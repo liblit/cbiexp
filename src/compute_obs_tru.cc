@@ -6,7 +6,7 @@
 #include <queue>
 #include <vector>
 #include "PredStats.h"
-#include "Progress.h"
+#include "Progress/Bounded.h"
 #include "ReportReader.h"
 #include "RunsDirectory.h"
 #include "SiteCoords.h"
@@ -244,7 +244,7 @@ int main(int argc, char** argv)
 
     fclose(pfp);
 
-    Progress progress("computing obs and tru", num_runs);
+    Progress::Bounded progress("computing obs and tru", num_runs);
     for (cur_run = 0; cur_run < num_runs; cur_run++) {
 	progress.step();
 	Outcome outcome = 0;

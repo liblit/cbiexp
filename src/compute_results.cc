@@ -5,7 +5,7 @@
 #include "CompactReport.h"
 #include "Confidence.h"
 #include "PredStats.h"
-#include "Progress.h"
+#include "Progress/Bounded.h"
 #include "ReportReader.h"
 #include "RunsDirectory.h"
 #include "classify_runs.h"
@@ -447,7 +447,7 @@ int main(int argc, char** argv)
     for (unsigned u = 0; u < num_units; u++)
 	site_info[u].resize(units[u].num_sites);
 
-    Progress progress("computing results", num_runs);
+    Progress::Bounded progress("computing results", num_runs);
     for (cur_run = 0; cur_run < num_runs; cur_run++) {
 	progress.step();
 	if (!is_srun[cur_run] && !is_frun[cur_run])

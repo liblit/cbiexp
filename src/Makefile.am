@@ -56,8 +56,12 @@ libanalyze_a_SOURCES =				\
 	NumRuns.h				\
 	PredStats.cc				\
 	PredStats.h				\
-	Progress.cc				\
-	Progress.h				\
+	Progress/Bounded.cc			\
+	Progress/Bounded.h			\
+	Progress/Unbounded.cc			\
+	Progress/Unbounded.h			\
+	Progress/enabled.cc			\
+	Progress/enabled.h			\
 	RawReport.cc				\
 	RawReport.h				\
 	ReportReader.cc				\

@@ -4,7 +4,7 @@
 #include "fopen.h"
 #include "ClassifyRuns.h"
 #include "NumRuns.h"
-#include "Progress.h"
+#include "Progress/Bounded.h"
 #include "RunsDirectory.h"
 
 using namespace std;
@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     FILE* ffp = fopenWrite(ClassifyRuns::failuresFilename);
 
     const unsigned numRuns = NumRuns::value();
-    Progress progress("scanning labels", numRuns);
+    Progress::Bounded progress("scanning labels", numRuns);
 
     for (unsigned i = 0; i < numRuns; i++) {
 	progress.step();

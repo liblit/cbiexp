@@ -147,7 +147,7 @@ uint 0|[1-9][0-9]*
 
 #include <argp.h>
 #include "CompactReport.h"
-#include "Progress.h"
+#include "Progress/Bounded.h"
 #include "RawReport.h"
 #include "RunsDirectory.h"
 #include "classify_runs.h"
@@ -186,7 +186,7 @@ int main(int argc, char** argv)
 
     classify_runs();
 
-    Progress progress("converting reports", num_runs);
+    Progress::Bounded progress("converting reports", num_runs);
 
     for (unsigned i = 0; i < num_runs; i++) {
 	progress.step();

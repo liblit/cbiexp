@@ -1,14 +1,11 @@
 #include <iostream>
-#include <unistd.h>
-#include "Progress.h"
+#include "Bounded.h"
+#include "enabled.h"
 
 using namespace std;
 
 
-static const bool enabled = isatty(STDOUT_FILENO) && getenv("TERM");
-
-
-Progress::Progress(const char task[], unsigned numSteps)
+Progress::Bounded::Bounded(const char task[], unsigned numSteps)
   : currentStep(0),
     numSteps(numSteps),
     task(task)
@@ -16,15 +13,15 @@ Progress::Progress(const char task[], unsigned numSteps)
 }
 
 
-Progress::~Progress()
+Progress::Bounded::~Bounded()
 {
   if (enabled)
-    cout << '\n';
+    cout << endl;
 }
 
 
 void
-Progress::step()
+Progress::Bounded::step()
 {
   if (enabled)
     {
