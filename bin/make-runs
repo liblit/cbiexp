@@ -1,12 +1,14 @@
 #!/usr/bin/perl -w
 #-*- cperl -*-
 
-
 use strict;
 
-use Cwd;
 use FindBin;
-use File::Temp qw(tempfile);
+use lib $FindBin::Bin;
+
+use Cwd;
+use File::Path;
+use File::stat;
 use FileHandle;
 use Getopt::Long qw(:config bundling auto_abbrev);
 
@@ -36,11 +38,16 @@ unless (-x $run_once && -x $label_once) {
 #
 
 my $jobs;
-my $verbose;
 my $datadir = 'data';
-my $dry_run;
+my $start = 0;
 
-my $usage = "Usage: $0 [--jobs=<count>] [--verbose] [--datadir=<dir>] <num-runs>\n";
+my $usage = <<EOT;
+Usage: $0 [OPTION...] <num-runs>
+
+  --datadir=DIR  store run suite in DIR (default "data")
+  --jobs=COUNT   use COUNT simultaneous jobs (default is CPU count - 1)
+  --start=NUM    assume that runs 0 through NUM - 1 have already been done
+EOT
 
 sub help () {
   print $usage;
@@ -48,14 +55,11 @@ sub help () {
 }
 
 my $understood = GetOptions('jobs=i' => \$jobs,
-			    'verbose' => \$verbose,
 			    'datadir=s' => \$datadir,
-			    'dry-run' => \$dry_run,
+			    'start=i' => \$start,
 			    'help|?' => \&help);
 
 die $usage unless $understood && @ARGV == 1;
-
-$verbose |= defined $dry_run;
 
 
 unless ($jobs) {
@@ -75,46 +79,128 @@ my ($num_runs) = @ARGV;
 
 ########################################################################
 #
-#  build temporary makefile
+#  prepare for runs
 #
 
-local ($,, $\) = ("\n", "\n");
+# create data storage area
+-d $datadir or mkdir $datadir or die "cannot mkdir $datadir: $!\n";
 
-my ($handle, $filename) = tempfile(UNLINK => 1);
-
-foreach (0 .. ($num_runs - 1)) {
-  my $subdir = int($_ / $RunsPerSubdirectory);
-  print $handle "stamp-labels: $subdir/$_/label";
+# perform any other setup work needed before the runs begin
+my $prep = "bin/prepare-runs";
+if (-x $prep) {
+    (system { $prep } $prep) == 0 or die "cannot run $prep: $!\n";
 }
-
-print $handle ("num_runs = $num_runs",
-	       "label_once = $cwd/$label_once",
-	       "run_once = $cwd/$run_once",
-	       "include $FindBin::Bin/make-runs.mk");
-
-close $handle;
 
 
 ########################################################################
 #
-#  start the build
+#  timestamp checking
 #
 
-# scrub environment in case we are inside a larger makefile
-delete @ENV{'MAKEFILES', 'MAKFLAGS'};
 
-# prepare data storage area
-mkdir $datadir;
+{
+    my $label_once_mtime = (stat "$cwd/$label_once")->mtime;
 
-# perform any other setup work needed before the runs begin
-my $prep = "bin/prepare-runs";
-if (-x $prep && ! $dry_run) {
-    (system { $prep } $prep) == 0 or die "cannot run $prep: $!\n";
+    sub need_label ($$) {
+	my $label = stat shift;
+	return 1 unless $label;
+	return 1 if $label_once_mtime > $label->mtime;
+
+	my $stamp = stat shift;
+	return 1 unless $stamp;
+
+	return $stamp->mtime > $label->mtime;
+    }
 }
 
-# do not use exec here; it interferes with tempfile cleanup
-my @make = ('nice', 'make', '-C', $datadir, '-j', $jobs, '-f', $filename);
-push @make, '-s' unless $verbose;
-push @make, '-n' if $dry_run;
-system @make;
-exit($? >> 8 || $? & 127);
+
+########################################################################
+#
+#  perform all runs
+#
+
+my $error = 0;
+my $updated = 0;
+my $children = 0;
+
+
+sub reap () {
+    wait;
+    $error = 1 if $?;
+    --$children;
+}
+
+
+foreach my $run_id ($start .. $num_runs - 1) {
+    if (-e 'orderly-shutdown') {
+	$error = 1;
+	last;
+    }
+
+    my $subdir = int($run_id / $RunsPerSubdirectory);
+    my $rundir = "$datadir/$subdir/$run_id";
+    my $stamp_file = "$rundir/stamp";
+    my $label_file = "$rundir/label";
+    next unless need_label $label_file, $stamp_file;
+
+    # wait for an available slot
+    reap while $children >= $jobs;
+    last if $error;
+
+    # use the available slot
+    my $pid = fork;
+    die "cannot fork: $!\n" unless defined $pid;
+
+    if ($pid == 0) {
+	if (-e 'stamp') {
+	    # already ran; just needs relabeling
+	    chdir $rundir;
+	} else {
+	    # prepare a fresh run directory
+	    print "run $run_id: start\n";
+	    rmtree $rundir;
+	    mkpath $rundir;
+	    chdir $rundir;
+
+	    # run the application
+	    system "$cwd/$run_once", $run_id;
+	    exit 1 if $?;
+
+	    # record that the run completed
+	    new FileHandle 'stamp', 'w'
+		or die "cannot update stamp: $!\n";
+	    print "run $run_id: done\n";
+	}
+
+	# label the outcome
+	print "run $run_id: label\n";
+	open STDOUT, '>', 'label' or die "cannot write label: $!\n";
+	system "$cwd/$label_once", $run_id;
+	if ($?) {
+	    unlink 'label';
+	    exit 1;
+	} else {
+	    exit 0;
+	}
+
+    } else {
+	# update slot count
+	++$children;
+
+	# remember that some work was done
+	$updated = 1;
+    }
+}
+
+
+# finish up any remaining jobs
+reap while $children;
+exit 1 if $error;
+
+if ($updated) {
+    my $filename = "$datadir/stamp-labels";
+    my $stamp = new FileHandle $filename, 'w' or die "cannot write $filename: $!\n";
+    $stamp->print("$num_runs\n");
+}
+
+exit 0;
