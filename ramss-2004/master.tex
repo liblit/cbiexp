@@ -40,7 +40,7 @@
 As part of our work on Cooperative Bug Isolation (CBI) we have undertaken to 
 instrument and distribute binaries for a number of large open source projects.
 This
-public deployment is an important  step towards a large experiment involving (we hope) hundreds or thousands of users that will measure the effectiveness of cooperative bug isolation.
+public deployment is an important  step towards a large experiment involving (we hope) hundreds or thousands of users that will measure the effectiveness of CBI.
 This paper describes several of the significant engineering issues that arise in 
 instrumenting the source code of realistic applications.  
 More information on CBI can be found at \cite{Liblit:CBIP}.
@@ -97,12 +97,12 @@ applications we instrument.
   \centering
   \begin{tabular}{lrcccc}
     Name & Lines of Code & Shared Libraries & Plugins & Threads \\\hline
-    Evolution & 460,912 & + & + & + \\
-    Gaim & 160,435 & & + & \\
-    The GIMP & 650,660 & + & + & \\
-    Gnumeric & 319,137 & & + & \\
-    Nautilus & 124,679 & + & + & + \\
-    Rhythmbox & 56,442 & + & &
+    evolution & 460,912 & + & + & + \\
+    gaim & 160,435 & & + & \\
+    gimp & 650,660 & + & + & \\
+    gnumeric & 319,137 & & + & \\
+    nautilus & 124,679 & + & + & + \\
+    rhythmbox & 56,442 & + & &
   \end{tabular}
   \caption{Instrumented applications}
   \label{apps}
@@ -268,7 +268,7 @@ panel.  The status icon changes depending on whether sampling is
 enabled or disabled globally, and remains present as long as at least
 one instrumented application is running.  
 
-Because the wrapper script launches the real instrumented binary as a
+Because the wrapper script launches the instrumented binary as a
 subprocess, it can also check that subprocess's exit status (either a
 result code or a fatal signal), which is included in the report
 uploaded to our feedback collection server.
@@ -276,8 +276,8 @@ The wrapper script compresses the raw feedback report for transit
 using gzip-compatible compression.  This is a huge benefit, as reports
 are mostly zeros and compress very well.  The average compression
 of the reports we have received is 96\%; Table~\ref{report-sizes} shows
-the range of report sizes we have received by application.  As can be
-seen, even the largest reports are less than 40K bytes, which can be uploaded
+the range of report sizes we have received by application.  
+The largest reports are less than 40K bytes, which can be uploaded
 over even a slow modem connection in seconds.
 
 Before submitting a report, the wrapper checks once more whether
@@ -285,7 +285,7 @@ sampling is enabled both globally and for this application.  If the
 user changed his mind after program launch, this gives a second chance
 for stopping an unwanted feedback report from going out.
 
-Because we transmit our reports using HTTP requests, every submission
+Because we transmit reports using HTTP requests, every submission
 can also have a response from the server.
 Ordinarily the collection server does not give any response beyond a
 success code.  However, if the server does give a response, the
@@ -296,7 +296,7 @@ The HTTP reply can also include a few special reply headers which
 update the local sampling configuration on the client.  We have the
 ability to promote a different destination URL for future reports,
 which may be useful if we need to relocate the collection server.  We
-can change the sampling density from its default of $1/100$, which may be
+can change the sampling density from its default of $\nicefrac{1}{100}$, which may be
 useful if performance problems arise.  We can also issue a ``poison
 pill'' which turns off sampling for future runs of the application.
 This is intended as a shutoff should the Cooperative Bug
@@ -346,16 +346,16 @@ apparently is sparse enough; we probably could have sampled even more
 densely for these interactive applications which spend most of their
 time waiting for the user to do something.  Note however that 
 these applications do have CPU-intensive phases, such as when
-Rhythmbox is loading up a library with thousands of music files or
-when Gnumeric is recalculating a very large spreadsheet.
+{\tt rhythmbox} is loading up a library with thousands of music files or
+when {\tt gnumeric} is recalculating a very large spreadsheet.
 
 Finally, Table~\ref{reports-per-app} summarizes the current state of
 the data for each of our instrumented applications.  In this table,
-``count'' is the total number of feedback reports received so far,
-which is broken out into ``good'' runs, runs that exited with a
-non-zero ``error'' status, and runs that ended in a ``crash'' due to a
+{\em count} is the total number of valid feedback reports received so far,
+which is broken out into {\em good} runs, runs that exited with a
+non-zero {\em error} status, and runs that ended in a {\em crash} due to a
 fatal signal.  The applications are ordered by decreasing crash rate;
-Rhythmbox ends by crashing 15\% of the time.
+{\tt rhythmbox} ends by crashing 15\% of the time.
 
 There is both good news and bad news in these figures.  The bad news
 is that we have not yet received enough executions to carry out
