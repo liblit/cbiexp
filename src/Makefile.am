@@ -61,6 +61,8 @@ libanalyze_a_SOURCES =				\
 	Progress.h				\
 	RawReport.cc				\
 	RawReport.h				\
+	ReportReader.cc				\
+	ReportReader.h				\
 	Rho.cc					\
 	Rho.h					\
 	RunsDirectory.cc			\

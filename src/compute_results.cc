@@ -6,6 +6,7 @@
 #include "Confidence.h"
 #include "PredStats.h"
 #include "Progress.h"
+#include "ReportReader.h"
 #include "RunsDirectory.h"
 #include "classify_runs.h"
 #include "fopen.h"
@@ -66,7 +67,8 @@ inline void print_pred(FILE* fp, int u, int c, int p, int site)
 
 void print_retained_preds()
 {
-    int u, c, p, site = 0;
+    unsigned u, c;
+    int p, site = 0;
 
     FILE* fp = fopenWrite(PredStats::filename);
     assert(fp);
@@ -134,7 +136,21 @@ inline void obs(int r, int u, int c)
 
 int cur_run;
 
-void process_s_site(int u, int c, int x, int y, int z)
+
+class Reader : public ReportReader
+{
+public:
+    void branchesSite(    unsigned unitIndex, unsigned siteIndex, unsigned, unsigned) const;
+    void gObjectUnrefSite(unsigned unitIndex, unsigned siteIndex, unsigned, unsigned, unsigned, unsigned) const;
+    void returnsSite(     unsigned unitIndex, unsigned siteIndex, unsigned, unsigned, unsigned) const;
+    void scalarPairsSite( unsigned unitIndex, unsigned siteIndex, unsigned, unsigned, unsigned) const;
+
+private:
+    void tripleSite( unsigned unitIndex, unsigned siteIndex, unsigned, unsigned, unsigned) const;
+};
+
+
+void Reader::tripleSite(unsigned u, unsigned c, unsigned x, unsigned y, unsigned z) const
 {
     assert(x || y || z);
     obs(cur_run, u, c);
@@ -152,7 +168,20 @@ void process_s_site(int u, int c, int x, int y, int z)
 	inc(cur_run, u, c, 5);
 }
 
-void process_b_site(int u, int c, int x, int y)
+
+void Reader::scalarPairsSite(unsigned u, unsigned c, unsigned x, unsigned y, unsigned z) const
+{
+    tripleSite(u, c, x, y, z);
+}
+
+
+void Reader::returnsSite(unsigned u, unsigned c, unsigned x, unsigned y, unsigned z) const
+{
+    tripleSite(u, c, x, y, z);
+}
+
+
+void Reader::branchesSite(unsigned u, unsigned c, unsigned x, unsigned y) const
 {
     assert(x || y);
     obs(cur_run, u, c);
@@ -160,7 +189,8 @@ void process_b_site(int u, int c, int x, int y)
     if (y) inc(cur_run, u, c, 1);
 }
 
-void process_g_site(int u, int c, int x, int y, int z, int w)
+
+void Reader::gObjectUnrefSite(unsigned u, unsigned c, unsigned x, unsigned y, unsigned z, unsigned w) const
 {
     assert(x || y || z || w);
     obs(cur_run, u, c);
@@ -169,6 +199,7 @@ void process_g_site(int u, int c, int x, int y, int z, int w)
     if (z) inc(cur_run, u, c, 2);
     if (w) inc(cur_run, u, c, 3);
 }
+
 
 inline void cull(int u, int c, int p)
 {
@@ -184,7 +215,8 @@ inline void cull(int u, int c, int p)
 
 void cull_preds()
 {
-    int u, c, p;
+    unsigned u, c;
+    int p;
 
     for (u = 0; u < num_units; u++) {
 	for (c = 0; c < units[u].num_sites; c++) {
@@ -219,7 +251,7 @@ inline bool have_equal_increase(int u1, int c1, int p1, int u2, int c2, int p2)
 
 void cull_preds_aggressively1()
 {
-    int u, c;
+    unsigned u, c;
 
     for (u = 0; u < num_units; u++) {
 	for (c = 0; c < units[u].num_sites; c++) {
@@ -331,9 +363,9 @@ inline bool is_eligible(int u, int c, int p, int s)
 	   (isdigit(sites[s + c].args[1][0]) || sites[s + c].args[1][0] != '-');
 }
 
-void checkG(int u, int c, int p, int s)
+void checkG(unsigned u, unsigned c, int p, int s)
 {
-    for (int d = 0; d < units[u].num_sites; d++) {
+    for (unsigned d = 0; d < units[u].num_sites; d++) {
 	if (c != d &&
 	    sites[s + c].line == sites[s + d].line &&
 	    strcmp(sites[s + c].args[0], sites[s + d].args[0]) == 0 &&
@@ -346,9 +378,9 @@ void checkG(int u, int c, int p, int s)
     }
 }
 
-void checkL(int u, int c, int p, int s)
+void checkL(unsigned u, unsigned c, int p, int s)
 {
-    for (int d = 0; d < units[u].num_sites; d++) {
+    for (unsigned d = 0; d < units[u].num_sites; d++) {
 	if (c != d &&
 	    sites[s + c].line == sites[s + d].line &&
 	    strcmp(sites[s + c].args[0], sites[s + d].args[0]) == 0 &&
@@ -363,7 +395,7 @@ void checkL(int u, int c, int p, int s)
 
 void cull_preds_aggressively2()
 {
-    int u, c, s;
+    unsigned u, c, s;
 
     for (s = 0, u = 0; u < num_units; s += units[u].num_sites, u++) {
 	if (units[u].scheme_code == 'S') {
@@ -412,7 +444,8 @@ int main(int argc, char** argv)
     classify_runs();
 
     site_info.resize(num_units);
-    for (int u = 0; u < num_units; u++) site_info[u].resize(units[u].num_sites);
+    for (unsigned u = 0; u < num_units; u++)
+	site_info[u].resize(units[u].num_sites);
 
     Progress progress("computing results", num_runs);
     for (cur_run = 0; cur_run < num_runs; cur_run++) {
@@ -420,11 +453,7 @@ int main(int argc, char** argv)
 	if (!is_srun[cur_run] && !is_frun[cur_run])
 	    continue;
 
-	FILE* fp = fopenRead(CompactReport::format(cur_run));
-
-	process_report(fp, process_s_site, process_s_site, process_b_site, process_g_site);
-
-	fclose(fp);
+	Reader().read(cur_run);
     }
 
     cull_preds();

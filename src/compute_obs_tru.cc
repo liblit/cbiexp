@@ -9,6 +9,7 @@
 #include "CompactReport.h"
 #include "PredStats.h"
 #include "Progress.h"
+#include "ReportReader.h"
 #include "RunsDirectory.h"
 #include "classify_runs.h"
 #include "fopen.h"
@@ -99,7 +100,20 @@ void print_site_info(int u, int c)
 
 int cur_run;
 
-void process_s_site(int u, int c, int x, int y, int z)
+class Reader : public ReportReader
+{
+public:
+    void branchesSite(    unsigned unitIndex, unsigned siteIndex, unsigned, unsigned) const;
+    void gObjectUnrefSite(unsigned unitIndex, unsigned siteIndex, unsigned, unsigned, unsigned, unsigned) const;
+    void returnsSite(     unsigned unitIndex, unsigned siteIndex, unsigned, unsigned, unsigned) const;
+    void scalarPairsSite( unsigned unitIndex, unsigned siteIndex, unsigned, unsigned, unsigned) const;
+
+private:
+    void tripleSite( unsigned unitIndex, unsigned siteIndex, unsigned, unsigned, unsigned) const;
+};
+
+
+void Reader::tripleSite(unsigned u, unsigned c, unsigned x, unsigned y, unsigned z) const
 {
     assert(x || y || z);
     inc_obs(cur_run, u, c, 0);
@@ -122,7 +136,20 @@ void process_s_site(int u, int c, int x, int y, int z)
 	inc_tru(cur_run, u, c, 5);
 }
 
-void process_b_site(int u, int c, int x, int y)
+
+void Reader::scalarPairsSite(unsigned u, unsigned c, unsigned x, unsigned y, unsigned z) const
+{
+    tripleSite(u, c, x, y, z);
+}
+
+
+void Reader::returnsSite(unsigned u, unsigned c, unsigned x, unsigned y, unsigned z) const
+{
+    tripleSite(u, c, x, y, z);
+}
+
+
+void Reader::branchesSite(unsigned u, unsigned c, unsigned x, unsigned y) const
 {
     assert(x || y);
     inc_obs(cur_run, u, c, 0);
@@ -131,7 +158,8 @@ void process_b_site(int u, int c, int x, int y)
     if (y) inc_tru(cur_run, u, c, 1);
 }
 
-void process_g_site(int u, int c, int x, int y, int z, int w)
+
+void Reader::gObjectUnrefSite(unsigned u, unsigned c, unsigned x, unsigned y, unsigned z, unsigned w) const
 {
     assert(x || y || z || w);
     inc_obs(cur_run, u, c, 0);
@@ -168,7 +196,7 @@ static void process_cmdline(int argc, char **argv)
 
 int main(int argc, char** argv)
 {
-    int u, c;
+    unsigned u, c;
 
     process_cmdline(argc, argv);
 
@@ -199,12 +227,7 @@ int main(int argc, char** argv)
 	if (!is_srun[cur_run] && !is_frun[cur_run])
 	    continue;
 
-	const string filename = CompactReport::format(cur_run);
-	FILE* fp = fopenRead(filename);
-
-	process_report(fp, process_s_site, process_s_site, process_b_site, process_g_site);
-
-	fclose(fp);
+	Reader().read(cur_run);
     }
 
     for (u = 0; u < num_units; u++)

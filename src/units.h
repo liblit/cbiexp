@@ -5,12 +5,12 @@
 struct unit_t {
   char scheme_code;
   const char *signature;
-  int num_sites;
+  unsigned num_sites;
 };
 
 extern const struct unit_t units[];
 
-extern const int num_units;
+extern const unsigned num_units;
 
 extern const int NumBPreds;
 extern const int NumRPreds;

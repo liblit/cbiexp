@@ -58,54 +58,6 @@ bool read_pred_full(FILE* fp, pred_info &pi)
 	return false;
 }
 
-void process_report(FILE* fp,
-                    void (*process_s_site)(int u, int c, int x, int y, int z),
-                    void (*process_r_site)(int u, int c, int x, int y, int z),
-                    void (*process_b_site)(int u, int c, int x, int y),
-                    void (*process_g_site)(int u, int c, int x, int y, int z, int w))
-{
-    int u, c, x, y, z, w;
-    bool problem = false;
-
-    while (1) {
-        fscanf(fp, "%d\t%d\t", &u, &c);
-        if (feof(fp))
-            break;
-	if (u >= num_units) {
-	    fprintf(stderr, "unit %d exceeds unit count (%d)\n", u, num_units);
-	    problem = true;
-	} else if (c >= units[u].num_sites) {
-	    fprintf(stderr, "site %d exceeds unit's site count (%d)\n", c, units[u].num_sites);
-	    problem = true;
-	} else
-	    switch (units[u].scheme_code) {
-	    case 'S':
-		fscanf(fp, "%d\t%d\t%d\n", &x, &y, &z);
-		process_s_site(u, c, x, y, z);
-		break;
-	    case 'B':
-		fscanf(fp, "%d\t%d\n", &x, &y);
-		process_b_site(u, c, x, y);
-		break;
-	    case 'R':
-		fscanf(fp, "%d\t%d\t%d\n", &x, &y, &z);
-		process_r_site(u, c, x, y, z);
-		break;
-	    case 'G':
-		fscanf(fp, "%d\t%d\t%d\t%d\n", &x, &y, &z, &w);
-		process_g_site(u, c, x, y, z, w);
-		break;
-	    default:
-		fprintf(stderr, "unit %d has unknown scheme code '%c'\n",
-			u, units[u].scheme_code);
-		problem = true;
-	    }
-    }
-
-    if (problem)
-	exit(1);
-}
-
 
 const string &
 scheme_name(char code)

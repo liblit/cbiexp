@@ -156,7 +156,7 @@ uint 0|[1-9][0-9]*
 
 static int get_unit_indx(char scheme_code, const string &signature)
 {
-    for (int i = 0; i < num_units; i++)
+    for (unsigned i = 0; i < num_units; i++)
 	if (scheme_code == units[i].scheme_code && signature == units[i].signature)
 	    return i;
 
