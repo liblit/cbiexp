@@ -48,7 +48,7 @@ To validate our algorithm we first performed an experiment in which we
 knew the set of bugs in advance.  We added nine bugs to \moss, a
 widely used service for detecting plagiarism in software
 \cite{Schleimer:2003:WLA}.  Six of these were previously discovered
-and repaired bugs in \moss that we reintroduced; the other three were
+and repaired bugs in \moss that we reintroduced.  The other three were
 variations on three of the original bugs, to see if our algorithm could
 discriminate between pairs of bugs with very similar behavior but
 distinct causes.  The nature of the eight crasing bugs varies: four
@@ -57,33 +57,34 @@ missing end-of-list check in the traversal of a hash table bucket, a missing
 out-of-memory check, and a violation of a subtle invariant that must be maintained between two
 parts of a complex data structure.  
 
-The last bug -- incorrect handling of comments in certain cases -- only
-causes incorrect output, not a crash.  For most of the other bugs, failure can 
-be detected by noting program crashes (though some of these bugs are non-deterministic 
-and do not always cause crashes).  The last bug, however, cannot be detected 
-in such an easy fashion.
-For our experiment we also ran a correct version of \moss\ and
-compared the output of the two versions, labeling any run where the
-output was different as a failure.  The purpose of using this oracle
-is to show that, in principle, bugs other than crashing bugs can also
-be isolated using our techniques, provided there is some way, whether
-by automatic self-checking or human inspection, to recognize failing
-runs.
+The ninth bug -- incorrect handling of comments in certain cases --
+only causes incorrect output, not a crash.  For most of the other
+bugs, failure can be detected by noting program crashes (though some
+of these bugs are non-deterministic and may not even crash when they
+should).  The ninth bug, however, cannot be detected in such an easy
+fashion.  For our experiment we also ran a correct version of \moss{}
+and compared the output of the two versions, labeling any run where
+the output was different as a failure.  The purpose of using this
+oracle is to show that, in principle, bugs other than crashing bugs
+can also be isolated using our techniques, provided there is some way,
+whether by automatic self-checking or human inspection, to recognize
+failing runs.
 
 \input{moss-view/table}
 
 \autoref{tab:mossdilute} shows the results of the experiment.  The
 predicates listed were selected by the elimination algorithm in the
-order shown.  The second column is the initial thermometer for each
-predicate,  showing the \context\ and \increase\ scores before
-elimination is performed. The fourth column is the {\em effective}
-thermometer, showing the \context\ and \increase\ scores for a
+order shown.  The first column is the initial bug thermometer for each
+predicate, showing the \context{} and \increase{} scores before
+elimination is performed. The fourth column is the \termdef{effective}
+bug thermometer, showing the \context{} and \increase{} scores for a
 predicate $P$ at the time $P$ is selected (i.e., when it is the
-top-ranked predicate).  The scores in the first and third columns are
-the initial and effective importance (harmonic mean) scores, respectively.
+top-ranked predicate).  Thus the effective thermometer reflects the
+cumulative diluting effect of redundancy elimination for other
+predicates selected before this one.
 
 As part of the experiment we separately recorded the exact set of
-bugs that occurred in each run.
+bugs that actually occurred in each run.
 The table at the far right of \autoref{tab:mossdilute} shows, for
 each selected predicate and for each bug, the number of runs in which
 both the selected predicate is observed to be true and the bug occurs.
@@ -94,23 +95,23 @@ bugs present.  For example, the top-ranked predicate, which is
 overwhelmingly a predictor of bug \#5, also includes some runs where
 bugs \#3, \#4, and \#9 occurred.  This situation is not the result of
 misclassification of failing runs by our algorithm.  As observed in
-\autoref{sec:introduction}, more than one bug may occur in a run;
-it simply happens that in some runs bugs \#5 and \#3 both occur (to
+\autoref{sec:introduction}, more than one bug may occur in a run.
+It simply happens that in some runs bugs \#5 and \#3 both occur (to
 pick just one possible combination).
 
 A particularly interesting case of this phenomenon is bug \#7, one of
 the buffer overruns.  Bug \#7 is not strongly predicted by any
 predicate on the list but in fact occurs in at least a few of the
 failing runs of most predicates.  We have examined the runs of bug \#7
-in detail and found that the only failing runs bug \#7 occurs in also
-have at least one other bug.  That is, even though the bug \#7 overrun
+in detail and found that the bug \#7 only occurs in runs that also
+trigger at least one other bug.  That is, even though the bug \#7 overrun
 happens (though rarely), it never causes incorrect output or a crash
 in any run.  Bug \#8, another overrun, is not even shown because the
 overrun is never triggered in our data (its column would be all
 0's).\footnote{Bug \#8 was originally found by a code inspection.}
 There is no way our algorithm can find causes of bugs that do not
 occur, but recall that part of our purpose in sampling user executions
-is to get an accurate picture of the most important bugs. It is
+is to get an accurate picture of the most important bugs.  It is
 consistent with this goal that if a bug never causes a problem, it is
 not only not worth fixing, it is not even worth reporting.
 
