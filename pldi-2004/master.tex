@@ -380,7 +380,7 @@ statements within (or added to) a program may be designated as
 unconditionally.
 %%
 \issue[Mayur]{"Our sampling transformation is general: any collection
-  of stmts within (or added to) a program may be designated as
+  of statements within (or added to) a program may be designated as
   "instrumentation" and thereby sampled instead of run conditionally"
 
   I didn't get the "within (or added to)" part.  I thought
@@ -612,11 +612,7 @@ domain-specific.
 In earlier work 
 we used $\ell_1$-regularized logistic regression
 to rank the predicates by their
-failure-prediction strength \cite{PLDI`03*141,NIPS2003_AP05}.  Independently others have used
-logistic regression with good results to cluster program failures (without
-identifying causes) related to the same bug \cite{ICSE`03*465}.  However, we have come
-to believe that logistic regression has scalability problems in our application.
-
+failure-prediction strength \cite{PLDI`03*141,NIPS2003_AP05}.
 Logistic regression uses linearly weighted
 combinations of predicates to classify a trial run as successful or
 failed.  Regularized logistic regression incorporates a penalty
@@ -663,6 +659,6 @@ executions.
 %}
 \end{document}
 
-%% LocalWords:  DIDUCE Burnell Horvitz Podgurski Elbaum Hardojo SDF
+%% LocalWords:  DIDUCE Burnell Horvitz Podgurski Elbaum Hardojo SDF CCured
 %% LocalWords:  topcrash cacm icse ramss pldi Podgurski's Kanduri
 %% LocalWords:  McMaster Umranov Votta
