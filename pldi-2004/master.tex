@@ -210,8 +210,8 @@ following instrumentation schemes:
   \texttt{NULL} versus non-\texttt{NULL}.  The observation is made
   just after the function returns but before the result is used by the
   original program.  An instrumentation site is added even if the
-  source program discarded the return value, as ignoring returned
-  error codes is a common source of bugs.  Each call site induces one
+  source program discarded the return value, as unchecked return
+  values are a common source of bugs.  Each call site induces one
   instrumentation site with three counters: number of negative
   returns, number of zero returns, and number of positive returns.
   
