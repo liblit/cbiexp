@@ -13,10 +13,10 @@ master.ps: %.ps: %.dvi
 	dvips -o$@ -Pgeneric $*
 
 master.dvi: %.dvi: $(texs) $(epss)
-	latex $*
+	latex  $*
 	bibtex $*
-	latex $*
-	latex $*
+	latex  $*
+	latex  $*
 
 $(pdfs): %.pdf: %.eps
 	epstopdf --outfile=$@ $<
