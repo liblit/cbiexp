@@ -74,7 +74,7 @@ the program fails nor that when the predicate is false that
 the program succeeds. But we can express the probability that a predicate
 being true implies failure.  Let $\fail$ be an atomic predicate that is
 true for failing runs and false for successful runs.  We want to compute:
-\[ \crash(P) = \prob(P \Rightarrow \fail) \]
+\[ \crash(P) \equiv \prob(P \Rightarrow \fail) \]
 for every predicate $P$ over the set of all runs.  Let $S(P)$ be the number
 of successful runs in which $P$ is observed to be true at least once, and let $F(P)$ be the number of
 failing runs in which $P$ is observed to be true at least once.  Then we have
@@ -125,7 +125,7 @@ true does not increase the probability of failure at all; this coincides with
 the intuition that this predicate is irrelevant to the bug.
 
 This leads us to the following definition:
-\[ \context(P) = \prob((P \lor \lnot P) \Rightarrow \fail) \]
+\[ \context(P) \equiv \prob((P \lor \lnot P) \Rightarrow \fail) \]
 Now, $P \lor \lnot P$ is not the set of all runs, because we are not working in a two-valued logic.
 In any given run, neither of $P$ or $\lnot P$ may be observed (because the site where this predicate is
 sampled is not reached), or one may be observed, or both may be observed (because the statement is executed
@@ -135,7 +135,7 @@ in the set of runs where the value of $P$ is observed at all, the program fails.
 
 The interesting quantity, then, is
 \begin{equation*}
- \increase(P) = \crash(P) - \context(P) \label{eqn:1}
+ \increase(P) \equiv \crash(P) - \context(P) \label{eqn:1}
 \end{equation*}
 
 which can be read as: How much does $P$ being true increase the probability of failure
