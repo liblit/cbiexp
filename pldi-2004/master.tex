@@ -3,14 +3,25 @@
 \documentclass{acm_proc_article-sp}
 %% \documentclass{sig-alternate}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
 %% standard texmf packages
-\usepackage[bookmarks,pdfauthor={Ben Liblit, Mayur Naik, Alice
-  X. Zheng, Alex Aiken, and Michael
-  I. Jordan}pdfpagemode=UseOutlines]{hyperref}
+%%
+
 \usepackage{nicefrac}
 \usepackage{xspace}
 
+\usepackage[bookmarks,pdfauthor={Ben Liblit, Mayur Naik, Alice X.
+  Zheng, Alex Aiken, and Michael I.
+  Jordan},pdfpagemode=UseOutlines]{hyperref}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
 %% unique to this paper
+%%
+
 \usepackage{Autoref}
 
 %% assorted handy macros
@@ -21,10 +32,21 @@
 \newcommand{\crash}{\mbox{\textit{Crash}}}
 \newcommand{\context}{\mbox{\textit{Context}}}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
 %% remove the following before submission!
+%%
+
 \usepackage{color}
 \newcommand{\placeholder}[1]{{\color[cmyk]{0,0.61,0.87,0}[#1]}}
 \pagenumbering{arabic}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% front matter
+%%
 
 \title{Statistical Debugging in the Presence of Multiple Bugs
   %%
@@ -74,6 +96,12 @@
 }
 
 \bibliographystyle{abbrv}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  document body
+%%
 
 \begin{document}
 
@@ -332,7 +360,6 @@ specialized net.  \placeholder{We understand through informal
 
 \bibliography{cacm1990,icse02,icse03,misc,paste02,pods,ramss,refs}
 \placeholder{Page budget for references: 1.}
-
 
 \end{document}
 
