@@ -10,11 +10,11 @@ cd $analysis
 #time=/usr/bin/time
 
 $time $root/bin/analyze-runs -do-process-labels -n 60 -l $experiment/data/%d/label
-$time $root/bin/analyze-runs -do-map-sites -vs $experiment/share/rhythmbox.sites
-$time $root/bin/analyze-runs -do-convert-reports -s ./s.runs -f ./f.runs -vr $experiment/data/%d/reports -cr $experiment/data/%d/reports.new -u ./units
-$time $root/bin/analyze-runs -do-compute-results -c 90 -s ./s.runs -f ./f.runs -cs ./sites.txt -cr $experiment/data/%d/reports.new -u ./units
-$time $root/bin/analyze-runs -do-print-results-1 -r ./summary.html -pf ./preds.full.txt 
+$time $root/bin/analyze-runs -do-map-sites -st $experiment/share/rhythmbox.sites
+$time $root/bin/analyze-runs -do-convert-reports -s ./s.runs -f ./f.runs -vr $experiment/data/%d/reports -cr $experiment/data/%d/reports.new -us ./units
+$time $root/bin/analyze-runs -do-compute-results -c 90 -s ./s.runs -f ./f.runs -cr $experiment/data/%d/reports.new -us ./units -ss ./sites
+$time $root/bin/analyze-runs -do-print-results-1 -r ./summary.html -p ./preds.txt -ss ./sites -us ./units
 
 # the above was an illustration of how to use analyze-runs to perform specific tasks.
 # usually, you should use it as follows:
-#$root/bin/analyze-runs -do-process-labels -do-map-sites -do-convert-reports -do-compute-results -do-print-results-1 -n 31998 -l $experiment/data/%d/label -vs $experiment/share/rhythmbox.sites -vr $experiment/data/%d/reports -cr $experiment/data/%d/reports.new 
+#$root/bin/analyze-runs -do-process-labels -do-map-sites -do-convert-reports -do-compute-results -do-print-results-1 -n 31998 -l $experiment/data/%d/label -st $experiment/share/rhythmbox.sites -vr $experiment/data/%d/reports -cr $experiment/data/%d/reports.new 
