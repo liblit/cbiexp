@@ -93,7 +93,7 @@ at one time all languages where handled in the same manner, but the
 others have been gradually ported to an improved algorithm.  The Lisp
 processing involves a standard hash table; we removed one of the
 end-of-bucket checks, which causes a crash when the program scans to
-the end of a hash bucket and tries to dereference a NULL pointer.  This
+the end of a hash bucket and tries to dereference a \texttt{NULL} pointer.  This
 bug only occurs for Lisp programs, but does reliably crash the program
 when it is touched.
 
@@ -124,7 +124,7 @@ a different array.
 
 In summary, the nine bugs are all either real bugs in \moss\ or bugs
 closely related to real bugs in \moss\ or other programs.  The bugs
-range from typical C coding errors (e.g., NULL pointer dereferences
+range from typical C coding errors (e.g., \texttt{NULL} pointer dereferences
 and array overruns) to high-level violations of a system's internal
 invariants (e.g., bugs \#1 and \#4).
 
