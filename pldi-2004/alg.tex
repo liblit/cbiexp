@@ -405,7 +405,7 @@ We are, in effect, covering the set of bugs with a ranked subset of predicates.
 The other property we might like, that the algorithm chooses exactly
 one predicate to represent each bug, does not hold; we shall see in
 \autoref{sec:experiments} that the algorithm sometimes selects a
-strong sub-bug predictor as well as a more natural predictor.  Besides
+strong sub-bug predictor as well as a more natural predictor.  Beyond
 always representing each bug, the algorithm works well for two other
 reasons.  First, two predicates are redundant if they predict the same
 (or nearly the same) set of failing runs.  Thus, simply removing the
@@ -414,7 +414,7 @@ reduces the importance of any related predicates in the correct
 proportions. Second, because elimination is
 iterative, it is only necessary that $\importance$ selects a good
 predictor at each step, and not necessarily the best one; any
-predicate that predicts a different set of failing runs than all
+predicate that covers a different set of failing runs than all
 higher-ranked predicates is selected eventually.
 
 
