@@ -119,8 +119,8 @@ only .88.}
 The
 next predicate marks the test in the code that decides whether \moss\ is analyzing Lisp
 programs; the crash score of 1.0 tells us that whenever a Lisp program is
-processed, \moss\ crashes.  The last predicate in
-Figure~\ref{fig-report} is an obvious cause of
+processed, \moss\ crashes.  The fourth predicate 
+is an obvious cause of
 bug \#6; it reveals that whenever the amount of memory to use is set
 via a command line option, the program will crash.\footnote{The full data set shows that bug \#6 is non-deterministic with respect to this predicate, so once again the certainty that the program will crash is the result of sampling error.}  All three of these predicates illustrate the potential of our method to
 help pinpoint the root cause of a crash rather than just where the crash
