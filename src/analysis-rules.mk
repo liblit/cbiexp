@@ -18,8 +18,8 @@ sparse := $(sparsebase:=.) $(sparsebase:=.ir) $(sparsebase:=.jc) $(sparsebase:=.
 
 schemes ?= all branches g-object-unref returns scalar-pairs
 sorts := lb is fs nf hl hs
-projections := none circular linear
-#views := $(foreach scheme, $(schemes), $(foreach sort, $(sorts), $(foreach projection, $(projections), $(scheme)_$(sort)_$(projection).xml)))
+projections := none #circular linear
+views := $(foreach scheme, $(schemes), $(foreach sort, $(sorts), $(foreach projection, $(projections), $(scheme)_$(sort)_$(projection).xml)))
 #topRho := $(foreach sort, hl hs, $(foreach proj, circular linear, top-rho_$(sort)_$(proj).xml))
 
 links :=					\
@@ -56,7 +56,7 @@ web :=							\
 	predictor-info.xml				\
 	summary.xml
 
-publish := $(HOME)/www/project/$(name)-new
+publish := $(HOME)/www/$(name)-new
 
 all: $(web)
 .PHONY: all
@@ -114,6 +114,7 @@ clean:: ; rm -f calculate.m
 
 $(sparse): $(corrdir)/mhn2sparsemat.pl f.runs s.runs obs.txt tru.txt
 	$(time) ./$< . .
+	for goal in $(sparse); do test -r $$goal; done
 clean:: ; rm -f $(sparse)
 
 all_hl_corrected-%.xml: $(tooldir)/corrective-ranking/% f.runs obs.txt tru.txt
@@ -132,7 +133,7 @@ $(filter %_none.xml, $(views)): $(tooldir)/gen_views.o sites.o units.o preds.txt
 clean:: ; rm -f $(filter %_none.xml, $(views)) gen-views
 
 summary.xml: $(tooldir)/gen_summary.o preds.txt s.runs f.runs sites.o units.o
-	$(time) $(tooldir)/analyze_runs --do=print-summary --runs-directory=$(datadir) --source-directory=../src
+	$(time) $(tooldir)/analyze_runs --do=print-summary --runs-directory=$(datadir) --sparsity=$(sparsity) --source-directory=../src
 	[ -r $@ ]
 clean:: ; rm -f summary.xml gen-summary
 
