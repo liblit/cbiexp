@@ -1,6 +1,5 @@
 #!/usr/bin/perl -w
 
-use File::Copy;
 use FileHandle;
 
 # allow complete group access
@@ -61,6 +60,7 @@ sub check_system ($) {
     if ((system $_[0]) == -1) {
 	die "system error: $!";
     }
+    return $?
 }
 
 
@@ -70,9 +70,9 @@ sub check_system ($) {
 
 sub snapshot_moss_bad ($) {
     my $executable = shift;
-    copy "$MPATH/$executable", '.' or die "copy error";
-    check_system "/usr/lib/sampler/tools/extract-section .debug_sampler_cfg $executable | gzip >$executable.cfg";
-    check_system "/usr/lib/sampler/tools/extract-section .debug_site_info $executable | gzip >$executable.sites";
+    check_system "cp -p $MPATH/$executable ." and die "copy error";
+    check_system "/usr/lib/sampler/tools/extract-section .debug_sampler_cfg $executable | gzip >$executable.cfg" and die "cfg extraction error";
+    check_system "/usr/lib/sampler/tools/extract-section .debug_site_info $executable | gzip >$executable.sites" and die "site info extraction error";
 }
 
 snapshot_moss_bad 'mossbad';
