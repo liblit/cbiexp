@@ -12,7 +12,7 @@
   <!-- add our own related links -->
   <xsl:template mode="go-to-links" match="view">
     <xsl:apply-imports/>
-    <xsl:if test="@scheme = 'all'">
+    <xsl:if test="@scheme = 'all' and (@sort = 'hl' or @sort = 'hs')">
       [<a href="top-rho_{@sort}_{@projection}.xml">correlation matrix for top predictors</a>]
     </xsl:if>
   </xsl:template>
