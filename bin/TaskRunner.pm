@@ -26,6 +26,7 @@ sub new ($%) {
     my $self = \%self;
 
     die "job count not set" unless $self->{jobs};
+    $self->{fancy} = -t && $ENV{TERM};
 
     bless ($self, $class);
     return $self;
@@ -52,11 +53,8 @@ sub error ($) {
 sub progress ($) {
   my $self = shift;
   my $percent = int(100 * $self->{step} / $self->{total});
-  my ($before, $after) =
-    (-t STDOUT && $ENV{TERM})
-      ? ("\r", "")
-	: ("", "\n");
-
+  my $before = $self->{fancy} ? "\r" : '';
+  my $after = $self->{fancy} && $self->{step} != $self->{total} ? '' : "\n";
   local $| = 1;
   print "$before$self->{description}: $self->{step}/$self->{total} $percent%$after";
 }
