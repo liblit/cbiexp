@@ -77,7 +77,11 @@ Predicate::lowerBound() const
   const double standardError = sqrt(badnessUncertainty + contextUncertainty);
   const double halfWidth = Confidence::critical() * standardError;
 
-  return increase() - halfWidth;
+  const double result = increase() - halfWidth;
+
+  // !!!: deviation from formal definitions:
+  //   clamping lower bound to be at least zero
+  return result < 0 ? 0 : result;
 }
 
 
@@ -88,14 +92,20 @@ Predicate::recall() const
   //   increment denominator to avoid NAN when allFailures.count() == 1
   //   increment numerator to counterbalance incremented denominator
 
-  return log(1. + trueInFailures.count()) / log(1. + allFailures.count());
+  const double result = log(1. + trueInFailures.count()) / log(1. + allFailures.count());
+  assert(result >= 0);
+  assert(result <= 1);
+  return result;
 }
 
 
 double
 Predicate::harmonic() const
 {
-  return 2 / (1 / lowerBound() + 1 / recall());
+  const double result = 2 / (1 / lowerBound() + 1 / recall());
+  assert(result >= 0);
+  assert(result <= 1);
+  return result;
 }
 
 
