@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstring>
 #include "def.h"
+#include "shell.h"
 
 #define CBI_WEBPAGE "http://www.cs.berkeley.edu/~liblit/sampler/"
 
@@ -80,10 +81,8 @@ int main(int argc, char** argv)
 			"</tr>\n");
 	    fclose(fp);
 
-	    char cmd[1000];
-	    sprintf(cmd, "sort -k%d -r -n < %s.txt | /moa/sc3/mhn/bin/format >> %s\n", sortby_indices[m], scheme_codes[i], file);
-	    system (cmd);
-	    sprintf(cmd, "echo \"</table></center>\n</body>\n</html>\" >> %s\n", file);
+	    shell("sort -k%d -r -n < %s.txt | /moa/sc3/mhn/bin/format >> %s\n", sortby_indices[m], scheme_codes[i], file);
+	    shell("echo \"</table></center>\n</body>\n</html>\" >> %s\n", file);
 	}
     }
 

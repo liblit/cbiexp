@@ -7,13 +7,18 @@ noinst_PROGRAMS =				\
 	map_sites				\
 	process_run_labels
 
-analyze_runs_SOURCES = analyze_runs.cc
+analyze_runs_SOURCES =				\
+	analyze_runs.cc				\
+	shell.cc				\
+	shell.h
 
 format_SOURCES = format.cc
 
 gen_views_SOURCES =				\
 	gen_views.cc				\
-	def.h
+	def.h					\
+	shell.cc				\
+	shell.h
 
 map_sites_SOURCES = map_sites.cc
 

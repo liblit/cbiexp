@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include "shell.h"
 
 #define PROCESS_RUN_LABELS "/moa/sc3/mhn/bin/process-run-labels"
 #define MAP_SITES          "/moa/sc3/mhn/bin/map-sites"
@@ -236,21 +237,14 @@ void process_cmdline(int argc, char** argv)
     }
 }
 
-char cmd[1000];
-
 void gen_views(char* preds_file, int prefix)
 {
-    sprintf(cmd, "awk '{ if ($1~/B/) print $0 }' < %s > B.txt", preds_file);
-    system (cmd);
-    sprintf(cmd, "awk '{ if ($1~/R/) print $0 }' < %s > R.txt", preds_file);
-    system (cmd);
-    sprintf(cmd, "awk '{ if ($1~/S/) print $0 }' < %s > S.txt", preds_file);
-    system (cmd);
-    sprintf(cmd, "cp %s preds.txt", preds_file);
-    system (cmd);
+    shell("awk '{ if ($1~/B/) print $0 }' < %s > B.txt", preds_file);
+    shell("awk '{ if ($1~/R/) print $0 }' < %s > R.txt", preds_file);
+    shell("awk '{ if ($1~/S/) print $0 }' < %s > S.txt", preds_file);
+    shell("cp %s preds.txt", preds_file);
 
-    sprintf(cmd, "%s -r %s -p %d", GEN_VIEWS, result_summary_file, prefix);
-    system (cmd);
+    shell("%s -r %s -p %d", GEN_VIEWS, result_summary_file, prefix);
 }
 
 int main(int argc, char** argv)
@@ -269,9 +263,8 @@ int main(int argc, char** argv)
 	printf("Processing run labels ...\n");
 	sruns_file = DEFAULT_SRUNS_FILE;
 	fruns_file = DEFAULT_FRUNS_FILE;
-	sprintf(cmd, "%s -n %d -l %s -s %s -f %s",
+	shell("%s -n %d -l %s -s %s -f %s",
 		PROCESS_RUN_LABELS, num_runs, label_path_fmt, sruns_file, fruns_file);
-	system (cmd);
     }
 
     if (do_map_sites) {
@@ -286,13 +279,12 @@ int main(int argc, char** argv)
 	printf("Mapping sites ...\n");
 	compact_sites_file = DEFAULT_COMPACT_SITES_FILE;
 	units_hdr_file = DEFAULT_UNITS_HDR_FILE;
-	sprintf(cmd, "cat %s | "
-		     "sed 's/[a-zA-Z_][a-zA-Z_0-9]*\\$//g' | "
-		     "sed 's/\\([0-9][0-9]*\\)LL/\\1/g' | "
-		     "sed 's/\\([0-9][0-9]*\\)ULL/\\1/g' | "
-		     "%s -cs %s -u %s",
-		     verbose_sites_file, MAP_SITES, compact_sites_file, units_hdr_file);
-	system (cmd);
+	shell("cat %s | "
+	      "sed 's/[a-zA-Z_][a-zA-Z_0-9]*\\$//g' | "
+	      "sed 's/\\([0-9][0-9]*\\)LL/\\1/g' | "
+	      "sed 's/\\([0-9][0-9]*\\)ULL/\\1/g' | "
+	      "%s -cs %s -u %s",
+	      verbose_sites_file, MAP_SITES, compact_sites_file, units_hdr_file);
     }
 
     if (do_convert_reports) {
@@ -301,12 +293,10 @@ int main(int argc, char** argv)
 	    exit(1);
 	}
 	printf("Converting reports ...\n");
-	sprintf(cmd, "g++ -O3 /moa/sc3/mhn/src/convert_reports.cc /moa/sc3/mhn/src/classify_runs.cc -I/moa/sc3/mhn/src -include %s -o %s",
-		     units_hdr_file, CONVERT_REPORTS);
-	system (cmd);
-	sprintf(cmd, "%s -s %s -f %s -vr %s -cr %s",
-		     CONVERT_REPORTS, sruns_file, fruns_file, verbose_report_path_fmt, compact_report_path_fmt);
-	system (cmd);
+	shell("g++ -O3 /moa/sc3/mhn/src/convert_reports.cc /moa/sc3/mhn/src/classify_runs.cc -I/moa/sc3/mhn/src -include %s -o %s",
+	      units_hdr_file, CONVERT_REPORTS);
+	shell("%s -s %s -f %s -vr %s -cr %s",
+	      CONVERT_REPORTS, sruns_file, fruns_file, verbose_report_path_fmt, compact_report_path_fmt);
     }
 
     if (do_compute_results) {
@@ -323,16 +313,14 @@ int main(int argc, char** argv)
 	preds_abbr_file = DEFAULT_PREDS_ABBR_FILE;
 	preds_hdr_file  = DEFAULT_PREDS_HDR_FILE;
 	result_summary_file = DEFAULT_RESULT_SUMMARY_FILE;
-	sprintf(cmd, "g++ -O3 /moa/sc3/mhn/src/compute_results.cc /moa/sc3/mhn/src/classify_runs.cc /moa/sc3/mhn/src/scaffold.cc -I/moa/sc3/mhn/src/ -include %s -o %s",
-		     units_hdr_file, COMPUTE_RESULTS);
-	system (cmd);
-	sprintf(cmd, "%s -e %s -d %s -s %s -f %s -c %s -cs %s -cr %s %s %s -pf %s -pa %s -ph %s -r %s",
-		     COMPUTE_RESULTS, experiment_name, program_src_dir,
-		     sruns_file, fruns_file, confidence,
-		     compact_sites_file, compact_report_path_fmt,
-		     ((trace_file) ? "-t" : ""), ((trace_file) ? trace_file : ""),
-		     preds_full_file, preds_abbr_file, preds_hdr_file, result_summary_file);
-	system (cmd);
+	shell("g++ -O3 /moa/sc3/mhn/src/compute_results.cc /moa/sc3/mhn/src/classify_runs.cc /moa/sc3/mhn/src/scaffold.cc -I/moa/sc3/mhn/src/ -include %s -o %s",
+	      units_hdr_file, COMPUTE_RESULTS);
+	shell("%s -e %s -d %s -s %s -f %s -c %s -cs %s -cr %s %s %s -pf %s -pa %s -ph %s -r %s",
+	      COMPUTE_RESULTS, experiment_name, program_src_dir,
+	      sruns_file, fruns_file, confidence,
+	      compact_sites_file, compact_report_path_fmt,
+	      ((trace_file) ? "-t" : ""), ((trace_file) ? trace_file : ""),
+	      preds_full_file, preds_abbr_file, preds_hdr_file, result_summary_file);
 
     }
 
@@ -348,13 +336,11 @@ int main(int argc, char** argv)
 	printf("Computing obs and tru ...\n");
 	obs_file = DEFAULT_OBS_FILE;
 	tru_file = DEFAULT_TRU_FILE;
-	sprintf(cmd, "g++ -O3 /moa/sc3/mhn/src/compute_obs_tru.cc /moa/sc3/mhn/src/classify_runs.cc /moa/sc3/mhn/src/scaffold.cc -I/moa/sc3/mhn/src/ -include %s -o %s",
-		     units_hdr_file, COMPUTE_OBS_TRU);
-	system (cmd);
-	sprintf(cmd, "%s -s %s -f %s -pa %s -cr %s -obs %s -tru %s",
-		     COMPUTE_OBS_TRU, sruns_file, fruns_file, preds_abbr_file,
-		     compact_report_path_fmt, obs_file, tru_file);
-	system (cmd);
+	shell("g++ -O3 /moa/sc3/mhn/src/compute_obs_tru.cc /moa/sc3/mhn/src/classify_runs.cc /moa/sc3/mhn/src/scaffold.cc -I/moa/sc3/mhn/src/ -include %s -o %s",
+	      units_hdr_file, COMPUTE_OBS_TRU);
+	shell("%s -s %s -f %s -pa %s -cr %s -obs %s -tru %s",
+	      COMPUTE_OBS_TRU, sruns_file, fruns_file, preds_abbr_file,
+	      compact_report_path_fmt, obs_file, tru_file);
     }
 
     if (do_print_results_1) {
@@ -372,8 +358,7 @@ int main(int argc, char** argv)
 	    exit(1);
 	}
 	printf("Pretty-printing results-n ...\n");
-	sprintf(cmd, "g++ -O3 /moa/sc3/mhn/src/gen_preds_file.cc -include %s -o %s", preds_hdr_file, GEN_PREDS_FILE);
-	system (cmd);
+	shell("g++ -O3 /moa/sc3/mhn/src/gen_preds_file.cc -include %s -o %s", preds_hdr_file, GEN_PREDS_FILE);
 	FILE* all_fp = fopen(all_cluster_file, "r");
 	assert(all_fp);
 	while (1) {
@@ -383,8 +368,7 @@ int main(int argc, char** argv)
 		break;
 	    char file[1000];
 	    sprintf(file, per_cluster_file, x);
-	    sprintf(cmd, "%s < %s > preds.%d.txt", GEN_PREDS_FILE, file, x);
-	    system (cmd);
+	    shell("%s < %s > preds.%d.txt", GEN_PREDS_FILE, file, x);
 	    sprintf(file, "preds.%d.txt", x);
 	    gen_views(file, x);
 	}
