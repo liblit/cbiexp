@@ -181,7 +181,8 @@ int main(int argc, char** argv)
 	puts("Converting reports ...");
 	shell("%s %s/convert_reports.o %s.o -L%s -lanalyze -o convert-reports %s",
 	      linker, objdir, MapSites::unitsBasename, objdir, lexlib);
-	shell("./convert-reports --runs-directory=%s", RunsDirectory::root);
+	shell("./convert-reports --number-of-runs=%u --runs-directory=%s",
+	      NumRuns::value(), RunsDirectory::root);
     }
 
     if (phaseSelected[DoComputeResults]) {
