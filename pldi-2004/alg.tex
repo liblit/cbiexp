@@ -184,17 +184,15 @@ Just like with Failure(P), Context(P) is a conditional probability.}
   value in run R.  Here, we should at least say 'R(P) v not R(P)', but
   I think it's even clearer to say 'P is observed'.  Also the '=>'
   implication notation belongs more in logic than in statistics.  I've
-  changed this to the conditional probability notation.}
+  changed this to the conditional probability notation.  But we should 
+  still deal with this issue in subsequent texts.}
+\issue[Alice]{I've modified the sentence ``In any given run...'' to make
+  it less of a run-on sentence.}
 %%
 Now, $P \lor \lnot P$ is not the set of all runs, because we are not working in a two-valued logic.
-In any given run, neither $P$ nor $\lnot P$ may be observed (because the site where this predicate is
-sampled is not reached),
-%%
-\issue[Mayur]{Change "(because the site where this predicate is
-  sampled is not reached)" to "(because the site where this predicate
-  occurs is not reached, or is reached but not sampled)"?}
-%%
-or one may be observed, or both may be observed (because the statement is executed
+In any given run, there are three possibilities: (a) neither $P$ nor $\lnot P$ 
+is observed (because the site where this predicate occurs is not reached, or is reached but not sampled
+), (b) one of $P$ or $\lnot P$ is observed, or (c) both are observed (because the statement is executed
 multiple times and $P$ is sometimes true and sometimes false).  Thus, $\context(P)$ is the probability that
 in the set of runs where the value of $P$ is observed at all, the program fails. We can compute $\context(P)$ as follows:
 \[ \context(P) = \frac{F(P \lor \lnot P)}{S(P \lor \lnot P) + F(P \lor \lnot P)} \]
@@ -290,15 +288,6 @@ Then
 \end{gather*}
 
 \input{moss-view/stats-breakout}
-
-\issue[Alice]{The name 'Moss' should be typeset in special font.  [I
-  can't find the place where this table is inserted, so I can't make
-  the change myself.]}
-
-\issue[Mayur]{Caption of Table 1(b): change ``lower bound of
-  Increase(P)'' to ``Increase(P)'' since we don't explain in the text
-  what "lower bound" is.  (Alternatively, it should be ``lower bound of
-  the confidence interval of Increase(P)'').}
 
 \subsection{Ranking Predicates: Specificity vs. Sensitivity}
 \label{sec:ranking}
