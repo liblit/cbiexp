@@ -209,58 +209,65 @@ and the additional highly correlated predicates on their affinity lists.
 We will next elucidate how one of the predicates reported in \autoref{tab:views-exif},
 \exifpred, enabled us to effectively isolate the cause of one of the bugs.
 The bug has the following unique stack trace:
+\begin{quote}
 \begin{verbatim}
-  main
-    exif_data_save_data
+main
+  exif_data_save_data
+    exif_data_save_data_content
       exif_data_save_data_content
-        exif_data_save_data_content
-          exif_data_save_data_entry
-            exif_mnote_data_save
-              exif_mnote_data_canon_save
-                memcpy
+        exif_data_save_data_entry
+          exif_mnote_data_save
+            exif_mnote_data_canon_save
+              memcpy
 \end{verbatim}
+\end{quote}
 and the code in the vicinity of the crash site is as follows:
-\begin{small}
+\begin{quote}
 \begin{verbatim}
-  // snippet of exif_mnote_data_canon_save
-  for (i = 0; i < n->count; i++) {
-       ...
-  (c)  memcpy(*buf + doff, n->entries[i].data, s);
-       ...
-  }
+// snippet of exif_mnote_data_canon_save
+for (i = 0; i < n->count; i++) {
+     ...
+(c)  memcpy(*buf + doff,
+            n->entries[i].data, s);
+     ...
+}
 \end{verbatim}
-\end{small}
+\end{quote}
 This alone provides little insight into the cause of the bug.
 However, our algorithm highlights {\tt o + s > buf\_size} in function
 {\tt exif\_mnote\_data\_canon\_load} as a strong failure predictor.
 This leads us to construct the following call sequence by a quick inspection of the
 source code:
+\begin{quote}
 \begin{verbatim}
-  main
-    exif_loader_get_data 
-      exif_data_load_data
-        exif_mnote_data_canon_load
-    exif_data_save_data
+main
+  exif_loader_get_data 
+    exif_data_load_data
+      exif_mnote_data_canon_load
+  exif_data_save_data
+    exif_data_save_data_content
       exif_data_save_data_content
-        exif_data_save_data_content
-          exif_data_save_data_entry
-            exif_mnote_data_save
-              exif_mnote_data_canon_save
-                memcpy
+        exif_data_save_data_entry
+          exif_mnote_data_save
+            exif_mnote_data_canon_save
+              memcpy
 \end{verbatim}
+\end{quote}
 The code in the vicinity of the predicate {\tt o + s > buf\_size} is as follows:
+\begin{quote}
 \begin{verbatim}
-  // snippet of exif_mnote_data_canon_load
-  for (i = 0; i < c; i++) {
-       ...
-       n->count = i + 1;
-       ...
-  (a)  if (o + s > buf_size) return;
-       ...
-  (b)  n->entries[i].data = malloc(s); 
-       ...
-  }
+// snippet of exif_mnote_data_canon_load
+for (i = 0; i < c; i++) {
+     ...
+     n->count = i + 1;
+     ...
+(a)  if (o + s > buf_size) return;
+     ...
+(b)  n->entries[i].data = malloc(s); 
+     ...
+}
 \end{verbatim}
+\end{quote}
 It is apparent from the above code snippets and the
 call sequence that whenever the predicate {\tt o + s > buf\_size} is true:
 \begin{itemize}
