@@ -38,7 +38,7 @@ else
 fi	
 
 PKG_CHECK_MODULES(RHYTHMBOX,                    \
-                  gtk+-2.0 >= 2.2.2             \
+                  gtk+-2.0 >= 2.2.0             \
                   libgnomeui-2.0                \
 		  libglade-2.0                  \
 		  gnome-vfs-2.0                 \
