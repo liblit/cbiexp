@@ -31,7 +31,7 @@
 #define DEFAULT_SITES_SRC_FILE "sites"
 #define DEFAULT_UNITS_SRC_FILE "units"
 #define DEFAULT_PREDS_TXT_FILE "preds.txt"
-#define DEFAULT_RESULT_SUMMARY_HTM_FILE "summary.html"
+#define DEFAULT_RESULT_SUMMARY_XML_FILE "summary.xml"
 #define DEFAULT_OBS_TXT_FILE "obs.txt"
 #define DEFAULT_TRU_TXT_FILE "tru.txt"
 
@@ -60,7 +60,7 @@ string sites_txt_file;
 char* sites_src_file = NULL;
 char* units_src_file = NULL;
 char* preds_txt_file = NULL;
-char* result_summary_htm_file = NULL;
+char* result_summary_xml_file = NULL;
 char* obs_txt_file = NULL;
 char* tru_txt_file = NULL;
 char* all_cluster_txt_file = NULL;
@@ -170,7 +170,7 @@ void process_cmdline(int argc, char** argv)
 	}
 	if (!strcmp(argv[i], "-r")) {
 	    i++;
-	    result_summary_htm_file = argv[i];
+	    result_summary_xml_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-o")) {
@@ -247,7 +247,7 @@ void process_cmdline(int argc, char** argv)
 		 "-us  <units-src-file>\n"
 		 "-pt  <preds-txt-file>\n"
 		 "-ps  <preds-src-file>\n"
-		 "-r   <result-summary-htm-file>\n"
+		 "-r   <result-summary-xml-file>\n"
 		 "-o   <obs-txt-file>\n"
 		 "-t   <tru-txt-file>\n"
 		 "-ka  <all-cluster-txt-file>\n"
@@ -271,7 +271,7 @@ void gen_views(char* preds_file, int prefix)
     shell("awk '{ if ($1~/S/) print $0 }' < %s > S.txt", preds_file);
     shell("awk '{ if ($1~/G/) print $0 }' < %s > G.txt", preds_file);
 
-    shell("%s -r %s -p %d %s", GEN_VIEWS, result_summary_htm_file,
+    shell("%s -r %s -p %d %s", GEN_VIEWS, result_summary_xml_file,
 	  prefix, verbose ? "-verbose" : "");
 }
 
@@ -347,16 +347,18 @@ int main(int argc, char** argv)
 	REQUIRE("-do-compute-results", "-f" , fruns_txt_file);
 	REQUIRE("-do-compute-results", "-cr", compact_report_path_fmt);
 	FORBID ("-do-compute-results", "-p" , preds_txt_file);
-	FORBID ("-do-compute-results", "-r" , result_summary_htm_file);
+	FORBID ("-do-compute-results", "-r" , result_summary_xml_file);
 	puts("Computing results ...");
 	preds_txt_file = DEFAULT_PREDS_TXT_FILE;
-	result_summary_htm_file = DEFAULT_RESULT_SUMMARY_HTM_FILE;
+	result_summary_xml_file = DEFAULT_RESULT_SUMMARY_XML_FILE;
+	shell("ln -s %s/summary.xsl %s/summary.css %s",
+	      incdir, incdir, dirname(result_summary_xml_file));
 	shell("%s %s/compute_results.o %s.o %s.o -L%s -lanalyze -o %s",
 	      linker, objdir, sites_src_file, units_src_file, objdir, COMPUTE_RESULTS);
-	shell("%s -e %s -d %s -c %s -s %s -f %s -cr %s -p %s -r %s",
+	shell("%s -e %s -d %s -c %s -s %s -f %s -cr %s -p %s -r %s -prefix 0",
 	      COMPUTE_RESULTS, experiment_name, program_src_dir, confidence,
               sruns_txt_file, fruns_txt_file, compact_report_path_fmt,
-	      preds_txt_file, result_summary_htm_file);
+	      preds_txt_file, result_summary_xml_file);
 /*
 	shell("%s -I%s -c %s.cc", compiler, incdir, preds_src_file);
 
@@ -387,7 +389,7 @@ int main(int argc, char** argv)
     }
 
     if (do_print_results_1) {
-	REQUIRE("-do-print-results-1", "-r", result_summary_htm_file);
+	REQUIRE("-do-print-results-1", "-r", result_summary_xml_file);
 	REQUIRE("-do-print-results-1", "-p", preds_txt_file);
         REQUIRE("-do-print-results-1", "-ss", sites_src_file);
         REQUIRE("-do-print-results-1", "-us", units_src_file);
@@ -399,7 +401,7 @@ int main(int argc, char** argv)
 
 /*
     if (do_print_results_n) {
-	REQUIRE("-do-print-results-n", "-r" , result_summary_htm_file);
+	REQUIRE("-do-print-results-n", "-r" , result_summary_xml_file);
 	REQUIRE("-do-print-results-n", "-ps", preds_src_file);
 	REQUIRE("-do-print-results-n", "-ka", all_cluster_txt_file);
 	REQUIRE("-do-print-results-n", "-kp", per_cluster_txt_file);

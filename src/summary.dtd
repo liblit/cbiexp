@@ -1,0 +1,24 @@
+<!-- results from a single experiment -->
+<!ELEMENT experiment (name, date, runs, confidence, prefix, scheme*)>
+
+<!-- human-readable name of an experiment or scheme -->
+<!ELEMENT name (#PCDATA)>
+
+<!-- date this report was produced -->
+<!ELEMENT date (#PCDATA)>
+
+<!-- outcome summary for the runs in an experiment -->
+<!ELEMENT runs (success, fail, ignore)>
+<!ELEMENT success (#PCDATA)>
+<!ELEMENT fail (#PCDATA)>
+<!ELEMENT ignore (#PCDATA)>
+
+<!-- data analysis parameters -->
+<!ELEMENT confidence (#PCDATA)>
+<!ELEMENT prefix (#PCDATA)>
+
+<!-- names and predicate counts for one scheme -->
+<!ELEMENT scheme (name, code, total, retain)>
+<!ELEMENT code (#PCDATA)>
+<!ELEMENT total (#PCDATA)>
+<!ELEMENT retain (#PCDATA)>

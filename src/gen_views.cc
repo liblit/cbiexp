@@ -45,7 +45,7 @@ void process_cmdline(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-    int i, j, m;
+    int i, m;
     FILE* fp;
 
     process_cmdline(argc, argv);
@@ -118,25 +118,6 @@ int main(int argc, char** argv)
             fclose(fp);
 	}
     }
-
-    fp = fopen(result_summary_file, "a");
-    assert(fp);
-
-    fputs("<table border=1>\n<tr>\n<td>Sorted by:</td>\n", fp);
-
-    for (i = 0; i < NUM_SORTBYS; i++)
-	fprintf(fp, "<td align=middle>%s</td>\n", sortby_names[i]);
-    fputs("</tr>\n", fp);
-
-    for (i = 0; i < NUM_SCHEMES; i++) {
-	fprintf(fp, "<tr>\n<td align=left>%s</td>\n", scheme_names[i]);
-	for (j = 0; j < NUM_SORTBYS; j++)
-	    fprintf(fp, "<td align=middle><a href=\"%s_%s.%s.html\">X</a></td>\n", scheme_codes[i], sortby_codes[j], prefix);
-	fputs("</tr>\n", fp);
-    }
-
-    fputs("</table>\n", fp);
-    fclose(fp);
 
     return 0;
 }

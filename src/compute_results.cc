@@ -43,7 +43,8 @@ char* fruns_txt_file = NULL;
 char* compact_report_path_fmt = NULL;
 
 char* preds_txt_file = NULL;
-char* result_summary_htm_file = NULL;
+char* prefix = NULL;
+char* result_summary_xml_file = NULL;
 
 int num_s_preds = 0;
 int num_r_preds = 0;
@@ -56,30 +57,59 @@ FILE* preds_txt_fp = NULL;
  * Procedures for printing (1) result summary and (2) retained predicates
  ***************************************************************************/
 
+static void print_scheme_summary(FILE *fp,
+				 const char name[], char code,
+				 int total, int retain)
+{
+    fprintf(fp,
+	    "\t<scheme>\n"
+	    "\t\t<name>%s</name>\n"
+	    "\t\t<code>%c</code>\n"
+	    "\t\t<total>%d</total>\n"
+	    "\t\t<retain>%d</retain>\n"
+	    "\t</scheme>\n",
+	    name,
+	    code,
+	    total,
+	    retain);
+}
+
 void print_result_summary()
 {
     time_t t;
     time(&t);
 
-    FILE* fp = fopen(result_summary_htm_file, "w");
+    FILE* fp = fopen(result_summary_xml_file, "w");
     assert(fp);
 
-    fputs("<table>\n<tr>\n"
-	  "<td align=middle><font size=\"+2\">Cooperative Bug Isolation Report</font></td>\n"
-	  "<td rowSpan=2 align=right>"
-	  "<a  href=\"http://www.cs.berkeley.edu/~liblit/sampler/\">"
-          "<img src=\"http://www.cs.berkeley.edu/~liblit/sampler/logo.png\" style=\"border-style: none\"></a></td>\n</tr>\n"
-	  "</table>\n<br>\n",
-	  fp);
-    fprintf(fp, "Experiment name: %s\n<p>\n", experiment_name);
-    fprintf(fp, "Generated on %s<p>\n", ctime(&t));
-    fprintf(fp, "# runs: %d [successful: %d failing: %d discarded: %d]\n<p>\n",
-	num_runs, num_sruns, num_fruns, num_runs - (num_sruns + num_fruns));
-    fprintf(fp, "# predicates instrumented: %d [branch: %d return: %d scalar: %d g-object-unref: %d]\n<p>\n",
-        NumBPreds + NumRPreds + NumSPreds + NumGPreds, NumBPreds, NumRPreds, NumSPreds, NumGPreds);
-    fprintf(fp, "# predicates retained:     %d [branch: %d return: %d scalar: %d g-object-unred: %d]\n<p>\n",
-	num_b_preds + num_r_preds + num_s_preds + num_g_preds, num_b_preds, num_r_preds, num_s_preds, num_g_preds);
-    fprintf(fp, "Confidence: %d%%\n<p>\n", confidence);
+    fprintf(fp,
+	    "<?xml version=\"1.0\"?>\n"
+	    "<?xml-stylesheet type=\"text/xsl\" href=\"summary.xsl\"?>\n"
+	    "<!DOCTYPE experiment SYSTEM \"summary.dtd\">\n"
+	    "<experiment>\n"
+	    "\t<name>%s</name>\n"
+	    "\t<date>%s</date>\n"
+	    "\t<runs>\n"
+	    "\t\t<success>%d</success>\n"
+	    "\t\t<failure>%d</failure>\n"
+	    "\t\t<ignore>%d</ignore>\n"
+	    "\t</runs>\n"
+	    "\t<confidence>%d</confidence>\n"
+	    "\t<prefix>%s</prefix>\n",
+	    experiment_name,
+	    ctime(&t),
+	    num_sruns,
+	    num_fruns,
+	    num_runs - (num_sruns + num_fruns),
+	    confidence,
+	    prefix);
+
+    print_scheme_summary(fp, "branches", 'B', NumBPreds, num_b_preds);
+    print_scheme_summary(fp, "returns", 'R', NumRPreds, num_r_preds);
+    print_scheme_summary(fp, "scalar-pairs", 'S', NumSPreds, num_s_preds);
+    print_scheme_summary(fp, "g-object-unref", 'G', NumGPreds, num_g_preds);
+
+    fputs("</experiment>\n", fp);
 
     fclose(fp);
 }
@@ -465,21 +495,27 @@ void process_cmdline(int argc, char** argv)
 	    preds_txt_file = argv[i];
 	    continue;
 	}
+	if (!strcmp(argv[i], "-prefix")) {
+	    i++;
+	    prefix = argv[i];
+	    continue;
+	}
 	if (!strcmp(argv[i], "-r")) {
 	    i++;
-	    result_summary_htm_file = argv[i];
+	    result_summary_xml_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-h")) {
 	    puts("Usage: compute-results <options>\n"
-                 "    -e  <experiment-name>\n"
-                 "    -d  <program-src-dir>\n"
-                 "    -c  <confidence>\n"
-                 "(r) -s  <sruns-txt-file>\n"
-                 "(r) -f  <fruns-txt-file>\n"
-                 "(r) -cr <compact-report-path-fmt>\n"
-                 "(w) -p  <preds-txt-file>\n"
-                 "(w) -r  <result-summary-htm-file>\n");
+                 "    -e       <experiment-name>\n"
+                 "    -d       <program-src-dir>\n"
+                 "    -c       <confidence>\n"
+                 "    -prefix  <views-prefix>\n"
+                 "(r) -s       <sruns-txt-file>\n"
+                 "(r) -f       <fruns-txt-file>\n"
+                 "(r) -cr      <compact-report-path-fmt>\n"
+                 "(w) -p       <preds-txt-file>\n"
+                 "(w) -r       <result-summary-xml-file>\n");
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
@@ -493,7 +529,8 @@ void process_cmdline(int argc, char** argv)
         !fruns_txt_file ||
         !compact_report_path_fmt ||
 	!preds_txt_file ||
-        !result_summary_htm_file) {
+	!prefix ||
+        !result_summary_xml_file) {
 	puts("Incorrect usage; try -h");
 	exit(1);
     }

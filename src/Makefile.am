@@ -1,4 +1,9 @@
-AM_CPPFLAGS = -W -Wall -Werror
+AM_CPPFLAGS = -W -Wall -Werror -Wformat=2
+
+EXTRA_DIST =					\
+	summary.css				\
+	summary.dtd				\
+	summary.xsl
 
 noinst_PROGRAMS =				\
 	analyze_runs				\

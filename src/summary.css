@@ -1,0 +1,29 @@
+a.logo {
+  width: 96px;
+  height: 96px;
+  float: right
+}
+
+a.logo img {
+  border-style: none
+}
+
+table, th, td {
+  border-width: 1px
+}
+
+table {
+  border-style: outset
+}
+
+th, td {
+  border-style: inset
+}
+
+td.scheme {
+  text-align: left
+}
+
+td {
+  text-align: center
+}
