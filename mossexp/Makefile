@@ -12,9 +12,12 @@ SCHEMES = branches returns scalar-pairs
 SFLAGS = $(SCHEMES:%=--sampler-scheme=%)
 SFLAGS += --no-sample
 SFLAGS += --assign-across-pointer --assign-into-field --assign-into-index
+SFLAGS += --compare-constants
 SFLAGS += --rename-locals
 #SFLAGS += -save-temps
 #SFLAGS += -v -Q
+
+-include site.mk
 
 
 ########################################################################
