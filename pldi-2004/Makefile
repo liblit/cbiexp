@@ -34,6 +34,12 @@ pdfs := $(epss:.eps=.pdf)
 
 all: master.pdf master.ps
 
+pubbase := $(shell echo $$HOME)/public_html/pldi-2005/pldi-2005
+publish := $(pubbase).pdf $(pubbase).ps
+publish: $(publish)
+$(publish): $(pubbase).%: master.%
+	cat $< >$@
+
 master.pdf: %.pdf: %.dvi $(texs) $(pdfs)
 	pdflatex $*
 	thumbpdf $*
