@@ -13,7 +13,7 @@ $MPATH = '../bin';			   # moss binaries are here
 $watchdog = "$MPATH/watchdog.pl";
 $ENV{'SAMPLER_DEBUGGER'} = "/usr/share/sampler/print-debug-info";  # collect stack traces
 #
-# This array contain a parameterized list of options.  Each option is
+# This array contains a parameterized list of options.  Each option is
 # a pair: a number and the option.  As perl does not support nested arrays
 # well, the pairs are encoded as even and odd elements of a flat list.
 # Each line has a list of pairs and is terminated by a "-1"; one line represents
@@ -28,7 +28,6 @@ $ENV{'SAMPLER_DEBUGGER'} = "/usr/share/sampler/print-debug-info";  # collect sta
 	       3, "-t 1000", 10, "-t 300", 90, "-t 30", 95, "-t 25", 100, "-t 5", -1,      # tile size
 	       2, "-w 800", 5, "-w 200", 90, "-w 8", 95, "-w 5", 100, "-w 1", -1,          # winnowing window size
 	       1, "-n 1", 4, "-n 2", 90, "-n 10", 100, "-n 1000000", -1,                   # max matches
-	       1, "-p 10", 100, "", -1,                                                    # size of index in memory
 	       -2 
               );
 
@@ -42,19 +41,25 @@ $ENV{'SAMPLER_DEBUGGER'} = "/usr/share/sampler/print-debug-info";  # collect sta
 #
 # Again, cumulative probability and the programming language of the trial.
 #  
-@langdistribution = (5, "java", 10, "lisp", 100, "c");                                     
+@langdistribution = (10, "java", 15, "lisp", 40, "cc", 100, "c");                                     
+
+#
+# Cumulative probability of running in either very small or normal memory.
+# This needs to be factored out of the standard options so that it can be chosen differently for database builds.
+#
+@memory_distribution = (1, "-p 10", 100, "");
 
 # The odds that we cannot write a database file.
 $unwritable = 50;
  
 #
-# Lists of c, java, and lisp files for use in the trials.
+# Lists of c, cc, java, and lisp files for use in the trials.
 # We choose elements from these lists randomly.
 #
 @c_files = `find $DPATH -name "*.c"`;
 @java_files = `find $DPATH -name "*.java"`;
 @lisp_files = `find $DPATH -name "*.lisp"`;
-
+@cc_files = `find $DPATH -name "*.cc"`;
 
 sub fatal ($) {
     my $disregard = new FileHandle 'disregard', 'w';
@@ -76,12 +81,27 @@ sub diff ($$) {
     return $status;
 }
 
+sub choose_memory_size() {
+    $i = 0;
+    $mem = "";
+    $memnum = rand(100);
+    while ($i < $#memory_distribution) {
+	$prob = $memory_distribution[$i++];
+	if ($memnum <= $prob) {
+	    $mem = $memory_distribution[$i];
+	    last;
+	} else {
+	    $i++;
+	}
+    }
+    return $mem;
+}
 
 sub run_moss ($$$) {
     my ($environment, $executable, $variant) = @_;
 
     # assemble the shell command
-    my $command = "$watchdog 600 $variant $MPATH/$executable $full_option_list -a manifest >$variant/stdout 2>$variant/stderr";
+    my $command = "$watchdog 600 $variant $MPATH/$executable $mem $full_option_list -a manifest >$variant/stdout 2>$variant/stderr";
     $command = "$environment $command" if $environment;
 
     # build data files directory
@@ -179,6 +199,9 @@ if ($lang eq "java") {
 if ($lang eq "lisp") {
     @filelist = @lisp_files;
 }
+if ($lang eq "cc") {
+    @filelist = @cc_files;
+}
 
 open(M,">manifest");
 for($i = 1; $i < $numfiles+1; $i++) {
@@ -212,7 +235,8 @@ if ($full_option_list =~ /db1/) {
 	print M "$file $i $lang $file\n";
     }
     close(M);
-    check_system "$watchdog 1000 - $MPATH/moss $full_option_list -s db1 -a db1.manifest > output.db1 2> errors.db1";
+    $mem = &choose_memory_size();
+    check_system "$watchdog 1000 - $MPATH/moss $mem $full_option_list -s db1 -a db1.manifest > output.db1 2> errors.db1";
 }
 
 #
@@ -227,10 +251,12 @@ if ($full_option_list =~ /db2/) {
 	print M "$file $i $lang $file\n";
     }
     close(M);
-    check_system "$watchdog 1000 - $MPATH/moss $full_option_list -s db2 -a db2.manifest > output.db2 2> errors.db2";
+    $mem = &choose_memory_size();
+    check_system "$watchdog 1000 - $MPATH/moss $mem $full_option_list -s db2 -a db2.manifest > output.db2 2> errors.db2";
 }
 
 # various runs
+$mem = &choose_memory_size();  # set the memory size for all of the runs of moss
 run_moss_good;
 run_moss_bad 'bad';
 run_moss_bad 'bad2';
