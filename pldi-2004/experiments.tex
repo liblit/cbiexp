@@ -198,17 +198,21 @@ bug.
 
 \subsection{Effect of Sampling on Predicate Selection}
 
-We now examine the effect of the sampling rate and the number of
-program trials on the number of predicates that are retained by step
-(1) of the algorithm.
+We now examine the effect of the sampling rate and number of trial runs
+on the number of retained predicates.
 We start with $3000$ randomly
-selected trial runs, and add $3000$ random trials at a time, until we
-incorporate all $31,871$ runs of our data.  We record the number of
+selected trial runs of \moss, and add $3000$ random trials at a time, until we
+incorporate all $31,871$ runs in our dataset.  We record the number of
 predicates retained at each step.  This process is repeated ten times
 for each sampling rate, with ten different random permutation sequences
 of our data. We plot the mean and the confidence interval (one
 standard deviation above and below the mean) in
-\Autoref{fig:predkept}.  Using all $31,871$ trial runs, we retain $10280$ 
+\Autoref{fig:predkept}.  
+Two trends are apparent from the graph.  First, as one would
+expect, the number of retained predicates always increases as more trial runs 
+are included.  Second, sampling reduces the overall number of retained 
+predicates.
+Using all $31,871$ trial runs, we retain $10280$ 
 predicates when the data is not sampled (i.e.,\ sampling rate is 
 $\nicefrac{1}{1}$), $10025$ at sampling
 rate $\nicefrac{1}{10}$, $6839$ at $\nicefrac{1}{100}$, and $5653$ at
@@ -225,9 +229,6 @@ $\nicefrac{1}{1000}$.
 \label{fig:predkept}
 \end{figure}
 
-Two trends are apparent from \Autoref{fig:predkept}.  First, as one would
-expect, the number of retained predicates increase as more trial runs are
-included.  Second, sampling reduces the overall number of retained predicates.
 
 %% As is apparent from the graph, there is much larger variation in the
 %% number of selected predicates when we use fewer trial runs.
