@@ -8,6 +8,68 @@ properly part of the algorithm discussion.}
   because they make the formulas unnecessarily clunky.  Does the
   current form look acceptable to everyone?}
 
+\subsection{Previous Approach}
+In our previous papers~\cite{Zheng:2003:SDSP} and~\cite{PLDI`03*141},
+we made use of $l1$-regularized logistic regression and similar
+methods to select and rank the predicates in the order of their
+failure-prediction strength.  This approach proves to overly-flexible
+in the presence of multiple bugs.
+
+The logistic regression model (and variants) allows an arbitrary
+linear weighted combination of the predicates to be used in predicting
+a crash.  Placing an $l1$-norm constraint forces most of the weights
+to drop to zero, thereby in essence selecting only the most
+important predicates.  However, when the data includes crashes caused
+by multiple different bugs, the allowance of arbitrary linear
+combinations is not always desirable.  Suppose a predicate is the
+common necessary precondition for two different bugs, then its weight
+in the regularized logistic regression output can be higher than the
+actual causes of the bugs.  In general, when the set of failed runs in
+the training set includes crashes due to different causes, the
+training process will give higher weights to sites shared by the
+program paths of all bugs.\footnote{Often times, these sites may also be
+shared by the paths of successful runs.  But their overall positive
+effect can be offset by giving large negative weights to predicates
+that are only present in successful runs (e.g. sites in unreached
+portions of the code due to an early crash of the program).}
+
+Another problem is caused by correlated predicates.\footnote{
+We return to this problem in \autoref{sec:experiments:results}.
+Essentially, our solution is to prune away most of the scalar-pairs
+predicates by pick one representative per line in the source code.}
+Due to the wide coverage of our instrumentation schemes, there can be
+many correlated indicators of the same bug.  For example, in an
+array-overrun bug, the culprit loop index variable will get abnormally
+large, which manifests itself when compared to many other small
+scalars in the program. Though technically only one of these
+predicates is what we take to be the ``smoking gun'' for the bug, any
+of them can be used to predict the crash.  Hence our classifier may
+(rightfully) give high weight to any of the correlated features.  In
+the presence of sampling, the more often observed predicates take the
+advantage.  Alternatively, the classifier may rightfully give smaller
+weights to a large number of these correlated predicates, and reserve
+the larger weights for something else.  This causes the ranking of
+some of the good predicates to drop down, but doesn't affect
+classification performance.
+
+For all of the above reasons, regularized logistic regression is not
+outrightly appropriate for dealing with multiple bugs.  In the next
+subsection, we introduce an alternate approach, one that makes more
+simplifying assumptions about the problem at hand, but is more
+aggressive in eliminating predicates as a first step.  We assume that
+a bug is caused by a {\bf single} predicate -- though more
+sophisticated bugs exist, the vast majority of common bugs are simple
+and ``univariate.''  Looking at it this way, the multiple bug problem
+diminishes, because even though more than one bug can occur during a
+single run of the program, it ultimately crashes due to only one bug.
+Hence each crash can be accounted for by one predicate.  The
+predicates are then ranked by a score depending on the number of
+crashes in which it is observed.  In essence, we circumvent the
+multiple bug problem by letting the ``smoking guns'' cluster the
+crashes, not the other way around.  As we will see, our approach can
+be interpreted as a simple univariate statistical test.
+
+\subsection{Current Approach}
 This section presents the algorithm that we have developed for
 isolating bugs in programs where multiple bugs are present
 simultaneously.  As discussed in \Autoref{sec:background}, our

@@ -65,7 +65,7 @@ pdfpagemode=UseOutlines]{hyperref}
 
 \title{Bug Isolation in the Presence of Multiple Errors
   %%
-  \thanks{This research was supported in part by NASA Grant No.\ 
+  \thanks{This research was supported in part by NASA Grant No.\
     NAG2-1210; NSF Grant Nos.\ EIA-9802069, CCR-0085949, ACI-9619020,
     and IIS-9988642; and DOE Prime Contract No.\ W-7405-ENG-48 through
     Memorandum Agreement No.\ B504962 with LLNL.  The information
@@ -247,9 +247,9 @@ The difficulty in using sparse sampling is that the resultant data is
 both noisy and incomplete.  When \nicefrac{99}{100} of all monitored
 program behaviors are omitted from any given report, it is impossible
 to have a complete picture of what happened during a single run.  Some
-predicate of interest may never have been true, or may simply have
+predicates of interest may never have been true, or may simply have
 been true but never recorded.  However, because sampling is fair,
-large numbers of runs do converge on a truthful representation of
+large numbers of runs do converge to a truthful representation of
 overall program behavior.
 
 Orthogonal to the sampling transformation is the decision about what
@@ -272,7 +272,7 @@ our system offers the following instrumentation schemes:
   branched false.
 
 \item[returns:] Function return values are interesting.  In C, the
-  sign of a result often used to encode the success or failure of some
+  sign of a return value is often used to encode the success or failure of some
   operation.  At each scalar-returning function call site, count how
   often the returned value is negative, zero, or positive.  For
   pointer-returning calls, this implicitly reduces to counting
@@ -326,7 +326,13 @@ site always updates exactly one of that site's counters.  An
 observation that $\mathtt{x} < \mathtt{y}$ is therefore equivalent to
 an observation that $\mathtt{x} \geq \mathtt{y}$.  This property is
 exploited in \Autoref{sec:algorithm} to synthesize new predicates out
-of existing observations.
+of existing observations.  This partition effect also allows us to
+determine whether or not -- and how many -- samples were taken at the
+site: the sum of the three counts $\mathtt{x} < \mathtt{y}$,
+$\mathtt{x} = \mathtt{y}$, and $\mathtt{x} > \mathtt{y}$ is exactly
+the total number of samples taken at the $\mathtt{(x,y)}$ site.  This
+discovery enables us to distinguish between a $0$ count vs. a $0$ for
+missing data.
 
 The post-execution feedback report is a dump of the counter values for
 each instrumentation site.  Reducing a trace to a set of counters
@@ -347,6 +353,7 @@ only the final state of the program at the point of failure.
 \section{Experimental Results}
 \label{sec:experiments:results}
 \input{experiments}
+
 
 \section{Related Work}
 \label{sec:related-work}
@@ -526,6 +533,13 @@ should be to help guide the filtering and ranking process.  For
 example, the control flow graph can be used to direct engineers'
 attention to likely first causes that appear earlier in the flow of
 execution.
+
+Our predicate analysis algorithm produced some encouraging results,
+but it is far from perfect.  We leave the problems of interpreting the
+top-ranked features in the hands of the practitioner.  But more could
+be done in clustering the selected predicates and in correlating each
+selected predicate with a set of runs it predicts.  Statistical
+clustering techniques may come in handy here.
 
 \bibliography{cacm1990,icse02,icse03,misc,paste02,pldi03,pods,ramss,refs}
 

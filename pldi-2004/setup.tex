@@ -1,19 +1,26 @@
 This section discusses background for the experimental results
-reported in \Autoref{sec:experiments:results}.  While all software
-experiments are difficult to do well, we have learned the hard way
-that there are some particular problems that must be addressed to do
-our experiment well.  Thus, this section discusses the set-up for our
+reported in \Autoref{sec:experiments:results}.
+\placeholder{[Alice] ``Do well'' is not very precise.  Do you mean
+  ``design correctly''?  I've changed the wording slightly}
+%While all software
+%experiments are difficult to do well, we have learned the hard way
+%that there are some particular problems that must be addressed to do
+%our experiment well.
+While all software experiments are difficult to design, we have
+learned the hard way that there are some particular problems that must
+be addressed in order to design our experiment correctly.
+Thus, this section discusses the set-up for our
 experiment in some detail, especially how we have compensated for
-potential sources of bias. 
+potential sources of bias.
 
 The basic framework of our experiment is a straightforward five step
-process: 
+process:
 \begin{enumerate}
-\item select an existing software application, 
-\item modify the source code to inject bugs into the program, 
+\item select an existing software application,
+\item modify the source code to inject bugs into the program,
 \item instrument the modified program,
-\item gather results from a large number of runs performed with automatically generated data and 
-\item apply our algorithm to the results.  
+\item gather results from a large number of runs performed with automatically generated data and
+\item apply our algorithm to the results.
 \end{enumerate}
 We discuss each step; the reader who is not interested in
 these details may wish to proceed to \Autoref{sec:experiments:results} and
@@ -105,7 +112,7 @@ when it is touched.
 When this area of memory is filled, the program should fail
 gracefully.  We removed the out-of-memory check.  The original bug
 was a bit more complex, but cannot be reproduced exactly because this
-portion of the code has been substantially revised.  
+portion of the code has been substantially revised.
 
 \item \moss\ has a routine that scans an array for multiple copies of the same passage of code within
 a single file; duplicate code within a file is treated differently than duplicate code across files.
@@ -132,7 +139,7 @@ range from typical C coding errors (e.g., \texttt{NULL} pointer dereferences
 and array overruns) to high-level violations of a system's internal
 invariants (e.g., bugs \#1 and \#3).
 
-To allow us to measure the accuracy of our techniques we also added code to \moss\ to 
+To allow us to measure the accuracy of our techniques we also added code to \moss\ to
 log when each bug was triggered.  For example, for bug \#1 we added:
 \begin{verbatim}
 void check_bug_1(const char *yytext, int yyleng)
@@ -144,7 +151,11 @@ void check_bug_1(const char *yytext, int yyleng)
 }
 \end{verbatim}
 The purpose of the static variable {\tt seen} is to ensure that each bug is logged only the first time
-it occurs in a run (some of the bugs can occur multiple times during one execution).  
+it occurs in a run (some of the bugs can occur multiple times during one execution).
+
+\placeholder{[Alice] It would be clearer if we commented the above
+  code to explain why we are matching on '\\n'.  Readers unfamiliar
+  with bug \#1 may be confused.}
 
 In the next step we ran our source-to-source instrumentor on \moss,
 modified to include the bugs and the logging code.  Recall that our
@@ -187,12 +198,12 @@ Depending on the programming language chosen, files to submit to
 and Java files.  The number of programs to submit with each run is
 another probability distribution, which guarantees that there are at
 least some runs with a very small number of files and some with a very
-large number of files submitted.  
+large number of files submitted.
 
 In the process of performing the experiment we discovered several ways
 in which our inputs were not as random as they could be---we had
 accidentally coupled two or more choices that could be independent.
-We removed removed many such sources of coupling among input parameters that we
+We removed many such sources of coupling among input parameters that we
 discovered.  Note that having more variation in the inputs helps our
 techniques, as increased variation reduces the chances that a program
 predicate will coincidentally appear to be correlated with failure.
