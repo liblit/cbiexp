@@ -66,20 +66,20 @@ FILE* preds_abbr_fp = NULL;
 FILE* preds_hdr_fp = NULL;
 FILE* result_summary_fp = NULL;
 
-inline void inc(int r, int u, int c, int p)     
-{                                
-    if (is_srun[r])               
-        site_summary[u][c].S[p]++; 
-    else if (is_frun[r])           
-        site_summary[u][c].F[p]++; 
+#define INC(r, u, c, p)            \
+{                                  \
+    if (is_srun[r])                \
+        site_summary[u][c].S[p]++; \
+    else if (is_frun[r])           \
+        site_summary[u][c].F[p]++; \
 }
 
-inline void obs(int r, int u, int c)
-{                                 
-    if (is_srun[r])               
-        site_summary[u][c].os++;  
-    else if (is_frun[r])          
-        site_summary[u][c].of++;  
+#define OBS(r, u, c)              \
+{                                 \
+    if (is_srun[r])               \
+        site_summary[u][c].os++;  \
+    else if (is_frun[r])          \
+        site_summary[u][c].of++;  \
 }
 
 
@@ -210,27 +210,27 @@ void process_site(FILE* fp, int r, int u, int c)
     case 'R':
         fscanf(fp, "%d %d %d\n", &x, &y, &z); 
         if (x + y + z > 0) {
-            obs(r, u, c);
+            OBS(r, u, c)
             if (x > 0)
-                inc(r, u, c, 0);
+                INC(r, u, c, 0)
             if (y + z > 0)
-                inc(r, u, c, 1);
+                INC(r, u, c, 1)
             if (y > 0)
-                inc(r, u, c, 2);
+                INC(r, u, c, 2)
             if (x + z > 0)
-                inc(r, u, c, 3);
+                INC(r, u, c, 3)
             if (z > 0)
-                inc(r, u, c, 4);
+                INC(r, u, c, 4)
             if (x + y > 0)
-                inc(r, u, c, 5);
+                INC(r, u, c, 5)
         }
         break;
     case 'B':
         fscanf(fp, "%d %d\n", &x, &y); 
         if (x + y > 0) {
-            obs(r, u, c);
-            if (x > 0) inc(r, u, c, 0);
-            if (y > 0) inc(r, u, c, 1);
+            OBS(r, u, c)
+            if (x > 0) INC(r, u, c, 0)
+            if (y > 0) INC(r, u, c, 1)
         }
         break;
     default:
