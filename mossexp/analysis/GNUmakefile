@@ -11,7 +11,6 @@ sparsebase := fobs sobs ftr str
 sparse := $(sparsebase:=.) $(sparsebase:=.ir) $(sparsebase:=.jc) $(sparsebase:=.meta)
 
 schemes := all branches returns scalar-pairs
-schemes := all scalar-pairs
 sorts := lb is fs nf hl hs
 projections := none circular linear
 views := $(foreach scheme, $(schemes), $(foreach sort, $(sorts), $(foreach projection, $(projections), $(scheme)_$(sort)_$(projection).xml)))
