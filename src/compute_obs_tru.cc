@@ -1,175 +1,197 @@
 #include <argp.h>
-#include <cstdio>
 #include <cassert>
-#include <cstring>
-#include <cstdlib>
-#include <cmath>
-#include <ctime>
+#include <cstdio>
+#include <ext/hash_map>
+#include <fstream>
+#include <queue>
 #include <vector>
-#include "CompactReport.h"
 #include "PredStats.h"
 #include "Progress.h"
 #include "ReportReader.h"
 #include "RunsDirectory.h"
+#include "SiteCoords.h"
 #include "classify_runs.h"
 #include "fopen.h"
-#include "units.h"
 #include "utils.h"
 
 using namespace std;
+using __gnu_cxx::hash_map;
 
-struct site_info_t {
-    bit_vector *obs[6], *tru[6];
-    site_info_t()
-    {
-	for (int i = 0; i < 6; i++)
-	    obs[i] = tru[i] = NULL;
-    }
+
+typedef vector<unsigned> OutcomeRunIds;
+typedef pair<OutcomeRunIds, OutcomeRunIds> RunIds;
+typedef OutcomeRunIds (RunIds::* Outcome);
+
+static unsigned cur_run;
+
+
+////////////////////////////////////////////////////////////////////////
+//
+//  Run lists assocated with one retained site
+//
+
+
+struct SiteInfo
+{
+    RunIds runs;
+    RunIds predicates[6];
+
+    void notice(Outcome);
+    void notice(Outcome, unsigned predicate);
 };
 
-vector<vector<site_info_t> > site_info;
 
-char* obs_txt_file = "obs.txt";
-char* tru_txt_file = "tru.txt";
-
-FILE* pfp = NULL;
-FILE* ofp = NULL;
-FILE* tfp = NULL;
-
-inline void inc_obs(int r, int u, int c, int p)
+inline void
+SiteInfo::notice(Outcome outcome)
 {
-    if (site_info[u][c].obs[p]) (*(site_info[u][c].obs[p]))[r] = true;
+    (runs.*outcome).push_back(cur_run);
 }
 
-inline void inc_tru(int r, int u, int c, int p)
+
+inline void
+SiteInfo::notice(const Outcome outcome, unsigned predicate)
 {
-    if (site_info[u][c].tru[p]) (*(site_info[u][c].tru[p]))[r] = true;
+    (predicates[predicate].*outcome).push_back(cur_run);
 }
 
-void print_pred_info(int u, int c, int p)
+
+typedef hash_map<SiteCoords, SiteInfo> SiteSeen;
+static SiteSeen siteSeen;
+
+
+////////////////////////////////////////////////////////////////////////
+//
+//  Information to print later for one retained predicate
+//
+
+
+class PredInfo
 {
-    int r;
+public:
+    PredInfo(const RunIds &site, const RunIds &pred);
 
-    if (site_info[u][c].obs[p]) {
-	fputs("F: ", ofp);
-	for (r = 0; r < num_runs; r++)
-	    if (is_frun[r] && (*(site_info[u][c].obs[p]))[r] == true)
-		fprintf(ofp, "%d ", r);
-	fputs("\nS: ", ofp);
-	for (r = 0; r < num_runs; r++)
-	    if (is_srun[r] && (*(site_info[u][c].obs[p]))[r] == true)
-		fprintf(ofp, "%d ", r);
-	fputc('\n', ofp);
-    }
+    const RunIds &site;
+    const RunIds &pred;
+};
 
-    if (site_info[u][c].tru[p]) {
-	fputs("F: ", tfp);
-	for (r = 0; r < num_runs; r++)
-	    if (is_frun[r] && (*(site_info[u][c].tru[p]))[r] == true)
-		fprintf(tfp, "%d ", r);
-	fputs("\nS: ", tfp);
-	for (r = 0; r < num_runs; r++)
-	    if (is_srun[r] && (*(site_info[u][c].tru[p]))[r] == true)
-		fprintf(tfp, "%d ", r);
-	fputc('\n', tfp);
-    }
+
+inline
+PredInfo::PredInfo(const RunIds &site, const RunIds &pred)
+    : site(site),
+      pred(pred)
+{
 }
 
-void print_site_info(int u, int c)
-{
-    int p;
 
-    switch (units[u].scheme_code) {
-    case 'S':
-    case 'R':
-	for (p = 0; p < 6; p++)
-	    print_pred_info(u, c, p);
-	break;
-    case 'B':
-	for (p = 0; p < 2; p++)
-	    print_pred_info(u, c, p);
-	break;
-    case 'G':
-	for (p = 0; p < 4; p++)
-	    print_pred_info(u, c, p);
-	break;
-    default:
-	assert(0);
-    }
+static ostream &
+operator<<(ostream &out, const OutcomeRunIds &runs)
+{
+    copy(runs.begin(), runs.end(), ostream_iterator<unsigned>(out, " "));
+    return out;
 }
 
-int cur_run;
+
+static ostream &
+operator<<(ostream &out, const RunIds &runs)
+{
+    return out << "F: " << runs.first << '\n'
+	       << "S: " << runs.second << '\n';
+}
+
+
+////////////////////////////////////////////////////////////////////////
+//
+//  Report reader
+//
+
 
 class Reader : public ReportReader
 {
 public:
-    void branchesSite(    unsigned unitIndex, unsigned siteIndex, unsigned, unsigned) const;
-    void gObjectUnrefSite(unsigned unitIndex, unsigned siteIndex, unsigned, unsigned, unsigned, unsigned) const;
-    void returnsSite(     unsigned unitIndex, unsigned siteIndex, unsigned, unsigned, unsigned) const;
-    void scalarPairsSite( unsigned unitIndex, unsigned siteIndex, unsigned, unsigned, unsigned) const;
+    Reader(Outcome);
+
+    void branchesSite(    const SiteCoords &, unsigned, unsigned) const;
+    void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned) const;
+    void returnsSite(     const SiteCoords &, unsigned, unsigned, unsigned) const;
+    void scalarPairsSite( const SiteCoords &, unsigned, unsigned, unsigned) const;
 
 private:
-    void tripleSite( unsigned unitIndex, unsigned siteIndex, unsigned, unsigned, unsigned) const;
+    SiteInfo *notice(     const SiteCoords &) const;
+    void tripleSite(      const SiteCoords &, unsigned, unsigned, unsigned) const;
+
+    const Outcome outcome;
 };
 
 
-void Reader::tripleSite(unsigned u, unsigned c, unsigned x, unsigned y, unsigned z) const
+inline
+Reader::Reader(Outcome outcome)
+    : outcome(outcome)
+{
+}
+
+
+SiteInfo *
+Reader::notice(const SiteCoords &coords) const
+{
+    const SiteSeen::iterator found = siteSeen.find(coords);
+    if (found == siteSeen.end())
+	return 0;
+    else {
+	SiteInfo &info = found->second;
+	info.notice(outcome);
+	return &info;
+    }
+}
+
+
+void Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
 {
     assert(x || y || z);
-    inc_obs(cur_run, u, c, 0);
-    inc_obs(cur_run, u, c, 1);
-    inc_obs(cur_run, u, c, 2);
-    inc_obs(cur_run, u, c, 3);
-    inc_obs(cur_run, u, c, 4);
-    inc_obs(cur_run, u, c, 5);
-    if (x)
-	inc_tru(cur_run, u, c, 0);
-    if (y || z)
-	inc_tru(cur_run, u, c, 1);
-    if (y)
-	inc_tru(cur_run, u, c, 2);
-    if (x || z)
-	inc_tru(cur_run, u, c, 3);
-    if (z)
-	inc_tru(cur_run, u, c, 4);
-    if (x || y)
-	inc_tru(cur_run, u, c, 5);
+    SiteInfo * const info = notice(coords);
+    if (info) {
+	if (x) info->notice(outcome, 0);
+	if (y) info->notice(outcome, 2);
+	if (z) info->notice(outcome, 4);
+	if (y || z) info->notice(outcome, 1);
+	if (x || z) info->notice(outcome, 3);
+	if (x || y) info->notice(outcome, 5);
+    }
 }
 
 
-void Reader::scalarPairsSite(unsigned u, unsigned c, unsigned x, unsigned y, unsigned z) const
+void Reader::scalarPairsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
 {
-    tripleSite(u, c, x, y, z);
+    tripleSite(coords, x, y, z);
 }
 
 
-void Reader::returnsSite(unsigned u, unsigned c, unsigned x, unsigned y, unsigned z) const
+void Reader::returnsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
 {
-    tripleSite(u, c, x, y, z);
+    tripleSite(coords, x, y, z);
 }
 
 
-void Reader::branchesSite(unsigned u, unsigned c, unsigned x, unsigned y) const
+void Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y) const
 {
     assert(x || y);
-    inc_obs(cur_run, u, c, 0);
-    inc_obs(cur_run, u, c, 1);
-    if (x) inc_tru(cur_run, u, c, 0);
-    if (y) inc_tru(cur_run, u, c, 1);
+    SiteInfo * const info = notice(coords);
+    if (info) {
+	if (x) info->notice(outcome, 0);
+	if (y) info->notice(outcome, 1);
+    }
 }
 
 
-void Reader::gObjectUnrefSite(unsigned u, unsigned c, unsigned x, unsigned y, unsigned z, unsigned w) const
+void Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z, unsigned w) const
 {
     assert(x || y || z || w);
-    inc_obs(cur_run, u, c, 0);
-    inc_obs(cur_run, u, c, 1);
-    inc_obs(cur_run, u, c, 2);
-    inc_obs(cur_run, u, c, 3);
-    if (x) inc_tru(cur_run, u, c, 0);
-    if (y) inc_tru(cur_run, u, c, 1);
-    if (z) inc_tru(cur_run, u, c, 2);
-    if (w) inc_tru(cur_run, u, c, 3);
+    SiteInfo * const info = notice(coords);
+    if (info) {
+	if (x) info->notice(outcome, 0);
+	if (y) info->notice(outcome, 1);
+	if (z) info->notice(outcome, 2);
+	if (w) info->notice(outcome, 3);
+    }
 }
 
 
@@ -194,48 +216,55 @@ static void process_cmdline(int argc, char **argv)
 };
 
 
+////////////////////////////////////////////////////////////////////////
+//
+//  The main event
+//
+
+
 int main(int argc, char** argv)
 {
-    unsigned u, c;
-
     process_cmdline(argc, argv);
 
     classify_runs();
 
-    ofp = fopenWrite(obs_txt_file);
-    tfp = fopenWrite(tru_txt_file);
+    ofstream ofp("obs.txt");
+    ofstream tfp("tru.txt");
 
-    site_info.resize(num_units);
-    for (u = 0; u < num_units; u++) site_info[u].resize(units[u].num_sites);
+    typedef queue<PredInfo> InterestingPreds;
+    InterestingPreds interesting;
 
-    pfp = fopenRead(PredStats::filename);
-    while (1) {
-	pred_info pi;
-	const bool got = read_pred_full(pfp, pi);
-	if (!got)
-	    break;
-	site_info[pi.u][pi.c].obs[pi.p] = new bit_vector(num_runs);
-	assert(site_info[pi.u][pi.c].obs[pi.p]);
-	site_info[pi.u][pi.c].tru[pi.p] = new bit_vector(num_runs);
-	assert(site_info[pi.u][pi.c].tru[pi.p]);
+    FILE * const pfp = fopenRead(PredStats::filename);
+    pred_info pi;
+    while (read_pred_full(pfp, pi)) {
+	const SiteInfo &siteInfo = siteSeen[pi];
+	const PredInfo predInfo(siteInfo.runs, siteInfo.predicates[pi.predicate]);
+	interesting.push(predInfo);
     }
+
     fclose(pfp);
 
     Progress progress("computing obs and tru", num_runs);
     for (cur_run = 0; cur_run < num_runs; cur_run++) {
 	progress.step();
-	if (!is_srun[cur_run] && !is_frun[cur_run])
+	Outcome outcome = 0;
+	if (is_srun[cur_run])
+	    outcome = &RunIds::second;
+	else if (is_frun[cur_run])
+	    outcome = &RunIds::first;
+	else
 	    continue;
 
-	Reader().read(cur_run);
+	Reader(outcome).read(cur_run);
     }
 
-    for (u = 0; u < num_units; u++)
-	for (c = 0; c < units[u].num_sites; c++)
-	    print_site_info(u, c);
+    while (!interesting.empty()) {
+	const PredInfo &info = interesting.front();
+	ofp << info.site;
+	tfp << info.pred;
+	interesting.pop();
+    }
 
-    fclose(ofp);
-    fclose(tfp);
     return 0;
 }
 

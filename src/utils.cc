@@ -47,12 +47,13 @@ bool read_pred_full(FILE* fp, pred_info &pi)
 
     const int got = fscanf(fp, "%c %d %d %d %d %f %f %f %f %d %d %d %d\n",
 			   &scheme_code,
-			   &pi.u, &pi.c, &pi.p, &pi.site,
+			   &pi.unitIndex, &pi.siteOffset, &pi.predicate,
+			   &pi.siteIndex,
 			   &pi.ps.lb, &pi.ps.in, &pi.ps.fs, &pi.ps.co,
 			   &pi.s, &pi.f, &pi.os, &pi.of);
 
     if (got == 13) {
-	assert(scheme_code == sites[pi.site].scheme_code);
+	assert(scheme_code == sites[pi.siteIndex].scheme_code);
 	return true;
     } else
 	return false;

@@ -26,31 +26,31 @@ PredicatePrinter::PredicatePrinter(ostream &out, const pred_info &stats)
 
       << "<source predicate=\"";
 
-  const site_t &info = sites[stats.site];
+  const site_t &info = sites[stats.siteIndex];
   switch(info.scheme_code)
     {
     case 'S':
       {
 	static const char* op[] = { "&lt;", "&gt;=", "==", "!=", "&gt;", "&lt;=" };
-	out << info.args[0] << ' ' << op[stats.p] << ' ' << info.args[1];
+	out << info.args[0] << ' ' << op[stats.predicate] << ' ' << info.args[1];
 	break;
       }
     case 'R':
       {
 	static const char* op[] = { "&lt;", "&gt;=", "==", "!=", "&gt;", "&lt;=" };
-	out << info.args[0] << ' ' << op[stats.p] << " 0";
+	out << info.args[0] << ' ' << op[stats.predicate] << " 0";
 	break;
       }
     case 'B':
       {
 	const char* op[] = { "is FALSE", "is TRUE" };
-	out << info.args[0] << ' ' << op[stats.p];
+	out << info.args[0] << ' ' << op[stats.predicate];
 	break;
       }
     case 'G':
       {
 	const char* op[] = { "= 0", "= 1", "&gt; 1", "invalid" };
-	out << "old_refcount(" << info.args[0] << ") " << op[stats.p];
+	out << "old_refcount(" << info.args[0] << ") " << op[stats.predicate];
 	break;
       }
     default:

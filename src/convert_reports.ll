@@ -188,7 +188,7 @@ int main(int argc, char** argv)
 
     Progress progress("converting reports", num_runs);
 
-    for (int i = 0; i < num_runs; i++) {
+    for (unsigned i = 0; i < num_runs; i++) {
 	progress.step();
 	if (!is_srun[i] && !is_frun[i])
 	    continue;

@@ -136,7 +136,7 @@ main(int argc, char *argv[])
   pred_info info;
   unsigned index = 0;
   while (read_pred_full(statsFile, info)) {
-    const string &scheme = scheme_name(sites[info.site].scheme_code);
+    const string &scheme = scheme_name(sites[info.siteIndex].scheme_code);
     IndexedPredInfo indexed(info, index);
     all.push_back(indexed);
     schemes[scheme].push_back(indexed);

@@ -8,13 +8,13 @@
 
 
 // global information provided by classify_runs()
-int num_runs = 0, num_sruns, num_fruns;
+unsigned num_runs, num_sruns, num_fruns;
 bool *is_srun, *is_frun;
 
 
 void classify_runs()
 {
-    int i;
+    unsigned i;
 
     FILE* sfp = fopenRead(ClassifyRuns::successesFilename);
     FILE* ffp = fopenRead(ClassifyRuns::failuresFilename);

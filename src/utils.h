@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <string>
+#include "PredCoords.h"
 
 
 struct pred_stat {
@@ -12,8 +13,8 @@ struct pred_stat {
     float co;
 };
 
-struct pred_info {
-    int u, c, p, site;
+struct pred_info : public PredCoords {
+    int siteIndex;
     pred_stat ps;
     int s, f, os, of;
 };

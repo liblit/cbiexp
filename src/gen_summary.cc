@@ -107,7 +107,7 @@ main(int argc, char** argv)
 
     pred_info info;
     while (read_pred_full(predStats, info))
-      ++tally[sites[info.site].scheme_code];
+      ++tally[sites[info.siteIndex].scheme_code];
 
     fclose(predStats);
   }

@@ -76,7 +76,7 @@ main(int argc, char** argv)
     pred_info info;
     while (read_pred_full(statsFile, info)) {
 	static const string all("all");
-	const string &scheme = scheme_name(sites[info.site].scheme_code);
+	const string &scheme = scheme_name(sites[info.siteIndex].scheme_code);
 	statsMap[all].push_back(info);
 	statsMap[scheme].push_back(info);
     }

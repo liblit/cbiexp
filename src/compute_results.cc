@@ -118,86 +118,86 @@ void print_retained_preds()
  * each instrumented predicate
  ***************************************************************************/
 
-inline void inc(int r, int u, int c, int p)
+inline void inc(int r, const SiteCoords &coords, unsigned p)
 {
     if (is_srun[r])
-	site_info[u][c].S[p]++;
+	site_info[coords.unitIndex][coords.siteOffset].S[p]++;
     else if (is_frun[r])
-	site_info[u][c].F[p]++;
+	site_info[coords.unitIndex][coords.siteOffset].F[p]++;
 }
 
-inline void obs(int r, int u, int c)
+inline void obs(int r, const SiteCoords &coords)
 {
     if (is_srun[r])
-	site_info[u][c].os++;
+	site_info[coords.unitIndex][coords.siteOffset].os++;
     else if (is_frun[r])
-	site_info[u][c].of++;
+	site_info[coords.unitIndex][coords.siteOffset].of++;
 }
 
-int cur_run;
+unsigned cur_run;
 
 
 class Reader : public ReportReader
 {
 public:
-    void branchesSite(    unsigned unitIndex, unsigned siteIndex, unsigned, unsigned) const;
-    void gObjectUnrefSite(unsigned unitIndex, unsigned siteIndex, unsigned, unsigned, unsigned, unsigned) const;
-    void returnsSite(     unsigned unitIndex, unsigned siteIndex, unsigned, unsigned, unsigned) const;
-    void scalarPairsSite( unsigned unitIndex, unsigned siteIndex, unsigned, unsigned, unsigned) const;
+    void branchesSite(    const SiteCoords &, unsigned, unsigned) const;
+    void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned) const;
+    void returnsSite(     const SiteCoords &, unsigned, unsigned, unsigned) const;
+    void scalarPairsSite( const SiteCoords &, unsigned, unsigned, unsigned) const;
 
 private:
-    void tripleSite( unsigned unitIndex, unsigned siteIndex, unsigned, unsigned, unsigned) const;
+    void tripleSite(      const SiteCoords &, unsigned, unsigned, unsigned) const;
 };
 
 
-void Reader::tripleSite(unsigned u, unsigned c, unsigned x, unsigned y, unsigned z) const
+void Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
 {
     assert(x || y || z);
-    obs(cur_run, u, c);
+    obs(cur_run, coords);
     if (x)
-	inc(cur_run, u, c, 0);
+	inc(cur_run, coords, 0);
     if (y || z)
-	inc(cur_run, u, c, 1);
+	inc(cur_run, coords, 1);
     if (y)
-	inc(cur_run, u, c, 2);
+	inc(cur_run, coords, 2);
     if (x || z)
-	inc(cur_run, u, c, 3);
+	inc(cur_run, coords, 3);
     if (z)
-	inc(cur_run, u, c, 4);
+	inc(cur_run, coords, 4);
     if (x || y)
-	inc(cur_run, u, c, 5);
+	inc(cur_run, coords, 5);
 }
 
 
-void Reader::scalarPairsSite(unsigned u, unsigned c, unsigned x, unsigned y, unsigned z) const
+void Reader::scalarPairsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
 {
-    tripleSite(u, c, x, y, z);
+    tripleSite(coords, x, y, z);
 }
 
 
-void Reader::returnsSite(unsigned u, unsigned c, unsigned x, unsigned y, unsigned z) const
+void Reader::returnsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
 {
-    tripleSite(u, c, x, y, z);
+    tripleSite(coords, x, y, z);
 }
 
 
-void Reader::branchesSite(unsigned u, unsigned c, unsigned x, unsigned y) const
+void Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y) const
 {
     assert(x || y);
-    obs(cur_run, u, c);
-    if (x) inc(cur_run, u, c, 0);
-    if (y) inc(cur_run, u, c, 1);
+    obs(cur_run, coords);
+    if (x) inc(cur_run, coords, 0);
+    if (y) inc(cur_run, coords, 1);
 }
 
 
-void Reader::gObjectUnrefSite(unsigned u, unsigned c, unsigned x, unsigned y, unsigned z, unsigned w) const
+void Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z, unsigned w) const
 {
     assert(x || y || z || w);
-    obs(cur_run, u, c);
-    if (x) inc(cur_run, u, c, 0);
-    if (y) inc(cur_run, u, c, 1);
-    if (z) inc(cur_run, u, c, 2);
-    if (w) inc(cur_run, u, c, 3);
+    obs(cur_run, coords);
+    if (x) inc(cur_run, coords, 0);
+    if (y) inc(cur_run, coords, 1);
+    if (z) inc(cur_run, coords, 2);
+    if (w) inc(cur_run, coords, 3);
 }
 
 
