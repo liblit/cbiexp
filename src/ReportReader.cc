@@ -26,6 +26,7 @@ ReportReader::read(unsigned runId) const
       assert(coords.unitIndex < num_units);
       const unit_t unit = units[coords.unitIndex];
       assert(coords.siteOffset < unit.num_sites);
+
       switch (unit.scheme_code)
 	{
 	  unsigned x, y, z, w;
