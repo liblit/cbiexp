@@ -82,14 +82,14 @@ with positive $\increase(\ldots)$ scores).
 
 We examined the reports generated with \nicefrac{1}{100} downsampled data.
 The branches report has 4 predicates with a 1.0 crash rating:
-
+%%
 \begin{small}
-  \begin{BVerbatim}[gobble=4]
-    0.94 Inc, 1.00 Cr, 0.06 Co, process_file_pass2, line 5523
-    0.80 Inc, 1.00 Cr, 0.20 Co, handle_options, line 5742
-    0.80 Inc, 1.00 Cr, 0.20 Co, string2lang, line 4366
-    0.78 Inc, 1.00 Cr, 0.22 Co, handle_options, line 5789
-  \end{BVerbatim}
+\begin{verbatim}
+0.94 Inc, 1.00 Cr, 0.06 Co, process_file_pass2 line 5523
+0.80 Inc, 1.00 Cr, 0.20 Co, handle_options line 5742
+0.80 Inc, 1.00 Cr, 0.20 Co, string2lang line 4366
+0.78 Inc, 1.00 Cr, 0.22 Co, handle_options line 5789
+\end{verbatim}
 \end{small}
 
 Each line of a report lists the increase, crash, and context scores of
