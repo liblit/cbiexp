@@ -1,9 +1,9 @@
 texs :=						\
 	alg.tex					\
-	Autoref.sty				\
 	bibnames.sty				\
 	cacm1990.bib				\
 	experiments.tex				\
+	gcbib.bib				\
 	icse02.bib				\
 	icse03.bib				\
 	master.tex				\
@@ -14,6 +14,7 @@ texs :=						\
 	moss-view/stats-by-harmonic.tex		\
 	moss-view/stats-by-increase.tex		\
 	moss-view/table.tex			\
+	nips16.bib				\
 	paste02.bib				\
 	pldi03.bib				\
 	pods.bib				\
@@ -22,12 +23,12 @@ texs :=						\
 	revisited.tex				\
 	setup.tex				\
 	table.tex				\
-	views/table.tex				\
 	views/bc/rows.tex			\
 	views/bug-o-meter.sty			\
 	views/ccrypt/rows.tex			\
 	views/exif/rows.tex			\
-	views/rhythmbox/rows.tex
+	views/rhythmbox/rows.tex		\
+	views/table.tex
 
 epss := predkept3a.eps predkept3b.eps
 pdfs := $(epss:.eps=.pdf)
