@@ -127,7 +127,7 @@ obs.txt tru.txt: $(tooldir)/compute_obs_tru.o stamp-convert-reports preds.txt s.
 clean:: ; rm -f obs.txt tru.txt compute-obs-tru
 
 $(filter %_none.xml, $(views)): $(tooldir)/gen_views.o sites.o units.o preds.txt
-	$(time) $(tooldir)/analyze_runs --do=print-results-1 $(view_flags)
+	$(time) $(tooldir)/analyze_runs --do=print-results-1 --runs-directory=$(datadir) $(view_flags)
 	xmllint --valid --noout $(filter %_none.xml, $(views))
 clean:: ; rm -f $(filter %_none.xml, $(views)) gen-views
 

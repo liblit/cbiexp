@@ -4,7 +4,9 @@
 #include <list>
 #include <string>
 #include "IndexedPredInfo.h"
+#include "NumRuns.h"
 #include "PredStats.h"
+#include "RunsDirectory.h"
 #include "Score/Fail.h"
 #include "Score/HarmonicMeanLog.h"
 #include "Score/HarmonicMeanSqrt.h"
@@ -56,6 +58,27 @@ gen_views(const string &scheme, Stats &stats)
 }
 
 
+static void process_cmdline(int argc, char *argv[])
+{
+    static const argp_option options[] = {
+	{ 0, 0, 0, 0, 0, 0 }
+    };
+
+    static const argp_child children[] = {
+	{ &NumRuns::argp, 0, 0, 0 },
+	{ &RunsDirectory::argp, 0, 0, 0 },
+	{ &Stylesheet::argp, 0, 0, 0 },
+	{ 0, 0, 0, 0 }
+    };
+
+    static const argp argp = {
+	options, 0, 0, 0, children, 0, 0
+    };
+
+    argp_parse(&argp, argc, argv, 0, 0, 0);
+}
+
+
 ////////////////////////////////////////////////////////////////////////
 //
 //  The main event
@@ -66,7 +89,7 @@ int
 main(int argc, char** argv)
 {
     // command line processing and other initialization
-    argp_parse(&Stylesheet::argp, argc, argv, 0, 0, 0);
+    process_cmdline(argc, argv);
     classify_runs();
 
     // group predicates by scheme for easier iteraton later

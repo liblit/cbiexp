@@ -219,7 +219,8 @@ int main(int argc, char** argv)
 	shell("%s %s/gen_views.o %s.o %s.o -L%s -lanalyze -L%s/Score -lScore -o gen-views",
 	      linker, objdir, MapSites::sitesBasename, MapSites::unitsBasename,
 	      objdir, objdir);
-	shell("./gen-views --stylesheet=%s", Stylesheet::filename);
+	shell("./gen-views --stylesheet=%s --number-of-runs=%d",
+	      Stylesheet::filename, NumRuns::value());
 	needLogoLinks = true;
     }
 
