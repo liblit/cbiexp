@@ -59,7 +59,7 @@ pdfpagemode=UseOutlines
 \newcommand{\bc}{\textsc{bc}\xspace}
 \newcommand{\ccrypt}{\textsc{ccrypt}\xspace}
 \newcommand{\exifpred}{{\tt o + s > buf\_size is TRUE}}
-\newcommand{\termdef}[1]{\textit{#1}}
+\newcommand{\termdef}[1]{\emph{#1}}
 \newcommand{\prob}{\ensuremath{\textit{Pr}}}
 \newcommand{\fail}{\ensuremath{\textit{Crash}}}
 \newcommand{\crash}{\ensuremath{\textit{Failure}}}
@@ -287,12 +287,12 @@ we have investigated. From this experimental work we did garner some
 key technical insights.  In addition to the bug predictors we wish to
 find among the instrumented predicates, there are several other kinds
 of predicates.  First, nearly all predicates (often 98\% or 99\%) are
-not predictive of anything.  These non-predictors are best identified and discarded as
+not predictive of anything.  These \termdef{non-predictors} are best identified and discarded as
 quickly as possible. Among the remaining predicates that can
 predict failure in some way, there are some bug predictors.
-There are also {\em super-bug predictors}, predicates that, as
+There are also \termdef{super-bug predictors}, predicates that, as
 described above, predict failures due to a variety of bugs.  And there
-are {\em sub-bug predictors}, predicates that characterize a subset of
+are \termdef{sub-bug predictors}, predicates that characterize a subset of
 the failures of a specific bug; these are often special cases of more
 general problems.  We give the concepts of super- and sub-bug
 predictors more precise technical treatment in
