@@ -69,19 +69,25 @@ $\increase(\ldots)$ score are
 
 \item 8,672 scalar-pairs predicates.
 \end{itemize}
-\placeholder{We need to replace the 8,672 number with the number of distinct sites that survived step 1 in the 1/100 downsampled data.  This is the fairest number to report.}
 About 99\% of all predicates in the the branch and returns
 instrumentation strategies are eliminated by step (1) of our
-algorithm, and the lists are short enough that almost no ranking is
-needed.  About 96\% of the predicates in the scalar-pairs strategy are
-eliminated, but clearly ranking is still important because of the
-large number of predicates that remain.
+algorithm.  About 96\% of the predicates in the scalar-pairs strategy are
+eliminated, but clearly this list is too long to process by hand,
+even for the highly-ranked predicates.  We noticed that the cause of the
+redundancy is that many closely related predicates are reported for the
+same line number.  Often there is a logically strongest predicate that can be
+selected; for example, if the system observes that $\tt x \leq y$ and $\tt x < y$
+are both correlated with failure, the predicate $\tt x \leq y$ is clearly redundant.  
+For our experiment, we simply reported only one predicate per line,
+and then browsed the entire list of other predicates on that line if it 
+appeared interesting.  Retaining one predicate per line gave us a list
+of 186 lines to examine (i.e., only 186 distinct lines in the program had
+predicates that were correlated with failure).
 
 \subsection{The Bugs}
 
 Because the branches instrumentation and the returns instrumentation
-have short lists and, in our experience, yield high quality
-predicates, we began by examining those two lists.  We expect this is
+yield high quality predicates, we began by examining those two lists.  We expect this is
 what a programmer or QA engineer examining these results would do as well.
 
 \begin{figure*}
@@ -97,11 +103,13 @@ what a programmer or QA engineer examining these results would do as well.
 \label{fig-report}
 \end{figure*}
 
-The branches report has 4 predicates with a 1.0 crash rating, shown
-in Figure~\ref{fig-report}.  Each line of the report lists the
-increase, crash, and context scores of a predicate, as well as the 
-function name and line number where it occurs.  We have dropped some fields of the report (such as the text of the predicate itself and the number of failing and successful runs in which the predicate is observed) to avoid cluttering the
-figure.
+The branches report has 4 predicates with a 1.0 crash rating, shown in
+Figure~\ref{fig-report}.  Each line of the report lists the increase,
+crash, and context scores of a predicate, as well as the function name
+and line number where it occurs.  We have dropped some fields of the
+report (such as the text of the predicate itself and the number of
+failing and successful runs in which the predicate is observed) to
+avoid cluttering the figure.
 
 The first predicate listed does not immediately suggest what the cause
 of failure might be. By looking at the failure log, we see that this predicate
@@ -126,7 +134,7 @@ help pinpoint the root cause of a crash rather than just where the crash
 happened.  Each of these predicates immediately suggests
 what test case to try to reproduce the bug. 
 
-The ninth listed cause in the branches report says that whenever the
+The 9th listed cause in the branches report says that whenever the
 user supplies the command line option to write a database, the chance
 of failure jumps to 62\% (bug \#2), and the fourteenth ranked cause
 says that whenever a database is read the chance of failure is 55\%
@@ -146,7 +154,7 @@ cause of bug \#2.
 The fourth entry of the full data (not the 1/100 downsampled data)
 returns report is very interesting.  This predicate shows that one of
 the file read operations in the function that loads a database can
-fail, and when it does the program itself fails with probability .64.
+fail, and when it does \moss\ itself fails with probability .64.
 It turns out that \moss\ was written assuming that the databases it
 loaded would never be corrupt, because it does no checking to ensure
 that the file reads that load databases succeed.  This is a previously
@@ -164,27 +172,16 @@ many more runs are needed for 1/100 sampling than we did for this experiment.}
 
 Bugs \#4 and \#9 have no causes in either the branches or the returns
 reports, as they are not correlated with any branch nor correlated
-with the result of any function call.  In the initial scalar-pairs
-report the highest-ranked cause of these bugs that we could find was
-in position 85 (for bug \#4) and 289 (for bug \#9).
-\placeholder{These locations are far too pessimistic, as many of these
-predicates are not unique; we should remove the redundant ones and
-then see where these predicates are, but if we don't have time it just
-us makes us look worse than necessary to report these numbers. - Alex}
-Even though these predicates are highly ranked in a list of thousands
-of scalar-pairs predicates, it is likely that the cause of bug \#9, at
-least, would be overlooked in this report.
-
-The problem is that there are many highly ranked scalar-pairs
-predicates that point to the other bugs besides
-\#4 and \#9.  To verify this, we simulated what would happen once bugs
-\#1, \#2, \#3, \#5, and \#6 were fixed by removing all failing runs where
-these bugs occurred from our data and rerunning the algorithm.  Once
-we did that, the obvious cause of bug \#4 was 7th on the list in the
-scalar-pairs report, and the obvious cause of bug \#9 was listed 28th,
-with the other causes between 1 and 28 being other predicates that
-were correlated with (and in some cases more deterministic than) bug
-\#4.
+with the result of any function call.  In the scalar-pairs report they
+are ranked 26th (for bug \#4) and 52nd (for bug \#9).  In both cases
+all of the predicates reported on the line reported were obvious
+indicators for the bug, so it did not matter in this case which
+predicate was selected as the representative for the report.  The
+predicates ranked higher than these two are either more obscure,
+but more deterministic, indicators for bug \#4 or for one of the other five observed bugs.
+Given the emphasis on determinism in our ranking function, bug \#9 could not be listed
+higher, as it is the most non-deterministic bug in our data set with a
+$\crash(\ldots)$ score of .72.
 
 Finally, we compared the reports generated from 1/100 sampled data
 with the reports generated from 1/1 sampled data.  The reports were
