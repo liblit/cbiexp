@@ -57,25 +57,25 @@ int main(int argc, char** argv)
     FILE* ffp = fopen(fruns_file, "w"); assert(ffp);
 
     for (int i = 0; i < num_runs; i++) {
+	char filename[100];
 	char s[100];
-	sprintf(s, label_path_fmt, i);
-	FILE* fp = fopen(s, "r");
+	sprintf(filename, label_path_fmt, i);
+	FILE* fp = fopen(filename, "r");
 	if (!fp) {
-	    fprintf(stderr, "cannot read %s: %s\n", s, strerror(errno));
+	    fprintf(stderr, "cannot read %s: %s\n", filename, strerror(errno));
 	    return 1;
 	}
 	fscanf(fp, "%s", s);
 	fclose(fp);
 
-	if (!strcmp(s, "success")) {
+	if (!strcmp(s, "success"))
 	    fprintf(sfp, "%d\n", i);
-	    continue;
-	}
-	if (!strcmp(s, "failure")) {
+	else if (!strcmp(s, "failure"))
 	    fprintf(ffp, "%d\n", i);
-	    continue;
+	else if (strcmp(s, "ignore")) {
+	    fprintf(stderr, "malformed label in %s: %s\n", filename, s);
+	    return 1;
 	}
-	assert(!strcmp(s, "ignore"));
     }
 
     fclose(sfp);
