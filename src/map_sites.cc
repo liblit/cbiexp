@@ -202,7 +202,7 @@ int main(int argc, char** argv)
     fprintf(sfp, "const int num_sites = %d;\n", num_sites);
 
     fputs("};\n\n", ufp);
-    fprintf(ufp, "const int num_units = %d;\n", num_units);
+    fprintf(ufp, "const unsigned num_units = %d;\n", num_units);
     fprintf(ufp, "const int NumBPreds = %d;\n", num_b_preds);
     fprintf(ufp, "const int NumRPreds = %d;\n", num_r_preds);
     fprintf(ufp, "const int NumSPreds = %d;\n", num_s_preds);
