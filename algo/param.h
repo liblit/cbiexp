@@ -3,8 +3,8 @@
 
 #include "preds.h"
 
-#define NUM_SUCCESS_RUNS 8036  // 8154
-#define NUM_FAILURE_RUNS 1928  // 1814
+#define NUM_SUCCESS_RUNS 16110 // data8.1 8036  
+#define NUM_FAILURE_RUNS 3848  // data8.1 1928  
 #define NUM_RUNS (NUM_SUCCESS_RUNS + NUM_FAILURE_RUNS)
 
 #define NUM_2_PREDS (2 * NUM_2_SITES)
@@ -12,13 +12,14 @@
 #define NUM_PREDS (NUM_2_PREDS + NUM_3_PREDS)
 
 /*********** input files ************/
-#define SUCCESS_FILE "data8.1/success_data8.1_10000.txt"
-#define FAILURE_FILE "data8.1/failure_data8.1_10000.txt"
-#define PATH_PREFIX  "/u/mhn/projects/cbi/src/data8.1"
+#define SUCCESS_FILE "success_data9_20000.txt"
+#define FAILURE_FILE "failure_data9_20000.txt"
+#define DATA_DIR     "/u/mhn/projects/cbi/src/data9"
 
 /*********** output files ************/
-#define PHASE1_CAUSES_FILE "phase1_causes.txt"
-#define PHASE2_CAUSES_FILE "phase2_causes.txt"
-#define STATS_FILE  "stats.txt"
+#define PHASE1_CAUSES_FILE "phase1_causes.htm"
+#define PHASE2_CAUSES_FILE "phase2_causes.htm"
+
+#define MAX_PRINT_COUNT 100
 
 #endif

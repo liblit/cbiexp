@@ -3,9 +3,9 @@
 
 /************** EDIT THE FOLLOWING PARAMETERS *******************/
 
-#define SITES_2_FILE "data8.1/sites2_data8.1.txt"
-#define SITES_3_FILE "data8.1/sites3_data8.1.txt"
-#define NUM_2_SITES 2145
+#define SITES_2_FILE "sites2_data9.txt"
+#define SITES_3_FILE "sites3_data9.txt"
+#define NUM_2_SITES 2146
 #define NUM_3_SITES 7896
 
 /****************************************************************/
@@ -43,7 +43,7 @@ void read_2_line()
         fscanf(fp, "%[^\n]s", u);      // read operand
         for (i = 0; i < MAX_CHARS; i++)
             if (u[i] == '\"')
-                u[i] = '#';
+                u[i] = 'Q';
         c = fgetc(fp); assert(c == '\n');
 }
 
@@ -64,12 +64,12 @@ void read_3_line()
         c = fgetc(fp); assert(c == '\t');
         for (i = 0; i < MAX_CHARS; i++)
             if (u[i] == '\"')
-                u[i] = '#';
+                u[i] = 'Q';
         fscanf(fp, "%[^\n]s", v);        // read right operand
         c = fgetc(fp); assert(c == '\n');
         for (i = 0; i < MAX_CHARS; i++)
             if (v[i] == '\"')
-                v[i] = '#';
+                v[i] = 'Q';
 }
 
 main()
