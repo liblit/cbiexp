@@ -21,6 +21,8 @@ unsigned unitIndex;
 unsigned sitesActual;
 unsigned sitesExpected;
 
+#define YY_DECL int yylex(const string &infile)
+ 
 %}
 
 
@@ -134,7 +136,8 @@ uint 0|[1-9][0-9]*
 
 
 <SITES_2,SITES_3,SITES_4>.*\n|. {
-    cerr << "malformed input near \"" << yytext << "\"\n"
+    cerr << "\nmalformed input near \"" << yytext << "\"\n"
+	 << "\tinput: " << infile << '\n'
 	 << "\tunit: " << signature << '\n'
 	 << "\tscheme: " << scheme << '\n'
 	 << "\tsite: " << sitesActual << '\n';
@@ -196,11 +199,12 @@ int main(int argc, char** argv)
 	if (!is_srun[i] && !is_frun[i])
 	    continue;
 
-	FILE* ifp = fopenRead(RawReport::format(i));
+	const string infile(RawReport::format(i));
+	FILE* ifp = fopenRead(infile);
 	ofp = fopenWrite(CompactReport::format(i));
 
 	yyrestart(ifp);
-	yylex();
+	yylex(infile);
 
 	fclose(ifp);
 	fclose(ofp);
