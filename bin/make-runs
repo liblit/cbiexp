@@ -74,7 +74,8 @@ local ($,, $\) = ("\n", "\n");
 my ($handle, $filename) = tempfile(UNLINK => 1);
 
 print $handle "stamp-labels: $_/label" foreach 0 .. ($num_runs - 1);
-print $handle ("label_once = $cwd/$label_once",
+print $handle ("num_runs = $num_runs",
+	       "label_once = $cwd/$label_once",
 	       "run_once = $cwd/$run_once",
 	       "include $FindBin::Bin/make-runs.mk");
 

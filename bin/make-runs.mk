@@ -1,5 +1,5 @@
 stamp-labels:
-	touch $@
+	echo $(num_runs) >$@
 
 %/label: %/stamp $(label_once)
 	echo run $*: label
