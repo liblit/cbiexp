@@ -197,15 +197,15 @@ $P$ for which $\increase(P) \leq 0$.  Recall that we have
 approximately 200,000 predicates for \moss.  The categories are:
 
 \begin{itemize}
-\item  A {\it dead} predicate is one that is not observed in any run and hence
+\item  A \termdef{dead} predicate is one that is not observed in any run and hence
 deemed unreachable.  Nearly half the instrumented predicates are dead.
 
-\item An {\it invariant} is a predicate that is observed in some run and, moreover,
+\item An \termdef{invariant} is a predicate that is observed in some run and, moreover,
 is either true every time it is observed or false every time it is observed,
 and is therefore presumed to be a program invariant.  More than a quarter of
 the instrumented predicates are invariants.
 
-\item An {\it aftermath} is a predicate that is not observed in any successful run but
+\item An \termdef{aftermath} is a predicate that is not observed in any successful run but
 is observed in some failing run, and is therefore deemed to be a secondary consequence
 of a bug.  A relatively small number of predicates are aftermaths, but clearly
 the impact on our reports would be large if this class of predicates were not eliminated.
