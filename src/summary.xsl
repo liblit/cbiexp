@@ -37,6 +37,13 @@
 	<p>Generated on <xsl:value-of select="@date"/></p>
 
 	<xsl:apply-templates/>
+
+	<!-- dilution algorithms -->
+	<p>Dilution algorithms, all schemes, harmonic mean (log):</p>
+	<ul>
+	  <li><a href="all_hl_corrected-exact-complete.xml">exact</a></li>
+	  <li><a href="all_hl_corrected-approximate-complete.xml">approximate</a></li>
+	</ul>
       </body>
     </html>
   </xsl:template>
