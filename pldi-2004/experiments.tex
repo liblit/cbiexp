@@ -34,14 +34,15 @@ described in \Autoref{sec:background}:
 \end{description}
 
 Thus, the input to our analysis is 31,873 feedback reports, each of
-which records the status of over 200,000 predicates.\footnote{The
-reader may wonder whether it is practical to actually generate a
-report on 200,000 predicates on a client machine and then upload it to
-a central server for analysis.  The answer is definitely yes.  First,
-recall that the predicates are synthesized from about half as many
-counters.  The counters are mostly zeroes and so compress extremely
-well, resulting in uploaded files in the range of 10-50K.}  The
-sampling rate for all runs in this experiment was \nicefrac{1}{1};
+which records the status of over 200,000 predicates.  The reader may
+wonder whether it is practical to actually generate a report on
+200,000 predicates on a client machine and then upload it to a central
+server for analysis.  The answer is definitely yes.  First, recall
+that the predicates are synthesized from about half as many counters.
+The counters are mostly zeroes and so compress extremely well,
+resulting in uploaded files in the range of 10-50K.
+
+The sampling rate for all runs in this experiment was \nicefrac{1}{1};
 i.e., we sampled every predicate every time it was reached.  We used a
 separate downsampling program to generate sparser samples from this
 full data; thus, we were able to use the same set of runs to test the
@@ -114,7 +115,7 @@ programs; the crash score of 1.0 tells us that whenever a Lisp program is
 processed, \moss\ crashes.  The fourth predicate
 is an obvious cause of
 bug \#6; it reveals that whenever the amount of memory to use is set
-via a command line option, the program will crash.\footnote{The full data set shows that bug \#6 is non-deterministic with respect to this predicate, so once again the certainty that the program will crash is the result of sampling error.}  All three of these predicates illustrate the potential of our method to
+via a command line option, the program will crash.  (The full data set shows that bug \#6 is non-deterministic with respect to this predicate, so once again the certainty that the program will crash is the result of sampling error.)  All three of these predicates illustrate the potential of our method to
 help pinpoint the root cause of a crash rather than just where the crash
 happened.  Each of these predicates immediately suggests
 what test case to try to reproduce the bug.
@@ -153,11 +154,11 @@ run and caused the buggy version of \moss\ to fail in a different way.
 This explains the very low $\increase(\ldots)$ score for this
 predicate (the chance of failure only increases by 11\% when this bug
 occurs) and why it was not observed in the \nicefrac{1}{100}
-downsampled data.\footnote{With enough runs it would be observed at
-  any sampling rate, but the anomaly that the reference and buggy
-  versions of \moss\ share this bug means that, at the
-  \nicefrac{1}{100} sampling rate, many more runs are likely needed
-  than what we had for this experiment.}
+downsampled data.  With enough runs it would be observed at
+any sampling rate, but the anomaly that the reference and buggy
+versions of \moss\ share this bug means that, at the
+\nicefrac{1}{100} sampling rate, many more runs are likely needed
+than what we had for this experiment.
 
 Bugs \#4 and \#9 have no causes in either the branches or the returns
 reports, as they are not correlated with any branch nor with the
