@@ -15,7 +15,7 @@ typically find and fix bugs:
 \end{enumerate}
 
 For our purposes, identifying a bug $\bug$ means selecting a
-predicate $P$ closely correlated with $\bugprofile$.  The difficulty is that we
+predicate $P$ closely correlated with its bug profile $\bugprofile$.  The difficulty is that we
 know the set of runs that succeed and fail, but we do not know which
 set of failing runs corresponds to $\bug$, or even how many bugs there
 are.  In other words, we do not know the sizes or membership of the set
@@ -27,7 +27,7 @@ importance.
 For the second step, while we cannot literally fix the bug
 corresponding to the chosen predictor $P$, we can simulate what
 happens if the bug does not occur.  We discard any run $R$ such that
-$\report{P} = 1$ and repeat.  Discarding all the runs where
+$\report{P} = 1$ and recursively apply the entire algorithm to the remaining runs.  Discarding all the runs where
 $\report{P} = 1$ reduces the importance of other predictors of
 $\bug$, allowing predicates that predict different bugs (i.e.,
 corresponding to different sets of failing runs) to rise to the top in
@@ -69,7 +69,7 @@ respect to \texttt{f == NULL}: if \texttt{f == NULL} is true at line
 the exact conditions causing failure; for example, buffer overrun bugs
 in a C program may or may not cause the program to crash depending on
 runtime system decisions about how data is laid out in memory.  Such
-bugs are \termdef{non-deterministic} with respect to every predicate;
+bugs are \termdef{non-deterministic} with respect to every observed predicate;
 even for the best predictor $P$, it is possible
 that $P$ is true and still the program terminates normally.  In the
 example above, if we insert before line \texttt{(d)} a valid pointer
@@ -134,13 +134,15 @@ decision that eventually causes the crash is made earlier, and the
 high $\crash(\texttt{x == 0})$ score merely reflects the fact that this
 predicate is checked on a path where the program is already doomed.
 
-A way to address this difficulty is to score a predicate not by the chance
-that it implies failure, but by how much difference it makes that the predicate
-is observed to be true versus simply reaching the line where the predicate is checked.
-That is, on line \texttt{(c)}, the probability of crashing is already 1.0 regardless
-of the value of the predicate \texttt{x == 0}, and thus the fact that \texttt{x == 0} is
-true does not increase the probability of failure at all.  This coincides with
-our intuition that this predicate is irrelevant to the bug.
+A way to address this difficulty is to score a predicate not by the
+chance that it implies failure, but by how much difference it makes
+that the predicate is observed to be true versus simply reaching the
+line where the predicate is checked.  That is, on line \texttt{(c)},
+the probability of crashing is already 1.0 regardless of the value of
+the predicate \texttt{x == 0}, and thus the fact that \texttt{x == 0}
+is true does not increase the probability of failure at all.  This
+fact coincides with our intuition that this predicate is irrelevant to
+the bug.
 
 Recall that we write ``$P$ observed'' when $P$ has been reached
 and sampled at least once, without regard to whether $P$ was actually
@@ -265,21 +267,22 @@ space limitations we omit additional per-predicate information, such
 as source file and line number, which is available in the interactive
 version of our analysis tools.
 
-We use a concise \termdef{bug thermometer} to visualize the information
-for each predicate.  The length of the thermometer is logarithmic in
-the number of runs in which the predicate was observed, so small
-increases in thermometer size indicate many more runs.  Each
+We use a concise \termdef{bug thermometer} to visualize the
+information for each predicate.  The length of the thermometer is
+logarithmic in the number of runs in which the predicate was observed,
+so small increases in thermometer size indicate many more runs.  Each
 thermometer has a sequence of bands.  The black band on the left shows
 $\context(P)$ as a fraction of the entire thermometer length.  The
 dark gray band (\textseg{red}) shows the lower bound of $\increase(P)$
 with 95\% confidence, also proportional to the entire thermometer
 length.  The light gray band (\textseg{pink}) shows the size of that
-confidence interval.  It is very small in most thermometers,
-indicating a tight interval.  The white space at the right end of the
-thermometer shows $S(P)$, the number of successful runs in which the
-predicate was observed to be true.  The tables show the thermometer as
-well as the numbers for each of the quantities that make up the
-thermometer.
+confidence interval.\footnote{If reading this paper in color, the dark
+gray band is red, and the light gray band is pink.}  It is very small
+in most thermometers, indicating a tight interval.  The white space at
+the right end of the thermometer shows $S(P)$, the number of
+successful runs in which the predicate was observed to be true.  The
+tables show the thermometer as well as the numbers for each of the
+quantities that make up the thermometer.
 
 The most important bug is the one that causes the greatest number of
 failed runs.  This observation suggests:
@@ -302,8 +305,9 @@ failing, but also many successful, runs.  The best of these predicates
 (the ones with high $\increase$ scores) are \termdef{super-bug
   predictors}: predictors that include failures from more than one
 bug.  Super-bug predictors account for a
-very large number of failures (by combining the failures of multiple
-bugs) but are also highly non-deterministic despite reasonably high
+very large number of failures by combining the failures of multiple
+bugs, but are also highly non-deterministic (because they are not 
+specific to any single cause of failure) despite reasonably high
 $\increase$ scores.
 
 Another possibility is:
@@ -316,7 +320,7 @@ dark gray (\textseg{red}), indicating $\increase$ scores that are very
 close to 1.0.  These predicates do a much better job of predicting
 failure.  In fact, the program always fails when any of these
 predicates is true.  However, observe that the number of failing runs
-($F$) is very small.  These predicates are \termdef{sub-bug
+(column $F$) is very small.  These predicates are \termdef{sub-bug
   predictors}: predictors for a subset of the failures caused by a
 bug.  Unlike super-bug predictors, which are not useful in our
 experience, sub-bug predictors that account for a significant fraction
@@ -361,11 +365,12 @@ number of failures.
 \label{sec:elimination}
 
 The remaining problem with the results in \autoref{tab:sorts-harmonic}
-is that there is substantial redundancy; it is easy to see that several of these
-predicates are related.  This hides other, distinct bugs that either have
-fewer failed runs or more non-deterministic predictors further down the
-list.  As discussed above, we use a simple iterative algorithm to eliminate
-redundant predicates:
+is that there is substantial redundancy; it is easy to see that
+several of these predicates are related.  This redundancy hides other,
+distinct bugs that either have fewer failed runs or more
+non-deterministic predictors further down the list.  As discussed
+previously, beginning with the set of all runs and predicates, we use
+a simple iterative algorithm to eliminate redundant predicates:
 \begin{enumerate}
 
 \item Rank predicates by $\importance$.

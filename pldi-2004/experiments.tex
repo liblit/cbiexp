@@ -27,7 +27,7 @@ To address this problem, we set the sampling rates of predicates to be
 inversely proportional to their frequency of execution.  Based on a
 training set of 1,000 executions, we set the sampling rate of each predicate so
 as to obtain an expected 100 samples of each predicate in subsequent program
-executions.  On the low end, the sampling rate is clamped to a minimum of $\nicefrac{1}{100}$.
+executions.  On the low end, the sampling rate is clamped to a minimum of $\nicefrac{1}{100}$; if the site is expected to be reached fewer than 100 times the sampling rate is set at 1.0.
 Thus, rarely executed code has a
 much higher sampling rate than very frequently executed code.  (A
 similar strategy has been pursued for similar reasons in related work \cite{chil04}.)  We
@@ -100,7 +100,7 @@ A particularly interesting case of this phenomenon is bug \#7, one of
 the buffer overruns.  Bug \#7 is not strongly predicted by any
 predicate on the list but in fact occurs in at least a few of the
 failing runs of most predicates.  We have examined the runs of bug \#7
-in detail and found that the bug \#7 only occurs in runs that also
+in detail and found that the only failing runs involving bug \#7 also
 trigger at least one other bug.  That is, even when the bug \#7 overrun
 happens, it never causes incorrect output or a crash
 in any run.  Bug \#8, another overrun, is not even shown because the
@@ -143,18 +143,19 @@ eighth line have very different initial and effective thermometers
 both) showing that these predicates are strongly affected by
 higher-ranked predicates.
 
-The displays presented thus far have a drawback illustrated by the \moss\ 
-experiment: It is not easy to identify the predicates to which a predicate is 
-closely related.  Such a feature would be useful in confirming whether two 
-selected predicates represent different bugs or are in fact related to the 
-same bug.  We do have a measure of how strongly $P$ implies another
-predicate $P'$: How does removing the runs where $\report{P} = 1$
-affect the importance of $P'$?  The more closely related $P$ and $P'$
-are, the more $P'$'s importance drops when $P$'s failing runs are
-removed.  In the interactive version of our analysis tools, each
-predicate $P$ in the final, ranked list of predicates can zoom in to a
-linked \termdef{affinity list} of all predicates ranked by how much
-$P$ causes their ranking score to decrease.
+The visualizations presented thus far have a drawback illustrated by
+the \moss\ experiment: It is not easy to identify the predicates to
+which a predicate is closely related.  Such a feature would be useful
+in confirming whether two selected predicates represent different bugs
+or are in fact related to the same bug.  We do have a measure of how
+strongly $P$ implies another predicate $P'$: How does removing the
+runs where $\report{P} = 1$ affect the importance of $P'$?  The more
+closely related $P$ and $P'$ are, the more $P'$'s importance drops
+when $P$'s failing runs are removed.  In the interactive version of
+our analysis tools, each predicate $P$ in the final, ranked list of
+links to an \termdef{affinity list} of all
+predicates ranked by how much $P$ causes their ranking score to
+decrease.
 
 \subsection{Additional Experiments}
 
@@ -300,26 +301,28 @@ event queues; each event performs some computation and possibly adds
 more events to some queues.  We know of no static analysis today that
 can analyze event-driven systems accurately, because no static
 analysis is currently capable of analyzing the heap-allocated event
-queues with sufficient precision.  Crash-reporting systems are also of
+queues with sufficient precision.  Stack inspection is also of
 limited utility in analyzing event-driven systems, as the stack in the
 main event loop is unchanging and all of the interesting state is in
 the queues.
 
 We isolated two distinct bugs in \rhythmbox.  The first predicate led
-us to the discovery of a race condition.  The second predicate was not useful directly,
-but we were able to isolate the bug using the predicates in its
-affinity list.  This second bug revealed what turned out to be a very
-common incorrect pattern of accessing the underlying object library
-(recall \autoref{sec:introduction}).  \rhythmbox developers confirmed
-the bugs and enthusiastically applied patches within a few days, in part because
-we could quantify the bugs as important crashing bugs.
-It required several hours to isolate each of the two bugs, in part because \rhythmbox
-is complex and in part because the bugs were violations of subtle heap invariants which
-are not directly captured by our current instrumentation schemes.
-Note, however, that we could not have
-even begun to understand these bugs without the information provided by our tool.
-We intend to explore schemes that track predicates on heap structure in
-future work.
+us to the discovery of a race condition.  The second predicate was not
+useful directly, but we were able to isolate the bug using the
+predicates in its affinity list.  This second bug revealed what turned
+out to be a very common incorrect pattern of accessing the underlying
+object library (recall \autoref{sec:introduction}).  \rhythmbox
+developers confirmed the bugs and enthusiastically applied patches
+within a few days, in part because we could quantify the bugs as
+important crashing bugs.  It required several hours to isolate each of
+the two bugs (and there are additional bugs represented in the
+predictors that we did not isolate) in part because \rhythmbox is
+complex and in part because the bugs were violations of subtle heap
+invariants which are not directly captured by our current
+instrumentation schemes.  Note, however, that we could not have even
+begun to understand these bugs without the information provided by our
+tool.  We intend to explore schemes that track predicates on heap
+structure in future work.
 
 \subsection{Comparison with Logistic Regression}
 \label{sec:comparison}

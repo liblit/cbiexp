@@ -117,8 +117,8 @@ pdfpagemode=UseOutlines
 \maketitle
 
 \begin{abstract}
-  We present a statistical debugging algorithm that is able to
-  isolate bugs in programs containing multiple undiagnosed bugs.
+  We present a statistical debugging algorithm that 
+  isolates bugs in programs containing multiple undiagnosed bugs.
   Earlier statistical algorithms that focus solely on identifying
   predictors that correlate with program failure perform poorly
   when there are multiple bugs.  Our new technique separates the
@@ -126,8 +126,8 @@ pdfpagemode=UseOutlines
   associated with individual bugs.  These predictors reveal both the
   circumstances under which bugs occur as well as the frequencies of
   failure modes, making it easier to prioritize debugging efforts.
-  Our algorithm is validated using several case studies.  These
-  case studies include examples in which the algorithm found previously
+  Our algorithm is validated using several case studies, including
+  examples in which the algorithm identified previously
   unknown, significant crashing bugs in widely used systems.
 \end{abstract}
 
@@ -145,14 +145,14 @@ pdfpagemode=UseOutlines
 
 This paper is about \termdef{statistical debugging}, a dynamic
 analysis for identifying the causes of software failures (i.e., bugs).
-Instrumented programs monitor their own behavior and send feedback
-reports to a central collection server.  The instrumentation examines
-program behavior during execution by sampling, so complete information is
-never available about any single run.  However, monitoring is also
-lightweight and therefore practical to deploy to large user
-communities, making it possible to gather information about many runs.
-The collected data can then be analyzed for interesting trends across
-all of the monitored executions.
+Instrumented programs monitor their own behavior and produce feedback
+reports.  The instrumentation examines program behavior during
+execution by sampling, so complete information is never available
+about any single run.  However, monitoring is also lightweight and
+therefore practical to deploy in a production testing environment or
+to large user communities, making it possible to gather information
+about many runs.  The collected data can then be analyzed for
+interesting trends across all of the monitored executions.
 
 In our approach, instrumentation consists of \termdef{predicates} tested
 at particular program points; we defer discussing which predicates are
@@ -166,22 +166,22 @@ succeeded or failed, as well as a bit vector with one bit for each
 predicate $P$.  If $P$ is observed to be true at least once during run
 $R$ then $\report{P} = 1$, otherwise $\report{P} = 0$.
 
-Let $\bug$ denote a bug (i.e., something which causes incorrect behavior in
-a program).  We use $\bugprofile$ to denote a \termdef{bug profile},
-i.e., a set of failing runs (feedback reports)
-that share a cause of failure.  The meaning becomes clear in context.  The
-union of all bug profiles is exactly the
-set of failing runs, but note that $\bugprofile_i \cap \bugprofile_j \neq
+Let $\bug$ denote a bug (i.e., something which causes incorrect
+behavior in a program).  We use $\bugprofile$ to denote a \termdef{bug
+profile}, i.e., a set of failing runs (feedback reports) that share
+$\bug$ as the cause of failure.  The union of all bug profiles is
+exactly the set of failing runs, but note that $\bugprofile_i \cap
+\bugprofile_j \neq
 \emptyset$ in general; more than one bug can occur in some runs.
 
 A predicate $P$ is a \termdef{bug predictor} (or simply a
 \termdef{predictor}) of bug $\bug$ if whenever $\report{P} = 1$
 then it is statistically likely that $R \in \bugprofile$ (see
 \autoref{sec:increase}).  \termdef{Statistical debugging} selects a
-small subset ${\cal S}$ of the set of all instrumented predicates
-${\cal P}$ such that ${\cal S}$ has predictors of all bugs.  We also
-rank the predictors in ${\cal S}$ from the most to least important.
-The set ${\cal S}$ and associated metrics (see
+small subset ${\cal S}$ of the set of all instrumented predicates ${\cal P}$ such
+that ${\cal S}$ has predictors of all bugs.  We also rank the
+predictors in ${\cal S}$ from the most to least important.  The set
+${\cal S}$ and associated metrics (see
 \autoref{sec:experiments}) are then available to engineers to help
 speed the process of finding and fixing the most serious bugs.
 
@@ -218,13 +218,13 @@ predicates are useless for isolating the cause of individual bugs.
 magnitude.  In reality, we do not know which failure is caused by which bug,
 so we are forced to lump all the bugs together and try to learn a binary
 classifier.  Thus, predictors for all but the most common bugs have relatively little
-influence over the global optimum and tend to be ranked low or not included
+influence over the global optimum and tend to be ranked very low or not included
 in ${\cal S}$ at all.
 
 \end{itemize}
 
 These problems with regularized logistic regression persist in many variations
-we have investigated. Analysis of this body of experimental work yielded some
+we have investigated, but analysis of this body of experimental work yielded some
 key technical insights.  In addition to the bug predictors we wish to
 find among the instrumented predicates, there are several other kinds
 of predicates.  First, nearly all predicates (often 98\% or 99\%) are
@@ -289,9 +289,8 @@ specification of the program properties to be analyzed.  Thus,
 statistical debugging provides a complementary approach to static
 analyses, which generally do require specification of the properties
 to check.  Statistical debugging can identify bugs beyond the reach of
-static analysis techniques and even new classes of bugs which may be
+current static analysis techniques and even new classes of bugs which may be
 amenable to static analysis if anyone thought to check for them.
-
 One of the bugs we found, in the \rhythmbox open source music player,
 provides a good illustration of the potential for positive interaction
 with static analysis.  A strong predictor of failure detected by our
@@ -317,27 +316,25 @@ This section describes ideas and terminology needed to present our
 algorithm.  The ideal program monitoring system would gather complete
 execution traces and provide them to an engineer (or, more likely, a
 tool) to mine for the causes of bugs.  However, complete tracing of
-program behavior is simply impractical; no end user would accept the
+program behavior is simply impractical; no end user or tester would accept the
 required performance overhead or network bandwidth.
 
 Instead, we use a combination of sparse random sampling, which controls
 performance overhead, and client-side summarization of the data, which
-limits the storage and transmission costs.  We briefly discuss
+limits storage and transmission costs.  We briefly discuss
 both aspects.
 
-Random sampling is added to a program via a source-to-source transformation.
-Our sampling transformation is general: any collection of
-statements within (or added to) a program may be designated as
-``instrumentation'' and thereby sampled instead of run
-unconditionally.
-
-That is, each time instrumentation code is reached,
+Random sampling is added to a program via a source-to-source
+transformation.  Our sampling transformation is general: any
+collection of statements within (or added to) a program may be
+designated as an {\em instrumentation site} and thereby sampled instead of run
+unconditionally.  That is, each time instrumentation code is reached,
 a coin flip decides whether the instrumentation is executed or not.
-Coin flipping is simulated in a statistically fair
-manner equivalent to a Bernoulli process: each potential sample is
-taken or skipped randomly and independently as the program runs.
-We have found that a sampling rate of \nicefrac{1}{100} normally keeps the performance overhead
-of instrumentation low, often unmeasurable.
+Coin flipping is simulated in a statistically fair manner equivalent
+to a Bernoulli process: each potential sample is taken or skipped
+randomly and independently as the program runs.  We have found that a
+sampling rate of \nicefrac{1}{100} in most applications\footnote{Some compute-bound kernels are an exception; we currently sometimes resort to simply
+excluding the most performance critical code from instrumentation.} keeps the performance overhead of instrumentation low, often unmeasurable.
 
 Orthogonal to the sampling transformation is the decision about what
 instrumentation to introduce and how to concisely summarize the
@@ -352,7 +349,7 @@ such as loop tests and short-circuiting logical operators, we track two predicat
 indicating whether the true or false branches were ever taken.
 
 \item[returns:] In C, the
-  sign of a return value is often used to signal success or failure.
+  sign of a function's return value is often used to signal success or failure.
   At each scalar-returning function call site, we track six predicates:
   whether the returned value is ever $< 0$, $\leq 0$, $> 0$, $\geq 0$,
   $= 0$, or $\neq 0$.
@@ -376,30 +373,29 @@ indicating whether the true or false branches were ever taken.
   constant expression $\mathtt{c}_j$.  For each   $\mathtt{y}_i$ and each $\mathtt{c}_j$,
   we track six relationships to the new value of \texttt{x}: $<, \leq, >, \geq, =, \neq$.
   Each $(\mathtt{x}, \mathtt{y}_i)$ or $(\mathtt{x}, \mathtt{c}_j)$ pair
-  is treated as a distinct instrumentation site.
+  is treated as a distinct instrumentation site---in general, a single assignment statement is associated with multiple distinct instrumentation sites.
   %%
 \end{description}
 
-All predicates at a site are sampled jointly.  To be more precise, an
-\termdef{observation} is a single dynamic check of all predicates at a
-single instrumentation site.  We write ``$P$ observed'' when the site
-containing $P$ has been sampled, regardless of whether $P$ was
-actually true or false.  We write ``$P$ observed to be true'' or
-merely ``$P$'' when the site containing $P$ has been sampled and $P$
-was actually found to be true.
-
-For example, sampling a single negative return value means that all
-six returns predicates ($< 0$, $\leq 0$, $> 0$, $\geq 0$, $= 0$, and
-$\neq 0$) are ``observed.''  However only three of them ($< 0$, $\leq
-0$, and $\neq 0$) are ``observed to be true.''  \footnote{In reality,
-  we count the number of times $P$ is observed to be true, but the
-  analysis of the feedback reports only uses whether $P$ is observed
-  to be true at least once.}
+All predicates at an instrumentation site are sampled jointly.  To be
+more precise, an \termdef{observation} is a single dynamic check of
+all predicates at a single instrumentation site.  We write ``$P$
+observed'' when the site containing $P$ has been sampled, regardless
+of whether $P$ was actually true or false.  We write ``$P$ observed to
+be true'' or merely ``$P$'' when the site containing $P$ has been
+sampled and $P$ was actually found to be true.  For example, sampling
+a single negative return value means that all six returns predicates
+($< 0$, $\leq 0$, $> 0$, $\geq 0$, $= 0$, and $\neq 0$) are
+``observed.''  However only three of them ($< 0$, $\leq 0$, and $\neq
+0$) are ``observed to be true.''  \footnote{In reality, we count the
+number of times $P$ is observed to be true, but the analysis of the
+feedback reports only uses whether $P$ is observed to be true at least
+once.}
 
   These are natural properties to check and provide good coverage of a
   program's scalar values and control flow.  This set is by no means
-  complete, however; in particular, it would be useful to have
-  predicates on heap structures as well.
+  complete, however; in particular, we believe it would be useful to have
+  predicates on heap structures as well (see Section~\ref{sec:experiments}).
 
 \section{Cause Isolation Algorithm}
 \label{sec:algorithm}
@@ -420,7 +416,7 @@ quality.  While we firmly believe in the use of static analysis to
 find and prevent bugs, our dynamic approach has advantages as well.  A dynamic
 analysis can observe actual run-time values, which is often better
 than either making a very conservative static assumption about run-time
-values for the sake of soundness, or allowing some very simple bugs to escape
+values for the sake of soundness or allowing some very simple bugs to escape
 undetected.  Another advantage of dynamic analysis, especially one
 that mines actual user executions for its data, is the ability to
 assign an accurate importance to each bug.  Additionally, as we have shown,
@@ -438,8 +434,9 @@ client program, and attempts to relate state changes in candidate
 predicates to manifestation of bugs.  Both projects assume complete
 monitoring, such as within a controlled test environment.  Our goal is
 to use lightweight partial monitoring, suitable for either testing
-or deployment to end users.  We never have complete information, and
-therefore we must use a more statistical approach.
+or deployment to end users.  
+%We never have complete information, and
+%therefore we must use a more statistical approach.
 
 \termdef{Software tomography} as realized through the GAMMA system
 \cite{PASTE'02*2,Orso:2003:LFDIART} shares our goal of low-overhead
@@ -454,14 +451,14 @@ Efforts to directly apply statistical modeling principles to debugging
 have met with mixed results.  Early work in this area by Burnell and
 Horvitz \cite{Burnell:1995:SCM} uses program slicing in conjunction
 with Bayesian belief networks to filter and rank the possible causes
-for a given bug.  Empirical evaluation shows that the slicing component
-alone finds 65\% of bug causes, while the probabilistic model
-correctly identifies another 10\%.  This additional payoff may seem
-small in light of the effort, measured in multiple
-man-years, required to distill experts' often tacit knowledge into a
-formal belief network.  However, the approach does illustrate one
-strategy for integrating information about program structure into the
-statistical modeling process.
+for a given bug.  Empirical evaluation shows that the slicing
+component alone finds 65\% of bug causes, while the probabilistic
+model correctly identifies another 10\%.  This additional payoff may
+seem small in light of the effort, measured in man-years, required to
+distill experts' often tacit knowledge into a formal belief network.
+However, the approach does illustrate one strategy for integrating
+information about program structure into the statistical modeling
+process.
 
 In more recent work, Podgurski et al.\ \cite{ICSE`03*465} apply
 statistical feature selection, clustering, and multivariate
@@ -476,7 +473,8 @@ uses logistic regression to select features which are highly
 predictive of failure.
 Clustering tends to identify small, tight groups of runs which do
 share a single cause but which are not always maximal.  That is, one
-cause may be split across several clusters.
+cause may be split across several clusters.  This problem is similar
+to covering a bug profile with sub-bug predictors.
 
 In contrast, current
 industrial practice uses stack traces to cluster failure reports into
@@ -511,7 +509,9 @@ occurring at all.  The Software Dependability Framework (SDF)
 \cite{Gross:2003:PSMUST} uses multivariate state estimation
 techniques to model and thereby predict impending system failures.
 Instrumentation is assumed to be complete and is typically
-domain-specific.
+domain-specific.  Our algorithm could also be used to identify {\em
+early warning} predicates that predict impending failure in actual
+use.
 
 \section{Conclusions}
 \label{sec:conclusions}
