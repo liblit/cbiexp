@@ -67,8 +67,8 @@ main(int argc, char** argv)
 
     site_name = argv[3];
 
-    printf("Searching failed runs in which predicate \"%s %s\" is observed to be true.\n", pred_kind, site_name);
-    printf("Will stop after finding at most %d failed runs.\n", num_runs_needed);
+    //printf("Searching failed runs in which predicate \"%s %s\" is observed to be true.\n", pred_kind, site_name);
+    //printf("Will stop after finding at most %d failed runs.\n", num_runs_needed);
 
 
     ffp = fopen("f.runs", "r");
@@ -121,14 +121,14 @@ main(int argc, char** argv)
                                           (p == 3 && x + z > 0) ||
                                           (p == 4 && z > 0) ||
                                           (p == 5 && x + y > 0))) {
-                        printf("found run: %d\n", i);
+                        //printf("found run: %d\n", i);
                         runs[num_runs_found] = i;
                         num_runs_found++;
                     }
                 } else {
                     sscanf(at, "%d %d", &x, &y); 
                     if (x + y > 0 && ((p == 0 && x > 0) || (p == 1 && y > 0))) {
-                        printf("found run: %d\n", i);
+                        //printf("found run: %d\n", i);
                         runs[num_runs_found] = i;
                         num_runs_found++;
                     }

@@ -26,27 +26,26 @@ main(int argc, char** argv)
         scheme++;
         t = strchr(scheme, '\"');
         *t = '\0';
-        int count = 0;
+
+        if (strcmp(scheme, "scalar-pairs") == 0)
+            printf("@S");
+        else if (strcmp(scheme, "branches") == 0)
+            printf("@B");
+        else if (strcmp(scheme, "returns") == 0)
+            printf("@R");
+        else
+            assert(0);
+        printf("%s\n", unit);
+
         while (1) {
             fscanf(fp, "%[^\n]s", p);
             fgetc(fp);  // eat '\n'
             if (strncmp(p, "</sites", 7) == 0)
                 break;
-            if (strcmp(scheme, "scalar-pairs") == 0)
-                printf("S");
-            else if (strcmp(scheme, "branches") == 0)
-                printf("B");
-            else if (strcmp(scheme, "returns") == 0)
-                printf("R");
-            else
-                assert(0);
-            printf("%s", unit);
-            printf("%05d", count);
-            printf("@ %s\n", p);
-            count++;
-            assert(count < 99999);
+            printf("%s\n", p);
         }
     }
+
     return 0;
 }
 
