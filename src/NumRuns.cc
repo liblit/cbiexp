@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <sysexits.h>
 #include "NumRuns.h"
 #include "RunsDirectory.h"
 
@@ -81,6 +82,9 @@ parseFlag(int key, char *arg, argp_state *state)
 	      exit(1);
 	    }
 	}
+
+      if (begin >= end)
+	argp_failure(state, EX_USAGE, 0, "no runs to read (begin %d >= end %d)", begin, end);
 
     default:
       return ARGP_ERR_UNKNOWN;
