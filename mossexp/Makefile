@@ -6,8 +6,9 @@ CPPFLAGS = -DDEBUG=0 -DNDEBUG -Ddeletes=""
 CFLAGS = -O3 -Wall
 EXTRACT = /usr/lib/sampler/tools/extract-section
 BAD = mossbad mossbad2
+MOSS = moss $(BAD)
 
-all: moss $(BAD)
+all: $(MOSS)
 
 lib/regions-norc.o:
 	cd lib; make regions-norc.o
@@ -49,7 +50,7 @@ mossbad_includes.flex: mossbad.flex
 clean: 
 	rm -f moss.c moss mossbad.c mossbad2.c mossbad_includes.flex mossbad.o mossbad2.o mossbad mossbad2 moss_includes.flex moss.o *~
 
-BIN = moss $(BAD) clusterdata.pl watchdog.pl make-runs
+BIN = $(MOSS) clusterdata.pl watchdog.pl make-runs
 
 install: install-bin install-share
 install-bin: $(BIN:%=$(INSTDIR)/bin/%)
@@ -57,16 +58,16 @@ install-share: install-cfg install-sites
 install-cfg: $(BAD:%=$(INSTDIR)/share/%.cfg)
 install-sites: $(BAD:%=$(INSTDIR)/share/%.sites)
 
-$(INSTDIR)/bin/%: %
+$(BIN:%=$(INSTDIR)/bin/%): $(INSTDIR)/bin/%: %
 	[ -d $(INSTDIR)/bin ] || mkdir -p $(INSTDIR)/bin
 	cp $< $@
 
-$(INSTDIR)/share/%.cfg: $(INSTDIR)/bin/%
+$(MOSS:%=$(INSTDIR)/share/%.cfg): $(INSTDIR)/share/%.cfg: $(INSTDIR)/bin/%
 	[ -d $(@D) ] || mkdir -p $(@D)
 	$(EXTRACT) .debug_sampler_cfg $< >$@.tmp
 	mv $@.tmp $@
 
-$(INSTDIR)/share/%.sites: $(INSTDIR)/bin/%
+$(MOSS:%=$(INSTDIR)/share/%.sites): $(INSTDIR)/share/%.sites: $(INSTDIR)/bin/%
 	[ -d $(@D) ] || mkdir -p $(@D)
 	$(EXTRACT) .debug_site_info $< >$@.tmp
 	mv $@.tmp $@

@@ -6,9 +6,7 @@ if ! shift; then
     exit 2
 fi
 
-if [ -d $dir ]; then
-    echo "Warning: reinstalling into existing directory"
-fi
-
 umask 022
-make -s -C "`dirname $0`" INSTDIR=$dir install
+mkdir $dir
+cd $dir
+make -s -C "`dirname $0`" INSTDIR=`pwd` install

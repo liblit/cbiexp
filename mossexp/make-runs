@@ -77,5 +77,5 @@ close $handle;
 #
 
 # do not use exec here; it interferes with tempfile cleanup
-system 'nice', 'make', '-s', '-C', "$FindBin::Bin/..", '-j', $jobs, '-f', $filename;
+system 'nice', 'make', '-s', '-k', '-C', "$FindBin::Bin/..", '-j', $jobs, '-f', $filename;
 exit($? >> 8 || $? & 127);
