@@ -31,7 +31,7 @@ share/*.sites
         signal    <signal number>
         timeout
 
-*/{bad,bad2}/reports
+*/{bad,bad2}/reports.gz
     feedback report suitable for use with "resolve-samples"
 
 */{bad,bad2}/fail
