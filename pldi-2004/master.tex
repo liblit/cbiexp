@@ -59,7 +59,6 @@ pdfpagemode=UseOutlines
 \newcommand{\exif}{\textsc{exif}\xspace}
 \newcommand{\bc}{\textsc{bc}\xspace}
 \newcommand{\ccrypt}{\textsc{ccrypt}\xspace}
-\newcommand{\exifpred}{{\tt o + s > buf\_size is TRUE}}
 \newcommand{\termdef}[1]{\emph{#1}}
 \newcommand{\prob}{\ensuremath{\textit{Pr}}}
 \newcommand{\fail}{\ensuremath{\textit{Crash}}}
@@ -484,13 +483,13 @@ itself a predicate.
 In this section we briefly survey related work. There is currently a
 great deal of interest in applying static analysis to improve software
 quality.  While we firmly believe in the use of static analysis to
-find and prevent bugs, our dynamic approach has advantages. A dynamic
+find and prevent bugs, our dynamic approach has advantages as well.  A dynamic
 analysis can observe actual run-time values, which is often better
 than either making a very conservative static assumption about run-time
 values for the sake of soundness, or allowing some even very simple bugs to escape
 undetected.  Another advantage of dynamic analysis, especially one
 that uses actual user executions for its data, is the ability to
-assign an accurate importance to each bug.  Finally, as we have shown,
+assign an accurate importance to each bug.  Additionally, as we have shown,
 a dynamic analysis that does not require an explicit specification of
 the properties to check can find clues to a very wide range of errors,
 including classes of errors not considered in the design of the
