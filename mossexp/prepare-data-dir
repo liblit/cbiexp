@@ -6,7 +6,9 @@ if ! shift; then
     exit 2
 fi
 
+base="`cd \`dirname $0\`; pwd`"
+
 umask 022
 mkdir $dir
 cd $dir
-make -s -C "`dirname $0`" INSTDIR=`pwd` install
+make -s -C $base INSTDIR=`pwd` install
