@@ -42,6 +42,7 @@ inline void print_pred(int u, int c, int p)
         for (i = 1; i <= NUM_RUNS; i++)
             if (is_srun[i] && (*(data[u][c].b[p]))[i] == true)
                 fprintf(fp, "%d ", i);
+        fprintf(fp, "\n");
         fclose(fp);
     }
 }
