@@ -38,6 +38,10 @@ $ENV{SAMPLER_SPARSITY} = 1;
 
 delete $ENV{SAMPLER_REPORT_FD};
 
+# workaround for hang in "futex(0x42133220, FUTEX_WAIT, 2, NULL)"
+# suggested by Carlos Morgado <http://mail.gnome.org/archives/balsa-list/2004-March/msg00107.html>
+$ENV{LD_ASSUME_KERNEL} = '2.4.19';
+
 
 ########################################################################
 #
