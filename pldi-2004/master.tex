@@ -69,7 +69,7 @@ pdfpagemode=UseOutlines
 \newcommand{\numfail}{\ensuremath{\textit{NumF}}}
 \renewcommand{\H}{{\mathcal{H}}}
 
-\newcommand{\issue}[1]{}
+\newcommand{\issue}[2][]{}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,6 +131,9 @@ pdfpagemode=UseOutlines
 
 
 \begin{document}
+
+\issue[Alice]{Overall comment: font too small?}
+
 \maketitle
 
 \begin{abstract}
@@ -165,6 +168,8 @@ pdfpagemode=UseOutlines
 \section{Introduction}
 \label{sec:introduction}
 
+\issue[Alice]{Too much notation in introduction?}
+
 This paper is about \termdef{statistical debugging}, a dynamic
 analysis for identifying the causes of software failures (i.e., bugs).
 Instrumented programs monitor their own behavior and send feedback
@@ -191,7 +196,14 @@ the number of times $P$ is observed to be true, but the analysis of
 the feedback reports only uses whether $P$ is observed to be true at
 least once.}
 
+\issue[Alice]{Comment about notation: the f(x) usually denotes some
+  kind of function, do we want to treat R (a run) as a function?  I'd
+  much prefer the subscript or superscript notation, which usually
+  refers to an element of a vector.  How about R_P instead of R(P)?
+  [I didn't make this change in the text]}
+    
 \issue{modified by Alice}
+
 The usual definition of a bug refers to a programmatic element that 
 unintentionally causes incorrect behavior.  We're going to abuse notation a
 bit and overload its definition.  In this paper, a {\em bug} also refers to
@@ -200,6 +212,13 @@ that share a cause of failure.  The meaning becomes clear in context.  The
 union of all bugs is exactly the
 set of failing runs, but note that ${\cal B}_i \cap {\cal B}_j \neq
 \emptyset$ in general; more than one bug can occur in some runs.
+
+\issue[Alice]{The definition of "bug" overloads the usual definition
+  of "something that causes incorrect behavior."  I understand that
+  this makes the super-bug and sub-bug terminology easier to justify
+  (weren't we going to use some other names for these?).  But if we're
+  going to veer from the usual definition, then at least we should
+  make this clear.  [text modified]}
 
 A predicate $P$ is a {\em bug predictor} (or simply a {\em predictor})
 of bug ${\cal B}$ if whenever $R(P) = 1$ then it is statistically
@@ -233,6 +252,13 @@ predictors ${\cal S}$.\footnote{This problem persists even for
 regularized logistic regression with penalty terms.}  This problem is
 already evident in the results in \cite{PLDI`03*141} but becomes much
 worse for larger programs.
+%%
+\issue[Alice]{Logistic regression is not a global optimization
+  technique.  The fact that predictors for less common bugs are ranked
+  lower by logistic regression is a consequence of doing binary
+  classification when we really should be doing multi-class
+  classification.  But we can't do multi-class classification since we
+  don't know the underlying bug labels. [text modified]}
 
 \item A separate difficulty is the prevalence of predicates predicting
 multiple bugs.  For example, for many Unix programs a bug is more
@@ -363,6 +389,8 @@ manner equivalent to a Bernoulli process: each potential sample is
 taken or skipped randomly and independently as the program runs.
 We have found that a sampling rate of \nicefrac{1}{100} normally keeps the performance overhead
 of instrumentation low, often unmeasurable.
+%%
+\issue[Alice]{Is this true?  I thought Ben's thesis would claim otherwise.}
 
 Orthogonal to the sampling transformation is the decision about what
 instrumentation to introduce and how to concisely summarize the
@@ -400,6 +428,8 @@ indicating whether the true or false branches were ever taken.
   we track six relationships to the new value of \texttt{x}: $<, \leq, >, \geq, =, \neq$.
 Each compared-to $\mathtt{y}_i$
   or $\mathtt{c}_j$ is treated as a distinct instrumentation site.
+  %%
+  \issue[Alice]{Changed to "we identify" to match the next sentence.}
 \end{description}
 
 These are natural properties to check and provide good
