@@ -10,8 +10,11 @@
 %% unique to this paper
 \usepackage{Autoref}
 
+%% assorted handy macros
 \newcommand{\moss}{\textsc{Moss}\xspace}
+\newcommand{\termdef}[1]{\textit{#1}}
 
+%% remove the following before submission!
 \newcommand{\placeholder}[1]{{\color[cmyk]{0,0.61,0.87,0}[#1]}}
 \pagenumbering{arabic}
 
@@ -212,6 +215,31 @@ with observed behavior.  \placeholder{The preceding feels too detailed
 
 \placeholder{Page budget: 1.}
 
+The Daikon project \cite{ernst2001} monitors instrumented applications
+to discover likely program invariants.  It collects extensive trace
+information at run time and uses this offline to accept or reject any
+of a wide variety of guessed candidate predicates.  The DIDUCE project
+\cite{ICSE02*291} tests a more restricted set of predicates within the
+client program, and attempts to relate state changes in candidate
+predicates to manifestation of bugs.  Both projects assume complete
+monitoring, such as within a controlled test environment.  Our goal is
+to use lightweight partial monitoring, suitable for deployment to end
+users.  We never have complete information, and therefore must use a
+more probabilistic approach: we wish to identify broad trends over
+time that correlate predicate violations with increased likelihood of
+failure.
+
+\termdef{Software tomography} as realized through the GAMMA system
+\cite{PASTE'02*2,Orso:2003:LFDIART} shares our goal of low-overhead
+distributed monitoring of deployed code.  GAMMA collects code coverage
+data to support a variety of code evolution tasks.  Our
+instrumentation exposes a broader family of data- and
+control-dependent predicates on program behavior and uses randomized
+sparse sampling to control overhead.  We observe, however, that the
+predicates injected by our instrumentor can approximate coverage: over
+many runs, the sum of all predicate counters at a site converges on
+the relative coverage of that site.
+
 \placeholder{In addition to related papers discussed in our own prior
   work, should also discuss:
 
@@ -228,7 +256,7 @@ with observed behavior.  \placeholder{The preceding feels too detailed
 \section{Conclusions}
 \label{sec:conclusions}
 
-\bibliography{cacm1990,icse03,misc,pods}
+\bibliography{cacm1990,icse02,icse03,misc,paste02,pods,refs}
 \placeholder{Page budget for references: 1.}
 
 
