@@ -96,23 +96,10 @@ being true implies failure.  Let $\fail$ be an atomic predicate that is
 true for failing runs and false for successful runs.  Let $\prob(A | B)$ denote
 the conditional probability function of the event $A$ given event $B$ .  
 We want to compute:
-\issue{modified by Alice}
-\issue[Alice]{Prob (P => Crash) should really be something like Pr (Crash = 1 | P = 1) [text modified]}
-\issue[Mike]{I've never liked the notation "Prob(P \implies Crash)".  What
-this quantity really is is "Prob(Crash | P = true)".  The notation
-"Prob(P \implies Crash)" doesn't suggest a conditional probability.
-Failure(P) really is a conditional probability, and I think that it
-should be presented as such.}
 \[ \crash(P) \equiv \prob(\fail = 1 | P = 1) \]
-%= \prob(\fail | P \mbox{ is true}) \]
 for every instrumented predicate $P$ over the set of all runs.  Let $S(P)$ be the number
 of successful runs in which $P$ is observed to be true, and let $F(P)$ be the number of
 failing runs in which $P$ is observed to be true.  
-%%
-\issue[Alice]{Same comment as R(P).  S(P) and F(P) are not really
-  functions, and it would be more natural to use the subscript
-  notation.  [didn't modify text]}
-%%
 We estimate $\crash(P)$ as:
 \[ \crash(P) = \frac{F(P)}{S(P) + F(P)} \]
 
@@ -130,8 +117,6 @@ $P$ is never observed to be true in a successful run ($S(P) =
 If $\crash(P) < 1.0$ then the bug is non-deterministic, with
 lower scores showing weaker correlation between the predicate and
 program failure.
-
-\issue{Modified by Mike: replaced ``surprising'' with ``unplesant''}
 
 Now $\crash(P)$ is a useful measure, but it is not good
 enough for the first step of our algorithm. To see this, consider again the
@@ -170,29 +155,12 @@ the intuition that this predicate is irrelevant to the bug.
 
 This leads us to the following definition:
 \[
-\issue{modified by Alice}
-\issue[Mike]{I've never liked the notation "Prob((P \or \not P) \implies Crash)".  
-What this quantity really is is "Prob(Crash | P = true \or P = false)".  
-Just like with Failure(P), Context(P) is a conditional probability.}
-\context(P) \equiv \prob(\fail = 1 | P \mbox{ is observed})  
+\context(P) \equiv \prob(\fail = 1 | P = 1 \lor \lnot P = 1)  
 \]
-%= \prob(\fail |  P \mbox{ observed}) 
-%\end{gather*}
-%%
-\issue[Alice]{The notation 'P v not P' confuses P with R(P).  We've
-  defined P to be the name of a predicate, and R(P) to be its actual
-  value in run R.  Here, we should at least say 'R(P) v not R(P)', but
-  I think it's even clearer to say 'P is observed'.  Also the '=>'
-  implication notation belongs more in logic than in statistics.  I've
-  changed this to the conditional probability notation.  But we should 
-  still deal with this issue in subsequent texts.}
-\issue[Alice]{I've modified the sentence ``In any given run...'' to make
-  it less of a run-on sentence.}
-%%
-Now, $P \lor \lnot P$ is not the set of all runs, because we are not working in a two-valued logic.
+Now, it is not the case that $P = 1 \lor \lnot P = 1$ in every run, because we are not working in a two-valued logic.
 In any given run, there are three possibilities: (a) neither $P$ nor $\lnot P$ 
-is observed (because the site where this predicate occurs is not reached, or is reached but not sampled
-), (b) one of $P$ or $\lnot P$ is observed, or (c) both are observed (because the statement is executed
+is observed (because the site where this predicate occurs is not reached, or is reached but not sampled),
+(b) one of $P$ or $\lnot P$ is observed, or (c) both are observed (because the statement is executed
 multiple times and $P$ is sometimes true and sometimes false).  Thus, $\context(P)$ is the probability that
 in the set of runs where the value of $P$ is observed at all, the program fails. We can compute $\context(P)$ as follows:
 \[ \context(P) = \frac{F(P \lor \lnot P)}{S(P \lor \lnot P) + F(P \lor \lnot P)} \]
@@ -208,12 +176,6 @@ we have
 \[\crash(\mbox{\tt x == 0}) = \context(\mbox{\tt x == 0}) = 1.0 \]
 and so $\increase(\mbox{\tt x == 0}) = 0$.
 
-\issue{Modified by Mike: "Since Increase() is a statistic, computing its confidence
-interval is a well-understood problem" -> 
-"Since Increase() is a statistic, computing a confidence interval 
-for the underlying parameter is a well-understood problem" 
-[confidence intervals are for parameters which are being estimated, 
-not for statistics.]}
 A predicate $P$ with $\increase(P) \leq 0$ has no predictive power; whether it is true does not increase the
 probability of failure, and we can safely discard all such predicates.
 But because some $\increase(P)$ scores may be based on few observations of $P$, it is important
@@ -460,8 +422,6 @@ transformation.
   log(F(P))/log(NumF)
 
   and the formula as written has the reciprocal of that.}
-\issue[Mike]{Replace precision by specificity and recall with sensitivity 
-throughout paper. (done)}
 The results are given in \autoref{tab:sorts-harmonic}.  We observe that
 all of the predicates on this list indeed have both high specificity and
 sensitivity, accurately describing a large number of failures. 
@@ -470,9 +430,6 @@ sensitivity, accurately describing a large number of failures.
 \subsection{Predicate Elimination}
 \label{sec:elimination}
 
-\issue{Modified by Mike: "these predicates are related hiding other, distinct bugs..."
-->
-"these predicates are related, hiding other, distinct bugs..."}
 The remaining problem with the results in \autoref{tab:sorts-harmonic}
 is that there is substantial redundancy; it is easy to see that several of these
 predicates are related, hiding other, distinct bugs that either have
