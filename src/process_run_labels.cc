@@ -28,10 +28,12 @@ main(int argc, char** argv)
         fscanf(fp, "%s", s);
         if (!strcmp(s, "success")) {
             fprintf(sfp, "%d\n", i);
+	    fclose(fp);
             continue;
         }
         if (!strcmp(s, "failure")) {
             fprintf(ffp, "%d\n", i);
+	    fclose(fp);
             continue;
         }
         assert(!strcmp(s, "ignore"));
