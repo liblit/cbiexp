@@ -30,7 +30,7 @@
 
   <xsl:template match="bug" mode="histogram">
     <td class="count">
-      <xsl:number select="@count"/>
+      <xsl:number value="@count"/>
     </td>
   </xsl:template>
 
