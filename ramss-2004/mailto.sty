@@ -1,0 +1,4 @@
+\usepackage{ifthen}
+\usepackage{url}
+
+\newcommand{\mailto}[1]{\ifthenelse{\isundefined{\href}}{\url{#1}}{\href{mailto:#1}{\Hurl{#1}}}}
