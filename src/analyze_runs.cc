@@ -10,7 +10,7 @@
 #define CONVERT_REPORTS    "./convert-reports"
 #define COMPUTE_RESULTS    "./compute-results"
 #define COMPUTE_OBS_TRU    "./compute-obs-tru"
-#define GEN_VIEWS          "gen-views"
+#define GEN_VIEWS          "gen_views"
 #define GEN_PREDS_FILE     "./gen-preds-file"
 
 #define DEFAULT_SRUNS_FILE "s.runs"
