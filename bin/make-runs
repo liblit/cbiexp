@@ -44,7 +44,7 @@ my $understood = GetOptions('jobs=i' => \$jobs,
 die "Usage: $0 [--jobs=<count>] [--verbose] [--datadir=<dir>] <num-runs>\n",
     unless $understood && @ARGV == 1;
 
-$verbose |= $dry_run;
+$verbose |= defined $dry_run;
 
 
 unless ($jobs) {
