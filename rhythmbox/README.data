@@ -37,15 +37,15 @@ indicate completion with a nonzero exit status.  Divide by 256 to get
 the exact status.
 
 
-** client/report
+** client/reports
 
-Raw feedback report.  This is complete data, with no
-downsampling.  If you decide to downsample, you may want to save those
-files in this same subdirectory so that other people can use them too.
+Raw feedback reports.  This is complete data, with no downsampling.
+If you decide to downsample, you may want to save those files in this
+same subdirectory so that other people can use them too.
 
 The following recipe may be useful for downsampling raw reports:
 
-    % /moa/sc1/cbi/sampler/tools/decimate-samples 100 <report >report-100.gz
+    % /moa/sc1/cbi/sampler/tools/decimate-samples 100 <reports >reports-100.gz
 
 The decimation tool takes an optional random number seed, but will
 select a good default from system entropy sources if none is provided.
