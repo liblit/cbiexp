@@ -84,7 +84,7 @@ More information on CBI can be found at \cite{Liblit:CBIP}.
 
 Cooperative Bug Isolation (CBI) seeks to leverage the
 huge amount of computation done by the end users of software.  By
-gathering a little bit of information from every execution of a
+gathering a little bit of information from every run of a
 program performed by its user community, we should be able to make
 inferences automatically about the causes of bugs experienced in the field.
 
@@ -287,7 +287,7 @@ which has excellent networking and desktop interaction support.
 
 When the wrapper script starts up, it checks whether the user has run
 an instrumented version of this application before.  If not, it
-presents a first-time opt-in dialog.  The dialog briefly describes the
+presents the first-time opt-in dialog.  The dialog briefly describes the
 goals of the project and the consequences of participating or not, and
 lets the user decide what to do.  There is also a hyperlink button to
 our web site for more information.  This dialog is presented in the
@@ -396,13 +396,13 @@ fatal signal.  Note the large variation in crash rates, from 0\%
 (\gimp) to 13\% (\rhythmbox).
 
 There is both good news and bad news in these figures.  The bad news
-is that we have not yet received enough executions to carry out
+is that we have not yet received enough reports to carry out
 statistically significant analysis of the results.  Based on our
 previous experience with studies done ``in the lab'' running
 applications on synthetic data to simulate a large user community,
-with $\nicefrac{1}{100}$ sampling we need between 10,000 and 20,000
-executions with our current methods to achieve accurate analysis of
-the results, which is more than ten times the number of runs we have
+with $\nicefrac{1}{100}$ sampling we need between ten and twenty thousand
+runs with our current methods to achieve accurate analysis of
+the results, which is more than ten times the number of reports we have
 received to date for any of these applications.\footnote{We began
 collecting data from the public distribution in October, 2003.}  Our
 situation here reflects an inherent aspect of CBI and similar
