@@ -2,49 +2,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <fstream>
-#include <iterator>
-#include <map>
-#include <string>
-#include <vector>
 
-using namespace std;
-
-class Unit {
-public:
-    const char scheme;
-    const string signature;
-
-    Unit(char, const string &);
-};
-
-
-Unit::Unit(char scheme, const string &signature)
-    : scheme(scheme),
-      signature(signature)
-{
-}
-
-
-bool operator < (const Unit &a, const Unit &b)
-{
-    return a.scheme < b.scheme
-	|| a.scheme == b.scheme && a.signature < b.signature;
-}
-
-
-typedef map<Unit, vector<string> > UnitMap;
-
-
-ostream & operator << (ostream &sink, const UnitMap::value_type &mapping)
-{
-    const Unit &unit = mapping.first;
-    const vector<string> &sites = mapping.second;
-
-    return sink << "{ \"" << unit.scheme << unit.signature << "\", "
-		<< sites.size() << " }";
-}
-
+char* sites_src_file = NULL;
+char* units_src_file = NULL;
+FILE* sfp = NULL;
+FILE* ufp = NULL;
 
 inline char scheme_code(char* s)
 {
@@ -57,91 +19,111 @@ inline char scheme_code(char* s)
     assert(0);
 }
 
-char* get_scheme_and_unit(char* x)
+char* get_scheme_and_signature(char* x)
 {
     char *u, *t, *s;
 
     u = strchr(x, '\"');
+    assert(u);
     t = strchr(u + 1, '\"');
+    assert(t);
     *t = '\0';
     s = strchr(t + 1, '\"');
+    assert(s);
     s++;
     t = strchr(s, '\"');
+    assert(t);
     *t = '\0';
 
     *u = scheme_code(s);
     return u;
 }
 
-char* del_cfg(char* s)
+void print_s_site(char* s)
 {
-    char *x;
-    x = strchr(s, '\t'); x++;
-    x = strchr(x, '\t'); x++;
-    x = strchr(x, '\t'); x++;
-    char* y;
-    y = strchr(x , '\t'); y++;
-    while ((*x++ = *y++))
-	;
-    return s;
+    char *x, *y;
+
+    x = strchr(s , '\t'); assert(x); *x = '\0'; x++;
+    x = strchr(x , '\t'); assert(x); x++;
+    x = strchr(x , '\t'); assert(x); x++;
+
+    y = strchr(x , '\t'); *y = '\0'; y++;
+
+    fprintf(sfp, "{ \"%s\", \"%s\" } ", s, x);
 }
 
-char* print_s_site(char* s)
+void print_b_site(char* s)
 {
-    char *t = del_cfg(s);
-    char* x;
-    x = strchr(t , '\t'); x++;
-    x = strchr(x , '\t'); x++;
-    x = strchr(x , '\t'); x++;
-    x = strchr(x , '\t');
-    *x = ' '; x++; *x = '$'; x++; *x = ' '; x++;
-
-    char* y;
-    y = strchr(x, '\t'); y++;
-    y = strchr(y, '\t'); y++;
-
-    while (*y != '\t') *x++ = *y++;
-    *x = '\n'; x++; *x = '\0';
-    return t;
+    char* x = strchr(s, '\n'); assert(x); *x = '\0';
+    fprintf(sfp, "{ \"%s\" } ", s);
 }
 
-char* print_site(char site_kind, char* s)
+void print_r_site(char* s)
 {
+    char* x = strchr(s, '\n'); assert(x); *x = '\0';
+    fprintf(sfp, "{ \"%s\" } ", s);
+}
+
+void print_site(char site_kind, char* s)
+{
+    char *x, *y, *z;
+
+    // s points to file name
+
+    x = strchr(s, '\t'); assert(x); *x = '\0'; x++;
+
+    // x points to line number
+
+    y = strchr(x, '\t'); assert(y); *y = '\0'; y++;
+
+    // y points to func name
+
+    z = strchr(y, '\t'); assert(z); *z = '\0'; z++;
+
+    // z points to CFG node
+
+    fprintf(sfp, "\t{ \"%s\", %s, \"%s\", ", s, x, y);
+
+    // ignore CFG node
+    z = strchr(z, '\t'); assert(z); z++;
+
+    // z points to scheme-specific predicate name
+
     switch (site_kind) {
-    case 'S': return print_s_site(s);
-    case 'B': return del_cfg(s);
-    case 'R': return del_cfg(s);
+    case 'S': print_s_site(z); break;
+    case 'B': print_b_site(z); break;
+    case 'R': print_r_site(z); break;
     default: assert(0);
     }
-}
 
-char* compact_sites_file = NULL;
-char* units_src_file = NULL;
+    fprintf(sfp, "},\n");
+}
 
 void process_cmdline(int argc, char** argv)
 {
     for (int i = 1; i < argc; i++) {
-	if (!strcmp(argv[i], "-u")) {
+	if (!strcmp(argv[i], "-ss")) {
+	    i++;
+	    sites_src_file = argv[i];
+	    continue;
+	}
+	if (!strcmp(argv[i], "-us")) {
 	    i++;
 	    units_src_file = argv[i];
 	    continue;
 	}
-	if (!strcmp(argv[i], "-cs")) {
-	    i++;
-	    compact_sites_file = argv[i];
-	    continue;
-	}
 	if (!strcmp(argv[i], "-h")) {
-	    puts("Usage: map-sites -cs <compact-sites-file> -u <units-src-file> < <verbose-sites-file>\n"
-		 "Reads  <verbose-sites-file>\n"
-		 "Writes <compact-sites-file> and <units-src-file>");
+	    puts("Usage: map-sites <options> < <sites-txt-file>\n"
+                 "(w) -ss <sites-src-file>\n"
+                 "(w) -us <units-src-file>\n"
+            );
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
 	exit(1);
     }
 
-    if (!compact_sites_file || !units_src_file) {
+    if (!sites_src_file || !units_src_file) {
 	puts("Incorrect usage; try -h");
 	exit(1);
     }
@@ -151,52 +133,54 @@ int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
 
-    int num_b_preds = 0, num_r_preds = 0, num_s_preds = 0;
-    UnitMap units;
+    int num_units = 0, num_b_preds = 0, num_r_preds = 0, num_s_preds = 0;
+
+    sfp = fopen(sites_src_file, "w"); assert(sfp);
+    ufp = fopen(units_src_file, "w"); assert(ufp);
+
+    fputs("#include <sites.h>\n\n"
+          "const struct site_t sites[] = {\n",
+          sfp);
+
+    fputs("#include <units.h>\n\n"
+          "const struct unit_t units[] = {\n",
+          ufp);
 
     while (1) {
-	char s[3000];
-	fgets(s, 3000, stdin);
-	if (feof(stdin))
-	    break;
-	assert(!strncmp(s, "<sites", 6));
-
-	char* t = get_scheme_and_unit(s);
-	const Unit unit(t[0], &t[1]);
-	vector<string> &sites = units[unit];
-
-	while (1) {
-	    char p[3000];
-	    fgets(p, 3000, stdin);
-	    if (!strncmp(p, "</sites", 7))
-		break;
-	    sites.push_back(print_site(t[0], p));
-	}
-	switch (t[0]) {
-	case 'S': num_s_preds += 6 * sites.size(); break;
-	case 'R': num_r_preds += 6 * sites.size(); break;
-	case 'B': num_b_preds += 2 * sites.size(); break;
-	default: assert(0);
-	}
+        char s[3000];
+        fgets(s, 3000, stdin);
+        if (feof(stdin))
+            break;
+        assert(!strncmp(s, "<sites", 6));
+        char* t = get_scheme_and_signature(s);
+        int count = 0;
+        while (1) {
+            char p[3000];
+            fgets(p, 3000, stdin);
+            if (!strncmp(p, "</sites", 7))
+                break;
+            print_site(t[0], p);
+            count++;
+        }
+        fprintf(ufp, "\t{ \"%s\", %d },\n", t, count);
+        num_units++;
+        switch (t[0]) {
+        case 'S': num_s_preds += 6 * count; break;
+        case 'R': num_r_preds += 6 * count; break;
+        case 'B': num_b_preds += 2 * count; break;
+        default: assert(0);
+        }
     }
 
-    ofstream sites_sink(compact_sites_file); assert(sites_sink);
-    ofstream units_sink(units_src_file); assert(units_sink);
+    fputs("};\n\n", sfp);
+    fputs("};\n\n", ufp);
+    fprintf(ufp, "const int NumUnits  = %d;\n", num_units);
+    fprintf(ufp, "const int NumBPreds = %d;\n", num_b_preds);
+    fprintf(ufp, "const int NumRPreds = %d;\n", num_r_preds);
+    fprintf(ufp, "const int NumSPreds = %d;\n", num_s_preds);
 
-    units_sink << "#include <units.h>\n\n"
-	       << "const struct Unit units[] = {\n";
-    
-    for (UnitMap::const_iterator unit = units.begin(); unit != units.end(); ++unit) {
-	units_sink << '\t' << *unit << ",\n";
-	copy(unit->second.begin(), unit->second.end(), ostream_iterator<string>(sites_sink));
-    }
-
-    units_sink << "};\n\n"
-	       << "const int NumUnits  = " << units.size() << ";\n"
-	       << "const int NumBPreds = " << num_b_preds << ";\n"
-	       << "const int NumRPreds = " << num_r_preds << ";\n"
-	       << "const int NumSPreds = " << num_s_preds << ";\n";
-
+    fclose(sfp);
+    fclose(ufp);
     return 0;
 }
 
