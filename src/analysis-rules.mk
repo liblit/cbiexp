@@ -153,6 +153,10 @@ s.runs f.runs: $(tooldir)/process_run_labels.o $(datadir)/stamp-labels
 	$(time) $(tooldir)/analyze_runs --do=process-labels --runs-directory=$(datadir)
 clean:: ; rm -f s.runs f.runs
 
+prior-dist: $(tooldir)/gather_prior_dist.o s.runs f.runs preds.txt
+	$(time) $(tooldir)/analyze_runs --do=gather-prior-dist --runs-directory=$(datadir)
+clean:: ; rm -f fpriors.dat spriors.dat
+
 sites.o units.o: $(tooldir)/map_sites.o $(sites)
 	$(time) $(tooldir)/analyze_runs --do=map-sites $(sites:%=--sites-text=%)
 clean:: ; rm -f sites.o units.o sites.cc units.cc

@@ -113,6 +113,7 @@ liblate_a_SOURCES =				\
 	compute_obs_tru.cc			\
 	compute_results.cc			\
 	convert_reports.ll			\
+	gather_prior_dist.cc			\
 	gen_preds_file.cc			\
 	gen_summary.cc				\
 	gen_views.cc				\

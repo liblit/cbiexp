@@ -42,6 +42,7 @@ enum {
     DoComputeObsTru,
     DoPrintSummary,
     DoPrintResults1,
+    DoGatherPriorDist,
     // DoPrintResultsN,
 
     PhaseCount
@@ -56,6 +57,7 @@ static char * const phaseNames[PhaseCount + 1] = {
     "compute-obs-tru",
     "print-summary",
     "print-results-1",
+    "gather-prior-dist",
     // "print-results-n",
     0
 };
@@ -219,6 +221,13 @@ int main(int argc, char** argv)
 	      objdir, objdir);
 	shell("./gen-views --stylesheet=%s", Stylesheet::filename);
 	needLogoLinks = true;
+    }
+
+    if (phaseSelected[DoGatherPriorDist] {
+	puts("Gathering prior distribution for number of times a predicate is reached...");
+	shell("%s %s/gather_prior_dist.o %s.o %s.o -L%s -lanalyze -o gather_prior_dist",
+	      linker, objdir, MapSites::sitesBasename, MapSites::unitsBasename, objdir);
+	shell("./gather_prior_dist --runs-directory=%s", RunsDirectory::root);
     }
 
     if (needLogoLinks) {
