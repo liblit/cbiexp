@@ -36,7 +36,7 @@
 #include "exif-i18n.h"
 #include "utils.h"
 
-#ifdef HAVE_LOCAL_H
+#ifdef HAVE_LOCALE_H
 #  include <locale.h>
 #endif
 
