@@ -34,13 +34,17 @@ unless (-x $run_once && -x $label_once) {
 my $jobs;
 my $verbose;
 my $datadir = 'data';
+my $dry_run;
 
 my $understood = GetOptions('jobs=i' => \$jobs,
 			    'verbose' => \$verbose,
-			    'datadir' => \$datadir);
+			    'datadir' => \$datadir,
+			    'dry-run' => \$dry_run);
 
 die "Usage: $0 [--jobs=<count>] [--verbose] [--datadir=<dir>] <num-runs>\n",
     unless $understood && @ARGV == 1;
+
+$verbose |= $dry_run;
 
 
 unless ($jobs) {
@@ -99,11 +103,13 @@ mkdir $datadir;
 
 # perform any other setup work needed before the runs begin
 my $prep = "bin/prepare-runs";
-if (-x $prep) {
+if (-x $prep && ! $dry_run) {
     (system { $prep } $prep) == 0 or die "cannot run $prep: $!\n";
 }
 
 # do not use exec here; it interferes with tempfile cleanup
-my @silent = $verbose ? () : ('-s');
-system 'nice', 'make', @silent, '-C', $datadir, '-j', $jobs, '-f', $filename;
+my @make = ('nice', 'make', '-C', $datadir, '-j', $jobs, '-f', $filename);
+push @make, '-s' unless $verbose;
+push @make, '-n' if $dry_run;
+system @make;
 exit($? >> 8 || $? & 127);
