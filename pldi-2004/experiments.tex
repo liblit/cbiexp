@@ -313,25 +313,17 @@ affinity list.  This second bug revealed what turned out to be a very
 common incorrect pattern of accessing the underlying object library
 (recall \autoref{sec:introduction}).  These bugs
 were confirmed and patches enthusiastically applied within a few days, in part because
-we could quantify the bugs as important crashing bugs.  It required
-several hours to isolate each of the two bugs, in part because \rhythmbox
-is complex and we were unfamiliar with it and in part because the bugs
-were violations of subtle invariants.  Note, however, that we could not have 
-even begun to
-understand these bugs without the information provided by our tool.
-
-\issue[Mayur]{Saying that we were unfamiliar with rhythmbox probably
-  connotes that we were familiar with bc, ccrypt, and exif, when in
-  fact we weren't.  So I think it should go.  Secondly, saying that
-  the bugs were violations of subtle invariants may connote that those
-  found in the other experiments weren't violations of subtle
-  invariants, which I think is not true.
-
-  How about saying that the bugs in \rhythmbox{} are related to
-  violations of complex heap invariants (as Alex noted long back) and
-  then mention that we currently do not track predicates on heap
-  structures (as Alex mentions at the end of the Background section
-  (sec 2)) and then round off the para by saying that we leave this
-  for future work?}
+we could quantify the bugs as important crashing bugs.
+It required several hours to isolate each of the two bugs, in part because \rhythmbox
+is complex and in part because the bugs were violations of subtle heap invariants which
+are not directly captured by our current instrumentation schemes.
+Note, however, that we could not have 
+even begun to understand these bugs without the information provided by our tool.
+We intend to explore schemes that instrument predicates on the heap structure in
+future work.
+% It required several hours to isolate each of the two bugs, in part because \rhythmbox
+% is complex and we were unfamiliar with it and in part because the bugs
+% were violations of subtle invariants.  Note, however, that we could not have 
+% even begun to understand these bugs without the information provided by our tool.
 
 %% LocalWords:  exps mossdilute ccrypt bc exif buf mnote rhythmbox
