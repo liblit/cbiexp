@@ -1,0 +1,155 @@
+\documentclass{acm_proc_article-sp}
+%% \documentclass{sig-alternate}
+
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{nicefrac}
+
+\newcommand{\placeholder}[1]{{\color[cmyk]{0,0.61,0.87,0}[#1]}}
+\pagenumbering{arabic}
+
+\title{\placeholder{Title Needed Here}
+  %%
+  \thanks{\placeholder{This grant boilerplate is from the PLDI'03
+    paper.  Newer text is needed here.}  This research was supported
+    in part by NASA Grant No. NAG2-1210; NSF Grant Nos. EIA-9802069,
+    CCR-0085949, ACI-9619020, and IIS-9988642; DOE Prime Contract
+    No. W-7405-ENG-48 through Memorandum Agreement No. B504962 with
+    LLNL; and a Lucent GRPW Fellowship.  The information presented
+    here does not necessarily reflect the position or the policy of
+    the Government and no official endorsement should be inferred.}}
+
+\numberofauthors{2}
+
+\makeatletter
+\newcommand*{\eecsMark}[0]{\@fnsymbol{2}}
+\newcommand*{\statMark}[0]{\@fnsymbol{3}}
+\makeatother
+\newcommand*{\eecs}[0]{\textsuperscript{\eecsMark}}
+\newcommand*{\stat}[0]{\textsuperscript{\statMark}}
+\newcommand*{\both}[0]{\textsuperscript{\eecsMark, \statMark}}
+
+\author{
+  \alignauthor
+  Mayur Naik \\
+  Alex Aiken \\
+  \vspace{1.5\baselineskip}
+  \affaddr{Computer Science Department} \\
+  \affaddr{353 Serra Mall} \\
+  \affaddr{Stanford University} \\
+  \affaddr{Stanford CA 94305-9025}
+  %%
+  \alignauthor
+  Ben Liblit \eecs \\
+  Alice X. Zheng \eecs \\
+  Michael I. Jordan \both \\
+  \vspace{0.5\baselineskip}
+  \affaddr{\eecs Department of Electrical Engineering and Computer Science} \\
+  \affaddr{\stat Department of Statistics} \\
+  \affaddr{University of California, Berkeley} \\
+  \affaddr{Berkeley, CA 94720-1776}}
+
+\bibliographystyle{abbrv}
+
+\begin{document}
+
+\conferenceinfo{PLDI'04,}{June 9--11, 2004, Washington, DC, USA.}
+\CopyrightYear{2004}
+%% \crdata{}
+\maketitle
+
+\begin{abstract}
+\placeholder{Abstract needed here.}
+\end{abstract}
+
+\category{D.2.5}{Software Engineering}{Testing and
+  Debugging}[distributed debugging]
+%%
+\category{G.3}{Mathematics of Computing}{Probability and
+  Statistics}[correlation and regression analysis]
+%%
+\category{I.5.2}{Pattern Recognition}{Design Methodology}[feature
+  evaluation and selection]
+
+\terms{Experimentation, Performance, Reliability}
+
+\keywords{bug isolation, random sampling, assertions, feature
+  selection, statistical debugging, logistic regression}
+
+\placeholder{The preceding categories, terms, and keywords were copied
+  from the PLDI'03 paper.  Some may need to be changed.  Note that the
+  categories and terms are \emph{not} free-form; see
+  \url{http://www.acm.org/sigs/pubs/proceed/sigguide-v2.1sp.htm}
+  sections 2.3.2 and 2.3.3 for details.}
+
+
+\section{Introduction}
+
+\placeholder{Page budget: 1.}
+
+
+\section{Background}
+
+\placeholder{Page budget: 1.}
+
+
+\section{\placeholder{Algorithm}}
+
+\placeholder{Page budget: 2.}
+
+
+\section{\placeholder{Experiments}}
+
+\subsection{\placeholder{Setup}}
+
+\placeholder{Page budget: 1.}
+
+\subsection{\placeholder{Results}}
+
+\placeholder{Page budget: 2, including pictures.}
+
+
+\section{\placeholder{Future Work / Alternate Approaches}}
+
+\placeholder{Page budget: \nicefrac{1}{2}.}
+
+\placeholder{Intended to cover three topics:
+
+  \begin{enumerate}
+  \item Non-uniform sampling via multiple counters.  Each acyclic
+    region can select a counter based on the frequency with which its
+    covered sites are expected to be hit.
+
+  \item Need for better statistical models.  This is a bit vague, but
+    should at least address problems we encountered using logistic
+    regression in the Moss experiment.
+
+  \item Exploiting program structure.
+  \end{enumerate}}
+
+
+\section{Related Work}
+
+\placeholder{Page budget: 1.}
+
+\placeholder{In addition to related papers discussed in our own prior
+  work, should also discuss:
+
+  \begin{itemize}
+  \item Podgurski's ICSE 2003 paper
+  \item that other rather older paper we all read; anybody remember
+    the title?
+  \item recent developments by anybody from the RAMSS workshop
+  \end{itemize}}
+
+
+\section{Conclusions}
+
+
+%%\bibliography{}
+\section{References}
+
+\placeholder{Page budget: 1.}
+
+
+\end{document}
