@@ -1,5 +1,6 @@
 %{ // -*- c++ -*-
 #include <cassert>
+#include <cerrno>
 #include <cstdio>
 #include <cstring>
 #include "units.h"
@@ -156,11 +157,17 @@ int main(int argc, char** argv)
 
 	sprintf(ifile, verbose_report_path_fmt, i);
 	FILE* ifp = fopen(ifile, "r");
-	assert(ifp);
+	if (!ifp) {
+	    fprintf(stderr, "cannot read %s: %s\n", ifile, strerror(errno));
+	    exit(1);
+	}
 
 	sprintf(ofile, compact_report_path_fmt, i);
 	ofp = fopen(ofile, "w");
-	assert(ofp);
+	if (!ofp) {
+	    fprintf(stderr, "cannot write %s: %s\n", ofile, strerror(errno));
+	    exit(1);
+	}
 
 	printf("r %d\n", i);
 	yyrestart(ifp);
