@@ -1,20 +1,21 @@
 \begin{table*}
-\caption{Run, site, and initial and retained predicate counts for each experiment}
+\caption{Summary statistics for bug isolation experiments}
 \label{tab:exps}
 \centering
-\begin{tabular}{lrrrrrr}
+\begin{tabular}{lrrrrrrr}
   \toprule
-  & \multicolumn{2}{c}{Runs} &
-  & \multicolumn{3}{c}{Predicate Counts} \\
-  \cmidrule{2-3}
-  \cmidrule{5-7}
-  & Successful & Failing & Sites & Initial & $\increase > 0$ & Elimination \\
+  & &
+  \multicolumn{2}{c}{Runs} & &
+  \multicolumn{3}{c}{Predicate Counts} \\
+  \cmidrule{3-4}
+  \cmidrule{6-8}
+  & Lines of Code & Successful & Failing & Sites & Initial & $\increase > 0$ & Elimination \\
   \midrule
-  \ccrypt     & 20684 & 10316 & 9948   & 58720  & 50      & 2 \\
-  \bc         & 23198 & 7802  & 50171 & 298482 & 147 & 2 \\ 
-  \moss       & 26299 & 5598  & 35223  & 202998 & 2740    & 21 \\
-  \rhythmbox  & 12530 & 19431 & 145176 & 857384 & 537     & 15 \\
-  \exif       & 30789 & 2211  & 27380  & 156476 & 272     & 3 \\ 
+  \ccrypt     & 5276   & 20,684 & 10,316 & 9948    & 58,720  & 50      & 2 \\
+  \bc         & 14,288 & 23,198 & 7802   & 50,171  & 298,482 & 147     & 2 \\ 
+  \moss       & 6001   & 26,299 & 5598   & 35,223  & 202,998 & 2740    & 21 \\
+  \rhythmbox  & 56,484 & 12,530 & 19,431 & 14,5176 & 857,384 & 537     & 15 \\
+  \exif       & 10,588 & 30,789 & 2211   & 27,380  & 156,476 & 272     & 3 \\ 
   \bottomrule
 \end{tabular}
 \end{table*}
