@@ -18,13 +18,19 @@
   />
 
 
+  <!-- should we offer zoom pages? -->
+  <xsl:param name="link-to-zoom" select="true()"/>
+
+
   <!-- extra column headers for our own additional information -->
   <xsl:template mode="dynamic-headings" match="view">
     <th>Initial Score</th>
     <th>Initial Thermometer</th>
     <th>Effective Score</th>
     <th>Effective Thermometer</th>
-    <th>Zoom</th>
+    <xsl:if test="$link-to-zoom">
+      <th>Zoom</th>
+    </xsl:if>
   </xsl:template>
 
 
@@ -34,12 +40,14 @@
     <xsl:apply-imports/>
     <td><xsl:value-of select="@effective"/></td>
     <xsl:apply-templates select="bug-o-meter"/>
-    <td class="link">
-      <xsl:call-template name="zoom-link">
-	<xsl:with-param name="projection" select="@projection"/>
-	<xsl:with-param name="index" select="@index"/>
-      </xsl:call-template>
-    </td>
+    <xsl:if>
+      <td class="link">
+	<xsl:call-template name="zoom-link">
+	  <xsl:with-param name="projection" select="@projection"/>
+	  <xsl:with-param name="index" select="@index"/>
+	</xsl:call-template>
+      </td>
+    </xsl:if>
   </xsl:template>
 
 
