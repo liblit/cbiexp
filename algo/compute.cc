@@ -33,7 +33,7 @@ inline void obs(int r, int u, int c)
         data[u][c].of++; 
 }
 
-inline void print_pred(FILE* fp, int u, int c, int p, char* pred_kind, char* site_name)
+inline void print_pred(FILE* fp, int u, int c, int p, const char* pred_kind, const char* site_name)
 {
     int s  = data[u][c].S[p];
     int f  = data[u][c].F[p];

@@ -14,10 +14,8 @@ main(int argc, char** argv)
     fprintf(ofpu, "#include \"def.h\"\n\n");
     fprintf(ofpu, "unit_t units[] = {\n");
 
-    FILE* ofps = fopen("sites.h", "w");
+    FILE* ofps = fopen("sites.txt", "w");
     assert(ofps);
-    fprintf(ofps, "#ifndef SITES_H\n#define SITES_H\n\n");
-    fprintf(ofps, "char* sites[] = {\n");
 
     while (1) {
         char s[1000], *unit, *scheme, *t;
@@ -44,7 +42,7 @@ main(int argc, char** argv)
             fgetc(ifp);  // eat '\n'
             if (strncmp(p, "</sites", 7) == 0)
                 break;
-            fprintf(ofps, "\t\"%s\",\n", p);
+            fprintf(ofps, "%s\n", p);
             count++;
         }
 
@@ -62,7 +60,6 @@ main(int argc, char** argv)
 
     fprintf(ofpu, "};\n\n#endif\n");
     fclose(ofpu);
-    fprintf(ofps, "};\n\n#endif\n");
     fclose(ofps);
 
     return 0;
