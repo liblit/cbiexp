@@ -213,7 +213,7 @@ compute-results: $(tooldir)/compute_results.o sites.o units.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
 clean:: ; rm -f compute-results
 
-$(datadir)/stamp-convert-reports:
+$(datadir)/stamp-convert-reports: s.runs f.runs
 	$(build) convert-reports
 	./convert-reports --runs-directory=$(datadir)
 	touch $@
