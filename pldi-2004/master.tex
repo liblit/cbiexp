@@ -428,8 +428,9 @@ indicating whether the true or false branches were ever taken.
 
 \item[returns:] In C, the
   sign of a return value is often used to signal success or failure.
-  At each scalar-returning function call site, we track three predicates:
-  whether the returned value is ever negative, zero, or positive.  
+  At each scalar-returning function call site, we track six predicates:
+  whether the returned value is ever $< 0$, $\le 0$, $> 0$, $\ge 0$,
+  $= 0$, or $\ne 0$.
 %  For
 %  pointer-returning calls, this scheme reduces to counting
 %  \texttt{NULL} versus non-\texttt{NULL}.  
@@ -441,14 +442,6 @@ indicating whether the true or false branches were ever taken.
 %  instrumentation site with three counters: number of negative
 %  returns, number of zero returns, and number of positive returns.
 %%
-  \issue[Mayur]{ returns: ... We track three predicates: ...
-
-    $\leftarrow$
-
-    returns: ... We track six predicate: ...
-    
-    We should make the explanation of the returns scheme very similar
-    to that of the scalar-pairs scheme.}
 
 \item[scalar-pairs:] Many bugs
   concern boundary issues in the relationship between a 
