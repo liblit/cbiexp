@@ -101,35 +101,35 @@ int cur_run;
 
 void process_s_site(int u, int c, int x, int y, int z)
 {
-	if (x + y + z > 0) {
+	if (x || y) {
 		inc_obs(cur_run, u, c, 0);
 		inc_obs(cur_run, u, c, 1);
 		inc_obs(cur_run, u, c, 2);
 		inc_obs(cur_run, u, c, 3);
 		inc_obs(cur_run, u, c, 4);
 		inc_obs(cur_run, u, c, 5);
-		if (x > 0)
+		if (x)
 			inc_tru(cur_run, u, c, 0);
-		if (y + z > 0)
+		if (y || z)
 			inc_tru(cur_run, u, c, 1);
-		if (y > 0)
+		if (y)
 			inc_tru(cur_run, u, c, 2);
-		if (x + z > 0)
+		if (x || z)
 			inc_tru(cur_run, u, c, 3);
-		if (z > 0)
+		if (z)
 			inc_tru(cur_run, u, c, 4);
-		if (x + y > 0)
+		if (x || y)
 			inc_tru(cur_run, u, c, 5);
 	}
 }
 
 void process_b_site(int u, int c, int x, int y)
 {
-	if (x + y > 0) {
+	if (x || y) {
 		inc_obs(cur_run, u, c, 0);
 		inc_obs(cur_run, u, c, 1);
-		if (x > 0) inc_tru(cur_run, u, c, 0);
-		if (y > 0) inc_tru(cur_run, u, c, 1);
+		if (x) inc_tru(cur_run, u, c, 0);
+		if (y) inc_tru(cur_run, u, c, 1);
 	}
 }
 
