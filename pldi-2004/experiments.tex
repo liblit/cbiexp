@@ -1,7 +1,19 @@
 
 This section describes the results of applying the algorithm discussed
 in \Autoref{sec:algorithm} to the experiment described in
-\Autoref{sec:experiments:setup}.  We performed 31,996 random runs of
+\Autoref{sec:experiments:setup}.  We briefly summarize the results.  
+The algorithm identified a cause that would be useful to a programmer
+examining these results for 7 of the 9 bugs.  For the 2 other bugs,
+one of the bugs (bug \#7) occurred in our experiment but never caused
+the program to fail; the other missing bug (bug \#8) was never
+triggered at all.  For 5 of the 7 bugs that led to program failures,
+the causes of the bugs were ranked very high in the initial results.  The
+remaining 2 bugs had causes that were ranked very near the top once
+we removed the other 5 bugs we ``found'' with our tool from the
+experiment.  A surprise was that we found a bug \#10; the results
+showed us a previously undiscovered bug in \moss.
+
+We performed 31,996 random runs of
 \moss\footnote{Which, not coincidentally, turns out to be the maximum
 number of files and subdirectories permitted in a Linux directory.
 The results of each run is saved in its own subdirectory.}  Of these,
@@ -44,6 +56,8 @@ reached.  We used a separate downsampling program to generate sparser
 samples from this full data; thus, we were able to use the same set of
 runs to test the effect of different sampling rates on the results.
 
+The time to run our algorithm on all the runs is about seven minutes on
+a fast machine.
 Step one of our algorithm eliminates almost all of the predicates.  At
 1/100 sampling, the numbers of predicates with a positive
 $\increase(\ldots)$ score are
@@ -64,7 +78,124 @@ eliminated, but clearly ranking is still important because of the
 large number of predicates that remain.
 
 \subsection{The Bugs}
-\placeholder{Alex writes this}
+
+Because the branches instrumentation and the returns instrumentation
+have short lists and, in our experience, yield high quality
+predicates, we began by examining those two lists.  We expect this is
+what a programmer or QA engineer examining these results would do as well.
+
+\begin{figure*}
+\begin{centering}
+\begin{verbatim}
+0.94 Inc, 1.00 Cr, 0.06 Co, process_file_pass2, line 5523
+0.80 Inc, 1.00 Cr, 0.20 Co, handle_options, line 5742
+0.80 Inc, 1.00 Cr, 0.20 Co, string2lang, line 4366
+0.78 Inc, 1.00 Cr, 0.22 Co, handle_options, line 5789
+\end{verbatim}
+
+\caption{The top four entries from the branches report.}
+\label{fig-report}
+\end{figure*}
+
+The branches report has 4 predicates with a 1.0 crash rating, shown
+in Figure~\ref{fig-report}.  Each line of the report lists the
+increase, crash, and context scores of a predicate, as well as the 
+function name and line number where it occurs.  We have dropped some fields of the report (such as the text of the predicate itself and the number of failing and successful runs in which the predicate is observed) to avoid cluttering the
+figure.
+
+The first predicate listed does not immediately suggest what the cause
+of failure might be. By looking at the failure log, we see that this predicate
+is highly correlated with a subset of the runs in which bug \#6 is
+triggered; an engineer with a deep understanding of how \moss\ works
+might be able to figure out the bug from this predicate alone.
+\placeholder{Need to confirm with Mayur that in fact this predicate is bug \#6.}
+The next three predicates are obvious ``hits''. The second predicate
+says that when comment matching is turned on, the program is
+guaranteed to fail; this is bug \#1, and the predicate points directly
+to the fact that something is wrong in the comment matching code.
+Recall that bug \#1 is non-deterministic; why then is the crash score 1.0?
+The discrepancy is the result of sampling error.  In the full data set
+(with 1/1 sampling) the crash measure for this predicate is .88.  The
+next predicate marks the test for whether \moss\ is analyzing Lisp
+programs; the crash score of 1.0 tells us that whenever a Lisp program is
+processed, \moss\ crashes.  The last predicate in
+Figure~\ref{fig-report} is a much more obvious cause of 
+bug \#6; it reveals that whenever the amount of memory to use is set
+via a command line option, the program will crash.\footnote{The full data set shows that bug \#6 is non-deterministic with respect to this predicate, so once again the certainty that the program will crash is the result of sampling error.}  All three of these predicates illustrate the potential of our method to
+help pinpoint the root cause of a crash rather than just where the crash
+happened.  Each of these predicates immediately suggests
+what test case to try to reproduce the bug. 
+
+The ninth listed cause in the branches report says that whenever the
+user supplies the command line option to write a database, the chance
+of failure jumps to 62\% (bug \#2), and the fourteenth ranked cause
+says that whenever a database is read the chance of failure is 55\%
+(bug \#3).  All the other causes between the 5th and 21st in the branches report are predicates that also implicate one of bugs 1, 2, 3, 5, or 6.  Below
+the 22nd listed cause the $\increase(\ldots)$ score for the predicates is
+only 1\%; we did not examine these predicates.
+
+The returns report is also quite interesting.  Recall that this
+instrumentation scheme samples the return values of functions (whether
+they are negative, positive, or zero).  The first two entries in this
+report are the results of string compares that point directly to bug
+\#5.  The third entry is the {\tt open} call in the function that writes
+a database; the predicate shows that when this function returns {\tt NULL},
+the program is guaranteed to crash (i.e., 1.0 crash score).  This is the
+cause of bug \#2.
+
+The fourth entry of the full data (not the 1/100 downsampled data)
+returns report is very interesting.  This predicate shows that one of
+the file read operations in the function that loads a database can
+fail, and when it does the program itself fails with probability .64.
+It turns out that \moss\ was written assuming that the databases it
+loaded would never be corrupt, because it does no checking to ensure
+that the file reads that load databases succeed.  This is a previously
+unknown bug in \moss.  It is a bit surprising that it was detected,
+because a run is only labeled a failure in our experiment if the
+reference \moss\ and the buggy \moss\ differ in their outcome, and
+this bug is present in both.  Thus, this bug could only be detected
+when another one of the introduced bugs was also triggered in the same
+run and caused the buggy version of \moss\ to fail in a different way.
+This explains the very low $\increase(\ldots)$ score for this
+predicate (the chance of failure only increases by 11\% when this bug
+occurs) and why it was not observed in the 1/100 downsampled data.\footnote{With enough runs it would be observed at any sampling rate, but the anomaly that
+the reference and buggy versions of \moss\ share this bug means that likely
+many more runs are needed for 1/100 sampling than we did for this experiment.}
+
+Bugs \#4 and \#9 have no causes in either the branches or the returns
+reports, as they are not correlated with any branch nor correlated
+with the result of any function call.  In the initial scalar-pairs
+report the highest-ranked cause of these bugs that we could find was
+in position 85 (for bug \#4) and 289 (for bug \#9).
+\placeholder{These locations are far too pessimistic, as many of these
+predicates are not unique; we should remove the redundant ones and
+then see where these predicates are, but if we don't have time it just
+us makes us look worse than necessary to report these numbers. - Alex}
+Even though these predicates are highly ranked in a list of thousands
+of scalar-pairs predicates, it is likely that the cause of bug \#9, at
+least, would be overlooked in this report.
+
+The problem is that there are many highly ranked scalar-pairs
+predicates that point to the other bugs besides
+\#4 and \#9.  To verify this, we simulated what would happen once bugs
+\#1, \#2, \#3, \#5, and \#6 were fixed by removing all failing runs where
+these bugs occurred from our data and rerunning the algorithm.  Once
+we did that, the obvious cause of bug \#4 was 7th on the list in the
+scalar-pairs report, and the obvious cause of bug \#9 was listed 28th,
+with the other causes between 1 and 28 being other predicates that
+were correlated with (and in some cases more deterministic than) bug
+\#4.
+
+Finally, we compared the reports generated from 1/100 sampled data
+with the reports generated from 1/1 sampled data.  The reports were
+similar, but not identical.  In particular the ordering of the
+predicates was slightly different and a few predicates with relatively
+few observations or a low $\increase(\ldots)$ score, and thus very
+sensitive to whether one or two successful or failing runs were
+observed or not, appeared on one list and not the other.
+
+\placeholder{ We need to comment on the ``big picture'' with our results,
+and observe the relative weakness of scalar pairs compared to the other two.}
 
 \subsection{Analysis of Predicate Elimination}
 \placeholder{Mayur writes this}

@@ -177,11 +177,12 @@ We can now state our algorithm:
 \item Sort the remaining predicates lexicographically first by $\crash(P)$ and then by $\context(P)$.
 \end{enumerate}
 
+\placeholder{ I observe that in downsampled data we have ``causes'' that are well-ranked based on only 1 failing run.  I think we should discard these, too.}
 A few comments on this algorithm are in order.  First, pruning
 predicates using $\increase(P) \leq 0$ has many desirable
 properties.  It is easy to prove that large classes of irrelevant
 predicates always have scores $\leq 0$.  For example, any predicate
-that is not reached, that is a program invariant, or that is just
+that is not reached, that is a program invariant, or that is obviously
 control-dependent on a true cause is eliminated by this test.  It is
 also worth pointing out that this algorithm tends to localize bugs at
 a point where the condition that causes the bug becomes true, rather than at
