@@ -210,20 +210,26 @@
     </td>
     <td><xsl:value-of select="@function"/>()</td>
     <td>
-      <xsl:variable name="source-dir" select="document('summary.xml')/experiment/@source-dir"/>
-      <xsl:variable name="prefix">
-	<xsl:choose>
-	  <xsl:when test="starts-with(@file, '/')"/>
-	  <xsl:when test="not($source-dir)"/>
-	  <xsl:otherwise>
-	    <xsl:value-of select="concat($source-dir, '/')"/>
-	  </xsl:otherwise>
-	</xsl:choose>
-      </xsl:variable>
-      <a href="{$prefix}{@file}.html#line{@line}">
-	<xsl:value-of select="@file"/>:<xsl:value-of select="@line"/>
-      </a>
+      <xsl:apply-templates select="." mode="source-link"/>
     </td>
+  </xsl:template>
+
+
+  <!-- link to a single line of source code -->
+  <xsl:template match="info" mode="source-link">
+    <xsl:variable name="source-dir" select="document('summary.xml')/experiment/@source-dir"/>
+    <xsl:variable name="prefix">
+      <xsl:choose>
+	<xsl:when test="starts-with(@file, '/')"/>
+	<xsl:when test="not($source-dir)"/>
+	<xsl:otherwise>
+	  <xsl:value-of select="concat($source-dir, '/')"/>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <a href="{$prefix}{@file}.html#line{@line}">
+      <xsl:value-of select="@file"/>:<xsl:value-of select="@line"/>
+    </a>
   </xsl:template>
 
 
