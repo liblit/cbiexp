@@ -79,9 +79,9 @@ snapshot_moss_bad 'mossbad2';
 
 
 sub diff ($$) {
-    check_system "cmp -s @_";
-    die "cmp error" if $? > 1;
-    return $?;
+    my $status = check_system "cmp -s @_";
+    die "cmp error on @_" if $status > 1;
+    return $status;
 }
 
 
