@@ -326,26 +326,6 @@ get_ts_ordering: $(tooldir)/get_ts_ordering.o units.o sites.o
 W.dat: get_ts_ordering $(datadir)/stamp-extract-timestamps
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --timestamp-when=first
 
-get_tp_weights: $(tooldir)/get_tp_weights.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
-
-X.dat: get_tp_weights 
-	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
-
-mult_WX: $(tooldir)/mult_WX.o units.o sites.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
-
-WX: mult_WX
-	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir)
-
-compute_pred_scores: $(tooldir)/compute_pred_scores.o sites.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
-
-predscores: compute_pred_scores
-	$(build) pred-scores.dtd scores.dtd
-	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name)
-	xmllint --valid --noout pred_scores.xml
-
 collect_parmstats: $(tooldir)/collect_parmstats.o units.o sites.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
 clean:: ; rm -f colect_parmstats
@@ -375,6 +355,26 @@ calc_truthprobs: $(tooldir)/calc_truthprobs.o units.o sites.o
 #truthprobs: calc_truthprobs parmstats.txt preds.txt
 truthprobs: calc_truthprobs
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
+
+get_tp_weights: $(tooldir)/get_tp_weights.o units.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
+
+X.dat: get_tp_weights 
+	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
+
+mult_WX: $(tooldir)/mult_WX.o units.o sites.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
+
+WX: mult_WX
+	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir)
+
+compute_pred_scores: $(tooldir)/compute_pred_scores.o sites.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
+
+predscores: compute_pred_scores
+	$(build) pred-scores.dtd scores.dtd
+	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name)
+	xmllint --valid --noout pred_scores.xml
 
 symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml links
 	xsltproc --output $@ $<

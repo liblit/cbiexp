@@ -255,6 +255,23 @@ Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsig
     update(coords, 3, x+y+z+w, w);
 }
 
+/****************************************************************************
+ * Utilities
+ ***************************************************************************/
+
+PredCoords
+notP (PredCoords &p) {
+  PredCoords notp(p);
+  if (p.predicate % 2 == 0) {
+    notp.predicate = p.predicate + 1;
+  }
+  else {
+    notp.predicate = p.predicate - 1;
+  }
+
+  return notp;
+}
+
 
 /****************************************************************************
  * Print results to file
@@ -298,20 +315,31 @@ operator<< (ostream &out, const PredPair &pp)
 void print_results()
 {
     ofstream parmsfp ("parmstats.txt", ios_base::trunc);
+    ofstream notpparmsfp ("notp-parmstats.txt", ios_base::trunc);
     while (!retainedPreds.empty()) {
 	PredCoords &coords = retainedPreds.front();
+	PredCoords notp = notP(coords);
 	pred_hash_t::iterator found = predHash.find(coords);
+	pred_hash_t::iterator found2 = predHash.find(notp);
 	if (found == predHash.end()) {
 	    cerr << "Cannot find stats for predicate " << coords << endl;
+	    exit(1);
+	}
+	if (found2 == predHash.end()) {
+	    cerr << "Cannot find stats for predicate " << notp << endl;
 	    exit(1);
 	}
 
 	PredPair &pp = found->second;
 	parmsfp << coords << '\n' << pp;
 
+	PredPair &notpp = found2->second;
+	notpparmsfp << notp << '\n' << notpp;
+
 	retainedPreds.pop();
     }
     parmsfp.close();
+    notpparmsfp.close();
 }
 
 
@@ -375,7 +403,9 @@ int main(int argc, char** argv)
     pred_info pi;
     while (read_pred_full(pfp, pi)) {
 	PredPair &pp = predHash[pi];
+	PredPair &notpp = predHash[notP(pi)];
 	pp.init();
+	notpp.init();
 	retainedPreds.push(pi);
     }
 

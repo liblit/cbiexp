@@ -615,20 +615,16 @@ inline void free_gsl_generator ()
 
 
 /****************************************************************************
- * MAIN
+ * Driver routine
  ***************************************************************************/
-
-int main(int argc, char** argv)
+void
+driver (char *infn, char *outfn)
 {
-    process_cmdline(argc, argv);
+    ofstream parmsfp (outfn, ios_base::trunc);
 
-    init_gsl_generator();
-
-    ofstream parmsfp ("hyperparms.txt", ios_base::trunc);
-
-    FILE *fp = fopenRead("parmstats.txt");
+    FILE *fp = fopenRead(infn);
     if (!fp) {
-	cerr << "Cannot open parmstats.txt for reading\n";
+	cerr << "Cannot open " << infn << " for reading\n";
 	exit(1);
     }
     
@@ -641,8 +637,23 @@ int main(int argc, char** argv)
 
     fclose(fp);
     parmsfp.close();
-    logfp.close();
 
+}
+
+/****************************************************************************
+ * MAIN
+ ***************************************************************************/
+
+int main(int argc, char** argv)
+{
+    process_cmdline(argc, argv);
+
+    init_gsl_generator();
+
+    driver("parmstats.txt", "hyperparms.txt");
+    driver("notp-parmstats.txt", "notp-hyperparms.txt");
+
+    logfp.close();
     free_gsl_generator();
 
     return 0;

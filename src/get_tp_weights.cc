@@ -29,8 +29,10 @@ static double score1 = 0.0, score2 = 0.0, score_n1 = 0.0, score_n2 = 0.0;
 static double score3 = 0.0;
 static ofstream logfp("truthprobs.txt", ios_base::trunc);
 static ofstream datfp("X.dat", ios_base::trunc);
+static ofstream notdatfp("notX.dat", ios_base::trunc);
 
 static vector<PredCoords> predVec;
+static vector<PredCoords> notpredVec;
 
 /****************************************************************
  * Predicate-specific information
@@ -313,38 +315,60 @@ void
 read_parms()
 {
   FILE *fp = fopenRead("hyperparms.txt");
+  FILE *notpfp = fopenRead("notp-hyperparms.txt");
   if (!fp) {
     cerr << "Cannot open hyperparms.txt for reading\n";
     exit(1);
   }
+  if (!notpfp) {
+    cerr << "Cannot open notp-hyperparms.txt for reading\n";
+    exit(1);
+  }
 
   queue<PredCoords> predQueue;
+  queue<PredCoords> notpredQueue;
   PredCoords coords;
   PredInfoPair pp;
   int ctr;
   
   while (true) {
+      // read info for predicate p
       ctr = fscanf(fp, "%u\t%u\t%u\n", 
 		   &coords.unitIndex, &coords.siteOffset, &coords.predicate);
       if (feof(fp))
 	  break;
       assert(ctr == 3);
-
       predQueue.push(coords);
-
       pp.f.set_parms(fp);
       pp.s.set_parms(fp);
-
       predHash[coords] = pp;
+
+      // read info for predicate ~p
+      ctr = fscanf(notpfp, "%u\t%u\t%u\n", 
+		   &coords.unitIndex, &coords.siteOffset, &coords.predicate);
+      assert(ctr == 3);
+      notpredQueue.push(coords);
+      pp.f.set_parms(notpfp);
+      pp.s.set_parms(notpfp);
+      predHash[coords] = pp;
+
   }
 
   fclose(fp);
+  fclose(notpfp);
 
   predVec.resize(predQueue.size());
   int i = 0;
   while (!predQueue.empty()) {
       predVec[i++] = predQueue.front();
       predQueue.pop();
+  }
+
+  notpredVec.resize(notpredQueue.size());
+  i = 0;
+  while (!notpredQueue.empty()) {
+      notpredVec[i++] = notpredQueue.front();
+      notpredQueue.pop();
   }
 }
 
@@ -378,6 +402,7 @@ operator<< (ostream &out, const vector<PredCoords> &pv)
 void print_results()
 {
   datfp << predVec << endl;
+  notdatfp << notpredVec << endl;
 }
 
 
