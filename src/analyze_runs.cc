@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <libgen.h>
+#include <string>
 #include "compiler.h"
 #include "shell.h"
 
@@ -38,6 +39,8 @@
 DO NOT EDIT ANYTHING BELOW THIS
  **************************************************************************/
 
+using std::string;
+
 bool do_process_labels = false;
 bool do_map_sites = false;
 bool do_convert_reports = false;
@@ -53,7 +56,7 @@ char* confidence = DEFAULT_CONFIDENCE;
 
 char* sruns_txt_file = NULL;
 char* fruns_txt_file = NULL;
-char* sites_txt_file = NULL;
+string sites_txt_file;
 char* sites_src_file = NULL;
 char* units_src_file = NULL;
 char* preds_txt_file = NULL;
@@ -146,7 +149,8 @@ void process_cmdline(int argc, char** argv)
 	}
 	if (!strcmp(argv[i], "-st")) {
 	    i++;
-	    sites_txt_file = argv[i];
+	    sites_txt_file += argv[i];
+	    sites_txt_file += ' ';
 	    continue;
 	}
 	if (!strcmp(argv[i], "-ss")) {
@@ -260,7 +264,7 @@ void gen_views(char* preds_file, int prefix)
     shell("%s -r %s -p %d", GEN_VIEWS, result_summary_htm_file, prefix);
 }
 
-void REQUIRE(char* main_opt, char* sub_opt, char* s)
+void REQUIRE(char* main_opt, char* sub_opt, bool s)
 {
     if (!s) {
         printf("When you specify %s, you must also specify %s\n", main_opt, sub_opt);
@@ -299,14 +303,15 @@ int main(int argc, char** argv)
     }
 
     if (do_map_sites) {
-	REQUIRE("-do-map-sites", "-st", sites_txt_file);
+	REQUIRE("-do-map-sites", "-st", !sites_txt_file.empty());
 	FORBID ("-do-map-sites", "-ss", sites_src_file);
 	FORBID ("-do-map-sites", "-us", units_src_file);
 	puts("Mapping sites ...");
 	sites_src_file = DEFAULT_SITES_SRC_FILE;
 	units_src_file = DEFAULT_UNITS_SRC_FILE;
 	shell("%s/map_sites.sed %s | %s/" MAP_SITES " -ss %s.cc -us %s.cc",
-	      bindir, sites_txt_file, bindir, sites_src_file, units_src_file);
+	      bindir, sites_txt_file.c_str(), bindir,
+	      sites_src_file, units_src_file);
 	shell("%s -I%s -c %s.cc", compiler, incdir, sites_src_file);
 	shell("%s -I%s -c %s.cc", compiler, incdir, units_src_file);
     }
