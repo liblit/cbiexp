@@ -169,7 +169,7 @@ print_scores()
   ofstream outfp ("pred_scores.xml");
   outfp << "<?xml version=\"1.0\"?>" << endl
         << "<?xml-stylesheet type=\"text/xsl\" href=\"" 
-	<< XMLTemplate::format("scores") << ".xsl\"?>" << endl
+	<< XMLTemplate::format("pred-scores") << ".xsl\"?>" << endl
 	<< "<!DOCTYPE scores SYSTEM \"pred-scores.dtd\">" << endl
 	<< "<scores>" << endl;
 

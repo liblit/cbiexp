@@ -49,6 +49,7 @@ links :=					\
 	operand.dtd				\
 	operands.xsl				\
 	pred-scores.dtd				\
+	pred-scores.xsl				\
 	predictor-info.dtd			\
 	projected-view.dtd			\
 	projected-view.xsl			\
@@ -372,7 +373,7 @@ compute_pred_scores: $(tooldir)/compute_pred_scores.o sites.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
 
 predscores: compute_pred_scores
-	$(build) pred-scores.dtd scores.dtd
+	$(build) links
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name)
 	xmllint --valid --noout pred_scores.xml
 

@@ -8,7 +8,6 @@
   >
 
   <xsl:import href="operands.xsl"/>
-  <xsl:import href="bug-o-meter.xsl"/>
 
   <xsl:output
     method="xml"
@@ -74,7 +73,6 @@
 
   <xsl:template match="scores" mode="dynamic-headings">
     <th>Score</th>
-    <th>Thermometer</th>
   </xsl:template>
 
   <xsl:template match="scores" mode="static-headings">
@@ -105,8 +103,6 @@
   <!-- simple score value in a single table cell -->
   <xsl:template match="predictor" mode="dynamic-cells">
     <td><xsl:value-of select="@score"/></td>
-    <xsl:variable name="index" select="number(@index)"/>
-    <xsl:apply-templates select="document('predictor-info.xml')/predictor-info/info[$index]/bug-o-meter"/>
   </xsl:template>
 
 
