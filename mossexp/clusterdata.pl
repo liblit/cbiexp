@@ -151,7 +151,7 @@ while ($numruns-- > 0) {
 	    }
 	    $item = $parameters[$i++];
 	}
-	for(; $parameters[$i] != -1; $i++) { }
+	for(; $parameters[$i] ne -1; $i++) { }
 	$i++;
 	$full_option_list .= $res . " ";
    }
