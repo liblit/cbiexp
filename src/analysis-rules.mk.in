@@ -92,7 +92,7 @@ $(publish)/%: %
 	cp $< $@
 
 stamp-src: $(tooldir)/htmlify-sources
-	./$< $(experiment)/src
+	$< $(experiment)/src
 	touch $@
 clean:: ; rm -rf stamp-src src
 
@@ -123,7 +123,7 @@ project: $(tooldir)/project.o sites.o units.o $(tooldir)/libanalyze.a $(tooldir)
 clean:: ; rm -f project
 
 $(topRho): top-rho_%: $(tooldir)/top-rho all_% rho.bin
-	./$<
+	$<
 	$(build) rho.dtd
 	xmllint --valid --noout $(topRho)
 clean:: ; rm -f $(topRho)
@@ -137,16 +137,16 @@ $(corrdir)/readsp.mexglx: force
 	$(MAKE) -C $(@D) $(@F)
 
 calculate.m: $(corrdir)/genMscript.pl $(sparsebase:=.meta)
-	$(time) ./$< .
+	$(time) $< .
 clean:: ; rm -f calculate.m
 
 $(sparse): $(corrdir)/mhn2sparsemat.pl f.runs s.runs obs.txt tru.txt
-	$(time) ./$< . .
+	$(time) $< . .
 	for goal in $(sparse); do test -r $$goal; done
 clean:: ; rm -f $(sparse)
 
 $(corrected): all_hl_corrected-%.xml: $(tooldir)/corrective-ranking/% f.runs obs.txt tru.txt
-	$(time) ./$< --zoom --begin-runs=$(training-runs) --runs-directory=$(datadir) $(corrected_view_flags)
+	$(time) $< --zoom --begin-runs=$(training-runs) --runs-directory=$(datadir) $(corrected_view_flags)
 	$(build) bug-o-meter.dtd corrected-view.dtd link-cell.css logo.css projected-view.dtd view.dtd
 	xmllint --valid --noout $@
 	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
