@@ -1,6 +1,6 @@
 SUBDIRS = corrective-ranking Score
 
-AM_CPPFLAGS = -W -Wall -Werror -Wformat $(BOOST_CPPFLAGS)
+AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 $(BOOST_CPPFLAGS)
 
 EXTRA_DIST =					\
 	summary.css				\
