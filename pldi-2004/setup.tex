@@ -92,13 +92,11 @@ that could cause the program to overrun the bounds of an array.  When
 this bug is triggered the program may terminate with correct output,
 terminate with incorrect output, or crash.
 
-
-\item \moss\ handles Lisp programs differently from other languages;
-at one time all languages where handled in the same manner, but the
-others have been gradually ported to an improved algorithm.  The Lisp
-processing involves a standard hash table.  We removed one of the
-end-of-bucket checks, which causes a crash when the program scans to
-the end of a hash bucket and tries to dereference a \texttt{NULL} pointer. 
+\item For historical reasons, \moss\ handles Lisp programs differently
+from all other languages.  The Lisp processing involves a standard
+hash table.  We removed one of the end-of-bucket checks, which
+causes a crash when the program scans to the end of a hash bucket
+and tries to dereference a \texttt{NULL} pointer.
 
 \item For efficiency \moss\ preallocates a large area of memory for its primary data structure.
 When this area of memory is filled, the program should fail
