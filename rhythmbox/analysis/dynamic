@@ -1,22 +1,31 @@
-#!/bin/sh -e
+#!/usr/bin/perl -w
 
-cd "`dirname $0`"
-root=$PWD/../..
-experiment=$PWD/..
-analysis=$PWD
-data=$experiment/data
+use strict;
+use FileHandle;
+use FindBin;
 
-count=`cat $data/stamp-labels`
-#count=10
+chdir $FindBin::Bin;
 
-$root/bin/analyze-runs \
-    -do-process-labels \
-    -do-convert-reports \
-    -do-compute-results \
-    -do-print-results-1 \
-    -n $count \
-    -l $data/%d/label \
-    -vr $data/%d/reports \
-    -cr $data/%d/reports.new \
-    -ss sites \
-    -us units
+my $root = "$FindBin::Bin/../..";
+my $experiment = "$FindBin::Bin/..";
+my $analysis = "$FindBin::Bin";
+my $data = "$experiment/data";
+
+my $count = (new FileHandle "$data/stamp-labels")->getline;
+chomp $count;
+
+my @command = ("$root/bin/analyze-runs",
+	       '-do-process-labels',
+	       #'-do-convert-reports',
+	       '-do-compute-results',
+	       '-do-print-results-1',
+	       '-n', $count,
+	       '-l', "$data/%d/label",
+	       #'-vr', "$data/%d/reports",
+	       '-cr', "$data/%d/reports.new",
+	       '-ss', 'sites',
+	       '-us', 'units',
+	       #'-s', 's.runs',
+	       #'-f', 'f.runs',
+	       );
+exec @command;
