@@ -16,6 +16,22 @@ AM_INIT_AUTOMAKE
 AC_PROG_CXX
 AC_PROG_RANLIB
 
+AC_LANG(C++)
+AC_REQUIRE_CPP
+
+# old versions of g++ die on large site info arrays
+if test "$GXX" = yes; then
+  AC_MSG_CHECKING(for GNU C++ compiler version)
+  AC_PREPROC_IFELSE([AC_LANG_PROGRAM([[
+#include <ansidecl.h>
+#if GCC_VERSION < 3003
+#error
+#endif]])],
+    [AC_MSG_RESULT(3.3.x or later)],
+    [AC_MSG_RESULT(earlier than 3.3.x)
+    AC_MSG_WARN(this compiler version may not handle large numbers of sites)])
+fi
+
 
 ########################################################################
 #
