@@ -137,16 +137,18 @@ pdfpagemode=UseOutlines
 \maketitle
 
 \begin{abstract}
-  We present a statistical debugging algorithm that is
-  robust in the face of multiple undiagnosed bugs.  The algorithm
-  identifies program behaviors that significantly increase the
-  likelihood of failure.  These predictors reveal both the
+  We present a statistical debugging algorithm that is able to
+  isolate bugs in programs containing multiple undiagnosed bugs.  
+  Earlier statistical algorithms that focus solely on identifying
+  predictors that correlate with program failure perform poorly
+  when there are multiple bugs.  Our new technique separates the
+  effects of different bugs and identifies predictors that are
+  associated with individual bugs.  These predictors reveal both the
   circumstances under which bugs occur as well as the frequencies of
   failure modes, making it easier to prioritize debugging efforts.
-  Our algorithm is validated using several case studies, including finding
-  previously unknown and significant crashing bugs in widely used systems.
-  We compare our technique with an earlier algorithm and find it much more accurate
-  and scalable.
+  Our algorithm is validated using several case studies.  These 
+  case studies include examples in which the algorithm found previously 
+  unknown, significant crashing bugs in widely used systems.  
 \end{abstract}
 
 
@@ -249,7 +251,7 @@ in ${\cal S}$ at all.
 \end{itemize}
 
 These problems with regularized logistic regression persist in many variations
-we have investigated. From this experimental work we did garner some
+we have investigated. Analysis of this body of experimental work yielded some
 key technical insights.  In addition to the bug predictors we wish to
 find among the instrumented predicates, there are several other kinds
 of predicates.  First, nearly all predicates (often 98\% or 99\%) are
@@ -463,8 +465,8 @@ distributed monitoring of deployed code.  GAMMA collects code coverage
 data to support a variety of code evolution tasks.  Our
 instrumentation exposes a broader family of data- and
 control-dependent predicates on program behavior and uses randomized
-sparse sampling to control overhead.  Our
-predicates do, however, give coverage information: the sum of all predicate counters at a site reveals the relative coverage of that site.
+sparse sampling to control overhead.  Our predicates do, 
+however, also give coverage information: the sum of all predicate counters at a site reveals the relative coverage of that site.
 
 Efforts to directly apply statistical modeling principles to debugging
 have met with mixed results.  Early work in this area by Burnell and

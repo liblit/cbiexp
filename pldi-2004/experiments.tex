@@ -53,20 +53,19 @@ distinct causes.  The nature of the eight crashing bugs varies: four
 buffer overruns, a null file pointer dereference in certain cases, a
 missing end-of-list check in the traversal of a hash table bucket, a missing
 out-of-memory check, and a violation of a subtle invariant that must be maintained between two
-parts of a complex data structure.
+parts of a complex data structure.  In addition, some of these bugs
+are non-deterministic any may not even crash when they should.
 
 The ninth bug---incorrect handling of comments in some cases---only
-causes incorrect output, not a crash.  For most of the other
-bugs, failure can be detected by noting program crashes (though some
-of these bugs are non-deterministic and may not even crash when they
-should).  The ninth bug, however, cannot be detected in such an easy
-fashion.  For our experiment we also ran a correct version of \moss{}
-and compared the output of the two versions, labeling any run where
-the output was different as a failure.  The purpose of using this
-oracle is to show that, in principle, bugs other than crashing bugs
-can also be isolated using our techniques, provided there is some way,
-whether by automatic self-checking or human inspection, to recognize
-failing runs.
+causes incorrect output, not a crash.  We include this bug in our
+experiment in order to show that bugs other than crashing bugs can 
+also be isolated using our techniques, provided there is some 
+way, whether by automatic self-checking or human inspection, to recognize
+failing runs.  In particular, for our experiment we also ran a correct 
+version of \moss{} and compared the output of the two versions. 
+This oracle provides a labeling of runs as ``success'' or ``failure,'' 
+and the resulting labels are treated identically by our program as
+those based on program crashes.
 
 \input{moss-view/table}
 
@@ -83,7 +82,7 @@ predicates selected before this one.
 
 As part of the experiment we separately recorded the exact set of
 bugs that actually occurred in each run.
-The table at the far right of \autoref{tab:mossdilute} shows, for
+The columns at the far right of \autoref{tab:mossdilute} show, for
 each selected predicate and for each bug, the number of runs in which
 both the selected predicate is observed to be true and the bug occurs.
 Note that while each
@@ -130,7 +129,7 @@ with very little redundancy.
 
 Below the eighth position there are no new bugs to report and every
 predicate is correlated with predicates higher on the list.  Even
-without the table of numbers at the right it is easy to spot the
+without the columns of numbers at the right it is easy to spot the
 eighth position as the natural cutoff.  Keep in mind that the length
 of the thermometer is on a log scale, hence changes in larger
 magnitudes may appear less evident.  Notice that the initial and
@@ -144,11 +143,11 @@ eighth line have very different initial and effective thermometers
 both) showing that these predicates are strongly affected by
 higher-ranked predicates.
 
-Our algorithm has a drawback illustrated by the \moss\ experiment: It
-is not easy to identify the predicates to which a predicate is closely
-related.  Such a feature is useful in confirming whether two selected
-predicates represent different bugs or are in fact related to the same
-bug.  We do have a measure of how strongly $P$ implies another
+The displays presented thus far have a drawback illustrated by the \moss\ 
+experiment: It is not easy to identify the predicates to which a predicate is 
+closely related.  Such a feature would be useful in confirming whether two 
+selected predicates represent different bugs or are in fact related to the 
+same bug.  We do have a measure of how strongly $P$ implies another
 predicate $P'$: How does removing the runs where $\report{P} = 1$
 affect the importance of $P'$?  The more closely related $P$ and $P'$
 are, the more $P'$'s importance drops when $P$'s failing runs are
@@ -283,7 +282,7 @@ call sequence that whenever the predicate \texttt{o + s > buf\_size} is true,
 
 In summary, our algorithm enabled us to effectively isolate the causes
 of several previously unknown bugs in source code unfamiliar to us in
-a couple of minutes and without any explicit specification beyond
+a small amount of time and without any explicit specification beyond
 ``the program shouldn't crash.''
 
 \subsubsection{\rhythmbox}
