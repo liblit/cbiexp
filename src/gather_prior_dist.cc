@@ -5,6 +5,8 @@
 #include <fstream>
 #include <queue>
 #include <vector>
+#include "CompactReport.h"
+#include "PredStats.h"
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
 #include "RunsDirectory.h"
@@ -12,7 +14,6 @@
 #include "classify_runs.h"
 #include "fopen.h"
 #include "utils.h"
-#include "DiscreteDist.h"
 
 using namespace std;
 using __gnu_cxx::hash_map;
@@ -33,8 +34,7 @@ static ostream &
 operator<<(ostream &out, const DiscreteDist &d)
 {
   out << d.size() << '\n';
-  DiscreteDist::iterator c = d.begin();
-  for (c; c != d.end(); c++) {
+  for (DiscreteDist::const_iterator c = d.begin(); c != d.end(); c++) {
     const unsigned n = c->first;
     const unsigned val = c->second;
     out << n << ' ' << val << ' ';
@@ -50,20 +50,47 @@ struct SiteInfo
 {
   DistPair reached;
 
-  void notice(DiscreteDist);
-}
+  void notice(Dist, unsigned);
+  //void print(ostream &, ostream &) const;
+};
 
 // Since the site is reached n times during this run, increment the
 // corresponding counter in the empirical measure
 inline void
-SiteInfo::notice(DiscreteDist d, unsigned n){
-  d[n] += 1;
+SiteInfo::notice(Dist d, unsigned n){
+  (reached.*d)[n] += 1;
 }
+
+//void
+//SiteInfo::print(ostream &ffp, ostream &sfp) const
+//{
+  //ffp << reached.first.size() << '\n';
+  //for (DiscreteDist::iterator c = reached.first.begin(); 
+       //c != reached.first.end(); 
+       //c++) 
+  //{
+    //const unsigned n = c->first;
+    //const unsigned val = c->second;
+    //ffp << n << ' ' << val << ' ';
+  //}
+  //ffp << '\n';
+//
+  //sfp << reached.second.size() << '\n';
+  //for (DiscreteDist::iterator c = reached.second.begin();
+       //c != reached.second.end();
+       //c++) 
+  //{
+    //const unsigned n = c->first;
+    //const unsigned val = c->second;
+    //sfp << n << ' ' << val << ' ';
+  //}
+//}
 
 typedef hash_map<SiteCoords, SiteInfo> SiteSeen;
 static SiteSeen siteSeen;
 
 typedef hash_map<SiteCoords, unsigned> SiteCounter;
+static SiteCounter siteCount;
 
 ////////////////////////////////////////////////////////////////
 //
@@ -73,7 +100,7 @@ typedef hash_map<SiteCoords, unsigned> SiteCounter;
 class Reader : public ReportReader
 {
 public:
-  Reader(DiscreteDist);
+  Reader(Dist);
 
   void branchesSite(const SiteCoords &, unsigned, unsigned) const;
   void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned) const;
@@ -83,15 +110,14 @@ public:
   void countZeros();
 
 private:
-  SiteInfo *notice(const SiteCoords &) const;
+  SiteInfo *notice(const SiteCoords &, unsigned) const;
   void tripleSite(const SiteCoords &, unsigned, unsigned, unsigned) const;
-  const DiscreteDist d;
-  SiteCounter siteCount;
-}
+  const Dist d;
+};
 
 inline
-Reader::Reader(DiscreteDist _d)
-  : d(_d), siteCount();
+Reader::Reader(Dist _d)
+  : d(_d)
 {
 }
 
@@ -140,17 +166,37 @@ void Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, 
 
 // Compact reports do not contain sites which are not reached.
 // Hence we must manually add those zeros into the empirical distribution
-void countZeros()
+void Reader::countZeros()
 {
-  SiteSeen::iterator s = siteSeen.begin();
-  for (s; s != siteSeen.end(); s++) {
+  for (SiteSeen::iterator s = siteSeen.begin(); s != siteSeen.end(); s++) {
     const SiteCoords &coords = s->first;
-    const SiteInfo &info = s->second;
-    const SiteCounter::iterator found = siteCounter.find(coords);
-    if (found == siteSeen.end())
+    SiteInfo &info = s->second;
+    const SiteCounter::iterator found = siteCount.find(coords);
+    if (found == siteCount.end())
       info.notice(d, 0);
   }
 }
+
+////////////////////////////////////////////////////////////////////////
+//
+//  Command line processing
+//
+
+
+static void process_cmdline(int argc, char **argv)
+{
+    static const argp_child children[] = {
+	{ &CompactReport::argp, 0, 0, 0 },
+	{ &RunsDirectory::argp, 0, 0, 0 },
+	{ 0, 0, 0, 0 }
+    };
+
+    static const argp argp = {
+	0, 0, 0, 0, children, 0, 0
+    };
+
+    argp_parse(&argp, argc, argv, 0, 0, 0);
+};
 
 ////////////////////////////////////////////////////////////////
 //
@@ -174,7 +220,7 @@ int main (int argc, char** argv)
   while (read_pred_full(pfp, pi)) {
     const SiteSeen::iterator found = siteSeen.find(pi);
     if (found == siteSeen.end()) {
-      const SiteInfo &siteInfo = predSeen[pi];
+      const SiteInfo &siteInfo = siteSeen[pi];
       retainedSites.push(siteInfo);
     }
   }
@@ -184,7 +230,7 @@ int main (int argc, char** argv)
   Progress::Bounded progress("Gathering empirical distribution", num_runs);
   for (cur_run = 0; cur_run < num_runs; cur_run++) {
     progress.step();
-    DiscreteDist d = 0;
+    Dist d;
     if (is_frun[cur_run])
       d = &DistPair::first;
     else if (is_srun[cur_run])
@@ -192,16 +238,19 @@ int main (int argc, char** argv)
     else
       continue;
 
+    siteCount.clear();
     Reader r(d);
     r.read(cur_run);
     r.countZeros();
 
   }
 
-  while (!interesting.empty()) {
-    const SiteInfo &info = interesting.front();
+  while (!retainedSites.empty()) {
+    const SiteInfo &info = retainedSites.front();
+    //info.print(ffp, sfp);
     ffp << info.reached.first;
     sfp << info.reached.second;
+    retainedSites.pop();
   }
 
   return 0;
