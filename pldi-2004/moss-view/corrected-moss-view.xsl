@@ -6,6 +6,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   >
 
+  <xsl:import href="bug-o-meter.xsl"/>
   <xsl:import href="operands.xsl"/>
 
   <!-- floating point format string for predictor scores -->
@@ -46,23 +47,6 @@
 
     <xsl:text> \\
 </xsl:text>
-  </xsl:template>
-
-
-  <!-- a single Bug-O-Meter -->
-  <xsl:template match="bug-o-meter">
-    <xsl:variable name="width" select="@log10-true"/>
-    <xsl:text>\bugometer{</xsl:text>
-    <xsl:value-of select="$width"/>
-    <xsl:text>}{</xsl:text>
-    <xsl:value-of select="@context"/>
-    <xsl:text>}{</xsl:text>
-    <xsl:value-of select="@lower-bound"/>
-    <xsl:text>}{</xsl:text>
-    <xsl:value-of select="@fail - (@context + @lower-bound)"/>
-    <xsl:text>}{</xsl:text>
-    <xsl:value-of select="1 - @fail"/>
-    <xsl:text>}</xsl:text>
   </xsl:template>
 
 
