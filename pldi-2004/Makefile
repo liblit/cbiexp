@@ -28,7 +28,7 @@ texs :=						\
 	views/ccrypt/rows.tex			\
 	views/exif/rows.tex			\
 	views/rhythmbox/rows.tex		\
-	views/table.tex
+	views/view.sty
 
 epss := predkept3a.eps predkept3b.eps
 pdfs := $(epss:.eps=.pdf)

@@ -164,9 +164,9 @@ containing both known and unknown bugs.  Complete analysis results for
 all experiments may be browsed interactively at
 \url{http://www.cs.berkeley.edu/~liblit/pldi-2005}.
 
-\input{views/table}
-
 \subsubsection{\ccrypt}
+
+\view{\ccrypt}{ccrypt}
 
 We analyzed \ccrypt 1.2, which has a known bug \cite{Selinger:2003:cqual}.  
 The results are shown in \autoref{tab:views-ccrypt}.
@@ -177,6 +177,8 @@ is a sub-bug predictor associated with the second predicate.
 
 \subsubsection{\bc}
 
+\view{\bc}{bc}
+
 \bc 1.06 has a previously reported buffer overrun.  Our results are shown in \autoref{tab:views-bc}.
 The outcome is the same as for \ccrypt: two predicates are retained by elimination, and the second
 predicate lists the first predicate at the top of its affinity list, indicating the first predicate
@@ -185,6 +187,8 @@ This bug causes a crash long after the overrun occurs and there is no useful
 information on the stack at the point of the crash to assist in isolating this bug.
 
 \subsubsection{\exif}
+
+\view{\exif}{exif}
 
 \autoref{tab:views-exif} shows results for \exif 0.6.9, an open source image processing program.
 The three predicates are predictors of three separate, and previously unknown, crashing bugs.  It took less
@@ -270,7 +274,10 @@ and eventually crashes.
 In summary, our algorithm enabled us to effectively isolate
 the cause of a previously unknown, crashing bug in source code unfamiliar to us in
 a couple of minutes and without explicit specifications.
+
 \subsubsection{\rhythmbox}
+
+\view{\rhythmbox}{rhythmbox}
 
 \autoref{tab:views-rhythmbox} shows our results for \rhythmbox
 0.6.5, an interactive, graphical, open source music player.
