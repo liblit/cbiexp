@@ -7,9 +7,10 @@
   xmlns="http://www.w3.org/1999/xhtml"
   >
 
+  <xsl:import href="scores.xsl"/>
+
   <xsl:import href="logo.xsl"/>
   <xsl:import href="bug-o-meter.xsl"/>
-  <xsl:import href="scores.xsl"/>
 
 
   <!-- where are we right now? -->

@@ -7,8 +7,8 @@
   xmlns="http://www.w3.org/1999/xhtml"
   >
 
-  <xsl:import href="bug-o-meter.xsl"/>
   <xsl:import href="scores.xsl"/>
+  <xsl:import href="bug-o-meter.xsl"/>
 
   <xsl:output
     method="xml"
@@ -25,7 +25,7 @@
   </xsl:template>
 
 
-  <xsl:template match="scores" mode="dynamic-headings">
+ <xsl:template match="scores" mode="dynamic-headings">
     <xsl:apply-imports/>
     <th>Thermometer</th>
   </xsl:template>
