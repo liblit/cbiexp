@@ -3,14 +3,14 @@
 
 In this section we compare our new algorithm with our previous
 approaches on the programs \ccrypt and \bc.
-\Autoref{tab:exps} shows raw counts for all four experiments of the
+\autoref{tab:exps} shows raw counts for all four experiments of the
 successful and unsuccessful runs, number of instrumentation sites in
 the program, the number of predicates for each
 instrumentation scheme, and the number of predicates retained by the
 test $\increase() > 0$.   Keep in mind that multiple predicates are
 derived from each instrumentation site.  For example, each branches
 site yields two predicates from two counters, while each scalar pairs
-site yields six predicates from three counters (see \Autoref{sec:background}).
+site yields six predicates from three counters (see \autoref{sec:background}).
 
 The sampling rate for all of our experiments is \nicefrac{1}{1};
 i.e., we sampled every predicate every time it was reached.  An
@@ -54,7 +54,7 @@ Using our new algorithm, the top 11 predicates (sorted by descending
 $\increase()$ score) involve predicates within a few lines of the line
 with the actual overrun.  However, these predicates also predict only
 20-100 failing runs, a small fraction of the number of failing runs
-for \bc in \Autoref{tab:exps}.  We have observed that this
+for \bc in \autoref{tab:exps}.  We have observed that this
 phenomenon is fairly common: if there are enough failures caused by a
 bug, some predicates will predict failure for small subsets of the failure set.
 

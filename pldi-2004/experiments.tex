@@ -3,9 +3,9 @@
 \input{table}
 
 In this section we present the results of applying the algorithm
-described in Section~\ref{sec:algorithm} in five case studies.\footnote{
+described in \autoref{sec:algorithm} in five case studies.\footnote{
 The data can be found at FIX ME URL.}
-Figure~\ref{tab:exps} shows the summary statistics for each of the
+\autoref{tab:exps} shows the summary statistics for each of the
 experiments.  In each study we ran the programs on about 32,000 random
 inputs.  The number of instrumentation sites varies with the size of
 the program, as does the number of predicates those instrumentation
@@ -71,7 +71,7 @@ runs.
 
 \input{moss-view/table}
 
-Table~\ref{tab:mossdilute} shows the results of the experiment.  The
+\autoref{tab:mossdilute} shows the results of the experiment.  The
 predicts listed were selected by the elimination algorithm in the
 order shown.  The second column is the initial thermometer for each
 predicate,  showing the \context\ and \increase\ scores before
@@ -83,7 +83,7 @@ the initial and effective importance (harmonic mean) scores, respectively.
 
 As part of the experiment we separately recorded the exact set of
 bugs that occurred in each run.
-The table at the far right of Table~\ref{tab:mossdilute} shows for
+The table at the far right of \autoref{tab:mossdilute} shows for
 each selected predicate $P$ and each bug ${\cal B}$ the number of runs where
 bug ${\cal B}$ occurs and $P$ is observed to be true.  Note that while each
 predicate has a very strong spike at one bug, indicating it is a
@@ -92,7 +92,7 @@ bugs present.  For example, the top-ranked predicate, which is
 overwhelmingly a predictor of bug \#5, also includes some runs where
 bugs \#3, \#4, and \#9 occurred.  This situation is not the result of
 misclassification of failing runs by our algorithm.  As observed in
-Section~\ref{sec:introduction}, more than one bug may occur in a run;
+\autoref{sec:introduction}, more than one bug may occur in a run;
 it simply happens that in some runs bugs \#5 and \#2 both occur (to
 pick just one possible combination).
 
@@ -159,7 +159,7 @@ ranked by how much $P$ causes their ranking score to decrease.
 \subsubsection{\ccrypt}
 
 We analyzed \ccrypt 1.2, which has a known bug \cite{Selinger:2003:cqual}.  
-The results are shown in Table~\ref{tab:views-ccrypt}.
+The results are shown in \autoref{tab:views-ccrypt}.
 Our algorithm reports two predictors, which both point directly to the single bug. 
 It is easy to discover that the two predictors are for the same bug; the first predicate
 is listed first in the second predicate's affinity list, indicating the first predicate
@@ -167,7 +167,7 @@ is a sub-bug predictor of the second predicate.
 
 \subsubsection{\bc}
 
-\bc 1.06 has a previously reported buffer overrun.  Our results are shown in Table~\ref{tab:views-bc}.
+\bc 1.06 has a previously reported buffer overrun.  Our results are shown in \autoref{tab:views-bc}.
 The outcome is the same as for \ccrypt: two predicates are retained by elimination, and the second
 predicate lists the first predicate at the top of its affinity list, indicating the first predicate
 is a sub-bug predictor of the second.  Both predicates point to the cause of the overrun.  
@@ -176,14 +176,14 @@ information on the stack at the point of the crash to assist in isolating this b
 
 \subsubsection{\exif}
 
-Table~\ref{tab:views-exif} shows results for \exif 0.6.9, an open source image processing program.
+\autoref{tab:views-exif} shows results for \exif 0.6.9, an open source image processing program.
 The three predicates are predictors of three separate, and previously unknown, crashing bugs.  It took less
 than 20 minutes of work to find and verify the cause of each of the bugs using these predicates
 and the additional highly correlated predicates on their affinity lists.
 
 \subsubsection{\rhythmbox}
 
-Table~\ref{tab:views-rhythmbox} shows our results for \rhythmbox
+\autoref{tab:views-rhythmbox} shows our results for \rhythmbox
 0.6.5, an interactive, graphical, open source music player.
 \rhythmbox is a complex event-driven system, written using
 a library providing object-oriented primitives in C.  Event-driven
@@ -201,7 +201,7 @@ us to a race condition.  The second predicate was not useful directly,
 but we were able to isolate the bug using the predicates in its
 affinity list.  This second bug revealed what turned out to be a very
 common incorrect pattern of accessing the underlying object library
-(recall Section~\ref{sec:introduction}).  These bugs
+(recall \autoref{sec:introduction}).  These bugs
 were confirmed and patches applied within a few days, in part because
 we could quantify the bugs as important crashing bugs.  It required
 several hours to isolate each of the two bugs, in part because \rhythmbox

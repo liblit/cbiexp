@@ -1,5 +1,5 @@
 This section presents our algorithm for automatically isolating
-multiple bugs.  As discussed in \Autoref{sec:background}, the input is
+multiple bugs.  As discussed in \autoref{sec:background}, the input is
 a set of feedback reports from individual program runs $R$, where
 $R(P) = 1$ if predicate $P$ is observed to be true during the
 execution of $R$.
@@ -37,7 +37,7 @@ We now discuss the first step, how to find the cause of the most important bug.
 We break this step into two sub-steps.  First, we eliminate predicates that have no
 predictive power at all; this typically reduces the number of predicates we need
 to consider by two orders of magnitude (e.g., from hundreds of thousands to thousands).
-Next, we rank the surviving predicates by importance (see Section~\ref{sec:ranking}).
+Next, we rank the surviving predicates by importance (see \autoref{sec:ranking}).
 
 Consider the following C code fragment:
 \begin{quote}
@@ -237,7 +237,7 @@ Then
 \label{sec:ranking}
 
 We now turn to the question of ranking the predicates.
-Tables~\ref{tab:sorts}(a), (b), and (c) show the top
+\autoref{tab:sorts} shows the top
 predicates under different ranking schemes (explained below) for one of our
 experiments.  We use
 a simple {\em thermometer} to visualize the information for each
@@ -256,9 +256,9 @@ numbers for each of the quantities that make up the thermometer.
 The most important bug is the one that causes the greatest number
 of failed runs.  This observation suggests:
 \[ \importance(P) = F(P) \]
-Table~\ref{tab:sorts}(a) shows the top predicates 
+\autoref{tab:sorts-failure} shows the top predicates 
 ranked by decreasing $F(P)$.\footnote{These predicates are ranked after predicates where $\increase(P) \leq 0$ are discarded.}
-While the predicates in Table~\ref{tab:sorts}(a) are, as expected, involved
+While the predicates in \autoref{tab:sorts-failure} are, as expected, involved
 in many failing runs, these predicates are also highly 
 non-deterministic, meaning they are also true in many successful runs
 and are weakly correlated with bugs.  
@@ -276,7 +276,7 @@ scores.
 
 Another possibility is:
 \[ \importance(P) = \increase(P) \]
-Table~\ref{tab:sorts}(b) shows the top predicates ranked by decreasing
+\autoref{tab:sorts-increase} shows the top predicates ranked by decreasing
 $\increase()$ score (note the thermometers in the different figures
 are not drawn to the same scale).  These predicates do a much better
 job of predicting failure; in fact, the program always fails when any
@@ -288,7 +288,7 @@ predictors that account for a significant fraction of the failures for
 a bug often provide valuable clues, but still they represent special
 cases and may not suggest other, more fundamental, causes of the bug.
 
-Tables~\ref{tab:sorts}(a) and (b) illustrate the difficulty of defining
+Tables~\ref{tab:sorts-failure} and \ref{tab:sorts-increase} illustrate the difficulty of defining
 ``importance''.  It is helpful to consider this problem in the language of information
 retrieval. We are looking for predicates with
 high {\em recall} (meaning predicates that account for many failed runs) but also high {\em precision}
@@ -303,7 +303,7 @@ case, $\increase(P)$ measures precision and $F(P)$ measures recall.  Define
 where $\numfail$ is total number of failing runs (independent of $P$)
 and therefore scales recall to between zero and one.
 
-The results are given in Table~\ref{tab:sorts}(c).  We observe that
+The results are given in \autoref{tab:sorts-harmonic}.  We observe that
 all of the predicates on this list indeed have both high precision and
 recall, accurately describing a large number of failures. 
 
@@ -311,7 +311,7 @@ recall, accurately describing a large number of failures.
 \subsection{Predicate Elimination}
 \label{sec:elimination}
 
-The remaining problem with the results in Table~\ref{tab:sorts}(c)
+The remaining problem with the results in \autoref{tab:sorts-harmonic}
 is that there is substantial redundancy; it is easy to see that several of these
 predicates are related hiding other, distinct bugs that either have
 fewer failed runs or more non-deterministic predictors further down the
@@ -343,7 +343,7 @@ Thus, the elimination algorithm chooses at least one predicate
 predictive of each bug represented by the input set of predicates.
 The other property we might like, that the algorithm chooses exactly
 one predicate to represent each bug, does not hold; we shall see in
-Section~\ref{sec:experiments} that the algorithm sometimes selects a
+\autoref{sec:experiments} that the algorithm sometimes selects a
 strong sub-bug predictor as well as a more natural predictor.  Besides
 always representing each bug, the algorithm works well for two other
 reasons.  First, two predicates are redundant if they predict the same

@@ -1,7 +1,7 @@
 %% -*- TeX-master: t -*-
 
 %% \documentclass[draft]{acm_proc_article-sp}
-\documentclass[draft]{sig-alternate}
+\documentclass{sig-alternate}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,7 +19,8 @@
 \usepackage[TABTOPCAP]{subfigure}
 \usepackage{xspace}
 
-\usepackage[bookmarks, pdftitle={Scalable Statistical Debugging}, pdfauthor={Ben Liblit, Mayur Naik, Alice X.
+\usepackage[bookmarks, breaklinks,
+pdftitle={Scalable Statistical Debugging}, pdfauthor={Ben Liblit, Mayur Naik, Alice X.
   Zheng, Alex Aiken, and Michael I.  Jordan}, pdfsubject={D.2.4
   [Software Engineering]: Software/Program Verification -- statistical
   methods; D.2.5 [Software Engineering]: Testing and Debugging --
@@ -39,11 +40,13 @@ pdfpagemode=UseOutlines]{hyperref}
 
 \usepackage{views/bug-o-meter}
 
-\usepackage{Autoref}
-\newcommand{\subfigureautorefname}[0]{Figure}
+\renewcommand{\sectionautorefname}[0]{Section}
+\renewcommand{\subsectionautorefname}[0]{\sectionautorefname}
+\newcommand{\subtableautorefname}[0]{\tableautorefname}
+
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
-%% assorted handy macros
+
 \newcommand{\moss}{\textsc{Moss}\xspace}
 \newcommand{\rhythmbox}{\textsc{Rhythmbox}\xspace}
 \newcommand{\exif}{\textsc{exif}\xspace}
@@ -167,7 +170,7 @@ all of the monitored executions.
 
 In our approach, instrumentation consists of {\em predicates} tested
 at particular program points; we defer discussing which predicates are
-chosen for instrumentation to Section~\ref{sec:background}.  A given
+chosen for instrumentation to \autoref{sec:background}.  A given
 program point may have many predicates that are sampled independently
 during program execution when that program point is reached (i.e.,
 each predicate associated with a program point may or may not be
@@ -187,12 +190,12 @@ set of failing runs, but note that ${\cal B}_i \cap {\cal B}_j \neq
 
 A predicate $P$ is a {\em bug predictor} (or simply a {\em predictor})
 of bug ${\cal B}$ if whenever $R(P) = 1$ then it is statistically
-likely that $R \in {\cal B}$ (see Section~\ref{sec:increase}).  {\em
+likely that $R \in {\cal B}$ (see \autoref{sec:increase}).  {\em
 Statistical debugging} selects a small subset ${\cal S}$ of the set of
 all instrumented predicates ${\cal P}$ such that ${\cal S}$ has
 predictors of all bugs.  We also rank the predictors in ${\cal S}$
 from the most to least important.  The set ${\cal S}$ and associated
-metrics (see Section~\ref{sec:experiments}) are then available to
+metrics (see \autoref{sec:experiments}) are then available to
 engineers to help speed the process of finding and fixing the most
 serious bugs.
 
@@ -248,7 +251,7 @@ are {\em sub-bug predictors}, predicates that characterize a subset of
 the failures of a specific bug; these are often special cases of more
 general problems.  We give the concepts of super- and sub-bug
 predictors more precise technical treatment in
-Section~\ref{sec:ranking}.
+\autoref{sec:ranking}.
 
 The difficulty in identifying the best bug predictors lies in not being
 misled by the sub- or super-bug predictors and not being overwhelmed
@@ -258,7 +261,7 @@ This paper makes a number of contributions on these problems:
 \begin{itemize}
 
 \item We present a new algorithm for isolating multiple bugs in
-complex applications (\Autoref{sec:algorithm}) based on different
+complex applications (\autoref{sec:algorithm}) based on different
 techniques and offering significant improvements over previous work:
 it scales much more gracefully in all the dimensions discussed above
 and for each selected predicate $P$ it naturally produces information
@@ -311,12 +314,12 @@ more than one hundred instances of the same unsafe pattern throughout
 \rhythmbox.
 
 The paper is organized as follows.  After providing background
-(\Autoref{sec:background}), we discuss our algorithm
-(\Autoref{sec:algorithm}). The experimental results are presented in
-Section~\ref{sec:experiments}.  We then discuss related
-work (\Autoref{sec:related-work}), including the advantages over our
+(\autoref{sec:background}), we discuss our algorithm
+(\autoref{sec:algorithm}). The experimental results are presented in
+\autoref{sec:experiments}.  We then discuss related
+work (\autoref{sec:related-work}), including the advantages over our
 previous approach based on logistic regression
-(\Autoref{sec:comparison}).
+(\autoref{sec:comparison}).
 
 
 \section{Background}
@@ -501,7 +504,6 @@ technique to model and thereby predict impending system failures.
 Instrumentation is assumed to be complete and is typically
 domain-specific.
 
-
 \subsection{Comparison with Logistic Regression}
 \label{sec:comparison}
 
@@ -528,10 +530,7 @@ domain-specific.
 \end{tabular}
 \end{table}
 
-
-
-
-As discussed in Section~\ref{sec:introduction}, in earlier work 
+As discussed in \autoref{sec:introduction}, in earlier work 
 we used $\ell_1$-regularized logistic regression
 to rank the predicates by their
 failure-prediction strength \cite{PLDI`03*141,NIPS2003_AP05}.  Independently others have used
@@ -549,15 +548,15 @@ coefficients for predicates giving the best overall prediction.
 A weakness of logistic regression for our application is that it seeks
 to cover the set of failing runs without regard to the orthogonality
 of the selected predicates (i.e., whether they represent distinct
-bugs).  This problem can be seen in Table~\ref{tab:logregression},
+bugs).  This problem can be seen in \autoref{tab:logregression},
 which gives the top ten predicates selected by logistic regression
 for \moss.  The striking fact is that all selected predicates are
 either sub-bug or super-bug predictors.  The predicates beginning {\tt
 p + \ldots} are all sub-bug predictors of bug \#1 (see
-Table~\ref{tab:mossdilute}).  The predicates {\tt i > \ldots} are
+\autoref{tab:mossdilute}).  The predicates {\tt i > \ldots} are
 super-bug predictors: {\tt i} is the length of the command line and
 the predicates say program crashes are more likely for long command
-lines (recall Section~\ref{sec:introduction}).
+lines (recall \autoref{sec:introduction}).
 
 The prevalence of super-bug predictors on the list shows the
 difficulty of making use of the penalty term.  Limiting the number of
