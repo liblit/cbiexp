@@ -284,18 +284,18 @@ a couple of minutes and with no explicit specification beyond
 
 \view{\rhythmbox}{rhythmbox}
 
-\autoref{tab:views-rhythmbox} shows our results for \rhythmbox
-0.6.5, an interactive, graphical, open source music player.
-\rhythmbox is a complex event-driven system, written using
-a library providing object-oriented primitives in C.  Event-driven
-systems use event queues; each event performs some computation and
-possibly adds more events to some queues.  We know of no static
-analysis today that can analyze event-driven systems accurately,
-because no static analysis is currently capable of analyzing the
-heap-allocated event queues with sufficient precision.
-Crash-reporting systems are also of limited utility in analyzing
-event-driven systems, as the stack in the main event loop is
-unchanging and all of the interesting state is in the queues.
+\autoref{tab:views-rhythmbox} shows our results for \rhythmbox 0.6.5,
+an interactive, graphical, open source music player.  \rhythmbox is a
+complex, multithreaded, event-driven system, written using a library
+providing object-oriented primitives in C.  Event-driven systems use
+event queues; each event performs some computation and possibly adds
+more events to some queues.  We know of no static analysis today that
+can analyze event-driven systems accurately, because no static
+analysis is currently capable of analyzing the heap-allocated event
+queues with sufficient precision.  Crash-reporting systems are also of
+limited utility in analyzing event-driven systems, as the stack in the
+main event loop is unchanging and all of the interesting state is in
+the queues.
 
 We isolated two distinct bugs in \rhythmbox.  The first predicate led
 us to a race condition.  The second predicate was not useful directly,
@@ -303,7 +303,7 @@ but we were able to isolate the bug using the predicates in its
 affinity list.  This second bug revealed what turned out to be a very
 common incorrect pattern of accessing the underlying object library
 (recall \autoref{sec:introduction}).  These bugs
-were confirmed and patches applied within a few days, in part because
+were confirmed and patches enthusiastically applied within a few days, in part because
 we could quantify the bugs as important crashing bugs.  It required
 several hours to isolate each of the two bugs, in part because \rhythmbox
 is complex and we were unfamiliar with it and in part because the bugs
