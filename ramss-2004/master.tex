@@ -88,7 +88,7 @@ program performed by its user community, we should be able to make
 inferences automatically about the causes of bugs experienced in the field.
 
 Our approach to CBI is based upon compile-time instrumentation of the
-program's source code.  We insert instrumentation into the program to
+program's source code.  We insert instrumentation to
 test a large number of predicates on program values during
 execution and to count how many times each predicate is observed to be
 true or false.  On termination of the program the list of predicate
@@ -97,7 +97,8 @@ whether the program terminated successfully or not.  Subsequent
 statistical analysis of which predicates are correlated with program
 failure can then indicate to engineers which values and what parts of
 the program are the sources of crashes; in at least some cases even
-the exact line of code that is at fault can be identified \cite{PLDI`03*141,Liblit:2003:SUEBI,Zheng:2003:SDSP}.
+the exact line of code that is at fault can be identified
+\cite{PLDI`03*141,Liblit:2003:SUEBI,Zheng:2003:SDSP}.
 
 We believe that CBI and related research efforts have great potential
 to make software development more responsive and efficient by giving
@@ -118,14 +119,13 @@ this point all components are good enough to support the deployment of
 realistic instrumented applications and the collection of feedback
 reports from a large user community.
 
-There are both interesting technical and social problems involved in
-the design of a CBI system.  In this paper, we focus on the solutions
-to technical problems most likely to be useful to the designers of
+The design of a CBI system involves interesting challenges, both
+technical and social.  In this paper, we focus on the solutions to
+technical problems most likely to be useful to the designers of
 similar systems and experiments: dealing with existing native
-compilers, shared libraries,
-plugins, and threads.  We also briefly discuss how users interact with
-our system, as well as give some static and dynamic measures of the
-applications we instrument.
+compilers, shared libraries, plugins, and threads.  We also briefly
+discuss how users interact with our system, as well as give some
+static and dynamic measures of the applications we instrument.
 
 \begin{table*}
   \centering
@@ -304,15 +304,15 @@ so we only take this extra care if in fact the application is multi-threaded
 A key feature of our CBI system is that performance can be improved by
 sampling the instrumentation code, which is implemented by frequently
 skipping over some instrumentation and instead executing a ``fast
-path'' with no instrumentation at all.  We use a global \emph{countdown}
-to determine how many instrumentation sites to skip before
-testing one predicate and recording its result.\footnote{The countdown
+path'' with no instrumentation at all.  We use a global
+\emph{countdown} to determine how many instrumentation sites to skip
+before testing one predicate and recording its result.  The countdown
 is chosen randomly from a geometric distribution with a mean that is
-the desired sampling rate.  This is equivalent to, but much more
+the desired sampling rate.  (This is equivalent to, but much more
 efficient than, flipping a coin at each instrumentation site to decide
-whether to take a sample.}  Thus, in a multi-threaded system, the
-global variable holding the next-sample countdown could be a source of
-high contention among threads.
+whether to take a sample.)  In a multi-threaded system, the global
+variable holding this next-sample countdown could be a source of high
+contention among threads.
 
 The simple solution to this problem is to give each thread its own,
 independent countdown variable.  The behavior of the system with per-thread
@@ -322,25 +322,24 @@ and in addition we avoid all locking.
 Enacting this plan requires compiler support.  We use the
 \texttt{\_\_thread} storage qualifier to declare thread-specific
 storage.  This is a GCC extension and also requires support from the
-POSIX threading runtime, C library, and even the runtime loader.  
-We also must alter thread creation so we can initialize the
-new thread's global state.  We use the \texttt{--wrap} flag provided
-by the GNU linker to replace \texttt{pthread\_create()} with our own
-special version.  
+POSIX threading runtime, C library, and runtime loader.  We also must
+alter thread creation so we can initialize the new thread's global
+state.  We use the \texttt{--wrap} flag provided by the GNU linker to
+replace \texttt{pthread\_create()} with our augmented version.
 
 The second class of data that requires special handling in
 multi-threaded applications is the predicate counters.  Recall that
 the predicate counters keep track of how often a particular predicate
-at a particular line of code is observed to be true or false.
-For efficiency we use low sampling rates, such as
-once every hundred times (randomized, on average) that the line of
-code associated with the predicate is executed.
-Therefore predicates are tested rarely and any individual counter
-is accessed rarely even by a single thread.  Therefore, we
-maintain only one copy of each predicate counter, shared by all
-threads.  The critical operation on these counters, an increment by
-one, is so basic that every CPU architecture has some way of doing
-this atomically without resorting to explicit locking.
+at a particular line of code is observed to be true or false.  For
+efficiency we use low sampling rates, such as once every hundred times
+(on average, randomized) that the line of code associated with the
+predicate is executed.  Therefore predicates are tested rarely and any
+individual counter is accessed rarely even by a single thread.
+Therefore, we maintain only one copy of each predicate counter, shared
+by all threads.  The critical operation on these counters, an
+increment by one, is so basic that every CPU architecture has some way
+of doing this atomically without resorting to heavyweight
+kernel-mediated locking.
 
 Finally, the third class of data that must be protected from concurrent access
 is the global registry of compilation units and the report file.
@@ -404,9 +403,9 @@ configuration management hooks let system administrators change both
 defaults as well as mandatory, locked-down settings.  These settings
 include the sampling density, the address of the report collection
 server, and whether reporting is enabled for all or selected
-applications.  Tracking of user behavior is a delicate matter, so it
-is important that users and their system administrators be able to
-adapt the system to local needs and concerns.
+applications.  Tracking of user behavior is a delicate matter, so
+users and their system administrators must be able to adapt the system
+to local needs and concerns.
 
 Because the wrapper script launches the instrumented binary as a
 subprocess, it can also check that subprocess's exit status (either a
@@ -466,9 +465,9 @@ far we have not needed any of these facilities.
 \section{Status of the Public Deployment}
 
 We conclude with some discussion of our experience thus far with our public
-deployment of the applications listed in \autoref{apps}.
+deployment of the applications listed earlier.
 
-One concern we have is that our approach adds a great deal of new code
+One concern is that our approach adds a great deal of new code
 to an application; in fact, binaries will often be at least twice as
 large as the original, uninstrumented program.  However, the growth in
 disk footprint is considerably smaller if one considers the entire
@@ -491,11 +490,26 @@ these applications do have CPU-intensive phases, such as when
 \rhythmbox is loading up a library with thousands of music files or
 when \gnumeric is recalculating a very large spreadsheet.
 
-Finally, \autoref{reports-per-app} summarizes the current state of
-the data for each of our instrumented applications.  In this table,
-\emph{count} is the total number of valid feedback reports received so far,
-which is broken out into \emph{good} runs, runs that exited with a
-non-zero \emph{error} status, and runs that ended in a \emph{crash} due to a
+\begin{table}
+  \centering
+  \begin{tabular}{lrrrr@{\ (}r@{\%)}}
+    \header{Application} & \header{Total} & \header{Good} & \header{Error} & \multicolumn{2}{c}{\textbf{Crash}} \\ \hline
+    \evolution & 916 & 838 & 55 & 23 & 3 \\
+    \gaim & 495 & 417 & 62 & 16 & 4 \\
+    \gimp & 109 & 107 & 2 & 0 & 0 \\
+    \gnumeric & 261 & 242 & 2 & 17 & 7 \\
+    \nautilus & 747 & 642 & 96 & 9 & 1 \\
+    \rhythmbox & 869 & 728 & 39 & 102 & 14
+  \end{tabular}
+  \caption{Number of reports received to date.}
+  \label{reports-per-app}
+\end{table}
+
+\autoref{reports-per-app} summarizes the current state of the data for
+each of our instrumented applications.  In this table, \emph{total} is
+the total number of valid feedback reports received so far, which is
+broken out into \emph{good} runs, runs that exited with a non-zero
+\emph{error} status, and runs that ended in a \emph{crash} due to a
 fatal signal.  Note the large variation in crash rates, from 0\%
 (\gimp) to 14\% (\rhythmbox).
 
@@ -523,22 +537,6 @@ experiment and have not yet invested much effort in attracting users.
 The next step in our experiment will be
 to find ways to recruit enough users to test the advantages of CBI
 for large user communities of complex applications.
-
-
-\begin{table}
-  \centering
-  \begin{tabular}{lrrrr@{\ (}r@{\%)}}
-    \header{Application} & \header{Count} & \header{Good} & \header{Error} & \multicolumn{2}{c}{\textbf{Crash}} \\ \hline
-    \evolution & 916 & 838 & 55 & 23 & 3 \\
-    \gaim & 495 & 417 & 62 & 16 & 4 \\
-    \gimp & 109 & 107 & 2 & 0 & 0 \\
-    \gnumeric & 261 & 242 & 2 & 17 & 7 \\
-    \nautilus & 747 & 642 & 96 & 9 & 1 \\
-    \rhythmbox & 869 & 728 & 39 & 102 & 14
-  \end{tabular}
-  \caption{Number of runs received.}
-  \label{reports-per-app}
-\end{table}
 
 \bibliography{personal,pldi03,ramss}
 
