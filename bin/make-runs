@@ -74,6 +74,7 @@ my ($handle, $filename) = tempfile(UNLINK => 1);
 print $handle "all: $_/label" foreach 0 .. ($num_runs - 1);
 
 print $handle ("%/label: %/stamp $cwd/$label_once",
+	       "\techo run \$*: label",
 	       "\tcd \$* && $cwd/$label_once \$* >\$(\@F).",
 	       "\tmv \$@. \$@",
 	       '',
