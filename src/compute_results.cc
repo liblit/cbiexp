@@ -247,7 +247,7 @@ void discard_run(int r)
     assert(0);
 }
 
-inline bool XOR(bool a, bool b) { return (a && !b) || (!a && b); }
+inline bool XOR(bool a, bool b) { return a ^ b; }
 
 void process_run(FILE* fp, int r, int u, int c)
 {
