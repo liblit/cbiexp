@@ -323,7 +323,8 @@ chi2stats.txt: chi2test parmstats.txt fpriors.dat fpriors-full.dat spriors.dat s
 calc_truthprobs: $(tooldir)/calc_truthprobs.o units.o sites.o 
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lm -o $@
 
-truthprobs: calc_truthprobs parmstats.txt preds.txt
+#truthprobs: calc_truthprobs parmstats.txt preds.txt
+truthprobs: calc_truthprobs
 	$(time) $< --runs-directory=$(datadir) --report-suffix=$(report-series)
 
 ########################################################################

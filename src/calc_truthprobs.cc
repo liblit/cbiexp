@@ -33,16 +33,16 @@ struct PredInfo
     unsigned tru, obs;
     double alpha; // truth rate = tru/obs
     double rho, lambda, beta;
-    double truthprob;
+    double truthprob, tp2; // truthprob is P(X > 0|r,y), tp2 is P(X>0|n,r,y)
     unsigned dst, dso, realt, realo;
     PredInfo() {
 	tru = obs = 0;
 	alpha = rho = lambda = beta = 0.0;
-	truthprob = 0.0;
+	truthprob = tp2 = 0.0;
 	dst = dso = realt = realo = 0;
     }
     void reinit() {
-        truthprob = 0.0;
+        truthprob = tp2 = 0.0;
 	dst = dso = realt = realo = 0;
     }
     void update_stats(unsigned _tru, unsigned _obs) {
@@ -55,12 +55,14 @@ struct PredInfo
 	beta = b;
     }
     void calc_prob(unsigned t, unsigned o);
+    void calc_prob2(unsigned t, unsigned o, unsigned n);
     void calc_zero_probs() {
       calc_prob(0,0);
     }
     void compare_prob (unsigned t, unsigned o) {
         realt = t;
         realo = o;
+        calc_prob2(dst, dso, realo);
     }
 };
 
@@ -81,6 +83,15 @@ PredInfo::calc_prob(unsigned t, unsigned o)
             truthprob = 1.0 - exp(-lambda*alpha*(1.0-rho));
 	}
     }
+}
+
+void
+PredInfo::calc_prob2(unsigned t, unsigned o, unsigned n)
+{
+  if (t > 0)
+    tp2 = 1.0;
+  else 
+    tp2 = 1.0 - exp((double) (n-o) * log(1.0-alpha));
 }
 
 class PredInfoPair;
@@ -127,7 +138,8 @@ operator<< (ostream &out, const PredInfo &pi)
 {
     out << pi.tru << '\t' << pi.obs << '\t' << pi.alpha << '\t'
 	<< pi.rho << '\t' << pi.lambda << '\t' << pi.beta << '\t'
-	<< pi.truthprob << '\t' << pi.dst << '\t' << pi.dso << '\t'
+	<< pi.truthprob << '\t' << pi.tp2 << '\t' 
+        << pi.dst << '\t' << pi.dso << '\t'
 	<< pi.realt << '\t' << pi.realo;
     return out;
 }
@@ -410,7 +422,7 @@ int main(int argc, char** argv)
 
     string report_suffix = CompactReport::suffix;
     unsigned ctr = 0;
-    Progress::Bounded prog2("Calculating truth probabilities", 5000);
+    Progress::Bounded prog2("Calculating truth probabilities", 1000);
     for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
 	if (ctr == 1000)
 	    break;
