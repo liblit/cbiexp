@@ -97,12 +97,9 @@ Candidates::best()
   iterator challenger = leader;
   while (++challenger != end())
     {
-      cerr << "current best: " << *leader << '\n'
-	   << "challenger:   " << *challenger << '\n';
       const double challengerScore = challenger->second->score();
       const Reason challengerReason = better(*challenger, challengerScore,
 					     *leader, leaderScore);
-      cerr << "outcome:      " << challengerReason << endl;
 
       if (challengerReason != NotBetter)
 	{
