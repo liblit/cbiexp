@@ -360,6 +360,12 @@ calc_truthprobs: $(tooldir)/calc_truthprobs.o units.o sites.o
 truthprobs: calc_truthprobs
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
 
+symmetric.xml: symmetric
+	./$< --runs-directory=$(datadir) --begin-runs=$(training-runs)
+
+symmetric: units.o $(tooldir)/symmetric/libsymmetric.a
+	$(LINK.cc) $< -L$(tooldir)/symmetric -L$(tooldir) -lsymmetric -lanalyze -o $@
+
 
 ########################################################################
 

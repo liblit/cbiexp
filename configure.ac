@@ -128,6 +128,7 @@ rhythmbox/Makefile
 rhythmbox/config.site
 src/Makefile
 src/corrective-ranking/Makefile
+src/symmetric/Makefile
 src/Score/Makefile
 src/analysis-rules.mk
 ])
