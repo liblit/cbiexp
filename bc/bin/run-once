@@ -8,7 +8,7 @@ use FileHandle;
 use FindBin;
 
 my $fuzz = "$FindBin::Bin/fuzz";
-my $bc = "$FindBin::Bin/../src/bc/bc";
+my $bc = "$FindBin::Bin/../build/bc/bc";
 
 @ARGV == 1 or die "Usage: $0 <run-id>\n";
 my $runId = shift;

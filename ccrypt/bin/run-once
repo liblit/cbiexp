@@ -10,7 +10,7 @@ use FileHandle;
 use FindBin;
 
 
-my $ccrypt = "$FindBin::Bin/../src/src/ccrypt";
+my $ccrypt = "$FindBin::Bin/../build/src/ccrypt";
 
 @ARGV == 1 or die "Usage: $0 <run-id>\n";
 my $runId = shift;
