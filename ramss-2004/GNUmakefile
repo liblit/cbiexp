@@ -21,4 +21,6 @@ master.dvi: %.dvi: $(texs) $(epss)
 
 $(epss): %.eps: %.png
 	convert $< $@
-#	pngtopnm $< | pnmtops -noturn -equalpixels -runlength >$@
+
+clean:
+	rm -f *.aux *.bbl *.blg *.dvi *.eps *.log *.out *.pdf *.ps *.tpt
