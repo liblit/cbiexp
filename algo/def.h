@@ -9,8 +9,8 @@
                            // 1, don't specify 0 in either s.runs or f.runs
 
 // Set these!
-#define I_SITES_FILE  "/moa/sc2/cbi/rhythmbox/share/rhythmbox.sites"
-#define I_REPORT_FILE "/moa/sc1/cbi/rb_ds100/%d.txt"
+#define I_SITES_FILE  "/moa/sc3/cbi/rhythmbox-get-uri-fix/share/rhythmbox.sites"
+#define I_REPORT_FILE "/moa/sc3/cbi/rhythmbox-get-uri-fix/data/%d/client/reports"
 #define O_REPORT_FILE "/moa/sc4/mhn/rb/base_ds100/%d.txt"
 #define O_PER_PRED_HTML_FILE "/moa/sc3/mhn/rb/base_ds100/r/%d_%d_%d.html"
 #define O_B_HTML_FILE "/moa/sc3/mhn/rb/base_ds100/B.html"
