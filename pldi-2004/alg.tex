@@ -310,15 +310,12 @@ predictors that account for a significant fraction of the failures for
 a bug often provide valuable clues, but still they represent special
 cases and may not suggest other, more fundamental, causes of the bug.
 
-\issue[Alice]{Why use the word "disproportionately"?  The harmonic
-  mean just rewards high scores in both dimensions, and has the
-  averaging affect of trading off one with the other, no?}
 Tables~\ref{tab:sorts-failure} and \ref{tab:sorts-increase} illustrate the difficulty of defining
 ``importance.''  We are looking for predicates with high \emph{sensitivity}
 (meaning predicates that account for many failed runs) but also high \emph{specificity} (meaning predicates that do not mispredict failure in many successful
 runs).  In information retrieval, the corresponding terms are recall and
 precision.  A standard way to combine sensitivity and specificity is to compute
-their harmonic mean; this measure disproportionately rewards high scores in
+their harmonic mean; this measure prefers high scores in
 both dimensions.  In our case, $\increase(P)$ measures specificity.  For
 sensitivity, we have found it useful to consider a transformation $\phi$ 
 of the raw counts, and to form the normalized ratio $\phi(F(P)) / \phi(\numfail)$, 
