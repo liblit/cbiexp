@@ -147,7 +147,6 @@ liblate_a_SOURCES =				\
 	get_ts_ordering.cc			\
 	logreg.cc				\
 	max-observed.cc				\
-	mult_WX.cc				\
 	partial_order.cc			\
 	preds.h					\
 	project.cc				\
