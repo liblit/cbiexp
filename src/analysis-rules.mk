@@ -19,9 +19,9 @@ sparse := $(sparsebase:=.) $(sparsebase:=.ir) $(sparsebase:=.jc) $(sparsebase:=.
 schemes ?= all branches g-object-unref returns scalar-pairs
 sorts := lb is fs nf hl hs
 projections := none circular linear
-views := $(foreach scheme, $(schemes), $(foreach sort, $(sorts), $(foreach projection, $(projections), $(scheme)_$(sort)_$(projection).xml)))
+#views := $(foreach scheme, $(schemes), $(foreach sort, $(sorts), $(foreach projection, $(projections), $(scheme)_$(sort)_$(projection).xml)))
+#topRho := $(foreach sort, hl hs, $(foreach proj, circular linear, top-rho_$(sort)_$(proj).xml))
 
-topRho := $(foreach sort, hl hs, $(foreach proj, circular linear, top-rho_$(sort)_$(proj).xml))
 links :=					\
 	bug-o-meter.css				\
 	bug-o-meter.dtd				\
@@ -117,7 +117,7 @@ $(sparse): $(corrdir)/mhn2sparsemat.pl f.runs s.runs obs.txt tru.txt
 clean:: ; rm -f $(sparse)
 
 all_hl_corrected-%.xml: $(tooldir)/corrective-ranking/% f.runs obs.txt tru.txt
-	$(time) ./$< $(corrected_view_flags)
+	$(time) ./$< --runs-directory=$(datadir) $(corrected_view_flags)
 	$(MAKE) bug-o-meter.dtd corrected-view.dtd projected-view.dtd view.dtd
 	xmllint --valid --noout $@
 clean:: ; rm -f all_hl_corrected-exact-complete.xml all_hl_corrected-approximate-complete.xml
