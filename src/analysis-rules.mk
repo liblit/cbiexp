@@ -85,7 +85,7 @@ xmlify-results: %: $(tooldir)/%.o sites.o units.o $(tooldir)/libanalyze.a
 clean:: ; rm -f xmlify-results
 
 $(filter-out %_none.xml, $(views)): project preds.txt rho.bin
-	$(time) ./$< $(projected_view_flags)
+	$(time) ./$< --runs-directory=$(datadir) $(projected_view_flags)
 	$(MAKE) projected-view.dtd view.dtd
 	xmllint --valid --noout $(filter-out %_none.xml, $(views))
 clean:: ; rm -f $(filter-out %_none.xml, $(views))
