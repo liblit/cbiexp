@@ -245,7 +245,7 @@ other     &  38762 & 36768 & 36504 & 33023 \\
 \subsection{Effect of Sampling on Predicate Selection}
 
 We now examine the effect of of the sampling rate and the number of
-program trials on the step (1) of the algorithm: predicate selection.
+program trials on step (1) of the algorithm: predicate selection.
 We start with $3000$ randomly
 selected trial runs, and add $3000$ random trials at a time, until we
 incorporate all $31873$ runs of our data.  We record the number of
@@ -291,12 +291,12 @@ very few trial runs).
 At the relatively high sampling rate of
 \nicefrac{1}{10}, there are still enough samples taken at most
 instrumentation sites, and there's a net increase in the number of
-selected predicates.  Once the sampling rate increases to
-\nicefrac{1}{100} and above, however, the sparsifying effect of
-sampling sets in; fewer samples are taken overall on fewer predicates,
+selected predicates.  Once the sampling rate shrinks to
+\nicefrac{1}{100} and below, however, the effect of sparse
+sampling sets in.  Fewer samples are taken overall on fewer predicates,
 and as a result, fewer predicates have a nonzero $\increase(\ldots)$ score.
 Incorporating more runs tends to alleviate the situation; at above
-$10000$ runs, roughly the same number of predicates are retained for
+10,000 runs, roughly the same number of predicates are retained for
 the \nicefrac{1}{100} sampled data as the unsampled data.  The very
 sparse sampling rate of \nicefrac{1}{1000}, on the other hand,
 causes much more change in the final result.  A lot more predicates
