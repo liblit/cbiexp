@@ -455,14 +455,11 @@ Each compared-to $\mathtt{y}_i$
   %%
 \end{description}
 
-\issue[Mayur]{General comment on all three scheme descriptions:
-
-  We should mention somewhere that the predicates within a site are
-  *not* sampled independently, that is, if we decide to sample a site,
-  then we record the value of each predicate at that site.  In a
-  related comment, maybe we should also mention the constraint on each
-  scheme that for every predicate P that it produces, there must be a
-  predicate !P.}
+All predicates at a given site are updated jointly.  For
+example, sampling a single negative return value would yield true
+observations of the $< 0$, $\le 0$, and $\ne 0$ predicates in the
+returns scheme.  Note that the logical negation of each predicate is
+itself a predicate.
 
   These are natural properties to check and provide good coverage of a
   program's scalar values and control flow.  This set is by no means
