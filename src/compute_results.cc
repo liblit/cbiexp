@@ -106,7 +106,7 @@ inline void print_pred(FILE* fp, int u, int c, int p, int site)
 
     assert(units[u].scheme_code == sites[site].scheme_code);
 
-    fprintf(fp, "%c %d %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d\n",
+    fprintf(fp, "%c %d %d %d %d %g %g %g %g %d %d %d %d\n",
 	units[u].scheme_code,
         u, c, p, site, 
         ps.lb, ps.in, ps.fs, ps.co,
