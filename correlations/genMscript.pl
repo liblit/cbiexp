@@ -45,7 +45,7 @@ sub output_calcCorr {
   print $fd "load $matdir/Wf.mat\nload $matdir/Wfobs.mat\nload $matdir/Wfcross.mat\n";
   print $fd "load $matdir/Ws.mat\nload $matdir/Wsobs.mat\nload $matdir/Wscross.mat\n";
   print $fd "calcCorr\n";
-  print $fd "save $matdir/Cov.mat Cov\nsave $matdir/rho.mat rho\nsave $matdir/condprob.mat PAB\n";
+  print $fd "save $matdir/Cov.mat Cov\nsave $matdir/rho.mat rho\n%save $matdir/condprob.mat PAB\n";
 }
 
 sub output_calcAdj {
