@@ -56,16 +56,23 @@ $unwritable = 50;
 @lisp_files = `find $DPATH -name "*.lisp"`;
 
 
+sub fatal ($) {
+    my $disregard = new FileHandle 'disregard', 'w';
+    $disregard->print("clustderdata.pl script error: $_[0]\n");
+    die $_[0];
+}
+
+
 sub check_system ($) {
-    die "system error: $!" if (system $_[0]) == -1;
-    die "system command crashed" if $? & 127;
+    fatal "cannot run command \"@_\": $!" if (system $_[0]) == -1;
+    fatal "command \"@_\" crashed" if $? & 127;
     return $? >> 8;
 }
 
 
 sub diff ($$) {
     my $status = check_system "cmp -s @_";
-    die "cmp error on @_" if $status > 1;
+    fatal "cmp error on @_\n" if $status > 1;
     return $status;
 }
 
@@ -78,7 +85,7 @@ sub run_moss ($$$) {
     $command = "$environment $command" if $environment;
 
     # build data files directory
-    mkdir $variant or die "mkdir $variant failed: $!";
+    mkdir $variant or fatal "mkdir $variant failed: $!";
 
     # record it for posterity
     my $commandHandle = new FileHandle "$variant/command", 'w';
