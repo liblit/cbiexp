@@ -255,6 +255,7 @@ which are likely to be of interest when hunting for bugs.  At present
 our system offers the following instrumentation schemes:
 
 \begin{description}
+\sloppy
 \item[branches:] At each conditional,
   count how often each branch is taken.  The observation is
   made just after the predicate is evaluated but before the selected
@@ -320,7 +321,7 @@ never observed during execution (all the counters at the site are 0)
 and predicates that are observed but never true (the counter(s) for the predicate
 is 0, but some other counter at the site is positive).
 
-The post-execution feedback report is a dump of the counter values for
+The post-execution feedback report consists of the final counter values for
 each instrumentation site.  Reducing a trace to a set of counters
 prevents us from reasoning about relative time ordering of events
 during execution.  However, it also means that program actions early
