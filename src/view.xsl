@@ -48,8 +48,7 @@
 	  <tr>
 	    <th>Go to:</th>
 	    <td>
-	      [<a href="summary.xml">report summary</a>]
-	      [<a href="{$projectURL}">CBI web page</a>]
+	      <xsl:apply-templates mode="go-to-links" select="view"/>
 	    </td>
 	  </tr>
 	</table>
@@ -143,6 +142,13 @@
   </xsl:template>
 
 
+  <!-- handy links to related pages -->
+  <xsl:template mode="go-to-links" match="view">
+    [<a href="summary.xml">report summary</a>]
+    [<a href="{$projectURL}">CBI web page</a>]
+  </xsl:template>
+
+
   <!-- the bug predictor table -->
   <xsl:template match="view">
     <table class="predictors">
@@ -170,6 +176,7 @@
   <!-- a single retained predictor -->
   <xsl:template match="predictor">
     <tr>
+      <xsl:attribute name="title">rank: <xsl:number/>, pred: <xsl:value-of select="@index"/></xsl:attribute>
       <xsl:apply-templates mode="cells" select="."/>
     </tr>
   </xsl:template>
