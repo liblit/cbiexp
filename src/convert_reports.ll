@@ -183,7 +183,6 @@ int main(int argc, char** argv)
 	FILE* ifp = fopenRead(RawReport::format(i));
 	ofp = fopenWrite(CompactReport::format(i));
 
-	printf("r %d\n", i);
 	yyrestart(ifp);
 	yylex();
 
