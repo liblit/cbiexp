@@ -14,7 +14,7 @@ namespace Progress { class Bounded; }
 //
 
 
-struct Predicates : public std::list<Predicate >
+struct Predicates : public std::list<Predicate>
 {
   Predicates();
   unsigned count;
