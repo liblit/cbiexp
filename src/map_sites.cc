@@ -84,12 +84,13 @@ void print_site(char scheme_code, char* s)
 
     z = strchr(y, '\t'); assert(z); *z = '\0'; z++;
 
-    // z points to CFG node
+    // z points to CFG node, unless report is fairly old
 
     fprintf(sfp, "\t{ \"%s\", %s, \"%s\", ", s, x, y);
 
-    // ignore CFG node
-    z = strchr(z, '\t'); assert(z); z++;
+    // ignore CFG node if present
+    char * const skip = strchr(z, '\t');
+    if (skip) z = skip + 1;
 
     // z points to scheme-specific predicate name
 
