@@ -49,6 +49,7 @@ my ($handle, $filename) = tempfile(UNLINK => 1);
 print $handle "all: $_/stamp" foreach $first .. $last;
 
 print $handle ("%/stamp:",
+	       "\ttest ! -e orderly-shutdown",
 	       "\techo run \$*: start",
 	       "\tmkdir \$*",
 	       "\tcd \$* && $FindBin::Bin/run-server",
