@@ -6,21 +6,21 @@
 #include <ctime>
 #include <vector>
 #include "classify_runs.h"
-#include "scaffold.h"
 #include "units.h"
+#include "utils.h"
 
 using namespace std;
 
-struct site_details_t {
+struct site_info_t {
     bit_vector *obs[6], *tru[6];
-    site_details_t()
+    site_info_t()
     {
 	for (int i = 0; i < 6; i++)
 	    obs[i] = tru[i] = NULL;
     }
 };
 
-vector<vector<site_details_t> > site_details;
+vector<vector<site_info_t> > site_info;
 
 char* sruns_txt_file = NULL;
 char* fruns_txt_file = NULL;
@@ -35,44 +35,44 @@ FILE* tfp = NULL;
 
 inline void inc_obs(int r, int u, int c, int p)
 {
-    if (site_details[u][c].obs[p]) (*(site_details[u][c].obs[p]))[r] = true;
+    if (site_info[u][c].obs[p]) (*(site_info[u][c].obs[p]))[r] = true;
 }
 
 inline void inc_tru(int r, int u, int c, int p)
 {
-    if (site_details[u][c].tru[p]) (*(site_details[u][c].tru[p]))[r] = true;
+    if (site_info[u][c].tru[p]) (*(site_info[u][c].tru[p]))[r] = true;
 }
 
 void print_pred_details(int u, int c, int p)
 {
     int r;
 
-    if (site_details[u][c].obs[p]) {
+    if (site_info[u][c].obs[p]) {
 	fputs("F: ", ofp);
 	for (r = 0; r < num_runs; r++)
-	    if (is_frun[r] && (*(site_details[u][c].obs[p]))[r] == true)
+	    if (is_frun[r] && (*(site_info[u][c].obs[p]))[r] == true)
 		fprintf(ofp, "%d ", r);
 	fputs("\nS: ", ofp);
 	for (r = 0; r < num_runs; r++)
-	    if (is_srun[r] && (*(site_details[u][c].obs[p]))[r] == true)
+	    if (is_srun[r] && (*(site_info[u][c].obs[p]))[r] == true)
 		fprintf(ofp, "%d ", r);
 	fputc('\n', ofp);
     }
 
-    if (site_details[u][c].tru[p]) {
+    if (site_info[u][c].tru[p]) {
 	fputs("F: ", tfp);
 	for (r = 0; r < num_runs; r++)
-	    if (is_frun[r] && (*(site_details[u][c].tru[p]))[r] == true)
+	    if (is_frun[r] && (*(site_info[u][c].tru[p]))[r] == true)
 		fprintf(tfp, "%d ", r);
 	fputs("\nS: ", tfp);
 	for (r = 0; r < num_runs; r++)
-	    if (is_srun[r] && (*(site_details[u][c].tru[p]))[r] == true)
+	    if (is_srun[r] && (*(site_info[u][c].tru[p]))[r] == true)
 		fprintf(tfp, "%d ", r);
 	fputc('\n', tfp);
     }
 }
 
-void print_site_details(int u, int c)
+void print_site_info(int u, int c)
 {
     int p;
 
@@ -91,37 +91,39 @@ void print_site_details(int u, int c)
     }
 }
 
-void process_s_site(int r, int u, int c, int x, int y, int z)
+int cur_run;
+
+void process_s_site(int u, int c, int x, int y, int z)
 {
 	if (x + y + z > 0) {
-		inc_obs(r, u, c, 0);
-		inc_obs(r, u, c, 1);
-		inc_obs(r, u, c, 2);
-		inc_obs(r, u, c, 3);
-		inc_obs(r, u, c, 4);
-		inc_obs(r, u, c, 5);
+		inc_obs(cur_run, u, c, 0);
+		inc_obs(cur_run, u, c, 1);
+		inc_obs(cur_run, u, c, 2);
+		inc_obs(cur_run, u, c, 3);
+		inc_obs(cur_run, u, c, 4);
+		inc_obs(cur_run, u, c, 5);
 		if (x > 0)
-			inc_tru(r, u, c, 0);
+			inc_tru(cur_run, u, c, 0);
 		if (y + z > 0)
-			inc_tru(r, u, c, 1);
+			inc_tru(cur_run, u, c, 1);
 		if (y > 0)
-			inc_tru(r, u, c, 2);
+			inc_tru(cur_run, u, c, 2);
 		if (x + z > 0)
-			inc_tru(r, u, c, 3);
+			inc_tru(cur_run, u, c, 3);
 		if (z > 0)
-			inc_tru(r, u, c, 4);
+			inc_tru(cur_run, u, c, 4);
 		if (x + y > 0)
-			inc_tru(r, u, c, 5);
+			inc_tru(cur_run, u, c, 5);
 	}
 }
 
-void process_b_site(int r, int u, int c, int x, int y)
+void process_b_site(int u, int c, int x, int y)
 {
 	if (x + y > 0) {
-		inc_obs(r, u, c, 0);
-		inc_obs(r, u, c, 1);
-		if (x > 0) inc_tru(r, u, c, 0);
-		if (y > 0) inc_tru(r, u, c, 1);
+		inc_obs(cur_run, u, c, 0);
+		inc_obs(cur_run, u, c, 1);
+		if (x > 0) inc_tru(cur_run, u, c, 0);
+		if (y > 0) inc_tru(cur_run, u, c, 1);
 	}
 }
 
@@ -195,9 +197,8 @@ int main(int argc, char** argv)
     tfp = fopen(tru_txt_file, "w");
     assert(tfp);
 
-    site_details.resize(num_units);
-    for (u = 0; u < num_units; u++)
-	site_details[u].resize(units[u].c);
+    site_info.resize(num_units);
+    for (u = 0; u < num_units; u++) site_info[u].resize(units[u].c);
 
     pfp = fopen(preds_txt_file, "r");
     assert(pfp);
@@ -208,21 +209,32 @@ int main(int argc, char** argv)
 	assert(u >= 0 && u < num_units);
 	assert(c >= 0 && c < units[u].c);
 	assert(p >= 0 && p < 6);
-	site_details[u][c].obs[p] = new bit_vector(num_runs);
-	assert(site_details[u][c].obs[p]);
-	site_details[u][c].tru[p] = new bit_vector(num_runs);
-	assert(site_details[u][c].tru[p]);
+	site_info[u][c].obs[p] = new bit_vector(num_runs);
+	assert(site_info[u][c].obs[p]);
+	site_info[u][c].tru[p] = new bit_vector(num_runs);
+	assert(site_info[u][c].tru[p]);
     }
     fclose(pfp);
 
-    scaffold(compact_report_path_fmt,
-             process_s_site,
-             process_s_site,
-             process_b_site);
+    for (cur_run = 0; cur_run < num_runs; cur_run++) {
+        if (!is_srun[cur_run] && !is_frun[cur_run])
+            continue;
+
+        printf("r %d\n", cur_run);
+        char s[1000];
+        sprintf(s, compact_report_path_fmt, cur_run);
+
+        FILE* fp = fopen(s, "r");
+        assert(fp);
+
+        process_report(fp, process_s_site, process_s_site, process_b_site);
+
+        fclose(fp);
+    }
 
     for (u = 0; u < num_units; u++)
 	for (c = 0; c < units[u].c; c++)
-	    print_site_details(u, c);
+	    print_site_info(u, c);
 
     fclose(ofp);
     fclose(tfp);

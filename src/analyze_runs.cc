@@ -366,8 +366,8 @@ int main(int argc, char** argv)
 	preds_abbr_txt_file = DEFAULT_PREDS_ABBR_TXT_FILE;
 	preds_src_file = DEFAULT_PREDS_SRC_FILE;
 	result_summary_htm_file = DEFAULT_RESULT_SUMMARY_HTM_FILE;
-	shell("%s %s/compute_results.o %s/classify_runs.o %s/scaffold.o %s/utils.o %s.o %s.o -o %s",
-	      linker, objdir, objdir, objdir, objdir, sites_src_file, units_src_file, COMPUTE_RESULTS);
+	shell("%s %s/compute_results.o %s/classify_runs.o %s/utils.o %s.o %s.o -o %s",
+	      linker, objdir, objdir, objdir, sites_src_file, units_src_file, COMPUTE_RESULTS);
 	shell("%s -e %s -d %s -c %s -s %s -f %s -cr %s %s %s -p %s -r %s",
 	      COMPUTE_RESULTS, experiment_name, program_src_dir, confidence,
               sruns_txt_file, fruns_txt_file, compact_report_path_fmt,
@@ -393,7 +393,7 @@ int main(int argc, char** argv)
 	puts("Computing obs and tru ...");
 	obs_txt_file = DEFAULT_OBS_TXT_FILE;
 	tru_txt_file = DEFAULT_TRU_TXT_FILE;
-	shell("%s %s/compute_obs_tru.o %s/classify_runs.o %s/scaffold.o %s.o -o %s",
+	shell("%s %s/compute_obs_tru.o %s/classify_runs.o %s/utils.o %s.o -o %s",
 	      linker, objdir, objdir, objdir, units_src_file, COMPUTE_OBS_TRU);
 	shell("%s -s %s -f %s -p %s -cr %s -ot %s -tt %s",
 	      COMPUTE_OBS_TRU, sruns_txt_file, fruns_txt_file, preds_abbr_txt_file,

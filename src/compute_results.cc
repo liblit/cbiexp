@@ -7,7 +7,6 @@
 #include <iostream>
 #include <vector>
 #include "classify_runs.h"
-#include "scaffold.h"
 #include "units.h"
 #include "sites.h"
 #include "utils.h"
@@ -191,31 +190,33 @@ inline void obs(int r, int u, int c)
 	site_info[u][c].of++; 
 }
 
-void process_s_site(int r, int u, int c, int x, int y, int z)
+int cur_run;
+
+void process_s_site(int u, int c, int x, int y, int z)
 {
 	if (x + y + z > 0) {
-		obs(r, u, c);
+		obs(cur_run, u, c);
 		if (x > 0)
-			inc(r, u, c, 0);
+			inc(cur_run, u, c, 0);
 		if (y + z > 0)
-			inc(r, u, c, 1);
+			inc(cur_run, u, c, 1);
 		if (y > 0)
-			inc(r, u, c, 2);
+			inc(cur_run, u, c, 2);
 		if (x + z > 0)
-			inc(r, u, c, 3);
+			inc(cur_run, u, c, 3);
 		if (z > 0)
-			inc(r, u, c, 4);
+			inc(cur_run, u, c, 4);
 		if (x + y > 0)
-			inc(r, u, c, 5);
+			inc(cur_run, u, c, 5);
 	}
 }
 
-void process_b_site(int r, int u, int c, int x, int y)
+void process_b_site(int u, int c, int x, int y)
 {
 	if (x + y > 0) {
-		obs(r, u, c);
-		if (x > 0) inc(r, u, c, 0);
-		if (y > 0) inc(r, u, c, 1);
+		obs(cur_run, u, c);
+		if (x > 0) inc(cur_run, u, c, 0);
+		if (y > 0) inc(cur_run, u, c, 1);
 	}
 }
 
@@ -513,12 +514,24 @@ int main(int argc, char** argv)
     classify_runs(sruns_txt_file, fruns_txt_file);
 
     site_info.resize(num_units);
-    for (int u = 0; u < num_units; u++) site_info[u].resize(units[u].c);
+    for (int u = 0; u < num_units; u++)
+        site_info[u].resize(units[u].c);
 
-    scaffold(compact_report_path_fmt,
-             process_s_site,
-             process_s_site,
-             process_b_site);
+    for (cur_run = 0; cur_run < num_runs; cur_run++) {
+        if (!is_srun[cur_run] && !is_frun[cur_run])
+            continue;
+
+        printf("r %d\n", cur_run);
+        char s[1000];
+        sprintf(s, compact_report_path_fmt, cur_run);
+
+        FILE* fp = fopen(s, "r");
+        assert(fp);
+
+        process_report(fp, process_s_site, process_s_site, process_b_site);
+
+        fclose(fp);
+    }
 
     cull_preds();
     cull_preds_aggressively1();
