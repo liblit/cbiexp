@@ -149,7 +149,7 @@ static int get_unit_indx(char scheme_code, const string &signature)
 	if (scheme_code == units[i].scheme_code && signature == units[i].signature)
 	    return i;
 
-    cerr << "site count mismatch: got " << sitesActual << ", expected " << sitesExpected << '\n'
+    cerr << "cannot find unit index"
 	 << "\tunit: " << signature << '\n'
 	 << "\tscheme: " << scheme_code << '\n';
     exit(1);
