@@ -40,7 +40,7 @@ better(Candidates::value_type &challenger, double challengerScore, double winner
 
   // !!!: deviation from formal definitions:
   //   prefer non-scalar-pairs predictors
-  if (units[challenger.first.unitIndex].scheme_code != 's')
+  if (units[challenger.first.unitIndex].scheme_code != 'S')
     return true;
 
   return false;
