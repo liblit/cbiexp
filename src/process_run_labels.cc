@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "def.h"
 
+int
 main(int argc, char** argv)
 {
     assert(argc == 2);
@@ -35,5 +36,6 @@ main(int argc, char** argv)
 
     fclose(sfp);
     fclose(ffp);
+    return 0;
 }
 
