@@ -1,0 +1,121 @@
+#!/usr/bin/perl -w
+#-*- cperl -*-
+
+use strict;
+use Getopt::Long;
+
+
+########################################################################
+#
+#  utilities for printing operand details for various schemes
+#
+
+
+sub cleanup_operand ($) {
+    local $_ = shift;
+
+    # remove function name prefix on local variables
+    s/[a-zA-Z_][a-zA-Z_0-9]*\$//g;
+
+    # remove long long integer constant suffixes
+    s/([0-9][0-9]*)LL/$1/g;
+    s/([0-9][0-9]*)ULL/$1/g;
+
+    # entity-escape special XML characters
+    s/&/\&amp;/g;
+    s/</\&lt;/g;
+    s/>/\&gt;/g;
+
+    return $_;
+}
+
+
+sub print_simple ($) {
+    die unless @_ == 1;
+    my $operand = cleanup_operand shift;
+    print "<operand source=\"$operand\"/>";
+}
+
+
+sub print_scalar_pairs (@) {
+    die "wrong number of details: @_" unless @_ == 5;
+    my ($left, $leftScope, $leftAccess, $right, $rightScope) = @_;
+    $left = cleanup_operand $left;
+    $right = cleanup_operand $right;
+    print
+	"<operand source=\"$left\" scope=\"$leftScope\" access=\"$leftAccess\"/>",
+	"<operand source=\"$right\" scope=\"$rightScope\"/>";
+}
+
+
+my %print_details = (
+    'branches' => \&print_simple,
+    'g-object-unref' => \&print_simple,
+    'returns' => \&print_simple,
+    'scalar-pairs' => \&print_scalar_pairs,
+);
+
+
+########################################################################
+#
+#  command line processing
+#
+
+my @prefixes = ();
+my $help;
+
+my $result = GetOptions('strip-prefix|p=s', \@prefixes,
+			'help|?' => \$help);
+
+if ($help || !$result) {
+    print <<"EOT";
+Usage: $0 [OPTION...] [<SITES-FILE> ...]
+
+  -p, --strip-prefix=PATH    strip PATH from the start of all file names
+  -?, --help                 Give this help list
+
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
+
+The \"--strip-prefix\" option may be used multiple times to strip
+multiple prefixes.  Sites are read from standard input if no sites
+file names are given on the command line.
+EOT
+    exit 1;
+}
+
+
+########################################################################
+#
+#  main conversion code
+#
+
+print
+    '<?xml version="1.0"?>',
+    '<!DOCTYPE site-info SYSTEM "site-info.dtd">',
+    '<site-info>';
+
+my $scheme;
+
+while (<>) {
+    chomp;
+    if (/^<sites .* scheme=\"([-a-z]+)\"/) {
+	$scheme = $1;
+	print $_;
+    } elsif ($_ eq "</sites>") {
+	$scheme = undef;
+	print $_;
+    } else {
+	die unless defined $scheme;
+	my @fields = split /\t/;
+	die "too few fields" if @fields < 5;
+	my ($file, $line, $function, $cfg, @details) = @fields;
+	$file =~ s/^\Q$_\E// foreach @prefixes;
+
+	print "<site file=\"$file\" line=\"$line\" function=\"$function\" cfg-node=\"$cfg\">";
+	$print_details{$scheme}(@details);
+	print "</site>";
+    }
+}
+
+print "</site-info>\n";
