@@ -118,7 +118,8 @@ Now, $P \vee \neg P$ is not the set of all runs, because we are not working in a
 In any given run, neither of $P$ or $\neg P$ may be observed (because the statement where this predicate is
 sampled is not reached), or one may be observed, or both may be observed (because the statement is executed
 multiple times and $P$ is sometimes true and sometimes false).  Thus, $\context(P)$ is the probability that
-in the set of runs where $P$ is observed at all, the program fails.
+in the set of runs where $P$ is observed at all, the program fails. We can compute $\context(P)$ as follows:
+\[ \context(P) = \frac{\#F(P \vee \neg P)}{\#S(P \vee \neg P) + \#F(P \vee \neg P)} \]
 
 We can now state our algorithm:
 \begin{enumerate}
