@@ -29,7 +29,7 @@
 
 using namespace std;
 
-const char *Stylesheet::filename = "view.xsl";
+const char *Stylesheet::filename = "projected-view.xsl";
 
 
 ////////////////////////////////////////////////////////////////////////
