@@ -193,10 +193,7 @@ tested each time the program point is reached).  A feedback report $R$
 consists of one bit indicating whether the {\em run} of the program
 succeeded or failed, as well as a bit vector with one bit for each
 predicate $P$; if $P$ is observed to be true at least once during run
-$R$ then $R(P) = 1$, otherwise $R(P) = 0$.\footnote{In reality, we count
-the number of times $P$ is observed to be true, but the analysis of
-the feedback reports only uses whether $P$ is observed to be true at
-least once.}
+$R$ then $R(P) = 1$, otherwise $R(P) = 0$.
 
 \issue[Alice]{Comment about notation: the f(x) usually denotes some
   kind of function, do we want to treat R (a run) as a function?  I'd
