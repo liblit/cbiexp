@@ -56,6 +56,7 @@ note 'command-line', "@argv";
 
 open STDOUT, '>', 'stdout' or die;
 open STDERR, '>', 'stderr' or die;
+$ENV{SAMPLER_FILE} = 'reports';
 system @argv;
 
 note 'outcome', $?;
