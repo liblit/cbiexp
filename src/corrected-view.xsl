@@ -11,6 +11,12 @@
 
   <xsl:import href="view.xsl"/>
 
+  <xsl:output
+    method="xml"
+    doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"
+    doctype-public="-//W3C//DTD XHTML 1.1//EN"
+  />
+
 
   <!-- extra column headers for our own additional information -->
   <xsl:template mode="dynamic-headings" match="view">
@@ -28,7 +34,20 @@
     <xsl:apply-imports/>
     <td><xsl:value-of select="@effective"/></td>
     <xsl:apply-templates select="bug-o-meter"/>
-    <td class="link"><a href="zoom-{/view/@projection}-{@index}.xml">&link;</a></td>
+    <td class="link">
+      <xsl:call-template name="zoom-link">
+	<xsl:with-param name="projection" select="@projection"/>
+	<xsl:with-param name="index" select="@index"/>
+      </xsl:call-template>
+    </td>
+  </xsl:template>
+
+
+  <!-- hyperlink for a single predicate's zoom page -->
+  <xsl:template name="zoom-link">
+    <xsl:param name="projection"/>
+    <xsl:param name="index"/>
+    <a href="zoom-{/view/@projection}-{@index}.xml">&link;</a>
   </xsl:template>
 
 
