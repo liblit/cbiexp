@@ -18,7 +18,7 @@ my $jobs;
 
 my $understood = GetOptions('jobs=i' => \$jobs);
 
-die "Usage: $0 [--jobs=<count>] <first-num> <last-run-num>\n",
+die "Usage: $0 [--jobs=<count>] <first-run-number> <last-run-number>\n",
     unless $understood && @ARGV == 2;
 
 
