@@ -84,7 +84,7 @@
     <xsl:param name="predicate"/>
     <xsl:text>old_refcount(</xsl:text>
     <xsl:value-of select="operand[1]/@source"/>
-    <xsl:text>old_refcount)</xsl:text>
+    <xsl:text>)</xsl:text>
     <xsl:text> </xsl:text>
     <xsl:value-of select="document('schemes.xml')/schemes/scheme[@id = 'g-object-unref']/predicate[number($predicate)]"/>
   </xsl:template>
