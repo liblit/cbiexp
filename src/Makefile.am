@@ -1,7 +1,6 @@
 SUBDIRS = corrective-ranking Score
 
-AM_CPPFLAGS = -W -Wall -Werror -Wformat 
-#AM_CXXFLAGS = -I/moa/sc5/cbi/alicez/cbiexp/src/boost_1_32_0/include/boost-1_32
+AM_CPPFLAGS = -W -Wall -Werror -Wformat $(BOOST_CPPFLAGS)
 
 EXTRA_DIST =					\
 	summary.css				\

@@ -22,8 +22,6 @@ AC_PROG_CXX
 AC_PROG_RANLIB
 AM_PROG_LEX
 
-AM_PATH_GSL
-
 AC_LANG(C++)
 AC_REQUIRE_CPP
 
@@ -39,6 +37,30 @@ if test "$GXX" = yes; then
     [AC_MSG_RESULT(earlier than 3.3.x)
     AC_MSG_WARN(this compiler version may not handle large numbers of sites)])
 fi
+
+
+########################################################################
+#
+#  supporting packages
+#
+
+
+AM_PATH_GSL
+
+
+AC_ARG_WITH(boost,
+  AC_HELP_STRING([--with-boost=PREFIX],
+                 [look for Boost in PREFIX (optional)]),
+  BOOST_CPPFLAGS="-I$withval/include",
+  BOOST_CPPFLAGS='')
+
+old_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
+AC_CHECK_HEADER(boost/version.hpp, ,
+  AC_MSG_ERROR(cannot find Boost headers; please use "--with-boost=DIR"))
+CPPFLAGS="$old_CPPFLAGS"
+
+AC_SUBST(BOOST_CPPFLAGS)
 
 
 ########################################################################
