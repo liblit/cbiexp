@@ -17,80 +17,48 @@ namespace Get
   class LowerBound
   {
   public:
-    LowerBound(const Stats &stats)
-      : stats(stats)
+    double operator () (const pred_info &pred) const
     {
-    }
-
-    double operator () (const predIndex index) const
-    {
-      return stats[index].ps.lb;
+      return pred.ps.lb;
     }
 
     static const char code[];
-
-  private:
-    const Stats &stats;
   };
 
 
   class IncreaseScore
   {
   public:
-    IncreaseScore(const Stats &stats)
-      : stats(stats)
+    double operator () (const pred_info &pred) const
     {
-    }
-
-    double operator () (const predIndex index) const
-    {
-      return stats[index].ps.in;
+      return pred.ps.in;
     }
 
     static const char code[];
-
-  private:
-    const Stats &stats;
   };
 
 
   class FailScore
   {
   public:
-    FailScore(const Stats &stats)
-      : stats(stats)
+    double operator () (const pred_info &pred) const
     {
-    }
-
-    double operator () (const predIndex index) const
-    {
-      return stats[index].ps.fs;
+      return pred.ps.fs;
     }
 
     static const char code[];
-
-  private:
-    const Stats &stats;
   };
 
 
   class TrueInFails
   {
   public:
-    TrueInFails(const Stats &stats)
-      : stats(stats)
+    double operator () (const pred_info &pred) const
     {
-    }
-
-    double operator () (const predIndex index) const
-    {
-      return stats[index].f;
+      return pred.f;
     }
 
     static const char code[];
-
-  private:
-    const Stats &stats;
   };
 }
 
@@ -105,16 +73,17 @@ namespace Sort
   {
   public:
     Ascending(const Stats &stats)
-      : get(stats)
+      : stats(stats)
     {
     }
 
     bool operator () (const predIndex &a, const predIndex &b)
     {
-      return get(a) > get(b);
+      return get(stats[a]) < get(stats[b]);
     }
 
   private:
+    const Stats &stats;
     const Get get;
   };
 
@@ -124,16 +93,17 @@ namespace Sort
   {
   public:
     Descending(const Stats &stats)
-      : get(stats)
+      : stats(stats)
     {
     }
 
     bool operator () (const predIndex &a, const predIndex &b)
     {
-      return get(a) > get(b);
+      return get(stats[a]) > get(stats[b]);
     }
 
   private:
+    const Stats &stats;
     const Get get;
   };
 }
