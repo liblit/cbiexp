@@ -3,6 +3,7 @@
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{ieee}
+\usepackage{mailto}
 \usepackage{nicefrac}
 \usepackage{url}
 \usepackage{xspace}
@@ -22,7 +23,7 @@
 \newcommand{\nautilus}{\texttt{nautilus}\xspace}
 \newcommand{\rhythmbox}{\texttt{rhythmbox}\xspace}
 
-\newcommand{\header}[1]{\multicolumn{1}{c}{#1}}
+\newcommand{\header}[1]{\multicolumn{1}{c}{\textbf{#1}}}
 
 \pagestyle{empty}
 
@@ -40,29 +41,29 @@
 \newcommand*{\both}[0]{\textsuperscript{\eecsMark, \statMark}}
 \newcommand*{\stan}[0]{\textsuperscript{\stanMark}}
 
-\newcommand{\aupar}{\end{tabular} \\ \begin{tabular}[t]{c}}
+\newcommand{\aumail}[1]{\small{\mailto{#1}}}
+\newcommand{\aupar}[0]{\end{tabular} \\ \begin{tabular}[t]{c}}
 
 \author{%
-  Ben Liblit \eecs \and
-  Mayur Naik \stan \and
-  Alice X.\ Zheng \eecs
-  %%
-  \aupar
-  %%
-  Alex Aiken \stan \and
-  Michael I.\ Jordan \both
+  Ben Liblit \eecs \\ \aumail{liblit@cs.berkeley.edu} \and
+  Mayur Naik \stan \\ \aumail{mhn@cs.stanford.edu} \and
+  Alice X.\ Zheng \eecs \\ \aumail{alicez@cs.berkeley.edu} \and
+  Alex Aiken \stan \\ \aumail{aiken@cs.stanford.edu} \and
+  Michael I.\ Jordan \both \\ \aumail{jordan@cs.berkeley.edu}
   %%
   \aupar
   %%
   \eecs Department of Electrical \\ Engineering and Computer Science \\
   \stat Department of Statistics \\
   University of California, Berkeley \\
-  Berkeley, CA 947201776
+  Berkeley, CA 94720-1776
+  %%
   \and
+  %%
   \stan Computer Science Department \\
   353 Serra Mall \\
   Stanford University \\
-  Stanford CA 943059025
+  Stanford CA 94305-9025
 }
 
 \maketitle
@@ -130,12 +131,12 @@ applications we instrument.
   \centering
   \begin{tabular}{lrcccc}
     \header{Application} & \header{Lines of Code} & \header{Shared Libraries} & \header{Plugins} & \header{Threads} \\\hline
-    \evolution  & 460,912       & \checkmark       & \checkmark & \checkmark \\
-    \gaim       & 160,435       &                  & \checkmark & \\
-    \gimp       & 650,660       & \checkmark       & \checkmark & \\
-    \gnumeric   & 319,137       &                  & \checkmark & \\
-    \nautilus   & 124,679       & \checkmark       & \checkmark & \checkmark \\
-    \rhythmbox  &  56,442       & \checkmark       &            &
+    \evolution  & 460,912 & \checkmark & \checkmark & \checkmark \\
+    \gaim & 160,435 & & \checkmark & \\
+    \gimp & 650,660 & \checkmark & \checkmark & \\
+    \gnumeric & 319,137 & & \checkmark & \\
+    \nautilus & 124,679 & \checkmark & \checkmark & \checkmark \\
+    \rhythmbox  &  56,442 & \checkmark & &
   \end{tabular}
   \caption{Instrumented applications.}
   \label{apps}
@@ -347,12 +348,12 @@ far we have not needed any of these facilities.
   \centering
   \begin{tabular}{lrr}
     \header{Application} & \header{Min} & \header{Max} \\ \hline
-    \evolution & 830 & 39863  \\
-    \gaim & 1786 & 18772  \\
-    \gimp & 15617 & 26304  \\
-    \gnumeric & 6661 & 15876  \\
-    \nautilus & 3252 & 10638  \\
-    \rhythmbox & 897 & 5823 
+    \evolution & 830 & 39,863  \\
+    \gaim & 1,786 & 18,772  \\
+    \gimp & 15,617 & 26,304  \\
+    \gnumeric & 6,661 & 15,876  \\
+    \nautilus & 3,252 & 10,638  \\
+    \rhythmbox & 897 & 5,823 
   \end{tabular}
   \caption{Feedback report sizes in bytes.}
   \label{report-sizes}
@@ -391,8 +392,8 @@ the data for each of our instrumented applications.  In this table,
 \emph{count} is the total number of valid feedback reports received so far,
 which is broken out into \emph{good} runs, runs that exited with a
 non-zero \emph{error} status, and runs that ended in a \emph{crash} due to a
-fatal signal.  Applications are ordered by decreasing crash rate;
-\rhythmbox crashes 13\% of the time.
+fatal signal.  Note the large variation in crash rates, from 0\%
+(\gimp) to 13\% (\rhythmbox).
 
 There is both good news and bad news in these figures.  The bad news
 is that we have not yet received enough executions to carry out
@@ -423,13 +424,13 @@ for large user communities of complex applications.
 \begin{table}
   \centering
   \begin{tabular}{lrrrr@{ (}r@{\%)}}
-    \header{Application} & \header{Count} & \header{Good} & \header{Error} & \multicolumn{2}{c}{Crash} \\ \hline
-    \rhythmbox & 726 & 598 & 36 & 92 & 13 \\
-    \gnumeric & 247 & 228 & 2 & 17 & 7 \\
-    \gaim & 464 & 386 & 62 & 16 & 3 \\
+    \header{Application} & \header{Count} & \header{Good} & \header{Error} & \multicolumn{2}{c}{\textbf{Crash}} \\ \hline
     \evolution & 702 & 647 & 39 & 16 & 2 \\
+    \gaim & 464 & 386 & 62 & 16 & 3 \\
+    \gimp & 77 & 77 & 0 & 0 & 0 \\
+    \gnumeric & 247 & 228 & 2 & 17 & 7 \\
     \nautilus & 468 & 426 & 36 & 6 & 1 \\
-    \gimp & 77 & 77 & 0 & 0 & 0
+    \rhythmbox & 726 & 598 & 36 & 92 & 13
   \end{tabular}
   \caption{Number of runs received.}
   \label{reports-per-app}
