@@ -7,7 +7,7 @@ approaches on the programs \ccrypt and \bc.
 successful and unsuccessful runs, number of instrumentation sites in
 the program, the number of predicates for each
 instrumentation scheme, and the number of predicates retained by the
-test $\increase() > 0$.   Keep in mind that multiple predicates are
+test $\increase > 0$.   Keep in mind that multiple predicates are
 derived from each instrumentation site.  For example, each branches
 site yields two predicates from two counters, while each scalar pairs
 site yields six predicates from three counters (see \autoref{sec:background}).
@@ -35,7 +35,7 @@ read returns EOF, the probability of failure increases to 1.00.\footnote{Note th
 whenever a causal sequence of instrumented predicates must be true for a bug to occur, each predicate along the
 sequence shows a distinct step up in the probability of failure.
 
-Note also that the report is very short; only 6 predicates out of more than 3,000 are retained by the test $\increase() > 0$.
+Note also that the report is very short; only 6 predicates out of more than 3,000 are retained by the test $\increase > 0$.
 Uniformly throughout our experiments the returns and branches reports are short enough that all predicates can
 easily be examined by hand; we discuss the larger scalar-pairs reports below.
 
@@ -51,7 +51,7 @@ The problem is indeed that {\tt indx} gets too big, resulting in an overrun of {
 is that {\tt v\_count} is the wrong loop bound; it should be {\tt a\_count} instead.  
 
 Using our new algorithm, the top 11 predicates (sorted by descending
-$\increase()$ score) involve predicates within a few lines of the line
+$\increase$ score) involve predicates within a few lines of the line
 with the actual overrun.  However, these predicates also predict only
 20-100 failing runs, a small fraction of the number of failing runs
 for \bc in \autoref{tab:exps}.  We have observed that this

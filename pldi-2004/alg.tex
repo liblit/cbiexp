@@ -182,7 +182,7 @@ and so $\increase(\mbox{\tt x == 0}) = 0$.
 A predicate $P$ with $\increase(P) \leq 0$ has no predictive power.  Being true does not increase the
 probability of failure, and we can safely discard all such predicates.
 But because some $\increase(P)$ scores may be based on few observations of $P$, it is important
-to attach confidence intervals to the scores.  Since $\increase()$ is a statistic, computing
+to attach confidence intervals to the scores.  Since $\increase$ is a statistic, computing
 a confidence interval for the underlying parameter is a well-understood problem. In our experiments we retain a predicate $P$
 only if $\increase(P) > 0$ with 95\% confidence; this removes predicates from consideration that have high
 increase scores but very low confidence because of few observations. 
@@ -278,7 +278,8 @@ The most important bug is the one that causes the greatest number
 of failed runs.  This observation suggests:
 \[ \importance(P) = F(P) \]
 \autoref{tab:sorts-failure} shows the top predicates 
-ranked by decreasing $F(P)$.\footnote{These predicates are ranked after predicates where $\increase(P) \leq 0$ are discarded.}
+with positive
+ranked by decreasing $F(P)$, after predicates where $\increase(P) \leq 0$ are discarded.}
 While the predicates in \autoref{tab:sorts-failure} are, as expected, involved
 in many failing runs, these predicates are also highly 
 non-deterministic, meaning they are also true in many successful runs
@@ -288,17 +289,17 @@ Our experience with other
 ranking strategies that emphasize the number of failed runs is also that
 they select predicates involved in many failing, but also many
 successful, runs.  The best of these predicates (the ones with high
-$\increase()$ scores) are {\em super-bug predictors}:
+$\increase$ scores) are {\em super-bug predictors}:
 predictors that include failures from more than one bug.  The
 signature of super-bug predictors is that they account for a very
 large number of failures (by combining the failures of multiple bugs)
-but are also highly non-deterministic despite reasonably high $\increase()$
+but are also highly non-deterministic despite reasonably high $\increase$
 scores.
 
 Another possibility is:
 \[ \importance(P) = \increase(P) \]
 \autoref{tab:sorts-increase} shows the top predicates ranked by decreasing
-$\increase()$ score (note the thermometers in the different figures
+$\increase$ score (note the thermometers in the different figures
 are not drawn to the same scale).  These predicates do a much better
 job of predicting failure; in fact, the program always fails when any
 of these predicates is true. However, note that the number of failing
@@ -347,7 +348,7 @@ list.  As discussed above, we use a simple recursive algorithm to eliminate
 redundant predicates:
 \begin{enumerate}
 
-\item Rank predicates by $\importance()$.
+\item Rank predicates by $\importance$.
 
 \item Remove the top-ranked predicate $P$ and discard all runs $R$ (feedback reports) where  $R(P) = 1$.
 
@@ -391,7 +392,7 @@ reasons.  First, two predicates are redundant if they predict the same
 set of runs in which a predicate is true automatically dramatically
 reduces the importance of any related predicates in the correct
 proportions. Second, because elimination is
-iterative, it is only necessary that $\importance()$ selects a good
+iterative, it is only necessary that $\importance$ selects a good
 predictor at each step, and not necessarily the best one; any
 predicate that predicts a different set of failing runs than all
 higher-ranked predicates is selected eventually.
