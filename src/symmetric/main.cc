@@ -1,5 +1,4 @@
 #include <cassert>
-#include <iterator>
 
 #include "../NumRuns.h"
 #include "../Progress/Bounded.h"
@@ -94,6 +93,7 @@ main(int argc, char *argv[])
 
   // create XML output file and write initial header
   ViewPrinter view(Stylesheet::filename, "symmetric", "symmetric.xml");
+  view << '\n';
 
   // Progress::Bounded progress("ranking predicates", candidates.size());
 
@@ -107,8 +107,18 @@ main(int argc, char *argv[])
       if (candidates.empty()) break;
       assert(!allFailures.empty());
 
+      {
+	static bool dumped = false;
+	if (!dumped)
+	  {
+	    dumped = true;
+	    ViewPrinter debug(Stylesheet::filename, "symmetric", "debug.xml");
+	    debug << candidates;
+	  }
+      }
+
       const Candidates::iterator winner(candidates.best());
-      view << winner->first;
+      view << *winner << '\n';
 
       const Predicate &winnerCounts = *winner->second;
       const RunSet &explainedFailures = winnerCounts.trueInFailures;

@@ -1,6 +1,7 @@
 #ifndef INCLUDE_symmetric_Counts_h
 #define INCLUDE_symmetric_Counts_h
 
+#include <iosfwd>
 #include "RunSet.h"
 
 
@@ -11,6 +12,7 @@ public:
 
   void trueInRun(Run *);
   void reclassify(const Run &);
+  void print(std::ostream &, const char tag[]) const;
 
   RunSet trueInFailures;
   unsigned trueInSuccesses;

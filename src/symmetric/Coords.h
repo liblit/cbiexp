@@ -17,8 +17,6 @@ public:
 bool operator==(const Coords &, const Coords &);
 bool operator!=(const Coords &, const Coords &);
 
-std::ostream &operator<<(std::ostream &, const Coords &);
-
 
 namespace __gnu_cxx
 {

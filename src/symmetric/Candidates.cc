@@ -1,6 +1,13 @@
 #include <cassert>
+#include <iostream>
+#include <iterator>
+#include "../units.h"
+#include "../utils.h"
+#include "Both.h"
 #include "Candidates.h"
 #include "Predicate.h"
+
+using namespace std;
 
 
 static bool
@@ -44,4 +51,32 @@ Candidates::best()
     }
 
   return winner;
+}
+
+
+////////////////////////////////////////////////////////////////////////
+
+
+ostream &operator<<(ostream &out, const Candidates::value_type &winner)
+{
+  const Coords &coords = winner.first;
+  const unit_t &unit = units[coords.unitIndex];
+  const Predicate &pred = *winner.second;
+
+  out << "<predicate unit=\"" << unit.signature
+      << "\" scheme=\"" << scheme_name(unit.scheme_code)
+      << "\" site=\"" << coords.siteOffset
+      << "\" test=\"" << coords.testId
+      << "\" score=\"" << pred.score() << "\">";
+  pred.print(out);
+  out << "</predicate>";
+
+  return out;
+}
+
+
+ostream &operator<<(ostream &out, const Candidates &candidates)
+{
+  copy(candidates.begin(), candidates.end(), ostream_iterator<Candidates::value_type>(out, "\n"));
+  return out;
 }

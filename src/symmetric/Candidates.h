@@ -13,5 +13,8 @@ struct Candidates : public __gnu_cxx::hash_map<Coords, Predicate *>
   iterator best();
 };
 
+std::ostream &operator<<(std::ostream &, const Candidates::value_type &);
+std::ostream &operator<<(std::ostream &, const Candidates &);
+
 
 #endif // !INCLUDE_symmetric_Candidates_h

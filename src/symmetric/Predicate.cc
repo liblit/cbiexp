@@ -1,9 +1,12 @@
 #include <cassert>
 #include <cmath>
+#include <iostream>
 #include "../Confidence.h"
 #include "Predicate.h"
 #include "Both.h"
 #include "allFailures.h"
+
+using namespace std;
 
 
 Predicate::Predicate(Both &both, const Predicate &inverse)
@@ -85,4 +88,16 @@ double
 Predicate::harmonic() const
 {
   return 2 / (1 / lowerBound() + 1 / recall());
+}
+
+
+////////////////////////////////////////////////////////////////////////
+
+
+void
+Predicate::print(ostream &out) const
+{
+  Counts::print(out, "self");
+  inverse.Counts::print(out, "inverse");
+  both.Counts::print(out, "both");
 }

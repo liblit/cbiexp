@@ -1,5 +1,3 @@
-#include "../units.h"
-#include "../utils.h"
 #include "Coords.h"
 
 using namespace std;
@@ -28,19 +26,6 @@ operator!=(const Coords &a,
 	   const Coords &b)
 {
   return !(a == b);
-}
-
-
-ostream &
-operator<<(ostream &out, const Coords &coords)
-{
-  const unit_t &unit = units[coords.unitIndex];
-
-  return out << "<predicate unit=\"" << unit.signature
-	     << "\" scheme=\"" << scheme_name(unit.scheme_code)
-	     << "\" site=\"" << coords.siteOffset
-	     << "\" test=\"" << coords.testId
-	     << "\">";
 }
 
 

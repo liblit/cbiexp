@@ -1,6 +1,7 @@
 #ifndef INCLUDE_symmetric_Predicate_h
 #define INCLUDE_symmetric_Predicate_h
 
+#include <iosfwd>
 #include "Counts.h"
 
 class Both;
@@ -11,7 +12,8 @@ class Predicate : public Counts
 public:
   Predicate(Both &, const Predicate &);
 
-  double score();
+  double score() const;
+  void print(std::ostream &) const;
 
   Both &both;
 
@@ -31,7 +33,7 @@ private:
 
 
 inline double
-Predicate::score()
+Predicate::score() const
 {
   return harmonic();
 }
