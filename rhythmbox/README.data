@@ -36,8 +36,14 @@ signal, where the value is that signal number.  Values of 256 and up
 indicate completion with a nonzero exit status.  Divide by 256 to get
 the exact status.
 
+** client/stdout
+** client/stderr
 
-** client/reports
+Logged standard output and error streams from the Rhythmbox
+application.
+
+
+* reports
 
 Raw feedback reports.  This is complete data, with no downsampling.
 If you decide to downsample, you may want to save those files in this
@@ -49,13 +55,6 @@ The following recipe may be useful for downsampling raw reports:
 
 The decimation tool takes an optional random number seed, but will
 select a good default from system entropy sources if none is provided.
-
-
-** client/stdout
-** client/stderr
-
-Logged standard output and error streams from the Rhythmbox
-application.
 
 
 * server
