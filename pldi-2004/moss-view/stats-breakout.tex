@@ -1,7 +1,8 @@
 %% -*- TeX-master: "../master.tex" -*-
 
 \begin{table*}
-  \caption{Comparison of ranking strategies for Moss}
+  \caption{Comparison of ranking strategies for Moss without
+    redundancy elimination}
   \label{tab:sorts}
   \centering
 
@@ -22,5 +23,5 @@
 
   \stats{Sort descending by $\text{F}(P)$ times lower bound of $\text{Increase}(P)$}{failure}
   \stats{Sort descending by lower bound of $\text{Increase}(P)$}{increase}
-  \stats{Iteratively rank and dilute using harmonic mean}{harmonic-dilute}
+  \stats{Sort descending by harmonic mean}{harmonic}
 \end{table*}

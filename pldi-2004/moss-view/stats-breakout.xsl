@@ -10,7 +10,7 @@
   <xsl:import href="operands.xsl"/>
 
   <!-- maximum number of predictors to display -->
-  <xsl:param name="predictor-limit" select="14"/>
+  <xsl:param name="predictor-limit" select="16"/>
 
   <!-- floating point format -->
   <xsl:param name="score-format" select="'0.000'"/>
