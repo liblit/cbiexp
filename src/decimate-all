@@ -50,6 +50,7 @@ foreach my $runId (0 .. $numRuns - 1) {
     my $subdir = int($runId / $RunsPerSubdirectory);
     my $rundir = "$datadir/$subdir/$runId";
     my $input = "$datadir/$subdir/$runId/reports.sparse";
+    next unless -r $input;
 
     my $pipe = new IO::Pipe;
     my $pid = fork;
