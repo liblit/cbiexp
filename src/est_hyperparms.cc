@@ -201,27 +201,32 @@ pred_info_t::newton_raphson_N()
     double E = -rho*ex;
     double B = gamma * E;
     double D = B * (-rho);
-    double t1 = (double) Z/A;
+    double t1 = (Z > 0) ? ((double) Z/A) : 0.0;
+    double zloga = (Z > 0)? ((double) Z * log(A)) : 0.0;
     // likelihood
-    double L = N*log(gamma) - lambda*rho*N + S*log(lambda)+ Z*log(A);
+    double L = N*log(gamma) - lambda*rho*N + S*log(lambda)+ zloga;
+
+    // logfp << "log(A): " << log(A) << " Z/A: " << t1 << endl;
 
     // gradient
     double ga = -rho*N + S/lambda + t1*B;  // partial wrt lambda
     double gb = N/gamma + t1*C;         // partial wrt gamma
     // Hessian
-    double aa = -(double) S/(lambda*lambda) - t1*(B*B/A - D);
-    double bb = -t1*(B*C/A - E);
-    double dd = -(double) N/(gamma*gamma) - t1*(C*C/A);
+    double t2 = (Z > 0) ? (t1 * (B*B/A-D)) : 0.0;
+    double aa = -(double) S/(lambda*lambda) - t2;
+    double bb = (Z > 0) ? (-t1*(B*C/A - E)) : 0.0;
+    double t3 = (Z > 0) ? (t1*(C*C/A)) : 0.0;
+    double dd = -(double) N/(gamma*gamma) - t3;
     double det = 1.0/(aa*dd-bb*bb);
 
     double lchange = det*(dd*ga-bb*gb);
     double gchange = det *(-bb*ga + aa*gb);
 
-//     logfp << "ex: " << ex << " C: " << C << " A: " << A 
-// 	  << " E: " << E << " B: " << B << " D: " << D
-// 	  << " t1: " << t1 << endl;
-//     logfp << S << ' ' << -S/(lambda*lambda) << ' ' << B*B/A-D << endl;
-//     logfp << "a: " << ga << " b: " << gb << " aa: " << aa << " bb: " << bb << " dd: " << dd << " det: " << det << " lchange: " << lchange << " gchange: " << gchange << endl;
+     logfp << "ex: " << ex << " C: " << C << " A: " << A 
+ 	  << " E: " << E << " B: " << B << " D: " << D
+ 	  << " t1: " << t1 << endl;
+     logfp << S << ' ' << -S/(lambda*lambda) << ' ' << B*B/A-D << endl;
+     logfp << "a: " << ga << " b: " << gb << " aa: " << aa << " bb: " << bb << " dd: " << dd << " det: " << det << " lchange: " << lchange << " gchange: " << gchange << endl;
 
     lambda -= lchange;
     gamma -= gchange;
