@@ -10,61 +10,46 @@ bool is_srun[NUM_RUNS + 1];
 bool is_frun[NUM_RUNS + 1];
 
 struct site_t {
-    int S[6], F[6];
-    int os, of;
     bit_vector* b[6];
     site_t() 
     { 
-        os = of = 0;
-        S[0] = S[1] = S[2] = S[3] = S[4] = S[5] = 0;
-        F[0] = F[1] = F[2] = F[3] = F[4] = F[5] = 0; 
+        for (int i = 0; i < 6; i++)
+            b[i] = NULL;
     }
 };
 
 site_t* data[NUM_UNITS];
 
-#define inc(r, u, c, p)  \
-{                                 \
-    if (is_srun[r])               \
-        data[u][c].S[p]++;        \
-    else if (is_frun[r])          \
-        data[u][c].F[p]++;        \
+#define inc(r, u, c, p)                                  \
+{                                                        \
+    if (data[u][c].b[p]) (*(data[u][c].b[p]))[r] = true; \
 }
 
-#define obs(r, u, c)  \
-{                                 \
-    if (is_srun[r])               \
-        data[u][c].os++;          \
-    else if (is_frun[r])          \
-        data[u][c].of++;          \
-}
-
-FILE* sites_fp;
-
-inline void print_pred(FILE* fp, int u, int c, int p, const char* pred_kind)
+inline void print_pred(int u, int c, int p)
 {
-    int s  = data[u][c].S[p];
-    int f  = data[u][c].F[p];
-    int os = data[u][c].os;
-    int of = data[u][c].of;
-    char site_name[3000];
+    int i;
 
-    fscanf(sites_fp, "%[^\n]s", site_name);
-    fgetc (sites_fp);
-
-    float crash   = ((float)  f) / ( s +  f);
-    float context = ((float) of) / (os + of);
-    fprintf(fp, "%.2f In %.2f Cr %.2f Co %d S %d F %d OS %d OF ",
-        crash - context, crash, context, s, f, os, of);
-    fprintf(fp, "<a href=\"r/%d_%d_%d.html\">", u, c, p);
-    fprintf(fp, "%s %s", pred_kind, site_name);
-    fprintf(fp, "</a><br>\n");
+    if (data[u][c].b[p]) {
+        char file[100];
+        sprintf(file, "/moa/sc3/mhn/r/%d_%d_%d.txt", u, c, p);
+        FILE* fp = fopen(file, "w");
+        assert(fp);
+        fprintf(fp, "F: ");
+        for (i = 1; i <= NUM_RUNS; i++)
+            if (is_frun[i] && (*(data[u][c].b[p]))[i] == true)
+                fprintf(fp, "%d ", i);
+        fprintf(fp, "\nS: ");
+        for (i = 1; i <= NUM_RUNS; i++)
+            if (is_srun[i] && (*(data[u][c].b[p]))[i] == true)
+                fprintf(fp, "%d ", i);
+        fclose(fp);
+    }
 }
 
 main(int argc, char** argv)
 {
     int i, j, k, x, y, z;
-    FILE *sfp = NULL, *ffp = NULL, *pfp;
+    FILE *sfp = NULL, *ffp = NULL, *pfp = NULL;
 
     /************************************************************************
      ** process command line options
@@ -183,15 +168,14 @@ main(int argc, char** argv)
     }
     printf("#S runs: %d #F runs: %d\n", ns, nf);
 
-    /************************************************************************
-     ** compute for each predicate, number of successful and failing runs in
-     ** which it is (1) just observed, and (2) observed to be true.
-     ************************************************************************/
-
     for (i = 0; i < NUM_UNITS; i++) {
         data[i] = new (site_t) [units[i].c];
         assert(data[i]);
     }
+
+    /************************************************************************
+     ** read -f specified file (if any)
+     ************************************************************************/
 
     if (pfp) {
         while (1) {
@@ -207,6 +191,11 @@ main(int argc, char** argv)
         }
         fclose(pfp);
     }
+
+    /************************************************************************
+     ** compute for each predicate, number of successful and failing runs in
+     ** which it is (1) just observed, and (2) observed to be true.
+     ************************************************************************/
 
     for (i = 1; i <= NUM_RUNS; i++) {
         if (!is_srun[i] && !is_frun[i])
@@ -225,72 +214,50 @@ main(int argc, char** argv)
             if (units[j].s[0] == 'S' || units[j].s[0] == 'R') {
                 for (k = 0; k < units[j].c; k++) {
                     fscanf(fp, "%d %d %d", &x, &y, &z); 
-                    if (x + y + z > 0) {
-                        obs(i, j, k);
-                        if (x > 0) {
-                            inc(i, j, k, 0);
-                            inc(i, j, k, 3);
-                            inc(i, j, k, 5);
-                        }
-                        if (y > 0) {
-                            inc(i, j, k, 2);
-                            inc(i, j, k, 1);
-                            inc(i, j, k, 5);
-                        }
-                        if (z > 0) {
-                            inc(i, j, k, 4);
-                            inc(i, j, k, 1);
-                            inc(i, j, k, 3);
-                        }
+                    if (x > 0) {
+                        inc(i, j, k, 0);
+                        inc(i, j, k, 3);
+                        inc(i, j, k, 5);
+                    }
+                    if (y > 0) {
+                        inc(i, j, k, 2);
+                        inc(i, j, k, 1);
+                        inc(i, j, k, 5);
+                    }
+                    if (z > 0) {
+                        inc(i, j, k, 4);
+                        inc(i, j, k, 1);
+                        inc(i, j, k, 3);
                     }
                 }
             }  else {
                 for (k = 0; k < units[j].c; k++) {
                     fscanf(fp, "%d %d", &x, &y); 
-                    if (x + y > 0) {
-                        obs(i, j, k);
-                        if (x > 0) inc(i, j, k, 0);
-                        if (y > 0) inc(i, j, k, 1);
-                    }
+                    if (x > 0) inc(i, j, k, 0);
+                    if (y > 0) inc(i, j, k, 1);
                 }
             } 
         }
         fclose(fp);
     }
 
-    FILE* out_s = fopen("S.html", "w");
-    FILE* out_r = fopen("R.html", "w");
-    FILE* out_b = fopen("B.html", "w");
-    assert(out_s && out_r && out_b);
-    sites_fp = fopen("sites.txt", "r");
-    assert(sites_fp);
-
     for (j = 0; j < NUM_UNITS; j++) {
         switch (units[j].s[0]) {
         case 'S':
-            for (k = 0; k < units[j].c; k++) {
-                print_pred(out_s, j, k, 0, "LT" );
-                print_pred(out_s, j, k, 1, "NLT");
-                print_pred(out_s, j, k, 2, "EQ" );
-                print_pred(out_s, j, k, 3, "NEQ");
-                print_pred(out_s, j, k, 4, "GT" );
-                print_pred(out_s, j, k, 5, "NGT");
-            }
-            break;
         case 'R':
             for (k = 0; k < units[j].c; k++) {
-                print_pred(out_r, j, k, 0, "LT" );
-                print_pred(out_r, j, k, 1, "NLT");
-                print_pred(out_r, j, k, 2, "EQ" );
-                print_pred(out_r, j, k, 3, "NEQ");
-                print_pred(out_r, j, k, 4, "GT" );
-                print_pred(out_r, j, k, 5, "NGT");
+                print_pred(j, k, 0);
+                print_pred(j, k, 1);
+                print_pred(j, k, 2);
+                print_pred(j, k, 3);
+                print_pred(j, k, 4);
+                print_pred(j, k, 5);
             }
             break;
         case 'B':
             for (k = 0; k < units[j].c; k++) {
-                print_pred(out_b, j, k, 0, "F");
-                print_pred(out_b, j, k, 1, "T");
+                print_pred(j, k, 0);
+                print_pred(j, k, 1);
             }
             break;
         default:
@@ -298,10 +265,6 @@ main(int argc, char** argv)
         }
     }
 
-    fclose(out_s);
-    fclose(out_r);
-    fclose(out_b);
-    fclose(sites_fp);
     return 0;
 }
 
