@@ -25,3 +25,32 @@ table.meter tr td.f3 {
 table.meter tr td.f4 {
   background-color: white
 }
+
+td.meter div.details {
+  display: none;
+  background-color: #ffd;
+  font-size: smaller;
+  border: thin solid #bb0;
+  padding: 1ex;
+  position: absolute;
+  margin-top: 1em;
+  margin-left: 1ex;
+}
+
+td.meter:hover div.details, td.meter-hover div.details {
+  display: block;
+}
+
+td.meter:hover, td.meter-hover {
+  background-color: #ffe;
+}
+
+td.meter div.details hr {
+  border: none;
+  border-top: 1px dotted #bb0;
+}
+
+td.meter div.details p {
+  padding: 0;
+  margin: 0;
+}
