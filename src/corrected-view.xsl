@@ -40,7 +40,7 @@
     <xsl:apply-imports/>
     <td><xsl:value-of select="@effective"/></td>
     <xsl:apply-templates select="bug-o-meter"/>
-    <xsl:if>
+    <xsl:if test="$link-to-zoom">
       <td class="link">
 	<xsl:call-template name="zoom-link">
 	  <xsl:with-param name="projection" select="@projection"/>
