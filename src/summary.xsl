@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet
+  version="1.0"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns="http://www.w3.org/1999/xhtml"
+>
+
   <xsl:output
-    method="html"
-    doctype-system="http://www.w3.org/TR/html4/strict.dtd"
-    doctype-public="-//W3C//DTD HTML 4.01//EN"/>
+    method="xml"
+    doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"
+    doctype-public="-//W3C//DTD XHTML 1.1//EN"
+  />
 
   <xsl:variable name="projectURL" select="'http://www.cs.berkeley.edu/~liblit/sampler/'"/>
   <xsl:variable name="prefix" select="/experiment/analysis/@prefix"/>
