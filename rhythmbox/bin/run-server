@@ -66,6 +66,7 @@ END {
 
 sub result (@) {
     Utils::note 'outcome', @_;
+    Utils::note '../bad', 'no client outcome' unless -e 'client/outcome';
     exit 0;
 }
 
