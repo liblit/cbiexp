@@ -192,99 +192,99 @@ bug.
 \subsection{Analysis of Predicate Elimination}
 
 To better understand how well predicate elimination works,
-\Autoref{tab:PREDELIM} CLASSIFIES THE MOST COMMON KINDS OF PREDICATES
-$P$ FOR WHICH $\INCREASE(P) \LEQ 0$.  RECALL THAT WE HAVE
-APPROXIMATELY 200,000 PREDICATES FOR \MOSS.  THE CATEGORIES ARE:
+\Autoref{tab:predelim} classifies the most common kinds of predicates
+$P$ for which $\increase(P) \leq 0$.  Recall that we have
+approximately 200,000 predicates for \moss.  The categories are:
 
-\BEGIN{ITEMIZE}
-\ITEM  A \TERMDEF{DEAD} PREDICATE IS ONE THAT IS NOT OBSERVED IN ANY RUN AND HENCE
-DEEMED UNREACHABLE.  NEARLY HALF THE INSTRUMENTED PREDICATES ARE DEAD.
+\begin{itemize}
+\item  A \termdef{dead} predicate is one that is not observed in any run and hence
+deemed unreachable.  Nearly half the instrumented predicates are dead.
 
-\ITEM AN \TERMDEF{INVARIANT} IS A PREDICATE THAT IS OBSERVED IN SOME RUN AND, MOREOVER,
-IS EITHER TRUE EVERY TIME IT IS OBSERVED OR FALSE EVERY TIME IT IS OBSERVED,
-AND IS THEREFORE PRESUMED TO BE A PROGRAM INVARIANT.  MORE THAN A QUARTER OF
-THE INSTRUMENTED PREDICATES ARE INVARIANTS.
+\item An \termdef{invariant} is a predicate that is observed in some run and, moreover,
+is either true every time it is observed or false every time it is observed,
+and is therefore presumed to be a program invariant.  More than a quarter of
+the instrumented predicates are invariants.
 
-\ITEM AN \TERMDEF{AFTERMATH} IS A PREDICATE THAT IS NOT OBSERVED IN ANY SUCCESSFUL RUN BUT
-IS OBSERVED IN SOME FAILING RUN, AND IS THEREFORE DEEMED TO BE A SECONDARY CONSEQUENCE
-OF A BUG.  A RELATIVELY SMALL NUMBER OF PREDICATES ARE AFTERMATHS, BUT CLEARLY
-THE IMPACT ON OUR REPORTS WOULD BE LARGE IF THIS CLASS OF PREDICATES WERE NOT ELIMINATED.
+\item An \termdef{aftermath} is a predicate that is not observed in any successful run but
+is observed in some failing run, and is therefore deemed to be a secondary consequence
+of a bug.  A relatively small number of predicates are aftermaths, but clearly
+the impact on our reports would be large if this class of predicates were not eliminated.
 
-\ITEM A SIGNIFICANT NUMBER OF ADDITIONAL PREDICATES ARE ELIMINATED THAT DO NOT FIT
-NEATLY INTO ONE OF THE OTHER CATEGORIES.
+\item A significant number of additional predicates are eliminated that do not fit
+neatly into one of the other categories.
 
-\END{ITEMIZE}
+\end{itemize}
 
-\BEGIN{TABLE}
-\CENTERING
-\CAPTION{CLASSIFICATION OF ELIMINATED PREDICATES.}
-\VSPACE{\BASELINESKIP}
-\BEGIN{TABULAR}{|L|R|R|R|R|}
-\HLINE
-\MULTICOLUMN{1}{|C|}{\TEXTBF{PREDICATE}} &  \MULTICOLUMN{4}{C|}{\TEXTBF{SAMPLING RATE}} \\
-\CLINE{2-5}
-\MULTICOLUMN{1}{|C|}{\TEXTBF{CATEGORY}}  &  \TEXTBF{\NICEFRAC{1}{1}} & \TEXTBF{\NICEFRAC{1}{10}} & \TEXTBF{\NICEFRAC{1}{100}} & \TEXTBF{\NICEFRAC{1}{1000}} \\
-\HLINE
-\HLINE
-DEAD      &  92810 & 92810 & 92834 & 95210 \\
-\HLINE
-INVARIANT &  56418 & 56614 & 57082 & 57034 \\
-\HLINE
-AFTERMATH &  5666  & 5954  & 6534  & 7032 \\
-\HLINE
-OTHER     &  38762 & 36768 & 36504 & 33023 \\
-\HLINE
-\END{TABULAR}
-\LABEL{TAB:PREDELIM}
-\END{TABLE}
+\begin{table}
+\centering
+\caption{Classification of eliminated predicates.}
+\vspace{\baselineskip}
+\begin{tabular}{|l|r|r|r|r|}
+\hline
+\multicolumn{1}{|c|}{\textbf{predicate}} &  \multicolumn{4}{c|}{\textbf{sampling rate}} \\
+\cline{2-5}
+\multicolumn{1}{|c|}{\textbf{category}}  &  \textbf{\nicefrac{1}{1}} & \textbf{\nicefrac{1}{10}} & \textbf{\nicefrac{1}{100}} & \textbf{\nicefrac{1}{1000}} \\
+\hline
+\hline
+dead      &  92810 & 92810 & 92834 & 95210 \\
+\hline
+invariant &  56418 & 56614 & 57082 & 57034 \\
+\hline
+aftermath &  5666  & 5954  & 6534  & 7032 \\
+\hline
+other     &  38762 & 36768 & 36504 & 33023 \\
+\hline
+\end{tabular}
+\label{tab:predelim}
+\end{table}
 
-\SUBSECTION{EFFECT OF SAMPLING ON PREDICATE SELECTION}
+\subsection{Effect of Sampling on Predicate Selection}
 
-WE NOW EXAMINE THE EFFECT OF OF THE SAMPLING RATE AND THE NUMBER OF
-PROGRAM TRIALS ON STEP (1) OF THE ALGORITHM: PREDICATE SELECTION.
-WE START WITH $3000$ RANDOMLY
-SELECTED TRIAL RUNS, AND ADD $3000$ RANDOM TRIALS AT A TIME, UNTIL WE
-INCORPORATE ALL $31873$ RUNS OF OUR DATA.  WE RECORD THE NUMBER OF
-PREDICATES RETAINED AT EACH STEP.  THIS PROCESS IS REPEATED TEN TIMES
-FOR EACH SAMPLING RATE, WITH TEN DIFFERENT RANDOM PERMUTATION SEQUENCES
-OF OUR DATA. WE PLOT THE MEAN AND THE CONFIDENCE INTERVAL (ONE
-STANDARD DEVIATION ABOVE AND BELOW THE MEAN) IN
-\AUTOREF{FIG:PREDKEPT-A}.  WHEN ALL $31873$ TRIAL
-RUNS ARE USED, WE RETAIN $8129$ PREDICATES WHEN THE DATA IS NOT
-SAMPLED (I.E. SAMPLING RATE IS $\NICEFRAC{1}{1}$), $8807$ AT SAMPLING
-RATE $\NICEFRAC{1}{10}$, $8309$ AT $\NICEFRAC{1}{100}$, AND $8936$ AT
-$\NICEFRAC{1}{1000}$.
+We now examine the effect of of the sampling rate and the number of
+program trials on step (1) of the algorithm: predicate selection.
+We start with $3000$ randomly
+selected trial runs, and add $3000$ random trials at a time, until we
+incorporate all $31873$ runs of our data.  We record the number of
+predicates retained at each step.  This process is repeated ten times
+for each sampling rate, with ten different random permutation sequences
+of our data. We plot the mean and the confidence interval (one
+standard deviation above and below the mean) in
+\Autoref{fig:predkept-a}.  When all $31873$ trial
+runs are used, we retain $8129$ predicates when the data is not
+sampled (i.e. sampling rate is $\nicefrac{1}{1}$), $8807$ at sampling
+rate $\nicefrac{1}{10}$, $8309$ at $\nicefrac{1}{100}$, and $8936$ at
+$\nicefrac{1}{1000}$.
 
-\BEGIN{FIGURE*}
+\begin{figure*}
   %%
-  \SUBFIGURE[BRANCHES, RETURNS, AND SCALAR PAIRS]
-  {\INCLUDEGRAPHICS[WIDTH=\COLUMNWIDTH]{PREDKEPT3A}
-    \LABEL{FIG:PREDKEPT-A}}
-  \HSPACE{\COLUMNSEP}
-  \SUBFIGURE[BRANCHES AND RETURNS ONLY]
-  {\INCLUDEGRAPHICS[WIDTH=\COLUMNWIDTH]{PREDKEPT3B}
-    \LABEL{FIG:PREDKEPT-B}}
+  \subfigure[branches, returns, and scalar pairs]
+  {\includegraphics[width=\columnwidth]{predkept3a}
+    \label{fig:predkept-a}}
+  \hspace{\columnsep}
+  \subfigure[branches and returns only]
+  {\includegraphics[width=\columnwidth]{predkept3b}
+    \label{fig:predkept-b}}
   %%
-  \CAPTION{THE EFFECT OF SAMPLING AND DATA SIZE ON THE NUMBER OF
-  PREDICATES SELECTED.}
-\END{FIGURE*}
+  \caption{The effect of sampling and data size on the number of
+  predicates selected.}
+\end{figure*}
 
-AS IS APPARENT FROM THE GRAPH, THERE IS MUCH LARGER VARIATION IN THE
-NUMBER OF SELECTED PREDICATES WHEN WE USE FEWER TRIAL RUNS.
-%USING $3000$ TRIALS, AT THE MINIMUM WE
-%RETAIN $7429$ PREDICATES USING UNSAMPLED DATA, $7654$ WHEN SAMPLING
-%RATE IS $\NICEFRAC{1}{10}$, $7347$ AT $\NICEFRAC{1}{100}$, AND $6750$
-%AT $\NICEFRAC{1}{1000}$;
-AS WE INCORPORATE MORE EXAMPLES OF SUCCESSFUL AND FAILED \MOSS\ RUNS,
-THE VARIANCES DECREASE FOR ALL SAMPLING RATES, BUT THE MEANS BEHAVE
-SOMEWHAT DIFFERENTLY.  WHEN THE DATA IS NOT SAMPLED, THE AVERAGE
-NUMBER OF SELECTED PREDICATES STAYS AROUND $8100$ FOR ALL DATA SIZES.
-SAMPLING ADDS NOISE TO THIS PROCEDURE.  AS WE OBSERVED PREVIOUSLY,
-A MODERATE SAMPLING RATE TENDS TO DRIVE UP THE \INCREASE() SCORES, AND
-THUS ENLARGES OUR SET OF SELECTED PREDICATES (EXCEPT WHEN WE ARE USING
-VERY FEW TRIAL RUNS).
+As is apparent from the graph, there is much larger variation in the
+number of selected predicates when we use fewer trial runs.
+%Using $3000$ trials, at the minimum we
+%retain $7429$ predicates using unsampled data, $7654$ when sampling
+%rate is $\nicefrac{1}{10}$, $7347$ at $\nicefrac{1}{100}$, and $6750$
+%at $\nicefrac{1}{1000}$;
+As we incorporate more examples of successful and failed \moss\ runs,
+the variances decrease for all sampling rates, but the means behave
+somewhat differently.  When the data is not sampled, the average
+number of selected predicates stays around $8100$ for all data sizes.
+Sampling adds noise to this procedure.  As we observed previously,
+a moderate sampling rate tends to drive up the \increase() scores, and
+thus enlarges our set of selected predicates (except when we are using
+very few trial runs).
 
-AT THE RELATIVELY HIGH SAMPLING RATE OF
+At the relatively high sampling rate of
 \nicefrac{1}{10}, there are still enough samples taken at most
 instrumentation sites, and there's a net increase in the number of
 selected predicates.  Once the sampling rate shrinks to
