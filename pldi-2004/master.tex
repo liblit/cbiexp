@@ -134,8 +134,7 @@ pdfpagemode=UseOutlines]{hyperref}
   likelihood of failure, our technique helps guide software engineers
   to the most significant flaws in an application.  The approach has
   connections to statistical hypothesis testing, and is validated
-  using a case study of a complex and deeply buggy plagiarism
-  detection system.
+  using a case study of a complex application.
 \end{abstract}
 
 \category{D.2.4}{Software Engineering}{Software/Program
@@ -156,17 +155,17 @@ pdfpagemode=UseOutlines]{hyperref}
 \section{Introduction}
 \label{sec:introduction}
 
-Programs are buggy.  We all know this, and yet we use them anyway.
-The commercial reality is that most software ships with many known
-bugs and untold numbers of bugs not yet discovered.  Software
-engineers understand that it is neither practical nor feasible to
-delay releasing code until the last bug has been fixed.
+Programs are buggy.  
+%We all know this, and yet we use them anyway.
+Most software ships with many known and unknown bugs; software
+engineers understand that it is impractical to delay releasing code
+until the last bug has been fixed.
 
-Statistical debugging is a body of tools and techniques that help to
-improve software quality in an imperfect world.  Specially
+Our vision is to use {\em statistical debugging} to
+improve software quality.  Specially
 instrumented programs monitor their own behavior and send feedback
 reports to a central collection server.  Monitoring is both sparse and
-random, which means that complete information is never available about
+random, so complete information is never available about
 any single run.  However, monitoring is also lightweight and therefore
 practical to deploy to user communities numbering in the thousands or
 millions.  Statistical debugging does not seek to understand the
@@ -176,94 +175,85 @@ or millions of runs.  Because the process is driven by data from real
 users, it implicitly attends to those program behaviors that cause the
 most problems for the most users, most often.
 
-Of course, our imperfect world is rarely so kind as to provide
-programs with only a single bug.  A single complex commercial
-application may have hundreds or thousands of latent flaws waiting to
-be triggered.  Multiple bugs may come into play even within a single
-run of an application.  Some errors may allow execution to continue
-more-or-less normally, while one may eventually cause a crash.
-Consider the fact that the Mozilla web browser project has a
+In our previous work we examined the problem of automatically
+isolating the cause of a single bug
+\cite{PLDI`03*141,Zheng:2003:SDSP}.  As discussed above, however, no
+realistic application has only a single bug, or even a handful of
+bugs.  Consider the fact that the Mozilla web browser project has a
 ``topcrash'' software QA team specifically dedicated to identifying
 and tracking the top forty most common crash bugs.  This cut-off is
 not because anyone believes that there are only forty bugs; it is an
-acknowledgment that engineering resources are finite so one should
-target the most important bugs first.  Fix one bug and another comes
-into view.
+acknowledgment that engineering resources are finite so one the most
+important bugs should be fixed first first. 
 
-Statistical isolation of a single bug is well understood
-\cite{Zheng:2003:SDSP}.  In general terms, one looks for predicates on
-program behavior which are strongly correlated with the binary outcome
-of bug/no-bug, or crash/no-crash.  Both sparse sampling and
-nondeterministic failure modes add noise to the process, but with a
-large population of runs consistent trends emerge.  The presence of
-multiple bugs complicates matters significantly, especially if we
-assume that the number of distinct bugs is itself unknown.  Even if we
-believe we have identified the direct cause of one bug, and even if we
-had complete instead of sampled data, we should expect that the
-``smoking gun'' will be absent from most failed runs, because no one
-bug accounts for more than some small fraction of failures.
+This paper is about simultaneously isolating multiple bugs in complex
+applications.  The main contributions are:
 
-This paper presents an effective approach to isolating multiple bugs
-in the face of such challenges.  Our discussion is organized as
-follows.  \Autoref{sec:background} reviews the sampling
-instrumentation infrastructure and the kind of feedback data that it
-provides.  In \Autoref{sec:algorithm} we describe the main filtering
-and ranking algorithm used to mine feedback data for bug causes.
-\Autoref{sec:experiments:setup} defines the parameters of a case study
-in multiple-bug isolation, while \Autoref{sec:experiments:results}
-presents our results.  We review related work in
-\Autoref{sec:related-work}, while \Autoref{sec:conclusions} concludes.
+\begin{itemize}
+
+\item We give a new algorithm for) isolating multiple bugs
+(Section~\ref{sec:algorithm}).  Our algorithm is very efficient and works well in the
+presence of multiple bugs, sparse sampling, and non-deterministic failure
+modes.
+
+\item We present a significant experimental study showing the
+effectiveness of our algorithm on a complex application
+(Sections~\ref{sec:experiments:setup} and
+\ref{sec:experiments:results}).  We seeded a program with 9 bugs (most
+of which were taken directly from the application's bug log).  Our
+system correctly identified a distinct cause for 7 of the bugs (the
+other 2 bugs never caused the program to fail in our experiment).  
+Our algorithm also discovered a new, previously unknown bug in the
+application.
+
+\end{itemize}
+
+After providing some background on our previous work in single-bug
+isolation (Section~\ref{sec:background}), we discuss the algorithm (Section~\ref{sec:algorithm}),
+the design of our experiment (Section~\ref{sec:experiments:setup}), and
+the experimental results (Section~\ref{sec:experiments:results}).
+The paper winds up with a discussion of related work (Section~\ref{sec:related-work})
+and future work and conclusions (Section~\ref{sec:conclusions}).
 
 \section{Background}
 \label{sec:background}
 
-Software errors arise from unexpected interactions between inputs,
-program internal state, and dynamic decisions made as the program
-runs.  Software engineers reason about programs at the level of source
-code statements and variables, and this is the level at which program
-monitoring can expose properties of interest.  However, complete
-source-level tracing of program behavior is impractical for field
-deployment.  No end user would accept the performance overhead or
-network bandwidth required to collect and transmit such a trace.
+This section summarizes our previous work in isolating single bugs
+\cite{PLDI`03*141,Zheng:2003:SDSP}, which is the starting point for
+this work.  The ideal program monitoring system would gather complete
+execution traces, and provide them to an engineer (or, more likely, a
+tool) to mine for the causes of bugs.  However, complete tracing of
+program behavior is simply impractical; no end user would accept the
+required performance overhead or network bandwidth.
 
-Instead, we use a combination of sparse random sampling and
-client-side summarization.  The former controls performance overhead
-while the later limits storage and transmission requirements.
-However, each also adds noise and uncertainty to the resulting data.
-The particulars of the sampling transformation have been reported
-elsewhere \cite{PLDI`03*141}.  We highlight a few key properties here.
-First, the sampling transformation is quite general: any collection of
+Instead, we use a combination of sparse random sampling, which controls
+performance overhead, and client-side summarization of the data, which
+limits the storage and transmission costs.  We briefly discuss
+both aspects.
+
+Random sampling is incorporated in a program via a source-to-source transformation.
+Our sampling transformation is general: any collection of
 statements within (or added to) a program may be designated as
 ``instrumentation'' and thereby sampled instead of run
-unconditionally.  Second, samples are taken in a statistically fair
+unconditionally.  That is, each time instrumentation code is reached,
+a coin flip determines whether the instrumentation is executed or not.
+The coin flips are computed in a statisically fair
 manner equivalent to a Bernoulli process: each potential sample is
 taken or skipped randomly and independently as the program runs.
-Lastly, the technique is highly effective at controlling performance
-provided that sampling is sparse: average rates on the order of one
-sample per hundred opportunities keep overhead low, often
-unmeasurable.
-
-The difficulty in using sparse sampling is that the resultant data is
-both noisy and incomplete.  When \nicefrac{99}{100} of all monitored
-program behaviors are omitted from any given report, it is impossible
-to have a complete picture of what happened during a single run.  Some
-predicates of interest may never have been true, or may simply have
-been true but never recorded.  However, because sampling is fair,
-large numbers of runs do converge to a truthful representation of
-overall program behavior.
+We have found that a sampling rate of \nicefrac{1}{100} keeps the performance overhead 
+of instrumentation low, often unmeasurable.
 
 Orthogonal to the sampling transformation is the decision about what
-instrumentation to introduce in the first place and how to concisely
+instrumentation to introduce and how to concisely
 summarize the resultant data.  This determines what behaviors one can
-possibly observe once sampling is applied.  A useful instrumentation
+possibly observe once the sampling transformation is applied.  A useful instrumentation
 scheme should be fairly general but selected to capture behaviors
 which are likely to be of interest when hunting for bugs.  At present
 our system offers the following instrumentation schemes:
 
 \begin{description}
-\item[branches:] Control flow is interesting.  At each conditional,
-  count how often each branch is taken (equivalently, how often the
-  conditional predicate is true versus false).  The observation is
+\item[branches:] At each conditional,
+  count how often each branch is taken.  The observation is
   made just after the predicate is evaluated but before the selected
   branch is taken.  This scheme also applies to implicit conditionals
   in loops and logical operators (\texttt{\&\&}, \texttt{||},
@@ -271,20 +261,20 @@ our system offers the following instrumentation schemes:
   with two counters: number of times branched true and number of times
   branched false.
 
-\item[returns:] Function return values are interesting.  In C, the
-  sign of a return value is often used to encode the success or failure of some
-  operation.  At each scalar-returning function call site, count how
+\item[returns:] In C, the
+  sign of a return value is often used to encode an operation's success or failure.
+  At each scalar-returning function call site, count how
   often the returned value is negative, zero, or positive.  For
-  pointer-returning calls, this implicitly reduces to counting
+  pointer-returning calls, this reduces to counting
   \texttt{NULL} versus non-\texttt{NULL}.  The observation is made
   just after the function returns but before the result is used by the
   original program.  An instrumentation site is added even if the
-  source program discarded the return value, as unchecked return
+  source program discards the return value, as unchecked return
   values are a common source of bugs.  Each call site induces one
   instrumentation site with three counters: number of negative
   returns, number of zero returns, and number of positive returns.
 
-\item[scalar-pairs:] Values of variables are interesting.  Many bugs
+\item[scalar-pairs:] Many bugs
   concern boundary issues exposed by the relationship between a pair
   of variables, or between a variable and some program constant.  At
   each scalar assignment \texttt{x = \dots}, identify each
@@ -292,8 +282,8 @@ our system offers the following instrumentation schemes:
   constant expression $\mathtt{c}_j$.  Count how often the new value
   for \texttt{x} is less than, equal to, or greater than each
   $\mathtt{y}_i$ and each $\mathtt{c}_j$.  The observation is made
-  after both sides of the assignment have been evaluated but just
-  before the assignment itself takes place.  This lets us compare
+  after both sides of the assignment have been evaluated but
+  before the assignment takes place.  This lets us compare
   \texttt{x} to \texttt{x} as well, effectively comparing the new and
   old values of the left-hand side.  Each compared-to $\mathtt{y}_i$
   or $\mathtt{c}_j$ is treated as a distinct instrumentation site;
@@ -303,36 +293,29 @@ our system offers the following instrumentation schemes:
   variable or constant.
 \end{description}
 
-These schemes are quite broad; they represent a large set of wild
-guesses as to what behavior may be interesting.  Nearly all of them
-are wrong or irrelevant for any particular bug.  Engineers may enable
-or disable any mix of schemes in a single binary, and may include or
-exclude entire regions of code on a per-file or per-function basis.
-For the most part, though, instrumenting an executable simply requires
-switching to our instrumenting compiler.  By design the system
-requires minimal human intervention at to build instrumented code.
-
-The schemes described above share certain key properties.  In the
-returns and scalar-pairs schemes, each site takes a large space of
-possible observations (e.g.\ the exact value returned by a call) and
-reduces it to a much smaller group of equivalence classes (e.g.\ the
-sign of the returned value).  Furthermore, each site can be treated as
-a set of predicates which form a complete, non-overlapping partition
-of the behaviors observed by that site.  For example, at each
-scalar-pairs comparison between \texttt{x} and \texttt{y}, one and
-only one of $\mathtt{x} < \mathtt{y}$, $\mathtt{x} = \mathtt{y}$, or
+The common theme among these instrumentation schemes is that we
+instrument program predicates and count the number of times that these
+predicates are observed to be true or false when a sample is taken.   
+For the returns and scalar-pairs instrumentation schemes, the three
+predicates that are tracked explicitly actually give rise to a family
+of six predicates that we use in our analysis of the data.
+For example, for each scalar-pairs comparison between \texttt{x} and \texttt{y}, one and
+only one of the three predicates $\mathtt{x} < \mathtt{y}$, $\mathtt{x} = \mathtt{y}$, or
 $\mathtt{x} > \mathtt{y}$ can be true.  Thus one observation at one
 site always updates exactly one of that site's counters.  An
 observation that $\mathtt{x} < \mathtt{y}$ is therefore equivalent to
-an observation that $\mathtt{x} \geq \mathtt{y}$.  This property is
-exploited in \Autoref{sec:algorithm} to synthesize new predicates out
-of existing observations.  This partition effect also allows us to
-determine whether or not -- and how many -- samples were taken at the
-site: the sum of the three counts $\mathtt{x} < \mathtt{y}$,
-$\mathtt{x} = \mathtt{y}$, and $\mathtt{x} > \mathtt{y}$ is exactly
-the total number of samples taken at the $\mathtt{(x,y)}$ site.  This
-discovery enables us to distinguish between a $0$ count vs. a $0$ for
-missing data.
+an observation that $\mathtt{x} \geq \mathtt{y}$.  Similarly, we can
+infer from the data the two remaining predicates $\mathtt{x} \leq \mathtt{y}$ or
+$\mathtt{x} \neq \mathtt{y}$.
+
+Also note that because some counter is always incremented at every
+sample in all three schemes, we can easily determine the number of
+times a predicate was reached by summing all the counters for the site
+(two counters for the branches instrumentation and three counters for
+the others).  Thus, we can distinguish between predicates that are
+never reached during execution (all the counters at the site are 0)
+and predicates that are never true (the counter(s) for the predicate
+is 0, but some other counter at the site is positive).
 
 The post-execution feedback report is a dump of the counter values for
 each instrumentation site.  Reducing a trace to a set of counters
@@ -346,7 +329,7 @@ only the final state of the program at the point of failure.
 \label{sec:algorithm}
 \input{alg}
 
-\section{Experimental Design}
+\section{Experiment Design}
 \label{sec:experiments:setup}
 \input{setup}
 
@@ -358,6 +341,7 @@ only the final state of the program at the point of failure.
 \section{Related Work}
 \label{sec:related-work}
 
+In this section we briefly survey related work.
 The Daikon project \cite{ernst2001} monitors instrumented applications
 to discover likely program invariants.  It collects extensive trace
 information at run time and uses this offline to accept or reject any
@@ -368,9 +352,7 @@ predicates to manifestation of bugs.  Both projects assume complete
 monitoring, such as within a controlled test environment.  Our goal is
 to use lightweight partial monitoring, suitable for deployment to end
 users.  We never have complete information, and therefore must use a
-more probabilistic approach: we wish to identify broad trends over
-time that correlate predicate violations with increased likelihood of
-failure.
+more statistical approach.
 
 \termdef{Software tomography} as realized through the GAMMA system
 \cite{PASTE'02*2,Orso:2003:LFDIART} shares our goal of low-overhead
@@ -402,19 +384,20 @@ visualization techniques to the task of classifying software failure
 reports.  The intent is to bucket each report into an equivalence
 group believed to share the same underlying cause.  Features are
 derived offline from fine-grained execution traces without sampling;
-this reduces the noise level of the data but may be impractical to
-deploy outside of a controlled testing environment.  As in our own
-earlier work, Podgurski uses logistic regression to select features
-which are highly predictive of failure.  \comment{Is it worth noting
-  that we use different strategies for limiting the size of the set of
-  selected features?  We use regularized logistic regression whereas
-  Podgurski applies standard logistic regression to randomly selected
-  subsets of the complete feature set and keeps the best-performing
-  subset.}  Clustering tends to identify small, tight groups of runs
-which do share a single cause but which are not always maximal.  (That
-is, one cause may be split across several clusters.)
+this reduces the noise level of the data but greatly restricts the
+instrumentation schemes that are practical deploy outside of a
+controlled testing environment.  As in our own earlier work, Podgurski
+uses logistic regression to select features which are highly
+predictive of failure.  \comment{Is it worth noting that we use
+different strategies for limiting the size of the set of selected
+features?  We use regularized logistic regression whereas Podgurski
+applies standard logistic regression to randomly selected subsets of
+the complete feature set and keeps the best-performing subset.}
+Clustering tends to identify small, tight groups of runs which do
+share a single cause but which are not always maximal.  That is, one
+cause may be split across several clusters.
 
-In contrast with Podgurski's statistical approach, widespread
+In contrast with Podgurski's statistical approach, current
 industrial practice uses stack traces to cluster failure reports into
 equivalence classes.  Two crash reports showing the same stack trace,
 or perhaps only the same top-of-stack function, are presumed to be two
@@ -484,62 +467,45 @@ specialized net.  \comment{We understand through informal
 \section{Conclusions and Future Work}
 \label{sec:conclusions}
 
-When hunting for bugs, the first thing an engineer wants to know is
-under what circumstances the failure occurs.  However, any complex
-application is likely to contain not just one but many bugs, any of
-which may have affected any single execution.  Isolating bug causes in
-such an environment is a difficult process.
-
-We have demonstrated an algorithm which turns multiple-bug isolation
-into a numbers game.  Given feedback profiles of enough runs, overall
-trends emerge which can help to guide an engineer to the most likely
-causes of the most common bugs.  Our approach uses lightweight,
+We have demonstrated a practical algorithm for isolating multiple bugs
+in complex software systems.  Given feedback profiles of enough runs,
+overall trends emerge which can help to guide an engineer to the most
+likely causes of the most common bugs.  Our approach uses lightweight,
 sampled instrumentation suitable for wide scale deployment to real end
 users, which means that the system also performs implicit triage: it
 learns the most, most quickly, about the bugs that happen most often.
-The key property of our approach is that it filters and orders
-potential causes based on the degree to which they \emph{increase} the
-likelihood of failure.  This allows us to capture both deterministic
-and non-deterministic bugs, and gives engineers a mechanism to gauge
-the strength of the analysis results.
+The key property of our approach is that it filters potential causes
+based on the degree to which they increase the likelihood of failure.
+Our algorithm appears to do a good job of isolating a wide variety of
+bugs, even when multiple bugs are present simultaneously.
 
-Our experience with \moss highlights the importance of selecting basic
-instrumentation schemes that capture behavior commonly associated with
-failure.  The branches and returns schemes yield a small number of
-high quality bug causes.  Scalar-pairs instrumentation, while
-potentially able to capture very subtle errors, suffers from an excess
-of noise predicates from which the few ``smoking guns'' are difficult
-to extract.  A more selective approach to injecting scalar-pairs
-instrumentation warrants study.
+When hunting for bugs, the first thing an engineer wants to know is
+under what circumstances the failure occurs.  Perhaps the most salient
+feature of our approach is the ability to pinpoint the circumstances
+under which bugs occur.
 
-Our \moss case study suggests several additional areas for future
-development.  In the experiments reported here, sampling is
-dynamically uniform: each crossing of each instrumentation site has
-the same fixed chance of being sampled or skipped.  However not all
-code is equally interesting.  Our approach can be generalized to
-support non-uniform sampling.  By observing rare events more often, we
-increase the odds of spotting key failure causes while ensuring that
-the bulk of execution is spent in fast, sparsely-sampled code.
+We also see several possible avenues for improvement, which we leave
+as future work:
+\begin{itemize}
 
-\placeholder{Yet to be addressed: need for better statistical models.
-  This is a bit vague, but should at least discuss problems we
-  encountered using logistic regression in the Moss experiment.}
+\item The scalar-pairs instrumentation scheme requires a very large number
+of predicates and finds relatively few bugs relative to the branches and
+returns instrumentation schemes.  A more specialized version of scalar-pairs
+would be useful.
 
-The sampling instrumentor uses several program analyses to boost the
-performance of instrumented code.  However, the post-run data analysis
-described in \Autoref{sec:algorithm} is largely ignorant of program
-structure.  These and other, deeper structural properties of the code
-should be to help guide the filtering and ranking process.  For
-example, the control flow graph can be used to direct engineers'
-attention to likely first causes that appear earlier in the flow of
-execution.
+\item To date, we have sampled all sites at the same rate.  However,
+rarely executed code, such as code that executes once on system start-up,
+can be sampled at a higher rate with no overall impact on performance and,
+furthermore, infrequently executed code is more likely
+to harbor bugs.  By observing rare events more often, we would need fewer
+runs to isolate bugs.
 
-Our predicate analysis algorithm produced some encouraging results,
-but it is far from perfect.  We leave the problems of interpreting the
-top-ranked features in the hands of the practitioner.  But more could
-be done in clustering the selected predicates and in correlating each
-selected predicate with a set of runs it predicts.  Statistical
-clustering techniques may come in handy here.
+\item The algorithm we present here analyzes every predicate independently
+of every other predicate.  While we have not yet found a statistical algorithm that exploits
+correlations between predicates effectively, we believe this is a worthwhile direction
+to explore.
+\end{itemize}
+
 
 \bibliography{cacm1990,icse02,icse03,misc,paste02,pldi03,pods,ramss,refs}
 
