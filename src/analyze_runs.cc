@@ -223,7 +223,7 @@ int main(int argc, char** argv)
 	needLogoLinks = true;
     }
 
-    if (phaseSelected[DoGatherPriorDist] {
+    if (phaseSelected[DoGatherPriorDist]) {
 	puts("Gathering prior distribution for number of times a predicate is reached...");
 	shell("%s %s/gather_prior_dist.o %s.o %s.o -L%s -lanalyze -o gather_prior_dist",
 	      linker, objdir, MapSites::sitesBasename, MapSites::unitsBasename, objdir);
