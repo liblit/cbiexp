@@ -141,7 +141,7 @@ uint 0|[1-9][0-9]*
 	 << "\tunit: " << signature << '\n'
 	 << "\tscheme: " << scheme << '\n'
 	 << "\tsite: " << sitesActual << '\n';
-    exit(1);
+    return 1;
 }
 
 
@@ -191,6 +191,7 @@ int main(int argc, char** argv)
 
     classify_runs();
 
+    bool failed = false;
     const unsigned num_runs = NumRuns::value();
     Progress::Bounded progress("converting reports", num_runs);
 
@@ -204,12 +205,13 @@ int main(int argc, char** argv)
 	ofp = fopenWrite(CompactReport::format(i));
 
 	yyrestart(ifp);
-	yylex(infile);
+	failed |= yylex(infile);
 
 	fclose(ifp);
 	fclose(ofp);
     }
-    return 0;
+
+    return failed;
 }
 
 
