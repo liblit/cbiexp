@@ -192,7 +192,7 @@ interest when hunting for bugs.  At present our system offers the
 following instrumentation schemes:
   
 \begin{description}
-\item[branches] Control flow is interesting.  At each conditional,
+\item[branches:] Control flow is interesting.  At each conditional,
   count how often each branch is taken (equivalently, how often the
   conditional predicate is true versus false).  The observation is
   made just after the predicate is evaluated but before the selected
@@ -202,8 +202,8 @@ following instrumentation schemes:
   with two counters: number of times brached true and number of times
   branched false.
   
-\item[returns] Function return values are interesting.  In C, the sign
-  of a result often used to encode the success or failure of some
+\item[returns:] Function return values are interesting.  In C, the
+  sign of a result often used to encode the success or failure of some
   operation.  At each scalar-returning function call site, count how
   often the returned value is negative, zero, or positive.  For
   pointer-returning calls, this implicitly reduces to counting
@@ -215,7 +215,7 @@ following instrumentation schemes:
   instrumentation site with three counters: number of negative
   returns, number of zero returns, and number of positive returns.
   
-\item[scalar-pairs] Values of variables are interesting.  Many bugs
+\item[scalar-pairs:] Values of variables are interesting.  Many bugs
   concern boundary issues exposed by the relationship between a pair
   of variables, or between a variable and some program constant.  At
   each scalar assignment \texttt{x = \dots}, identify each
