@@ -73,14 +73,14 @@ char* print_site(char site_kind, char* s)
 }
 
 char* compact_sites_file = NULL;
-char* units_hdr_file = NULL;
+char* units_src_file = NULL;
 
 void process_cmdline(int argc, char** argv)
 {
     for (int i = 1; i < argc; i++) {
 	if (!strcmp(argv[i], "-u")) {
 	    i++;
-	    units_hdr_file = argv[i];
+	    units_src_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-cs")) {
@@ -89,16 +89,16 @@ void process_cmdline(int argc, char** argv)
 	    continue;
 	}
 	if (!strcmp(argv[i], "-h")) {
-	    puts("Usage: map-sites -cs <compact-sites-file> -u <units-hdr-file> < <verbose-sites-file>\n"
+	    puts("Usage: map-sites -cs <compact-sites-file> -u <units-src-file> < <verbose-sites-file>\n"
 		 "Reads  <verbose-sites-file>\n"
-		 "Writes <compact-sites-file> and <units-hdr-file>");
+		 "Writes <compact-sites-file> and <units-src-file>");
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
 	exit(1);
     }
 
-    if (!compact_sites_file || !units_hdr_file) {
+    if (!compact_sites_file || !units_src_file) {
 	puts("Incorrect usage; try -h");
 	exit(1);
     }
@@ -109,11 +109,11 @@ int main(int argc, char** argv)
     process_cmdline(argc, argv);
 
     FILE* cfp = fopen(compact_sites_file, "w"); assert(cfp);
-    FILE* ufp = fopen(units_hdr_file, "w"); assert(ufp);
+    FILE* ufp = fopen(units_src_file, "w"); assert(ufp);
     int num_units = 0, num_b_preds = 0, num_r_preds = 0, num_s_preds = 0;
 
-    fputs("#ifndef UNITS_H\n#define UNITS_H\n\n"
-	  "const struct { char* s; int c; } units[] = {\n",
+    fputs("#include <units.h>\n\n"
+	  "const struct Unit units[] = {\n",
 	  ufp);
 
     while (1) {
@@ -143,11 +143,10 @@ int main(int argc, char** argv)
     }
 
     fputs("};\n\n", ufp);
-    fprintf(ufp, "#define NUM_UNITS   %d\n", num_units);
-    fprintf(ufp, "#define NUM_B_PREDS %d\n", num_b_preds);
-    fprintf(ufp, "#define NUM_R_PREDS %d\n", num_r_preds);
-    fprintf(ufp, "#define NUM_S_PREDS %d\n", num_s_preds);
-    fputs("\n#endif\n", ufp);
+    fprintf(ufp, "const int NumUnits  = %d;\n", num_units);
+    fprintf(ufp, "const int NumBPreds = %d;\n", num_b_preds);
+    fprintf(ufp, "const int NumRPreds = %d;\n", num_r_preds);
+    fprintf(ufp, "const int NumSPreds = %d;\n", num_s_preds);
 
     fclose(cfp);
     fclose(ufp);

@@ -1,4 +1,6 @@
 #include <cstdio>
+#include "preds.h"
+
 
 int main(int, char*[])
 {

@@ -3,10 +3,11 @@
 #include <cassert>
 #include <cstdlib>
 #include "classify_runs.h"
+#include "units.h"
 
 int get_indx(char* s)
 {
-    for (int i = 0; i < NUM_UNITS; i++)
+    for (int i = 0; i < NumUnits; i++)
 	if (strcmp(s, units[i].s) == 0)
 	    return i;
 

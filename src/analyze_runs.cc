@@ -16,13 +16,13 @@
 #define DEFAULT_SRUNS_FILE "s.runs"
 #define DEFAULT_FRUNS_FILE "f.runs"
 #define DEFAULT_COMPACT_SITES_FILE "sites.txt"
-#define DEFAULT_UNITS_HDR_FILE "units.h"
+#define DEFAULT_UNITS_FILE_BASE "units"
 #define DEFAULT_EXPERIMENT_NAME "dummy"
 #define DEFAULT_PROGRAM_SRC_DIR "."
 #define DEFAULT_CONFIDENCE "95"
 #define DEFAULT_PREDS_FULL_FILE "preds.full.txt"
 #define DEFAULT_PREDS_ABBR_FILE "preds.abbr.txt"
-#define DEFAULT_PREDS_HDR_FILE "preds.h"
+#define DEFAULT_PREDS_FILE_BASE "preds"
 #define DEFAULT_RESULT_SUMMARY_FILE "summary.html"
 #define DEFAULT_OBS_FILE "obs.txt"
 #define DEFAULT_TRU_FILE "tru.txt"
@@ -46,7 +46,7 @@ char* fruns_file = NULL;
 
 char* verbose_sites_file = NULL;
 char* compact_sites_file = NULL;
-char* units_hdr_file = NULL;
+char* units_file_base = NULL;
 
 char* verbose_report_path_fmt = NULL;
 char* compact_report_path_fmt = NULL;
@@ -57,7 +57,7 @@ char* confidence = DEFAULT_CONFIDENCE;
 char* trace_file = NULL;
 char* preds_full_file = NULL;
 char* preds_abbr_file = NULL;
-char* preds_hdr_file = NULL;
+char* preds_file_base = NULL;
 char* result_summary_file = NULL;
 char* all_cluster_file = NULL;
 char* per_cluster_file = NULL;
@@ -128,7 +128,7 @@ void process_cmdline(int argc, char** argv)
 	}
 	if (!strcmp(argv[i], "-u")) {
 	    i++;
-	    units_hdr_file = argv[i];
+	    units_file_base = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-vr")) {
@@ -171,9 +171,9 @@ void process_cmdline(int argc, char** argv)
 	    preds_abbr_file = argv[i];
 	    continue;
 	}
-	if (!strcmp(argv[i], "-ph")) {
+	if (!strcmp(argv[i], "-pb")) {
 	    i++;
-	    preds_hdr_file = argv[i];
+	    preds_file_base = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-r")) {
@@ -216,7 +216,7 @@ void process_cmdline(int argc, char** argv)
 		 "-f   <fruns-file>\n"
 		 "-vs  <verbose-sites-file>\n"
 		 "-cs  <compact-sites-file>\n"
-		 "-u   <units-hdr-file>\n"
+		 "-u   <units-file-base>\n"
 		 "-vr  <verbose-report-path-fmt>\n"
 		 "-cr  <compact-report-path-fmt>\n"
 		 "-e   <experiment-name>\n"
@@ -225,7 +225,7 @@ void process_cmdline(int argc, char** argv)
 		 "-t   <trace-file>\n"
 		 "-pf  <preds-txt-full-file>\n"
 		 "-pa  <preds-txt-abbr-file>\n"
-		 "-ph  <preds-hdr-file>\n"
+		 "-pb  <preds-hdr-file>\n"
 		 "-r   <result-summary-file>\n"
 		 "-obs <obs-file>\n"
 		 "-tru <tru-file>\n"
@@ -251,7 +251,8 @@ void gen_views(const char bindir[], char* preds_file, int prefix)
 int main(int argc, char** argv)
 {
     const char * const bindir = dirname(argv[0]);
-    const char * const srcdir = bindir;
+    const char * const objdir = bindir;
+    const char * const incdir = bindir;
     process_cmdline(argc, argv);
 
     if (do_process_labels) {
@@ -271,7 +272,7 @@ int main(int argc, char** argv)
     }
 
     if (do_map_sites) {
-	if (compact_sites_file || units_hdr_file)  {
+	if (compact_sites_file || units_file_base)  {
 	    puts("When you specify -do-map-sites, you must not specify -cs or -u");
 	    exit(1);
 	}
@@ -281,50 +282,51 @@ int main(int argc, char** argv)
 	}
 	puts("Mapping sites ...");
 	compact_sites_file = DEFAULT_COMPACT_SITES_FILE;
-	units_hdr_file = DEFAULT_UNITS_HDR_FILE;
+	units_file_base = DEFAULT_UNITS_FILE_BASE;
 	shell("cat %s | "
 	      "sed 's/[a-zA-Z_][a-zA-Z_0-9]*\\$//g' | "
 	      "sed 's/\\([0-9][0-9]*\\)LL/\\1/g' | "
 	      "sed 's/\\([0-9][0-9]*\\)ULL/\\1/g' | "
-	      "%s/%s -cs %s -u %s",
-	      verbose_sites_file, bindir, MAP_SITES, compact_sites_file, units_hdr_file);
+	      "%s/%s -cs %s -u %s.cc",
+	      verbose_sites_file, bindir, MAP_SITES, compact_sites_file, units_file_base);
+	shell("g++ -O3 -I%s -c %s.cc", incdir, units_file_base);
     }
 
     if (do_convert_reports) {
-	if (!sruns_file || !fruns_file || !verbose_report_path_fmt || !compact_report_path_fmt || !units_hdr_file) {
+	if (!sruns_file || !fruns_file || !verbose_report_path_fmt || !compact_report_path_fmt || !units_file_base) {
 	    puts("When you specify -do-convert-reports, you must also specify -s, -f, -vr, -cr, and -u");
 	    exit(1);
 	}
 	puts("Converting reports ...");
-	shell("g++ -O3 %s/convert_reports.cc %s/classify_runs.cc -I%s -include %s -o %s",
-	      srcdir, srcdir, srcdir, units_hdr_file, CONVERT_REPORTS);
+	shell("g++ -O3 %s/convert_reports.o %s/classify_runs.o %s.o -o %s",
+	      objdir, objdir, units_file_base, CONVERT_REPORTS);
 	shell("%s -s %s -f %s -vr %s -cr %s",
 	      CONVERT_REPORTS, sruns_file, fruns_file, verbose_report_path_fmt, compact_report_path_fmt);
     }
 
     if (do_compute_results) {
-	if (preds_full_file || preds_abbr_file || preds_hdr_file || result_summary_file) {
-	    puts("When you specify -do-compute-results, you must not specify -pf, -pa, -ph, or -r");
+	if (preds_full_file || preds_abbr_file || preds_file_base || result_summary_file) {
+	    puts("When you specify -do-compute-results, you must not specify -pf, -pa, -pb, or -r");
 	    exit(1);
 	}
-	if (!sruns_file || !fruns_file || !compact_sites_file || !compact_report_path_fmt || !units_hdr_file) {
+	if (!sruns_file || !fruns_file || !compact_sites_file || !compact_report_path_fmt || !units_file_base) {
 	    puts("When you specify -do-compute-results, you must also specify -s, -f, -cs, -cr, and -u");
 	    exit(1);
 	}
 	puts("Computing results ...");
 	preds_full_file = DEFAULT_PREDS_FULL_FILE;
 	preds_abbr_file = DEFAULT_PREDS_ABBR_FILE;
-	preds_hdr_file  = DEFAULT_PREDS_HDR_FILE;
+	preds_file_base  = DEFAULT_PREDS_FILE_BASE;
 	result_summary_file = DEFAULT_RESULT_SUMMARY_FILE;
-	shell("g++ -O3 %s/compute_results.cc %s/classify_runs.cc %s/scaffold.cc -I%s -include %s -o %s",
-	      srcdir, srcdir, srcdir, srcdir, units_hdr_file, COMPUTE_RESULTS);
-	shell("%s -e %s -d %s -s %s -f %s -c %s -cs %s -cr %s %s %s -pf %s -pa %s -ph %s -r %s",
+	shell("g++ -O3 %s/compute_results.o %s/classify_runs.o %s/scaffold.o %s.o -o %s",
+	      objdir, objdir, objdir, units_file_base, COMPUTE_RESULTS);
+	shell("%s -e %s -d %s -s %s -f %s -c %s -cs %s -cr %s %s %s -pf %s -pa %s -ps %s.cc -r %s",
 	      COMPUTE_RESULTS, experiment_name, program_src_dir,
 	      sruns_file, fruns_file, confidence,
 	      compact_sites_file, compact_report_path_fmt,
 	      ((trace_file) ? "-t" : ""), ((trace_file) ? trace_file : ""),
-	      preds_full_file, preds_abbr_file, preds_hdr_file, result_summary_file);
-
+	      preds_full_file, preds_abbr_file, preds_file_base, result_summary_file);
+	shell("g++ -O3 -I%s -c %s.cc", incdir, preds_file_base);
     }
 
     if (do_compute_obs_tru) {
@@ -332,15 +334,15 @@ int main(int argc, char** argv)
 	    puts("When you specify -do-compute-obs-tru, you must not specify -obs or -tru");
 	    exit(1);
 	}
-	if (!sruns_file || !fruns_file || !preds_abbr_file || !compact_report_path_fmt || !units_hdr_file) {
+	if (!sruns_file || !fruns_file || !preds_abbr_file || !compact_report_path_fmt || !units_file_base) {
 	    puts("When you specify -do-compute-obs-tru, you must also specify -s, -f, -pa, -cr, and -u");
 	    exit(1);
 	}
 	puts("Computing obs and tru ...");
 	obs_file = DEFAULT_OBS_FILE;
 	tru_file = DEFAULT_TRU_FILE;
-	shell("g++ -O3 %s/compute_obs_tru.cc %s/classify_runs.cc %s/scaffold.cc -I%s -include %s -o %s",
-	      srcdir, srcdir, srcdir, srcdir, units_hdr_file, COMPUTE_OBS_TRU);
+	shell("g++ -O3 %s/compute_obs_tru.o %s/classify_runs.o %s/scaffold.o %s.o -o %s",
+	      objdir, objdir, objdir, units_file_base, COMPUTE_OBS_TRU);
 	shell("%s -s %s -f %s -pa %s -cr %s -obs %s -tru %s",
 	      COMPUTE_OBS_TRU, sruns_file, fruns_file, preds_abbr_file,
 	      compact_report_path_fmt, obs_file, tru_file);
@@ -356,12 +358,12 @@ int main(int argc, char** argv)
     }
 
     if (do_print_results_n) {
-	if (!result_summary_file || !preds_hdr_file || !all_cluster_file || !per_cluster_file) {
-	    puts("When you specify -do-print-results-n, you must also specify -r, -ph, -ka, and -kp");
+	if (!result_summary_file || !preds_file_base || !all_cluster_file || !per_cluster_file) {
+	    puts("When you specify -do-print-results-n, you must also specify -r, -pb, -ka, and -kp");
 	    exit(1);
 	}
 	puts("Pretty-printing results-n ...");
-	shell("g++ -O3 %s/gen_preds_file.cc -include %s -o %s", srcdir, preds_hdr_file, GEN_PREDS_FILE);
+	shell("g++ -O3 %s/gen_preds_file.o %s.o -o %s", objdir, preds_file_base, GEN_PREDS_FILE);
 	FILE* all_fp = fopen(all_cluster_file, "r");
 	assert(all_fp);
 	while (1) {

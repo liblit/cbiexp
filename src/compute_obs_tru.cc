@@ -7,6 +7,7 @@
 #include <vector>
 #include "classify_runs.h"
 #include "scaffold.h"
+#include "units.h"
 
 using namespace std;
 
@@ -19,7 +20,7 @@ struct site_details_t {
     }
 };
 
-site_details_t* site_details[NUM_UNITS];
+vector<vector<site_details_t> > site_details;
 
 char* sruns_file = NULL;
 char* fruns_file = NULL;
@@ -193,10 +194,9 @@ int main(int argc, char** argv)
     tru_fp = fopen(tru_file, "w");
     assert(tru_fp);
 
-    for (u = 0; u < NUM_UNITS; u++) {
-	site_details[u] = new (site_details_t) [units[u].c];
-	assert(site_details[u]);
-    }
+    site_details.resize(NumUnits);
+    for (u = 0; u < NumUnits; u++)
+	site_details[u].resize(units[u].c);
 
     preds_fp = fopen(preds_file, "r");
     assert(preds_fp);
@@ -204,7 +204,7 @@ int main(int argc, char** argv)
 	fscanf(preds_fp, "%d %d %d", &u, &c, &p);
 	if (feof(preds_fp))
 	    break;
-	assert(u >= 0 && u < NUM_UNITS );
+	assert(u >= 0 && u < NumUnits );
 	assert(c >= 0 && c < units[u].c);
 	assert(p >= 0 && p < 6);
 	site_details[u][c].obs[p] = new bit_vector(num_runs);
@@ -216,7 +216,7 @@ int main(int argc, char** argv)
 
     scaffold(compact_report_path_fmt, process_site);
 
-    for (u = 0; u < NUM_UNITS; u++)
+    for (u = 0; u < NumUnits; u++)
 	for (c = 0; c < units[u].c; c++)
 	    print_site_details(u, c);
 

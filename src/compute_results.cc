@@ -4,8 +4,12 @@
 #include <cstdlib>
 #include <cmath>
 #include <ctime>
+#include <vector>
 #include "classify_runs.h"
 #include "scaffold.h"
+#include "units.h"
+
+using std::vector;
 
 #define CBI_WEBPAGE "http://www.cs.berkeley.edu/~liblit/sampler/"
 
@@ -25,7 +29,7 @@ struct site_summary_t {
     }
 };
 
-site_summary_t* site_summary[NUM_UNITS];
+vector<vector<site_summary_t> > site_summary;
 
 const float conf_map[10] = {
     1.645,  // 90%
@@ -50,7 +54,7 @@ char* compact_report_path_fmt = NULL;
 char* trace_file = NULL;
 char* preds_full_file = NULL;
 char* preds_abbr_file = NULL;
-char* preds_hdr_file = NULL;
+char* preds_src_file = NULL;
 char* result_summary_file = NULL;
 
 float conf;
@@ -63,7 +67,7 @@ FILE* sites_fp = NULL;
 FILE* trace_fp = NULL;
 FILE* preds_full_fp = NULL;
 FILE* preds_abbr_fp = NULL;
-FILE* preds_hdr_fp = NULL;
+FILE* preds_src_fp = NULL;
 FILE* result_summary_fp = NULL;
 
 #define INC(r, u, c, p)            \
@@ -102,7 +106,7 @@ void restore_site_name(pred_name* n)
 {
     fprintf(preds_full_fp, "</td><td>%s</td><td><a href=\"%s/%s#%s\">%s:%s</a>\n",
 	n->func, program_src_dir, n->file, n->line, n->file, n->line);
-    fprintf(preds_hdr_fp , "</td><td>%s</td><td><a href=\\\"%s/%s#%s\\\">%s:%s</a>\",\n",
+    fprintf(preds_src_fp , "</td><td>%s</td><td><a href=\\\"%s/%s#%s\\\">%s:%s</a>\",\n",
 	n->func, program_src_dir, n->file, n->line, n->file, n->line);
 
     *(n->line - 1) = '\t';
@@ -144,7 +148,7 @@ void print_pred_stats(int u, int c, int p)
     fprintf(preds_full_fp, "%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
 	units[u].s[0], u, c, p, lb, in, fs, co, s, f, os, of);
     fprintf(preds_abbr_fp, "%d %d %d\n", u, c, p);
-    fprintf(preds_hdr_fp , "\t\"%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
+    fprintf(preds_src_fp , "\t\"%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
 	units[u].s[0], u, c, p, lb, in, fs, co, s, f, os, of);
 }
 
@@ -239,7 +243,7 @@ void print_site_summary(int u, int c, char* site_name)
 		print_pred_stats(u, c, p);
 		extract_pred_name(site_name, &n);
 		print_scalar_pred(preds_full_fp, n.pred, scalar_op[p / 2], p % 2 ? true : false);
-		print_scalar_pred(preds_hdr_fp , n.pred, scalar_op[p / 2], p % 2 ? true : false);
+		print_scalar_pred(preds_src_fp , n.pred, scalar_op[p / 2], p % 2 ? true : false);
 		restore_site_name(&n);
 	    }
 	break;
@@ -291,7 +295,7 @@ void print_site_summary(int u, int c, char* site_name)
 		print_pred_stats(u, c, p);
 		extract_pred_name(site_name, &n);
 		print_return_pred(preds_full_fp, n.pred, return_op[p / 2], p % 2 ? true : false);
-		print_return_pred(preds_hdr_fp , n.pred, return_op[p / 2], p % 2 ? true : false);
+		print_return_pred(preds_src_fp , n.pred, return_op[p / 2], p % 2 ? true : false);
 		restore_site_name(&n);
 	    }
 	break;
@@ -301,7 +305,7 @@ void print_site_summary(int u, int c, char* site_name)
 	    print_pred_stats(u, c, 0);
 	    extract_pred_name(site_name, &n);
 	    print_branch_pred(preds_full_fp, n.pred, "is FALSE");
-	    print_branch_pred(preds_hdr_fp , n.pred, "is FALSE");
+	    print_branch_pred(preds_src_fp , n.pred, "is FALSE");
 	    restore_site_name(&n);
 	}
 	if (is_bug_predictor(u, c, 1)) {
@@ -309,7 +313,7 @@ void print_site_summary(int u, int c, char* site_name)
 	    print_pred_stats(u, c, 1);
 	    extract_pred_name(site_name, &n);
 	    print_branch_pred(preds_full_fp, n.pred, "is TRUE");
-	    print_branch_pred(preds_hdr_fp , n.pred, "is TRUE");
+	    print_branch_pred(preds_src_fp , n.pred, "is TRUE");
 	    restore_site_name(&n);
 	}
 	break;
@@ -419,7 +423,7 @@ void print_result_summary()
     fprintf(result_summary_fp, "# runs: %d [successful: %d failing: %d discarded: %d]\n<p>\n",
 	num_runs, num_sruns, num_fruns, num_runs - (num_sruns + num_fruns));
     fprintf(result_summary_fp, "# predicates instrumented: %d [branch: %d return: %d scalar: %d]\n<p>\n",
-	NUM_B_PREDS + NUM_R_PREDS + NUM_S_PREDS, NUM_B_PREDS, NUM_R_PREDS, NUM_S_PREDS);
+	NumBPreds + NumRPreds + NumSPreds, NumBPreds, NumRPreds, NumSPreds);
     fprintf(result_summary_fp, "# predicates retained: %d [branch: %d return: %d scalar: %d]\n<p>\n",
 	num_b_preds + num_r_preds + num_s_preds, num_b_preds, num_r_preds, num_s_preds);
     fprintf(result_summary_fp, "Confidence: %d%%\n<p>\n", confidence);
@@ -479,9 +483,9 @@ void process_cmdline(int argc, char** argv)
 	    preds_abbr_file = argv[i];
 	    continue;
 	}
-	if (!strcmp(argv[i], "-ph")) {
+	if (!strcmp(argv[i], "-ps")) {
 	    i++;
-	    preds_hdr_file = argv[i];
+	    preds_src_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-r")) {
@@ -499,7 +503,7 @@ void process_cmdline(int argc, char** argv)
 
     if (!experiment_name || !program_src_dir || !sruns_file || !fruns_file || confidence == -1 ||
 	!compact_sites_file || !compact_report_path_fmt ||
-	!preds_full_file || !preds_abbr_file || !preds_hdr_file || !result_summary_file) {
+	!preds_full_file || !preds_abbr_file || !preds_src_file || !result_summary_file) {
 	puts("Incorrect usage; try -h");
 	exit(1);
     }
@@ -518,7 +522,7 @@ void process_trace_file()
 	fscanf(trace_fp, "%d %d %d %d", &u, &c, &p, &b);
 	if (feof(trace_fp))
 	    break;
-	assert(u >= 0 && u < NUM_UNITS );
+	assert(u >= 0 && u < NumUnits );
 	assert(c >= 0 && c < units[u].c);
 	assert(p >= 0 && p < 6);
 	assert(b == 0 || b == 1);
@@ -546,24 +550,23 @@ int main(int argc, char** argv)
     assert(preds_full_fp);
     preds_abbr_fp = fopen(preds_abbr_file, "w");
     assert(preds_abbr_fp);
-    preds_hdr_fp = fopen(preds_hdr_file, "w");
-    assert(preds_hdr_fp);
+    preds_src_fp = fopen(preds_src_file, "w");
+    assert(preds_src_fp);
     result_summary_fp = fopen(result_summary_file, "w");
     assert(result_summary_fp);
 
-    fputs("#ifndef PREDS_H\n#define PREDS_H\n\n", preds_hdr_fp);
-    fputs("const char* preds[] = {\n", preds_hdr_fp);
+    fputs("#include <preds.h>\n\n"
+	  "const char* const preds[] = {\n", preds_src_fp);
 
-    for (u = 0; u < NUM_UNITS; u++) {
-	site_summary[u] = new (site_summary_t) [units[u].c];
-	assert(site_summary[u]);
-    }
+    site_summary.resize(NumUnits);
+    for (u = 0; u < NumUnits; u++)
+	site_summary[u].resize(units[u].c);
 
     process_trace_file();
 
     scaffold(compact_report_path_fmt, process_site);
 
-    for (u = 0; u < NUM_UNITS; u++) {
+    for (u = 0; u < NumUnits; u++) {
 	for (c = 0; c < units[u].c; c++) {
 	    char site_name[10000];
 	    fscanf(sites_fp, "%[^\n]s", site_name); fgetc(sites_fp);
@@ -573,15 +576,12 @@ int main(int argc, char** argv)
 
     print_result_summary();
 
-    for (u = 0; u < NUM_UNITS; u++)
-	delete [] (site_summary[u]);
-
-    fputs("};\n\n#endif\n", preds_hdr_fp);
+    fputs("};\n", preds_src_fp);
 
     fclose(sites_fp);
     fclose(preds_full_fp);
     fclose(preds_abbr_fp);
-    fclose(preds_hdr_fp);
+    fclose(preds_src_fp);
     fclose(result_summary_fp);
     return 0;
 }
