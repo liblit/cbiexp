@@ -232,7 +232,7 @@ statistical procedure that tries to select a set of predicates that
 best predict the outcome of every run. As we worked to apply these
 methods to much larger programs under realistic conditions, we
 discovered a number of serious scalability problems:
-
+%%
 \begin{itemize}
 
 \item For large applications the set ${\cal P}$ numbers in the hundreds of
@@ -242,13 +242,6 @@ causes logistic regression to choose highly redundant lists of
 predictors ${\cal S}$.  Redundancy is
 already evident in prior work \cite{PLDI`03*141} but becomes much
 worse for larger programs.
-%%
-\issue[Alice]{Logistic regression is not a global optimization
-  technique.  The fact that predictors for less common bugs are ranked
-  lower by logistic regression is a consequence of doing binary
-  classification when we really should be doing multi-class
-  classification.  But we can't do multi-class classification since we
-  don't know the underlying bug labels. [text modified]}
 
 \item A separate difficulty is the prevalence of predicates predicting
 multiple bugs.  For example, for many Unix programs a bug is more
