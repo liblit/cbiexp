@@ -42,7 +42,10 @@ unless ($jobs) {
     while (<$cpuinfo>) {
 	++$jobs if /^processor\t/;
     }
+    --$jobs;
 }
+
+$jobs = 1 if $jobs < 1;
 
 
 my ($first, $last) = @ARGV;
