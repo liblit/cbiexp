@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-#-*- cperl -*-
+#-*- mode: cperl; cperl-indent-level: 4 -*-
 
 use strict;
 
@@ -137,6 +137,7 @@ foreach my $run_id ($start .. $num_runs - 1) {
 	last;
     }
 
+    # is any work needed for this run?
     my $subdir = int($run_id / $RunsPerSubdirectory);
     my $rundir = "$datadir/$subdir/$run_id";
     my $stamp_file = "$rundir/stamp";
@@ -152,6 +153,8 @@ foreach my $run_id ($start .. $num_runs - 1) {
     die "cannot fork: $!\n" unless defined $pid;
 
     if ($pid == 0) {
+	$0 = "run $run_id";
+
 	if (-e 'stamp') {
 	    # already ran; just needs relabeling
 	    chdir $rundir;
