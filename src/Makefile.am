@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -W -Wall -Werror -Wformat=2
+AM_CPPFLAGS = -W -Wall -Werror -Wformat
 
 EXTRA_DIST =					\
 	summary.css				\
