@@ -14,9 +14,6 @@ typically find and fix bugs:
 
 \end{enumerate}
 
-\issue[Alice]{Modified to differentiate between a bug and a bug
-  profile}
-
 For our purposes, identifying the cause of a bug $\bug$ means selecting a
 predicate $P$ closely correlated with $\bugprofile$.  The difficulty is that we
 know the set of runs that succeed and fail, but we do not know which
@@ -55,28 +52,28 @@ if (f == NULL) {  (b)
 }
 \end{verbatim}
 \end{quote}
-Consider the predicate {\tt f == NULL} at line {\tt (b)}, which would
+Consider the predicate \texttt{f == NULL} at line \texttt{(b)}, which would
 be captured by branches instrumentation.  Clearly
 this predicate is highly correlated with failure; in fact, whenever it
 is true this program inevitably crashes.\footnote{We also note that this bug could
 be detected by a simple static analysis; this example is meant to be concise rather than
 a significant application of our techniques.}   An important observation,
 however, is that there is no one perfect predictor of failure in a
-program with multiple bugs.  Even a ``smoking gun'' such as {\tt f ==
-  NULL} at line {\tt (b)} has little or no predictive power for
+program with multiple bugs.  Even a ``smoking gun'' such as \texttt{f ==
+  NULL} at line \texttt{(b)} has little or no predictive power for
 failures due to unrelated bugs in the same program.
 
 The bug in the code fragment above is \termdef{deterministic} with
-respect to {\tt f == NULL}: if {\tt f == NULL} is true at line {\tt
-(b)}, the program fails.  In many cases it is impossible to observe
+respect to \texttt{f == NULL}: if \texttt{f == NULL} is true at line
+\texttt{(b)}, the program fails.  In many cases it is impossible to observe
 the exact conditions causing failure; for example, buffer overrun bugs
 in a C program may or may not cause the program to crash depending on
 runtime system decisions about how data is laid out in memory.  Such
 bugs are \termdef{non-deterministic} with respect to every predicate;
 even for the best predictor $P$, it is possible
 that $P$ is true and still the program terminates normally.  In the
-example above, if we insert before line {\tt (d)} a valid pointer
-assignment to {\tt f} controlled by a conditional that is true at
+example above, if we insert before line \texttt{(d)} a valid pointer
+assignment to \texttt{f} controlled by a conditional that is true at
 least occasionally (say via a call to read input)
 \begin{quote}
 \begin{verbatim}
@@ -84,19 +81,12 @@ if (...) f = ... some valid pointer ...;
 *f;
 \end{verbatim}
 \end{quote}
-the bug becomes non-deterministic with respect to {\tt f == NULL}.
+the bug becomes non-deterministic with respect to \texttt{f == NULL}.
 
 To summarize, even for a predicate $P$ that is truly the cause of a bug, we can neither assume that
 when $P$ is true that
 the program fails nor that when $P$ is never observed to be true  that
 the program succeeds.
-%%
-\issue[Mayur]{``To summarize, even for a predicate P \dots, we can
-  neither X nor Y.''
-
-  I think we need to switch X and Y in the above sentence because Alex
-  describes Y first and X next in the preceding 2 para's.}
-%%
 But we can express the probability that $P$
 being true implies failure.  Let $\fail$ be an atomic predicate that is
 true for failing runs and false for successful runs.  Let $\prob(A | B)$ denote
@@ -126,45 +116,35 @@ program failure.
 
 Now $\crash(P)$ is a useful measure, but it is not good
 enough for the first step of our algorithm. To see this, consider again the
-code fragment given above in its original, deterministic form.  At line {\tt (b)} we
-have $\crash(\mbox{\tt f == NULL}) = 1.0$, so this predicate is a good
+code fragment given above in its original, deterministic form.  At line \texttt{(b)} we
+have $\crash(\texttt{f == NULL}) = 1.0$, so this predicate is a good
 candidate for the cause of the bug.
-But on line {\tt (c)} we have the unpleasant fact that $\crash(\mbox{\tt x == 0}) = 1.0$ as well.
+But on line \texttt{(c)} we have the unpleasant fact that $\crash(\texttt{x == 0}) = 1.0$ as well.
 To understand why, observe that the
-predicate \texttt{x == 0} is always true at line {\tt (c)} and, in
+predicate \texttt{x == 0} is always true at line \texttt{(c)} and, in
 addition,
 only failing runs reach this line.
-Thus $S(\mbox{\tt x == 0}) = 0$, and, so long as there is at least one run that
-reaches line {\tt (c)} at all, $\crash(\mbox{\tt x == 0})$ at line {\tt (c)} is 1.0.
+Thus $S(\texttt{x == 0}) = 0$, and, so long as there is at least one run that
+reaches line \texttt{(c)} at all, $\crash(\texttt{x == 0})$ at line \texttt{(c)} is 1.0.
 
 As this example
 shows, just because $\crash(P)$ is high does not
-mean $P$ is the cause of a bug.  In the case of {\tt x == 0}, the
+mean $P$ is the cause of a bug.  In the case of \texttt{x == 0}, the
 decision that eventually causes the crash is made earlier, and the
-high $\crash(\mbox{\tt x == 0})$ score merely reflects the fact that this
+high $\crash(\texttt{x == 0})$ score merely reflects the fact that this
 predicate is checked on a path where the program is already doomed.
-
-\issue[Alice]{The Failure score is not a perfect definition of
-  importance.  The context score is designed to address one specific
-  problem (that of the innocent by-stander), but there are many
-  others.  We should make this clear in the text.  [didn't modify
-  text]}
 
 A way to address this difficulty is to score a predicate not by the chance
 that it implies failure, but by how much difference it makes that the predicate
 is observed to be true versus simply reaching the line where the predicate is checked.
-That is, on line {\tt (c)}, the probability of crashing is already 1.0 regardless
-of the value of the predicate {\tt x == 0}, and thus the fact that {\tt x == 0} is
+That is, on line \texttt{(c)}, the probability of crashing is already 1.0 regardless
+of the value of the predicate \texttt{x == 0}, and thus the fact that \texttt{x == 0} is
 true does not increase the probability of failure at all.  This coincides with
 our intuition that this predicate is irrelevant to the bug.
 
-\issue[Alice]{Changed P or not P to ``P observed,'' because according
-  to our notation, P is the name of a predicate, NOT the value of the
-  predicate.  We've been using R(P) to denote the value of the
-  predicate in run R.}
 This leads us to the following definition:
 \[
-\context(P) \equiv \prob(\fail = 1 | P \mbox{ observed})
+\context(P) \equiv \prob(\fail = 1 | \text{$P$ observed})
 \]
 Now, it is not the case that $P$ is observed in every run, because the
 site where this predicate occurs may not be reached, or may be reached
@@ -180,8 +160,8 @@ but not sampled.
 Thus, $\context(P)$ is the probability that
 in the subset of runs where the site containing predicate $P$ is reached and sampled, the program fails.
 We can estimate $\context(P)$ as follows:
-\[ \context(P) = \frac{F(P \mbox{ observed})}{S(P \mbox{ observed}) +
-  F(P \mbox{ observed})} \]
+\[ \context(P) = \frac{F(\text{$P$ observed})}{S(\text{$P$ observed}) +
+  F(\text{$P$ observed})} \]
 
 The interesting quantity, then, is
 \begin{equation*}
@@ -189,10 +169,10 @@ The interesting quantity, then, is
 \end{equation*}
 %%
 which can be read as: How much does $P$ being true increase the probability of failure
-over simply reaching the line where $P$ is sampled?  For example, for the predicate {\tt x == 0} on line {\tt (c)},
+over simply reaching the line where $P$ is sampled?  For example, for the predicate \texttt{x == 0} on line \texttt{(c)},
 we have
-\[\crash(\mbox{\tt x == 0}) = \context(\mbox{\tt x == 0}) = 1.0 \]
-and so $\increase(\mbox{\tt x == 0}) = 0$.
+\[\crash(\texttt{x == 0}) = \context(\texttt{x == 0}) = 1.0 \]
+and so $\increase(\texttt{x == 0}) = 0$.
 
 A predicate $P$ with $\increase(P) \leq 0$ has no predictive power.  Being true does not increase the
 probability of failure, and we can safely discard all such predicates.
@@ -208,11 +188,11 @@ predicates always have scores $\leq 0$.  For example, any predicate
 that is unreachable, that is a program invariant, or that is obviously
 control-dependent on a true cause is eliminated by this test.  It is
 also worth pointing out that this test tends to localize bugs at
-a point where the condition that causes the bug becomes true, rather than at
+a point where the condition that causes the bug first becomes true, rather than at
 the crash site.  For example, in the code fragment given above, the bug is
-attributed to the success of the conditional branch test {\tt f ==
-NULL} on line {\tt (b)} rather than the pointer dereference on line
-{\tt (d)}.  Thus, the cause of the bug discovered by the algorithm
+attributed to the success of the conditional branch test \texttt{f ==
+NULL} on line \texttt{(b)} rather than the pointer dereference on line
+\texttt{(d)}.  Thus, the cause of the bug discovered by the algorithm
 points directly to the conditions under which the crash occurs, rather than
 the line on which it occurs (which is usually available anyway in the
 stack trace).
@@ -221,7 +201,7 @@ stack trace).
 \label{sec:statisticalinterpretation}
 
 We have explained the test $\increase(P) > 0$ using programming terminology,
-but it also has a natural statistical interpretation as a simplified \termdef{likelihood ratio} hypothesis
+but it also has a natural statistical interpretation as a simplified likelihood ratio hypothesis
 test.  Consider the two classes of trial runs
 of the program: failed runs $F$ and successful runs $S$.  For each
 class, we can treat the predicate $P$ as a Bernoulli random variable
@@ -234,8 +214,8 @@ the null hypothesis $\H_0:
 \pi_f \leq \pi_s$, versus the alternate hypothesis $\H_1: \pi_f > \pi_s$.  Since
 $\pi_f$ and $\pi_s$ are not known, we must estimate them:
 \begin{align*}
-  \hat \pi_f(P) &= \frac{F(P)}{F(P \mbox{ observed})} &
-  \hat \pi_s(P) &= \frac{S(P)}{S(P \mbox{ observed})}
+  \hat \pi_f(P) &= \frac{F(P)}{F(\text{$P$ observed})} &
+  \hat \pi_s(P) &= \frac{S(P)}{S(\text{$P$  observed})}
 \end{align*}
 
 Although these proportion estimates of $\pi_f$ and $\pi_s$ approach the
@@ -253,8 +233,8 @@ false-positive probability (i.e.,\ choosing $\H_1$ when $\H_0$ is true).
 A necessary (but not sufficient) condition for choosing $\H_1$ is that
 $\hat \pi_f(P) > \hat \pi_s(P)$.  However, this is
 equivalent to the condition that $\increase(P) > 0$.  To see why,
-let $a = F(P)$, $b = S(P)$, $c = F(P\mbox{ observed})$, and $d =
-S(P\mbox{ observed})$.
+let $a = F(P)$, $b = S(P)$, $c = F(\text{$P$ observed})$, and $d =
+S(\text{$P$ observed})$.
 Then
 \begin{gather*}
   \increase(P) > 0 \iff \crash(P) > \context(P) \\
@@ -273,7 +253,7 @@ Then
 \setlength{\textsegwidth}{2ex}
 \newcommand{\textseg}[1]{\parbox{\textsegwidth}{\segment{#1}{\textsegwidth}}}
 
-We now turn to the question of ranking those predicates that survived
+We now turn to the question of ranking those predicates that survive
 pruning.  \autoref{tab:sorts} shows the top predicates under different
 ranking schemes (explained below) for one of our experiments.  Due to
 space limitations we omit additional per-predicate information, such
@@ -391,22 +371,6 @@ redundant predicates:
 \item Repeat these steps until the set of runs is empty or the set of predicates is empty.
 \end{enumerate}
 
-\issue[Mayur]{We should mention somewhere in the text that we do
-  eliminate logically related predicates by a conservative static
-  analysis, lest the reviewer finds so many seemingly logically
-  related predicates in our table snapshots and complains that we
-  haven't done a straightforward static analysis to prune the list of
-  thousands of predicates.  We do in fact perform a straightforward
-  static analysis, but it is conservative in the presence of sampling,
-  namely, it does not perform an inter-site analysis but it does
-  perform an intra-site analysis.  The latter, while unsound in
-  principle, is sound in the limit, and it does reduce the number of
-  predicates retained after the Increase <= 0 test by a factor of 3 or
-  so.  I am not sure where exactly to put this stuff (maybe at the
-  point where we say we discard predicates with Increase <= 0) but
-  will look out for it during a future scan of the paper.}
-
-\issue[Alice]{Modified to differentiate between bugs and bug profiles.}
 We can now state an easy-to-prove but important property of this algorithm.
 \begin{lemma}
 Let $P_1,\ldots,P_n$ be a set of instrumented predicates, $\bug_1,\ldots,\bug_m$

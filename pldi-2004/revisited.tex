@@ -22,7 +22,7 @@ We analyzed \ccrypt version 1.2, which has a known input validation
 bug.  At one point in the code the program attempts to write a file.
 If the file already exists, the user is presented with a prompt asking
 for confirmation that the file should be written; if the user input is
-EOF (i.e., the user hits {\tt Enter} without typing anything) the
+EOF (i.e., the user hits \texttt{Control-D} without typing anything) the
 program will crash.  We used only the returns instrumentation scheme
 for this experiment.  The top two entries of the report are (most
 information is elided for brevity):
@@ -45,14 +45,14 @@ easily be examined by hand; we discuss the larger scalar-pairs reports below.
 
 Our second experiment isolates a buffer overrun in version 1.06 of GNU \bc.  In our
 previous work, which used an algorithm based on logistic regression, all of the top
-predictors showed that the variable {\tt indx} was bigger than some other value on the first line of the following
+predictors showed that the variable \texttt{indx} was bigger than some other value on the first line of the following
 code fragment:
 \begin{verbatim}
 for(; indx < v_count; indx++)
       arrays[index] = NULL;
 \end{verbatim}
-The problem is indeed that {\tt indx} gets too big, resulting in an overrun of {\tt arrays}.  The bug
-is that {\tt v\_count} is the wrong loop bound; it should be {\tt a\_count} instead.  
+The problem is indeed that \texttt{indx} gets too big, resulting in an overrun of \texttt{arrays}.  The bug
+is that \texttt{v\_count} is the wrong loop bound; it should be \texttt{a\_count} instead.  
 
 Using our new algorithm, the top 11 predicates (sorted by descending
 $\increase$ score) involve predicates within a few lines of the line
@@ -77,10 +77,10 @@ failing runs.\footnote{Our system hyperlinks each predicate to a
 rank-ordered list of correlated predicates; it is literally the work
 of a moment to discover this fact.}  Changing the rank order to list
 the predicates with a large number of failing runs first, the first
-group of predicates mostly involve {\tt indx} being larger than
+group of predicates mostly involve \texttt{indx} being larger than
 something else on the first line of the code fragment given above.
-Also in this cluster is the predicate {\tt v\_count > a\_count} (which is sampled at an assignment
-to {\tt a\_count} a few lines before the loop), as
+Also in this cluster is the predicate \texttt{v\_count > a\_count} (which is sampled at an assignment
+to \texttt{a\_count} a few lines before the loop), as
 expected.
 
 In summary, our new algorithm performed at least as well as either of

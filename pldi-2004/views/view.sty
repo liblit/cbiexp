@@ -1,14 +1,16 @@
-\newcommand{\view}[2]{%
+%% -*- TeX-master: "../master.tex" -*-
+
+\newcommand{\view}[3][\small]{%
   \begin{table}
-    \caption{Predictors for #1}
-    \label{tab:views-#2}
+    \caption{Predictors for #2}
+    \label{tab:views-#3}
     \centering
-    \tiny
+    #1
     \begin{tabular}{lll}
       \toprule
       Initial & Effective & Predicate \\
       \midrule
-      \input{views/#2/rows}
+      \input{views/#3/rows}
       \bottomrule
     \end{tabular}
   \end{table}}

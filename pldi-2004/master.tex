@@ -73,8 +73,6 @@ pdfpagemode=UseOutlines
 \renewcommand{\H}{{\mathcal{H}}}
 \newcommand{\report}[1]{\ensuremath{R(#1)}}
 
-\newcommand{\issue}[2][]{}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -136,16 +134,13 @@ pdfpagemode=UseOutlines
 
 \begin{document}
 
-\issue[Mike]{I think that Section 5.1 would be better placed at the
-end of Section 4.}
-
 \maketitle
 
 \begin{abstract}
   We present a statistical debugging algorithm that is
   robust in the face of multiple undiagnosed bugs.  The algorithm
   identifies program behaviors that significantly increase the
-  likelihood of failure; these predictors reveal both the
+  likelihood of failure.  These predictors reveal both the
   circumstances under which bugs occur as well as the frequencies of
   failure modes, making it easier to prioritize debugging efforts.
   Our algorithm is validated using several case studies, including finding
@@ -173,13 +168,11 @@ end of Section 4.}
 \section{Introduction}
 \label{sec:introduction}
 
-\issue[Alice]{Too much notation in introduction?}
-
 This paper is about \termdef{statistical debugging}, a dynamic
 analysis for identifying the causes of software failures (i.e., bugs).
 Instrumented programs monitor their own behavior and send feedback
 reports to a central collection server.  The instrumentation examines
-program behavior during execution by sampling; complete information is
+program behavior during execution by sampling, so complete information is
 never available about any single run.  However, monitoring is also
 lightweight and therefore practical to deploy to large user
 communities, making it possible to gather information about many runs.
@@ -195,14 +188,8 @@ each predicate associated with a program point may or may not be
 tested each time the program point is reached).  A feedback report $R$
 consists of one bit indicating whether a run of the program
 succeeded or failed, as well as a bit vector with one bit for each
-predicate $P$; if $P$ is observed to be true at least once during run
+predicate $P$.  If $P$ is observed to be true at least once during run
 $R$ then $\report{P} = 1$, otherwise $\report{P} = 0$.
-
-\issue[Mike]{"A bug is a set of failing runs".  Semantically one thinks
-of a bug as someone that characterizes a program, not a set of runs.
-What about calling a set of a failing runs a "bug profile"?}
-
-\issue{modified by Alice}
 
 Let $\bug$ denote a bug (i.e., something which causes incorrect behavior in
 a program).  We use $\bugprofile$ to denote a \termdef{bug profile},
@@ -253,8 +240,8 @@ implying a long command line may rank near the top, even though such
 predicates are useless for isolating the cause of individual bugs.
 
 \item Finally, different bugs occur at rates that differ by orders of
-magnitude.  In reality, we do not know which crash is caused by which bug,
-hence we are forced to lump all the bugs together and try to learn a binary
+magnitude.  In reality, we do not know which failure is caused by which bug,
+so we are forced to lump all the bugs together and try to learn a binary
 classifier.  Thus, predictors for all but the most common bugs have relatively little
 influence over the global optimum and tend to be ranked low or not included
 in ${\cal S}$ at all.
@@ -269,9 +256,9 @@ of predicates.  First, nearly all predicates (often 98\% or 99\%) are
 not predictive of anything.  These \termdef{non-predictors} are best identified and discarded as
 quickly as possible. Among the remaining predicates that can
 predict failure in some way, there are some bug predictors.
-There are also \termdef{super-bug predictors}, predicates that, as
+There are also \termdef{super-bug predictors}: predicates that, as
 described above, predict failures due to a variety of bugs.  And there
-are \termdef{sub-bug predictors}, predicates that characterize a subset of
+are \termdef{sub-bug predictors}: predicates that characterize a subset of
 the instances of a specific bug; these are often special cases of more
 general problems.  We give the concepts of super- and sub-bug
 predictors more precise technical treatment in
@@ -301,11 +288,9 @@ the algorithm to discover previously unknown serious crashing bugs in
 two large and widely used open source applications.
 
 \item We show that relatively few runs (we used 32,000) are sufficient
-to isolate all of the bugs described in this paper, showing that our
-approach is feasible for in-house automatic testing as well as use
-post-deployment.
-
-\issue[Alice]{``use post-deployment'' doesn't make sense}
+to isolate all of the bugs described in this paper, demonstrating that our
+approach is feasible for in-house automatic testing as well as for
+deployment to end users.
 
 \item We report on the effectiveness of the current industry practice
 of collecting stack traces from failing runs.  We find that across all
@@ -370,23 +355,7 @@ Our sampling transformation is general: any collection of
 statements within (or added to) a program may be designated as
 ``instrumentation'' and thereby sampled instead of run
 unconditionally.
-%%
-\issue[Mayur]{"Our sampling transformation is general: any collection
-  of statements within (or added to) a program may be designated as
-  "instrumentation" and thereby sampled instead of run conditionally"
 
-  I didn't get the "within (or added to)" part.  I thought
-  instrumented code always refers to code that is added, and not code
-  that is within?
-
-  Ben later clarified this but we need to put it into the paper:
-
-  We can treat existing code as instrumentation to be sampled even if
-  we didn't add it ourself.  \texttt{assert()} statements are a clear
-  candidate for this sort of thing.  Our PLDI 2003 paper did this with
-  the assert-like statements added by CCured.  From our perspective,
-  that code is "within" the program, not "added to" it.}
-%%
 That is, each time instrumentation code is reached,
 a coin flip decides whether the instrumentation is executed or not.
 Coin flipping is simulated in a statistically fair
@@ -394,12 +363,10 @@ manner equivalent to a Bernoulli process: each potential sample is
 taken or skipped randomly and independently as the program runs.
 We have found that a sampling rate of \nicefrac{1}{100} normally keeps the performance overhead
 of instrumentation low, often unmeasurable.
-%%
-\issue[Alice]{Is this true?  I thought Ben's thesis would claim otherwise.}
 
 Orthogonal to the sampling transformation is the decision about what
 instrumentation to introduce and how to concisely summarize the
-resulting data.  A useful instrumentation captures behaviors likely to
+resulting data.  Useful instrumentation captures behaviors likely to
 be of interest when hunting for bugs.  At present our system offers
 the following instrumentation schemes for C programs:
 
@@ -433,9 +400,8 @@ indicating whether the true or false branches were ever taken.
   same-typed in-scope variable $\mathtt{y}_i$ and each
   constant expression $\mathtt{c}_j$.  For each   $\mathtt{y}_i$ and each $\mathtt{c}_j$,
   we track six relationships to the new value of \texttt{x}: $<, \leq, >, \geq, =, \neq$.
-Each $(\mathtt{y}_i, \mathtt{c}_j)$ pair
-%% compared-to $\mathtt{y}_i$ or $\mathtt{c}_j$
-is treated as a distinct instrumentation site.
+  Each $(\mathtt{x}, \mathtt{y}_i)$ or $(\mathtt{x}, \mathtt{c}_j)$ pair
+  is treated as a distinct instrumentation site.
   %%
 \end{description}
 
@@ -444,7 +410,7 @@ example, sampling a single negative return
 value yields true observations of the $< 0$, $\leq 0$, and $\neq 0$ predicates and
 false observations of the $> 0$, $\geq 0$, and $= 0$ predicates
 at that site.  Also, note that in any scheme, the logical negation of every
-predicate at any given site is itself a predicate at that site.
+predicate at any given site is also a predicate at that site.
 
   These are natural properties to check and provide good coverage of a
   program's scalar values and control flow.  This set is by no means
@@ -472,7 +438,7 @@ analysis can observe actual run-time values, which is often better
 than either making a very conservative static assumption about run-time
 values for the sake of soundness, or allowing some very simple bugs to escape
 undetected.  Another advantage of dynamic analysis, especially one
-that uses actual user executions for its data, is the ability to
+that mines actual user executions for its data, is the ability to
 assign an accurate importance to each bug.  Additionally, as we have shown,
 a dynamic analysis that does not require an explicit specification of
 the properties to check can find clues to a very wide range of errors,
@@ -542,11 +508,8 @@ Bugs \#4 and \#6 also have nearly unique stack signatures.
 The remaining bugs are much less consistent: each stack signature is
 observed after a variety of different bugs, and each triggered bug
 causes failure in a variety of different stack states.  \rhythmbox and \exif
-bugs caused crashes so long after the bad behavior that the crash stacks
-were not useful at all.
-
-\issue[Alice]{It's not correct to say that the crash stacks weren't
-  useful at all for \exif, is it?}
+bugs caused crashes so long after the bad behavior that stacks
+were of limited use or no use at all.
 
 Studies that attempt real-world deployment of monitored software must
 address a host of practical engineering concerns, from distribution to
@@ -566,21 +529,6 @@ techniques to model and thereby predict impending system failures.
 Instrumentation is assumed to be complete and is typically
 domain-specific.
 
-\issue[Alex]{There is a new Ernst paper in FSE and there was another
-  one in ICSE\@.  I'm not sure either is really relevant, but if we are
-  going to cite him we should show awareness of the more recent work.}
-
-\issue[Alex]{I don't know what Orso has been doing other than that he
-  told me they have done a study on whether code coverage in the field
-  is similar to code coverage in testing; we should cite that one.
-  It's on his home page, I'm pretty sure (Alessandro Orso, I think, at
-  Georgia Tech).}
-
-\issue[Mayur]{Add references to Ernst and Orso.  [I think we already
-  have enough references to these folks and the related work section
-  is already quite long.  Let us give this the least priority.]}
-
-
 \section{Conclusions}
 \label{sec:conclusions}
 
@@ -590,9 +538,9 @@ detect a wide variety of both anticipated and unanticipated causes of failure
 in realistic systems and do so with a relatively modest number of program
 executions.
 
-%{\small
+\begin{small}
 \bibliography{cacm1990,gcbib,icse02,icse03,misc,nips16,paste02,pldi03,pods,ramss,refs}
-%}
+\end{small}
 \end{document}
 
 %% LocalWords:  DIDUCE Burnell Horvitz Podgurski Elbaum Hardojo SDF CCured

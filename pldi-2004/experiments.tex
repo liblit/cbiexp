@@ -4,7 +4,7 @@
 
 In this section we present the results of applying the algorithm
 described in \autoref{sec:algorithm} in five case
-studies.  \autoref{tab:exps} shows the summary statistics for each of the
+studies.  \autoref{tab:exps} shows summary statistics for each of the
 experiments.  In each study we ran the programs on about 32,000 random
 inputs.  The number of instrumentation sites varies with the size of
 the program, as does the number of predicates those instrumentation
@@ -55,8 +55,8 @@ missing end-of-list check in the traversal of a hash table bucket, a missing
 out-of-memory check, and a violation of a subtle invariant that must be maintained between two
 parts of a complex data structure.
 
-The ninth bug -- incorrect handling of comments in certain cases --
-only causes incorrect output, not a crash.  For most of the other
+The ninth bug---incorrect handling of comments in some cases---only
+causes incorrect output, not a crash.  For most of the other
 bugs, failure can be detected by noting program crashes (though some
 of these bugs are non-deterministic and may not even crash when they
 should).  The ninth bug, however, cannot be detected in such an easy
@@ -78,7 +78,7 @@ elimination is performed. The fourth column is the \termdef{effective}
 bug thermometer, showing the \context{} and \increase{} scores for a
 predicate $P$ at the time $P$ is selected (i.e., when it is the
 top-ranked predicate).  Thus the effective thermometer reflects the
-cumulative diluting effect of redundancy elimination for other
+cumulative diluting effect of redundancy elimination for all
 predicates selected before this one.
 
 As part of the experiment we separately recorded the exact set of
@@ -103,7 +103,7 @@ predicate on the list but in fact occurs in at least a few of the
 failing runs of most predicates.  We have examined the runs of bug \#7
 in detail and found that the bug \#7 only occurs in runs that also
 trigger at least one other bug.  That is, even when the bug \#7 overrun
-happens (though rarely), it never causes incorrect output or a crash
+happens, it never causes incorrect output or a crash
 in any run.  Bug \#8, another overrun, is not even shown because the
 overrun is never triggered in our data (its column would be all
 0's).\footnote{Bug \#8 was originally found by a code inspection.}
@@ -121,8 +121,8 @@ in the sixth position.  Notice that even the rarest bug, bug \#2,
 which occurs more than an order of magnitude less frequently than
 the most common bug, is identified immediately after the last of
 the other bugs.\footnote{The peculiar eighth predicate, \texttt{f < f},
-says that after an assignment the new value of {\tt f} is less than
-the old value of {\tt f}.}  Furthermore, we have verified by hand that
+says that after an assignment the new value of \texttt{f} is less than
+the old value of \texttt{f}.}  Furthermore, we have verified by hand that
 the selected predicates would, in our judgment, lead an engineer to
 the cause of the bug. Overall, the elimination algorithm does an excellent
 job of listing separate causes of each of the bugs in order of priority,
@@ -233,8 +233,8 @@ for (i = 0; i < n->count; i++) {
 \end{verbatim}
 \end{quote}
 This stack trace alone provides little insight into the cause of the
-bug.  However, our algorithm highlights {\tt o + s > buf\_size} in
-function {\tt exif\_mnote\_data\_canon\_load} as a strong bug
+bug.  However, our algorithm highlights \texttt{o + s > buf\_size} in
+function \texttt{exif\_mnote\_data\_canon\_load} as a strong bug
 predictor.  Thus, a quick inspection of the source code leads us to
 construct the following call sequence:
 \begin{quote}
@@ -253,7 +253,7 @@ main
               memcpy
 \end{verbatim}
 \end{quote}
-The code in the vicinity of the predicate {\tt o + s > buf\_size} is as follows:
+The code in the vicinity of the predicate \texttt{o + s > buf\_size} is as follows:
 \begin{quote}
 \begin{verbatim}
 // snippet of exif_mnote_data_canon_load
@@ -269,7 +269,7 @@ for (i = 0; i < c; i++) {
 \end{verbatim}
 \end{quote}
 It is apparent from the above code snippets and the
-call sequence that whenever the predicate {\tt o + s > buf\_size} is true,
+call sequence that whenever the predicate \texttt{o + s > buf\_size} is true,
 %%
 \begin{itemize}
 \item the function \texttt{exif\_mnote\_data\_canon\_load} returns on
@@ -277,8 +277,8 @@ call sequence that whenever the predicate {\tt o + s > buf\_size} is true,
   line \texttt{(b)} and thus leaving \texttt{n->entries[i]->data}
   uninitialized for some value of \texttt{i}, and
 
-\item the function {\tt exif\_mnote\_data\_canon\_save} passes the
-  uninitialized {\tt n->entries[i]->data} to {\tt memcpy} on line \texttt{(c)}, which reads it and eventually crashes.
+\item the function \texttt{exif\_mnote\_data\_canon\_save} passes the
+  uninitialized \texttt{n->entries[i]->data} to \texttt{memcpy} on line \texttt{(c)}, which reads it and eventually crashes.
 \end{itemize}
 
 In summary, our algorithm enabled us to effectively isolate the causes
@@ -290,7 +290,7 @@ a couple of minutes and without any explicit specification beyond
 
 \begingroup
 \setlength{\segunit}{10pt}
-\view{\rhythmbox}{rhythmbox}
+\view[\tiny]{\rhythmbox}{rhythmbox}
 \endgroup
 
 \autoref{tab:views-rhythmbox} shows our results for \rhythmbox 0.6.5,
@@ -311,22 +311,16 @@ us to the discovery of a race condition.  The second predicate was not useful di
 but we were able to isolate the bug using the predicates in its
 affinity list.  This second bug revealed what turned out to be a very
 common incorrect pattern of accessing the underlying object library
-(recall \autoref{sec:introduction}).  These bugs
-were confirmed and patches enthusiastically applied within a few days, in part because
+(recall \autoref{sec:introduction}).  \rhythmbox developers confirmed
+the bugs and enthusiastically applied patches within a few days, in part because
 we could quantify the bugs as important crashing bugs.
 It required several hours to isolate each of the two bugs, in part because \rhythmbox
 is complex and in part because the bugs were violations of subtle heap invariants which
 are not directly captured by our current instrumentation schemes.
 Note, however, that we could not have
 even begun to understand these bugs without the information provided by our tool.
-We intend to explore schemes that instrument predicates on the heap structure in
+We intend to explore schemes that track predicates on heap structure in
 future work.
-% It required several hours to isolate each of the two bugs, in part because \rhythmbox
-% is complex and we were unfamiliar with it and in part because the bugs
-% were violations of subtle invariants.  Note, however, that we could not have
-% even begun to understand these bugs without the information provided by our tool.
-
-\issue[Alice]{Moved the following subsection from section 5 to section 4}
 
 \subsection{Comparison with Logistic Regression}
 \label{sec:comparison}
@@ -372,9 +366,9 @@ bugs).  This problem can be seen in \autoref{tab:logregression},
 which gives the top ten predicates selected by logistic regression
 for \moss.  The striking fact is that all selected predicates are
 either sub-bug or super-bug predictors.  The predicates beginning with
-{\tt p + \ldots} are all sub-bug predictors of bug \#1 (see
-\autoref{tab:mossdilute}).  The predicates {\tt i > \ldots} are
-super-bug predictors: {\tt i} is the length of the command line and
+\texttt{p + \ldots} are all sub-bug predictors of bug \#1 (see
+\autoref{tab:mossdilute}).  The predicates \texttt{i > \ldots} are
+super-bug predictors: \texttt{i} is the length of the command line and
 the predicates say program crashes are more likely for long command
 lines (recall \autoref{sec:introduction}).
 
