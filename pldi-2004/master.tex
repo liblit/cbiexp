@@ -201,10 +201,8 @@ provides.  In \Autoref{sec:algorithm} we describe the main filtering
 and ranking algorithm used to mine feedback data for bug causes.
 \Autoref{sec:experiments:setup} defines the parameters of a case study
 in multiple-bug isolation, while \Autoref{sec:experiments:results}
-presents our results.  Our experience with this study suggests areas
-for future development, which we outline in \Autoref{sec:future-work}.
-\Autoref{sec:related-work} reviews related work and
-\Autoref{sec:conclusions} concludes.
+presents our results.  We review related work in
+\Autoref{sec:related-work}, while \Autoref{sec:conclusions} concludes.
 
 \section{Background}
 \label{sec:background}
@@ -348,83 +346,6 @@ only the final state of the program at the point of failure.
 \placeholder{Page budget: 2, including pictures.}
 \input{experiments}
 
-\section{\placeholder{Future Work / Alternate Approaches}}
-\label{sec:future-work}
-
-\placeholder{Page budget: \nicefrac{1}{2}.}
-
-Our experience with \moss suggests several key areas for future
-development.
-
-In the experiments reported here, sampling is dynamically uniform:
-each crossing of each instrumentation site has the same fixed chance
-of being sampled or skipped.  However not all code is equally
-interesting.  The details of a one-time configuration action may have
-more impact on a bug than some bulk initialization loop that iterates
-millions of times.  Two generalizations of our approach support
-non-uniform sampling.
-
-One might replace the single global ``next sample'' countdown with
-several countdowns having a variety of means.  Each acyclic region
-uses one of these counters for all of its sites.  Thus,
-heavily-trafficked code might be sampled at a rate of
-\nicefrac{1}{1000}, while moderate-use code uses \nicefrac{1}{100} and
-rarely executed initialization and error-handling code uses
-\nicefrac{1}{10} or even \nicefrac{1}{1} (i.e.\ no sampling; complete
-data collection).
-
-A complementary extension is to allow individual sites to decrement
-the ``next sample'' countdown more than once.  Decrementing once is
-equivalent to tossing a biased coin once and only taking a sample if
-that toss comes up (e.g.) heads.  Decrementing twice simulates taking
-a sample if either of two tosses comes up heads.  For a basic
-underlying countdown with mean $d$, decrementing $n$ times yields an
-effective sampling rate of $(1 - (1 - \frac{1}{d})^n)$.  For purposes
-of checking countdown thresholds at the tops of acyclic regions, a
-site that decrements $n$ times is equivalent to $n$ sites that
-decrement once.  Thus each global ``next sample'' countdown actually
-supports a family of sampling rates selectable on a per-site basis.
-
-\placeholder{The above assumes that we have already given a refresher
-  on global countdowns and threshold checks earlier in the paper.
-  Rewording will be needed if we don't get into that amount of
-  detail.}
-
-\placeholder{Yet to be addressed: how you actually decide what rate to
-  use for a given site.  Presumably some mix of ad-hoc guessing,
-  coverage information from in-house testing, and dynamic adjustment
-  in the field based on what you're seeing in the feedback reports
-  you've gotten so far.}
-
-\placeholder{Yet to be addressed: need for better statistical models.
-  This is a bit vague, but should at least discuss problems we
-  encountered using logistic regression in the Moss experiment.}
-
-The sampling instrumentor uses several program analyses to boost the
-performance of instrumented code.  However, the post-run data analysis
-described in \Autoref{sec:algorithm} is largely ignorant of program
-structure.  Exploiting properties visible in the source code can allow
-further filtering of suspect predicates.  We expect that in any given
-failed execution, there are two points of greatest interest to an
-engineer: the place where things first started to go wrong, and the
-place where an immediate failure became truly inevitable.  Thus,
-predicates with high crash scores \placeholder{Is ``crash score'' the
-  right term here?  Check against \Autoref{sec:algorithm}.} are most
-interesting when they appear close to program entry or close to the
-location of an actual crash.
-
-This suggests an approach based on traversal of the control flow
-graph.  To find earliest causes, search forward from program entry for
-points at which the chance of failure substantially increases.  To
-find latest causes, search backward from crash locations for points at
-which the chance of failure substantially decreases.  Predicate
-observations provide additional clues, and could be incorporated to
-further restrict the search to only those paths which are consistent
-with observed behavior.  \placeholder{The preceding feels too detailed
-  for an algorithm we haven't actually implemented.  I'd rather
-  provide sketches of more distinct ideas rather than presenting just
-  one idea in this much detail.}
-
 \section{Related Work}
 \label{sec:related-work}
 
@@ -553,8 +474,58 @@ specialized net.  \comment{We understand through informal
   seem to have vanished entirely.  Have written to Gross and Porter
   asking if they have anything more recent I should look at.}
 
-\section{Conclusions}
+\section{Conclusions and Future Work}
 \label{sec:conclusions}
+
+When hunting for bugs, the first thing an engineer wants to know is
+under what circumstances the failure occurs.  However, any complex
+application is likely to contain not just one but many bugs, any of
+which may have affected any single execution.  Isolating bug causes in
+such an environment is a difficult process.
+
+We have demonstrated an algorithm which turns multiple-bug isolation
+into a numbers game.  Given feedback profiles of enough runs, overall
+trends emerge which can help to guide an engineer to the most likely
+causes of the most common bugs.  Our approach uses lightweight,
+sampled instrumentation suitable for wide scale deployment to real end
+users, which means that the system also performs implicit triage: it
+learns the most, most quickly, about the bugs that happen most often.
+The key property of our approach is that it filters and orders
+potential causes based on the degree to which they \emph{increase} the
+likelihood of failure.  This allows us to capture both deterministic
+and non-deterministic bugs, and gives engineers a mechanism to gauge
+the strength of the analysis results.
+
+Our experience with \moss highlights the importance of selecting basic
+instrumentation schemes that capture behavior commonly associated with
+failure.  The branches and returns schemes yield a small number of
+high quality bug causes.  Scalar-pairs instrumentation, while
+potentially able to capture very subtle errors, suffers from an excess
+of noise predicates from which the few ``smoking guns'' are difficult
+to extract.  A more selective approach to injecting scalar-pairs
+instrumentation warrants study.
+
+Our \moss case study suggests several additional areas for future
+development.  In the experiments reported here, sampling is
+dynamically uniform: each crossing of each instrumentation site has
+the same fixed chance of being sampled or skipped.  However not all
+code is equally interesting.  Our approach can be generalized to
+support non-uniform sampling.  By observing rare events more often, we
+increase the odds of spotting key failure causes while ensuring that
+the bulk of execution is spent in fast, sparsely-sampled code.
+
+\placeholder{Yet to be addressed: need for better statistical models.
+  This is a bit vague, but should at least discuss problems we
+  encountered using logistic regression in the Moss experiment.}
+
+The sampling instrumentor uses several program analyses to boost the
+performance of instrumented code.  However, the post-run data analysis
+described in \Autoref{sec:algorithm} is largely ignorant of program
+structure.  These and other, deeper structural properties of the code
+should be to help guide the filtering and ranking process.  For
+example, the control flow graph can be used to direct engineers'
+attention to likely first causes that appear earlier in the flow of
+execution.
 
 \bibliography{cacm1990,icse02,icse03,misc,paste02,pldi03,pods,ramss,refs}
 \placeholder{Page budget for references: 1.}
