@@ -28,7 +28,8 @@ local ($,, $\) = ("\t", "\n");
 
 while (my $runId = <$failures>) {
     chomp $runId;
-    my $filename = "$datadir/$runId/bad/stderr";
+    my $subdir = int($runId / 10000);
+    my $filename = "$datadir/$subdir/$runId/bad/stderr";
     my $stderr = new FileHandle $filename;
     if ($stderr) {
 	my %bugs;
