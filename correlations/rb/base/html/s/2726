@@ -1,0 +1,672 @@
+<report id="main-stack-trace">
+#0  0xffffe002 in ?? ()
+#1  0x0871dba4 in reportDebugInfo ()
+#2  0x0871dd6d in handleSignal ()
+#3  <signal handler called>
+#4  0x403b3c4a in gtk_tree_view_column_get_type () from /usr/lib/libgtk-x11-2.0.so.0
+#5  0x403ac612 in gtk_tree_view_insert_column () from /usr/lib/libgtk-x11-2.0.so.0
+#6  0x403ac217 in gtk_tree_view_append_column () from /usr/lib/libgtk-x11-2.0.so.0
+#7  0x08301b1c in rb_entry_view_append_column_custom (rb_entry_view_append_column_custom$view=0x89e4618, rb_entry_view_append_column_custom$column=0x89e43c8, rb_entry_view_append_column_custom$title=0x872c002 "Tra_ck", rb_entry_view_append_column_custom$key=0x872c009 "Track", rb_entry_view_append_column_custom$sort_func=0x82c97a7 <rb_entry_view_track_sort_func>, rb_entry_view_append_column_custom$user_data=0x89e4618) at rb-entry-view.c:1372
+#8  0x08301835 in rb_entry_view_append_column (rb_entry_view_append_column$view=0x89e4618, rb_entry_view_append_column$coltype=RB_ENTRY_VIEW_COL_TRACK_NUMBER) at rb-entry-view.c:1345
+#9  0x0866ccae in rb_library_source_constructor (rb_library_source_constructor$type=144753952, rb_library_source_constructor$n_construct_properties=1, rb_library_source_constructor$construct_properties=0x89e2ce8) at rb-library-source.c:428
+#10 0x4085e91e in g_object_newv () from /usr/lib/libgobject-2.0.so.0
+#11 0x4085ef17 in g_object_new_valist () from /usr/lib/libgobject-2.0.so.0
+#12 0x4085e6dd in g_object_new () from /usr/lib/libgobject-2.0.so.0
+#13 0x0866fe09 in rb_library_source_new (rb_library_source_new$db=0x89b6440) at rb-library-source.c:581
+#14 0x080ac7f7 in rb_shell_construct (rb_shell_construct$shell=0x8979260) at rb-shell.c:1163
+#15 0x080757a3 in rb_init (rb_init$shell=0x8979260) at main.c:218
+#16 0x409c2743 in g_timeout_add () from /usr/lib/libglib-2.0.so.0
+#17 0x409bfb35 in g_get_current_time () from /usr/lib/libglib-2.0.so.0
+#18 0x409c0b78 in g_main_context_dispatch () from /usr/lib/libglib-2.0.so.0
+#19 0x409c0e8d in g_main_context_dispatch () from /usr/lib/libglib-2.0.so.0
+#20 0x409c158f in g_main_loop_run () from /usr/lib/libglib-2.0.so.0
+#21 0x40739328 in bonobo_main () from /usr/lib/libbonobo-2.so.0
+#22 0x08075473 in main (main$argc=2, main$argv=0xbfffd264) at main.c:173
+#23 0x420156a4 in __libc_start_main () from /lib/tls/libc.so.6
+</report>
+<report id="threads-stack-trace">
+
+Thread 6 (Thread 1098419504 (LWP 14307)):
+#0  0xffffe002 in ?? ()
+No symbol table info available.
+#1  0x409aabda in g_async_queue_pop_unlocked () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#2  0x409d8dfb in g_static_rw_lock_free () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#3  0x409d79f1 in g_static_private_free () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#4  0x40985332 in start_thread () from /lib/tls/libpthread.so.0
+No symbol table info available.
+
+Thread 5 (Thread 1106812208 (LWP 14308)):
+#0  0xffffe002 in ?? ()
+No symbol table info available.
+
+Thread 4 (Thread 1116949808 (LWP 14309)):
+#0  0xffffe002 in ?? ()
+No symbol table info available.
+
+Thread 3 (Thread 1125342512 (LWP 14310)):
+#0  0xffffe002 in ?? ()
+No symbol table info available.
+
+Thread 2 (Thread 1133735216 (LWP 14311)):
+#0  0xffffe002 in ?? ()
+No symbol table info available.
+#1  0x080d131e in rb_shell_load_complete_cb (rb_shell_load_complete_cb$db=0x89b6440, rb_shell_load_complete_cb$shell=0x8979260) at rb-shell.c:1888
+	rb_shell_load_complete_cb$__cil_tmp3 = (GMutex *) 0x893e708
+	rb_shell_load_complete_cb$__cil_tmp4 = 1
+	rb_shell_load_complete_cb$__cil_tmp5 = (GMutex *) 0x40887ba4
+	rb_shell_load_complete_cb$__cil_tmp6 = 0
+#2  0x4086ed77 in g_cclosure_marshal_VOID__VOID () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#3  0x4085bed7 in g_closure_invoke () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#4  0x4086e983 in g_signal_emit_by_name () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#5  0x4086d9a8 in g_signal_emit_valist () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#6  0x4086dbe4 in g_signal_emit () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#7  0x0856c77c in rhythmdb_load_thread_main (rhythmdb_load_thread_main$db=0x89b6440) at rhythmdb.c:924
+	rhythmdb_load_thread_main$klass = (RhythmDBClass *) 0x89b6200
+	rhythmdb_load_thread_main$tmp = (GObject *) 0x89b6440
+	rhythmdb_load_thread_main$__cil_tmp4 = (RhythmDBClass *) 0x89b6200
+#8  0x409d79f1 in g_static_private_free () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#9  0x40985332 in start_thread () from /lib/tls/libpthread.so.0
+No symbol table info available.
+
+Thread 1 (Thread 1087187776 (LWP 14304)):
+#0  0xffffe002 in ?? ()
+No symbol table info available.
+#1  0x0871dba4 in reportDebugInfo ()
+No symbol table info available.
+#2  0x0871dd6d in handleSignal ()
+No symbol table info available.
+#3  <signal handler called>
+No symbol table info available.
+#4  0x403b3c4a in gtk_tree_view_column_get_type () from /usr/lib/libgtk-x11-2.0.so.0
+No symbol table info available.
+#5  0x403ac612 in gtk_tree_view_insert_column () from /usr/lib/libgtk-x11-2.0.so.0
+No symbol table info available.
+#6  0x403ac217 in gtk_tree_view_append_column () from /usr/lib/libgtk-x11-2.0.so.0
+No symbol table info available.
+#7  0x08301b1c in rb_entry_view_append_column_custom (rb_entry_view_append_column_custom$view=0x89e4618, rb_entry_view_append_column_custom$column=0x89e43c8, rb_entry_view_append_column_custom$title=0x872c002 "Tra_ck", rb_entry_view_append_column_custom$key=0x872c009 "Track", rb_entry_view_append_column_custom$sort_func=0x82c97a7 <rb_entry_view_track_sort_func>, rb_entry_view_append_column_custom$user_data=0x89e4618) at rb-entry-view.c:1372
+	rb_entry_view_append_column_custom$sortdata = (struct RBEntryViewColumnSortData *) 0x0
+	rb_entry_view_append_column_custom$tmp = 1
+	rb_entry_view_append_column_custom$tmp___0 = (GObject *) 0x89e43c8
+	rb_entry_view_append_column_custom$tmp___1 = 0x89e4590
+	rb_entry_view_append_column_custom$tmp___2 = (GObject *) 0x89e43c8
+	rb_entry_view_append_column_custom$tmp___3 = 144025584
+	rb_entry_view_append_column_custom$tmp___4 = (GtkTreeView *) 0x89e52e8
+	rb_entry_view_append_column_custom$tmp___6 = 0x40448557
+	rb_entry_view_append_column_custom$__cil_tmp16 = (GList *) 0x89d3c10
+	rb_entry_view_append_column_custom$__cil_tmp17 = (struct RBEntryViewColumnSortData *) 0x403b518c
+	rb_entry_view_append_column_custom$__cil_tmp18 = (gint (*)(gconstpointer, gconstpointer, gpointer)) 0xbfff6ca8
+	rb_entry_view_append_column_custom$__cil_tmp19 = 0x89e43c8
+	rb_entry_view_append_column_custom$__cil_tmp20 = 1
+	rb_entry_view_append_column_custom$__cil_tmp21 = 246
+	rb_entry_view_append_column_custom$__cil_tmp22 = -1073779544
+#8  0x08301835 in rb_entry_view_append_column (rb_entry_view_append_column$view=0x89e4618, rb_entry_view_append_column$coltype=RB_ENTRY_VIEW_COL_TRACK_NUMBER) at rb-entry-view.c:1345
+	rb_entry_view_append_column$column = (GtkTreeViewColumn *) 0x89e43c8
+	rb_entry_view_append_column$renderer = (GtkCellRenderer *) 0x89e4460
+	rb_entry_view_append_column$cell_data = (struct RBEntryViewCellDataFuncData *) 0x89e4068
+	rb_entry_view_append_column$sort_data = (struct RBEntryViewCellDataFuncData *) 0x89e4450
+	rb_entry_view_append_column$title = 0x872c002 "Tra_ck"
+	rb_entry_view_append_column$key = 0x872c009 "Track"
+	rb_entry_view_append_column$cell_data_func = (void (*)(GtkTreeViewColumn *, GtkCellRenderer *, GtkTreeModel *, GtkTreeIter *, gpointer)) 0x82d7c0f <rb_entry_view_intstr_cell_data_func>
+	rb_entry_view_append_column$sort_func = (gint (*)(gconstpointer, gconstpointer, gpointer)) 0x82c97a7 <rb_entry_view_track_sort_func>
+	rb_entry_view_append_column$real_sort_data = 0x89e4618
+	rb_entry_view_append_column$propid = RHYTHMDB_PROP_TRACK_NUMBER
+	rb_entry_view_append_column$tmp = 144507144
+	rb_entry_view_append_column$tmp___0 = (GTypeInstance *) 0x89e43c8
+	rb_entry_view_append_column$width = 18608
+	rb_entry_view_append_column$tmp___3 = (GObject *) 0x0
+	rb_entry_view_append_column$tmp___6 = 172
+	rb_entry_view_append_column$tmp___7 = (RBTreeViewColumn *) 0x0
+	rb_entry_view_append_column$tmp___8 = 144009320
+	rb_entry_view_append_column$tmp___9 = (RBTreeViewColumn *) 0x0
+	rb_entry_view_append_column$tmp___10 = 0
+	rb_entry_view_append_column$tmp___11 = (RBTreeViewColumn *) 0x872bb70
+	rb_entry_view_append_column$tmp___12 = 1
+	rb_entry_view_append_column$tmp___13 = (RBTreeViewColumn *) 0x872bb14
+	rb_entry_view_append_column$tmp___14 = (struct RBEntryViewCellDataFuncData *) 0x89e4618
+	rb_entry_view_append_column$__cil_tmp30 = 0x0
+	rb_entry_view_append_column$__cil_tmp31 = 0x0
+	rb_entry_view_append_column$__cil_tmp32 = (void (*)(GtkTreeViewColumn *, GtkCellRenderer *, GtkTreeModel *, GtkTreeIter *, gpointer)) 0
+	rb_entry_view_append_column$__cil_tmp33 = (gint (*)(gconstpointer, gconstpointer, gpointer)) 0
+	rb_entry_view_append_column$__cil_tmp34 = 0x0
+	rb_entry_view_append_column$__cil_tmp35 = (GtkTreeViewColumn *) 0x89e43c8
+	rb_entry_view_append_column$__cil_tmp36 = 141737516
+	rb_entry_view_append_column$__cil_tmp37 = (struct RBEntryViewCellDataFuncData *) 0x1
+	rb_entry_view_append_column$__cil_tmp38 = (RBEntryView *) 0x872be3e
+	rb_entry_view_append_column$__cil_tmp39 = RHYTHMDB_PROP_TYPE
+	rb_entry_view_append_column$__cil_tmp40 = (gint (*)(gconstpointer, gconstpointer, gpointer)) 0x872be50 <samplerUnitSignature+1035>
+	rb_entry_view_append_column$__cil_tmp41 = (GtkCellRenderer *) 0x0
+	rb_entry_view_append_column$__cil_tmp42 = 0x89e3680
+	rb_entry_view_append_column$__cil_tmp43 = 0x89e4618 "87\236\b\001"
+	rb_entry_view_append_column$__cil_tmp44 = 0x82b99cf "\211Eè\203}è"
+	rb_entry_view_append_column$__cil_tmp45 = (struct RBEntryViewCellDataFuncData *) 0x89e4068
+	rb_entry_view_append_column$__cil_tmp46 = (RBEntryView *) 0x89e4618
+	rb_entry_view_append_column$__cil_tmp47 = (struct RBEntryViewCellDataFuncData *) 0x89e4450
+	rb_entry_view_append_column$__cil_tmp48 = (RBEntryView *) 0x89e4618
+	rb_entry_view_append_column$__cil_tmp49 = RHYTHMDB_PROP_TRACK_NUMBER
+	rb_entry_view_append_column$__cil_tmp50 = RHYTHMDB_PROP_TRACK_NUMBER
+	rb_entry_view_append_column$__cil_tmp51 = (void (*)(GtkTreeViewColumn *, GtkCellRenderer *, GtkTreeModel *, GtkTreeIter *, gpointer)) 0x82d7c0f <rb_entry_view_intstr_cell_data_func>
+	rb_entry_view_append_column$__cil_tmp52 = (gint (*)(gconstpointer, gconstpointer, gpointer)) 0x82c97a7 <rb_entry_view_track_sort_func>
+	rb_entry_view_append_column$__cil_tmp53 = 0x89e4618
+	rb_entry_view_append_column$__cil_tmp54 = 0x872c002 "Tra_ck"
+	rb_entry_view_append_column$__cil_tmp55 = 0x872c009 "Track"
+	rb_entry_view_append_column$__cil_tmp56 = 1082517213
+	rb_entry_view_append_column$__cil_tmp57 = 3221197096
+	rb_entry_view_append_column$__cil_tmp58 = (void (*)(GtkTreeViewColumn *, GtkCellRenderer *, GtkTreeModel *, GtkTreeIter *, gpointer)) 0x1
+	rb_entry_view_append_column$__cil_tmp59 = 144586368
+	rb_entry_view_append_column$__cil_tmp60 = (gint (*)(gconstpointer, gconstpointer, gpointer)) 0x40887ba4 <_g_type_debug_flags+1756>
+	rb_entry_view_append_column$__cil_tmp61 = 0x4085ed5b "\201ÃI\216\002"
+	rb_entry_view_append_column$__cil_tmp62 = 0x2 <Address 0x2 out of bounds>
+	rb_entry_view_append_column$__cil_tmp63 = RHYTHMDB_PROP_GENRE
+	rb_entry_view_append_column$__cil_tmp64 = RHYTHMDB_PROP_TYPE
+	rb_entry_view_append_column$__cil_tmp65 = (void (*)(GtkTreeViewColumn *, GtkCellRenderer *, GtkTreeModel *, GtkTreeIter *, gpointer)) 0
+	rb_entry_view_append_column$__cil_tmp66 = RHYTHMDB_PROP_TYPE
+	rb_entry_view_append_column$__cil_tmp67 = (gint (*)(gconstpointer, gconstpointer, gpointer)) 0
+	rb_entry_view_append_column$__cil_tmp68 = 0x0
+	rb_entry_view_append_column$__cil_tmp69 = 0x0
+	rb_entry_view_append_column$__cil_tmp70 = 0x0
+	rb_entry_view_append_column$__cil_tmp71 = RHYTHMDB_PROP_TYPE
+	rb_entry_view_append_column$__cil_tmp72 = RHYTHMDB_PROP_TYPE
+	rb_entry_view_append_column$__cil_tmp73 = (void (*)(GtkTreeViewColumn *, GtkCellRenderer *, GtkTreeModel *, GtkTreeIter *, gpointer)) 0
+	rb_entry_view_append_column$__cil_tmp74 = RHYTHMDB_PROP_TYPE
+	rb_entry_view_append_column$__cil_tmp75 = (gint (*)(gconstpointer, gconstpointer, gpointer)) 0
+	rb_entry_view_append_column$__cil_tmp76 = 0x0
+	rb_entry_view_append_column$__cil_tmp77 = 0x0
+	rb_entry_view_append_column$__cil_tmp78 = 0x0
+	rb_entry_view_append_column$__cil_tmp79 = RHYTHMDB_PROP_TYPE
+	rb_entry_view_append_column$__cil_tmp80 = 144586552
+	rb_entry_view_append_column$__cil_tmp81 = (void (*)(GtkTreeViewColumn *, GtkCellRenderer *, GtkTreeModel *, GtkTreeIter *, gpointer)) 0x89e43c8
+	rb_entry_view_append_column$__cil_tmp82 = 4294967295
+	rb_entry_view_append_column$__cil_tmp83 = (gint (*)(gconstpointer, gconstpointer, gpointer)) 0x10
+	rb_entry_view_append_column$__cil_tmp84 = 0x89e448c "\220B\236\b"
+	rb_entry_view_append_column$__cil_tmp85 = 0x14 <Address 0x14 out of bounds>
+	rb_entry_view_append_column$__cil_tmp86 = 143601784
+	rb_entry_view_append_column$__cil_tmp87 = 143601817
+	rb_entry_view_append_column$__cil_tmp88 = (void (*)(GtkTreeViewColumn *, GtkCellRenderer *, GtkTreeModel *, GtkTreeIter *, gpointer)) 0xbfff90a0
+	rb_entry_view_append_column$__cil_tmp89 = RHYTHMDB_PROP_GENRE
+	rb_entry_view_append_column$__cil_tmp90 = (gint (*)(gconstpointer, gconstpointer, gpointer)) 0x2
+	rb_entry_view_append_column$__cil_tmp91 = 0x2 <Address 0x2 out of bounds>
+	rb_entry_view_append_column$__cil_tmp92 = 0x2 <Address 0x2 out of bounds>
+	rb_entry_view_append_column$__cil_tmp93 = RHYTHMDB_PROP_GENRE
+	rb_entry_view_append_column$__cil_tmp94 = RHYTHMDB_PROP_GENRE
+	rb_entry_view_append_column$__cil_tmp95 = (void (*)(GtkTreeViewColumn *, GtkCellRenderer *, GtkTreeModel *, GtkTreeIter *, gpointer)) 0x2
+	rb_entry_view_append_column$__cil_tmp96 = RHYTHMDB_PROP_TYPE
+	rb_entry_view_append_column$__cil_tmp97 = (gint (*)(gconstpointer, gconstpointer, gpointer)) 0x89e43c8
+	rb_entry_view_append_column$__cil_tmp98 = 0x9 <Address 0x9 out of bounds>
+	rb_entry_view_append_column$__cil_tmp99 = 0x89e3738 "\2006\236\bÀ°\234\b\032 0\b\036(+\bÁ\210+\b"
+	rb_entry_view_append_column$__cil_tmp100 = 1082519386
+	rb_entry_view_append_column$__cil_tmp101 = 3221197048
+	rb_entry_view_append_column$__cil_tmp102 = (void (*)(GtkTreeViewColumn *, GtkCellRenderer *, GtkTreeModel *, GtkTreeIter *, gpointer)) 0x89e43b4
+	rb_entry_view_append_column$__cil_tmp103 = 144590360
+	rb_entry_view_append_column$__cil_tmp104 = (gint (*)(gconstpointer, gconstpointer, gpointer)) 0x40887ba4 <_g_type_debug_flags+1756>
+	rb_entry_view_append_column$__cil_tmp105 = 0x40887480 ""
+	rb_entry_view_append_column$__cil_tmp106 = 0x89e43b4 ""
+	rb_entry_view_append_column$__cil_tmp107 = 144590360
+	rb_entry_view_append_column$__cil_tmp108 = 1084254080
+	rb_entry_view_append_column$__cil_tmp109 = (void (*)(GtkTreeViewColumn *, GtkCellRenderer *, GtkTreeModel *, GtkTreeIter *, gpointer)) 0xbfff9048
+	rb_entry_view_append_column$__cil_tmp110 = 144589768
+	rb_entry_view_append_column$__cil_tmp111 = (gint (*)(gconstpointer, gconstpointer, gpointer)) 0x42132320 <main_arena>
+	rb_entry_view_append_column$__cil_tmp112 = 0x42073786 "e\203=\f"
+	rb_entry_view_append_column$__cil_tmp113 = 0xbfff9038 "\200t\210@¤{\210@\030F\236\b´C\236\bø\220ÿ¿Zï\205@87\236\b\t"
+	rb_entry_view_append_column$__cil_tmp114 = 144589768
+	rb_entry_view_append_column$__cil_tmp115 = (GtkCellRenderer *) 0x89e4460
+	rb_entry_view_append_column$__cil_tmp116 = 0
+	rb_entry_view_append_column$__cil_tmp117 = 0x89e4618
+	rb_entry_view_append_column$__cil_tmp118 = 144586552
+	rb_entry_view_append_column$__cil_tmp119 = 144586368
+#9  0x0866ccae in rb_library_source_constructor (rb_library_source_constructor$type=144753952, rb_library_source_constructor$n_construct_properties=1, rb_library_source_constructor$construct_properties=0x89e2ce8) at rb-library-source.c:428
+	rb_library_source_constructor$source = (RBLibrarySource *) 0x89e2cf8
+	rb_library_source_constructor$klass = (RBLibrarySourceClass *) 0x89dd680
+	rb_library_source_constructor$parent_class___0 = (GObjectClass *) 0x89e2500
+	rb_library_source_constructor$tmp = 144753952
+	rb_library_source_constructor$tmp___0 = (GTypeClass *) 0x89dd680
+	rb_library_source_constructor$tmp___2 = (GTypeClass *) 0x89e2500
+	rb_library_source_constructor$tmp___4 = 144753952
+	rb_library_source_constructor$tmp___5 = (GTypeInstance *) 0x89e2cf8
+	rb_library_source_constructor$tmp___7 = (GObject *) 0x8
+	rb_library_source_constructor$tmp___8 = (GObject *) 0x409c5534
+	rb_library_source_constructor$tmp___9 = 0xbfff9438 "è\224ÿ¿\036é\205@ Å \b\001"
+	rb_library_source_constructor$tmp___10 = (GObject *) 0x1
+	rb_library_source_constructor$tmp___11 = (GObject *) 0x8
+	rb_library_source_constructor$tmp___12 = 1084254080
+	rb_library_source_constructor$tmp___13 = (GtkWidget *) 0xbfff9438
+	rb_library_source_constructor$tmp___14 = 8
+	rb_library_source_constructor$tmp___15 = (GtkBox *) 0x42132320
+	rb_library_source_constructor$tmp___16 = 0x4207360b "\205À\211Çt\031e\203=\f"
+	rb_library_source_constructor$tmp___17 = (GObject *) 0xbfff9408
+	rb_library_source_constructor$tmp___18 = (GObject *) 0x1
+	rb_library_source_constructor$tmp___19 = 1108550432
+	rb_library_source_constructor$tmp___20 = (GtkWidget *) 0x1
+	rb_library_source_constructor$tmp___21 = 144753952
+	rb_library_source_constructor$tmp___22 = (GtkBox *) 0x873ac00
+	rb_library_source_constructor$tmp___23 = 0x88f5bec ""
+	rb_library_source_constructor$tmp___24 = (GObject *) 0x408647be
+	rb_library_source_constructor$tmp___25 = (GObject *) 0xbfff9438
+	rb_library_source_constructor$tmp___26 = 1
+	rb_library_source_constructor$tmp___27 = (GtkWidget *) 0x0
+	rb_library_source_constructor$tmp___28 = 1082686372
+	rb_library_source_constructor$tmp___29 = (GtkBox *) 0x4086538b
+	rb_library_source_constructor$tmp___30 = 1082684544
+	rb_library_source_constructor$tmp___31 = (GtkPaned *) 0x8955478
+	rb_library_source_constructor$tmp___32 = (GObject *) 0x40872e8c
+	rb_library_source_constructor$tmp___33 = 3221197832
+	rb_library_source_constructor$tmp___34 = (GtkWidget *) 0x8955478
+	rb_library_source_constructor$tmp___35 = 1
+	rb_library_source_constructor$tmp___36 = (GtkPaned *) 0x40887ba4
+	rb_library_source_constructor$tmp___37 = 1082600891
+	rb_library_source_constructor$tmp___38 = (GtkBox *) 0x3bc
+	rb_library_source_constructor$tmp___39 = 144753952
+	rb_library_source_constructor$tmp___40 = (GtkWidget *) 0x2
+	rb_library_source_constructor$tmp___41 = (GObject *) 0x3c8
+	rb_library_source_constructor$__cil_tmp50 = (RBLibrarySourceClass *) 0x89dd680
+	rb_library_source_constructor$__cil_tmp51 = (GObjectClass *) 0x89e2500
+	rb_library_source_constructor$__cil_tmp52 = (RBLibrarySource *) 0x89e2cf8
+	rb_library_source_constructor$__cil_tmp53 = (GtkWidget *) 0x89e3588
+	rb_library_source_constructor$__cil_tmp54 = (GtkWidget *) 0x89e3630
+	rb_library_source_constructor$__cil_tmp55 = (RBEntryView *) 0x89e4618
+	rb_library_source_constructor$__cil_tmp56 = (RBPropertyView *) 0x8955520
+	rb_library_source_constructor$__cil_tmp57 = (RBPropertyView *) 0x3f8
+	rb_library_source_constructor$__cil_tmp58 = (RBPropertyView *) 0xbfff9380
+	rb_library_source_constructor$__cil_tmp59 = 143612944
+	rb_library_source_constructor$__cil_tmp60 = 1082545103
+	rb_library_source_constructor$__cil_tmp61 = 3221197768
+	rb_library_source_constructor$__cil_tmp62 = 143612944
+	rb_library_source_constructor$__cil_tmp63 = 0
+	rb_library_source_constructor$__cil_tmp64 = 1082686372
+	rb_library_source_constructor$__cil_tmp65 = 1083922923
+	rb_library_source_constructor$__cil_tmp66 = 1064
+	rb_library_source_constructor$__cil_tmp67 = 1076
+	rb_library_source_constructor$__cil_tmp68 = 1076
+	rb_library_source_constructor$__cil_tmp69 = 1088
+	rb_library_source_constructor$__cil_tmp70 = 3221197696
+#10 0x4085e91e in g_object_newv () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#11 0x4085ef17 in g_object_new_valist () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#12 0x4085e6dd in g_object_new () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#13 0x0866fe09 in rb_library_source_new (rb_library_source_new$db=0x89b6440) at rb-library-source.c:581
+	rb_library_source_new$source = (RBSource *) 0x896e010
+	rb_library_source_new$tmp = 144357416
+	rb_library_source_new$tmp___0 = 0x873aecb "Library"
+	rb_library_source_new$tmp___1 = 144753952
+	rb_library_source_new$tmp___2 = (GTypeInstance *) 0xcc
+	rb_library_source_new$__cil_tmp8 = (RBSource *) 0x0
+#14 0x080ac7f7 in rb_shell_construct (rb_shell_construct$shell=0x8979260) at rb-shell.c:1163
+	rb_shell_construct$registration_failed = 0
+	rb_shell_construct$corba_object = 0xbfffb128
+	rb_shell_construct$ev = {_id = 0x40a06780 "¤\226\006", _major = 143614208, _any = {_type = 0xbfffb0f8, _value = 0x409b05de, _release = 168 '¨'}}
+	rb_shell_construct$win = (BonoboWindow *) 0x8981a68
+	rb_shell_construct$corba_container = 0x89a2470
+	rb_shell_construct$vbox = (GtkWidget *) 0x89dc598
+	rb_shell_construct$rhythmdb_exists = 1
+	rb_shell_construct$__inst = (GTypeInstance *) 0x8979260
+	rb_shell_construct$__t = 144090480
+	rb_shell_construct$tmp = 144090480
+	rb_shell_construct$__r = 1
+	rb_shell_construct$tmp___0 = 144105576
+	rb_shell_construct$tmp___1 = 0x871f520 "Music Player"
+	rb_shell_construct$tmp___2 = (GTypeInstance *) 0x8981a68
+	rb_shell_construct$tmp___4 = 144003064
+	rb_shell_construct$tmp___6 = (GObject *) 0x8981a68
+	rb_shell_construct$tmp___7 = (GObject *) 0x8981a68
+	rb_shell_construct$tmp___8 = (GObject *) 0x8981a68
+	rb_shell_construct$tmp___9 = (BonoboUIEngine *) 0x88f23e8
+	rb_shell_construct$tmp___10 = 143640904
+	rb_shell_construct$tmp___11 = (BonoboObject *) 0x89a2380
+	rb_shell_construct$fname = 0x89b5cc8 "\017"
+	rb_shell_construct$tmp___12 = (const gchar *) 0x896df28 "/u/liblit/.gnome2/rhythmbox"
+	rb_shell_construct$tmp___13 = 0x89b5cc8 "\017"
+	rb_shell_construct$tmp___14 = (GObject *) 0x89b6440
+	rb_shell_construct$tmp___15 = (GObject *) 0x89b6440
+	rb_shell_construct$tmp___16 = (GObject *) 0x89b6440
+	rb_shell_construct$tmp___17 = (GObject *) 0x89b6440
+	rb_shell_construct$tmp___18 = (GObject *) 0xff8
+	rb_shell_construct$tmp___19 = 4088
+	rb_shell_construct$tray_component = (BonoboUIComponent *) 0x89a85e0
+	rb_shell_construct$tmp___20 = (GObject *) 0x89a64b8
+	rb_shell_construct$tmp___21 = (GObject *) 0x89ac1d0
+	rb_shell_construct$tmp___22 = (GObject *) 0x89ac1d0
+	rb_shell_construct$tmp___23 = (GObject *) 0x89ac1d0
+	rb_shell_construct$tmp___24 = (GObject *) 0x89ac1d0
+	rb_shell_construct$tmp___25 = (GObject *) 0x89ac1d0
+	rb_shell_construct$tmp___26 = (GObject *) 0x89cedc0
+	rb_shell_construct$tmp___27 = (GObject *) 0x89cedc0
+	rb_shell_construct$tmp___28 = (GObject *) 0x89cedc0
+	rb_shell_construct$tmp___29 = 144493704
+	rb_shell_construct$tmp___30 = (RBSourceList *) 0x89cedc0
+	rb_shell_construct$tmp___31 = (GObject *) 0x89cedc0
+	rb_shell_construct$tmp___32 = 144022632
+	rb_shell_construct$tmp___33 = (GtkNotebook *) 0x89dc4b8
+	rb_shell_construct$tmp___34 = 144022632
+	rb_shell_construct$tmp___35 = (GtkNotebook *) 0x89dc4b8
+	rb_shell_construct$tmp___36 = (GObject *) 0x89dc4b8
+	rb_shell_construct$tmp___37 = 144003064
+	rb_shell_construct$tmp___38 = (GtkWidget *) 0x89c53a8
+	rb_shell_construct$tmp___39 = 144009144
+	rb_shell_construct$tmp___40 = (GtkBox *) 0x89db280
+	rb_shell_construct$tmp___41 = 144009144
+	rb_shell_construct$tmp___42 = (GtkBox *) 0x89db280
+	rb_shell_construct$tmp___43 = 144017744
+	rb_shell_construct$tmp___44 = (GtkPaned *) 0x89ccbf0
+	rb_shell_construct$tmp___45 = 144017744
+	rb_shell_construct$tmp___46 = (GtkPaned *) 0x89ccbf0
+	rb_shell_construct$tmp___47 = 143631576
+	rb_shell_construct$tmp___48 = (GtkPaned *) 0x401e12bd
+	rb_shell_construct$tmp___49 = 3221205032
+	rb_shell_construct$tmp___50 = (GtkPaned *) 0x871ed4a
+	rb_shell_construct$tmp___51 = GTK_TEXT_DIR_LTR
+	rb_shell_construct$tmp___52 = 144005264
+	rb_shell_construct$tmp___53 = (GtkContainer *) 0x89dc598
+	rb_shell_construct$tmp___54 = 144003064
+	rb_shell_construct$tmp___55 = (GtkWidget *) 0x89ac1d0
+	rb_shell_construct$tmp___56 = 144009144
+	rb_shell_construct$tmp___57 = (GtkBox *) 0x89dc598
+	rb_shell_construct$tmp___58 = 144009144
+	rb_shell_construct$tmp___59 = (GtkBox *) 0x89dc598
+	rb_shell_construct$tmp___60 = 144009144
+	rb_shell_construct$tmp___61 = (GtkBox *) 0x89dc598
+	rb_shell_construct$tmp___62 = 144003064
+	rb_shell_construct$tmp___63 = (GtkWidget *) 0x89d9870
+	rb_shell_construct$tmp___64 = 144009144
+	rb_shell_construct$tmp___65 = (GtkBox *) 0x89dc598
+	rb_shell_construct$tmp___66 = (GObject *) 0x89b6440
+	rb_shell_construct$tmp___67 = (GObject *) 0x89dd928
+	rb_shell_construct$tmp___68 = 1083987289
+	rb_shell_construct$tmp___69 = (GTypeInstance *) 0xbfffafc8
+	rb_shell_construct$tmp___71 = 141684042
+	rb_shell_construct$tmp___72 = (RBSource *) 0x40a061bc
+	rb_shell_construct$tmp___73 = 1075709598
+	rb_shell_construct$tmp___74 = (RBIRadioSource *) 0xbfffafa8
+	rb_shell_construct$tmp___75 = 143631632
+	rb_shell_construct$tmp___76 = (RBLibrarySource *) 0x88fa538
+	rb_shell_construct$tmp___77 = 1084254080
+	rb_shell_construct$tmp___78 = (RBSourceList *) 0x409c657b
+	rb_shell_construct$tmp___79 = 141684042
+	rb_shell_construct$tmp___80 = (GtkWindow *) 0x10
+	rb_shell_construct$tmp___81 = (GObject *) 0x40a06780
+	rb_shell_construct$tmp___82 = (GObject *) 0x42132320
+	rb_shell_construct$tmp___83 = (GObject *) 0x10
+	rb_shell_construct$tmp___84 = 1108550432
+	rb_shell_construct$tmp___85 = (BonoboObject *) 0x4207360b
+	rb_shell_construct$tmp___86 = 3221204856
+	rb_shell_construct$tmp___87 = Bonobo_ACTIVATION_REG_SUCCESS
+	rb_shell_construct$msg = 0x88f8280 "\002"
+	rb_shell_construct$tmp___88 = 0x409c66b1 "ëÑ\213M\b\213A\024\203À\030\211\004$è\\\eþÿ\213u\b\213V\034\211F\030ÿF\b\211\020\213F\030Ç@\004"
+	rb_shell_construct$tmp___89 = (const gchar *) 0xbfffaf88 "¨¯ÿ¿\236\006\036@¼a @Jíq\bÈ¯ÿ¿YU\234@(Ù\235\b@d\233\b\230Å\235\b¸g\225\bp\230\235\bøO\225\b\230Å\235\b¸g\225\b\230Å\235\b¸g\225\b\230Å\235\b¸g\225\bÐÁ\232\bøO\225\b\230Å\235\b\220X\225\b\001"
+	rb_shell_construct$tmp___90 = (GObject *) 0x40a06780
+	rb_shell_construct$tmp___91 = 0x2
+	rb_shell_construct$tmp___92 = (GObject *) 0x40891b27
+	rb_shell_construct$tmp___93 = 0xbfffaf48
+	rb_shell_construct$tmp___94 = 0
+	rb_shell_construct$tmp___95 = (GtkWidget *) 0x2
+	rb_shell_construct$druid = (RBDruid *) 0x40891aec
+	rb_shell_construct$tmp___96 = (RBDruid *) 0xbfffaf48
+	rb_shell_construct$tmp___97 = 144038868
+	rb_shell_construct$tmp___98 = (GtkWidget *) 0x8743d30
+	rb_shell_construct$tmp___99 = (GObject *) 0x40894520
+	rb_shell_construct$tmp___100 = 143631908
+	rb_shell_construct$tmp___101 = 143631904
+	rb_shell_construct$tmp___102 = (GtkWidget *) 0x896e0a8
+	rb_shell_construct$__cil_tmp120 = 0
+	rb_shell_construct$__cil_tmp121 = (GTypeInstance *) 0x8979260
+	rb_shell_construct$__cil_tmp122 = 144090480
+	rb_shell_construct$__cil_tmp123 = 1
+	rb_shell_construct$__cil_tmp124 = 1083735473
+	rb_shell_construct$__cil_tmp125 = -1073762520
+	rb_shell_construct$__cil_tmp126 = 143631904
+	rb_shell_construct$__cil_tmp127 = (BonoboWindow *) 0x8981a68
+	rb_shell_construct$__cil_tmp128 = (GtkWidget *) 0x8981a68
+	rb_shell_construct$__cil_tmp129 = (BonoboUIContainer *) 0x89a2380
+	rb_shell_construct$__cil_tmp130 = 0x89a2470
+	rb_shell_construct$__cil_tmp131 = (BonoboUIComponent *) 0x89a1a08
+	rb_shell_construct$__cil_tmp132 = 0x89b5cc8 "\017"
+	rb_shell_construct$__cil_tmp133 = 1
+	rb_shell_construct$__cil_tmp134 = (RhythmDB *) 0x89b6440
+	rb_shell_construct$__cil_tmp135 = (RBShellPlayer *) 0x89ac1d0
+	rb_shell_construct$__cil_tmp136 = (RBShellClipboard *) 0x89c4280
+	rb_shell_construct$__cil_tmp137 = (RBSourceHeader *) 0x89c53a8
+	rb_shell_construct$__cil_tmp138 = (GtkWidget *) 0x89ccbf0
+	rb_shell_construct$__cil_tmp139 = (GtkWidget *) 0x89cedc0
+	rb_shell_construct$__cil_tmp140 = (RBStatusbar *) 0x89d9870
+	rb_shell_construct$__cil_tmp141 = (GtkWidget *) 0x89db280
+	rb_shell_construct$__cil_tmp142 = (GtkWidget *) 0x89dc4b8
+	rb_shell_construct$__cil_tmp143 = (GtkWidget *) 0x89dc598
+	rb_shell_construct$__cil_tmp144 = (GtkWidget *) 0x89dc8f0
+	rb_shell_construct$__cil_tmp145 = (GtkWidget *) 0x89dd928
+	rb_shell_construct$__cil_tmp146 = 0
+	rb_shell_construct$__cil_tmp147 = (GList *) 0x89d3acc
+	rb_shell_construct$__cil_tmp148 = (RBSource *) 0x896e0a0
+	rb_shell_construct$__cil_tmp149 = (RBIRadioSource *) 0x4207470b
+	rb_shell_construct$__cil_tmp150 = (RBPlaylistManager *) 0x0
+	rb_shell_construct$__cil_tmp151 = 0x88f8280
+	rb_shell_construct$__cil_tmp152 = 1083991729
+	rb_shell_construct$__cil_tmp153 = -1073762616
+	rb_shell_construct$__cil_tmp154 = 0x40a06780 "¤\226\006"
+	rb_shell_construct$__cil_tmp155 = (RBDruid *) 0x2
+	rb_shell_construct$__cil_tmp156 = (GTypeInstance *) 0x8979260
+	rb_shell_construct$__cil_tmp157 = (GTypeClass *) 0x8979188
+	rb_shell_construct$__cil_tmp158 = 1
+	rb_shell_construct$__cil_tmp159 = 1
+	rb_shell_construct$__cil_tmp160 = 1
+	rb_shell_construct$__cil_tmp161 = 0
+	rb_shell_construct$__cil_tmp162 = 144038856
+	rb_shell_construct$__cil_tmp163 = 1
+	rb_shell_construct$__cil_tmp164 = 0x40894520
+	rb_shell_construct$__cil_tmp165 = 0xbfffaf20
+	rb_shell_construct$__cil_tmp166 = 1075783904
+	rb_shell_construct$__cil_tmp167 = -1073762528
+	rb_shell_construct$__cil_tmp168 = -1073762384
+	rb_shell_construct$__cil_tmp169 = -1073762704
+	rb_shell_construct$__cil_tmp170 = 24
+	rb_shell_construct$__cil_tmp171 = 25
+	rb_shell_construct$__cil_tmp172 = 26
+	rb_shell_construct$__cil_tmp173 = 27
+	rb_shell_construct$__cil_tmp174 = 28
+	rb_shell_construct$__cil_tmp175 = 29
+	rb_shell_construct$__cil_tmp176 = 30
+	rb_shell_construct$__cil_tmp177 = 1081740331
+	rb_shell_construct$__cil_tmp178 = 103
+	rb_shell_construct$__cil_tmp179 = 104
+	rb_shell_construct$__cil_tmp180 = 105
+	rb_shell_construct$__cil_tmp181 = 106
+	rb_shell_construct$__cil_tmp182 = 107
+	rb_shell_construct$__cil_tmp183 = 147
+	rb_shell_construct$__cil_tmp184 = 148
+	rb_shell_construct$__cil_tmp185 = 149
+	rb_shell_construct$__cil_tmp186 = 168
+	rb_shell_construct$__cil_tmp187 = 169
+	rb_shell_construct$__cil_tmp188 = 3959422988
+	rb_shell_construct$__cil_tmp189 = 3976200205
+	rb_shell_construct$__cil_tmp190 = 3992977422
+	rb_shell_construct$__cil_tmp191 = 203
+	rb_shell_construct$__cil_tmp192 = 204
+	rb_shell_construct$__cil_tmp193 = 3221204536
+	rb_shell_construct$__cil_tmp194 = 3
+	rb_shell_construct$__cil_tmp195 = 1081901580
+	rb_shell_construct$__cil_tmp196 = 1081901580
+#15 0x080757a3 in rb_init (rb_init$shell=0x8979260) at main.c:218
+	rb_init$argv = (char **) 0x4000c270
+	rb_init$argc = -1073761688
+	rb_init$tmp = (GObject *) 0x8914510
+	rb_init$tmp___1 = (GObject *) 0x0
+	rb_init$tmp___3 = (GObject *) 0x40
+	rb_init$tmp___4 = 0x0
+	rb_init$tmp___5 = (GObject *) 0x409c565d
+	rb_init$tmp___6 = 0xbfffb248
+	rb_init$__cil_tmp12 = (char **) 0x40
+	rb_init$__cil_tmp13 = 0
+	rb_init$__cil_tmp14 = (GMutex *) 0x893e708
+	rb_init$__cil_tmp15 = 1
+	rb_init$__cil_tmp16 = 0x4000c34f
+	rb_init$__cil_tmp17 = 0xbfffb250
+	rb_init$__cil_tmp18 = (GMutex *) 0x401bd790
+	rb_init$__cil_tmp19 = 0
+#16 0x409c2743 in g_timeout_add () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#17 0x409bfb35 in g_get_current_time () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#18 0x409c0b78 in g_main_context_dispatch () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#19 0x409c0e8d in g_main_context_dispatch () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#20 0x409c158f in g_main_loop_run () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#21 0x40739328 in bonobo_main () from /usr/lib/libbonobo-2.so.0
+No symbol table info available.
+#22 0x08075473 in main (main$argc=2, main$argv=0xbfffd264) at main.c:173
+	main$program = (GnomeProgram *) 0x88f8e48
+	main$object = 0x0
+	main$rb_shell = (RBShell *) 0x8979260
+	main$sound_events_borked = 0
+	main$popt_options = {{longName = 0x871e4bc "print-playing", shortName = 0 '\0', argInfo = 0, arg = 0x8740028, val = 0, descrip = 0x871e4e0 "Print the playing song and exit", argDescrip = 0x0}, {longName = 0x871e500 "print-playing-path", shortName = 0 '\0', argInfo = 0, arg = 0x874002c, val = 0, descrip = 0x871e520 "Print the playing song URI and exit", argDescrip = 0x0}, {longName = 0x871e544 "print-song-length", shortName = 0 '\0', argInfo = 0, arg = 0x8740044, val = 0, descrip = 0x871e560 "Print the playing song length in seconds and exit", argDescrip = 0x0}, {longName = 0x871e592 "print-play-time", shortName = 0 '\0', argInfo = 0, arg = 0x8740040, val = 0, descrip = 0x871e5c0 "Print the current elapsed time of playing song and exit", argDescrip = 0x0}, {longName = 0x871e5f8 "set-play-time", shortName = 0 '\0', argInfo = 3, arg = 0x8740048, val = 0, descrip = 0x871e620 "Seek to the specified time in playing song if possible and exit", argDescrip = 0x0}, {longName = 0x871e660 "play-pause", shortName = 0 '\0', argInfo = 0, arg = 0x8740030, val = 0, descrip = 0x871e66b "Toggle play/pause mode", argDescrip = 0x0}, {longName = 0x871e682 "focus", shortName = 0 '\0', argInfo = 0, arg = 0x8740034, val = 0, descrip = 0x871e688 "Focus the running player", argDescrip = 0x0}, {longName = 0x871e6a1 "previous", shortName = 0 '\0', argInfo = 0, arg = 0x8740038, val = 0, descrip = 0x871e6aa "Jump to previous song", argDescrip = 0x0}, {longName = 0x871e6c0 "next", shortName = 0 '\0', argInfo = 0, arg = 0x874003c, val = 0, descrip = 0x871e6c5 "Jump to next song", argDescrip = 0x0}, {longName = 0x871e6d7 "debug", shortName = 100 'd', argInfo = 0, arg = 0x8740018, val = 0, descrip = 0x871e6dd "Enable debugging code", argDescrip = 0x0}, {longName = 0x871e6f3 "no-registration", shortName = 110 'n', argInfo = 0, arg = 0x8740020, val = 0, descrip = 0x871e703 "Do not register the shell", argDescrip = 0x0}, {longName = 0x871e71d "dry-run", shortName = 0 '\0', argInfo = 0, arg = 0x8740024, val = 0, descrip = 0x871e740 "Don't save any data permanently (implies --no-registration)", argDescrip = 0x0}, {longName = 0x871e77c "quit", shortName = 113 'q', argInfo = 0, arg = 0x874001c, val = 0, descrip = 0x871e781 "Quit Rhythmbox", argDescrip = 0x0}, {longName = 0x0, shortName = 0 '\0', argInfo = 4, arg = 0x8741260, val = 0, descrip = 0x871e790 "MonkeyMedia options:", argDescrip = 0x0}, {longName = 0x0, shortName = 0 '\0', argInfo = 0, arg = 0x0, val = 0, descrip = 0x0, argDescrip = 0x0}}
+	main$tmp = (poptOption *) 0x8741260
+	main$tmp___0 = 0x871e7a5 "Rhythmbox"
+	main$tmp___1 = (const GnomeModuleInfo *) 0x400bf6c0
+	main$tmp___2 = 1077264337
+	main$tmp___3 = 0
+	main$tmp___4 = 0
+	main$tmp___5 = 0x42010d3c "GLIBC_2.0"
+	main$tmp___6 = 0x42010d3c "GLIBC_2.0"
+	main$tmp___7 = (GObject *) 0x8979260
+	main$tmp___8 = (GObject *) 0x8979260
+	main$tmp___9 = (GObject *) 0x8979260
+	main$tmp___10 = (GObject *) 0x8979260
+	main$__cil_tmp20 = 0
+	main$__cil_tmp21 = 0x871e4bc "print-playing"
+	main$__cil_tmp22 = 0 '\0'
+	main$__cil_tmp23 = 0
+	main$__cil_tmp24 = (void *) 0x8740028
+	main$__cil_tmp25 = 0
+	main$__cil_tmp26 = 0x871e4e0 "Print the playing song and exit"
+	main$__cil_tmp27 = 0x0
+	main$__cil_tmp28 = 0x871e500 "print-playing-path"
+	main$__cil_tmp29 = 0 '\0'
+	main$__cil_tmp30 = 0
+	main$__cil_tmp31 = (void *) 0x874002c
+	main$__cil_tmp32 = 0
+	main$__cil_tmp33 = 0x871e520 "Print the playing song URI and exit"
+	main$__cil_tmp34 = 0x0
+	main$__cil_tmp35 = 0x871e544 "print-song-length"
+	main$__cil_tmp36 = 0 '\0'
+	main$__cil_tmp37 = 0
+	main$__cil_tmp38 = (void *) 0x8740044
+	main$__cil_tmp39 = 0
+	main$__cil_tmp40 = 0x871e560 "Print the playing song length in seconds and exit"
+	main$__cil_tmp41 = 0x0
+	main$__cil_tmp42 = 0x871e592 "print-play-time"
+	main$__cil_tmp43 = 0 '\0'
+	main$__cil_tmp44 = 0
+	main$__cil_tmp45 = (void *) 0x8740040
+	main$__cil_tmp46 = 0
+	main$__cil_tmp47 = 0x871e5c0 "Print the current elapsed time of playing song and exit"
+	main$__cil_tmp48 = 0x0
+	main$__cil_tmp49 = 0x871e5f8 "set-play-time"
+	main$__cil_tmp50 = 0 '\0'
+	main$__cil_tmp51 = 3
+	main$__cil_tmp52 = (void *) 0x8740048
+	main$__cil_tmp53 = 0
+	main$__cil_tmp54 = 0x871e620 "Seek to the specified time in playing song if possible and exit"
+	main$__cil_tmp55 = 0x0
+	main$__cil_tmp56 = 0x871e660 "play-pause"
+	main$__cil_tmp57 = 0 '\0'
+	main$__cil_tmp58 = 0
+	main$__cil_tmp59 = (void *) 0x8740030
+	main$__cil_tmp60 = 0
+	main$__cil_tmp61 = 0x871e66b "Toggle play/pause mode"
+	main$__cil_tmp62 = 0x0
+	main$__cil_tmp63 = 0x871e682 "focus"
+	main$__cil_tmp64 = 0 '\0'
+	main$__cil_tmp65 = 0
+	main$__cil_tmp66 = (void *) 0x8740034
+	main$__cil_tmp67 = 0
+	main$__cil_tmp68 = 0x871e688 "Focus the running player"
+	main$__cil_tmp69 = 0x0
+	main$__cil_tmp70 = 0x871e6a1 "previous"
+	main$__cil_tmp71 = 0 '\0'
+	main$__cil_tmp72 = 0
+	main$__cil_tmp73 = (void *) 0x8740038
+	main$__cil_tmp74 = 0
+	main$__cil_tmp75 = 0x871e6aa "Jump to previous song"
+	main$__cil_tmp76 = 0x0
+	main$__cil_tmp77 = 0x871e6c0 "next"
+	main$__cil_tmp78 = 0 '\0'
+	main$__cil_tmp79 = 0
+	main$__cil_tmp80 = (void *) 0x874003c
+	main$__cil_tmp81 = 0
+	main$__cil_tmp82 = 0x871e6c5 "Jump to next song"
+	main$__cil_tmp83 = 0x0
+	main$__cil_tmp84 = 0x871e6d7 "debug"
+	main$__cil_tmp85 = 100 'd'
+	main$__cil_tmp86 = 0
+	main$__cil_tmp87 = (void *) 0x8740018
+	main$__cil_tmp88 = 0
+	main$__cil_tmp89 = 0x871e6dd "Enable debugging code"
+	main$__cil_tmp90 = 0x0
+	main$__cil_tmp91 = 0x871e6f3 "no-registration"
+	main$__cil_tmp92 = 110 'n'
+	main$__cil_tmp93 = 0
+	main$__cil_tmp94 = (void *) 0x8740020
+	main$__cil_tmp95 = 0
+	main$__cil_tmp96 = 0x871e703 "Do not register the shell"
+	main$__cil_tmp97 = 0x0
+	main$__cil_tmp98 = 0x871e71d "dry-run"
+	main$__cil_tmp99 = 0 '\0'
+	main$__cil_tmp100 = 0
+	main$__cil_tmp101 = (void *) 0x8740024
+	main$__cil_tmp102 = 0
+	main$__cil_tmp103 = 0x871e740 "Don't save any data permanently (implies --no-registration)"
+	main$__cil_tmp104 = 0x0
+	main$__cil_tmp105 = 0x871e77c "quit"
+	main$__cil_tmp106 = 113 'q'
+	main$__cil_tmp107 = 0
+	main$__cil_tmp108 = (void *) 0x874001c
+	main$__cil_tmp109 = 0
+	main$__cil_tmp110 = 0x871e781 "Quit Rhythmbox"
+	main$__cil_tmp111 = 0x0
+	main$__cil_tmp112 = 0x0
+	main$__cil_tmp113 = 0 '\0'
+	main$__cil_tmp114 = 4
+	main$__cil_tmp115 = (void *) 0x8741260
+	main$__cil_tmp116 = 0
+	main$__cil_tmp117 = 0x871e790 "MonkeyMedia options:"
+	main$__cil_tmp118 = 0x0
+	main$__cil_tmp119 = 0x0
+	main$__cil_tmp120 = 0 '\0'
+	main$__cil_tmp121 = 0
+	main$__cil_tmp122 = (void *) 0x0
+	main$__cil_tmp123 = 0
+	main$__cil_tmp124 = 0x0
+	main$__cil_tmp125 = 0x0
+	main$__cil_tmp126 = (GnomeProgram *) 0x88f8e48
+	main$__cil_tmp127 = 0
+	main$__cil_tmp128 = 0x0
+	main$__cil_tmp129 = 0x0
+	main$__cil_tmp130 = 0x0
+	main$__cil_tmp131 = (RBShell *) 0x8979260
+	main$__cil_tmp132 = 0
+	main$__cil_tmp133 = 0
+	main$__cil_tmp134 = 0x43eef0 <Address 0x43eef0 out of bounds>
+	main$__cil_tmp135 = 1
+	main$__cil_tmp136 = 1
+	main$__cil_tmp137 = 1
+	main$__cil_tmp138 = 1
+	main$__cil_tmp139 = 0
+	main$__cil_tmp140 = (gchar *) 0x88eb530 "0\210\223\b"
+	main$__cil_tmp141 = 0x42121c29 "/usr/share/locale"
+	main$__cil_tmp142 = 0x88fdab8 "UTF-8"
+	main$__cil_tmp143 = 0x88fdac8 "rhythmbox"
+	main$__cil_tmp144 = 0
+	main$__cil_tmp145 = 9
+#23 0x420156a4 in __libc_start_main () from /lib/tls/libc.so.6
+No symbol table info available.
+#0  0xffffe002 in ?? ()
+</report>

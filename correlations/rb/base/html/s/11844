@@ -1,0 +1,388 @@
+<report id="main-stack-trace">
+#0  0xffffe002 in ?? ()
+#1  0x0871dba4 in reportDebugInfo ()
+#2  0x0871dd6d in handleSignal ()
+#3  <signal handler called>
+#4  0x08622845 in get_entry_genre_name (get_entry_genre_name$entry=0x8a2dad0) at rhythmdb-tree.c:228
+#5  0x08604d2c in rhythmdb_tree_entry_get (rhythmdb_tree_entry_get$adb=0x8a2dad0, rhythmdb_tree_entry_get$aentry=0x43b5396c, rhythmdb_tree_entry_get$propid=2, rhythmdb_tree_entry_get$value=0xbfffb670) at rhythmdb-tree.c:1190
+#6  0x085a60bd in rhythmdb_entry_get_string (rhythmdb_entry_get_string$db=0x8a2dad0, rhythmdb_entry_get_string$entry=0x43b5396c, rhythmdb_entry_get_string$propid=2) at rhythmdb.c:1729
+#7  0x086a5b4c in rhythmdb_property_model_insert (rhythmdb_property_model_insert$model=0x8a8f4b0, rhythmdb_property_model_insert$entry=0x43b5396c) at rhythmdb-property-model.c:462
+#8  0x086a59b4 in rhythmdb_property_model_row_inserted_cb (rhythmdb_property_model_row_inserted_cb$model=0x8a8d938, rhythmdb_property_model_row_inserted_cb$path=0x8b56470, rhythmdb_property_model_row_inserted_cb$iter=0x8a4ec40, rhythmdb_property_model_row_inserted_cb$propmodel=0x8a8f4b0) at rhythmdb-property-model.c:433
+#9  0x402dfeab in _gtk_marshal_VOID__BOXED_BOXED () from /usr/lib/libgtk-x11-2.0.so.0
+#10 0x4085bed7 in g_closure_invoke () from /usr/lib/libgobject-2.0.so.0
+#11 0x4086e983 in g_signal_emit_by_name () from /usr/lib/libgobject-2.0.so.0
+#12 0x4086d9a8 in g_signal_emit_valist () from /usr/lib/libgobject-2.0.so.0
+#13 0x4086dbe4 in g_signal_emit () from /usr/lib/libgobject-2.0.so.0
+#14 0x4038dcbb in gtk_tree_model_row_inserted () from /usr/lib/libgtk-x11-2.0.so.0
+#15 0x085da644 in rhythmdb_query_model_poll (rhythmdb_query_model_poll$model=0x8a8d938, rhythmdb_query_model_poll$timeout=0xbfffc620) at rhythmdb-query-model.c:778
+#16 0x0833011e in idle_poll_model (idle_poll_model$view=0x8a4f130) at rb-entry-view.c:2099
+#17 0x409c2743 in g_timeout_add () from /usr/lib/libglib-2.0.so.0
+#18 0x409bfb35 in g_get_current_time () from /usr/lib/libglib-2.0.so.0
+#19 0x409c0b78 in g_main_context_dispatch () from /usr/lib/libglib-2.0.so.0
+#20 0x409c0e8d in g_main_context_dispatch () from /usr/lib/libglib-2.0.so.0
+#21 0x409c158f in g_main_loop_run () from /usr/lib/libglib-2.0.so.0
+#22 0x40739328 in bonobo_main () from /usr/lib/libbonobo-2.so.0
+#23 0x08075473 in main (main$argc=2, main$argv=0xbfffe664) at main.c:173
+#24 0x420156a4 in __libc_start_main () from /lib/tls/libc.so.6
+</report>
+<report id="threads-stack-trace">
+
+Thread 6 (Thread 1098534192 (LWP 6915)):
+#0  0xffffe002 in ?? ()
+No symbol table info available.
+#1  0x409aabda in g_async_queue_pop_unlocked () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#2  0x409d8dfb in g_static_rw_lock_free () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#3  0x409d79f1 in g_static_private_free () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#4  0x40985332 in start_thread () from /lib/tls/libpthread.so.0
+No symbol table info available.
+
+Thread 5 (Thread 1106926896 (LWP 6916)):
+#0  0xffffe002 in ?? ()
+No symbol table info available.
+
+Thread 4 (Thread 1116949808 (LWP 6917)):
+#0  0xffffe002 in ?? ()
+No symbol table info available.
+
+Thread 3 (Thread 1125342512 (LWP 6918)):
+#0  0xffffe002 in ?? ()
+No symbol table info available.
+
+Thread 2 (Thread 1133735216 (LWP 6919)):
+#0  0xffffe002 in ?? ()
+No symbol table info available.
+#1  0x080d131e in rb_shell_load_complete_cb (rb_shell_load_complete_cb$db=0x8a2dad0, rb_shell_load_complete_cb$shell=0x8a09270) at rb-shell.c:1888
+	rb_shell_load_complete_cb$__cil_tmp3 = (GMutex *) 0x89a6820
+	rb_shell_load_complete_cb$__cil_tmp4 = 1
+	rb_shell_load_complete_cb$__cil_tmp5 = (GMutex *) 0x40887ba4
+	rb_shell_load_complete_cb$__cil_tmp6 = 0
+#2  0x4086ed77 in g_cclosure_marshal_VOID__VOID () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#3  0x4085bed7 in g_closure_invoke () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#4  0x4086e983 in g_signal_emit_by_name () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#5  0x4086d9a8 in g_signal_emit_valist () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#6  0x4086dbe4 in g_signal_emit () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#7  0x0856c77c in rhythmdb_load_thread_main (rhythmdb_load_thread_main$db=0x8a2dad0) at rhythmdb.c:924
+	rhythmdb_load_thread_main$klass = (RhythmDBClass *) 0x8a2d890
+	rhythmdb_load_thread_main$tmp = (GObject *) 0x8a2dad0
+	rhythmdb_load_thread_main$__cil_tmp4 = (RhythmDBClass *) 0x8a2d890
+#8  0x409d79f1 in g_static_private_free () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#9  0x40985332 in start_thread () from /lib/tls/libpthread.so.0
+No symbol table info available.
+
+Thread 1 (Thread 1087187776 (LWP 6823)):
+#0  0xffffe002 in ?? ()
+No symbol table info available.
+#1  0x0871dba4 in reportDebugInfo ()
+No symbol table info available.
+#2  0x0871dd6d in handleSignal ()
+No symbol table info available.
+#3  <signal handler called>
+No symbol table info available.
+#4  0x08622845 in get_entry_genre_name (get_entry_genre_name$entry=0x8a2dad0) at rhythmdb-tree.c:228
+No locals.
+#5  0x08604d2c in rhythmdb_tree_entry_get (rhythmdb_tree_entry_get$adb=0x8a2dad0, rhythmdb_tree_entry_get$aentry=0x43b5396c, rhythmdb_tree_entry_get$propid=2, rhythmdb_tree_entry_get$value=0xbfffb670) at rhythmdb-tree.c:1190
+	rhythmdb_tree_entry_get$db = (RhythmDBTree *) 0x8a2dad0
+	rhythmdb_tree_entry_get$tmp = 144783640
+	rhythmdb_tree_entry_get$tmp___0 = (RhythmDBTree *) 0x8a2dad0
+	rhythmdb_tree_entry_get$entry = (RhythmDBTreeEntry *) 0x43b5396c
+	rhythmdb_tree_entry_get$tmp___1 = (RhythmDBTreeEntry *) 0x43b5396c
+	rhythmdb_tree_entry_get$tmp___2 = (const gchar *) 0x43a37f68 "Laundry Service"
+	rhythmdb_tree_entry_get$tmp___3 = (const gchar *) 0x11c <Address 0x11c out of bounds>
+	rhythmdb_tree_entry_get$tmp___4 = (const gchar *) 0x40 <Address 0x40 out of bounds>
+	rhythmdb_tree_entry_get$tmp___5 = (const gchar *) 0xbfffb670 "@"
+	rhythmdb_tree_entry_get$tmp___6 = (const gchar *) 0x40879165 "ëÎ\213\a\205Àu\201\213E\f\215³\234Øÿÿ\211\004$è\"ûýÿ\205Àu\006\215³üØÿÿ\213E\f\211\004$èmüýÿ\211D$\020\215\203\016×ÿÿ\211D$\f\215\203<Ùÿÿ\211t$\024ékÿÿÿÇD$\020G"
+	rhythmdb_tree_entry_get$tmp___7 = (const gchar *) 0xbfffb218 "¨¶ÿ¿½`Z\bÐÚ¢\bl9µC\002"
+	rhythmdb_tree_entry_get$tmp___8 = (const gchar *) 0xbfffb670 "@"
+	rhythmdb_tree_entry_get$tmp___9 = (const gchar *) 0xbfffbc10 "hç¤\b8Ù¨\b"
+	rhythmdb_tree_entry_get$tmp___10 = (const gchar *) 0x40887ba4 "ÀJ\003"
+	rhythmdb_tree_entry_get$tmp___11 = (const gchar *) 0x0
+	rhythmdb_tree_entry_get$tmp___12 = (const gchar *) 0x88f3524 ""
+	rhythmdb_tree_entry_get$tmp___13 = (const gchar *) 0x40 <Address 0x40 out of bounds>
+	rhythmdb_tree_entry_get$tmp___14 = (const gchar *) 0x85bf50b "\201Ã\0258\030"
+	rhythmdb_tree_entry_get$tmp___15 = 3221205480
+	rhythmdb_tree_entry_get$tmp___16 = (RhythmDBTree *) 0x0
+	rhythmdb_tree_entry_get$__cil_tmp25 = (RhythmDBTree *) 0x8a2dad0
+	rhythmdb_tree_entry_get$__cil_tmp26 = (RhythmDBTreeEntry *) 0x43b5396c
+	rhythmdb_tree_entry_get$__cil_tmp27 = 0
+#6  0x085a60bd in rhythmdb_entry_get_string (rhythmdb_entry_get_string$db=0x8a2dad0, rhythmdb_entry_get_string$entry=0x43b5396c, rhythmdb_entry_get_string$propid=2) at rhythmdb.c:1729
+	rhythmdb_entry_get_string$klass = (RhythmDBClass *) 0x8a2d890
+	rhythmdb_entry_get_string$gval = {g_type = 64, data = {{v_int = 0, v_uint = 0, v_long = 0, v_ulong = 0, v_int64 = 0, v_uint64 = 0, v_float = 0, v_double = 0, v_pointer = 0x0}, {v_int = 0, v_uint = 0, v_long = 0, v_ulong = 0, v_int64 = 0, v_uint64 = 0, v_float = 0, v_double = 0, v_pointer = 0x0}}}
+	rhythmdb_entry_get_string$ret = 0x0
+	rhythmdb_entry_get_string$__cil_tmp7 = (RhythmDBClass *) 0x8a2d890
+	rhythmdb_entry_get_string$__cil_tmp8 = 0
+	rhythmdb_entry_get_string$__cil_tmp9 = 0
+	rhythmdb_entry_get_string$__cil_tmp10 = 0
+	rhythmdb_entry_get_string$__cil_tmp11 = 0xbfffb698 "¨¶ÿ¿\220Ø¢\bìÚ¢\b -t\b\230¹ÿ¿L[j\bÐÚ¢\bl9µC\002"
+	rhythmdb_entry_get_string$__cil_tmp12 = (GValue *) 0xbfffb670
+#7  0x086a5b4c in rhythmdb_property_model_insert (rhythmdb_property_model_insert$model=0x8a8f4b0, rhythmdb_property_model_insert$entry=0x43b5396c) at rhythmdb-property-model.c:462
+	rhythmdb_property_model_insert$prop = (RhythmDBPropertyModelEntry *) 0x40887ba4
+	rhythmdb_property_model_insert$iter = {stamp = 145283384, user_data = 0x8a4ec40, user_data2 = 0x0, user_data3 = 0xbfffb990}
+	rhythmdb_property_model_insert$path = (GtkTreePath *) 0x86ac28f
+	rhythmdb_property_model_insert$ptr = 0xbfffb998
+	rhythmdb_property_model_insert$propstr = 0x8a8f3f0 "\002"
+	rhythmdb_property_model_insert$sort_key = 0xbfffbc10 "hç¤\b8Ù¨\b"
+	rhythmdb_property_model_insert$tmp = 141831456
+	rhythmdb_property_model_insert$tmp___0 = (GtkTreeModel *) 0x3f8
+	rhythmdb_property_model_insert$tmp___1 = 1016
+	rhythmdb_property_model_insert$tmp___2 = (GtkTreeModel *) 0x2
+	rhythmdb_property_model_insert$__cil_tmp13 = 0x2 <Address 0x2 out of bounds>
+	rhythmdb_property_model_insert$__cil_tmp14 = 0xbfffb984
+	rhythmdb_property_model_insert$__cil_tmp15 = (RhythmDBPropertyModelEntry *) 0x8a4ec40
+	rhythmdb_property_model_insert$__cil_tmp16 = 145283384
+	rhythmdb_property_model_insert$__cil_tmp17 = 0x4038d7de "\213]ô\213uø\213}ü\211ì]ÃÇD$\020X\004"
+	rhythmdb_property_model_insert$__cil_tmp18 = (RhythmDBPropertyModelEntry *) 0xbfffb968
+	rhythmdb_property_model_insert$__cil_tmp19 = 0x8a4ec40 "×þ\030M°7¹\b"
+	rhythmdb_property_model_insert$__cil_tmp20 = 0x8a8d938 "\220\025¥\b\a"
+	rhythmdb_property_model_insert$__cil_tmp21 = 1078294712
+	rhythmdb_property_model_insert$__cil_tmp22 = 1077467243
+	rhythmdb_property_model_insert$__cil_tmp23 = 0xe0b937b0
+	rhythmdb_property_model_insert$__cil_tmp24 = 0x1
+	rhythmdb_property_model_insert$__cil_tmp25 = (GtkTreePath *) 0x1
+	rhythmdb_property_model_insert$__cil_tmp26 = 0x0
+#8  0x086a59b4 in rhythmdb_property_model_row_inserted_cb (rhythmdb_property_model_row_inserted_cb$model=0x8a8d938, rhythmdb_property_model_row_inserted_cb$path=0x8b56470, rhythmdb_property_model_row_inserted_cb$iter=0x8a4ec40, rhythmdb_property_model_row_inserted_cb$propmodel=0x8a8f4b0) at rhythmdb-property-model.c:433
+	rhythmdb_property_model_row_inserted_cb$entry = (RhythmDBEntry *) 0x43b5396c
+	rhythmdb_property_model_row_inserted_cb$tmp = (RhythmDBEntry *) 0x43b5396c
+	rhythmdb_property_model_row_inserted_cb$__cil_tmp7 = (RhythmDBEntry *) 0x43b5396c
+#9  0x402dfeab in _gtk_marshal_VOID__BOXED_BOXED () from /usr/lib/libgtk-x11-2.0.so.0
+No symbol table info available.
+#10 0x4085bed7 in g_closure_invoke () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#11 0x4086e983 in g_signal_emit_by_name () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#12 0x4086d9a8 in g_signal_emit_valist () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#13 0x4086dbe4 in g_signal_emit () from /usr/lib/libgobject-2.0.so.0
+No symbol table info available.
+#14 0x4038dcbb in gtk_tree_model_row_inserted () from /usr/lib/libgtk-x11-2.0.so.0
+No symbol table info available.
+#15 0x085da644 in rhythmdb_query_model_poll (rhythmdb_query_model_poll$model=0x8a8d938, rhythmdb_query_model_poll$timeout=0xbfffc620) at rhythmdb-query-model.c:778
+	rhythmdb_query_model_poll$processed = (GList *) 0x43b4b2cc
+	rhythmdb_query_model_poll$tem = (GList *) 0x4036d02d
+	rhythmdb_query_model_poll$now = {tv_sec = 1077334061, tv_usec = 597418}
+	rhythmdb_query_model_poll$update = (struct RhythmDBQueryModelUpdate *) 0x43b53cd8
+	rhythmdb_query_model_poll$count = 1541
+	rhythmdb_query_model_poll$path = (GtkTreePath *) 0x8b85ce8
+	rhythmdb_query_model_poll$iter = {stamp = 1293483735, user_data = 0x8b937b0, user_data2 = 0x0, user_data3 = 0x409da0ed}
+	rhythmdb_query_model_poll$ptr = 0x8b937b0
+	rhythmdb_query_model_poll$index___0 = 1107913350
+	rhythmdb_query_model_poll$tmp = 144957400
+	rhythmdb_query_model_poll$tmp___0 = (GtkTreeModel *) 0x8a8d938
+	rhythmdb_query_model_poll$tmp___1 = 144957400
+	rhythmdb_query_model_poll$tmp___2 = (GtkTreeModel *) 0x8a8d938
+	rhythmdb_query_model_poll$tmp___3 = 144957400
+	rhythmdb_query_model_poll$tmp___4 = (GtkTreeModel *) 0x8a8d938
+	rhythmdb_query_model_poll$tmp___5 = 144957400
+	rhythmdb_query_model_poll$tmp___6 = (GtkTreeModel *) 0x8a8d938
+	rhythmdb_query_model_poll$tmp___7 = 1078262318
+	rhythmdb_query_model_poll$tmp___8 = (GtkTreeModel *) 0x8a4a840
+	rhythmdb_query_model_poll$tmp___9 = (GObject *) 0x8a8d938
+	rhythmdb_query_model_poll$tmp___10 = 1
+	rhythmdb_query_model_poll$update___0 = (struct RhythmDBQueryModelUpdate *) 0x8915a68
+	rhythmdb_query_model_poll$__cil_tmp25 = (GList *) 0x0
+	rhythmdb_query_model_poll$__cil_tmp26 = 0
+	rhythmdb_query_model_poll$__cil_tmp27 = (struct RhythmDBQueryModelUpdate *) 0x43b53cd8
+	rhythmdb_query_model_poll$__cil_tmp28 = 1293483735
+	rhythmdb_query_model_poll$__cil_tmp29 = 0x8b937b0
+	rhythmdb_query_model_poll$__cil_tmp30 = 0x8b937b0
+	rhythmdb_query_model_poll$__cil_tmp31 = (GtkTreePath *) 0x8b85ce8
+	rhythmdb_query_model_poll$__cil_tmp32 = 0x8b93790
+	rhythmdb_query_model_poll$__cil_tmp33 = 0x8b93790
+	rhythmdb_query_model_poll$__cil_tmp34 = (GtkTreePath *) 0x8b85ce8
+	rhythmdb_query_model_poll$__cil_tmp35 = 0xbfffc208
+	rhythmdb_query_model_poll$__cil_tmp36 = 1078262318
+	rhythmdb_query_model_poll$__cil_tmp37 = (GtkTreePath *) 0x8a4a840
+	rhythmdb_query_model_poll$__cil_tmp38 = (GList *) 0x43b4b2cc
+	rhythmdb_query_model_poll$__cil_tmp39 = 1541
+	rhythmdb_query_model_poll$__cil_tmp40 = (GList *) 0xe0000000
+	rhythmdb_query_model_poll$__cil_tmp41 = (struct RhythmDBQueryModelUpdate *) 0x0
+	rhythmdb_query_model_poll$__cil_tmp42 = (GList *) 0x0
+	rhythmdb_query_model_poll$__cil_tmp43 = 0
+	rhythmdb_query_model_poll$__cil_tmp44 = 1
+	rhythmdb_query_model_poll$__cil_tmp45 = 0
+	rhythmdb_query_model_poll$__cil_tmp46 = 0
+	rhythmdb_query_model_poll$__cil_tmp47 = 0
+	rhythmdb_query_model_poll$__cil_tmp48 = 760
+	rhythmdb_query_model_poll$__cil_tmp49 = (GTimeVal *) 0xbfffc620
+	rhythmdb_query_model_poll$__cil_tmp50 = 1
+	rhythmdb_query_model_poll$__cil_tmp51 = 0
+	rhythmdb_query_model_poll$__cil_tmp52 = (GList *) 0x8b08fa0
+#16 0x0833011e in idle_poll_model (idle_poll_model$view=0x8a4f130) at rb-entry-view.c:2099
+	idle_poll_model$did_sync = 1083987652
+	idle_poll_model$timeout = {tv_sec = 1077334061, tv_usec = 963970}
+	idle_poll_model$__cil_tmp4 = 1083962082
+	idle_poll_model$__cil_tmp5 = 3221210712
+	idle_poll_model$__cil_tmp6 = 1084254080
+	idle_poll_model$__cil_tmp7 = (GMutex *) 0x89a6820
+	idle_poll_model$__cil_tmp8 = 1
+	idle_poll_model$__cil_tmp9 = -1073756648
+	idle_poll_model$__cil_tmp10 = (GMutex *) 0x88fff48
+	idle_poll_model$__cil_tmp11 = 145010776
+#17 0x409c2743 in g_timeout_add () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#18 0x409bfb35 in g_get_current_time () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#19 0x409c0b78 in g_main_context_dispatch () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#20 0x409c0e8d in g_main_context_dispatch () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#21 0x409c158f in g_main_loop_run () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#22 0x40739328 in bonobo_main () from /usr/lib/libbonobo-2.so.0
+No symbol table info available.
+#23 0x08075473 in main (main$argc=2, main$argv=0xbfffe664) at main.c:173
+	main$program = (GnomeProgram *) 0x88f8e48
+	main$object = 0x0
+	main$rb_shell = (RBShell *) 0x8a09270
+	main$sound_events_borked = 0
+	main$popt_options = {{longName = 0x871e4bc "print-playing", shortName = 0 '\0', argInfo = 0, arg = 0x8740028, val = 0, descrip = 0x871e4e0 "Print the playing song and exit", argDescrip = 0x0}, {longName = 0x871e500 "print-playing-path", shortName = 0 '\0', argInfo = 0, arg = 0x874002c, val = 0, descrip = 0x871e520 "Print the playing song URI and exit", argDescrip = 0x0}, {longName = 0x871e544 "print-song-length", shortName = 0 '\0', argInfo = 0, arg = 0x8740044, val = 0, descrip = 0x871e560 "Print the playing song length in seconds and exit", argDescrip = 0x0}, {longName = 0x871e592 "print-play-time", shortName = 0 '\0', argInfo = 0, arg = 0x8740040, val = 0, descrip = 0x871e5c0 "Print the current elapsed time of playing song and exit", argDescrip = 0x0}, {longName = 0x871e5f8 "set-play-time", shortName = 0 '\0', argInfo = 3, arg = 0x8740048, val = 0, descrip = 0x871e620 "Seek to the specified time in playing song if possible and exit", argDescrip = 0x0}, {longName = 0x871e660 "play-pause", shortName = 0 '\0', argInfo = 0, arg = 0x8740030, val = 0, descrip = 0x871e66b "Toggle play/pause mode", argDescrip = 0x0}, {longName = 0x871e682 "focus", shortName = 0 '\0', argInfo = 0, arg = 0x8740034, val = 0, descrip = 0x871e688 "Focus the running player", argDescrip = 0x0}, {longName = 0x871e6a1 "previous", shortName = 0 '\0', argInfo = 0, arg = 0x8740038, val = 0, descrip = 0x871e6aa "Jump to previous song", argDescrip = 0x0}, {longName = 0x871e6c0 "next", shortName = 0 '\0', argInfo = 0, arg = 0x874003c, val = 0, descrip = 0x871e6c5 "Jump to next song", argDescrip = 0x0}, {longName = 0x871e6d7 "debug", shortName = 100 'd', argInfo = 0, arg = 0x8740018, val = 0, descrip = 0x871e6dd "Enable debugging code", argDescrip = 0x0}, {longName = 0x871e6f3 "no-registration", shortName = 110 'n', argInfo = 0, arg = 0x8740020, val = 0, descrip = 0x871e703 "Do not register the shell", argDescrip = 0x0}, {longName = 0x871e71d "dry-run", shortName = 0 '\0', argInfo = 0, arg = 0x8740024, val = 0, descrip = 0x871e740 "Don't save any data permanently (implies --no-registration)", argDescrip = 0x0}, {longName = 0x871e77c "quit", shortName = 113 'q', argInfo = 0, arg = 0x874001c, val = 0, descrip = 0x871e781 "Quit Rhythmbox", argDescrip = 0x0}, {longName = 0x0, shortName = 0 '\0', argInfo = 4, arg = 0x8741260, val = 0, descrip = 0x871e790 "MonkeyMedia options:", argDescrip = 0x0}, {longName = 0x0, shortName = 0 '\0', argInfo = 0, arg = 0x0, val = 0, descrip = 0x0, argDescrip = 0x0}}
+	main$tmp = (poptOption *) 0x8741260
+	main$tmp___0 = 0x871e7a5 "Rhythmbox"
+	main$tmp___1 = (const GnomeModuleInfo *) 0x400bf6c0
+	main$tmp___2 = 1077334048
+	main$tmp___3 = 0
+	main$tmp___4 = 0
+	main$tmp___5 = 0x42010d3c "GLIBC_2.0"
+	main$tmp___6 = 0x42010d3c "GLIBC_2.0"
+	main$tmp___7 = (GObject *) 0x8a09270
+	main$tmp___8 = (GObject *) 0x8a09270
+	main$tmp___9 = (GObject *) 0x8a09270
+	main$tmp___10 = (GObject *) 0x8a09270
+	main$__cil_tmp20 = 0
+	main$__cil_tmp21 = 0x871e4bc "print-playing"
+	main$__cil_tmp22 = 0 '\0'
+	main$__cil_tmp23 = 0
+	main$__cil_tmp24 = (void *) 0x8740028
+	main$__cil_tmp25 = 0
+	main$__cil_tmp26 = 0x871e4e0 "Print the playing song and exit"
+	main$__cil_tmp27 = 0x0
+	main$__cil_tmp28 = 0x871e500 "print-playing-path"
+	main$__cil_tmp29 = 0 '\0'
+	main$__cil_tmp30 = 0
+	main$__cil_tmp31 = (void *) 0x874002c
+	main$__cil_tmp32 = 0
+	main$__cil_tmp33 = 0x871e520 "Print the playing song URI and exit"
+	main$__cil_tmp34 = 0x0
+	main$__cil_tmp35 = 0x871e544 "print-song-length"
+	main$__cil_tmp36 = 0 '\0'
+	main$__cil_tmp37 = 0
+	main$__cil_tmp38 = (void *) 0x8740044
+	main$__cil_tmp39 = 0
+	main$__cil_tmp40 = 0x871e560 "Print the playing song length in seconds and exit"
+	main$__cil_tmp41 = 0x0
+	main$__cil_tmp42 = 0x871e592 "print-play-time"
+	main$__cil_tmp43 = 0 '\0'
+	main$__cil_tmp44 = 0
+	main$__cil_tmp45 = (void *) 0x8740040
+	main$__cil_tmp46 = 0
+	main$__cil_tmp47 = 0x871e5c0 "Print the current elapsed time of playing song and exit"
+	main$__cil_tmp48 = 0x0
+	main$__cil_tmp49 = 0x871e5f8 "set-play-time"
+	main$__cil_tmp50 = 0 '\0'
+	main$__cil_tmp51 = 3
+	main$__cil_tmp52 = (void *) 0x8740048
+	main$__cil_tmp53 = 0
+	main$__cil_tmp54 = 0x871e620 "Seek to the specified time in playing song if possible and exit"
+	main$__cil_tmp55 = 0x0
+	main$__cil_tmp56 = 0x871e660 "play-pause"
+	main$__cil_tmp57 = 0 '\0'
+	main$__cil_tmp58 = 0
+	main$__cil_tmp59 = (void *) 0x8740030
+	main$__cil_tmp60 = 0
+	main$__cil_tmp61 = 0x871e66b "Toggle play/pause mode"
+	main$__cil_tmp62 = 0x0
+	main$__cil_tmp63 = 0x871e682 "focus"
+	main$__cil_tmp64 = 0 '\0'
+	main$__cil_tmp65 = 0
+	main$__cil_tmp66 = (void *) 0x8740034
+	main$__cil_tmp67 = 0
+	main$__cil_tmp68 = 0x871e688 "Focus the running player"
+	main$__cil_tmp69 = 0x0
+	main$__cil_tmp70 = 0x871e6a1 "previous"
+	main$__cil_tmp71 = 0 '\0'
+	main$__cil_tmp72 = 0
+	main$__cil_tmp73 = (void *) 0x8740038
+	main$__cil_tmp74 = 0
+	main$__cil_tmp75 = 0x871e6aa "Jump to previous song"
+	main$__cil_tmp76 = 0x0
+	main$__cil_tmp77 = 0x871e6c0 "next"
+	main$__cil_tmp78 = 0 '\0'
+	main$__cil_tmp79 = 0
+	main$__cil_tmp80 = (void *) 0x874003c
+	main$__cil_tmp81 = 0
+	main$__cil_tmp82 = 0x871e6c5 "Jump to next song"
+	main$__cil_tmp83 = 0x0
+	main$__cil_tmp84 = 0x871e6d7 "debug"
+	main$__cil_tmp85 = 100 'd'
+	main$__cil_tmp86 = 0
+	main$__cil_tmp87 = (void *) 0x8740018
+	main$__cil_tmp88 = 0
+	main$__cil_tmp89 = 0x871e6dd "Enable debugging code"
+	main$__cil_tmp90 = 0x0
+	main$__cil_tmp91 = 0x871e6f3 "no-registration"
+	main$__cil_tmp92 = 110 'n'
+	main$__cil_tmp93 = 0
+	main$__cil_tmp94 = (void *) 0x8740020
+	main$__cil_tmp95 = 0
+	main$__cil_tmp96 = 0x871e703 "Do not register the shell"
+	main$__cil_tmp97 = 0x0
+	main$__cil_tmp98 = 0x871e71d "dry-run"
+	main$__cil_tmp99 = 0 '\0'
+	main$__cil_tmp100 = 0
+	main$__cil_tmp101 = (void *) 0x8740024
+	main$__cil_tmp102 = 0
+	main$__cil_tmp103 = 0x871e740 "Don't save any data permanently (implies --no-registration)"
+	main$__cil_tmp104 = 0x0
+	main$__cil_tmp105 = 0x871e77c "quit"
+	main$__cil_tmp106 = 113 'q'
+	main$__cil_tmp107 = 0
+	main$__cil_tmp108 = (void *) 0x874001c
+	main$__cil_tmp109 = 0
+	main$__cil_tmp110 = 0x871e781 "Quit Rhythmbox"
+	main$__cil_tmp111 = 0x0
+	main$__cil_tmp112 = 0x0
+	main$__cil_tmp113 = 0 '\0'
+	main$__cil_tmp114 = 4
+	main$__cil_tmp115 = (void *) 0x8741260
+	main$__cil_tmp116 = 0
+	main$__cil_tmp117 = 0x871e790 "MonkeyMedia options:"
+	main$__cil_tmp118 = 0x0
+	main$__cil_tmp119 = 0x0
+	main$__cil_tmp120 = 0 '\0'
+	main$__cil_tmp121 = 0
+	main$__cil_tmp122 = (void *) 0x0
+	main$__cil_tmp123 = 0
+	main$__cil_tmp124 = 0x0
+	main$__cil_tmp125 = 0x0
+	main$__cil_tmp126 = (GnomeProgram *) 0x88f8e48
+	main$__cil_tmp127 = 0
+	main$__cil_tmp128 = 0x0
+	main$__cil_tmp129 = 0x0
+	main$__cil_tmp130 = 0x0
+	main$__cil_tmp131 = (RBShell *) 0x8a09270
+	main$__cil_tmp132 = 0
+	main$__cil_tmp133 = 0
+	main$__cil_tmp134 = 0x449fdf <Address 0x449fdf out of bounds>
+	main$__cil_tmp135 = 1
+	main$__cil_tmp136 = 1
+	main$__cil_tmp137 = 1
+	main$__cil_tmp138 = 1
+	main$__cil_tmp139 = 0
+	main$__cil_tmp140 = (gchar *) 0x88eb530 "\b\206\223\b"
+	main$__cil_tmp141 = 0x42121c29 "/usr/share/locale"
+	main$__cil_tmp142 = 0x88fdba8 "UTF-8"
+	main$__cil_tmp143 = 0x88fdbb8 "rhythmbox"
+	main$__cil_tmp144 = 0
+	main$__cil_tmp145 = 13
+#24 0x420156a4 in __libc_start_main () from /lib/tls/libc.so.6
+No symbol table info available.
+#0  0xffffe002 in ?? ()
+</report>

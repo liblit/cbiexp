@@ -1,0 +1,31 @@
+<report id="main-stack-trace">
+#0  0xffffe002 in ?? ()
+#1  0x0871dba4 in reportDebugInfo ()
+#2  0x0871dd6d in handleSignal ()
+#3  <signal handler called>
+</report>
+<report id="threads-stack-trace">
+
+Thread 2 (Thread 1098419504 (LWP 30888)):
+#0  0xffffe002 in ?? ()
+No symbol table info available.
+#1  0x409aabda in g_async_queue_pop_unlocked () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#2  0x409d8dfb in g_static_rw_lock_free () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#3  0x409d79f1 in g_static_private_free () from /usr/lib/libglib-2.0.so.0
+No symbol table info available.
+#4  0x40985332 in start_thread () from /lib/tls/libpthread.so.0
+No symbol table info available.
+
+Thread 1 (Thread 1087187776 (LWP 30885)):
+#0  0xffffe002 in ?? ()
+No symbol table info available.
+#1  0x0871dba4 in reportDebugInfo ()
+No symbol table info available.
+#2  0x0871dd6d in handleSignal ()
+No symbol table info available.
+#3  <signal handler called>
+No symbol table info available.
+#0  0xffffe002 in ?? ()
+</report>
