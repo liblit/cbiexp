@@ -298,7 +298,11 @@ the corresponding terms are {\em selectivity} and {\em sensitivity}.  In both fi
 the standard metric is the harmonic mean of precision and recall, which disproportionately
 rewards high scores in both dimensions.  In our
 case, $\increase(P)$ measures precision and $F(P)$ measures recall.  Define
-\[ \importance(P) = \frac{2}{\frac{1}{\increase(P)} + \frac{1}{log(F(P))}} \] 
+%%
+\[ \importance(P) = \frac{2}{\frac{1}{\increase(P)} + \frac{log(\numfail)}{log(F(P))}} \]
+%%
+where $\numfail$ is total number of failing runs (independent of $P$)
+and therefore scales recall to between zero and one.
 
 The results are given in Table~\ref{tab:sorts}(c).  We observe that
 all of the predicates on this list indeed have both high precision and
