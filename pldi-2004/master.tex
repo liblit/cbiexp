@@ -18,8 +18,7 @@
 \usepackage[TABTOPCAP]{subfigure}
 \usepackage{xspace}
 
-\usepackage[bookmarks, pdftitle={Statistical Debugging in the Presence of
-  Multiple Errors}, pdfauthor={Ben Liblit, Mayur Naik, Alice X.
+\usepackage[bookmarks, pdftitle={Scalable Statistical Debugging}, pdfauthor={Ben Liblit, Mayur Naik, Alice X.
   Zheng, Alex Aiken, and Michael I.  Jordan}, pdfsubject={D.2.4
   [Software Engineering]: Software/Program Verification -- statistical
   methods; D.2.5 [Software Engineering]: Testing and Debugging --
@@ -41,16 +40,22 @@ pdfpagemode=UseOutlines]{hyperref}
 
 \usepackage{Autoref}
 \newcommand{\subfigureautorefname}[0]{Figure}
-
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
 %% assorted handy macros
 \newcommand{\moss}{\textsc{Moss}\xspace}
 \newcommand{\rhythmbox}{\textsc{Rhythmbox}\xspace}
+\newcommand{\exif}{\textsc{exif}\xspace}
+\newcommand{\bc}{\textsc{bc}\xspace}
+\newcommand{\ccrypt}{\textsc{ccrypt}\xspace}
+
 \newcommand{\termdef}[1]{\textit{#1}}
 \newcommand{\prob}{\mbox{\textit{Prob}}}
 \newcommand{\fail}{\mbox{\textit{Crash}}}
 \newcommand{\crash}{\mbox{\textit{Failure}}}
 \newcommand{\context}{\mbox{\textit{Context}}}
 \newcommand{\increase}{\mbox{\textit{Increase}}}
+\newcommand{\importance}{\mbox{\textit{Importance}}}
 \renewcommand{\H}{{\mathcal{H}}}
 
 
@@ -59,16 +64,17 @@ pdfpagemode=UseOutlines]{hyperref}
 %% front matter
 %%
 
-\title{Statistical Debugging in the Presence of Multiple Errors
-  %%
-  \thanks{This research was supported in part by NASA Grant No.\
+
+
+\title{Scalable Statistical Debugging\thanks{This research was supported in part by NASA Grant No.\
     NAG2-1210; NSF Grant Nos.\ EIA-9802069, CCR-0085949, ACI-9619020,
     and IIS-9988642; DOE Prime Contract No.\ W-7405-ENG-48 through
     Memorandum Agreement No.\ B504962 with LLNL; and DARPA ARO-MURI 
     ACCLIMATE DAAD-19-02-1-0383.  The information
     presented here does not necessarily reflect the position or the
     policy of the Government and no official endorsement should be
-    inferred.}}
+    inferred.}
+}
 
 \makeatletter
 \newcommand*{\eecsMark}[0]{\@fnsymbol{2}}
@@ -96,7 +102,6 @@ pdfpagemode=UseOutlines]{hyperref}
   Berkeley, CA 94720-1776
   \and
   \stan Computer Science Department \\
-  353 Serra Mall \\
   Stanford University \\
   Stanford CA 94305-9025
 }
@@ -109,22 +114,21 @@ pdfpagemode=UseOutlines]{hyperref}
 %%  document body
 %%
 
-\begin{document}
 
+\begin{document}
 \maketitle
 
 \begin{abstract}
-  We present a statistical debugging algorithm that operates on very
-  sparsely sampled data drawn from large numbers of runs and which is
+  We present a statistical debugging algorithm that is
   robust in the face of multiple undiagnosed bugs.  The algorithm
   identifies program behaviors that significantly increase the
-  likelihood of failure.  These failure predictors reveal both the
+  likelihood of failure; these predictors reveal both the
   circumstances under which bugs occur as well as the frequencies of
   failure modes, making it easier to prioritize debugging efforts.
-  The approach has connections to statistical hypothesis testing and
-  is validated using several case studies.  We compare our technique
-  with an earlier algorithm and find it more accurate, efficient, and
-  scalable.
+  Our algorithm is validated using several case studies, including finding
+  previously unknown and significant crashing bugs in widely used systems.
+  We compare our technique with an earlier algorithm and find it much more accurate 
+  and scalable.
 \end{abstract}
 
 
@@ -146,131 +150,170 @@ pdfpagemode=UseOutlines]{hyperref}
 \section{Introduction}
 \label{sec:introduction}
 
-It is a fact of life that most software ships with many known and
-unknown bugs.  Unfortunately, in most cases it is impractical to delay
-releasing code until the last bug has been fixed.  For example, the
-Mozilla web browser project has a ``topcrash'' software QA team
-specifically dedicated to identifying and tracking the top forty most
-common crash bugs.  This cut-off is not because anyone believes that
-there are only forty bugs; it is an acknowledgment that engineering
-resources are finite and so the most important bugs should be fixed
-first.
+This paper is about \termdef{statistical debugging}, a dynamic
+analysis for identifying the causes of software failures (i.e., bugs).
+Instrumented programs monitor their own behavior and send feedback
+reports to a central collection server.  The instrumentation examines
+program behavior during execution by sampling; complete information is
+never available about any single run.  However, monitoring is also
+lightweight and therefore practical to deploy to large user
+communities, making it possible to gather information about many runs.
+The collected data can then be analyzed for interesting trends across
+all of the monitored executions.
 
-Our vision is to use \termdef{statistical debugging} to improve
-software quality after code is deployed.  Specially instrumented
-programs monitor their own behavior and send feedback reports to a
-central collection server.  Monitoring is both sparse and random, so
-complete information is never available about any single run.
-However, monitoring is also lightweight and therefore practical to
-deploy to user communities numbering in the thousands or millions.
-Statistical debugging does not seek to understand the single cause of
-a single failure on one machine; rather, it identifies statistical
-trends that isolate bug causes across many runs.  Because the process
-is driven by data from actual user executions, it reflects the reality
-of how the software is used and implicitly attends to those program
-behaviors that cause the most problems for the most users, most often.
+In our approach, instrumentation consists of {\em predicates} tested
+at particular program points; we defer discussing which predicates are
+chosen for instrumentation to Section~\ref{sec:background}.  A given
+program point may have many predicates that are sampled independently
+during program execution when that program point is reached (i.e.,
+each predicate associated with a program point may or may not be
+tested each time the program point is reached).  A feedback report $R$
+consists of one bit indicating whether the {\em run} of the program
+succeeded or failed, as well as a bit vector with one bit for each
+predicate $P$; if $P$ is observed to be true at least once during run
+$R$ then $R(P) = 1$, otherwise $R(P) = 0$.\footnote{In truth, we count
+the number of times $P$ is observed to be true, but the analysis of
+the feedback reports only uses whether $P$ is observed to be true at
+least once.}
 
-In previous work we examined the problem of automatically isolating
-the causes of bugs and proposed two algorithms, the most general of
-which was based on a statistical technique known as {\em logistic
-regression} \cite{PLDI`03*141,Zheng:2003:SDSP}.  As we worked to apply
-these methods to large programs under realistic conditions, we
-discovered a number of scalability problems, the most serious of which
-was that the performance of the techniques declined significantly 
-when the applications being analyzed had multiple bugs (see
-\Autoref{sec:comparison}).  As mentioned above, real applications
-have many bugs.
+A {\em bug} is a set of failing runs (feedback reports) ${\cal B}$
+that share a cause of failure.  The union of all bugs is exactly the
+set of failing runs, but note that ${\cal B}_i \cap {\cal B}_j \neq
+\emptyset$ in general; more than one bug can occur in some runs.
 
-The first contribution of this paper is a new algorithm for isolating
-multiple bugs in complex applications (see \Autoref{sec:algorithm}).  This algorithm 
-is based on an entirely different family of statistical techniques than our previous work and offers
-a number of improvements:
-it is much more efficient, the quality of the
-results is high and unaffected by increases in either the size of the program
-or the number of bugs, and it naturally produces information
-that shows how important (in number of program crashes) each detected
-cause of a bug is.  Furthermore, the method is statistically sound, meaning that
-the results computed accurately summarize the analyzed program 
-executions, and the results can be directly understood in terms of program behavior.
-For example, here is a portion of a report generated for \rhythmbox,
-a popular Open Source jukebox:
-\begin{verbatim}
-Predicate: g_source_remove() > 0 
-Location: line 77 of disclosure-widget.c
-Context: 0.08
-Increase: 0.92   
-Failure: 1.00   
-\end{verbatim}
-This information summarizes what is observed about a particular call site of the function {\tt g\_source\_remove}.
-Any execution that reaches this function call has an 8\% chance of failure (the Context score).  If, however,
-the function returns a
-positive value\footnote{A common C programming idiom is for functions to signal success or failure by the sign of the return value.}, the probability that the program fails is 100\%; i.e., when this predicate on this line is true the program always crashes eventually.  We say that the predicate contributes an increase in the probability of failure of 100\% - 8\% = 92\%.
+A predicate $P$ is a {\em bug predictor} (or simply a {\em predictor})
+of bug ${\cal B}$ if whenever $R(P) = 1$ then it is statistically
+likely that $R \in {\cal B}$ (see Section~\ref{sec:increase}).  {\em
+Statistical debugging} selects a small subset ${\cal S}$ of the set of
+all instrumented predicates ${\cal P}$ such that ${\cal S}$ has
+predictors of all bugs.  We also rank the predictors in ${\cal S}$
+from the most to least important.  The set ${\cal S}$ and associated
+metrics (see Section~\ref{sec:experiments}) are then available to
+engineers to help speed the process of finding and fixing the most
+serious bugs.
 
-It turns out that the crash happens long after the call to {\tt g\_source\_remove} completes,
-but the fact that {\tt g\_source\_remove} succeeds (indicated by the positive return value) is part of what causes the bug.  Thus,
-our approach can help engineers isolate bugs by showing the conditions and early events that trigger the bug, rather than just the
-program state at the point of failure.  Furthermore, our algorithm also allows accurate calculations of what fraction of all failures occur when this predicate
-is true; in the example above, the predicate was true in 184 of 1873 \rhythmbox\ executions that crashed in our dataset, which means that
-it is involved in 9.8\% of all the failures observed.  This information allows engineers to assign accurate priorities to bug fixes.
+In previous work, we focused on techniques
+for lightweight instrumentation and sampling of program executions, but
+we also studied two preliminary algorithms for statistical debugging and
+presented experimental results on medium-size applications with a
+single bug \cite{PLDI`03*141,Zheng:2003:SDSP}.  The most general
+technique we studied is based on {\em logistic regression}, a standard
+optimization procedure that tries to select a set of predicates that
+best predicts the outcome of every run. As we worked to apply these
+methods to much larger programs under realistic conditions, we
+discovered a number of serious scalability problems:
 
+\begin{itemize}
 
-Our second contribution is a series of case studies evaluating the effectiveness of
-our technique.  The first two studies compare our algorithm to the two techniques
-we previously proposed (see \Autoref{sec:revisited}).  Each of these studies focuses on a
-program with a single bug; in both cases the new algorithm
-performs at least as well as the old one at identifying the conditions under which the bug occurs.  
+\item For large applications the set ${\cal P}$ numbers in the hundreds of
+thousands of predicates, many of which are, or are very nearly,
+logically redundant.  In our experience, this redundancy in ${\cal P}$
+causes logistic regression to choose highly redundant lists of
+predictors ${\cal S}$.\footnote{This problem persists even for
+regularized logistic regression with penalty terms.}  This problem is
+already evident in the results in \cite{PLDI`03*141} but becomes much
+worse for larger programs.
 
-The third study involves an application with multiple known bugs (see
-\Autoref{sec:experiments:results}).  Knowing the bugs makes this a controlled study, 
-in the sense that we are able to determine whether the algorithm fails to recognize any of the
-bugs.  The results show that the algorithm correctly
-isolates strong predictors for each of the bugs that occurred in our
-experiment, even though the algorithm has no knowledge of how many
-bugs are in the program or which bug caused any individual failure.
-In addition, our algorithm isolated another bug in this application that was previously unknown.
+\item A separate difficulty is the prevalence of predicates predicting
+multiple bugs.  For example, for many Unix programs a bug is more
+likely to be encountered when many command line flags are given,
+because the more options that are given non-default settings the more
+likely unusual code paths are to be exercised.  Thus, predicates
+implying a long command line may rank near the top, even though such
+predicates are useless for isolating the cause of individual bugs.
 
-We also use this third case study to investigate a speculative
-application of our techniques.  Our algorithm relies only on the
-ability to label the outcome of a program as ``correct'' or
-``incorrect''.  Furthermore, because our techniques are statistical,
-the labeling of correct/incorrect results need not be perfect; our
-algorithm can tolerate noise in the labeling.  These features open up
-the possibility of having a single approach that can detect a wide
-range of program errors from low-level, crashing bugs to high-level
-logic bugs that do not crash the program but simply cause it to
-produce incorrect output, provided only that there is some way to
-label program outcomes reasonably accurately.  Detecting incorrect
-output can be done in a number of ways.  Certainly program crashes are
-incorrect (e.g., in C programs), as are unhandled top-level exceptions
-(e.g., in Java programs).  Internal program checks for consistency,
-such as low-level assert statements and higher-level input validation
-checks between untrusting components, can also be used to label
-results as correct or incorrect.  Finally (and this is the speculative
-part) users could also provide feedback on whether the output of a
-program execution appears correct or not, allowing the automatic
-isolation of bugs that are not otherwise observed by a crash or
-internal consistency check.  The third study includes some subtle,
-non-crashing bugs that our system is able to isolate correctly.
+\item Finally, different bugs occur at rates that differ by orders of
+magnitude.  Because logistic regression is a global optimization,
+predictors for less common bugs have very little influence over the
+global optimum and tend to be ranked low or not included in ${\cal S}$
+at all.
 
+\end{itemize}
 
-In the fourth study we apply our techniques to the current release
-of \rhythmbox, the Open Source jukebox mentioned above (see
-\Autoref{sec:rb}).  \rhythmbox\ is the largest and most complex of our
-case studies, and the bugs in \rhythmbox\ are unknown to us.  Thus far
-we have successfully isolated two serious crashing bugs in \rhythmbox\ 
-using our approach.  At least in part because we were able to
-quantify the importance of these bugs for the \rhythmbox\ developers, both
-bug reports were given high priority and fixes were applied to the
-main development branch within a few days.
+These problems with logistic regression persist across many variations
+we have investigated. From this experimental work we did garner some
+key technical insights.  In addition to the bug predictors we wish to
+find among the instrumented predicates, there are several other kinds
+of predicates.  First, nearly all predicates (often 98\% or 99\%) are
+not predictive of anything; these are best identified and discarded as
+quickly as possible. Among the remaining predicates that can
+predict failure in some way, there are some bug predictors.
+There are also {\em super-bug predictors}, predicates that, as
+described above, predict failures due to a variety of bugs.  And there
+are {\em sub-bug predictors}, predicates the characterize a subset of
+the failures of a specific bug; these are often special cases of more
+general problems.  We give the concepts of super- and sub-bug
+predictors more precise technical treatment in
+Section~\ref{sec:ranking}.
 
+The difficulty in identifying the best bug predictors lies in not being
+fooled by the sub- or super-bug predictors and not being overwhelmed
+by the sheer number of predicates to sift through.
+This paper makes a number of contributions on these problems:
 
-The paper is organized as follows.  After providing some background
+\begin{itemize}
+
+\item We present a new algorithm for isolating multiple bugs in
+complex applications (\Autoref{sec:algorithm}) based on different
+techniques and offering significant improvements over previous work:
+it scales much more gracefully in all the dimensions discussed above
+and for each selected predicate $P$ it naturally produces information
+that shows both how important (in number of explained program
+failures) and how accurate a predictor $P$ is.
+
+\item We validate the algorithm by a variety of experiments: We show
+improved results for the experiments in \cite{PLDI`03*141}; in a
+controlled experiment we show that the algorithm is able to find a
+number of known bugs in a complex application; and, finally, we use
+the algorithm to discover previously unknown serious crashing bugs in
+two large and widely used open source applications.
+
+\item We show that relatively few runs (we used 32,000) are sufficient
+to isolate all of the bugs described in this paper, showing that our
+approach is feasible for in-house automatic testing as well as use
+post-deployment.
+
+\item We report on the effectiveness of the current industry practice
+of collecting stack traces from failing runs.  We find that across all
+of our experiments, in about half the cases the stack is useful in
+isolating the cause of a bug; in the other half the stack contains
+essentially no information about the bug's cause.
+
+\item Finally, we show that, in principle, it is possible for our
+approach to help isolate any kind of failure, not just program
+crashes.  All that is required is a way to label each run as either
+``successful'' or ``unsuccessful''.
+
+\end{itemize}
+
+With respect to this last point, perhaps the greatest strength of our
+system is its ability to automatically identify the cause of many
+different kinds of bugs, including new classes bugs that we did not
+anticipate in building the tool.  By relying only on the distinction
+between good and bad executions, our analysis does not require a
+specification of the program properties to be analyzed.  Thus,
+statistical debugging provides a complementary approach to static
+analyses, which generally do require specification of the properties
+to check.  Statistical debugging can identify bugs beyond the reach of
+static analysis techniques and even new classes of bugs which may be
+amenable to static analysis if anyone thought to check for them.
+
+One of the bugs we found, in the open source music player \rhythmbox,
+provides a good illustration of the potential for positive interaction
+with static analysis.  A strong predictor of failure detected by our
+algorithm revealed a previously unrecognized unsafe usage pattern of a
+library's API.  A simple syntactic static analysis subsequently showed
+more than one hundred instances of the same unsafe pattern throughout
+\rhythmbox.
+
+The paper is organized as follows.  After providing background
 (\Autoref{sec:background}), we discuss our algorithm
-(\Autoref{sec:algorithm}) and its advantages over our previous approach
-based on logistic regression (\Autoref{sec:comparison}).  The case studies
-are presented in Sections~\ref{sec:revisited}-\ref{sec:rb}.  We conclude with a
-discussion of related work (\Autoref{sec:related-work}) and future
-work (\Autoref{sec:conclusions}). 
+(\Autoref{sec:algorithm}). The experimental results are presented in
+Section~\ref{sec:experiments}.  We then discuss related
+work (\Autoref{sec:related-work}), including the advantages over our
+previous approach based on logistic regression
+(\Autoref{sec:comparison}).
+
 
 \section{Background}
 \label{sec:background}
@@ -300,32 +343,24 @@ We have found that a sampling rate of \nicefrac{1}{100} normally keeps the perfo
 of instrumentation low, often unmeasurable.
 
 Orthogonal to the sampling transformation is the decision about what
-instrumentation to introduce and how to concisely
-summarize the resultant data.  This determines what behaviors one can
-possibly observe once the sampling transformation is applied.  A useful instrumentation
-scheme should be fairly general but selected to capture behaviors
-which are likely to be of interest when hunting for bugs.  At present
-our system offers the following instrumentation schemes:
+instrumentation to introduce and how to concisely summarize the
+resulting data.  A useful instrumentation captures behaviors likely to
+be of interest when hunting for bugs.  At present our system offers
+the following instrumentation schemes for C programs:
 
 \begin{description}
 \sloppy
 \item[branches:] At each conditional, including implicit conditionals
-such as loop tests and short-circuiting logical operators,
-  count how often each branch is taken.  
-%The observation is
-%  made just after the predicate is evaluated but before the selected
-%  branch is taken.  This scheme also applies to implicit conditionals
-%  in loops and logical operators (\texttt{\&\&}, \texttt{||},
-%  \texttt{?:}).  Each conditional induces one instrumentation site
-%  with two counters: number of times branched true and number of times
-%  branched false.
+such as loop tests and short-circuiting logical operators, we track two predicates
+indicating whether the true or false branches were ever taken.
 
 \item[returns:] In C, the
-  sign of a return value is often used to encode an operation's success or failure.
-  At each scalar-returning function call site, count how
-  often the returned value is negative, zero, or positive.  For
-  pointer-returning calls, this scheme reduces to counting
-  \texttt{NULL} versus non-\texttt{NULL}.  
+  sign of a return value is often used to signal success or failure.
+  At each scalar-returning function call site, we track three predicates:
+  whether the returned value is ever negative, zero, or positive.  
+%  For
+%  pointer-returning calls, this scheme reduces to counting
+%  \texttt{NULL} versus non-\texttt{NULL}.  
 %The observation is made
 %  just after the function returns but before the result is used by the
 %  original program.  An instrumentation site is added even if the
@@ -335,156 +370,48 @@ such as loop tests and short-circuiting logical operators,
 %  returns, number of zero returns, and number of positive returns.
 
 \item[scalar-pairs:] Many bugs
-  concern boundary issues exposed by the relationship between a pair
-  of variables, or between a variable and some program constant.  At
+  concern boundary issues in the relationship between a 
+  variable and another variable or constant.  At
   each scalar assignment \texttt{x = \dots}, identify each
-  \emph{other} same-typed in-scope variable $\mathtt{y}_i$ and each
-  constant expression $\mathtt{c}_j$.  Count how often the new value
-  for \texttt{x} is less than, equal to, or greater than each
-  $\mathtt{y}_i$ and each $\mathtt{c}_j$.  
-%The observation is made
-%  after both sides of the assignment have been evaluated but
-%  before the assignment takes place.  This lets us compare
-%  \texttt{x} to \texttt{x} as well, effectively comparing the new and
-%  old values of the left-hand side.  
+  same-typed in-scope variable $\mathtt{y}_i$ and each
+  constant expression $\mathtt{c}_j$.  For each   $\mathtt{y}_i$ and each $\mathtt{c}_j$,  
+  we track six relationships to the new value of \texttt{x}: $<, \leq, >, \geq, =, \neq$.
 Each compared-to $\mathtt{y}_i$
-  or $\mathtt{c}_j$ is treated as a distinct instrumentation site;
-  thus a single assignment may induce a large number of sites.  
-% Each
-%  such site maintains three counters: how often the value being
-%  assigned is less than, equal to, or greater than the compared-to
-%  variable or constant.
+  or $\mathtt{c}_j$ is treated as a distinct instrumentation site.
 \end{description}
 
-The common theme among these instrumentation schemes is that we
-instrument program predicates and count the number of times that these
-predicates are observed to be true or false when a sample is taken.
-For the returns and scalar-pairs instrumentation schemes, the three
-predicates that are tracked explicitly actually give rise to a family
-of six predicates that we use in our analysis of the data.
-For example, for each scalar-pairs comparison between \texttt{x} and \texttt{y}, one and
-only one of the three predicates $\mathtt{x} < \mathtt{y}$, $\mathtt{x} = \mathtt{y}$, or
-$\mathtt{x} > \mathtt{y}$ can be true.  Thus one observation at one
-site always updates exactly one of that site's counters.  An
-observation that $\mathtt{x} < \mathtt{y}$ is true is therefore equivalent to
-an observation that $\mathtt{x} \geq \mathtt{y}$ is false.  Similarly, we can
-infer from the data the two remaining predicates $\mathtt{x} \leq \mathtt{y}$ or
-$\mathtt{x} \neq \mathtt{y}$.
-
-Also note that because some counter is always incremented at every
-sample in all three schemes, we can easily determine the number of
-times a site was sampled by summing all the counters for the site
-(two counters for the branches instrumentation and three counters for
-the others).  Thus, we can distinguish between predicates that are
-never observed during execution (all the counters at the site are 0)
-and predicates that are observed but never true (the counter(s) for the predicate
-is 0, but some other counter at the site is positive).
-
-The post-execution feedback report consists of the final counter values for
-each instrumentation site.  Reducing a trace to a set of counters
-prevents us from reasoning about relative time ordering of events
-during execution.  However, it also means that program actions early
-in execution remain just as visible as those much later.  This
-contrasts with traditional postmortem debugging tools which expose
-only the final state of the program at the point of failure.
+These are natural properties to check and provide good
+coverage of a program's scalar values and control flow.  This set 
+is by no means complete, however; in particular, it would be useful
+to have predicates on heap structures as well.
 
 \section{Cause Isolation Algorithm}
 \label{sec:algorithm}
 \input{alg}
 
-\section{Experiments Revisited}
-\label{sec:revisited}
-\input{revisited}
-
-
-\section{A Controlled Experiment}
-\label{sec:experiments:results}
+\section{Experiments}
+\label{sec:experiments}
 \input{experiments}
 
 
-\section{Rhythmbox}
-\label{sec:rb}
 
-
-For our final case study we instrumented \rhythmbox, an Open Source
-jukebox application.  Thus far we have isolated two serious crashing
-bugs in \rhythmbox, and fixes for both bugs have been accepted and
-applied to the main branch of the \rhythmbox\ source tree.  We briefly
-describe the two bugs and the lessons we have learned from working on
-a large application with unknown bugs.
-
-The first bug, discssed briefly in \Autoref{sec:introduction}, is
-predicted to occur when a particular call to {\tt g\_source\_remove}
-returns a positive value.  This function is part of the GTK, a graphical
-object toolbox for C.
-%%an object system for C.  
-%%(?? "an object system for C" doesn't make sense.  -- Alice)
-Objects in GTK can be referred to both
-via pointers and via object IDs; {\tt g\_source\_remove}
-takes an object ID as its argument.
-
-In this case the problem is that the object ID passed as an argument
-is stale---the object it belongs to was destroyed much earlier in the
-prorgram, but the object ID was retained in the owning object's fields.
-A section of clean-up code much later in the program dutifully calls {\tt g\_source\_remove} on the
-stale ID; if the ID has been reallocated, the unfortunate object that
-has that ID is then destroyed, wreaking havoc in the rest of the execution.
-
-A strong predictor for the second bug is 
-\begin{verbatim}
-monkey_media_player_get_uri() == NULL 
-\end{verbatim} 
-This function
-returns the current play source (e.g., a CD library or internet radio
-station) for \rhythmbox.  The interesting thing is that this source
-should never be {\tt NULL} while \rhythmbox\ is still playing.  This
-observation leads to the bug.  GTK is reference-counted, and the
-programmer has freed a complex data structure by removing references
-and nulling fields (thus the predicate above) in the belief that the objects are freed. But there
-is a race condition: one object sometimes survives long enough to
-invoke callbacks into the other objects that have been reclaimed,
-resulting in a crash.
-
-These bugs were the most complex that we dealt with in 
-our experiments (although one or two of the \moss\ bugs are close).  The
-call stack at the point of crash for both bugs is unhelpful (see \Autoref{sec:conclusions}).  We feel confident in saying that without the use of
-our tool we could not have isolated these bugs, and we believe
- the fact that these crashing bugs have gone undiscovered in \rhythmbox\ is
-good evidence that they are not easy to find without tool support.
-
-On the other hand, it should also be clear from our descriptions of the bugs
-that our techniques did not point us as directly to the bugs as one might hope.
-Working only from the output of our system and having no prior knowledge of
-the rather involved architecture of \rhythmbox, it took us considerable time
-to understand these two bugs.  
-
-The lesson is that while our algorithm is theoretically sound and (in
-our opinion) performs well in practice, it is only as good as the
-predicates chosen for instrumentation.  Our current instrumentation
-strategies focus on low-level properties of the C code, while \rhythmbox\
-is really written in a higher-level language, namely at the level of
-the GTK API.  We have already identified a new instrumentation strategy
-that makes use of the semantics of the GTK and would have led us
-much more quickly to the second bug; such a strategy, while GTK-specific,
-would still be widely applicable, as GTK is widely used.  We expect
-that such system- or API-specific instrumentation strategies would be
-needed in many cases to obtain maximum benefit from our techniques.
-
-
-\section{Related Work}
+\section{Previous and Related Work}
 \label{sec:related-work}
 
-In this section we briefly survey related work. There is currently a great
-deal of interest in applying static analysis to improve software quality.  Some,
-but certainly not all, of the bugs we found in our studies could also have
-been detected by known static analyses.  While we firmly believe in
-the use of static analysis to find and prevent bugs, our dynamic approach has
-advantages. A dynamic analysis can observe actual run-time values, which is often
-better than either making a very conservative static assumption about runtime
-values to be sound, or allowing some even very simple bugs to escape undetected.
-Another advantage of dynamic analysis, especially one that uses actual user
-executions for its data, is the ability to assign an accurate importance to each
-bug.
+In this section we briefly survey related work. There is currently a
+great deal of interest in applying static analysis to improve software
+quality.  While we firmly believe in the use of static analysis to
+find and prevent bugs, our dynamic approach has advantages. A dynamic
+analysis can observe actual run-time values, which is often better
+than either making a very conservative static assumption about runtime
+values to be sound, or allowing some even very simple bugs to escape
+undetected.  Another advantage of dynamic analysis, especially one
+that uses actual user executions for its data, is the ability to
+assign an accurate importance to each bug.  Finally, as we have shown,
+a dynamic analysis that does not require an explicit specification of
+the properties to check can find clues to a very wide range of errors,
+including classes of errors not considered in the design of the
+analysis.
   
 The Daikon project \cite{ernst2001} monitors instrumented applications
 to discover likely program invariants.  It collects extensive trace
@@ -494,9 +421,9 @@ of a wide variety of guessed candidate predicates.  The DIDUCE project
 client program, and attempts to relate state changes in candidate
 predicates to manifestation of bugs.  Both projects assume complete
 monitoring, such as within a controlled test environment.  Our goal is
-to use lightweight partial monitoring, suitable for deployment to end
-users.  We never have complete information, and therefore must use a
-more statistical approach.
+to use lightweight partial monitoring, suitable for either for testing
+or deployment to end users.  We never have complete information, and
+therefore must use a more statistical approach.
 
 \termdef{Software tomography} as realized through the GAMMA system
 \cite{PASTE'02*2,Orso:2003:LFDIART} shares our goal of low-overhead
@@ -541,15 +468,15 @@ equivalence classes.  Two crash reports showing the same stack trace,
 or perhaps only the same top-of-stack function, are presumed to be two
 reports of the same failure.  This works to the extent that a single
 cause corresponds to a single point of failure, but our experience
-with \moss\ and \rhythmbox\ suggests that this assumption may not often hold.  In \moss\ find
+with \moss, \rhythmbox, and \exif suggests that this assumption may not often hold.  In \moss\ find
 that only bugs 2 and 5 have truly unique ``signature'' stacks: a
 crash location which is present if and only if the corresponding bug
 was actually triggered.  These bugs are also our most deterministic.
 Bugs 4 and 6 also have nearly unique stack signatures.
 The remaining bugs are much less consistent: each stack signature is
 observed after a variety of different bugs, and each triggered bug
-causes failure in a variety of different stack states.  In \rhythmbox,
-both bugs caused crashes so long after the bad behavior that the crash stacks
+causes failure in a variety of different stack states.  \rhythmbox and \exif
+bugs caused crashes so long after the bad behavior that the crash stacks
 were not useful at all.
 
 Studies that attempt real-world deployment of monitored software must
@@ -570,63 +497,76 @@ technique to model and thereby predict impending system failures.
 Instrumentation is assumed to be complete and is typically
 domain-specific.
 
-\section{Conclusions and Future Work}
+
+\subsection{Comparison with Logistic Regression}
+\label{sec:comparison}
+
+\begin{table}
+\centering
+\begin{tabular}{l|l}
+{\em Coefficient} & {\em Predicate} \\ \hline
+0.769379 & {\tt (p + passage\_index)->last\_line < 4}  \\
+0.686149 & {\tt (p + passage\_index)->first\_line < i} \\
+0.675982 & {\tt i > 20} \\
+0.671991 & {\tt i > 26} \\
+0.619479 & {\tt (p + passage\_index)->last\_line < i}  \\
+0.600712 & {\tt i > 23} \\
+0.591044 & {\tt (p + passage\_index)->last\_line == next} \\
+0.567753 & {\tt i > 22} \\
+0.544829 & {\tt i > 25} \\
+0.536122 & {\tt i > 28} 
+\end{tabular}
+\caption{Results of logistic regression for Moss.}
+\label{tab:logregression}
+\end{table}
+
+
+
+
+As discussed briefly in Section~\ref{sec:introduction}, in earlier work 
+we made use of $\ell_1$-regularized logistic regression and similar
+methods to select and rank the predicates in the order of their
+failure-prediction strength \cite{PLDI`03*141,Zheng:2003:SDSP}.  Independently others have used
+logistic regression with good results to cluster program failures (without
+identifying causes) related to the same bug \cite{ICSE`03*465}.  However, we have come
+to believe that logistic regression has scalability problems in our application.
+
+Logistic regression and its variants use a linearly weighted
+combination of the predicates to classify a trial run as successful or
+failed.  Regularized logistic regression incorporates a penalty
+that forces the regression to set most coefficients to zero, thereby
+selecting only the most important predicates.  The output is a set of
+coefficients for predicates that gives the best overall prediction: i.e., if
+certain predicates are true the program is likely to fail.
+
+Table~\ref{tab:logregression} gives the top ten predicates and their importance
+(coefficients) as determined by logistic regression for our \moss experiment.
+The striking property of the selected predicates is that they are all either sub-bug
+or super-bug predictors.  The predicates beginning {\tt p + \ldots} are all sub-bug
+predictors of bug \#1 (see Table~\ref{tab:mossdilute}).  The predicates 
+{\tt i > \ldots} are super-bug predictors; {\tt i} is the length
+of the command line and the predicates say program crashes are more
+likely for long command lines (recall Section~\ref{sec:introduction}).
+
+The prevalence of super-bug predictors on the list shows the
+difficulty of making use of the penalty term to control the number
+of predicates chosen.
+Limiting the number of predicates
+that can be selected via a penalty has the effect of encouraging
+logistic regression to choose super-bug predictors, as these cover
+more failing runs at the expense of poorer predictive power compared to
+predictors of individual bugs.  Relaxing the penalty allows logistic
+regression to add more predicates to improve its prediction, but the
+sub-bug predictors apparently are favored.
+
+\section{Conclusions}
 \label{sec:conclusions}
 
-We have demonstrated a practical algorithm for isolating multiple bugs
-in complex software systems.  Given feedback profiles of enough runs,
-overall trends emerge which can help to guide an engineer to the most
-likely causes of the most common bugs.  Our approach uses lightweight,
-sampled instrumentation suitable for wide scale deployment to real end
-users, which means that the system also performs implicit triage: it
-learns the most, most quickly, about the bugs that happen most often.
-The key property of our approach is that it filters potential causes
-based on the degree to which they increase the likelihood of failure.
-Our algorithm appears to do a good job of isolating a wide variety of
-bugs, even when multiple bugs are present simultaneously.
-
-When hunting for bugs, the first thing an engineer wants to know is
-under what circumstances the failure occurs.  Perhaps the most salient
-feature of our approach is the ability to pinpoint the circumstances
-under which bugs occur.
-
-We also see several possible avenues for improvement, which we leave
-as future work:
-\begin{itemize}
-
-\item The scalar-pairs instrumentation scheme induces many
-predicates and finds fewer bugs than the branches and
-returns instrumentation schemes.  A more specialized version of scalar-pairs
-would be useful.
-
-\item To date, we have sampled all sites at the same rate.  However,
-rarely executed code, such as code that executes once on system start-up,
-can be sampled at a higher rate with no impact on overall performance.
-Moreover, infrequently executed code is more likely
-to harbor bugs.  By observing rare events more often, we would need fewer
-runs to isolate bugs.
-
-\item The algorithm we present here analyzes every predicate independently
-of every other predicate.  We believe we can do more to exploit
-statistical correlations between predicates.
-
-
-\end{itemize}
-
-\input{moss-view/table}
-
-\input{moss-view/stats-breakout}
-
-This paragraph shows how to cross reference subtables within
-\autoref{tab:sorts}.  See also \autoref{tab:sorts-failure},
-\autoref{tab:sorts-increase}, and \autoref{tab:sorts-harmonic}.
-
-\input{views/table}
-
-This paragraph shows how to cross reference subtables within
-\autoref{tab:views}.  See also \autoref{tab:views-ccrypt},
-\autoref{tab:views-bc}, \autoref{tab:views-exif}, and
-\autoref{tab:views-rhythmbox}.
+We have demonstrated a practical, scalable algorithm for isolating multiple bugs
+in complex software systems.  Our experimental results show that we can
+detect a wide variety of both anticipated and unanticipated causes of failure
+in realistic systems and do so with a relatively modest number of program
+executions.
 
 \bibliography{cacm1990,icse02,icse03,misc,paste02,pldi03,pods,ramss,refs}
 

@@ -1,272 +1,205 @@
+\input{table}
 
-In this section we present the results of a controlled experiment in
-which we injected bugs into \moss\ \cite{Schleimer:2003:WLA}, a widely
-used plagiarism detection service.  A primary goal of this experiment
-was to see whether our algorithm was effective at finding most or all
-bugs in an application; thus it was necessary to know the set of bugs
-we were looking for.  Both \moss\ source code and bug logs were
-available to us, and so we could easily reproduce historical bugs.
+In this section we present the results of applying the algorithm
+described in Section~\ref{sec:algorithm} in five case studies.\footnote{
+The data can be found at FIX ME URL.}
+Figure~\ref{tab:exps} shows the summary statistics for each of the
+experiments.  In each study we ran the programs on about 32,000 random
+inputs.  The number of instrumentation sites varies with the size of
+the program, as does the number of predicates those instrumentation
+sites yield.  Our algorithm is very effective in reducing the number
+of predicates the user must examine.  For example, in the case of
+\rhythmbox an initial set of 857,384 predicates is reduced to 537 by the $\increase(P) > 0$
+test, a reduction of 99.9\%.  The elimination algorithm then yields 15 predicates, a further
+reduction of 97\%.  The other case studies show a similar reduction in the number of
+predicates by 3-4 orders of magnitude.
 
-We briefly describe the nine bugs we added to \moss.  As discussed in
-\Autoref{sec:introduction}, these bugs vary from low-level crashing
-bugs to high-level logic bugs that simply produce incorrect output.
-Except where noted, these are all bugs that originally occurred in
-\moss.
-\begin{enumerate}
-\item We reintroduced a bug that causes the number of
-lines in C-style multi-line comments to be counted incorrectly.  This bug causes incorrect output
-in certain circumstances: an option to
-match comments must be on (normally \moss\ ignores comments)
-and there must be matching multi-line comments that affect the output.
+The results we discuss are all on sampled data.  Sampling can have
+serious negative effects on our algorithm.  Assume $P_1$ and $P_2$ are
+equivalent bug predictors and both are sampled at a rate of
+$\frac{1}{100}$ and both are reached once per run.  Then even though
+$P_1$ and $P_2$ are equivalent, they will be observed in nearly disjoint
+sets of runs and treated as close to independent by the elimination
+algorithm.
 
-\item We removed a check for a
-null {\tt FILE} pointer.  This is not originally a \moss\ bug; it is exactly analogous to the {\tt ccrypt} bug (see \Autoref{sec:revisited}).
+To address this problem, we set the sampling rates of predicates to be
+inversely proportional to their frequency of execution.  Based on a
+training set of 1,000 executions, we choose a sampling rate for $P$ to
+achieve an expected 100 observations of $P$ during program execution,
+but never less than $\frac{1}{100}$.  Thus, rarely executed code has a
+much higher sampling rate than very frequently executed code; a
+similar strategy has been pursued for similar reasons in \cite{Trishul}.  We
+have validated this approach by comparing the results for each
+experiment with results obtained with no sampling at all (i.e., the
+sampling rate of all predicates set to 100\%).  The results are
+identical except for the \rhythmbox and \moss experiments, where we
+judge the differences to be minor: sometimes a different but logically
+equivalent predicate is chosen, the ranking of predictors of different
+bugs is slightly different, or one or the other version has a few
+extra, weak predictors at the tail end of the list.  
 
-\item We removed an array bounds update
-in the routine for loading preprocessed data from disk. The
-program behaves normally unless the function is called a second time,
-in which case previously loaded data may be partially overwritten.
-This bug has unpredictable effects and
-was particularly difficult to find originally.
 
-\item We removed a size check that prevents users from supplying command-line arguments
-that could cause the program to overrun the bounds of an array.
+\subsection{A Validation Experiment}
 
-\item For historical reasons, \moss\ handles Lisp programs differently
-from all other languages.  We removed a end-of-list check in the Lisp-specific
-code.
+To validate our algorithm we first performed an experiment where we
+knew the set of bugs in advance.  We added nine bugs to \moss, a
+widely used service for detecting plagiarism in software
+\cite{Schleimer:2003:WLA}.  Six of these were previously discovered
+and repaired bugs in \moss that we reintroduced; the other three were
+variations on three of the original bugs, to see if our algorithm could
+discriminate between pairs of bugs with very similar behavior but
+distinct causes.  The nature of the bugs varies: four
+buffer overruns, a null file pointer dereference in certain cases, a
+missing end-of-list check in the traversal of a hash table bucket, a missing
+out-of-memory check, and a violation of a subtle invariant that must be maintained between two
+parts of a complex data structure comprise the eight crashing bugs.  
 
-\item For efficiency \moss\ preallocates a large area of memory for its primary data structure.
-When this area of memory is filled, the program should fail
-gracefully.  We removed an out-of-memory check. 
+The last bug, incorrect handling of comments in certain cases, only
+causes incorrect output, not a crash.  While the failure can be
+detected for the other bugs by noting program crashes (in most
+cases---some of the bugs are non-deterministic and do not always
+cause crashes), this last bug cannot be detected in such an easy fashion.
+For our experiment we also ran a correct version of \moss\ and
+compared the output of the two versions, labeling any run where the
+output was different as a failure.  The purpose of using this oracle
+is to show that, in principle, bugs other than crashing bugs can also
+be isolated using our techniques, provided there is some way, whether
+by automatic self-checking or human inspection, to recognize failing
+runs.
 
-\item \moss\ has a routine that scans an array for multiple copies of a data value.
-We removed the limit check that prevents the code from searching past the end of the array.  
-This bug did not occur in \moss; it is intended to be a more frequently occurring version of bug 8.
+Table~\ref{tab:mossdilute} shows the results of the experiment.  The
+predicts listed were selected by the elimination algorithm in the
+order shown.  The second column is the initial thermometer for each
+predicate,  showing the \context\ and \increase\ scores before
+elimination is performed. The fourth column is the {\em effective}
+thermometer, showing the \context\ and \increase\ scores for a
+predicate $P$ at the time $P$ is selected (i.e., when it is the
+top-ranked predicate).  The scores in the first and third columns are
+the initial and effective importance (harmonic mean) scores, respectively.
 
-\item  A buffer overrun, this bug was never known to have caused a failure in \moss. It
-was discovered originally by a code review.
+As part of the experiment we separately recorded the exact set of
+bugs that occurred in each run.
+The table at the far right of Table~\ref{tab:mossdilute} shows for
+each selected predicate $P$ and each bug ${\cal B}$ the number of runs where
+bug ${\cal B}$ occurs and $P$ is observed to be true.  Note that while each
+predicate has a very strong spike at one bug, indicating it is a
+strong predictor of that bug, there are always some runs with other
+bugs present.  For example, the top-ranked predicate, which is
+overwhelmingly a predictor of bug \#5, also includes some runs where
+bugs \#3, \#4, and \#9 occurred.  This situation is not the result of
+misclassification of failing runs by our algorithm.  As observed in
+Section~\ref{sec:introduction}, more than one bug may occur in a run;
+it simply happens that in some runs bugs \#5 and \#2 both occur (to
+pick just one possible combination).
 
-\item This bug is a variant of bug 4, but involves a different command-line argument and
-a different array.
-\end{enumerate}
-
-In summary, six of the nine bugs were originally bugs in \moss, two are variants on \moss bugs, and one
-is a port of the {\tt ccrypt} bug.  The bugs
-range from typical C coding errors (e.g., \texttt{NULL} pointer dereferences
-and array overruns) to high-level violations of a system's internal
-invariants (e.g., bugs 1 and 3).
-
-To measure the accuracy of our techniques we logged 
-when each bug was triggered.  Of course, this logging 
-code was excluded from the sampling instrumentation.
-To determine whether a run produced correct output we compared it against a run
-of the reference version of \moss.  As discussed in \Autoref{sec:introduction},
-in practice the labeling of runs as successful or failed is done by either detecting
-crashes, internal assertion failures, or (speculatively) by direct user feedback that the output
-of the program appears incorrect.  Our use of a reference version in this experiment made
-it possible for us to label large numbers of runs automatically.
-
-\Autoref{tab:exps} shows that \moss\ has over 200,000 instrumented predicates,
-and \rhythmbox\ has over 800,000.
-The reader may wonder whether it is practical to actually generate a report on
-800,000 predicates on a client machine and then upload it to a central
-server for analysis.  The answer is definitely yes.  Recall
-that the predicates are synthesized from about half as many counters.
-The counters are mostly zeroes and so compress extremely well,
-resulting in uploaded files in the range of 10-50Kbytes.
-
-As can be seen in \Autoref{tab:exps}, the branches and returns schemes
-resulted in short reports.  We again used correlations between predicates to help us navigate
-the scalar-pairs report.
-
-We briefly summarize the results.
-The algorithm identified a highly-ranked cause that would be useful to a programmer
-for six of the nine bugs.  For the two other bugs,
-one (bug 7) occurred in our experiment but never caused
-the program to crash or produce incorrect output; the other (bug 8) was never
-triggered at all.  There is no way our algorithm can find causes of bugs that do not
+A particularly interesting case of this phenomenon is bug \#7, one of
+the buffer overruns.  Bug \#7 is not strongly predicted by any
+predicate on the list but in fact occurs in at least a few of the
+failing runs of most predicates.  We have examined the runs of bug \#7
+in detail and found that the only failing runs bug \#7 occurs in also
+have at least one other bug.  That is, even though the bug \#7 overrun
+happens (though rarely), it never causes incorrect output or a crash
+in any run.  Bug \#8, another overrun, is not even shown because the
+overrun is never triggered in our data (its column would be all
+0's).\footnote{Bug \#8 was originally found by a code inspection.}
+There is no way our algorithm can find causes of bugs that do not
 occur, but recall that part of our purpose in sampling user executions
-is to get an accurate picture of the most important bugs. It is consistent with
-this goal that if a bug never causes a problem, it is not only not worth fixing,
-it is not even worth reporting.  The remaining bug had a strong predictor in the reports,
-but being a less important bug it was not highly ranked until other, higher-ranked
-bugs were fixed, at which point its strongest predictor became highly ranked.
+is to get an accurate picture of the most important bugs. It is
+consistent with this goal that if a bug never causes a problem, it is
+not only not worth fixing, it is not even worth reporting.
 
-Both the branches and returns reports are quite short and most any sort order would be
-reasonable.  Here we show the top six predicates, sorted in decreasing order of the probability
-of the program failing when the predicate is true:
-%%
-\begin{verbatim}
-Predicate      Context    Increase   Failure    Bug #
-strcmp(s,"lisp") == 0  
-               0.19       0.81       1.00       5
-*pstart + numpassages > pmax - 1 
-               0.53       0.47       1.00       6
-config.match_comment != 0
-               0.14       0.83       0.97       1
-strmp(argv[i],"-p") == 0
-               0.14       0.83       0.97       6
-strmp(argv[i],"-s") == 0
-               0.11       0.43       0.53       2
-config.dbfile != NULL
-               0.03       0.47       0.50       2
-\end{verbatim}
-We have added the last column by hand to show the bug each predicate indicates.  In
-each case these predicates give a very strong hint to the programmer about the conditions
-under which failure occurs.  We describe each briefly, in order.
+The other bugs all have strong predictors on the list.  In fact,
+the top eight predicates have exactly one predictor for each of the seven
+bugs that occur, with the exception of bug \#1, which has one very
+strong sub-bug predictor in the second spot and another predictor
+in the sixth position.  Notice that even the rarest bug, bug \#2,
+which occurs more than an order of magnitude less frequently than
+the most common bug, is identified immediately after the last of
+the other bugs.\footnote{The peculiar eighth predicate, {\tt f $<$ f}, 
+says that after an assignment the new value of {\tt f} is less than
+the old value of {\tt f}.}  Furthermore, we have verified by hand that
+the selected predicates would, in our judgment, lead an engineer to
+the cause of the bug. Overall, the elimination algorithm does an excellent
+job of listing separate causes of each of the bugs in order of priority,
+with very little redundancy.
 
+Below the eighth position there are no new bugs to report and every
+predicate is correlated with predicates higher on the list.  Even
+without the table of numbers at the right it is easy to spot the
+eighth position as the natural cutoff.  Notice that the initial and
+effective thermometers for the first eight predicates are essentially
+identical, with the exception of the predicate at position six, indicating
+that it is related to some predicate listed earlier (i.e., its sub-bug
+at position two).  All of the predicates below the eighth line have very
+different initial and effective thermometers (either many fewer
+failing runs, or much more non-deterministic, or both) showing that these
+predicates are strongly affected by 
+higher-ranked predicates.
 
-The first predicate marks the line where the decision is made about
-whether a Lisp program is being processed or not; the program always
-fails for Lisp inputs, and our algorithm correctly identifies this
-branch as the place where the decision is made that inevitably leads
-to failure.  The second predicate is an out-of-memory check just like
-the one that we removed to introduce bug 6, except that this test executes
-only when a \moss\ database is loaded.  In runs where this predicate
-is true bug 6 is inevitably triggered.  The next predicate says that
-the program fails with 97\% probability when comment matching is
-enabled, pointing to bug 1.  The fourth predicate is another indicator for
-bug 6, saying that whenever the user sets the memory size on the command line,
-the program is very likely to fail.  The last two predicates are nearly 
-equivalent and show that failure is much more likely whenever a
-database file is to be written (the first predicate is true when the
-command-line flag to save a database is supplied; the second predicate
-is true when the current configuration holds a non-null output
-database file name).
+\subsection{Additional Experiments}
 
+Our algorithm has a drawback illustrated by the \moss\ experiment: It
+is not easy to identify the predicates to which a predicate is closely
+related.  Such a feature is useful in confirming whether two selected
+predicts represent different bugs or are in fact related to the same
+bug.  We have a measure of how strongly $P$ implies another predicate
+$P'$: How does removing the runs where $R(P) = 1$ affect the
+importance of $P'$?  The more closely related $P$ and $P'$ are, the
+more $P'$'s importance drops when $P$'s failing runs are removed.  In
+our implementation, each predicate $P$ in the final, ranked list of
+predicates is hyperlinked to an {\em affinity} list of all predicates
+ranked by how much $P$ causes their ranking score to decrease.
 
-After the top six predicates, predicates 7-14 (not shown) are further useful predicates that
-point to one of the bugs detected by a higher-ranked predicate (bugs 1, 2, 5, and 6).  The 15th-ranked
-predicate in the branches report would point a programmer to the cause of bug 3.  In the returns report,
-the first four predicate are all indicators for bug 5 and the next two are indicators for bug 2.
+\input{views/table}
 
-The two remaining bugs 4 and 9 have predicates in the scalar-pairs report that point immediately to the
-bug; in particular, in both cases there are predicates that say an array subscript into the overrun
-array is larger than the declared size of the array.  The predicate for bug 4 is 16th
-in the scalar-pairs report; the higher-ranked predicates are all associated with other bugs.  
+\subsubsection{\ccrypt}
 
-The smoking-gun predicate
-for bug 9 appears 743rd on the scalar-pairs report.  This predicate is non-deterministic (a \crash\ score of .86) with a 
-low $\increase()$ score (.69) in comparison to other predicates.  Furthermore, this predicate
- is associated with relatively few failures; none of our suggested sort
-orders would rank this predicate close to the top of the list.  There are two basic approaches that can be taken
-to making the cause of bug 9 easier for engineers to notice in our output.  First, there is
-a huge amount of redundancy in the scalar-pairs report.  We can use correlations between predicates to suppress redundant
-predicates, thereby shortening the list and raising the ranking of unique predicates.  Even an extremely crude method
-of determining redundancy can be effective; for example, we experimented with clustering predicates that appear on the
-same line together and only reporting one predicate, chosen arbitrarily, per line.  This reduce the number of scalar-pairs
-predicates from thousands to 186, with the cause for bug 9 ranked 52nd.  
+We analyzed {\tt ccrypt} version 1.2, which has a known bug \cite{Selinger:2003:cqual}.  
+The results are shown in Table~\autoref{tab:views-ccrypt}.
+Our algorithm reports two predictors, which both point directly to the single bug. 
+It is easy to discover that the two predictors are for the same bug; the first predicate
+is listed first in the second predicate's affinity list, indicating the first predicate
+is a sub-bug predictor of the second predicate.
 
-An even simpler approach, however, is to take the view that we cannot address all the bugs at once anyway, and so long
-as the most important bugs are ranked highly it does not matter where less important bugs are ranked.  
-We fixed the highest ranked bugs (1, 2, 3, 5, 6, and 7) and then reran the experiment.  The smoking gun for bug 4 was
-rated at the top and the predicate for bug 9 was rated 26th.  Since the first 25 predicates in this scalar-pairs report
-were all associated with bug 4, fixing that bug would put the predicates for bug 9 at the top of the list.
+\subsubsection{\bc}
 
+The results for \bc\ are shown in Table~\autoref{tab:views-bc}, which has a known buffer overrun.
+The outcome is the same as for \ccrypt: two predicates are retained by elimination, and the second
+predicate lists the first predicate at the top of its affinity list, indicating the first predicate
+is a sub-bug predictor of the second.  Both predicates point to the cause of the overrun.  
+This bug causes a crash long after the overrun occurs and there is no useful
+information on the stack at the point of the crash to assist in isolating this bug.
 
-As mentioned earlier,  we also found a  previously unknown bug in \moss.
-An entry in the returns report shows that one of
-the file read operations in the function that loads a database can
-fail, and when it does \moss\ itself fails with probability 0.64.
-It turns out that \moss\ assumes that any database it reads has the
-correct database file format, because it does no checking to ensure
-that the read operations that actually load the database succeed.  
-It is surprising that this bug was detected,
-because a run is only labeled a failure in our experiment if the
-reference \moss\ and the buggy \moss\ differ in their outcome, and
-this bug is present in both versions.  Thus, this bug could only be detected
-when another one of the introduced bugs was also triggered in the same
-run and caused the buggy version of \moss\ to fail in a different way.
-This explains the very low $\increase(\ldots)$ score for this
-predicate (the chance of failure only increases by 11\% when this bug
-occurs) and why it was not observed in the \nicefrac{1}{100}
-downsampled data.  With enough runs it would be observed at
-any sampling rate, but the anomaly that the reference and buggy
-versions of \moss\ share this bug means that, at the
-\nicefrac{1}{100} sampling rate, many more runs are likely needed
-than what we had for this experiment.
+\subsubsection{\exif}
 
-Finally, we compared the reports generated from \nicefrac{1}{100} sampled data
-with the reports generated from \nicefrac{1}{1} sampled data.  The reports were
-similar, but the ordering of  predicates was slightly different.
+Table~\autoref{tab:views-exif} shows results for \exif, an open source image processing program.
+The three predicates are predictors of three separate, and previously unknown, crashing bugs.  It took less
+than 20 minutes of work to find and verify the cause of each of the bugs using these predicates
+and the additional highly correlated predicates on their affinity lists.
 
-In summary, our algorithm did a good job of producing concise reports that not
-only identified the bugs, but also gave useful information about the root causes and
-how to reproduce the bugs.  In addition, the algorithm identified a previously unknown
-bug.
+\subsubsection{\rhythmbox}
 
-\subsection{Effect of Sampling on Predicate Selection}
+Table~\autoref{tab:views-rhythmbox} shows our results for \rhythmbox, an open source jukebox player.
+\rhythmbox is a complex event-driven system, written using
+a library providing object-oriented primitives in C.  Event-driven
+systems use event queues; each event performs some computation and
+possibly adds more events to some queues.  We know of no static
+analysis today that can analyze event-driven systems accurately,
+because no static analysis is currently capable of analyzing the
+heap-allocated event queues with sufficient precision.
+Crash-reporting systems are also of limited utility in analyzing
+event-driven systems, as the stack in the main event loop is
+unchanging and all of the interesting state is in the queues.
 
-We now examine the effect of the sampling rate and number of trial runs
-on the number of retained predicates.
-We start with $3000$ randomly
-selected trial runs of \moss, and add $3000$ random trials at a time, until we
-incorporate all $31,871$ runs in our dataset.  We record the number of
-predicates retained at each step.  This process is repeated ten times
-for each sampling rate, with ten different random permutation sequences
-of our data. We plot the mean and the confidence interval (one
-standard deviation above and below the mean) in
-\Autoref{fig:predkept}.  
-Two trends are apparent from the graph.  First, as one would
-expect, the number of retained predicates always increases as more trial runs 
-are included.  Second, sampling reduces the overall number of retained 
-predicates.
-Using all $31,871$ trial runs, we retain $10280$ 
-predicates when the data is not sampled (i.e.,\ sampling rate is 
-$\nicefrac{1}{1}$), $10025$ at sampling
-rate $\nicefrac{1}{10}$, $6839$ at $\nicefrac{1}{100}$, and $5653$ at
-$\nicefrac{1}{1000}$.
-
-\begin{figure}
-\centering
-\includegraphics[width=\columnwidth]{predkept3a}
-%%(a) Branches, returns, and scalar-pairs. \\
-%%\includegraphics[width=\columnwidth]{predkept3b}
-%%(b) Branches and returns only.
-\caption{The effect of sampling and data size on the number of
-  predicates selected.}
-\label{fig:predkept}
-\end{figure}
-
-
-%% As is apparent from the graph, there is much larger variation in the
-%% number of selected predicates when we use fewer trial runs.
-%% %Using $3000$ trials, at the minimum we
-%% %retain $7429$ predicates using unsampled data, $7654$ when sampling
-%% %rate is $\nicefrac{1}{10}$, $7347$ at $\nicefrac{1}{100}$, and $6750$
-%% %at $\nicefrac{1}{1000}$;
-%% As we incorporate more examples of successful and failed \moss\ runs,
-%% the variances decrease for all sampling rates, but the means behave
-%% somewhat differently.  When the data is not sampled, the average
-%% number of selected predicates stays around $8100$ for all data sizes.
-%% Sampling adds noise to this procedure.  As we observed previously,
-%% a moderate sampling rate tends to drive up the $\increase(\ldots)$ scores, and
-%% thus enlarges our set of selected predicates (except when we are using
-%% very few trial runs).
-
-%% At the relatively high sampling rate of
-%% \nicefrac{1}{10}, there are still enough samples taken at most
-%% instrumentation sites, and there is a net increase in the number of
-%% selected predicates.  Once the sampling rate shrinks to
-%% \nicefrac{1}{100} and below, however, the effect of sparse
-%% sampling sets in.  Fewer samples are taken overall on fewer predicates,
-%% and as a result, fewer predicates have a nonzero $\increase(\ldots)$ score.
-%% Incorporating more runs tends to alleviate the situation; at above
-%% 10,000 runs, roughly the same number of predicates are retained for
-%% the \nicefrac{1}{100} sampled data as the complete data.  The very
-%% sparse sampling rate of \nicefrac{1}{1000}, on the other hand,
-%% causes much more change in the final result.  A lot more predicates
-%% are eliminated when using fewer trials, and a lot more predicates are
-%% retained using more trials.
-
-%% Most of the volatility in the results come from the scalar-pair
-%% predicates.  \Autoref{fig:predkept-b} shows the same graph for
-%% only the branch and return predicates.  Here, across all data sizes,
-%% the number of selected predicates remains roughly constant at each
-%% sampling rate.  The complete data is still able to select the fewest
-%% number of predicates, with \nicefrac{1}{100} sampled data following
-%% close behind.  The \nicefrac{1}{1000} sampled data still produces a
-%% net increase in the number of selected predicates.
-
-%% LocalWords:  downsampling lang downsampled predelim predkept
+We isolated two distinct bugs in \rhythmbox.  The first predicate led
+us to a race condition.  The second predicate was not useful directly,
+but we were able to isolate the bug using the predicates in its
+affinity list.  This second bug revealed what turned out to be a very
+common incorrect pattern of accessing the underlying object library
+(see the discussion in Section~\ref{sec:introduction}).  These bugs
+were confirmed and patches applied within a few days, in part because
+we could quantify the bugs as important crashing bugs.  It required
+several hours to isolate each of the two bugs, in part because \rhythmbox
+is complex and we were unfamiliar with it and in part because the bugs
+were violations of subtle invariants.  We could not have even begun to
+understand these bugs without the information provided by our tool.
