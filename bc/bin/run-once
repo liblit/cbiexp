@@ -45,7 +45,7 @@ delete $ENV{SAMPLER_REPORT_FD};
 #
 
 my ($inFd, $inName) = tempfile(UNLINK => 1);
-(system { $fuzz } $fuzz, $runId, 1, $inName) == 0
+(system { $fuzz } $fuzz, $runId, 9, $inName) == 0
     or die "cannot create random input file: $!";
 
 open my $oldin, '<&', \*STDIN or die "cannot save standard input: $!";
