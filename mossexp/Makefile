@@ -53,4 +53,4 @@ install:
 	cp mossbad2 $(INSTDIR)
 	cp clusterdata.pl $(INSTDIR)
 	cp watchdog.pl $(INSTDIR)
-	chmod a+x $(INSTDIR)/*
+	chmod g+rwx $(INSTDIR)/*
