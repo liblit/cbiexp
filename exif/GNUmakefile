@@ -1,4 +1,4 @@
-CC  := sampler-cc -g --sampler-scheme=scalar-pairs --sampler-scheme=branches --no-sample
+CC  := sampler-cc --sampler-scheme=scalar-pairs --sampler-scheme=branches --no-sample
 # using the returns scheme masks the bug
 
 pwd := $(shell pwd)
