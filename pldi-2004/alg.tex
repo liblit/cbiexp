@@ -98,6 +98,11 @@ the conditional probability function of the event $A$ given event $B$ .
 We want to compute:
 \issue{modified by Alice}
 \issue[Alice]{Prob (P => Crash) should really be something like Pr (Crash = 1 | P = 1) [text modified]}
+\issue[Mike]{I've never liked the notation "Prob(P \implies Crash)".  What
+this quantity really is is "Prob(Crash | P = true)".  The notation
+"Prob(P \implies Crash)" doesn't suggest a conditional probability.
+Failure(P) really is a conditional probability, and I think that it
+should be presented as such.}
 \[ \crash(P) \equiv \prob(\fail = 1 | P = 1) \]
 %= \prob(\fail | P \mbox{ is true}) \]
 for every instrumented predicate $P$ over the set of all runs.  Let $S(P)$ be the number
@@ -126,13 +131,15 @@ If $\crash(P) < 1.0$ then the bug is non-deterministic, with
 lower scores showing weaker correlation between the predicate and
 program failure.
 
+\issue{Modified by Mike: replaced ``surprising'' with ``unplesant''}
+
 Now $\crash(P)$ is a useful measure, but it is not good
 enough for the first step of our algorithm. To see this, consider again the
 code fragment given above (in its original form, not with the
 modification to make the bug non-deterministic).  At line {\tt (b)} we
 have $\crash(\mbox{\tt f == NULL}) = 1.0$, so this predicate is a good
 candidate for the cause of the bug.
-But on line {\tt (c)} we have the surprising fact that $\crash(\mbox{\tt x == 0}) = 1.0$ as well.
+But on line {\tt (c)} we have the unpleasant fact that $\crash(\mbox{\tt x == 0}) = 1.0$ as well.
 To understand why, observe that the 
 predicate \texttt{x == 0} is always true at line {\tt (c)} and, in
 addition,
@@ -164,6 +171,9 @@ the intuition that this predicate is irrelevant to the bug.
 This leads us to the following definition:
 \[
 \issue{modified by Alice}
+\issue[Mike]{I've never liked the notation "Prob((P \or \not P) \implies Crash)".  
+What this quantity really is is "Prob(Crash | P = true \or P = false)".  
+Just like with Failure(P), Context(P) is a conditional probability.}
 \context(P) \equiv \prob(\fail = 1 | P \mbox{ is observed})  
 \]
 %= \prob(\fail |  P \mbox{ observed}) 
@@ -200,15 +210,25 @@ we have
 \[\crash(\mbox{\tt x == 0}) = \context(\mbox{\tt x == 0}) = 1.0 \]
 and so $\increase(\mbox{\tt x == 0}) = 0$.
 
+\issue{Modified by Mike: "Since Increase() is a statistic, computing its confidence
+interval is a well-understood problem" -> 
+"Since Increase() is a statistic, computing a confidence interval 
+for the underlying parameter is a well-understood problem" 
+[confidence intervals are for parameters which are being estimated, 
+not for statistics.]}
 A predicate $P$ with $\increase(P) \leq 0$ has no predictive power; whether it is true does not increase the
 probability of failure, and we can safely discard all such predicates.
 But because some $\increase(P)$ scores may be based on few observations of $P$, it is important
 to attach confidence intervals to the scores.  Since $\increase()$ is a statistic, computing
-its confidence interval is a well-understood problem. In our experiments we retain a predicate $P$
+a confidence interval for the underlying parameter is a well-understood problem. In our experiments we retain a predicate $P$
 only if $\increase(P) > 0$ with 95\% confidence; this removes predicates from consideration that have high
 increase scores but very low confidence because of few observations. 
 
-Pruning predicates using $\increase(P) \leq 0$ has many desirable
+\issue{Modified by Mike: "Pruning predicates using Increase(P) \leq 0"
+-> "Pruning predicates based on Increase(P)"
+[Since we're using confidence intervals, the former statement
+isn't strictly correct].}
+Pruning predicates based on $\increase(P)$ has many desirable
 properties.  It is easy to prove that large classes of irrelevant
 predicates always have scores $\leq 0$.  For example, any predicate
 that is unreachable, that is a program invariant, or that is obviously
@@ -280,7 +300,7 @@ Then
   what "lower bound" is.  (Alternatively, it should be ``lower bound of
   the confidence interval of Increase(P)'').}
 
-\subsection{Ranking Predicates: Precision vs. Recall}
+\subsection{Ranking Predicates: Specificity vs. Sensitivity}
 \label{sec:ranking}
 
 \issue[Alice]{I thought we were going to use the sensitivity vs.
@@ -401,25 +421,49 @@ predictors that account for a significant fraction of the failures for
 a bug often provide valuable clues, but still they represent special
 cases and may not suggest other, more fundamental, causes of the bug.
 
-Tables~\ref{tab:sorts-failure} and \ref{tab:sorts-increase} illustrate the difficulty of defining
-``importance''.  It is helpful to consider this problem in the language of information
-retrieval. We are looking for predicates with
-high {\em recall} (meaning predicates that account for many failed runs) but also high {\em precision}
-(meaning predicates that do not mispredict failure in many successful runs).  In statistics,
-the corresponding terms are {\em selectivity} and {\em sensitivity}.  In both fields,
-the standard metric is the harmonic mean of precision and recall, which disproportionately
-rewards high scores in both dimensions.
-%%
 \issue[Alice]{Why use the word "disproportionately"?  The harmonic
   mean just rewards high scores in both dimensions, and has the
   averaging affect of trading off one with the other, no?}
+\issue{Modified by Mike: "selectivity" -> "sensitivity"}
+\issue[Mike]{Tables 1(a) and (b) illustrate the difficulty of defining
+``importance.''  It is helpful to consider this problem in the 
+language of information retrieval. ..." 
+[I personally don't think that the terminology of "recall" and 
+"precision" are very helpful in our context; I think that "sensitivity"
+and "specificity" are better.  In particular, it's clear to me
+what it means for a predicate to have high sensitivity, and it's
+not clear to me what it means for a predicate to have high recall.
+Moreover, the latter terms are used in a much wider set of fields
+than "recall" and "precision", which are mainly used in IR.  In
+sum, I would suggest changing the paragraph to the following:}
+Tables~\ref{tab:sorts-failure} and \ref{tab:sorts-increase} illustrate the difficulty of defining
+``importance.''  We are looking for predicates with high \emph{sensitivity}
+(meaning predicates that account for many failed runs) but also high \emph{specificity} (meaning predicates that do not mispredict failure in many successful
+runs).  In information retrieval, the corresponding terms are recall and
+precision.  A standard way to combine sensitivity and specificity is to compute
+their harmonic mean; this measure disproportionately rewards high scores in
+both dimensions.  In our case, $\increase(P)$ measures specificity.  For
+sensitivity, we have found it useful to consider a transformation $\phi()$ 
+of the raw counts, and to form the ratio $\phi(F(P)) / \phi(\numfail)$, 
+where $\numfail$ is the total number of failed runs.  Thus our overall
+metric is the following:
+%% It is helpful to consider this problem in the language of information
+%% retrieval. We are looking for predicates with
+%% high {\em recall} (meaning predicates that account for many failed runs) but also high {\em precision}
+%% (meaning predicates that do not mispredict failure in many successful runs).  In statistics,
+%% the corresponding terms are {\em sensitivity} and {\em specificity}.  In both fields,
+%% the standard metric is the harmonic mean of precision and recall, which disproportionately
+%% rewards high scores in both dimensions.
 %%
-In our case, $\increase(P)$ measures precision and $F(P)$ measures recall.  Define
+%%
+%% In our case, $\increase(P)$ measures precision and $F(P)$ measures recall.  Define
 %%
 \[ \importance(P) = \frac{2}{\frac{1}{\increase(P)} + \frac{log(\numfail)}{log(F(P))}} \]
 %%
-where $\numfail$ is total number of failing runs (independent of $P$)
-and therefore scales recall to between zero and one.
+%% where $\numfail$ is total number of failing runs (independent of $P$)
+%% and therefore scales recall to between zero and one.
+In particular, in our work thus far $\phi()$ has been a logarithmic
+transformation.
 %%
 \issue[Alex]{It might be a bit unclear since the quantity that is in
   the interval 0-1 is
@@ -427,18 +471,22 @@ and therefore scales recall to between zero and one.
   log(F(P))/log(NumF)
 
   and the formula as written has the reciprocal of that.}
-
+\issue[Mike]{Replace precision by specificity and recall with sensitivity 
+throughout paper. (done)}
 The results are given in \autoref{tab:sorts-harmonic}.  We observe that
-all of the predicates on this list indeed have both high precision and
-recall, accurately describing a large number of failures. 
+all of the predicates on this list indeed have both high specificity and
+sensitivity, accurately describing a large number of failures. 
 
 
 \subsection{Predicate Elimination}
 \label{sec:elimination}
 
+\issue{Modified by Mike: "these predicates are related hiding other, distinct bugs..."
+->
+"these predicates are related, hiding other, distinct bugs..."}
 The remaining problem with the results in \autoref{tab:sorts-harmonic}
 is that there is substantial redundancy; it is easy to see that several of these
-predicates are related hiding other, distinct bugs that either have
+predicates are related, hiding other, distinct bugs that either have
 fewer failed runs or more non-deterministic predictors further down the
 list.  As discussed above, we use a simple recursive algorithm to eliminate
 redundant predicates:

@@ -133,6 +133,8 @@ pdfpagemode=UseOutlines
 \begin{document}
 
 \issue[Alice]{Overall comment: font too small?}
+\issue[Mike]{ I think that Section 5.1 would be better placed at the
+end of Section 4.}
 
 \maketitle
 
@@ -220,6 +222,10 @@ set of failing runs, but note that ${\cal B}_i \cap {\cal B}_j \neq
   going to veer from the usual definition, then at least we should
   make this clear.  [text modified]}
 
+\issue[Mike]{"A bug is a set of failing runs".  Semantically one thinks 
+of a bug as someone that characterizes a program, not a set of runs.
+What about calling a set of a failing runs a "bug profile"?}
+
 A predicate $P$ is a {\em bug predictor} (or simply a {\em predictor})
 of bug ${\cal B}$ if whenever $R(P) = 1$ then it is statistically
 likely that $R \in {\cal B}$ (see \autoref{sec:increase}).  {\em
@@ -231,25 +237,28 @@ metrics (see \autoref{sec:experiments}) are then available to
 engineers to help speed the process of finding and fixing the most
 serious bugs.
 
+\issue{modified by Mike (``The most general technique...'')}
+
 In previous work, we focused on techniques
 for lightweight instrumentation and sampling of program executions, but
 we also studied two preliminary algorithms for statistical debugging and
 presented experimental results on medium-size applications with a
 single bug \cite{PLDI`03*141,NIPS2003_AP05}.  The most general
-technique we studied is based on {\em logistic regression}, a standard
-optimization procedure that tries to select a set of predicates that
-best predicts the outcome of every run. As we worked to apply these
+technique we studied is {\em regularized logistic regression}, a standard
+statistical procedure that tries to select a set of predicates that
+best predict the outcome of every run. As we worked to apply these
 methods to much larger programs under realistic conditions, we
 discovered a number of serious scalability problems:
 
 \begin{itemize}
 
+\issue{Modified by Mike (deleted ``the problem persists...'')}
+
 \item For large applications the set ${\cal P}$ numbers in the hundreds of
 thousands of predicates, many of which are, or are very nearly,
 logically redundant.  In our experience, this redundancy in ${\cal P}$
 causes logistic regression to choose highly redundant lists of
-predictors ${\cal S}$.  This problem persists even for
-regularized logistic regression with penalty terms.  Redundancy is
+predictors ${\cal S}$.  Redundancy is
 already evident in prior work \cite{PLDI`03*141} but becomes much
 worse for larger programs.
 %%
@@ -301,9 +310,11 @@ This paper makes a number of contributions on these problems:
 
 \begin{itemize}
 
+\issue{Modified by Mike (deleted ``..based on different techniques and offering...'')}
+
 \item We present a new algorithm for isolating multiple bugs in
-complex applications (\autoref{sec:algorithm}) based on different
-techniques and offering significant improvements over previous work:
+complex applications (\autoref{sec:algorithm}) 
+that offers significant improvements over previous work:
 it scales much more gracefully in all the dimensions discussed above
 and for each selected predicate $P$ it naturally produces information
 that shows both how important (in number of explained program
@@ -336,7 +347,7 @@ essentially no information about the bug's cause.
 \item Finally, we show that, in principle, it is possible for our
 approach to help isolate any kind of failure, not just program
 crashes.  All that is required is a way to label each run as either
-``successful'' or ``unsuccessful''.
+``successful'' or ``unsuccessful.''
 
 \end{itemize}
 
@@ -492,12 +503,15 @@ Each compared-to $\mathtt{y}_i$
 \section{Previous and Related Work}
 \label{sec:related-work}
 
+\issue[Mike]{"run-time values to be sound" -> "run-time values to be found" (?)
+
+}
 In this section we briefly survey related work. There is currently a
 great deal of interest in applying static analysis to improve software
 quality.  While we firmly believe in the use of static analysis to
 find and prevent bugs, our dynamic approach has advantages. A dynamic
 analysis can observe actual run-time values, which is often better
-than either making a very conservative static assumption about runtime
+than either making a very conservative static assumption about run-time
 values to be sound, or allowing some even very simple bugs to escape
 undetected.  Another advantage of dynamic analysis, especially one
 that uses actual user executions for its data, is the ability to
@@ -519,6 +533,7 @@ to use lightweight partial monitoring, suitable for either for testing
 or deployment to end users.  We never have complete information, and
 therefore must use a more statistical approach.
 
+\issue{Modified by Mike: "Our predicates, however,..." -> "Our predicates do, however,..."}
 \termdef{Software tomography} as realized through the GAMMA system
 \cite{PASTE'02*2,Orso:2003:LFDIART} shares our goal of low-overhead
 distributed monitoring of deployed code.  GAMMA collects code coverage
@@ -526,7 +541,7 @@ data to support a variety of code evolution tasks.  Our
 instrumentation exposes a broader family of data- and
 control-dependent predicates on program behavior and uses randomized
 sparse sampling to control overhead.  Our
-predicates, however, give coverage information: the sum of all predicate counters at a site converges to the relative coverage of that site.
+predicates do, however, give coverage information: the sum of all predicate counters at a site converges to the relative coverage of that site.
 
 Efforts to directly apply statistical modeling principles to debugging
 have met with mixed results.  Early work in this area by Burnell and
@@ -582,12 +597,15 @@ have helped to guide our own design of a wide public deployment of
 applications with sampled instrumentation, presently underway
 \cite{Liblit:2003:CBIP}.
 
+\issue{Modified by Mike: "uses the multivariate state estimation technique"
+->
+"uses multivariate state estimation techniques"}
 For some highly available systems, even a single failure must be
 avoided.  Once the behaviors that predict imminent failure are known,
 automatic corrective measures may be able to prevent the failure from
 occurring at all.  The Software Dependability Framework (SDF)
-\cite{Gross:2003:PSMUST} uses the multivariate state estimation
-technique to model and thereby predict impending system failures.
+\cite{Gross:2003:PSMUST} uses multivariate state estimation
+techniques to model and thereby predict impending system failures.
 Instrumentation is assumed to be complete and is typically
 domain-specific.
 
