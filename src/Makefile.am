@@ -132,6 +132,7 @@ liblate_a_SOURCES =				\
 	extract_timestamps.ll			\
 	find_tsSCC.cc				\
 	gather_prior_dist.cc			\
+	gather_prior_truths.cc			\
 	gen_preds_file.cc			\
 	gen_summary.cc				\
 	gen_views.cc				\

@@ -242,6 +242,13 @@ prior-dist: gather_prior_dist s.runs f.runs preds.txt
 	mv spriors.dat spriors-full.dat
 	$(time) ./$< --runs-directory=$(datadir) --report-suffix=$(report-series)
 
+gather_prior_truths: %: $(tooldir)/%.o sites.o units.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
+clean:: ; rm -f gather_prior_truths
+
+truth-dist: gather_prior_truths s.runs f.runs preds.txt
+	$(time) ./$< --runs-directory=$(datadir)
+
 compute_nonconst_preds: %: $(tooldir)/%.o sites.o units.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -lm -o $@
 clean:: ; rm -f compute_nonconst_preds
