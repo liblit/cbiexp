@@ -3,7 +3,10 @@ experiment := ..
 datadir := $(experiment)/data
 corrdir := $(root)/correlations
 tooldir := $(root)/src
-sites := $(wildcard $(experiment)/share/*.sites)
+
+sitesglob := $(experiment)/share/*.sites
+sites := $(wildcard $(sitesglob))
+sites := $(if $(sites), $(sites), $(error no sites files in $(sitesglob)))
 
 time := /usr/bin/time
 
