@@ -113,7 +113,7 @@ void restore_site_name(pred_name* n)
 char  scalar_op[3] = { '<', '=', '>' };
 char* return_op[3] = { "< 0", "= 0", "> 0" };
 
-bool print_pred_summary(int u, int c, int p)
+bool is_bug_predictor(int u, int c, int p)
 {
     int s  = site_summary[u][c].S[p];
     int f  = site_summary[u][c].F[p];
@@ -124,13 +124,28 @@ bool print_pred_summary(int u, int c, int p)
     float co = ((float) of) / (os + of);
     float in = fs - co;
     float lb = in - conf * sqrt(((fs * (1 - fs)) / (f + s)) + ((co * (1 - co))/(of + os)));
-    if (lb > 0 && s + f >= 10) {
-        fprintf(preds_full_fp, "%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ", units[u].s[0], u, c, p, lb, in, fs, co, s, f, os, of);
-        fprintf(preds_abbr_fp, "%d %d %d\n", u, c, p);
-        fprintf(preds_hdr_fp , "\t\"%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ", units[u].s[0], u, c, p, lb, in, fs, co, s, f, os, of);
-        return true;
-    }
+
+    if (lb > 0 && s + f >= 10) return true;
     return false;
+}
+
+void print_pred_stats(int u, int c, int p)
+{
+    int s  = site_summary[u][c].S[p];
+    int f  = site_summary[u][c].F[p];
+    int os = site_summary[u][c].os;
+    int of = site_summary[u][c].of;
+
+    float fs = ((float)  f) / ( s +  f);
+    float co = ((float) of) / (os + of);
+    float in = fs - co;
+    float lb = in - conf * sqrt(((fs * (1 - fs)) / (f + s)) + ((co * (1 - co))/(of + os)));
+
+    fprintf(preds_full_fp, "%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
+        units[u].s[0], u, c, p, lb, in, fs, co, s, f, os, of);
+    fprintf(preds_abbr_fp, "%d %d %d\n", u, c, p);
+    fprintf(preds_hdr_fp , "\t\"%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
+        units[u].s[0], u, c, p, lb, in, fs, co, s, f, os, of);
 }
 
 void print_branch_pred(FILE* fp, char* pred, char* op)
@@ -158,13 +173,70 @@ void print_scalar_pred(FILE* fp, char* pred, char op, bool is_neg)
 bool print_site_summary(int u, int c, char* site_name)
 {
     pred_name n;
-    int p;
+    int p, count = 0;
+
+#define LT  0
+#define GEQ 1
+#define EQ  2
+#define NEQ 3
+#define GT  4
+#define LEQ 5
+
+    bool a[6] = { false, // 0 LT
+                  false, // 1 GEQ
+                  false, // 2 EQ
+                  false, // 3 NEQ
+                  false, // 4 GT
+                  false  // 5 LEQ
+                };
 
     switch (units[u].s[0]) {
     case 'S':
         for (p = 0; p < 6; p++)
-            if (print_pred_summary(u, c, p)) {
+            if (is_bug_predictor(u, c, p)) {
+                count++;
+                a[p] = true;
+            }
+
+        switch (count) {
+        case 2:
+            if (a[LT]) {
+                if (a[LEQ]) 
+                    a[LEQ] = false;
+                else if (a[NEQ])
+                    a[NEQ] = false;
+            } else if (a[GT]) {
+                if (a[GEQ]) 
+                    a[GEQ] = false;
+                else if (a[NEQ])
+                    a[NEQ] = false;
+            } else if (a[EQ]) {
+                if (a[LEQ]) 
+                    a[LEQ] = false; 
+                else if (a[GEQ])
+                    a[GEQ] = false;
+            }
+            break;
+        case 3:
+            if (a[LT] && a[EQ] && a[LEQ])
+                a[LT] = a[EQ] = false;
+            else if (a[GT] && a[EQ] && a[GEQ])
+                a[GT] = a[EQ] = false;
+            else if (a[LT] && a[GT] && a[NEQ])
+                a[LT] = a[GT] = false;
+            else if (a[LT] && a[LEQ] && a[NEQ])
+                a[LEQ] = a[NEQ] = false;
+            else if (a[GT] && a[GEQ] && a[NEQ])
+                a[GEQ] = a[NEQ] = false;
+            else if (a[EQ] && a[LEQ] && a[GEQ])
+                a[LEQ] = a[GEQ] = false;
+            break;
+        }
+
+        for (p = 0; p < 6; p++)
+            if (a[p]) {
                 num_s_preds++;
+                print_pred_stats(u, c, p);
                 extract_pred_name(site_name, &n);
                 print_scalar_pred(preds_full_fp, n.pred, scalar_op[p / 2], p % 2 ? true : false);
                 print_scalar_pred(preds_hdr_fp , n.pred, scalar_op[p / 2], p % 2 ? true : false);
@@ -172,9 +244,51 @@ bool print_site_summary(int u, int c, char* site_name)
             }
         break;
     case 'R':
+        for (p = 0; p < 6; p++)
+            if (is_bug_predictor(u, c, p)) {
+                count++;
+                a[p] = true;
+            }
+
+        switch (count) {
+        case 2:
+            if (a[LT]) {
+                if (a[LEQ]) 
+                    a[LEQ] = false;
+                else if (a[NEQ])
+                    a[NEQ] = false;
+            } else if (a[GT]) {
+                if (a[GEQ]) 
+                    a[GEQ] = false;
+                else if (a[NEQ])
+                    a[NEQ] = false;
+            } else if (a[EQ]) {
+                if (a[LEQ]) 
+                    a[LEQ] = false; 
+                else if (a[GEQ])
+                    a[GEQ] = false;
+            }
+            break;
+        case 3:
+            if (a[LT] && a[EQ] && a[LEQ])
+                a[LT] = a[EQ] = false;
+            else if (a[GT] && a[EQ] && a[GEQ])
+                a[GT] = a[EQ] = false;
+            else if (a[LT] && a[GT] && a[NEQ])
+                a[LT] = a[GT] = false;
+            else if (a[LT] && a[LEQ] && a[NEQ])
+                a[LEQ] = a[NEQ] = false;
+            else if (a[GT] && a[GEQ] && a[NEQ])
+                a[GEQ] = a[NEQ] = false;
+            else if (a[EQ] && a[LEQ] && a[GEQ])
+                a[LEQ] = a[GEQ] = false;
+            break;
+        }
+
         for (p = 0; p < 6; p++) 
-            if (print_pred_summary(u, c, p)) {
+            if (a[p]) {
                 num_r_preds++;
+                print_pred_stats(u, c, p);
                 extract_pred_name(site_name, &n);
                 print_return_pred(preds_full_fp, n.pred, return_op[p / 2], p % 2 ? true : false);
                 print_return_pred(preds_hdr_fp , n.pred, return_op[p / 2], p % 2 ? true : false);
@@ -182,15 +296,17 @@ bool print_site_summary(int u, int c, char* site_name)
             }
         break;
     case 'B':
-        if (print_pred_summary(u, c, 0)) {
+        if (is_bug_predictor(u, c, 0)) {
             num_b_preds++;
+            print_pred_stats(u, c, 0);
             extract_pred_name(site_name, &n);
             print_branch_pred(preds_full_fp, n.pred, "is FALSE");
             print_branch_pred(preds_hdr_fp , n.pred, "is FALSE");
             restore_site_name(&n);
         }
-        if (print_pred_summary(u, c, 1)) {
+        if (is_bug_predictor(u, c, 1)) {
             num_b_preds++;
+            print_pred_stats(u, c, 1);
             extract_pred_name(site_name, &n);
             print_branch_pred(preds_full_fp, n.pred, "is TRUE");
             print_branch_pred(preds_hdr_fp , n.pred, "is TRUE");
