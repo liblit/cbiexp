@@ -55,6 +55,8 @@ pdfpagemode=UseOutlines
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
 
+\newcommand{\bug}{\ensuremath{B}}
+\newcommand{\bugprofile}{\ensuremath{\mathcal{B}}}
 \newcommand{\moss}{\textsc{Moss}\xspace}
 \newcommand{\rhythmbox}{\textsc{Rhythmbox}\xspace}
 \newcommand{\exif}{\textsc{exif}\xspace}
@@ -148,7 +150,7 @@ end of Section 4.}
   failure modes, making it easier to prioritize debugging efforts.
   Our algorithm is validated using several case studies, including finding
   previously unknown and significant crashing bugs in widely used systems.
-  We compare our technique with an earlier algorithm and find it much more accurate 
+  We compare our technique with an earlier algorithm and find it much more accurate
   and scalable.
 \end{abstract}
 
@@ -195,25 +197,24 @@ consists of one bit indicating whether a run of the program
 succeeded or failed, as well as a bit vector with one bit for each
 predicate $P$; if $P$ is observed to be true at least once during run
 $R$ then $\report{P} = 1$, otherwise $\report{P} = 0$.
-    
-\issue{modified by Alice}
 
-The usual definition of a bug refers to a programmatic element that 
-unintentionally causes incorrect behavior.  We're going to abuse notation a
-bit and overload its definition.  In this paper, a \termdef{bug} also refers to
-a set of failing runs (feedback reports) ${\cal B}$
-that share a cause of failure.  The meaning becomes clear in context.  The 
-union of all bugs is exactly the
-set of failing runs, but note that ${\cal B}_i \cap {\cal B}_j \neq
-\emptyset$ in general; more than one bug can occur in some runs.
-
-\issue[Mike]{"A bug is a set of failing runs".  Semantically one thinks 
+\issue[Mike]{"A bug is a set of failing runs".  Semantically one thinks
 of a bug as someone that characterizes a program, not a set of runs.
 What about calling a set of a failing runs a "bug profile"?}
 
+\issue{modified by Alice}
+
+Let $\bug$ denote a bug (i.e., something causes incorrect behavior in
+a program).  We use $\bugprofile$ to denote a \termdef{bug profile},
+i.e., a set of failing runs (feedback reports)
+that share a cause of failure.  The meaning becomes clear in context.  The
+union of all bugs profiles is exactly the
+set of failing runs, but note that $\bugprofile_i \cap \bugprofile_j \neq
+\emptyset$ in general; more than one bug can occur in some runs.
+
 A predicate $P$ is a \termdef{bug predictor} (or simply a
-\termdef{predictor}) of bug ${\cal B}$ if whenever $\report{P} = 1$
-then it is statistically likely that $R \in {\cal B}$ (see
+\termdef{predictor}) of bug profile $\bugprofile$ if whenever $\report{P} = 1$
+then it is statistically likely that $R \in \bugprofile$ (see
 \autoref{sec:increase}).  \termdef{Statistical debugging} selects a
 small subset ${\cal S}$ of the set of all instrumented predicates
 ${\cal P}$ such that ${\cal S}$ has predictors of all bugs.  We also
@@ -252,10 +253,10 @@ implying a long command line may rank near the top, even though such
 predicates are useless for isolating the cause of individual bugs.
 
 \item Finally, different bugs occur at rates that differ by orders of
-magnitude.  In reality, we do not know which crash is caused by which bug, 
+magnitude.  In reality, we do not know which crash is caused by which bug,
 hence we are forced to lump all the bugs together and try to learn a binary
 classifier.  Thus, predictors for all but the most common bugs have relatively little
-influence over the global optimum and tend to be ranked low or not included 
+influence over the global optimum and tend to be ranked low or not included
 in ${\cal S}$ at all.
 
 \end{itemize}
@@ -284,7 +285,7 @@ This paper makes a number of contributions on these problems:
 \begin{itemize}
 
 \item We present a new algorithm for isolating multiple bugs in
-complex applications (\autoref{sec:algorithm}) 
+complex applications (\autoref{sec:algorithm})
 that offers significant improvements over previous work.
 It scales much more gracefully in all the dimensions discussed above
 and for each selected predicate $P$ it naturally yields information
@@ -408,11 +409,11 @@ indicating whether the true or false branches were ever taken.
 \item[returns:] In C, the
   sign of a return value is often used to signal success or failure.
   At each scalar-returning function call site, we track six predicates:
-  whether the returned value is ever $< 0$, $\le 0$, $> 0$, $\ge 0$,
-  $= 0$, or $\ne 0$.
+  whether the returned value is ever $< 0$, $\leq 0$, $> 0$, $\geq 0$,
+  $= 0$, or $\neq 0$.
 %  For
 %  pointer-returning calls, this scheme reduces to counting
-%  \texttt{NULL} versus non-\texttt{NULL}.  
+%  \texttt{NULL} versus non-\texttt{NULL}.
 %The observation is made
 %  just after the function returns but before the result is used by the
 %  original program.  An instrumentation site is added even if the
@@ -423,11 +424,11 @@ indicating whether the true or false branches were ever taken.
 %%
 
 \item[scalar-pairs:] Many bugs
-  concern boundary issues in the relationship between a 
+  concern boundary issues in the relationship between a
   variable and another variable or constant.  At
   each scalar assignment \texttt{x = \dots}, identify each
   same-typed in-scope variable $\mathtt{y}_i$ and each
-  constant expression $\mathtt{c}_j$.  For each   $\mathtt{y}_i$ and each $\mathtt{c}_j$,  
+  constant expression $\mathtt{c}_j$.  For each   $\mathtt{y}_i$ and each $\mathtt{c}_j$,
   we track six relationships to the new value of \texttt{x}: $<, \leq, >, \geq, =, \neq$.
 Each compared-to $\mathtt{y}_i$
   or $\mathtt{c}_j$ is treated as a distinct instrumentation site.
@@ -436,7 +437,7 @@ Each compared-to $\mathtt{y}_i$
 
 All predicates at a given site are updated jointly.  For
 example, sampling a single negative return value would yield true
-observations of the $< 0$, $\le 0$, and $\ne 0$ predicates in the
+observations of the $< 0$, $\leq 0$, and $\neq 0$ predicates in the
 returns scheme.  Note that the logical negation of each predicate is
 itself a predicate.
 
@@ -472,7 +473,7 @@ a dynamic analysis that does not require an explicit specification of
 the properties to check can find clues to a very wide range of errors,
 including classes of errors not considered in the design of the
 analysis.
-  
+
 The Daikon project \cite{ernst2001} monitors instrumented applications
 to discover likely program invariants.  It collects extensive trace
 information at run time and mines traces offline to accept or reject any
@@ -517,7 +518,7 @@ this approach reduces the noise level of the data but greatly restricts the
 instrumentation schemes that are practical to deploy outside of a
 controlled testing environment.  As in our own earlier work, Podgurski
 uses logistic regression to select features which are highly
-predictive of failure.  
+predictive of failure.
 Clustering tends to identify small, tight groups of runs which do
 share a single cause but which are not always maximal.  That is, one
 cause may be split across several clusters.
@@ -571,67 +572,6 @@ domain-specific.
   have enough references to these folks and the related work section
   is already quite long.  Let us give this the least priority.]}
 
-\subsection{Comparison with Logistic Regression}
-\label{sec:comparison}
-
-\begin{table}
-\caption{Results of logistic regression for \moss}
-\label{tab:logregression}
-\centering
-\small
-\begin{tabular}{ll}
-  \toprule
-  Coefficient & Predicate \\
-  \midrule
-  0.769379 & \verb|p + passage_index)->last_line < 4| \\
-  0.686149 & \verb|(p + passage_index)->first_line < i| \\
-  0.675982 & \verb|i > 20| \\
-  0.671991 & \verb|i > 26| \\
-  0.619479 & \verb|(p + passage_index)->last_line < i| \\
-  0.600712 & \verb|i > 23| \\
-  0.591044 & \verb|(p + passage_index)->last_line == next| \\
-  0.567753 & \verb|i > 22| \\
-  0.544829 & \verb|i > 25| \\
-  0.536122 & \verb|i > 28| \\
-  \bottomrule
-\end{tabular}
-\end{table}
-
-In earlier work 
-we used $\ell_1$-regularized logistic regression
-to rank the predicates by their
-failure-prediction strength \cite{PLDI`03*141,NIPS2003_AP05}.
-Logistic regression uses linearly weighted
-combinations of predicates to classify a trial run as successful or
-failed.  Regularized logistic regression incorporates a penalty
-forcing most coefficients to be set to zero, thereby
-selecting only the most important predicates.  The output is a set of
-coefficients for predicates giving the best overall prediction.
-
-A weakness of logistic regression for our application is that it seeks
-to cover the set of failing runs without regard to the orthogonality
-of the selected predicates (i.e., whether they represent distinct
-bugs).  This problem can be seen in \autoref{tab:logregression},
-which gives the top ten predicates selected by logistic regression
-for \moss.  The striking fact is that all selected predicates are
-either sub-bug or super-bug predictors.  The predicates beginning {\tt
-p + \ldots} are all sub-bug predictors of bug \#1 (see
-\autoref{tab:mossdilute}).  The predicates {\tt i > \ldots} are
-super-bug predictors: {\tt i} is the length of the command line and
-the predicates say program crashes are more likely for long command
-lines (recall \autoref{sec:introduction}).
-
-The prevalence of super-bug predictors on the list shows the
-difficulty of making use of the penalty term.  Limiting the number of
-predicates that can be selected via a penalty has the effect of
-encouraging logistic regression to choose super-bug predictors, as
-these cover more failing runs at the expense of poorer predictive
-power compared to predictors of individual bugs.  On the other hand,
-some of the predicates are apparently excellent sub-bug predictors,
-and are therefore chosen over others.
-%%Relaxing the penalty
-%%allows logistic regression to add more predicates to improve its
-%%prediction, but the sub-bug predictors apparently are favored.
 
 \section{Conclusions}
 \label{sec:conclusions}

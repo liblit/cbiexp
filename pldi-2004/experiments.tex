@@ -25,9 +25,9 @@ algorithm.
 
 To address this problem, we set the sampling rates of predicates to be
 inversely proportional to their frequency of execution.  Based on a
-training set of 1,000 executions, we set the sampling rate of each predicate so 
-as to obtain an expected 100 samples of each predicate in subsequent program 
-executions; the sampling rate is clamped to a minimum of $\nicefrac{1}{100}$.  
+training set of 1,000 executions, we set the sampling rate of each predicate so
+as to obtain an expected 100 samples of each predicate in subsequent program
+executions; the sampling rate is clamped to a minimum of $\nicefrac{1}{100}$.
 Thus, rarely executed code has a
 much higher sampling rate than very frequently executed code.  (A
 similar strategy has been pursued for similar reasons in related work \cite{chil04}.)  We
@@ -38,7 +38,7 @@ identical except for the \rhythmbox and \moss experiments, where we
 judge the differences to be minor: sometimes a different but logically
 equivalent predicate is chosen, the ranking of predictors of different
 bugs is slightly different, or one or the other version has a few
-extra, weak predictors at the tail end of the list.  
+extra, weak predictors at the tail end of the list.
 
 \subsection{A Validation Experiment}
 
@@ -53,7 +53,7 @@ distinct causes.  The nature of the eight crashing bugs varies: four
 buffer overruns, a null file pointer dereference in certain cases, a
 missing end-of-list check in the traversal of a hash table bucket, a missing
 out-of-memory check, and a violation of a subtle invariant that must be maintained between two
-parts of a complex data structure.  
+parts of a complex data structure.
 
 The ninth bug -- incorrect handling of comments in certain cases --
 only causes incorrect output, not a crash.  For most of the other
@@ -240,7 +240,7 @@ construct the following call sequence:
   \small
 \begin{verbatim}
 main
-  exif_loader_get_data 
+  exif_loader_get_data
     exif_data_load_data
       exif_mnote_data_canon_load
   exif_data_save_data
@@ -262,7 +262,7 @@ for (i = 0; i < c; i++) {
      ...
 (a)  if (o + s > buf_size) return;
      ...
-(b)  n->entries[i].data = malloc(s); 
+(b)  n->entries[i].data = malloc(s);
      ...
 }
 \end{verbatim}
@@ -317,13 +317,77 @@ we could quantify the bugs as important crashing bugs.
 It required several hours to isolate each of the two bugs, in part because \rhythmbox
 is complex and in part because the bugs were violations of subtle heap invariants which
 are not directly captured by our current instrumentation schemes.
-Note, however, that we could not have 
+Note, however, that we could not have
 even begun to understand these bugs without the information provided by our tool.
 We intend to explore schemes that instrument predicates on the heap structure in
 future work.
 % It required several hours to isolate each of the two bugs, in part because \rhythmbox
 % is complex and we were unfamiliar with it and in part because the bugs
-% were violations of subtle invariants.  Note, however, that we could not have 
+% were violations of subtle invariants.  Note, however, that we could not have
 % even begun to understand these bugs without the information provided by our tool.
+
+\issue[Alice]{Moved the following subsection from section 5 to section 4}
+
+\subsection{Comparison with Logistic Regression}
+\label{sec:comparison}
+
+\begin{table}
+\caption{Results of logistic regression for \moss}
+\label{tab:logregression}
+\centering
+\small
+\begin{tabular}{ll}
+  \toprule
+  Coefficient & Predicate \\
+  \midrule
+  0.769379 & \verb|p + passage_index)->last_line < 4| \\
+  0.686149 & \verb|(p + passage_index)->first_line < i| \\
+  0.675982 & \verb|i > 20| \\
+  0.671991 & \verb|i > 26| \\
+  0.619479 & \verb|(p + passage_index)->last_line < i| \\
+  0.600712 & \verb|i > 23| \\
+  0.591044 & \verb|(p + passage_index)->last_line == next| \\
+  0.567753 & \verb|i > 22| \\
+  0.544829 & \verb|i > 25| \\
+  0.536122 & \verb|i > 28| \\
+  \bottomrule
+\end{tabular}
+\end{table}
+
+In earlier work
+we used $\ell_1$-regularized logistic regression
+to rank the predicates by their
+failure-prediction strength \cite{PLDI`03*141,NIPS2003_AP05}.
+Logistic regression uses linearly weighted
+combinations of predicates to classify a trial run as successful or
+failed.  Regularized logistic regression incorporates a penalty
+forcing most coefficients to be set to zero, thereby
+selecting only the most important predicates.  The output is a set of
+coefficients for predicates giving the best overall prediction.
+
+A weakness of logistic regression for our application is that it seeks
+to cover the set of failing runs without regard to the orthogonality
+of the selected predicates (i.e., whether they represent distinct
+bugs).  This problem can be seen in \autoref{tab:logregression},
+which gives the top ten predicates selected by logistic regression
+for \moss.  The striking fact is that all selected predicates are
+either sub-bug or super-bug predictors.  The predicates beginning {\tt
+p + \ldots} are all sub-bug predictors of bug \#1 (see
+\autoref{tab:mossdilute}).  The predicates {\tt i > \ldots} are
+super-bug predictors: {\tt i} is the length of the command line and
+the predicates say program crashes are more likely for long command
+lines (recall \autoref{sec:introduction}).
+
+The prevalence of super-bug predictors on the list shows the
+difficulty of making use of the penalty term.  Limiting the number of
+predicates that can be selected via a penalty has the effect of
+encouraging logistic regression to choose super-bug predictors, as
+these cover more failing runs at the expense of poorer predictive
+power compared to predictors of individual bugs.  On the other hand,
+some of the predicates are apparently excellent sub-bug predictors,
+and are therefore chosen over others.
+%%Relaxing the penalty
+%%allows logistic regression to add more predicates to improve its
+%%prediction, but the sub-bug predictors apparently are favored.
 
 %% LocalWords:  exps mossdilute ccrypt bc exif buf mnote rhythmbox
