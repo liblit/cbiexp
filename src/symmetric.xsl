@@ -53,7 +53,7 @@
     <xsl:variable name="coords" select="concat($unit-id, ':', $scheme-id)"/>
 
     <xsl:for-each select="document('static-site-info.xml')">
-      <xsl:variable name="unit" select="key('sites', $coords)"/>
+      <xsl:variable name="unit" select="key('sites', $coords)[1]"/>
       <xsl:variable name="info" select="$unit/site[$site-id]"/>
 
       <xsl:if test="count($unit) != 1">
