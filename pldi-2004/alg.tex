@@ -71,10 +71,10 @@ even for the best predictor $P$, it is possible
 that $P$ is true and still the program terminates normally.  In the
 example above, if we insert before line {\tt (d)} a valid pointer
 assignment to {\tt f} controlled by a conditional that is true at
-least occasionally (say via a call to read input):
+least occasionally (say via a call to read input)
 \begin{quote}
 \begin{verbatim}
-if (read()) f = ... some valid pointer ...;
+if (...) f = ... some valid pointer ...;
 *f;
 \end{verbatim}
 \end{quote}
