@@ -8,7 +8,7 @@
 
 int get_indx(const char* s)
 {
-    for (int i = 0; i < NumUnits; i++)
+    for (int i = 0; i < num_units; i++)
         if (strcmp(s, units[i].s) == 0)
             return i;
     assert(0);
