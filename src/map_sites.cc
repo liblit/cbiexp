@@ -133,7 +133,7 @@ int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
 
-    int num_units = 0, num_b_preds = 0, num_r_preds = 0, num_s_preds = 0;
+    int num_sites = 0, num_units = 0, num_b_preds = 0, num_r_preds = 0, num_s_preds = 0;
 
     sfp = fopen(sites_src_file, "w"); assert(sfp);
     ufp = fopen(units_src_file, "w"); assert(ufp);
@@ -163,6 +163,7 @@ int main(int argc, char** argv)
             count++;
         }
         fprintf(ufp, "\t{ \"%s\", %d },\n", t, count);
+        num_sites += count;
         num_units++;
         switch (t[0]) {
         case 'S': num_s_preds += 6 * count; break;
@@ -173,8 +174,10 @@ int main(int argc, char** argv)
     }
 
     fputs("};\n\n", sfp);
+    fprintf(sfp, "const int num_sites = %d;\n", num_sites);
+
     fputs("};\n\n", ufp);
-    fprintf(ufp, "const int NumUnits  = %d;\n", num_units);
+    fprintf(ufp, "const int num_units = %d;\n", num_units);
     fprintf(ufp, "const int NumBPreds = %d;\n", num_b_preds);
     fprintf(ufp, "const int NumRPreds = %d;\n", num_r_preds);
     fprintf(ufp, "const int NumSPreds = %d;\n", num_s_preds);
