@@ -1,4 +1,4 @@
-// Usage: compute -p <program_name> -d <program_src_dir> -c <confidence>
+// Usage: compute -p <program_name> -d <program_src_dir> [-c <confidence>]
 // Creates files PRED_TXT_FILE and PRED_HDR_FILE and RESULT_SUMMARY_FILE
 
 #include <stdio.h>
@@ -8,7 +8,7 @@
 #include <math.h>
 #include <time.h>
 #include "def.h"
-#include "units.h"
+#include UNITS_HDR_FILE
 #include "classify_runs.h"
 
 struct site_summary_t {
