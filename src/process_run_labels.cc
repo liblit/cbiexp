@@ -1,10 +1,10 @@
 // Usage: process_run_labels <num_runs>
 // Creates files SRUNS_TXT_FILE and FRUNS_TXT_FILE
 
-#include <stdio.h>
-#include <assert.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cassert>
+#include <cstring>
+#include <cstdlib>
 #include "def.h"
 
 int

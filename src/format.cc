@@ -1,6 +1,6 @@
-#include <stdio.h>
-#include <assert.h>
-#include <math.h>
+#include <cstdio>
+#include <cassert>
+#include <cmath>
 
 main()
 {

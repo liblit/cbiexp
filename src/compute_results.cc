@@ -1,12 +1,12 @@
 // Usage: compute -p <program_name> -d <program_src_dir> [-c <confidence>]
 // Creates files PRED_TXT_FILE and PRED_HDR_FILE and RESULT_SUMMARY_FILE
 
-#include <stdio.h>
-#include <assert.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
+#include <cstdio>
+#include <cassert>
+#include <cstring>
+#include <cstdlib>
+#include <cmath>
+#include <ctime>
 #include "def.h"
 #include UNITS_HDR_FILE
 #include "classify_runs.h"

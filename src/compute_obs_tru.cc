@@ -1,12 +1,12 @@
 // Usage: compute_obs_tru < preds_list in <u c p> format
 // Creates files OBS_FILE and TRU_FILE
 
-#include <stdio.h>
-#include <assert.h>
-#include <string.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
+#include <cstdio>
+#include <cassert>
+#include <cstring>
+#include <cstdlib>
+#include <cmath>
+#include <ctime>
 #include <vector>
 #include "def.h"
 #include UNITS_HDR_FILE

@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include <assert.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cassert>
+#include <cstring>
+#include <cstdlib>
 #include "def.h"
 
 int num_runs = 0, num_sruns, num_fruns;

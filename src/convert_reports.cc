@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstring>
+#include <cassert>
+#include <cstdlib>
 #include "def.h"
 #include "units.h"
 #include "classify_runs.h"

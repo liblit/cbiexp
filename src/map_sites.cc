@@ -1,9 +1,9 @@
 // Usage: map_sites < <sites_file>
 // Creates files SITES_TXT_FILE and UNITS_HDR_FILE
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
+#include <cstdio>
+#include <cstring>
+#include <cassert>
 #include "def.h"
 
 inline char scheme_code(char* s)

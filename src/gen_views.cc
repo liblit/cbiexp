@@ -1,6 +1,6 @@
-#include <stdio.h>
-#include <assert.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cassert>
+#include <cstdlib>
 #include "def.h"
 
 main(int argc, char** argv)

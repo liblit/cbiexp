@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <assert.h>
+#include <cstdio>
+#include <cassert>
 #include "def.h"
 #include UNITS_HDR_FILE
 #include "classify_runs.h"
