@@ -113,12 +113,6 @@ $(sparse): $(corrdir)/mhn2sparsemat.pl f.runs s.runs obs.txt tru.txt
 	$(time) ./$< . .
 clean:: ; rm -f $(sparse)
 
-all_hl_corrected.xml: $(tooldir)/correct f.runs obs.txt tru.txt
-	$(time) ./$< $(corrected_view_flags)
-	$(MAKE) bug-o-meter.dtd corrected-view.dtd projected-view.dtd view.dtd
-	xmllint --valid --noout $@
-clean:: ; rm -f all_hl_corrected.xml
-
 all_hl_corrected-%.xml: $(tooldir)/corrective-ranking/% f.runs obs.txt tru.txt
 	$(time) ./$< $(corrected_view_flags)
 	$(MAKE) bug-o-meter.dtd corrected-view.dtd projected-view.dtd view.dtd
