@@ -18,9 +18,12 @@ if test -x "$new_cxx"; then
   : ${CXX:=$new_cxx}
 fi
 
+AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_RANLIB
 AM_PROG_LEX
+
+AM_PATH_GSL
 
 AC_LANG(C++)
 AC_REQUIRE_CPP
