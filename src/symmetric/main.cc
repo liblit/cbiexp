@@ -122,7 +122,6 @@ main(int argc, char *argv[])
 
   {
     cerr << "dumping initial candidates list into \"debug.xml\": ";
-    dumped = true;
     ViewPrinter debug(Stylesheet::filename, "symmetric", "debug.xml");
     debug << candidates;
     cerr << "done\n";
