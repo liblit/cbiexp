@@ -97,13 +97,15 @@ int main(int argc, char** argv)
             sprintf(file2, "%s.tmp.txt", scheme_codes[i]);
 
 	    shell("sort -k%d -r -n < %s.txt > %s", sortby_indices[m], scheme_codes[i], file2);
+	    shell("cat %s", file2);
 
             FILE* fp2 = fopen(file2, "r");
             assert(fp2);
 
             while (1) {
-                pred_info pi = read_pred_full(fp2);
-                if (feof(fp2))
+		pred_info pi;
+		const bool got = read_pred_full(fp2, pi);
+                if (!got)
                     break;
                 fputs("<tr>\n", fp);
                 print_pred_full(fp, pi);

@@ -35,18 +35,17 @@ bool retain_pred(int s, int f, int os, int of, int confidence)
     return retain_pred(s, f, (compute_pred_stat(s, f, os, of, confidence)).lb);
 }
 
-pred_info read_pred_full(FILE* fp)
+bool read_pred_full(FILE* fp, pred_info &pi)
 {
     char scheme_code;
-    pred_info pi;
 
-    fscanf(fp, "%c %d %d %d %d %f %f %f %f %d %d %d %d",
-        &scheme_code,
-        &pi.u, &pi.c, &pi.p, &pi.site,
-        &pi.ps.lb, &pi.ps.in, &pi.ps.fs, &pi.ps.co,
-        &pi.s, &pi.f, &pi.os, &pi.of);
+    const int got = fscanf(fp, "%c %d %d %d %d %f %f %f %f %d %d %d %d\n",
+			   &scheme_code,
+			   &pi.u, &pi.c, &pi.p, &pi.site,
+			   &pi.ps.lb, &pi.ps.in, &pi.ps.fs, &pi.ps.co,
+			   &pi.s, &pi.f, &pi.os, &pi.of);
 
-    return pi;
+    return got == 13;
 }
 
 void print_pred_full(FILE* fp, pred_info pi)
@@ -98,8 +97,8 @@ void print_pred_name(FILE* fp, int site, int p)
             sites[site].args[0], b_op[p]);
         break;
     case 'G':
-        fprintf(fp, "old_refcount(%s) %s",
-            sites[site].args[0], g_op[p]);
+        fprintf(fp, "old_refcount(%s) %s for site %d, pred %d",
+            sites[site].args[0], g_op[p], site, p);
         break;
     default:
         assert(0);

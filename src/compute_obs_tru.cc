@@ -222,8 +222,9 @@ int main(int argc, char** argv)
     pfp = fopen(preds_txt_file, "r");
     assert(pfp);
     while (1) {
-	pred_info pi = read_pred_full(pfp);
-	if (feof(pfp))
+	pred_info pi;
+	const bool got = read_pred_full(pfp, pi);
+	if (!got)
 	    break;
 	site_info[pi.u][pi.c].obs[pi.p] = new bit_vector(num_runs);
 	assert(site_info[pi.u][pi.c].obs[pi.p]);

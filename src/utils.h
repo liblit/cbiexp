@@ -21,7 +21,7 @@ pred_stat compute_pred_stat(int s, int f, int os, int of, int confidence);
 bool retain_pred(int s, int f, float lb);
 bool retain_pred(int s, int f, int os, int of, int conf);
 
-pred_info read_pred_full(FILE* fp);
+bool read_pred_full(FILE* fp, pred_info &);
 void print_pred_full(FILE* fp, pred_info pi);
 void print_pred_stat(FILE* fp, pred_info pi);
 void print_pred_name(FILE* fp, int site, int p);
