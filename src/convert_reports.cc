@@ -27,8 +27,8 @@ int get_indx(const char *signature)
     }
 }
 
-char* sruns_file = NULL;
-char* fruns_file = NULL;
+char* sruns_txt_file = NULL;
+char* fruns_txt_file = NULL;
 char* verbose_report_path_fmt = NULL;
 char* compact_report_path_fmt = NULL;
 
@@ -37,12 +37,12 @@ void process_cmdline(int argc, char** argv)
     for (int i = 1; i < argc; i++) {
 	if (!strcmp(argv[i], "-s")) {
 	    i++;
-	    sruns_file = argv[i];
+	    sruns_txt_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-f")) {
 	    i++;
-	    fruns_file = argv[i];
+	    fruns_txt_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-vr")) {
@@ -56,16 +56,20 @@ void process_cmdline(int argc, char** argv)
 	    continue;
 	}
 	if (!strcmp(argv[i], "-h")) {
-	    puts("Usage: convert-reports -s <sruns-file> -f <fruns-file> -vr <verbose-report-path-fmt> -cr <compact-report-path-fmt>\n"
-		 "Reads  verbose reports\n"
-		 "Writes compact reports");
+	    puts("Usage: convert-reports <options>\n"
+                 "(r) -s  <sruns-file>\n"
+                 "(r) -f  <fruns-file>\n"
+                 "(r) -vr <verbose-report-path-fmt>\n"
+                 "(w) -cr <compact-report-path-fmt>\n"
+            );
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
 	exit(1);
     }
 
-    if (!sruns_file || !fruns_file || !verbose_report_path_fmt || !compact_report_path_fmt) {
+    if (!sruns_txt_file || !fruns_txt_file ||
+        !verbose_report_path_fmt || !compact_report_path_fmt) {
 	puts("Incorrect usage; try -h");
 	exit(1);
     }
@@ -78,7 +82,7 @@ int main(int argc, char** argv)
 
     process_cmdline(argc, argv);
 
-    classify_runs(sruns_file, fruns_file);
+    classify_runs(sruns_txt_file, fruns_txt_file);
 
     for (int i = 0; i < num_runs; i++) {
 	char ifile[1000], ofile[1000];
