@@ -67,7 +67,7 @@ my ($handle, $filename) = tempfile(UNLINK => 1);
 
 print $handle "all: $_/label" foreach $first .. $last;
 
-print $handle ("%/label: %/stamp",
+print $handle ("%/label: %/stamp $cwd/$label_once",
 	       "\tcd \$* && $cwd/$label_once \$* >\$(\@F).",
 	       "\tmv \$@. \$@",
 	       '',
