@@ -89,12 +89,18 @@ true for failing runs and false for successful runs.  Let $\prob(A | B)$ denote
 the conditional probability function of the event $A$ given event $B$ .  
 We want to compute:
 \issue{modified by Alice}
+\issue[Alice]{Prob (P => Crash) should really be something like Pr (Crash = 1 | P = 1) [text modified]}
 \[ \crash(P) \equiv \prob(\fail = 1 | P = 1) \]
 %= \prob(\fail | P \mbox{ is true}) \]
 for every instrumented predicate $P$ over the set of all runs.  Let $S(P)$ be the number
 of successful runs in which $P$ is observed to be true, and let $F(P)$ be the number of
-failing runs in which $P$ is observed to be true.  We
-estimate $\crash(P)$ as:
+failing runs in which $P$ is observed to be true.  
+%%
+\issue[Alice]{Same comment as R(P).  S(P) and F(P) are not really
+  functions, and it would be more natural to use the subscript
+  notation.  [didn't modify text]}
+%%
+We estimate $\crash(P)$ as:
 \[ \crash(P) = \frac{F(P)}{S(P) + F(P)} \]
 
 Notice that $\crash(P)$ is unaffected by the set of runs in which
@@ -133,6 +139,12 @@ decision that eventually causes the crash is made earlier, and the
 $\crash(\mbox{\tt x == 0})$ score merely reflects the fact that this
 predicate is checked on a path where the program is already doomed.
 
+\issue[Alice]{The Failure score is not a perfect definition of
+  importance.  The context score is designed to address one specific
+  problem (that of the innocent by-stander), but there are many
+  others.  We should make this clear in the text.  [didn't modify
+  text]}
+
 A way to address this difficulty is to score a predicate not by the chance
 that it implies failure, but by how much difference it makes that the predicate
 is observed to be true versus simply reaching the line where the predicate is checked.
@@ -148,6 +160,14 @@ This leads us to the following definition:
 \]
 %= \prob(\fail |  P \mbox{ observed}) 
 %\end{gather*}
+%%
+\issue[Alice]{The notation 'P v not P' confuses P with R(P).  We've
+  defined P to be the name of a predicate, and R(P) to be its actual
+  value in run R.  Here, we should at least say 'R(P) v not R(P)', but
+  I think it's even clearer to say 'P is observed'.  Also the '=>'
+  implication notation belongs more in logic than in statistics.  I've
+  changed this to the conditional probability notation.}
+%%
 Now, $P \lor \lnot P$ is not the set of all runs, because we are not working in a two-valued logic.
 In any given run, neither $P$ nor $\lnot P$ may be observed (because the site where this predicate is
 sampled is not reached), or one may be observed, or both may be observed (because the statement is executed
@@ -237,8 +257,15 @@ Then
 
 \input{moss-view/stats-breakout}
 
+\issue[Alice]{The name 'Moss' should be typeset in special font.  [I
+  can't find the place where this table is inserted, so I can't make
+  the change myself.]}
+
 \subsection{Ranking Predicates: Precision vs. Recall}
 \label{sec:ranking}
+
+\issue[Alice]{I thought we were going to use the sensitivity vs.
+  specificity terminology instead of precision vs. recall?}
 
 We now turn to the question of ranking the predicates.
 \autoref{tab:sorts} shows the top
@@ -299,8 +326,13 @@ high {\em recall} (meaning predicates that account for many failed runs) but als
 (meaning predicates that do not mispredict failure in many successful runs).  In statistics,
 the corresponding terms are {\em selectivity} and {\em sensitivity}.  In both fields,
 the standard metric is the harmonic mean of precision and recall, which disproportionately
-rewards high scores in both dimensions.  In our
-case, $\increase(P)$ measures precision and $F(P)$ measures recall.  Define
+rewards high scores in both dimensions.
+%%
+\issue[Alice]{Why use the word "disproportionately"?  The harmonic
+  mean just rewards high scores in both dimensions, and has the
+  averaging affect of trading off one with the other, no?}
+%%
+In our case, $\increase(P)$ measures precision and $F(P)$ measures recall.  Define
 %%
 \[ \importance(P) = \frac{2}{\frac{1}{\increase(P)} + \frac{log(\numfail)}{log(F(P))}} \]
 %%
