@@ -52,6 +52,7 @@ libanalyze_a_SOURCES =				\
 
 noinst_HEADERS =				\
 	      preds.h				\
+	      sites.h				\
 	      units.h
 
 late_programs =					\
