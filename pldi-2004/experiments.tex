@@ -50,7 +50,7 @@ effect of different sampling rates on the results.
 
 The time to run our algorithm on all the runs is about seven minutes on
 a fast machine.
-At \nicefrac{1}{100} sampling, step (1) of our analysis algorithm eliminates about 99\% of
+At \nicefrac{1}{100} sampling, step (1) of our algorithm eliminates about 99\% of
 all branch and return predicates, and about 96\% of the scalar-pair
 predicates.  We retain only
 \begin{itemize}
@@ -242,7 +242,8 @@ other     &  38762 & 36768 & 36504 & 33023 \\
 \subsection{Effect of Sampling on Predicate Selection}
 
 We now examine the effect of the sampling rate and the number of
-program trials on step (1) of the algorithm: predicate selection.
+program trials on the number of predicates that are retained by step
+(1) of the algorithm.
 We start with $3000$ randomly
 selected trial runs, and add $3000$ random trials at a time, until we
 incorporate all $31,873$ runs of our data.  We record the number of
