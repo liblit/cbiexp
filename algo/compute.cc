@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include <math.h>
 #include "units.h"
 
-bool is_srun[NUM_RUNS + 1];
-bool is_frun[NUM_RUNS + 1];
+bool is_srun[NUM_RUNS];
+bool is_frun[NUM_RUNS];
 
 struct site_t {
     int S[6], F[6];
@@ -38,26 +39,29 @@ site_t* data[NUM_UNITS];
 }
 
 FILE* sites_fp = NULL;
+bool use_confidence = false;
 
-inline void print_pred(FILE* fp, int u, int c, int p, const char* pred_kind)
+inline void print_pred(FILE* fp, int u, int c, int p, const char* pred_kind, char* site_name)
 {
     int s  = data[u][c].S[p];
     int f  = data[u][c].F[p];
     int os = data[u][c].os;
     int of = data[u][c].of;
-    char site_name[3000];
 
-    fscanf(sites_fp, "%[^\n]s", site_name);
-    fgetc (sites_fp);
+    float cr = ((float)  f) / ( s +  f);
+    float co = ((float) of) / (os + of);
+    float in = cr - co;
 
-    float crash   = ((float)  f) / ( s +  f);
-    float context = ((float) of) / (os + of);
-    fprintf(fp, "%.2f In %.2f Cr %.2f Co %d S %d F %d OS %d OF ",
-        crash - context, crash, context, s, f, os, of);
-    fprintf(fp, "<a href=\"r/%d_%d_%d.html\">", u, c, p);
-    fprintf(fp, "%s %s", pred_kind, site_name);
-    fprintf(fp, "</a><br>\n");
+    if (!use_confidence ||
+        in - 1.96 * sqrt(((cr * (1 - cr)) / (f + s)) + ((co * (1 - co))/(of + os))) > 0 && s + f >= 10) {
+        fprintf(fp, "%.2f In, %.2f Cr, %.2f Co, %d S, %d F, %d OS, %d OF, ",
+            in, cr, co, s, f, os, of);
+        fprintf(fp, "<a href=\"r/%d_%d_%d.html\">", u, c, p);
+        fprintf(fp, "%s %s", pred_kind, site_name);
+        fprintf(fp, "</a><br>\n");
+    }
 }
+
 
 main(int argc, char** argv)
 {
@@ -120,56 +124,61 @@ main(int argc, char** argv)
             }
             continue;
         }
+        if (strcmp(argv[i], "-c") == 0) {
+            use_confidence = true;
+            continue;
+        }
         if (strcmp(argv[i], "-h") == 0) {
-            printf("Usage: compute [-s runs_file] [-f runs_file] [-i sites_file]\n");
+            printf("Usage: compute -s runs_file -f runs_file -i sites_file [-c]\n");
             return 0;
         }
         printf("Illegal option: %s\n", argv[i]);
         return 1;
     }
 
-    /************************************************************************
-     ** read -s specified file (if any)
-     ************************************************************************/
-
-    if (sfp) {
-        while (1) {
-            fscanf(sfp, "%d", &i);
-            if (feof(sfp))
-                break;
-            if (i <= 0 || i > NUM_RUNS) {
-                printf("Illegal run %d in -s specified file\n", i);
-                return 1;
-            }
-            is_srun[i] = true;
-        }
-        fclose(sfp);
+    if (!sfp || !ffp || !sites_fp) {
+        printf("Incorrect usage; try -h\n");
+        return 1;
     }
 
     /************************************************************************
-     ** read -f specified file (if any)
+     ** read -s specified file 
      ************************************************************************/
 
-    if (ffp) {
-        while (1) {
-            fscanf(ffp, "%d", &i);
-            if (feof(ffp))
-                break;
-            if (i <= 0 || i > NUM_RUNS) {
-                printf("Illegal run %d in -f specified file\n", i);
-                return 1;
-            }
-            is_frun[i] = true;
+    while (1) {
+        fscanf(sfp, "%d", &i);
+        if (feof(sfp))
+            break;
+        if (i < 0 || i >= NUM_RUNS) {
+            printf("Illegal run %d in -s specified file\n", i);
+            return 1;
         }
-        fclose(ffp);
+        is_srun[i] = true;
     }
+    fclose(sfp);
+
+    /************************************************************************
+     ** read -f specified file 
+     ************************************************************************/
+
+    while (1) {
+        fscanf(ffp, "%d", &i);
+        if (feof(ffp))
+            break;
+        if (i < 0 || i >= NUM_RUNS) {
+            printf("Illegal run %d in -f specified file\n", i);
+            return 1;
+        }
+        is_frun[i] = true;
+    }
+    fclose(ffp);
 
     /************************************************************************
      ** do sanity check (no run should be both successful and failing)
      ************************************************************************/
 
     int ns = 0, nf = 0;
-    for (i = 1; i <= NUM_RUNS; i++) {
+    for (i = 0; i < NUM_RUNS; i++) {
         if (is_srun[i] && is_frun[i]) {
             printf("Run %d is both successful and failing\n", i);
             return 1;
@@ -191,15 +200,17 @@ main(int argc, char** argv)
         assert(data[i]);
     }
 
-    for (i = 1; i <= NUM_RUNS; i++) {
+
+    for (i = 0; i < NUM_RUNS; i++) {
         if (!is_srun[i] && !is_frun[i])
             continue;
-        char file[100];
-        sprintf(file, "/moa/sc4/mhn/runs/%d.txt", i);
-        FILE* fp = fopen(file, "r");
-        assert(fp);
 
         printf("r %d\n", i);
+
+        char file[100];
+        sprintf(file, "/moa/sc4/mhn/rb/base/%d.txt", i);
+        FILE* fp = fopen(file, "r");
+        assert(fp);
 
         while (1) {
             fscanf(fp, "%d", &j);
@@ -245,33 +256,40 @@ main(int argc, char** argv)
     FILE* out_r = fopen("R.html", "w");
     FILE* out_b = fopen("B.html", "w");
     assert(out_s && out_r && out_b);
+    char site_name[10000];
 
     for (j = 0; j < NUM_UNITS; j++) {
         switch (units[j].s[0]) {
         case 'S':
             for (k = 0; k < units[j].c; k++) {
-                print_pred(out_s, j, k, 0, "LT" );
-                print_pred(out_s, j, k, 1, "NLT");
-                print_pred(out_s, j, k, 2, "EQ" );
-                print_pred(out_s, j, k, 3, "NEQ");
-                print_pred(out_s, j, k, 4, "GT" );
-                print_pred(out_s, j, k, 5, "NGT");
+                fscanf(sites_fp, "%[^\n]s", site_name);
+                fgetc (sites_fp);
+                print_pred(out_s, j, k, 0, "LT" , site_name);
+                print_pred(out_s, j, k, 1, "NLT", site_name);
+                print_pred(out_s, j, k, 2, "EQ" , site_name);
+                print_pred(out_s, j, k, 3, "NEQ", site_name);
+                print_pred(out_s, j, k, 4, "GT" , site_name);
+                print_pred(out_s, j, k, 5, "NGT", site_name);
             }
             break;
         case 'R':
             for (k = 0; k < units[j].c; k++) {
-                print_pred(out_r, j, k, 0, "LT" );
-                print_pred(out_r, j, k, 1, "NLT");
-                print_pred(out_r, j, k, 2, "EQ" );
-                print_pred(out_r, j, k, 3, "NEQ");
-                print_pred(out_r, j, k, 4, "GT" );
-                print_pred(out_r, j, k, 5, "NGT");
+                fscanf(sites_fp, "%[^\n]s", site_name);
+                fgetc (sites_fp);
+                print_pred(out_r, j, k, 0, "LT" , site_name);
+                print_pred(out_r, j, k, 1, "NLT", site_name);
+                print_pred(out_r, j, k, 2, "EQ" , site_name);
+                print_pred(out_r, j, k, 3, "NEQ", site_name);
+                print_pred(out_r, j, k, 4, "GT" , site_name);
+                print_pred(out_r, j, k, 5, "NGT", site_name);
             }
             break;
         case 'B':
             for (k = 0; k < units[j].c; k++) {
-                print_pred(out_b, j, k, 0, "F");
-                print_pred(out_b, j, k, 1, "T");
+                fscanf(sites_fp, "%[^\n]s", site_name);
+                fgetc (sites_fp);
+                print_pred(out_b, j, k, 0, "F", site_name);
+                print_pred(out_b, j, k, 1, "T", site_name);
             }
             break;
         default:

@@ -2,7 +2,11 @@
 #include <string.h>
 #include <assert.h>
 
-#define SITES_FILE "/moa/sc3/cbi/rhythmbox/share/rhythmbox.sites"
+//#define SITES_FILE "/moa/sc3/cbi/rhythmbox-get-uri-fix/share/rhythmbox.sites"
+//#define SITES_FILE "/moa/sc4/cbi/data11/share/mossbad.sites"
+//#define SITES_FILE "/moa/sc2/cbi/rhythmbox/share/rhythmbox.sites"
+//#define SITES_FILE "/moa/sc2/cbi/data10/share/mossbad.sites"
+#define SITES_FILE "/moa/sc4/cbi/data11/share/mossbad.sites"
 
 main()
 {

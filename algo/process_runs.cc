@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <stdlib.h>
 #include "def.h"
 #include "units.h"
 
-bool is_srun[NUM_RUNS + 1];
-bool is_frun[NUM_RUNS + 1];
+bool is_srun[NUM_RUNS];
+bool is_frun[NUM_RUNS];
 
 int get_indx(char* s)
 {
@@ -62,55 +63,56 @@ main(int argc, char** argv)
             continue;
         }
         if (strcmp(argv[i], "-h") == 0) {
-            printf("Usage: process_runs [-s runs_file] [-f runs_file]\n");
+            printf("Usage: process_runs -s runs_file -f runs_file\n");
             return 0;
         }
         printf("Illegal option: %s\n", argv[i]);
         return 1;
     }
 
+    if (!sfp || !ffp) {
+        printf("Incorrect usage; try -h\n");
+        return 1;
+    }
+
     /************************************************************************
-     ** read -s specified file (if any)
+     ** read -s specified file
      ************************************************************************/
                                                                                                                                                                                                      
-    if (sfp) {
-        while (1) {
-            fscanf(sfp, "%d", &i);
-            if (feof(sfp))
-                break;
-            if (i <= 0 || i > NUM_RUNS) {
-                printf("Illegal run %d in -s specified file\n", i);
-                return 1;
-            }
-            is_srun[i] = true;
+    while (1) {
+        fscanf(sfp, "%d", &i);
+        if (feof(sfp))
+            break;
+        if (i < 0 || i >= NUM_RUNS) {
+            printf("Illegal run %d in -s specified file\n", i);
+            return 1;
         }
-        fclose(sfp);
+        is_srun[i] = true;
     }
+    fclose(sfp);
                                                                                                                                                                                                      
     /************************************************************************
-     ** read -f specified file (if any)
+     ** read -f specified file 
      ************************************************************************/
                                                                                                                                                                                                      
-    if (ffp) {
-        while (1) {
-            fscanf(ffp, "%d", &i);
-            if (feof(ffp))
-                break;
-            if (i <= 0 || i > NUM_RUNS) {
-                printf("Illegal run %d in -f specified file\n", i);
-                return 1;
-            }
-            is_frun[i] = true;
+    while (1) {
+        fscanf(ffp, "%d", &i);
+        if (feof(ffp))
+            break;
+        if (i < 0 || i >= NUM_RUNS) {
+            printf("Illegal run %d in -f specified file\n", i);
+            return 1;
         }
-        fclose(ffp);
+        is_frun[i] = true;
     }
+    fclose(ffp);
                                                                                                                                                                                                      
     /************************************************************************
      ** do sanity check (no run should be both successful and failing)
      ************************************************************************/
                                                                                                                                                                                                      
     int ns = 0, nf = 0;
-    for (i = 1; i <= NUM_RUNS; i++) {
+    for (i = 0; i < NUM_RUNS; i++) {  
         if (is_srun[i] && is_frun[i]) {
             printf("Run %d is both successful and failing\n", i);
             return 1;
@@ -126,17 +128,19 @@ main(int argc, char** argv)
      ** main loop
      ************************************************************************/
 
-    for (i = 1; i <= NUM_RUNS; i++) {
+    for (i = 0; i < NUM_RUNS; i++) {
         if (!is_srun[i] && !is_frun[i])
             continue;
 
         char ifile[1000], ofile[1000];
 
-        sprintf(ifile, "/moa/sc3/cbi/rhythmbox/data/%d/client/reports", i);
+        printf("r %d\n", i);
+
+        sprintf(ifile, "/moa/sc2/cbi/rhythmbox/analyze/ds1/%d.txt", i);
         FILE* ifp = fopen(ifile, "r");
         assert(ifp);
 
-        sprintf(ofile, "/moa/sc4/mhn/runs/%d.txt", i);
+        sprintf(ofile, "/moa/sc4/mhn/rb/base/%d.txt", i);
         FILE* ofp = fopen(ofile, "w");
         assert(ofp);
 
@@ -190,3 +194,8 @@ main(int argc, char** argv)
     return 0;
 }
 
+/*
+        system("rm -f ./reports");
+        sprintf(cmd, "gunzip -c /moa/sc2/cbi/rhythmbox/data/%d/client/reports.gz > reports", i);
+        system(cmd);
+*/
