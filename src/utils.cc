@@ -35,18 +35,32 @@ bool retain_pred(int s, int f, int os, int of, int confidence)
     return retain_pred(s, f, (compute_pred_stat(s, f, os, of, confidence)).lb);
 }
 
-void print_pred_full(FILE* fp, pred_stat ps, int s, int f, int os, int of, int site, int p)
+pred_info read_pred_full(FILE* fp)
 {
-    print_pred_stat(fp, ps, s, f, os, of);
-    print_pred_name(fp, site, p);
+    char scheme_code;
+    pred_info pi;
+
+    fscanf(fp, "%1s %d %d %d %d %f %f %f %f %d %d %d %d",
+        &scheme_code,
+        &pi.u, &pi.c, &pi.p, &pi.site,
+        &pi.ps.lb, &pi.ps.in, &pi.ps.fs, &pi.ps.co,
+        &pi.s, &pi.f, &pi.os, &pi.of);
+
+    return pi;
 }
 
-void print_pred_stat(FILE* fp, pred_stat ps, int s, int f, int os, int of)
+void print_pred_full(FILE* fp, pred_info pi)
 {
-    float f1 = ps.co * 100;
-    float f2 = ps.lb * 100;
-    float f3 = (ps.fs - (ps.co + ps.lb)) * 100;
-    float f4 = (1.0 - ps.fs) * 100;
+    print_pred_stat(fp, pi);
+    print_pred_name(fp, pi.site, pi.p);
+}
+
+void print_pred_stat(FILE* fp, pred_info pi)
+{
+    float f1 = pi.ps.co * 100;
+    float f2 = pi.ps.lb * 100;
+    float f3 = (pi.ps.fs - (pi.ps.co + pi.ps.lb)) * 100;
+    float f4 = (1.0 - pi.ps.fs) * 100;
     fprintf(fp, "<td>"
                 "<table class=\"scores\" style=\"width: %dpx\" "
                 "title=\"Ctxt: %.0f%% LB: %.0f%%, Incr: %.0f%%, Fail: %.0f%%; tru in %d S and %d F; obs in %d S and %d F\">"
@@ -58,7 +72,7 @@ void print_pred_stat(FILE* fp, pred_stat ps, int s, int f, int os, int of)
                 "</tr>"
                 "</table>"
                 "</td>",
-        (int) floor(log10(s + f) * 60), f1, f2, ps.in * 100, ps.fs * 100, s, f, os, of, f1, f2, f3, f4);
+        (int) floor(log10(pi.s + pi.f) * 60), f1, f2, pi.ps.in * 100, pi.ps.fs * 100, pi.s, pi.f, pi.os, pi.of, f1, f2, f3, f4);
 }
 
 const char* s_op[6] = { "<", ">=", "==", "!=", ">", "<=" };

@@ -98,18 +98,11 @@ int main(int argc, char** argv)
             assert(fp2);
 
             while (1) {
-                char scheme_code;
-                int u, c, p, site, s, f, os, of;
-                pred_stat ps;
-                fscanf(fp2, "%1s %d %d %d %d %f %f %f %f %d %d %d %d",
-                    &scheme_code,
-                    &u, &c, &p, &site,
-                    &ps.lb, &ps.in, &ps.fs, &ps.co,
-                    &s, &f, &os, &of);
+                pred_info pi = read_pred_full(fp2);
                 if (feof(fp2))
                     break;
                 fputs("<tr>\n", fp);
-                print_pred_full(fp, ps, s, f, os, of, site, p);
+                print_pred_full(fp, pi);
                 fputs("</tr>\n", fp);
             }
 

@@ -62,7 +62,6 @@ char* obs_txt_file = NULL;
 char* tru_txt_file = NULL;
 char* all_cluster_txt_file = NULL;
 char* per_cluster_txt_file = NULL;
-char* trace_txt_file = NULL;
 
 char* label_path_fmt = NULL;
 char* verbose_report_path_fmt = NULL;
@@ -170,12 +169,12 @@ void process_cmdline(int argc, char** argv)
 	    result_summary_htm_file = argv[i];
 	    continue;
 	}
-	if (!strcmp(argv[i], "-ot")) {
+	if (!strcmp(argv[i], "-o")) {
 	    i++;
 	    obs_txt_file = argv[i];
 	    continue;
 	}
-	if (!strcmp(argv[i], "-tt")) {
+	if (!strcmp(argv[i], "-t")) {
 	    i++;
 	    tru_txt_file = argv[i];
 	    continue;
@@ -188,11 +187,6 @@ void process_cmdline(int argc, char** argv)
 	if (!strcmp(argv[i], "-kp")) {
 	    i++;
 	    per_cluster_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-t")) {
-	    i++;
-	    trace_txt_file = argv[i];
 	    continue;
 	}
 
@@ -241,11 +235,10 @@ void process_cmdline(int argc, char** argv)
 		 "-pt  <preds-txt-file>\n"
 		 "-ps  <preds-src-file>\n"
 		 "-r   <result-summary-htm-file>\n"
-		 "-ot  <obs-txt-file>\n"
-		 "-tt  <tru-txt-file>\n"
+		 "-o   <obs-txt-file>\n"
+		 "-t   <tru-txt-file>\n"
 		 "-ka  <all-cluster-txt-file>\n"
 		 "-kp  <per-cluster-txt-file>\n"
-		 "-t   <trace-txt-file>\n"
 		 "-l   <label-path-fmt>\n"
 		 "-vr  <verbose-report-path-fmt>\n"
 		 "-cr  <compact-report-path-fmt>\n");
@@ -262,6 +255,7 @@ void gen_views(char* preds_file, int prefix)
     shell("awk '{ if ($1~/B/) print $0 }' < %s > B.txt", preds_file);
     shell("awk '{ if ($1~/R/) print $0 }' < %s > R.txt", preds_file);
     shell("awk '{ if ($1~/S/) print $0 }' < %s > S.txt", preds_file);
+    shell("awk '{ if ($1~/G/) print $0 }' < %s > G.txt", preds_file);
 
     shell("%s -r %s -p %d", GEN_VIEWS, result_summary_htm_file, prefix);
 }
@@ -343,10 +337,9 @@ int main(int argc, char** argv)
 	result_summary_htm_file = DEFAULT_RESULT_SUMMARY_HTM_FILE;
 	shell("%s %s/compute_results.o %s/classify_runs.o %s/utils.o %s.o %s.o -o %s",
 	      linker, objdir, objdir, objdir, sites_src_file, units_src_file, COMPUTE_RESULTS);
-	shell("%s -e %s -d %s -c %s -s %s -f %s -cr %s %s %s -p %s -r %s",
+	shell("%s -e %s -d %s -c %s -s %s -f %s -cr %s -p %s -r %s",
 	      COMPUTE_RESULTS, experiment_name, program_src_dir, confidence,
               sruns_txt_file, fruns_txt_file, compact_report_path_fmt,
-	      ((trace_txt_file) ? "-t" : ""), ((trace_txt_file) ? trace_txt_file : ""),
 	      preds_txt_file, result_summary_htm_file);
 /*
 	shell("%s -I%s -c %s.cc", compiler, incdir, preds_src_file);
@@ -358,7 +351,6 @@ int main(int argc, char** argv)
 */
     }
 
-/*
     if (do_compute_obs_tru) {
         REQUIRE("-do-compute-obs-tru", "-us", units_src_file);
 	REQUIRE("-do-compute-obs-tru", "-s" , sruns_txt_file);
@@ -372,11 +364,10 @@ int main(int argc, char** argv)
 	tru_txt_file = DEFAULT_TRU_TXT_FILE;
 	shell("%s %s/compute_obs_tru.o %s/classify_runs.o %s/utils.o %s.o -o %s",
 	      linker, objdir, objdir, objdir, units_src_file, COMPUTE_OBS_TRU);
-	shell("%s -s %s -f %s -p %s -cr %s -ot %s -tt %s",
-	      COMPUTE_OBS_TRU, sruns_txt_file, fruns_txt_file, preds_abbr_txt_file,
+	shell("%s -s %s -f %s -p %s -cr %s -o %s -t %s",
+	      COMPUTE_OBS_TRU, sruns_txt_file, fruns_txt_file, preds_txt_file,
               compact_report_path_fmt, obs_txt_file, tru_txt_file);
     }
-*/
 
     if (do_print_results_1) {
 	REQUIRE("do-print-results-1", "-r", result_summary_htm_file);

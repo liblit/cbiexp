@@ -169,12 +169,12 @@ void process_cmdline(int argc, char** argv)
 	    compact_report_path_fmt = argv[i];
 	    continue;
 	}
-	if (!strcmp(argv[i], "-ot")) {
+	if (!strcmp(argv[i], "-o")) {
 	    i++;
 	    obs_txt_file = argv[i];
 	    continue;
 	}
-	if (!strcmp(argv[i], "-tt")) {
+	if (!strcmp(argv[i], "-t")) {
 	    i++;
 	    tru_txt_file = argv[i];
 	    continue;
@@ -185,8 +185,8 @@ void process_cmdline(int argc, char** argv)
                  "(r) -f  <fruns-txt-file>\n"
                  "(r) -p  <preds-txt-file>\n"
                  "(r) -cr <compact-report-path-fmt>\n"
-                 "(w) -ot <obs-txt-file>\n"
-                 "(w) -tt <tru-txt-file>\n");
+                 "(w) -o  <obs-txt-file>\n"
+                 "(w) -t  <tru-txt-file>\n");
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
@@ -205,7 +205,7 @@ void process_cmdline(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-    int u, c, p;
+    int u, c;
 
     process_cmdline(argc, argv);
 
@@ -222,16 +222,13 @@ int main(int argc, char** argv)
     pfp = fopen(preds_txt_file, "r");
     assert(pfp);
     while (1) {
-	fscanf(pfp, "%d %d %d", &u, &c, &p);
+	pred_info pi = read_pred_full(pfp);
 	if (feof(pfp))
 	    break;
-	assert(u >= 0 && u < num_units);
-	assert(c >= 0 && c < units[u].num_sites);
-	assert(p >= 0 && p < 6);
-	site_info[u][c].obs[p] = new bit_vector(num_runs);
-	assert(site_info[u][c].obs[p]);
-	site_info[u][c].tru[p] = new bit_vector(num_runs);
-	assert(site_info[u][c].tru[p]);
+	site_info[pi.u][pi.c].obs[pi.p] = new bit_vector(num_runs);
+	assert(site_info[pi.u][pi.c].obs[pi.p]);
+	site_info[pi.u][pi.c].tru[pi.p] = new bit_vector(num_runs);
+	assert(site_info[pi.u][pi.c].tru[pi.p]);
     }
     fclose(pfp);
 
