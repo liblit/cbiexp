@@ -1,9 +1,10 @@
 root := ../..
-experiment := ..
+experiment ?= ..
 datadir ?= $(experiment)/data
 corrdir := $(root)/correlations
 tooldir := $(root)/src
 
+sitesdir ?= $(experiment)/share
 sitesglob := $(experiment)/share/*.sites
 sites := $(wildcard $(sitesglob))
 sites := $(if $(sites), $(sites), $(error no sites files in $(sitesglob)))
@@ -139,9 +140,9 @@ clean:: ; rm -f preds.txt compute-results
 
 stamp-convert-reports: $(tooldir)/convert_reports.o $(datadir)/stamp-labels s.runs f.runs units.o
 	if [ -e $(datadir)/stamp-convert-reports ]; then \
-	  echo 'data directory claims to be converted already' >&2 \
+	  echo 'data directory claims to be converted already' >&2; \
 	else \
-	  $(time) $(tooldir)/analyze_runs --do=convert-reports --runs-directory=$(datadir) \
+	  $(time) $(tooldir)/analyze_runs --do=convert-reports --runs-directory=$(datadir); \
 	fi
 	touch $@
 clean:: ; rm -f convert-reports stamp-convert-reports
