@@ -2,7 +2,7 @@ root := ../..
 experiment := ..
 datadir := $(experiment)/data
 
-sites := $(experiment)/share/rhythmbox.sites
+sites := $(wildcard $(experiment)/share/*.sites)
 
 all: stamp-dynamic
 
