@@ -4,6 +4,7 @@ use strict;
 
 use File::Basename;
 use File::Path;
+use File::Temp qw(tempdir);
 use FindBin;
 use POSIX qw(SIGKILL SIGTERM);
 
@@ -28,9 +29,8 @@ my $cwd = `pwd`;
 chomp $cwd;
 my $run_id = basename $cwd;
 
-my $tmpdir = "$cwd/tmp";
+my $tmpdir = tempdir(CLEANUP => 0);
 $ENV{TMPDIR} = $tmpdir;
-mkdir $tmpdir or die "cannot mkdir $tmpdir: $!";
 
 $ENV{XAUTHORITY} = "$tmpdir/xauth";
 $ENV{DISPLAY} = ":$run_id";
@@ -43,18 +43,16 @@ $ENV{LD_LIBRARY_PATH}= $FindBin::Bin;
 END {
     # blow away various GNOME support daemons
     if (defined $tmpdir && -d $ENV{TMPDIR}) {
-	my @chaff = map { chomp; $_ } qx'find $TMPDIR | xargs /usr/sbin/lsof -t';
-	unless ($?) {
+	my @chaff = map { chomp; $_ } qx'find $TMPDIR -print0 | xargs -0r /usr/sbin/lsof -t';
+	if (!@chaff) {
+	    print "not killing support daemons: chaff list is empty\n";
+	} elsif ($chaff[0] == 1) {
+	    print "not killing support daemons: chaff list fails sanity check\n";
+	} else {
 	    print "killing GNOME support daemons: @chaff\n";
-	    if (@chaff) {
-		if ($chaff[0] == 0) {
-		    print "sanity check: list looks suspect, not killing\n";
-		} else {
-		    kill SIGTERM, @chaff;
-		    sleep 2;
-		    kill SIGKILL, @chaff;
-		}
-	    }
+	    kill SIGTERM, @chaff;
+	    sleep 2;
+	    kill SIGKILL, @chaff;
 	}
 	rmtree $tmpdir, 0, 1;
     }
@@ -79,12 +77,10 @@ sub result (@) {
 
 my $server = new TimedCommand 'startx', "$FindBin::Bin/run-client", '--', '/usr/X11R6/bin/Xvfb', $ENV{DISPLAY}, '-nolisten', 'tcp', '-fbdir', $tmpdir;
 
-my $play_time = rand(10) + 3;
+my $play_time = rand(10) + 10;
 Utils::note 'play-time', $play_time;
 my ($outcome, $detail) = $server->wait($play_time);
-if ($outcome eq 'exit') {
-    result 'premature', $detail;
-}
+result 'premature', $detail if $outcome eq 'exit';
 
 
 ########################################################################
@@ -96,10 +92,8 @@ my $quitter = new TimedCommand $SiteConfig::rhythmbox, '--quit';
 $quitter->wait(5);
 $quitter->kill(SIGKILL);
 
-($outcome, $detail) = $server->wait(5);
-if ($outcome eq 'exit') {
-    result 'normal', $detail;
-}
+($outcome, $detail) = $server->wait(10);
+result 'normal', $detail if $outcome eq 'exit';
 
 
 ########################################################################
@@ -108,6 +102,8 @@ if ($outcome eq 'exit') {
 #
 
 $server->kill(SIGTERM);
-$server->wait(5);
+($outcome, $detail) = $server->wait(10);
+result 'sigterm', $detail if $outcome eq 'exit';
+    
 $server->kill(SIGKILL);
-result 'killed', 0;
+result 'sigkill', 0;
