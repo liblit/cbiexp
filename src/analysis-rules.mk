@@ -1,6 +1,6 @@
 root := ../..
 experiment := ..
-datadir := $(experiment)/data
+datadir ?= $(experiment)/data
 corrdir := $(root)/correlations
 tooldir := $(root)/src
 
