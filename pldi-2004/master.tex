@@ -465,20 +465,16 @@ equivalence classes.  Two crash reports showing the same stack trace,
 or perhaps only the same top-of-stack function, are presumed to be two
 reports of the same failure.  This works to the extent that a single
 cause corresponds to a single point of failure, but our experience
-with \moss\ and \rhythmbox\ suggests that this assumption may not often hold.  We find
-that only bugs \#2 and \#5 have truly unique ``signature'' stacks: a
+with \moss\ and \rhythmbox\ suggests that this assumption may not often hold.  In \moss\ find
+that only bugs 2 and 5 have truly unique ``signature'' stacks: a
 crash location which is present if and only if the corresponding bug
 was actually triggered.  These bugs are also our most deterministic.
-Bugs \#4 and \#6 have nearly unique stack signatures, modulo small
-changes to frames several levels removed from the point of failure.
+Bugs 4 and 6 also have nearly unique stack signatures.
 The remaining bugs are much less consistent: each stack signature is
 observed after a variety of different bugs, and each triggered bug
-causes failure in a variety of different stack states.  Stack-based
-clustering provides little insight for temporally extended bugs that
-do not crash until well after the bad behavior.  A special case of
-this is a program which produces incorrect output but exits normally
-without crashing and therefore without any crash stack on which to
-cluster.
+causes failure in a variety of different stack states.  In \rhythmbox,
+both bugs caused crashes so long after the bad behavior that the crash stacks
+were not useful at all.
 
 Studies that attempt real-world deployment of monitored software must
 address a host of practical engineering concerns, from distribution to
@@ -536,10 +532,10 @@ to harbor bugs.  By observing rare events more often, we would need fewer
 runs to isolate bugs.
 
 \item The algorithm we present here analyzes every predicate independently
-of every other predicate.  While we have not yet found a statistical algorithm that exploits
-correlations between predicates effectively in the presence of
-multiple bugs, we believe this is a worthwhile direction
-to explore.
+of every other predicate.  We believe we can do more to exploit
+statistical correlations between predicates.
+
+
 \end{itemize}
 
 
