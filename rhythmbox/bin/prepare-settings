@@ -1,6 +1,0 @@
-#!/bin/sh -e
-
-gconftool-2 --set --type=string /apps/rhythmbox/state/play_order random-by-age
-gconftool-2 --set --type=bool   /apps/rhythmbox/state/repeat false
-
-gconftool-2 --set --type=string /system/gstreamer/default/audiosink fakesink
