@@ -229,12 +229,13 @@ equivalent to the condition that $\increase(P) > 0$.  To see this,
 let $a = F(P)$, $b = S(P)$, $c = F(P\lor\lnot P)$, and $d = S(P\lor\lnot P)$.
 Then
 \begin{gather*}
-  \increase(P) > 0 \Leftrightarrow \crash(P) > \context(P) \\
-  \Leftrightarrow \frac{a}{a+b} > \frac{c}{c+d}
-  \Leftrightarrow a (c+d) > (a+b) c \\
-  \Leftrightarrow ad > bc \Leftrightarrow \frac{a}{c} > \frac{b}{d} \\
-  \Leftrightarrow \hat \pi_f > \hat \pi_s
+  \increase(P) > 0 \iff \crash(P) > \context(P) \\
+  \iff \frac{a}{a+b} > \frac{c}{c+d}
+  \iff a (c+d) > (a+b) c \\
+  \iff ad > bc \iff \frac{a}{c} > \frac{b}{d}
+  \iff \hat \pi_f > \hat \pi_s
 \end{gather*}
+
 Hence the $\increase(P) > 0$ criterion is not only well motivated
 from the program analysis point of view, but can also be seen as a much
 simplified version of the Z test for two populations of
