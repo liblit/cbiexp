@@ -121,7 +121,18 @@ information provided by our tool"
 I am not sure whether the EXIF example is at the right place.
 
 =========================================
-10. Add references to Ernst and Orso.  [I think we already have enough
+11. Future Work.
+
+Add one or two lines about future work to the end of the conclusions
+section:
+
+1. tracking predicates about the heap structure (remember rhythmbox)
+2. creating counterexamples (traces) from predicates by using static
+   analysis (will ward off any criticism that predicates aren't always
+   sufficient)
+
+=========================================
+12. Add references to Ernst and Orso.  [I think we already have enough
 references to these folks and the related work section is already
 quite long.  Let us give this the least priority.]
 
