@@ -352,18 +352,19 @@ int main(int argc, char** argv)
     }
 
     if (do_compute_obs_tru) {
+        REQUIRE("-do-compute-obs-tru", "-ss", sites_src_file);
         REQUIRE("-do-compute-obs-tru", "-us", units_src_file);
 	REQUIRE("-do-compute-obs-tru", "-s" , sruns_txt_file);
 	REQUIRE("-do-compute-obs-tru", "-f" , fruns_txt_file);
         REQUIRE("-do-compute-obs-tru", "-p" , preds_txt_file);
         REQUIRE("-do-compute-obs-tru", "-cr", compact_report_path_fmt);
-	FORBID ("-do-compute-obs-tru", "-ot", obs_txt_file);
-	FORBID ("-do-compute-obs-tru", "-tt", tru_txt_file);
+	FORBID ("-do-compute-obs-tru", "-o" , obs_txt_file);
+	FORBID ("-do-compute-obs-tru", "-t" , tru_txt_file);
 	puts("Computing obs and tru ...");
 	obs_txt_file = DEFAULT_OBS_TXT_FILE;
 	tru_txt_file = DEFAULT_TRU_TXT_FILE;
-	shell("%s %s/compute_obs_tru.o %s/classify_runs.o %s/utils.o %s.o -o %s",
-	      linker, objdir, objdir, objdir, units_src_file, COMPUTE_OBS_TRU);
+	shell("%s %s/compute_obs_tru.o %s/classify_runs.o %s/utils.o %s.o %s.o -o %s",
+	      linker, objdir, objdir, objdir, sites_src_file, units_src_file, COMPUTE_OBS_TRU);
 	shell("%s -s %s -f %s -p %s -cr %s -o %s -t %s",
 	      COMPUTE_OBS_TRU, sruns_txt_file, fruns_txt_file, preds_txt_file,
               compact_report_path_fmt, obs_txt_file, tru_txt_file);
