@@ -1,14 +1,16 @@
 #!/usr/bin/perl -w
 
 use FileHandle;
+use FindBin;
+
+die "Do not run this program directly; use $FindBin::Bin instead\n" if @ARGV;
 
 # allow complete group access
 umask 002;
 
 $DPATH = "/moa/sc1/cbi/sources";           # source code data is here
-$MPATH = "/moa/sc1/cbi/bin";               # moss binaries are here
+$MPATH = '../bin';			   # moss binaries are here
 $watchdog = "$MPATH/watchdog.pl";
-$numruns = $ARGV[0];
 $ENV{'SAMPLER_DEBUGGER'} = "/usr/share/sampler/print-debug-info";  # collect stack traces
 #
 # This array contain a parameterized list of options.  Each option is
@@ -45,8 +47,6 @@ $ENV{'SAMPLER_DEBUGGER'} = "/usr/share/sampler/print-debug-info";  # collect sta
 # The odds that we cannot write a database file.
 $unwritable = 50;
  
-$dir = 0;
-
 #
 # Lists of c, java, and lisp files for use in the trials.
 # We choose elements from these lists randomly.
@@ -61,21 +61,6 @@ sub check_system ($) {
     die "system command crashed" if $? & 127;
     return $? >> 8;
 }
-
-
-#
-# copy the executables to the current directory
-#
-
-sub snapshot_moss_bad ($) {
-    my $executable = shift;
-    check_system "cp -p $MPATH/$executable ." and die "copy error";
-    check_system "/usr/lib/sampler/tools/extract-section .debug_sampler_cfg $executable >$executable.cfg" and die "cfg extraction error";
-    check_system "/usr/lib/sampler/tools/extract-section .debug_site_info $executable >$executable.sites" and die "site info extraction error";
-}
-
-snapshot_moss_bad 'mossbad';
-snapshot_moss_bad 'mossbad2';
 
 
 sub diff ($$) {
@@ -123,148 +108,135 @@ sub run_moss_bad ($) {
 }
 
 
-while ($numruns-- > 0) {
-    print "$numruns runs to go.\n";
-    #
-    # Each trial lives in its own directory.
-    #
-    while (-e $dir) {
-	$dir++;
-    }
-    mkdir($dir);
-    chdir($dir++);
-    #
-    # Scan over the list of options and build up an option
-    # list according to the probability distribution.
-    #
-    $full_option_list = "";
-    $i = 0;
-    while ($parameters[$i] != -2) {
-	$item = $parameters[$i++];
-	$num = rand(100);
-	$res = "";
-	while ($item != -1) {
-	    $opt_string = $parameters[$i++];
-	    if ($num < $item) {
-		$res = $opt_string;
-		last;
-	    }
-	    $item = $parameters[$i++];
+#
+# Scan over the list of options and build up an option
+# list according to the probability distribution.
+#
+$full_option_list = "";
+$i = 0;
+while ($parameters[$i] != -2) {
+    $item = $parameters[$i++];
+    $num = rand(100);
+    $res = "";
+    while ($item != -1) {
+	$opt_string = $parameters[$i++];
+	if ($num < $item) {
+	    $res = $opt_string;
+	    last;
 	}
-	for(; $parameters[$i] ne -1; $i++) { }
+	$item = $parameters[$i++];
+    }
+    for(; $parameters[$i] ne -1; $i++) { }
+    $i++;
+    $full_option_list .= $res . " ";
+}
+
+#
+# Now decide how many files will be submitted of which languages and choose
+# them randomly.
+#
+$filenum = rand(100);
+$i = 0;
+$numfiles = 0;
+while ($i < $#filedistribution) {
+    $prob = $filedistribution[$i++];
+
+    if ($filenum <= $prob) {
+	$numfiles = $filedistribution[$i++];
+	last;
+    } else {
 	$i++;
-	$full_option_list .= $res . " ";
-   }
-
-    #
-    # Now decide how many files will be submitted of which languages and choose
-    # them randomly.
-    #
-    $filenum = rand(100);
-    $i = 0;
-    $numfiles = 0;
-    while ($i < $#filedistribution) {
-	$prob = $filedistribution[$i++];
-
-	if ($filenum <= $prob) {
-	   $numfiles = $filedistribution[$i++];
-	   last;
-       } else {
-	   $i++;
-       }
     }
+}
 
-    $i = 0;
-    $lang = "";
-    $langnum = rand(100);
-    while ($i < $#langdistribution) {
-	$prob = $langdistribution[$i++];
+$i = 0;
+$lang = "";
+$langnum = rand(100);
+while ($i < $#langdistribution) {
+    $prob = $langdistribution[$i++];
 
-	if ($langnum <= $prob) {
-	   $lang = $langdistribution[$i++];
-	   last;
-       } else {
-	   $i++;
-       }
+    if ($langnum <= $prob) {
+	$lang = $langdistribution[$i++];
+	last;
+    } else {
+	$i++;
     }
+}
 
-    if ($lang eq "c") {
-	@filelist = @c_files;
-    }
-    if ($lang eq "java") {
-	@filelist = @java_files;
-    }
-    if ($lang eq "lisp") {
-	@filelist = @lisp_files;
-    }
+if ($lang eq "c") {
+    @filelist = @c_files;
+}
+if ($lang eq "java") {
+    @filelist = @java_files;
+}
+if ($lang eq "lisp") {
+    @filelist = @lisp_files;
+}
 
-    open(M,">manifest");
-    for($i = 1; $i < $numfiles+1; $i++) {
-	$num = int(rand($#filelist));
-	$file = $filelist[$num];
-	chop($file);
-	print M "$file $i $lang $file\n";
-    }
-    close(M);
+open(M,">manifest");
+for($i = 1; $i < $numfiles+1; $i++) {
+    $num = int(rand($#filelist));
+    $file = $filelist[$num];
+    chop($file);
+    print M "$file $i $lang $file\n";
+}
+close(M);
 
 #
 # In the case of a trial that writes a database file, there is a chance the file is not writable.
 #
-    if ($full_option_list =~ /dbfile/) {
-	if (rand(100) < $unwritable) {
-	    check_system "touch dbfile; chmod a-wrx dbfile";
-	}
+if ($full_option_list =~ /dbfile/) {
+    if (rand(100) < $unwritable) {
+	check_system "touch dbfile; chmod a-wrx dbfile";
     }
+}
 
 #
 # If we are supposed to read database db1, we need to build it.
 # For this we use the standard moss executable so that there is no
 # problem with data collection.
 # 
-    if ($full_option_list =~ /db1/) {
-	open(M,">db1.manifest");
-	for($i = 1; $i < 20; $i++) {
-	    $num = int(rand($#filelist));
-	    $file = $filelist[$num];
-	    chop($file);
-	    print M "$file $i $lang $file\n";
-	}
-	close(M);
-	check_system "$watchdog 1000 $MPATH/moss $full_option_list -s db1 -a db1.manifest > output.db1 2> errors.db1";
+if ($full_option_list =~ /db1/) {
+    open(M,">db1.manifest");
+    for($i = 1; $i < 20; $i++) {
+	$num = int(rand($#filelist));
+	$file = $filelist[$num];
+	chop($file);
+	print M "$file $i $lang $file\n";
     }
-    
+    close(M);
+    check_system "$watchdog 1000 $MPATH/moss $full_option_list -s db1 -a db1.manifest > output.db1 2> errors.db1";
+}
+
 #
 # Likewise for db2; this is an ugly bit of cut and paste coding.
 #
-    if ($full_option_list =~ /db2/) {
-	open(M,">db2.manifest");
-	for($i = 1; $i < 20; $i++) {
-	    $num = int(rand($#filelist));
-	    $file = $filelist[$num];
-	    chop($file);
-	    print M "$file $i $lang $file\n";
-	}
-	close(M);
-	check_system "$watchdog 1000 $MPATH/moss $full_option_list -s db2 -a db2.manifest > output.db2 2> errors.db2";
+if ($full_option_list =~ /db2/) {
+    open(M,">db2.manifest");
+    for($i = 1; $i < 20; $i++) {
+	$num = int(rand($#filelist));
+	$file = $filelist[$num];
+	chop($file);
+	print M "$file $i $lang $file\n";
     }
+    close(M);
+    check_system "$watchdog 1000 $MPATH/moss $full_option_list -s db2 -a db2.manifest > output.db2 2> errors.db2";
+}
 
-    # various runs
-    run_moss_good;
-    run_moss_bad 'bad';
-    run_moss_bad 'bad2';
+# various runs
+run_moss_good;
+run_moss_bad 'bad';
+run_moss_bad 'bad2';
 
-    # overall sanity checks
-    my @abnormality;
-    my $goodExit = (new FileHandle 'good/exit')->getline;
-    push @abnormality, 'good run crashed' if $goodExit =~ /^signal\t/;
-    push @abnormality, 'good run timed out' if $goodExit eq 'timeout';
-    push @abnormality, 'bad and bad2 runs exited differently' if diff 'bad/exit', 'bad2/exit';
-    push @abnormality, 'bad run produced no reports' if -z 'bad/reports';
-    push @abnormality, 'bad2 run produced no reports' if -z 'bad2/reports';
-    if (@abnormality) {
-	my $disregard = new FileHandle 'disregard', 'w';
-	$disregard->print("$_\n") foreach @abnormality;
-    }
-
-    chdir("..");
+# overall sanity checks
+my @abnormality;
+my $goodExit = (new FileHandle 'good/exit')->getline;
+push @abnormality, 'good run crashed' if $goodExit =~ /^signal\t/;
+push @abnormality, 'good run timed out' if $goodExit eq 'timeout';
+push @abnormality, 'bad and bad2 runs exited differently' if diff 'bad/exit', 'bad2/exit';
+push @abnormality, 'bad run produced no reports' if -z 'bad/reports';
+push @abnormality, 'bad2 run produced no reports' if -z 'bad2/reports';
+if (@abnormality) {
+    my $disregard = new FileHandle 'disregard', 'w';
+    $disregard->print("$_\n") foreach @abnormality;
 }

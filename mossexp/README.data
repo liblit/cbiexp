@@ -1,12 +1,12 @@
 Guide to data files:
 
-{mossbad,mossbad2}
-    instrumented executables, preserved for posterity
+bin/*
+    various executables and supporting scripts
 
-{mossbad,mossbad2}.cfg
+share/*.cfg
     extracted CFG info for use with "order-sites"
 
-{mossbad,mossbad2}.sites
+share/*.sites
     extracted site info for use with "resolve-samples"
 
 */{good,bad,bad2}

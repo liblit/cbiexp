@@ -1,0 +1,14 @@
+#!/bin/sh -e
+
+dir=$1
+if ! shift; then
+    echo "Usage: $0 <data-dir>" >&2
+    exit 2
+fi
+
+if [ -d $dir ]; then
+    echo "Warning: reinstalling into existing directory"
+fi
+
+umask 022
+make -s -C "`dirname $0`" INSTDIR=$dir install
