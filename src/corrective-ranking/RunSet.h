@@ -31,6 +31,7 @@ private:
 
 
 std::istream & operator>>(std::istream &, RunSet &);
+std::ostream & operator<<(std::ostream &, const RunSet &);
 
 
 #endif // !INCLUDE_corrective_ranking_RunSet_h

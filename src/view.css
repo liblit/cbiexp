@@ -1,5 +1,6 @@
-@import "logo.css";
 @import "bug-o-meter.css";
+@import "link-cell.css";
+@import "logo.css";
 
 table.views th {
   text-align: right
@@ -34,7 +35,6 @@ table.predictors th, table.predictors td {
 tr.rare { 
   background: #ddf
 }
-
 
 td.count {
   text-align: right

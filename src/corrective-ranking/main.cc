@@ -10,6 +10,7 @@
 
 #include "Predicates.h"
 #include "allFailures.h"
+#include "zoom.h"
 
 using namespace std;
 
@@ -20,7 +21,7 @@ using namespace std;
 //
 
 
-void
+static void
 buildView(Predicates &candidates, const char projection[])
 {
   // create XML output file and write initial header
@@ -32,24 +33,7 @@ buildView(Predicates &candidates, const char projection[])
   while (!candidates.empty())
     {
       const Predicates::iterator winner = max_element(candidates.begin(), candidates.end());
-
-      view << "<predictor index=\"" << winner->index + 1
-	   << "\" initial=\"" << winner->initial
-	   << "\" effective=\"" << winner->effective
-	   << "\">"
-
-	   << "<bug-o-meter true-success=\"" << winner->tru.successes.count
-	   << "\" true-failure=\"" << winner->tru.failures.count
-	   << "\" seen-success=\"" << winner->obs.successes.count
-	   << "\" seen-failure=\"" << winner->obs.failures.count
-	   << "\" fail=\"" << winner->badness()
-	   << "\" context=\"" << winner->context()
-	   << "\" increase=\"" << winner->increase()
-	   << "\" lower-bound=\"" << winner->lowerBound()
-	   << "\" log10-true=\"" << log10(double(winner->tru.count()))
-	   << "\"/>"
-
-	   << "</predictor>";
+      view << *winner;;
 
       // cerr << "winner " << winner->index << " dilutes all failures\n";
       allFailures.dilute(*winner, winner->tru.failures);
@@ -78,10 +62,39 @@ buildView(Predicates &candidates, const char projection[])
 
 const char *Stylesheet::filename = "corrected-view.xsl";
 
+static bool zoomsWanted = false;
+
+
+static int
+parseFlag(int key, char *, argp_state *)
+{
+  using namespace Confidence;
+
+  switch (key) {
+  case 'z':
+    zoomsWanted = true;
+    return 0;
+  default:
+    return ARGP_ERR_UNKNOWN;
+  }
+}
+
 
 static void
 processCommandLine(int argc, char *argv[])
 {
+  static const argp_option options[] = {
+    {
+      "zoom",
+      'z',
+      0,
+      0,
+      "generate zoom views in addition to main ranking",
+      0
+    },
+    { 0, 0, 0, 0, 0, 0 }
+  };
+
   static const argp_child children[] = {
     { &Confidence::argp, 0, 0, 0 },
     { &NumRuns::argp, 0, 0, 0 },
@@ -91,7 +104,7 @@ processCommandLine(int argc, char *argv[])
   };
 
   static const argp argp = {
-    0, 0, 0, 0, children, 0, 0
+    options, parseFlag, 0, 0, children, 0, 0
   };
 
   argp_parse(&argp, argc, argv, 0, 0, 0);
@@ -124,5 +137,8 @@ rankMain(const char projection[])
 
   Predicates candidates;
   candidates.load();
+
+  if (zoomsWanted)
+    buildZooms(candidates, projection);
   buildView(candidates, projection);
 }

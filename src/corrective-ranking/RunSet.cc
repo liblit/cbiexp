@@ -29,6 +29,17 @@ operator>>(istream &in, RunSet &runs)
 }
 
 
+ostream &
+operator<<(ostream &out, const RunSet &runs)
+{
+  for (size_t runId = 0; runId < runs.size(); ++runId)
+    if (runs[runId])
+      out << ' ' << runId;
+
+  return out;
+}
+
+
 RunSet::RunSet(Outcome outcome)
   : outcome(outcome),
     count(0)

@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<!DOCTYPE stylesheet>
+<!DOCTYPE stylesheet [
+  <!ENTITY link "&#9679;">
+]>
 
 <xsl:stylesheet
   version="1.0"
@@ -16,6 +18,7 @@
     <th>Initial Bug-O-Meter&#8482;</th>
     <th>Effective Score</th>
     <th>Effective Bug-O-Meter&#8482;</th>
+    <th>Zoom</th>
   </xsl:template>
 
 
@@ -25,6 +28,7 @@
     <xsl:apply-imports/>
     <td><xsl:value-of select="@effective"/></td>
     <xsl:apply-templates select="bug-o-meter"/>
+    <td class="link"><a href="zoom-{/view/@projection}-{@index}.xml">&link;</a></td>
   </xsl:template>
 
 

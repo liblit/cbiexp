@@ -34,6 +34,7 @@ links :=					\
 	bug-o-meter.xsl				\
 	corrected-view.dtd			\
 	corrected-view.xsl			\
+	link-cell.css				\
 	logo.css				\
 	logo.xsl				\
 	predictor-info.dtd			\
@@ -52,14 +53,17 @@ links :=					\
 	view.dtd				\
 	view.xsl
 
-web :=							\
-	$(views)					\
-	$(links)					\
-	$(topRho)					\
-	$(web_extras)					\
+corrected :=						\
 	all_hl_corrected-exact-complete.xml		\
-	all_hl_corrected-approximate-complete.xml	\
-	predictor-info.xml				\
+	all_hl_corrected-approximate-complete.xml
+
+web :=						\
+	$(views)				\
+	$(corrected)				\
+	$(links)				\
+	$(topRho)				\
+	$(web_extras)				\
+	predictor-info.xml			\
 	summary.xml
 
 publish ?= $(HOME)/www/$(name)-new
@@ -68,6 +72,7 @@ all: $(web)
 .PHONY: all
 
 publish: $(web:%=$(publish)/%)
+	cp zoom-corrected-*.xml $(publish)
 .PHONY: publish
 
 $(publish)/%: %
@@ -122,11 +127,11 @@ $(sparse): $(corrdir)/mhn2sparsemat.pl f.runs s.runs obs.txt tru.txt
 	for goal in $(sparse); do test -r $$goal; done
 clean:: ; rm -f $(sparse)
 
-all_hl_corrected-%.xml: $(tooldir)/corrective-ranking/% f.runs obs.txt tru.txt
-	$(time) ./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) $(corrected_view_flags)
-	$(build) bug-o-meter.dtd corrected-view.dtd projected-view.dtd view.dtd
-	xmllint --valid --noout $@
-clean:: ; rm -f all_hl_corrected-exact-complete.xml all_hl_corrected-approximate-complete.xml
+$(corrected): all_hl_corrected-%.xml: $(tooldir)/corrective-ranking/% f.runs obs.txt tru.txt
+	$(time) ./$< --zoom --begin-runs=$(training-runs) --runs-directory=$(datadir) $(corrected_view_flags)
+	$(build) bug-o-meter.dtd corrected-view.dtd link-cell.css logo.css projected-view.dtd view.dtd
+	xmllint --valid --noout $@ zoom-corrected-*.xml
+clean:: ; rm -f all_hl_corrected-exact-complete.xml all_hl_corrected-approximate-complete.xml zoom-corrected-*.xml
 
 ifndef report-series
 stamp-decimate := $(datadir)/stamp-convert-reports
@@ -158,6 +163,7 @@ clean:: ; rm -f gen-views
 
 summary.xml: gen-summary preds.txt s.runs f.runs
 	$(time) ./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) --source-directory=../src >$@
+	$(build) link-cell.css logo.css summary.css summary.dtd summary.xsl
 	xmllint --valid --noout $@
 clean:: ; rm -f summary.xml
 
@@ -221,15 +227,11 @@ clean:: ; rm -f max-observed
 
 update-tools := update-tools
 
-$(tooldir)/analysis-rules.mk: force
-	$(MAKE) -C $(@D) $(@F)
+$(tooldir)/analysis-rules.mk: $(update-tools)
+	$(MAKE) -C $(@D)
 
-$(tooldir)/%: $(update-tools)
-
-update-tools: force
-	$(MAKE) -C $(tooldir)
+update-tools:
 .PHONY: update-tools
-
 
 .PHONY: clean
 

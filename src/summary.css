@@ -1,4 +1,5 @@
 @import "logo.css";
+@import "link-cell.css";
 
 
 /***********************************************************************
@@ -85,15 +86,4 @@ table.scheme-links td.total,
 table.scheme-links td.percent {
   border-left: none;
   padding-left: 0
-}
-
-td.link a {
-  display: block;
-  text-decoration: none;
-  width: 100%;
-  height: 100%
-}
-
-td.link a:hover {
-  background: #fdd
 }

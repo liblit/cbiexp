@@ -22,7 +22,9 @@ libcorrective_a_SOURCES =			\
 	allFailures.cc				\
 	allFailures.h				\
 	main.cc					\
-	main.h
+	main.h					\
+	zoom.cc					\
+	zoom.h
 
 exact_complete_SOURCES = exact-complete.cc
 exact_complete_LDADD = libcorrective.a ../libanalyze.a

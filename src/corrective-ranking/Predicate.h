@@ -37,6 +37,8 @@ struct Predicate
 
 bool operator<(const Predicate &, const Predicate &);
 
+std::ostream &operator<<(std::ostream &, const Predicate &);
+
 
 ////////////////////////////////////////////////////////////////////////
 
