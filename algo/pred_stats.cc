@@ -110,12 +110,14 @@ main(int argc, char** argv)
                                           (p == 3 && x + z > 0) ||
                                           (p == 4 && z > 0) ||
                                           (p == 5 && x + y > 0))) {
+                        printf("found run: %d\n", i);
                         runs[num_runs_found] = i;
                         num_runs_found++;
                     }
                 } else {
                     sscanf(at, "%d %d", &x, &y); 
                     if (x + y > 0 && ((p == 0 && x > 0) || (p == 1 && y > 0))) {
+                        printf("found run: %d\n", i);
                         runs[num_runs_found] = i;
                         num_runs_found++;
                     }
