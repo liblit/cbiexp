@@ -102,7 +102,7 @@ Predicate::recall() const
 double
 Predicate::harmonic() const
 {
-  const double result = 2 / (1 / lowerBound() + 1 / recall());
+  const double result = 2 / (1 / increase() + 1 / recall());
   assert(result >= 0);
   assert(result <= 1);
   return result;
