@@ -1,21 +1,26 @@
-\documentclass[times,10pt,twocolumn]{article}
+\documentclass[10pt,twocolumn]{article}
 
-\usepackage{url}
-\usepackage{latex8}
-\usepackage{times}
+\usepackage{amsfonts}
 \usepackage{amsmath}
-\usepackage{graphics}
 \usepackage{ieee}
 \usepackage{nicefrac}
+\usepackage{url}
+\usepackage{xspace}
 
-\newfont{\affaddr}{phvr at 10pt}
+\usepackage[bookmarks, pdftitle={Public Deployment of Cooperative Bug
+  Isolation}, pdfauthor={Ben Liblit, Mayur Naik, Alice X. Zheng, Alex
+  Aiken, and Michael I. Jordan}, pdfpagemode=UseOutlines]{hyperref}
 
-\newcommand{\evolution}{\tt evolution}
-\newcommand{\gaim}{\tt gaim}
-\newcommand{\gimp}{\tt gimp}
-\newcommand{\gnumeric}{\tt gnumeric}
-\newcommand{\nautilus}{\tt nautilus}
-\newcommand{\rhythmbox}{\tt rhythmbox}
+\ifthenelse{\isundefined{\pdfoutput}}{}{\usepackage{thumbpdf}}
+
+\newcommand{\evolution}{\texttt{evolution}\xspace}
+\newcommand{\gaim}{\texttt{gaim}\xspace}
+\newcommand{\gimp}{\texttt{gimp}\xspace}
+\newcommand{\gnumeric}{\texttt{gnumeric}\xspace}
+\newcommand{\nautilus}{\texttt{nautilus}\xspace}
+\newcommand{\rhythmbox}{\texttt{rhythmbox}\xspace}
+
+\pagestyle{empty}
 
 \begin{document}
 
@@ -31,23 +36,40 @@
 \newcommand*{\both}[0]{\textsuperscript{\eecsMark, \statMark}}
 \newcommand*{\stan}[0]{\textsuperscript{\stanMark}}
 
-\author{
-  Ben Liblit \eecs \ \ \ Mayur Naik \stan \ \ \  Alice X.\ Zheng \eecs \\
-  Alex Aiken \stan \ \ \ Michael I.\ Jordan \both  \\
- \eecs Department of Electrical Engineering and Computer Science \\ 
+\newcommand{\aupar}{\end{tabular} \\ \begin{tabular}[t]{c}}
+
+\author{%
+  Ben Liblit \eecs \and
+  Mayur Naik \stan \and
+  Alice X.\ Zheng \eecs
+  %%
+  \aupar
+  %%
+  Alex Aiken \stan \and
+  Michael I.\ Jordan \both
+  %%
+  \aupar
+  %%
+  \eecs Department of Electrical \\ Engineering and Computer Science \\
   \stat Department of Statistics \\
- University of California, Berkeley \\
- \stan Computer Science Department \\
- Stanford University
+  University of California, Berkeley \\
+  Berkeley, CA 947201776
+  \and
+  \stan Computer Science Department \\
+  353 Serra Mall \\
+  Stanford University \\
+  Stanford CA 943059025
 }
 
 \maketitle
+
+\thispagestyle{empty}
 
 \begin{abstract}
 As part of our work on Cooperative Bug Isolation (CBI) we have undertaken to 
 instrument and distribute binaries for a number of large open source projects.
 This
-public deployment is an important  step towards a large experiment involving (we hope) hundreds or thousands of users that will measure the effectiveness of CBI.
+public deployment is an important  step towards a large experiment involving (we hope) hundreds or thousands of users that will measure the effectiveness of CBI\@.
 This paper describes several of the significant engineering issues that arise in 
 instrumenting the source code of realistic applications.  
 More information on CBI can be found at \cite{Liblit:CBIP}.
@@ -82,7 +104,7 @@ using real applications.
 
 This paper reports on our experience in preparing for just such an
 experiment.  We have instrumented a number of large open source
-applications, listed in Table~\ref{apps}, with a total of about 1.8
+applications, listed in \autoref{apps}, with a total of about 1.8
 million lines of code. We have made these instrumented programs
 available to the public and are in the process of collecting feedback
 reports.  As a result, we have demonstrated a complete CBI system and
@@ -103,13 +125,13 @@ applications we instrument.
 \begin{table*}
   \centering
   \begin{tabular}{lrcccc}
-    Application & Lines of Code & Shared Libraries & Plugins & Threads \\\hline
-    \evolution & 460,912 & + & + & + \\
-    \gaim & 160,435 & & + & \\
-    \gimp & 650,660 & + & + & \\
-    \gnumeric & 319,137 & & + & \\
-    \nautilus & 124,679 & + & + & + \\
-    \rhythmbox & 56,442 & + & &
+    Application & Lines of Code & Shared Libraries & Plugins    & Threads \\\hline
+    \evolution  & 460,912       & \checkmark       & \checkmark & \checkmark \\
+    \gaim       & 160,435       &                  & \checkmark & \\
+    \gimp       & 650,660       & \checkmark       & \checkmark & \\
+    \gnumeric   & 319,137       &                  & \checkmark & \\
+    \nautilus   & 124,679       & \checkmark       & \checkmark & \checkmark \\
+    \rhythmbox  &  56,442       & \checkmark       &            &
   \end{tabular}
   \caption{Instrumented applications.}
   \label{apps}
@@ -123,7 +145,7 @@ a single object file.  We simply write out the predicate counters in the
 order in which they appear in that file, and that list constitutes a complete
 report.
 
-However, as can be seen in Table \ref{apps}, most applications involve
+However, as can be seen in \autoref{apps}, most applications involve
 multiple object files in the form of shared libraries, plugins, or
 both.  Note that this table counts only those shared libraries and
 plugins that are part of the source code of the application;
@@ -199,8 +221,8 @@ so we only take this extra care if in fact the application is multithreaded
 A key feature of our CBI system is that performance can be improved by
 sampling the instrumentation code, which is implemented by frequently
 skipping over some instrumentation and instead executing a ``fast
-path'' with no instrumentation at all.  We use a global {\em
-countdown} to determine how many instrumentation sites to skip before
+path'' with no instrumentation at all.  We use a global \emph{countdown}
+to determine how many instrumentation sites to skip before
 testing one predicate and recording its result.\footnote{The countdown
 is chosen randomly from a geometric distribution with a mean that is
 the desired sampling rate.  This is equivalent to, but much more
@@ -285,9 +307,9 @@ subprocess, it can also check that subprocess's exit status (either a
 result code or a fatal signal), which is included in the report
 uploaded to our feedback collection server.
 The wrapper script compresses the raw feedback report for transit
-using {\tt gzip}-compatible compression.  This is a huge benefit, as reports
+using \texttt{gzip}-compatible compression.  This is a huge benefit, as reports
 are mostly zeros and compress very well.  The average compression
-of the reports we have received is 96\%; Table~\ref{report-sizes} shows
+of the reports we have received is 96\%; \autoref{report-sizes} shows
 the range of report sizes we have received by application.  
 The largest reports are less than 40K bytes, which can be uploaded
 over even a slow modem connection in seconds.
@@ -335,7 +357,7 @@ far we have not needed any of these facilities.
 \section{Status of the Public Deployment}
 
 We conclude with some discussion of our experience thus far with our public
-deployment of the applications listed in Table~\ref{apps}.
+deployment of the applications listed in \autoref{apps}.
 
 One concern we have is that our approach adds a great deal of new code
 to an application; in fact, binaries will often be at least twice as
@@ -357,16 +379,16 @@ apparently is sparse enough; we probably could have sampled even more
 densely for these interactive applications which spend most of their
 time waiting for the user to do something.  Note however that 
 these applications do have CPU-intensive phases, such as when
-{\tt rhythmbox} is loading up a library with thousands of music files or
-when {\tt gnumeric} is recalculating a very large spreadsheet.
+\rhythmbox is loading up a library with thousands of music files or
+when \gnumeric is recalculating a very large spreadsheet.
 
-Finally, Table~\ref{reports-per-app} summarizes the current state of
+Finally, \autoref{reports-per-app} summarizes the current state of
 the data for each of our instrumented applications.  In this table,
-{\em count} is the total number of valid feedback reports received so far,
-which is broken out into {\em good} runs, runs that exited with a
-non-zero {\em error} status, and runs that ended in a {\em crash} due to a
+\emph{count} is the total number of valid feedback reports received so far,
+which is broken out into \emph{good} runs, runs that exited with a
+non-zero \emph{error} status, and runs that ended in a \emph{crash} due to a
 fatal signal.  Applications are ordered by decreasing crash rate;
-{\tt rhythmbox} crashes 13\% of the time.
+\rhythmbox crashes 13\% of the time.
 
 There is both good news and bad news in these figures.  The bad news
 is that we have not yet received enough executions to carry out
