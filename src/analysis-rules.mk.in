@@ -318,6 +318,12 @@ get_tp_weights: $(tooldir)/get_tp_weights.o units.o
 X.dat: get_tp_weights hyperparms.txt
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
 
+compute_pred_scores: $(tooldir)/compute_pred_scores.o sites.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -o $@
+
+predscores: compute_pred_scores
+	$(time) $< 
+
 collect_parmstats: $(tooldir)/collect_parmstats.o units.o sites.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
 clean:: ; rm -f colect_parmstats

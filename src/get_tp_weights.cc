@@ -370,16 +370,8 @@ operator<< (ostream &out, const vector<PredCoords> &pv)
     return out;
 }
 
-void print_results(unsigned r)
+void print_results()
 {
-  logfp << "Run " << r;
-  if (pptr == &PredInfoPair::f)
-    logfp << " (f)\n";
-  else if (pptr == &PredInfoPair::s)
-    logfp << " (s)\n";
-  else
-    assert(0);
-  logfp << predHash;
   datfp << predVec << endl;
 }
 
@@ -441,7 +433,7 @@ int main(int argc, char** argv)
 	CompactReport::suffix = "";
 	Reader(READ_FULL).read(r);
 
-        print_results(r);
+        print_results();
     }
 
     logfp << "------\nScores over " << ctr << " runs:\n";

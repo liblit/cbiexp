@@ -127,6 +127,7 @@ liblate_a_SOURCES =				\
 	compute_obs_tru.cc			\
 	compute_results.cc			\
 	compute_nonconst_preds.cc		\
+	compute_pred_scores.cc			\
 	convert_reports.ll			\
 	est_hyperparms.cc			\
 	extract_timestamps.ll			\
