@@ -1,15 +1,14 @@
 AM_CPPFLAGS = -W -Wall -Werror -Wformat
 
 noinst_LIBRARIES =				\
-	libadaptive-sampled.a			\
 	libcorrective.a
 
 noinst_PROGRAMS =				\
+	adaptive-sampled			\
 	approximate-complete			\
 	exact-complete
 
 libcorrective_a_SOURCES =			\
-	CountingIterator.h			\
 	Outcome.cc				\
 	Outcome.h				\
 	Predicates.cc				\
@@ -25,19 +24,14 @@ libcorrective_a_SOURCES =			\
 	main.cc					\
 	main.h
 
-exact_complete_SOURCES =			\
-	exact-complete.cc
-
+exact_complete_SOURCES = exact-complete.cc
 exact_complete_LDADD = libcorrective.a ../libanalyze.a
 
-approximate_complete_SOURCES =			\
-	approximate-complete.cc
-
+approximate_complete_SOURCES = approximate-complete.cc
 approximate_complete_LDADD = libcorrective.a ../libanalyze.a
 
-libadaptive_sampled_a_SOURCES =			\
-	AlternateRunsDirectory.h		\
-	adaptive-sampled.cc
+adaptive_sampled_SOURCES = adaptive-sampled.cc
+adaptive_sampled_LDADD = libcorrective.a ../libanalyze.a
 
 
 ../libanalyze.a: force

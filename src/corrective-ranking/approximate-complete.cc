@@ -19,6 +19,7 @@ RunSet::dilute(const Predicate &, const RunSet &winner)
 int
 main(int argc, char *argv[])
 {
-  rankMain(argc, argv, "corrected-approximate-complete");
+  initialize(argc, argv);
+  rankMain("corrected-approximate-complete");
   return 0;
 }

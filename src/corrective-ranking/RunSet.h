@@ -2,7 +2,7 @@
 #define INCLUDE_corrective_ranking_RunSet_h
 
 #include <iosfwd>
-#include <list>
+#include <vector>
 #include "Outcome.h"
 
 class Predicate;
@@ -10,11 +10,11 @@ class Predicate;
 
 ////////////////////////////////////////////////////////////////////////
 //
-//  A set of run numbers represented as an ordered list
+//  A set of runs represented as a membership bit vector
 //
 
 
-class RunSet : public std::list<unsigned>
+class RunSet : public std::vector<bool>
 {
 public:
   Outcome outcome;

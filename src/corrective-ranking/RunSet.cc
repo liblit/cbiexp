@@ -3,7 +3,8 @@
 #include <sstream>
 #include <string>
 
-#include "CountingIterator.h"
+#include "../NumRuns.h"
+
 #include "Predicate.h"
 #include "RunSet.h"
 
@@ -13,14 +14,14 @@ using namespace std;
 istream &
 operator>>(istream &in, RunSet &runs)
 {
-  assert(runs.empty());
+  runs.assign(NumRuns::value(), false);
   runs.count = 0;
 
   unsigned runId;
   in.exceptions(ios::badbit);
   while (in >> runId)
     {
-      runs.push_back(runId);
+      runs[runId] = 1;
       ++runs.count;
     }
 
@@ -29,7 +30,8 @@ operator>>(istream &in, RunSet &runs)
 
 
 RunSet::RunSet(Outcome outcome)
-  : outcome(outcome)
+  : outcome(outcome),
+    count(0)
 {
 }
 
@@ -57,10 +59,12 @@ RunSet::load(istream &in)
 size_t
 RunSet::intersectionSize(const RunSet &other)
 {
-  size_t result = 0;
+  assert(size() == other.size());
 
-  CountingIterator<unsigned> sink(result);
-  set_intersection(begin(), end(), other.begin(), other.end(), sink);
+  size_t result = 0;
+  for (size_t runId = 0; runId < size(); ++runId)
+    if ((*this)[runId] && other[runId])
+      ++result;
 
   return result;
 }

@@ -4,6 +4,7 @@
 #include "../Confidence.h"
 #include "../NumRuns.h"
 #include "../Progress/Bounded.h"
+#include "../RunsDirectory.h"
 #include "../Stylesheet.h"
 #include "../ViewPrinter.h"
 
@@ -84,6 +85,7 @@ processCommandLine(int argc, char *argv[])
   static const argp_child children[] = {
     { &Confidence::argp, 0, 0, 0 },
     { &NumRuns::argp, 0, 0, 0 },
+    { &RunsDirectory::argp, 0, 0, 0 },
     { &Stylesheet::argp, 0, 0, 0 },
     { 0, 0, 0, 0 }
   };
@@ -103,19 +105,22 @@ processCommandLine(int argc, char *argv[])
 
 
 void
-rankMain(int argc, char *argv[], const char projection[])
+initialize(int argc, char *argv[])
 {
   // command line processing and other initialization
   set_terminate(__gnu_cxx::__verbose_terminate_handler);
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
   // feenableexcept(FE_DIVBYZERO | FE_INVALID);
+}
 
-  {
-    ifstream failuresFile("f.runs");
-    assert(failuresFile);
-    failuresFile >> allFailures;
-  }
+
+void
+rankMain(const char projection[])
+{
+  ifstream failuresFile("f.runs");
+  assert(failuresFile);
+  failuresFile >> allFailures;
 
   Predicates candidates;
   candidates.load();

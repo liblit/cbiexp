@@ -2,7 +2,8 @@
 #define INCLUDE_corrective_ranking_main_h
 
 
-void rankMain(int, char *[], const char []);
+void initialize(int, char *[]);
+void rankMain(const char []);
 
 
 #endif // !INCLUDE_corrective_ranking_main_h

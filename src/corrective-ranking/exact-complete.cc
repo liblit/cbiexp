@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cassert>
 #include <iostream>
 
 #include "RunSet.h"
@@ -10,17 +11,21 @@ using namespace std;
 void
 RunSet::dilute(const Predicate &, const RunSet &winner)
 {
-  list<unsigned> difference;
-  set_difference(begin(), end(), winner.begin(), winner.end(), back_inserter(difference));
-  
-  swap(difference);
-  count = size();
+  assert(size() == winner.size());
+
+  for (size_t runId = 0; runId < size(); ++runId)
+    if ((*this)[runId] && winner[runId])
+      {
+	(*this)[runId] = 0;
+	--count;
+      }
 }
 
 
 int
 main(int argc, char *argv[])
 {
-  rankMain(argc, argv, "corrected-exact-complete");
+  initialize(argc, argv);
+  rankMain("corrected-exact-complete");
   return 0;
 }

@@ -3,8 +3,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "../PredStats.h"
 #include "../Progress/Bounded.h"
-#include "../Progress/Unbounded.h"
 
 #include "Predicates.h"
 
@@ -41,22 +41,18 @@ void Predicates::load(const char directory[])
   open(tru, directory, "tru.txt");
   open(obs, directory, "obs.txt");
 
-  Progress::Unbounded progress("reading predicates");
-  while (tru && obs)
+  const unsigned numPreds = PredStats::count();
+  Progress::Bounded progress("reading predicates", numPreds);
+
+  for (count = 0; count < numPreds; ++count)
     {
-      // speculate that there is at least one more predicate so we can
-      // create space for it first and then build it in place
-      push_back(count++);
+      progress.step();
+      push_back(count);
       back().load(tru, obs);
-      if (tru && obs) progress.step();
     }
 
-  // last speculation was wrong
-  pop_back();
-  --count;
-
-  assert(tru.eof());
-  assert(obs.eof());
+  assert(tru.peek() == EOF);
+  assert(obs.peek() == EOF);
 }
 
 

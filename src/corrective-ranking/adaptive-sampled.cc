@@ -1,6 +1,9 @@
 #include <fstream>
 #include <vector>
 
+#include "../PredStats.h"
+#include "../Progress/Bounded.h"
+
 #include "Predicate.h"
 #include "main.h"
 
@@ -53,16 +56,23 @@ RunSet::dilute(const Predicate &winPred, const RunSet &winSet)
 int
 main(int argc, char *argv[])
 {
-  ifstream in("../complete/tru.txt");
-  assert(in);
-  do
-    {
-      trueComplete.push_back(RunSuite());
-      trueComplete.back().load(in);
-    }
-  while (in);
-  trueComplete.pop_back();
+  initialize(argc, argv);
 
-  rankMain(argc, argv, "adaptive-sampled");
+  {
+    ifstream in("../analysis-adapt/tru.txt");
+    assert(in);
+    const unsigned numPreds = PredStats::count();
+    trueComplete.reserve(numPreds);
+
+    Progress::Bounded progress("reading predicates for complete data", numPreds);
+    for (unsigned pred = 0; pred < numPreds; ++pred)
+      {
+	progress.step();
+	trueComplete.push_back(RunSuite());
+	trueComplete.back().load(in);
+      }
+  }
+
+  rankMain("adaptive-sampled");
   return 0;
 }
