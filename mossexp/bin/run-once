@@ -48,7 +48,7 @@ $ENV{'SAMPLER_DEBUGGER'} = "/usr/share/sampler/print-debug-info";  # collect sta
 @memory_distribution = (1, "-p 10", 100, "");
 
 # The odds that we cannot write a database file.
-$unwritable = 50;
+$unwritable = 10;
  
 #
 # Lists of c, cc, java, and lisp files for use in the trials.
