@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 
 use FileHandle;
@@ -10,20 +10,22 @@ use strict;
 ########################################################################
 
 
-sub status ($) {
-    print STDERR scalar localtime, '  --  watchdog: ', shift, "\n";
+my $timeout = shift;
+my $variant = shift;
+
+
+sub variant_outfile ($) {
+    my $filename = ($variant eq '-') ? '/dev/null' : "$variant/$_[0]";
+    return new FileHandle $filename, 'w';
 }
 
 
 ########################################################################
 
 
-my $timeout = shift(@ARGV);
-
-########################################################################
-
-
 $| = 1;
+
+my $start = time;
 
 my $handle = new FileHandle;
 my $pid = $handle->open("@ARGV |");
@@ -34,10 +36,24 @@ while ($ready = $select->can_read($timeout)
     print $_;
 }
 
-if (!$ready) {
-    status 'killing';
-    kill SIGKILL, $pid;
-}
+my $elapsed = time - $start;
+my $timeHandle = variant_outfile 'time';
+$timeHandle->print("$elapsed\n");
 
-$handle->close;
-exit($? >> 8 || $?);
+my $exitHandle = variant_outfile 'exit';
+if ($ready) {
+    $handle->close;
+    my $signal = $? & 127;
+    my $status = $? >> 8;
+    if ($signal) {
+	$exitHandle->print("signal\t$signal\n");
+	exit $signal;
+    } else {
+	$exitHandle->print("normal\t$status\n");
+	exit $status;
+    }
+} else {
+    kill SIGKILL, $pid;
+    $exitHandle->print("timeout\n");
+    exit 123;
+}
