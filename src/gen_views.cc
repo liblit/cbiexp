@@ -49,7 +49,7 @@ int main(int argc, char** argv)
     for (i = 0; i < NUM_SCHEMES; i++) {
 	for ( m = 0; m < NUM_SORTBYS; m++) {
 	    char file[1000];
-	    sprintf(file, "%s%s_%s.html", prefix, scheme_codes[i], sortby_codes[m]);
+	    sprintf(file, "%s_%s.%s.html", scheme_codes[i], sortby_codes[m], prefix);
 	    fp = fopen(file, "w"); assert(fp);
 	    fputs("<html>\n"
 		  "<head><link type=\"text/css\" rel=\"stylesheet\" href=\"http://www.stanford.edu/~mhn/style.css\"/></head>\n"
@@ -60,7 +60,7 @@ int main(int argc, char** argv)
 		if (i == j)
 		    fprintf(fp, "[%s] ", scheme_names[j]);
 		else
-		    fprintf(fp, "[<a href=\"%s%s_%s.html\">%s</a>] ", prefix, scheme_codes[j], sortby_codes[m], scheme_names[j]);
+		    fprintf(fp, "[<a href=\"%s_%s.%s.html\">%s</a>] ", scheme_codes[j], sortby_codes[m], prefix, scheme_names[j]);
 	    }
 	    fputs("</td>\n<td rowSpan=3 align=right>"
 		  "<a href=\"" CBI_WEBPAGE "\">"
@@ -72,7 +72,7 @@ int main(int argc, char** argv)
 		if (m == n)
 		    fprintf(fp, "[%s] ", sortby_names[n]);
 		else
-		    fprintf(fp, "[<a href=\"%s%s_%s.html\">%s</a>] ", prefix, scheme_codes[i], sortby_codes[n], sortby_names[n]);
+		    fprintf(fp, "[<a href=\"%s_%s.%s.html\">%s</a>] ", scheme_codes[i], sortby_codes[n], prefix, sortby_names[n]);
 	    }
 	    fputs("</td>\n</tr>\n", fp);
 	    fprintf(fp, "<tr><td align=right>Go to:</td><td align=left>[<a href=\"%s\">report summary</a>] [<a href=\"" CBI_WEBPAGE "\">CBI webpage</a>]</td></tr>\n",
@@ -103,7 +103,7 @@ int main(int argc, char** argv)
     for (i = 0; i < NUM_SCHEMES; i++) {
 	fprintf(fp, "<tr>\n<td align=left>%s</td>\n", scheme_names[i]);
 	for (j = 0; j < NUM_SORTBYS; j++)
-	    fprintf(fp, "<td align=middle><a href=\"%s%s_%s.html\">X</a></td>\n", prefix, scheme_codes[i], sortby_codes[j]);
+	    fprintf(fp, "<td align=middle><a href=\"%s_%s.%s.html\">X</a></td>\n", scheme_codes[i], sortby_codes[j], prefix);
 	fputs("</tr>\n", fp);
     }
 
