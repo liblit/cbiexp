@@ -35,8 +35,9 @@ find \&wanted, @SiteConfig::musicdirs;
 #  prepare for sampler data collection
 #
 
-my $rhythmbox = "$FindBin::Bin/rhythmbox";
+my $rhythmbox = "$FindBin::Bin/../build/shell/rhythmbox";
 
+$ENV{GCONF_LOCAL_LOCKS} = 1;
 $ENV{GNOME_DISABLE_CRASH_DIALOG} = 1;
 $ENV{SAMPLER_DEBUGGER} = '/usr/share/sampler/print-debug-info';
 $ENV{SAMPLER_FILE} = 'reports';

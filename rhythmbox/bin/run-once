@@ -31,7 +31,7 @@ my $tmpdir = tempdir(CLEANUP => 0);
 $ENV{TMPDIR} = $tmpdir;
 
 $ENV{XAUTHORITY} = "$tmpdir/xauth";
-$ENV{DISPLAY} = ":$run_id";
+$ENV{DISPLAY} = ':' . ($run_id + 100);
 $ENV{PATH} .= ':/usr/X11R6/bin/';
 
 # for modified ORBit2 library which looks at $TMPDIR
@@ -86,7 +86,7 @@ result 'premature', $detail if $outcome eq 'exit';
 #   politely ask Rhythmbox to quit
 #
 
-my $rhythmbox = "$FindBin::Bin/rhythmbox";
+my $rhythmbox = "$FindBin::Bin/../build/shell/rhythmbox";
 my $quitter = new TimedCommand $rhythmbox, '--quit';
 $quitter->wait(5);
 $quitter->kill(SIGKILL);

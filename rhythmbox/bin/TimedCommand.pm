@@ -10,19 +10,22 @@ sub new ($@) {
     my $proto = shift;
     my $class = ref($proto) || $proto;
 
-    warn "launching timed command @_\n";
+    my $self = {};
+    bless $self, $class;
 
-    my $pid = fork;
-    die "cannot fork: $!" unless defined $pid;
+    $self->{command} = \@_;
+    $self->trace("launch @_");
 
-    if ($pid == 0) {
+    $self->{pid} = fork;
+    die "cannot fork: $!" unless defined $self->{pid};
+
+    if ($self->{pid} == 0) {
 	# child process
 	exec { $_[0] } @_;
 	die "cannot exec $_[0]: $!";
     }
 
-    my $self = \$pid;
-    bless $self, $class;
+    $self->trace("pid $self->{pid}");
     return $self;
 }
 
@@ -30,11 +33,12 @@ sub new ($@) {
 sub wait ($$) {
     my ($self, $timeout) = @_;
     my $status;
+    $self->trace("wait $timeout");
 
     eval {
 	local $SIG{ALRM} = sub { die "alarm\n" };
 	alarm $timeout;
-	waitpid $$self, 0;
+	waitpid $self->{pid}, 0;
 	$status = $?;
 	alarm 0;
     };
@@ -42,9 +46,11 @@ sub wait ($$) {
     if ($@) {
 	die unless $@ eq "alarm\n";
 	# child still running
+	$self->trace('timed out');
 	return 'timeout';
     } else {
 	# child exited on its own
+	$self->trace("exited with status $status");
 	return 'exit', $status;
     }
 }
@@ -52,7 +58,14 @@ sub wait ($$) {
 
 sub kill ($$) {
     my ($self, $signal) = @_;
-    kill $signal, $$self;
+    $self->trace("kill $signal");
+    kill $signal, $self->{pid};
+}
+
+
+sub trace($@) {
+    my $self = shift;
+    warn "$self: ", @_, "\n";
 }
 
 
