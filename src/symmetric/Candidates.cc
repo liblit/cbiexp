@@ -32,24 +32,48 @@ Candidates::filter()
 enum Reason { NotBetter, FirstInList, HighestScore, NonScalarPairs, NonDerived };
 
 
-static Reason
-better(Candidates::value_type &challenger, double challengerScore, double winnerScore)
+static ostream &
+operator<<(ostream &out, Reason reason)
 {
-  if (challengerScore < winnerScore)
+  switch (reason)
+    {
+    case NotBetter:
+      return out << "not better";
+    case FirstInList:
+      return out << "first in list";
+    case HighestScore:
+      return out << "highest score";
+    case NonScalarPairs:
+      return out << "not scalar-pairs";
+    case NonDerived:
+      return out << "not derived (logically stronger)";
+    default:
+      return out << "unknown reason";
+    }
+}
+
+
+static Reason
+better(Candidates::value_type &challenger, double challengerScore,
+       Candidates::value_type &leader, double leaderScore)
+{
+  if (challengerScore < leaderScore)
     return NotBetter;
 
-  if (challengerScore > winnerScore)
+  if (challengerScore > leaderScore)
     return HighestScore;
 
   // !!!: deviation from formal definitions:
   //   prefer non-scalar-pairs predictors
-  if (units[challenger.first.unitIndex].scheme_code != 'S')
+  if (units[challenger.first.unitIndex].scheme_code != 'S' &&
+      units[leader    .first.unitIndex].scheme_code == 'S')
     return NonScalarPairs;
 
   // !!!: deviation from formal definitions:
-  //   prefer non-derived predictors, which are logically stronger
-  //   than derived predictors
-  if (challenger.first.predicate & 1 == 0)
+  //   prefer non-derived predictors, since they are logically
+  //   stronger than derived predictors
+  if (challenger.first.predicate % 2 == 0 &&
+      leader    .first.predicate % 2 != 0)
     return NonDerived;
 
   return NotBetter;
@@ -66,44 +90,30 @@ Candidates::best()
 
   assert(begin() != end());
 
-  iterator winner = begin();
-  double winnerScore = winner->second->score();
-  Reason winnerReason = FirstInList;
+  iterator leader = begin();
+  double leaderScore = leader->second->score();
+  Reason leaderReason = FirstInList;
 
-  iterator challenger = winner;
+  iterator challenger = leader;
   while (++challenger != end())
     {
+      cerr << "current best: " << *leader << '\n'
+	   << "challenger:   " << *challenger << '\n';
       const double challengerScore = challenger->second->score();
-      const Reason challengerReason = better(*challenger, challengerScore, winnerScore);
+      const Reason challengerReason = better(*challenger, challengerScore,
+					     *leader, leaderScore);
+      cerr << "outcome:      " << challengerReason << endl;
+
       if (challengerReason != NotBetter)
 	{
-	  winner = challenger;
-	  winnerScore = challengerScore;
-	  winnerReason = challengerReason;
+	  leader = challenger;
+	  leaderScore = challengerScore;
+	  leaderReason = challengerReason;
 	}
     }
 
-  cerr << "next best candidate selected due to: ";
-  switch (winnerReason)
-    {
-    case FirstInList:
-      cerr << "first in list\n";
-      break;
-    case HighestScore:
-      cerr << "highest score\n";
-      break;
-    case NonScalarPairs:
-      cerr << "not scalar-pairs\n";
-      break;
-    case NonDerived:
-      cerr << "not derived (logically stronger)\n";
-      break;
-    default:
-      cerr << "unknown reason\n";
-      exit(1);
-    }
-
-  return winner;
+  cerr << "next best candidate selected due to: " << leaderReason << '\n';
+  return leader;
 }
 
 
