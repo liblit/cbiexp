@@ -138,7 +138,11 @@ preds.txt: $(tooldir)/compute_results.o sites.o units.o s.runs f.runs stamp-conv
 clean:: ; rm -f preds.txt compute-results
 
 stamp-convert-reports: $(tooldir)/convert_reports.o $(datadir)/stamp-labels s.runs f.runs units.o
-	$(time) $(tooldir)/analyze_runs --do=convert-reports --runs-directory=$(datadir)
+	if [ -e $(datadir)/stamp-convert-reports ]; then \
+	  echo 'data directory claims to be converted already' >&2 \
+	else \
+	  $(time) $(tooldir)/analyze_runs --do=convert-reports --runs-directory=$(datadir) \
+	fi
 	touch $@
 clean:: ; rm -f convert-reports stamp-convert-reports
 
