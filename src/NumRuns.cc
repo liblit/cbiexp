@@ -9,12 +9,9 @@ using namespace std;
 static unsigned explicitValue = 0;
 
 
-#define LONG_FLAG "number-of-runs"
-
-
 static const argp_option options[] = {
   {
-    LONG_FLAG,
+    "number-of-runs",
     'n',
     "COUNT",
     0,
