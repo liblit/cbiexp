@@ -16,6 +16,7 @@ struct site_summary_t {
     int S[6], F[6];
     int os, of;
     bool is_pivot[6];
+    bool is_true_pivot[6];
     site_summary_t() 
     { 
         os = of = 0;
@@ -48,7 +49,8 @@ float conf;
 char* program_name = NULL;
 char* program_src_dir = NULL;
 
-int num_pivots = 0;
+bool use_pivots = false;
+int  num_pivots = 0;
 
 int num_s_preds = 0;
 int num_r_preds = 0;
@@ -59,21 +61,22 @@ FILE* preds_txt_fp = NULL;
 FILE* preds_hdr_fp = NULL;
 FILE* result_summary_fp = NULL;
 
-#define inc(r, u, c, p)            \
-{                                  \
-    if (is_srun[r])                \
-        site_summary[u][c].S[p]++; \
-    else if (is_frun[r])           \
-        site_summary[u][c].F[p]++; \
+inline void inc(int r, int u, int c, int p)     
+{                                
+    if (is_srun[r])               
+        site_summary[u][c].S[p]++; 
+    else if (is_frun[r])           
+        site_summary[u][c].F[p]++; 
 }
 
-#define obs(r, u, c)              \
-{                                 \
-    if (is_srun[r])               \
-        site_summary[u][c].os++;  \
-    else if (is_frun[r])          \
-        site_summary[u][c].of++;  \
+inline void obs(int r, int u, int c)
+{                                 
+    if (is_srun[r])               
+        site_summary[u][c].os++;  
+    else if (is_frun[r])          
+        site_summary[u][c].of++;  
 }
+
 
 struct pred_name {
     char* file;
@@ -244,6 +247,8 @@ void discard_run(int r)
     assert(0);
 }
 
+inline bool XOR(bool a, bool b) { return (a && !b) || (!a && b); }
+
 void process_run(FILE* fp, int r, int u, int c)
 {
     int x, y, z;
@@ -252,24 +257,24 @@ void process_run(FILE* fp, int r, int u, int c)
     case 'S':
     case 'R':
         fscanf(fp, "%d %d %d\n", &x, &y, &z); 
-        if (site_summary[u][c].is_pivot[0] && x == 0)
+        if (site_summary[u][c].is_pivot[0] && XOR(site_summary[u][c].is_true_pivot[0], x))
             discard_run(r);
-        if (site_summary[u][c].is_pivot[1] && y + z == 0)
+        if (site_summary[u][c].is_pivot[1] && XOR(site_summary[u][c].is_true_pivot[1], y + z))
             discard_run(r);
-        if (site_summary[u][c].is_pivot[2] && y == 0)
+        if (site_summary[u][c].is_pivot[2] && XOR(site_summary[u][c].is_true_pivot[2], y))
             discard_run(r);
-        if (site_summary[u][c].is_pivot[3] && x + z == 0)
+        if (site_summary[u][c].is_pivot[3] && XOR(site_summary[u][c].is_true_pivot[3], x + z))
             discard_run(r);
-        if (site_summary[u][c].is_pivot[4] && z == 0)
+        if (site_summary[u][c].is_pivot[4] && XOR(site_summary[u][c].is_true_pivot[4], z))
             discard_run(r);
-        if (site_summary[u][c].is_pivot[5] && x + y == 0)
+        if (site_summary[u][c].is_pivot[5] && XOR(site_summary[u][c].is_true_pivot[5], x + y))
             discard_run(r);
         break;
     case 'B':
         fscanf(fp, "%d %d\n", &x, &y); 
-        if (site_summary[u][c].is_pivot[0] && x == 0)
+        if (site_summary[u][c].is_pivot[0] && XOR(site_summary[u][c].is_true_pivot[0], x))
             discard_run(r);
-        if (site_summary[u][c].is_pivot[1] && y == 0)
+        if (site_summary[u][c].is_pivot[1] && XOR(site_summary[u][c].is_true_pivot[1], y))
             discard_run(r);
         break;
     default:
@@ -318,8 +323,12 @@ void process_cmdline(int argc, char** argv)
             assert(conf_percent >= 90 && conf_percent < 100);
             continue;
         } 
+        if (!strcmp(argv[i], "-k")) {
+            use_pivots = true;
+            continue;
+        } 
         if (!strcmp(argv[i], "-h")) {
-            printf("Usage: compute -p program_name -d program_src_dir [-c confidence]\n");
+            printf("Usage: compute -p program_name -d program_src_dir [-c confidence] [-k]\n");
             exit(0);
         }
         printf("Illegal option: %s\n", argv[i]);
@@ -334,7 +343,7 @@ void process_cmdline(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-    int u, c, p;
+    int u, c, p, b;
 
     process_cmdline(argc, argv);
 
@@ -355,20 +364,22 @@ int main(int argc, char** argv)
         assert(site_summary[u]);
     }
 
-    while (1) {
-        fscanf(stdin, "%d %d %d", &u, &c, &p);
-        if (feof(stdin))
-            break;
-        assert(u >= 0 && u < NUM_UNITS );
-        assert(c >= 0 && c < units[u].c);
-        assert(p >= 0 && p < 6);
-        site_summary[u][c].is_pivot[p] = true;
-        num_pivots++;
+    if (use_pivots) {
+        while (1) {
+            fscanf(stdin, "%d %d %d %d", &u, &c, &p, &b);
+            if (feof(stdin))
+                break;
+            assert(u >= 0 && u < NUM_UNITS );
+            assert(c >= 0 && c < units[u].c);
+            assert(p >= 0 && p < 6);
+            assert(b == 0 || b == 1);
+            site_summary[u][c].is_pivot[p] = true;
+            site_summary[u][c].is_true_pivot[p] = b;
+            num_pivots++;
+        }
+        printf("%d pivots\n", num_pivots);
+        scaffold(process_run);
     }
-
-    printf("%d pivots\n", num_pivots);
-
-    if (num_pivots) scaffold(process_run);
 
     scaffold(process_site);
 
