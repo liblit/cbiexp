@@ -155,14 +155,18 @@ the intuition that this predicate is irrelevant to the bug.
 
 This leads us to the following definition:
 \[
-\context(P) \equiv \prob(\fail = 1 | P = 1 \lor \lnot P = 1)  
+\context(P) \equiv \prob(\fail = 1 | P \lor \lnot P = 1)  
 \]
-Now, it is not the case that $P = 1 \lor \lnot P = 1$ in every run, because we are not working in a two-valued logic.
-In any given run, there are three possibilities: (a) neither $P$ nor $\lnot P$ 
-is observed (because the site where this predicate occurs is not reached, or is reached but not sampled),
-(b) one of $P$ or $\lnot P$ is observed, or (c) both are observed (because the statement is executed
-multiple times and $P$ is sometimes true and sometimes false).  Thus, $\context(P)$ is the probability that
-in the set of runs where the value of $P$ is observed at all, the program fails. We can compute $\context(P)$ as follows:
+Now, it is not the case that $P \lor \lnot P = 1$ in every run, because we are not working in a two-valued logic:
+In a given run, neither $P$ nor $\lnot P$ may be observed because the site where this predicate occurs is not reached,
+or is reached but not sampled.
+%In any given run, there are three possibilities: (a) neither $P$ nor $\lnot P$ 
+%is observed (because the site where this predicate occurs is not reached, or is reached but not sampled),
+%(b) one of $P$ or $\lnot P$ is observed, or (c) both are observed (because the statement is executed
+%multiple times and $P$ is sometimes true and sometimes false).
+Thus, $\context(P)$ is the probability that
+in the set of runs where the site containing predicate $P$ is reached and sampled, the program fails.
+We can compute $\context(P)$ as follows:
 \[ \context(P) = \frac{F(P \lor \lnot P)}{S(P \lor \lnot P) + F(P \lor \lnot P)} \]
 
 The interesting quantity, then, is
