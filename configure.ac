@@ -65,6 +65,7 @@ Makefile
 correlations/Makefile
 rhythmbox/config.site
 src/Makefile
+src/corrective-ranking/Makefile
 src/Score/Makefile
 src/compiler.cc
 ])

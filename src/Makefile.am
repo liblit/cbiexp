@@ -1,4 +1,4 @@
-SUBDIRS = Score
+SUBDIRS = corrective-ranking Score
 
 AM_CPPFLAGS = -W -Wall -Werror -Wformat
 
@@ -9,7 +9,6 @@ EXTRA_DIST =					\
 
 noinst_PROGRAMS =				\
 	analyze_runs				\
-	correct					\
 	map_sites				\
 	process_run_labels
 
@@ -25,9 +24,6 @@ analyze_runs_SOURCES =				\
 	compiler.h
 
 analyze_runs_LDADD = libanalyze.a
-
-correct_SOURCES = correct.cc
-correct_LDADD = libanalyze.a
 
 map_sites_SOURCES = map_sites.cc
 map_sites_LDADD = libanalyze.a

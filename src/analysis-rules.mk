@@ -39,7 +39,17 @@ links :=					\
 	view.css				\
 	view.dtd				\
 	view.xsl
-web := $(views) $(links) $(topRho) all_hl_corrected.xml predictor-info.xml summary.xml $(web_extras)
+
+web :=							\
+	$(views)					\
+	$(links)					\
+	$(topRho)					\
+	$(web_extras)					\
+	all_hl_corrected-exact-complete.xml		\
+	all_hl_corrected-approximate-complete.xml	\
+	predictor-info.xml				\
+	summary.xml
+
 publish := $(HOME)/www/project/$(name)-new
 
 all: $(web)
@@ -106,6 +116,12 @@ all_hl_corrected.xml: $(tooldir)/correct f.runs obs.txt tru.txt
 	xmllint --valid --noout $@
 clean:: ; rm -f all_hl_corrected.xml
 
+all_hl_corrected-%.xml: $(tooldir)/corrective-ranking/% f.runs obs.txt tru.txt
+	$(time) ./$< $(corrected_view_flags)
+	$(MAKE) bug-o-meter.dtd corrected-view.dtd projected-view.dtd view.dtd
+	xmllint --valid --noout $@
+clean:: ; rm -f all_hl_corrected-exact-complete.xml all_hl_corrected-approximate-complete.xml
+
 obs.txt tru.txt: $(tooldir)/compute_obs_tru.o stamp-convert-reports preds.txt s.runs f.runs sites.o units.o
 	$(time) $(tooldir)/analyze_runs --do=compute-obs-tru --runs-directory=$(datadir)
 clean:: ; rm -f obs.txt tru.txt compute-obs-tru
@@ -138,6 +154,9 @@ sites.o units.o: $(tooldir)/map_sites.o $(sites)
 clean:: ; rm -f sites.o units.o sites.cc units.cc
 
 $(tooldir)/%: force
+	$(MAKE) -C $(@D) $(@F)
+
+$(tooldir)/corrective-ranking/%: force
 	$(MAKE) -C $(@D) $(@F)
 
 .PHONY: clean
