@@ -30,6 +30,7 @@ sub read_htmlinfo {
   open (IN, "$fn") || die "Open: $!";
   #$_ = <IN>; $_ = <IN>;  #skip header
   while (<IN>) {
+    next if /^</;  # skip any html tag lines
     last if /<\/body>/;
     chomp;
     push @list, $_;

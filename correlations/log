@@ -11,12 +11,19 @@
 ./resolve-clusters_html.pl < ../graphalgs/rhythmbox/data1/predlist-corcluster-0.3.txt > html/corclusters0.3.html
 
 
+./mhn2sparsemat.pl /moa/sc3/mhn/rb/base rb/base
 ./mhn2sparsemat.pl /moa/sc3/mhn/moss/data10 moss/data10
 ./mhn2sparsemat.pl /moa/sc3/mhn/moss/data11 moss/data11
 ./mhn2sparsemat.pl /moa/sc3/mhn/rb/fix1 rb/fix1
 ./mhn2sparsemat.pl /moa/sc3/mhn/rb/fix2 rb/fix2
+./mhn2sparsemat.pl /moa/sc3/mhn/ccrypt ccrypt
+./mhn2sparsemat.pl /moa/sc3/mhn/bc bc
+
 
 ## to be run in matlab
+./genMscript.pl rb/base
+./resolve-clusters_html.pl rb/base < rb/base/predlist-speccluster1-0.25.txt
+
 ./genMscript.pl moss/data10 
 ./resolve-clusters_html.pl moss/data10 < moss/data10/predlist-speccluster1-0.25.txt
 
@@ -29,3 +36,8 @@
 ./genMscript.pl rb/fix2
 ./resolve-clusters_html.pl rb/fix2 < rb/fix2/predlist-speccluster1-0.25.txt
 
+./genMscript.pl ccrypt
+./resolve-clusters_html.pl ccrypt < ccrypt/predlist-speccluster1-0.25.txt
+
+./genMscript.pl bc
+./resolve-clusters_html.pl bc < bc/predlist-speccluster1-0.25.txt
