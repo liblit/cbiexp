@@ -69,7 +69,7 @@ $\increase(\ldots)$ score are
 %eliminated, but clearly this list is too long to process by hand,
 Step (1) of our analysis algorithm eliminates about 99\% of
 all branch and return predicates, and about 96\% of the scalar-pairs
-predicates.  
+predicates.
 
 Clearly the scalar-pairs list is still too long after step (1) to
 process by hand, even if we only look at the highly-ranked predicates.
@@ -88,6 +88,7 @@ with positive $\increase(\ldots)$ scores).
 
 We examined the reports generated with \nicefrac{1}{100} downsampled data.
 The branches report has 4 predicates with a 1.0 crash rating:
+
 \begin{small}
   \begin{BVerbatim}[gobble=4]
     0.94 Inc, 1.00 Cr, 0.06 Co, process_file_pass2, line 5523
@@ -119,7 +120,7 @@ only .88.}
 The
 next predicate marks the test in the code that decides whether \moss\ is analyzing Lisp
 programs; the crash score of 1.0 tells us that whenever a Lisp program is
-processed, \moss\ crashes.  The fourth predicate 
+processed, \moss\ crashes.  The fourth predicate
 is an obvious cause of
 bug \#6; it reveals that whenever the amount of memory to use is set
 via a command line option, the program will crash.\footnote{The full data set shows that bug \#6 is non-deterministic with respect to this predicate, so once again the certainty that the program will crash is the result of sampling error.}  All three of these predicates illustrate the potential of our method to
@@ -171,7 +172,7 @@ Bugs \#4 and \#9 have no causes in either the branches or the returns
 reports, as they are not correlated with any branch nor with the
 result of any function call.  In the \nicefrac{1}{100} downsampled
 scalar-pairs report, there are obvious causes showing that the array
-bounds have been exceeded ranked 26th (for bug \#4) and 52nd (for bug
+bounds have been exceeded which are ranked 26th (for bug \#4) and 52nd (for bug
 \#9).  In both cases it didn't matter which predicate we chose to
 represent the bug for the line identified as the cause of the bug; all
 of the predicates were essentially the same.  The other
@@ -196,15 +197,15 @@ In summary, our algorithm did a good job of producing concise reports that not
 only identified the bugs, but also gave useful information about the root causes and
 how to reproduce the bugs.  In addition, the algorithm identified a previously unknown
 bug.
- 
+
 \subsection{Analysis of Predicate Elimination}
 
 To better understand how well predicate elimination works,
-Figure~\ref{predelim} cliassifies the most common kinds of predicates
+Figure~\ref{predelim} classifies the most common kinds of predicates
 $P$ for which $\increase(P) \leq 0$.  Recall that we have
 approximately 200,000 predicates for \moss.  The categories are:
 
-\begin{itemize}  
+\begin{itemize}
 \item  A {\it dead} predicate is one that is not observed in any run and hence
 deemed unreachable.  Nearly half the instrumented predicates are dead.
 
@@ -249,15 +250,15 @@ misc.     &  38762 & 36768 & 36504 & 33023 \\
 \subsection{Effect of Sampling on Predicate Selection}
 
 We now examine the effect of of the sampling rate and the number of
-program trials on the number of selected predicates, shown in
- Figure~\ref{fig-predkept}.
-For each sampling rate, we start with $3000$ randomly
+program trials on the step (1) of the algorithm: predicate selection.
+We start with $3000$ randomly
 selected trial runs, and add $3000$ random trials at a time, until we
 incorporate all $31873$ runs of our data.  We record the number of
-predicates retained at each step.  This process is repeated 10 times,
-with 10 different random permutation sequences
-of our data. We plot the mean and the confidence interval of one
-standard deviation above and below the mean.  When all $31873$ trial
+predicates retained at each step.  This process is repeated 10 times
+for each sampling rate, with 10 different random permutation sequences
+of our data. We plot the mean and the confidence interval (one
+standard deviation above and below the mean) in
+Fig.~\ref{fig-predkept}(a).  When all $31873$ trial
 runs are used, we retain $8129$ predicates when the data is not
 sampled (i.e. sampling rate is $\nicefrac{1}{1}$), $8807$ at sampling
 rate $\nicefrac{1}{10}$, $8309$ at $\nicefrac{1}{100}$, and $8936$ at
@@ -265,7 +266,7 @@ $\nicefrac{1}{1000}$.
 
 \begin{figure}
   \centering
-  \includegraphics[height=1.5in,width=\columnwidth]{predkept1}
+  \includegraphics[height=2in,width=\columnwidth]{predkept1}
   \caption{The effect of sampling and data size on the number of
   predicates selected.}
   \label{fig-predkept}
@@ -277,13 +278,14 @@ number of selected predicates when we use fewer trial runs.
 %retain $7429$ predicates using unsampled data, $7654$ when sampling
 %rate is $\nicefrac{1}{10}$, $7347$ at $\nicefrac{1}{100}$, and $6750$
 %at $\nicefrac{1}{1000}$;
-As we incorporate more successful and failed \moss\ runs, the variance
-decrease for all sampling rates, but the mean behaves
+As we incorporate more examples of successful and failed \moss\ runs,
+the variances decrease for all sampling rates, but the means behave
 somewhat differently.  When the data is not sampled, the average
 number of selected predicates stays around $8100$ for all data sizes.
-Sampling adds noise to this procedure and tends to increase our set of
-selected predicates (except when sampling is very sparse or we are
-using very few trial runs).
+Sampling adds noise to this procedure.  As we observed previously,
+a moderate sampling rate tends to drive up the \increase() scores, and
+thus enlarges our set of selected predicates (except when we are using
+very few trial runs).
 
 At the relatively high sampling rate of
 \nicefrac{1}{10}, there are still enough samples taken at most

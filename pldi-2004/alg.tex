@@ -3,7 +3,7 @@ isolating bugs in programs where multiple bugs are present
 simultaneously.  As discussed in \Autoref{sec:background}, our
 approach is to count the number of times we observe pre-specified
 predicates at each program point to be true during program
-execution.  
+execution.
 %Because our system has no \textit{a priori} knowledge of
 %what bugs may be in the program, or even any model of what the program
 %does, our strategy is to make the set of predicates large in the
@@ -167,8 +167,10 @@ the line on which it occurs (which is usually available anyway in the
 stack trace). \Autoref{sec:experiments:results} gives several examples
 of this phenomenon while hunting for real bugs.
 
-\placeholder{[Alice]  The motivation for this ranking function is not
-  very convincing\ldots}
+\placeholder{[Alice]  I still don't understand the following example
+  about line (a) vs line (b).  Doesn't the scalar-pairs comparison
+  happen BEFORE the assignment takes place?  So would one ever observe
+  $\mbox{\tt (f=NULL)}$ at line (a)?  I'll ask Ben\ldots}
 
 The purpose of sorting the surviving predicates in step (2) by
 $\crash(\ldots)$ is to ensure that the highest confidence predicates (those
@@ -201,12 +203,12 @@ The selection criterion of $\increase(P) > 0$ turns out to be a simplified
 statistical hypothesis test.  Consider the two classes of trial runs
 of the the program, failed runs $F$ and successful runs $S$.  For each
 class, we can treat the predicate $P$ as a Bernoulli random variable
-with heads probability $\pi_f(P)$ and $\pi_s(P)$, respectively.  The heads
+with heads probabilities $\pi_f(P)$ and $\pi_s(P)$, respectively, for the
+two classes.  The heads
 probability is the probability that the predicate is observed to be
-true.  If a predicate is causes a set of crashes, then its heads
-probability would be much higher than for the successful runs.  In
-other words, a good criterion of relevance is that $\pi_f > \pi_s$.  We
-can formulate two statistical hypotheses: the null hypothesis $\H_0:
+true.  If a predicate causes a set of crashes, then $\pi_f$ should be
+much bigger than $\pi_s$.  We can formulate two statistical hypotheses:
+the null hypothesis $\H_0:
 \pi_f \leq \pi_s$, vs.\ the alternate hypothesis $\H_1: \pi_f > \pi_s$.  Since
 $\pi_f$ and $\pi_s$ are not known, we have to estimate them from our
 data.
@@ -214,49 +216,49 @@ data.
   \hat \pi_f(P) &=& \frac{F(P)}{F(P \lor \lnot P)} \\
   \hat \pi_s(P) &=& \frac{S(P)}{S(P \lor \lnot P)}
 \end{eqnarray}
-These proportion estimates of $\pi_f$ and $\pi_s$ differ from the true
-heads probabilities, but should approach the truth as we increase the
-number of trial runs.  With a certain probability, using these
-estimates instead of the true probabilities will give us the wrong
-answer.  The \textit{Z test} makes use of the statistic $ Z =
-\frac{(\hat \pi_f - \hat \pi_s)}{V_{f,s}}$, where $V_{f,s}$ is a sample
-variance term, and $Z$ is distributed as a standard Gaussian random
-variable.  With a certain guarantee of false-positive error
-probability, the test can conclude whether or not $\pi_f(P) > \pi_s(P)$,
-separately for each predicate $P$.  A necessary (but not sufficient)
-condition is that $\hat \pi_f(P) > \hat \pi_s(P)$.  This turns out to be
-equivalent to the condition that $\increase(P) > 0$.  For simplicity,
+Although these proportion estimates of $\pi_f$ and $\pi_s$ approach the
+true heads probabilities as we increase the number of trial runs, they
+still differ from the true values.  With a certain probability, using these
+estimates instead of the true values will give us the wrong
+answer.  The \textit{Z test} takes into account this uncertainty, and
+makes use of the statistic $ Z = \frac{(\hat \pi_f - \hat
+  \pi_s)}{V_{f,s}}$, where $V_{f,s}$ is a sample variance term, and $Z$
+is distributed as a standard Gaussian random
+variable.  Performed independently for each predicate $P$, the test
+decides whether or not $\pi_f(P) \leq \pi_s(P)$ with a guanranted
+false-positive probability (i.e. choosing $\H_1$ when $\H_0$ is true).
+A necessary (but not sufficient) condition for choosing $\H_1$ is that
+$\hat \pi_f(P) > \hat \pi_s(P)$.  This turns out to be
+equivalent to the condition that $\increase(P) > 0$.  To see this,
 let $a = F(P)$, $b = S(P)$, $c = F(P\lor\lnot P)$, and $d = S(P\lor\lnot P)$.
 \begin{gather*}
   \increase(P) > 0 \Leftrightarrow \crash(P) > \context(P) \\
-  \Leftrightarrow \frac{a}{a+b)} > \frac{c}{c+d}
+  \Leftrightarrow \frac{a}{a+b} > \frac{c}{c+d}
   \Leftrightarrow a (c+d) > (a+b) c \\
   \Leftrightarrow ad > bc \Leftrightarrow \frac{a}{c} > \frac{b}{d} \\
   \Leftrightarrow \hat \pi_f > \hat \pi_s
 \end{gather*}
-Hence the $\increase(P) > 0$ criterion, while being well motivated in
-from the program analysis point of view, can also be seen as a much
-simplified version of the \textit{Z test} for two populations of trial
-runs (failed vs.\ successful).
+Hence the $\increase(P) > 0$ criterion is not only well motivated
+from the program analysis point of view, but can also be seen as a much
+simplified version of the Z test for two populations of
+Bernoulli trials.
 
 \subsection{Comparison with Previous Approach}
 In our previous papers~\cite{Zheng:2003:SDSP} and~\cite{PLDI`03*141},
 we made use of $l1$-regularized logistic regression and similar
 methods to select and rank the predicates in the order of their
-failure-prediction strength.  Logistic regression, at least as we have
-applied in our work so far, proves to be overly-flexible
-in the presence of multiple bugs.
+failure-prediction strength.  This approach proves to be
+overly-flexible in the presence of multiple bugs.
 
-
-The logistic regression model (and variants) allows an arbitrary
-linear weighted combination of the predicates to be used in predicting
-a crash.  Logistic regression incorporates a penalty that forces the
-regression to set most coefficients to zero, thereby selecting only the most
-important predicates.  However, when the data includes crashes caused
-by multiple different bugs, arbitrary linear
+Logistic regression and its variants uses a linearly weighted
+combination of the predicates to classify a trial run as crashed or
+successful.  Regularized logistic regression incorporates a penalty
+that forces the regression to set most coefficients to zero, thereby
+selecting only the most important predicates.  However, when the data
+includes crashes caused by multiple different bugs, arbitrary linear
 combinations are not always desirable.  If a predicate is a
 common precondition for two different bugs, its coefficient
-can be greater than the coefficients of the actual causes of the bugs.  
+can be greater than the coefficients of the actual causes of the bugs.
 In general, when the set of failed runs in
 the training set includes crashes due to different causes, the
 training process will give higher weights to sites shared by the
@@ -269,33 +271,30 @@ portions of the code due to an early crash of the program).}
 Another problem is caused by correlated predicates.
 Due to the wide coverage of our instrumentation schemes, there can be
 many correlated indicators of the same bug.  For example, in an
-array-overrun bug, the culprit loop index variable will get abnormally
+array-overrun bug, the culprit loop index variable gets abnormally
 large, which manifests itself when compared to many other small
-scalars in the program. Though technically only one of these
+scalars in the program.  Even though technically only one of these
 predicates is what we take to be the ``smoking gun'' for the bug, any
 of them can be used to predict the crash.  Hence our classifier may
-(rightfully) give high weight to any of the correlated features.  In
-the presence of sampling, the more often observed predicates take the
-advantage.  Alternatively, the classifier may rightfully give smaller
+(rightfully) give high weights to any of the correlated features.  In
+the presence of sampling, the predicates with higher coverage has the
+advantage.  Alternatively, the classifier may give smaller
 weights to a large number of these correlated predicates, and reserve
-the larger weights for something else.  This causes the ranking of
-some of the good predicates to drop down, but doesn't affect
-classification performance.
+the larger weights for something else.  This doesn't affect
+classification performance, but causes the ranking of
+some of the good predicates to drop down.
 
 For all of the above reasons, regularized logistic regression is not
 outrightly appropriate for dealing with multiple bugs.  While logistic
-regression attempts to correlate features, note that the algorithm we
+regression attempts to combine predicates, note that the algorithm we
 propose in this paper assumes that a bug is caused by a single
 predicate---though more sophisticated bugs exist, the vast majority of
 common bugs are simple and ``univariate.''  Looking at it this way,
-the multiple bug problem diminishes, because even though more than one
-bug can occur during a single run of the program, the run ultimately
-crashes due to only one bug.  Hence each crash can be accounted for by
-one predicate.  The predicates are then ranked by a score depending on
-the number of crashes in which it is observed.  In essence, we
-circumvent the multiple bug problem by letting the ``smoking guns''
-cluster the crashes, not the other way around.  As we have shown, this
-new approach can be interpreted as a simple univariate statistical
-test.
+the multiple bug problem diminishes, because every crashed run
+ultimately crashes due to only one bug.  Hence each crash can be
+accounted for by one predicate.  The predicates are then ranked by a
+score depending on the number of crashes in which it is observed.  In
+essence, we circumvent the multiple bug problem by letting the
+``smoking guns'' cluster the crashes, not the other way around.
 
 %% LocalWords:  pre bc downsampled

@@ -155,7 +155,7 @@ pdfpagemode=UseOutlines]{hyperref}
 \section{Introduction}
 \label{sec:introduction}
 
-Programs are buggy.  
+Programs are buggy.
 %We all know this, and yet we use them anyway.
 Most software ships with many known and unknown bugs; software
 engineers understand that it is impractical to delay releasing code
@@ -184,7 +184,7 @@ bugs.  Consider the fact that the Mozilla web browser project has a
 and tracking the top forty most common crash bugs.  This cut-off is
 not because anyone believes that there are only forty bugs; it is an
 acknowledgment that engineering resources are finite so one the most
-important bugs should be fixed first first. 
+important bugs should be fixed first first.
 
 This paper is about simultaneously isolating multiple bugs in complex
 applications.  The main contributions are:
@@ -202,7 +202,7 @@ effectiveness of our algorithm on a complex application
 \ref{sec:experiments:results}).  We seeded a program with 9 bugs (most
 of which were taken directly from the application's bug log).  Our
 system correctly identified a distinct cause for 7 of the bugs (the
-other 2 bugs never caused the program to fail in our experiment).  
+other 2 bugs never caused the program to fail in our experiment).
 Our algorithm also discovered a new, previously unknown bug in the
 application.
 
@@ -240,7 +240,7 @@ a coin flip determines whether the instrumentation is executed or not.
 The coin flips are computed in a statisically fair
 manner equivalent to a Bernoulli process: each potential sample is
 taken or skipped randomly and independently as the program runs.
-We have found that a sampling rate of \nicefrac{1}{100} keeps the performance overhead 
+We have found that a sampling rate of \nicefrac{1}{100} keeps the performance overhead
 of instrumentation low, often unmeasurable.
 
 Orthogonal to the sampling transformation is the decision about what
@@ -295,7 +295,7 @@ our system offers the following instrumentation schemes:
 
 The common theme among these instrumentation schemes is that we
 instrument program predicates and count the number of times that these
-predicates are observed to be true or false when a sample is taken.   
+predicates are observed to be true or false when a sample is taken.
 For the returns and scalar-pairs instrumentation schemes, the three
 predicates that are tracked explicitly actually give rise to a family
 of six predicates that we use in our analysis of the data.
@@ -397,7 +397,7 @@ Clustering tends to identify small, tight groups of runs which do
 share a single cause but which are not always maximal.  That is, one
 cause may be split across several clusters.
 
-In contrast with Podgurski's statistical approach, current
+In contrast, current
 industrial practice uses stack traces to cluster failure reports into
 equivalence classes.  Two crash reports showing the same stack trace,
 or perhaps only the same top-of-stack function, are presumed to be two
@@ -502,7 +502,8 @@ runs to isolate bugs.
 
 \item The algorithm we present here analyzes every predicate independently
 of every other predicate.  While we have not yet found a statistical algorithm that exploits
-correlations between predicates effectively, we believe this is a worthwhile direction
+correlations between predicates effectively in the presence of
+multiple bugs, we believe this is a worthwhile direction
 to explore.
 \end{itemize}
 
