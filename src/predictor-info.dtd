@@ -19,7 +19,7 @@
 <!ATTLIST info site NMTOKEN #REQUIRED>
 
 <!-- predicate number within site -->
-<!-- Predicates are numbered from 1, not from 0. -->
+<!-- Predicates are numbered from 0, not from 1.  This is an exception to the general policy of using 1-based numbering in XML. -->
 <!-- Scheme-specific documentation is needed on predicate numbering. -->
 <!ATTLIST info predicate NMTOKEN #REQUIRED>
 
