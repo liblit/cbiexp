@@ -19,35 +19,41 @@
     here does not necessarily reflect the position or the policy of
     the Government and no official endorsement should be inferred.}}
 
-\numberofauthors{2}
+\numberofauthors{3}
 
 \makeatletter
 \newcommand*{\eecsMark}[0]{\@fnsymbol{2}}
 \newcommand*{\statMark}[0]{\@fnsymbol{3}}
+\newcommand*{\stanMark}[0]{\@fnsymbol{4}}
 \makeatother
 \newcommand*{\eecs}[0]{\textsuperscript{\eecsMark}}
 \newcommand*{\stat}[0]{\textsuperscript{\statMark}}
 \newcommand*{\both}[0]{\textsuperscript{\eecsMark, \statMark}}
+\newcommand*{\stan}[0]{\textsuperscript{\stanMark}}
+
+\newcommand{\moreauthors}[0]{\end{tabular}\\\vspace{-.5\baselineskip}\begin{tabular}{c}}
 
 \author{
+  \alignauthor Ben Liblit \eecs \\
+  \alignauthor Mayur Naik \stan \\
+  \alignauthor Alice X. Zheng \eecs \\
+  \moreauthors
+  \global\multiply\auwidth by 3
+  \global\divide\auwidth by 2
+  \alignauthor Alex Aiken \stan \\
+  \alignauthor Michael I. Jordan \both
+  \moreauthors
   \alignauthor
-  Mayur Naik \\
-  Alex Aiken \\
-  \vspace{1.5\baselineskip}
-  \affaddr{Computer Science Department} \\
+  \affaddr{\eecs Department of Electrical \\ Engineering and Computer Science} \\
+  \affaddr{\stat Department of Statistics} \\
+  \affaddr{University of California, Berkeley} \\
+  \affaddr{Berkeley, CA 94720-1776}
+  \alignauthor
+  \affaddr{\stan Computer Science Department} \\
   \affaddr{353 Serra Mall} \\
   \affaddr{Stanford University} \\
   \affaddr{Stanford CA 94305-9025}
-  %%
-  \alignauthor
-  Ben Liblit \eecs \\
-  Alice X. Zheng \eecs \\
-  Michael I. Jordan \both \\
-  \vspace{0.5\baselineskip}
-  \affaddr{\eecs Department of Electrical Engineering and Computer Science} \\
-  \affaddr{\stat Department of Statistics} \\
-  \affaddr{University of California, Berkeley} \\
-  \affaddr{Berkeley, CA 94720-1776}}
+}
 
 \bibliographystyle{abbrv}
 
