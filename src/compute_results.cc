@@ -191,41 +191,32 @@ inline void obs(int r, int u, int c)
 	site_info[u][c].of++; 
 }
 
-void process_site(FILE* fp, int r, int u, int c)
+void process_s_site(int r, int u, int c, int x, int y, int z)
 {
-    int x, y, z;
-
-    switch (units[u].s[0]) {
-    case 'S':
-    case 'R':
-	fscanf(fp, "%d %d %d\n", &x, &y, &z);
 	if (x + y + z > 0) {
-	    obs(r, u, c);
-	    if (x > 0)
-		inc(r, u, c, 0);
-	    if (y + z > 0)
-		inc(r, u, c, 1);
-	    if (y > 0)
-		inc(r, u, c, 2);
-	    if (x + z > 0)
-		inc(r, u, c, 3);
-	    if (z > 0)
-		inc(r, u, c, 4);
-	    if (x + y > 0)
-		inc(r, u, c, 5);
+		obs(r, u, c);
+		if (x > 0)
+			inc(r, u, c, 0);
+		if (y + z > 0)
+			inc(r, u, c, 1);
+		if (y > 0)
+			inc(r, u, c, 2);
+		if (x + z > 0)
+			inc(r, u, c, 3);
+		if (z > 0)
+			inc(r, u, c, 4);
+		if (x + y > 0)
+			inc(r, u, c, 5);
 	}
-	break;
-    case 'B':
-	fscanf(fp, "%d %d\n", &x, &y);
+}
+
+void process_b_site(int r, int u, int c, int x, int y)
+{
 	if (x + y > 0) {
-	    obs(r, u, c);
-	    if (x > 0) inc(r, u, c, 0);
-	    if (y > 0) inc(r, u, c, 1);
+		obs(r, u, c);
+		if (x > 0) inc(r, u, c, 0);
+		if (y > 0) inc(r, u, c, 1);
 	}
-	break;
-    default:
-        assert(0);
-    }
 }
 
 inline void cull(int u, int c, int p)
@@ -524,7 +515,10 @@ int main(int argc, char** argv)
     site_info.resize(num_units);
     for (int u = 0; u < num_units; u++) site_info[u].resize(units[u].c);
 
-    scaffold(compact_report_path_fmt, process_site);
+    scaffold(compact_report_path_fmt,
+             process_s_site,
+             process_s_site,
+             process_b_site);
 
     cull_preds();
     cull_preds_aggressively1();

@@ -91,47 +91,38 @@ void print_site_details(int u, int c)
     }
 }
 
-void process_site(FILE* fp, int r, int u, int c)
+void process_s_site(int r, int u, int c, int x, int y, int z)
 {
-   int x, y, z;
-
-    switch (units[u].s[0]) {
-    case 'S':
-    case 'R':
-	fscanf(fp, "%d %d %d\n", &x, &y, &z);
 	if (x + y + z > 0) {
-	    inc_obs(r, u, c, 0);
-	    inc_obs(r, u, c, 1);
-	    inc_obs(r, u, c, 2);
-	    inc_obs(r, u, c, 3);
-	    inc_obs(r, u, c, 4);
-	    inc_obs(r, u, c, 5);
-	    if (x > 0)
-		inc_tru(r, u, c, 0);
-	    if (y + z > 0)
-		inc_tru(r, u, c, 1);
-	    if (y > 0)
-		inc_tru(r, u, c, 2);
-	    if (x + z > 0)
-		inc_tru(r, u, c, 3);
-	    if (z > 0)
-		inc_tru(r, u, c, 4);
-	    if (x + y > 0)
-		inc_tru(r, u, c, 5);
+		inc_obs(r, u, c, 0);
+		inc_obs(r, u, c, 1);
+		inc_obs(r, u, c, 2);
+		inc_obs(r, u, c, 3);
+		inc_obs(r, u, c, 4);
+		inc_obs(r, u, c, 5);
+		if (x > 0)
+			inc_tru(r, u, c, 0);
+		if (y + z > 0)
+			inc_tru(r, u, c, 1);
+		if (y > 0)
+			inc_tru(r, u, c, 2);
+		if (x + z > 0)
+			inc_tru(r, u, c, 3);
+		if (z > 0)
+			inc_tru(r, u, c, 4);
+		if (x + y > 0)
+			inc_tru(r, u, c, 5);
 	}
-	break;
-    case 'B':
-	fscanf(fp, "%d %d\n", &x, &y);
+}
+
+void process_b_site(int r, int u, int c, int x, int y)
+{
 	if (x + y > 0) {
-	    inc_obs(r, u, c, 0);
-	    inc_obs(r, u, c, 1);
-	    if (x > 0) inc_tru(r, u, c, 0);
-	    if (y > 0) inc_tru(r, u, c, 1);
+		inc_obs(r, u, c, 0);
+		inc_obs(r, u, c, 1);
+		if (x > 0) inc_tru(r, u, c, 0);
+		if (y > 0) inc_tru(r, u, c, 1);
 	}
-	break;
-    default:
-	assert(0);
-    }
 }
 
 void process_cmdline(int argc, char** argv)
@@ -224,7 +215,10 @@ int main(int argc, char** argv)
     }
     fclose(pfp);
 
-    scaffold(compact_report_path_fmt, process_site);
+    scaffold(compact_report_path_fmt,
+             process_s_site,
+             process_s_site,
+             process_b_site);
 
     for (u = 0; u < num_units; u++)
 	for (c = 0; c < units[u].c; c++)
