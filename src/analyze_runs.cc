@@ -5,6 +5,7 @@
 #include <cstring>
 #include <libgen.h>
 #include <string>
+#include <unistd.h>
 #include "compiler.h"
 #include "shell.h"
 
