@@ -273,3 +273,7 @@ if (@abnormality) {
     my $disregard = new FileHandle 'disregard', 'w';
     $disregard->print("$_\n") foreach @abnormality;
 }
+
+# save some space
+check_system 'gzip bad/reports' if -e 'bad/reports';
+check_system 'gzip bad2/reports' if -e 'bad2/reports';
