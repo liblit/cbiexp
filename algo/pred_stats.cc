@@ -133,7 +133,7 @@ main(int argc, char** argv)
     fprintf(fp, "<html>\n<body>\n");
     for (i = 0; i < num_runs_found; i++)
         fprintf(fp, "[<a href=\"/moa/sc2/cbi/rhythmbox/data/%d\">%d</a>] ", runs[i], runs[i]);
-    fprintf(fp, "</html>\n</body>\n");
+    fprintf(fp, "\n</html>\n</body>\n");
     fclose(fp);
 
     return 0;
