@@ -10,6 +10,7 @@
 %%
 
 \usepackage{nicefrac}
+\usepackage{fancyvrb}
 \usepackage{xspace}
 
 \usepackage[bookmarks,pdfauthor={Ben Liblit, Mayur Naik, Alice X.
@@ -147,6 +148,175 @@
 
 \placeholder{Page budget: 1.}
 
+We begin by reviewing the sampled instrumentation infrastructure.  We
+highlight the ways in which the design constraints discussed earlier
+\placeholder{reword if we don't do that in the introduction} impact
+the kind and form of data collected.  The challenge taken up in
+\Autoref{sec:algorithm} is to use this data in a way that helps
+isolate problems in buggy software.
+
+Software errors arise from unexpected interactions between inputs,
+program internal state, and dynamic decisions made as the program
+runs.  Software engineers reason about programs at the level of source
+code statements and variables, and this is the level at which program
+monitoring can expose properties of interest.  However, complete
+source-level tracing of program behavior is impractical for field
+deployment.  No end user would accept the performance overhead or
+network bandwidth required to collect and transmit such a trace.
+
+Instead, we use a combination of client-side summarization and fair
+random sampling.  The former controls limits storage and transmission
+requirements while the later controls performance overhead.  However,
+each also adds noise and uncertainty to the resulting data.  We
+briefly review these two techniques and their implications here;
+additional details including performance assessments have been
+published elsewhere \cite{PLDI`03*141}.  Although our approach is
+applicable to a wide variety of programming languages, our current
+implementation and all examples that follow are targeted at C.
+
+\subsection{Schemes and Summarization}
+
+An \termdef{instrumentation scheme} is a set of rules describing what
+information to collect at each program point of interest.  Our
+instrumentation schemes are quite general but are selected to capture
+behaviors which are likely to be of interest when hunting for bugs.
+At present our system offers the following instrumentation schemes:
+  
+\begin{description}
+\item[branches] Control flow is interesting.  Record which branch is
+  taken at each conditional (equivalently, whether the conditional
+  predicate was true or false).  The observation is made just after
+  the predicate is evaluated but before the selected branch is taken.
+  This scheme also applies to implicit conditionals in loops and
+  logical operators (\texttt{\&\&}, \texttt{||}, \texttt{?:}).  Each
+  branch induces one instrumentation site.
+  
+\item[returns] Function return values are interesting.  In C, the sign
+  of a result often used to encode the success or failure of some
+  operation.  At each scalar-returning function call site, record
+  whether the returned value is negative, zero, or positive.  For
+  pointer-returning calls, this implicitly reduces to \texttt{NULL} or
+  non-\texttt{NULL}.  The observation is made just after the function
+  returns but before the result is used by the original program.  An
+  instrumentation site is added even if the source program discarded
+  the return value, as ignoring returned error codes is a common
+  source of bugs..  Each call induces one instrumentation site.
+  
+\item[scalar-pairs] Values of variables are interesting.  Many bugs
+  concern boundary issues exposed by the relationship between a pair
+  of variables, or between a variable and some program constant.  At
+  each scalar assignment \texttt{x = \dots}, identify each
+  \emph{other} same-typed in-scope variable $\mathtt{y}_i$ and each
+  constant expression $\mathtt{c}_j$.  Record how often the new value
+  for \texttt{x} is less than, equal to, or greater than each
+  $\mathtt{y}_i$ and each $\mathtt{c}_j$.  The observation is made
+  after both sides of the assignment have been evaluated but just
+  before the assignment itself takes place.  This lets us compare
+  \texttt{x} to \texttt{x} as well, effectively comparing the new and
+  old values of the left-hand side.  Each compared-to $\mathtt{y}_i$
+  or $\mathtt{c}_j$ is treated as a distinct instrumentation site;
+  thus a single assignment may induce a large number of sites.
+\end{description}
+
+These schemes are quite broad; they represent a large set of wild
+guesses as to what behavior may be interesting for any particular bug.
+Engineers may enable or disable any mix of schemes in a single binary,
+and may include or exclude entire regions of code on a per-file or
+per-function basis.  For the most part, though, instrumenting an
+executable simply requires switching to our instrumenting compiler.
+By design the instrumentor requires minimal human intervention at
+application build time.
+
+In the returns and scalar-pairs schemes, each site takes a large space
+of possible observations (e.g.\ the exact value returned by a call)
+and reduces it to a much smaller group of equivalence classes (e.g.\ 
+the sign of the returned value).  This is already a summarization of
+behavior.  However, we must shrink the program profile even further,
+down to a flat behavior profile whose size is both moderate and fixed
+regardless of how long a given application runs.  Therefore, we do not
+emit a stream of observations from each site.  Rather, each site
+maintains small group of counters which tally how often each behavior
+is observed.  Thus, each branch site has two counters: how often the
+program branched true and how often it branched false.  Each returns
+site uses three counters to record how often a negative, zero, or
+positive value is seen.  Each scalar-pairs site uses three counters as
+well to record how often the assigned value is less than, equal to, or
+greater than the compared-to variable or constant.
+
+These counters are maintained within the program's global address
+space during execution.  Note that each site can be treated as a set
+of predicates which form a complete, non-overlapping partition of the
+behaviors observed by that site.  For example, at each scalar-pairs
+comparison between \texttt{x} and \texttt{y}, one and only one of
+$\mathtt{x} < \mathtt{y}$, $\mathtt{x} = \mathtt{y}$, or $\mathtt{x} >
+\mathtt{y}$ can be true.  Thus one observation at one site always
+updates exactly one of that site's counters.  An observation that
+$\mathtt{x} < \mathtt{y}$ is therefore equivalent to an observation
+that $\mathtt{x} \ge \mathtt{y}$.  This property will be used in
+\Autoref{sec:algorithm} to synthesize new predicates out of existing
+observations.
+
+The post-execution feedback report is a dump of the counter values for
+each instrumentation site.  Reducing a trace to a set of counters
+prevents us from reasoning about relative time ordering of events
+during execution.  However, it also means that program actions early
+in execution remain just as visible as those much later.  This is in
+stark contrast with traditional postmortem debugging tools which
+expose only the final state of the program at the point of failure.
+
+\subsection{Sparse Random Sampling}
+
+Each individual instrumentation site is fast, but in large numbers
+they will harm performance.  Controlling this overhead requires that
+we skip some observations.  If sampling is sparse, then the common
+case of skipping a sample can be optimized as a ``fast path'' For such
+partial instrumentation to be statistically meaningful, it must be
+fair in a strict sense: each site when crossed at run time must have
+an identical and independent chance of being sampled or omitted
+regardless of how that same decision was made for any other dynamic
+crossing of any other site.
+
+The requirement suggests tossing a biased coin at each site.  However,
+generating these biased random bits would be slower than simply
+performing all observations unconditionally.  We must amortize the
+decision cost across larger numbers of sites.  Consider a sequence of
+biased random bits with 0 (skip) much more common than 1 (sample).
+Instead of storing the sequence of bits directly, record only how many
+0's appear before the next 1: how many sites are to be skipped before
+the next sample is taken.  This is the \termdef{inter-arrival time} of
+1's, and can be computed directly by selecting random numbers from a
+geometric distribution.  A geometric distribution with mean 100 gives
+inter-arrival times for a stream where samples are taken on average
+once per hundred opportunities.
+
+Instrumented code uses a global ``next sample'' countdown to predict
+upcoming observations.  At each site, we decrement the countdown by
+one.  If that drives the countdown to zero, then we take an
+observation and reset the countdown to a new geometrically distributed
+random value.  This counter has a useful near-term predictive quality:
+if the counter is 58, then we know that none of the next 58 sites
+crossed will be sampled.  This fact lets us amortize the sample/skip
+decision across larger regions of code.  Consider any program point at
+the top of an acyclic region.  There are only a finite number of
+forward paths within that region, and therefore a finite maximum
+number of sites along those paths.  We may know, for example, that no
+forward path through a given region crosses more than 24 sites.  If
+the next sample is more than 24 sites away, then we know in advance
+that no sample will be taken on this pass through the region.  We
+instead branch off into an alternate copy of the code which contains
+no instrumentation beyond simply updating the global next sample
+countdown.  This maximum site count becomes the \termdef{threshold}
+for that region.
+
+\placeholder{\dots}
+
+This is an explicit trade-off between overhead and noise.  Sparser
+sampling yields lower overhead but more noise (uncertainty) in each
+feedback report.  We compensate for this uncertainty by looking for
+broad trends across many runs.  With thousands or millions of users,
+any individual feedback report may be noisy but the behavior of the
+system as a whole will converge on an accurate representation of real
+program behavior.
 
 \section{Algorithm}
 \label{sec:algorithm}
@@ -359,7 +529,7 @@ specialized net.  \placeholder{We understand through informal
 \section{Conclusions}
 \label{sec:conclusions}
 
-\bibliography{cacm1990,icse02,icse03,misc,paste02,pods,ramss,refs}
+\bibliography{cacm1990,icse02,icse03,misc,paste02,pldi03,pods,ramss,refs}
 \placeholder{Page budget for references: 1.}
 
 \end{document}
