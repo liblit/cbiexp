@@ -33,15 +33,15 @@ inline void print_pred(int u, int c, int p, const char* pred_kind, char* site_na
 
     if (data[u][c].b[p]) {
         char file[100];
-        sprintf(file, "/moa/sc3/mhn/rb/base/r/%d_%d_%d.html", u, c, p);
+        sprintf(file, "/moa/sc3/mhn/moss/data11/r/%d_%d_%d.html", u, c, p);
         FILE* fp = fopen(file, "w");
         assert(fp);
 
         fprintf(fp, "<html>\n<body>\n");
 
         // print predicate name
-        fprintf(fp, "%s %s\n", pred_kind, site_name);
-        fprintf(fp, "<br><br>\n");
+        // fprintf(fp, "%s %s\n", pred_kind, site_name);
+        // fprintf(fp, "<br><br>\n");
 
         // print f runs in which it is true
         fprintf(fp, "F: ");
@@ -55,7 +55,7 @@ inline void print_pred(int u, int c, int p, const char* pred_kind, char* site_na
         for (i = 0; i < NUM_RUNS; i++)
             if (is_srun[i] && (*(data[u][c].b[p]))[i] == true)
                 fprintf(fp, "[%d] ", i);
-        fprintf(fp, "\n</html>\n</body>\n");
+        fprintf(fp, "\n</body>\n</html>\n");
         fclose(fp);
     }
 }
@@ -233,7 +233,7 @@ main(int argc, char** argv)
         printf("r %d\n", i);
 
         char file[100];
-        sprintf(file, "/moa/sc4/mhn/rb/base/%d.txt", i);
+        sprintf(file, "/moa/sc4/mhn/moss/data11/%d.txt", i);
         FILE* fp = fopen(file, "r");
         assert(fp);
 

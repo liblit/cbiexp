@@ -136,11 +136,11 @@ main(int argc, char** argv)
 
         printf("r %d\n", i);
 
-        sprintf(ifile, "/moa/sc2/cbi/rhythmbox/analyze/ds1/%d.txt", i);
+        sprintf(ifile, "/moa/sc4/cbi/data11/%d/bad/reports", i);
         FILE* ifp = fopen(ifile, "r");
         assert(ifp);
 
-        sprintf(ofile, "/moa/sc4/mhn/rb/base/%d.txt", i);
+        sprintf(ofile, "/moa/sc4/mhn/moss/data11/%d.txt", i);
         FILE* ofp = fopen(ofile, "w");
         assert(ofp);
 

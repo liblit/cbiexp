@@ -208,7 +208,7 @@ main(int argc, char** argv)
         printf("r %d\n", i);
 
         char file[100];
-        sprintf(file, "/moa/sc4/mhn/rb/base/%d.txt", i);
+        sprintf(file, "/moa/sc4/mhn/moss/data11/%d.txt", i);
         FILE* fp = fopen(file, "r");
         assert(fp);
 
