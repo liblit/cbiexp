@@ -84,7 +84,7 @@ sub read_info {
   my @info;
   my %info;
   my $k = 1;
-  open (INFO, "$fn") || die "Open: $!";
+  open (INFO, "$fn") || die "Open $fn: $!";
   while (<INFO>) {
     chomp;
     ## kluge for to get rid of leading zero's in the runlist of ccrypt and bc
