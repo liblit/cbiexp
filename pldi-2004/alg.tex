@@ -85,7 +85,7 @@ when $P$ is true that
 the program fails nor that when $P$ is never observed to be true  that
 the program succeeds.
 %%
-\issue[Mayur]{``To summarize, even for a predicate P ..., we can
+\issue[Mayur]{``To summarize, even for a predicate P \dots, we can
   neither X nor Y.''
 
   I think we need to switch X and Y in the above sentence because Alex
@@ -94,7 +94,7 @@ the program succeeds.
 But we can express the probability that $P$
 being true implies failure.  Let $\fail$ be an atomic predicate that is
 true for failing runs and false for successful runs.  Let $\prob(A | B)$ denote
-the conditional probability function of the event $A$ given event $B$ .  
+the conditional probability function of the event $A$ given event $B$.  
 We want to compute:
 \[ \crash(P) \equiv \prob(\fail = 1 | P = 1) \]
 for every instrumented predicate $P$ over the set of all runs.  Let $S(P)$ be the number
@@ -206,7 +206,7 @@ stack trace).
 \label{sec:statisticalinterpretation}
 
 We have explained the test $\increase(P) > 0$ using programming terminology,
-but it also has a natural statistical interpretation as a simplified {\em likelihood ratio} hypothesis
+but it also has a natural statistical interpretation as a simplified \termdef{likelihood ratio} hypothesis
 test.  Consider the two classes of trial runs
 of the program: failed runs $F$ and successful runs $S$.  For each
 class, we can treat the predicate $P$ as a Bernoulli random variable

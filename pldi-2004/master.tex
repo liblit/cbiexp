@@ -134,7 +134,7 @@ pdfpagemode=UseOutlines
 \begin{document}
 
 \issue[Alice]{Overall comment: font too small?}
-\issue[Mike]{ I think that Section 5.1 would be better placed at the
+\issue[Mike]{I think that Section 5.1 would be better placed at the
 end of Section 4.}
 
 \maketitle
@@ -184,14 +184,14 @@ communities, making it possible to gather information about many runs.
 The collected data can then be analyzed for interesting trends across
 all of the monitored executions.
 
-In our approach, instrumentation consists of {\em predicates} tested
+In our approach, instrumentation consists of \termdef{predicates} tested
 at particular program points; we defer discussing which predicates are
 chosen for instrumentation to \autoref{sec:background}.  A given
 program point may have many predicates that are sampled independently
 during program execution when that program point is reached (i.e.,
 each predicate associated with a program point may or may not be
 tested each time the program point is reached).  A feedback report $R$
-consists of one bit indicating whether the {\em run} of the program
+consists of one bit indicating whether a run of the program
 succeeded or failed, as well as a bit vector with one bit for each
 predicate $P$; if $P$ is observed to be true at least once during run
 $R$ then $R(P) = 1$, otherwise $R(P) = 0$.
@@ -206,28 +206,21 @@ $R$ then $R(P) = 1$, otherwise $R(P) = 0$.
 
 The usual definition of a bug refers to a programmatic element that 
 unintentionally causes incorrect behavior.  We're going to abuse notation a
-bit and overload its definition.  In this paper, a {\em bug} also refers to
+bit and overload its definition.  In this paper, a \termdef{bug} also refers to
 a set of failing runs (feedback reports) ${\cal B}$
 that share a cause of failure.  The meaning becomes clear in context.  The 
 union of all bugs is exactly the
 set of failing runs, but note that ${\cal B}_i \cap {\cal B}_j \neq
 \emptyset$ in general; more than one bug can occur in some runs.
 
-\issue[Alice]{The definition of "bug" overloads the usual definition
-  of "something that causes incorrect behavior."  I understand that
-  this makes the super-bug and sub-bug terminology easier to justify
-  (weren't we going to use some other names for these?).  But if we're
-  going to veer from the usual definition, then at least we should
-  make this clear.  [text modified]}
-
 \issue[Mike]{"A bug is a set of failing runs".  Semantically one thinks 
 of a bug as someone that characterizes a program, not a set of runs.
 What about calling a set of a failing runs a "bug profile"?}
 
-A predicate $P$ is a {\em bug predictor} (or simply a {\em predictor})
+A predicate $P$ is a \termdef{bug predictor} (or simply a \termdef{predictor})
 of bug ${\cal B}$ if whenever $R(P) = 1$ then it is statistically
-likely that $R \in {\cal B}$ (see \autoref{sec:increase}).  {\em
-Statistical debugging} selects a small subset ${\cal S}$ of the set of
+likely that $R \in {\cal B}$ (see \autoref{sec:increase}).
+\termdef{Statistical debugging} selects a small subset ${\cal S}$ of the set of
 all instrumented predicates ${\cal P}$ such that ${\cal S}$ has
 predictors of all bugs.  We also rank the predictors in ${\cal S}$
 from the most to least important.  The set ${\cal S}$ and associated
@@ -398,10 +391,10 @@ unconditionally.
   Ben later clarified this but we need to put it into the paper:
 
   We can treat existing code as instrumentation to be sampled even if
-  we didn't add it ourself.  assert() statements are a clear candidate
-  for this sort of thing.  Our PLDI 2003 paper did this with the
-  assert-like statements added by CCured.  From our perspective, that
-  code is "within" the program, not "added to" it.}
+  we didn't add it ourself.  \texttt{assert()} statements are a clear
+  candidate for this sort of thing.  Our PLDI 2003 paper did this with
+  the assert-like statements added by CCured.  From our perspective,
+  that code is "within" the program, not "added to" it.}
 %%
 That is, each time instrumentation code is reached,
 a coin flip decides whether the instrumentation is executed or not.
