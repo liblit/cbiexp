@@ -59,8 +59,8 @@ pdfpagemode=UseOutlines]{hyperref}
   \thanks{This research was supported in part by NASA Grant No.\
     NAG2-1210; NSF Grant Nos.\ EIA-9802069, CCR-0085949, ACI-9619020,
     and IIS-9988642; DOE Prime Contract No.\ W-7405-ENG-48 through
-    Memorandum Agreement No.\ B504962 with LLNL; and ONR MURI
-    N00014-00-1-0637.  The information
+    Memorandum Agreement No.\ B504962 with LLNL; and DARPA ARO-MURI 
+    ACCLIMATE DAAD-19-02-1-0383.  The information
     presented here does not necessarily reflect the position or the
     policy of the Government and no official endorsement should be
     inferred.}}
@@ -184,7 +184,7 @@ multiple bugs in complex applications (see \Autoref{sec:algorithm}).  This algor
 is based on an entirely different family of statistical techniques than our previous work and offers
 a number of improvements:
 it is much more efficient, the quality of the
-results is high and unaffected by increasing either the size of the program
+results is high and unaffected by increases in either the size of the program
 or the number of bugs, and it naturally produces information
 that shows how important (in number of program crashes) each detected
 cause of a bug is.  Furthermore, the method is statistically sound, meaning that
@@ -201,11 +201,12 @@ Failure: 1.00
 This line says that when a particular call site of the function {\tt g\_source\_remove} returns a 
 positive value\footnote{A common C programming idiom is for functions to signal error conditions by returning non-zero values.}, the probability that the program fails 
 increases 92\% to 100\%; i.e., when this predicate on this line is true the program always crashes eventually, but in executions where this predicate is not
+%%(?? I don't understand the phrase "increases 92\% to 100\%", are you citing a confidence interval? --Alice)
 observed to be true the failure rate is 8\%.  It turns out that the crash happens long after the call to {\tt g\_source\_remove} completes,
 but that the actual cause of the bug is closely connected to what goes wrong inside of this function call.  Thus,
 our approach can help engineers isolate bugs by showing the conditions and early events that trigger the bug, rather than just the
 program state at the point of failure.  Furthermore, our algorithm also allows accurate calculations of what fraction of all failures occur when this predicate
-true; in the example above, the predicate was true in 184 of 1873 Rhythmbox executions that crashed in our dataset, which means that
+is true; in the example above, the predicate was true in 184 of 1873 Rhythmbox executions that crashed in our dataset, which means that
 it is involved in 9.8\% of all the failures observed.  This information allows engineers to assign accurate priorities to bug fixes.
 
 

@@ -61,9 +61,10 @@ bug, some predicates will predict failure for small subsets of the failure set.
 We have found it useful, especially when examining the larger
 scalar-pairs reports, to be able to distinguish whether a
 highly-ranked predicate largely captures an entire bug or just an aspect of a bug.  To
-this end, we compute correlation matrices, showing the correlation of
-each retained predicate with every other retained predicate; intuitively, the
-correlations show how often the bugs occur in the same failing run.  High correlations
+this end, we compute correlation coefficient matrices, showing the correlation coefficient between each pair of retained predicates; 
+%% each retained predicate with every other retained predicate; 
+intuitively, the
+correlations show how often the predicates co-occur in the same failing run.  High correlations
 indicate that the two predicates are very likely caused by the same bug.
 
 In this experiment, a moment's work shows that the top-ranked predicates are highly

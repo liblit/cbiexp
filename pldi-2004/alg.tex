@@ -75,11 +75,12 @@ the program fails nor that when the predicate is false that
 the program succeeds. But we can express the probability that a predicate
 being true implies failure.  Let $\fail$ be an atomic predicate that is
 true for failing runs and false for successful runs.  We want to compute:
-\[ \crash(P) \equiv \prob(P \Rightarrow \fail) \]
+\[ \crash(P) \equiv \prob(P \Rightarrow \fail) = \Prob(\fail | P \mbox{ is true}) \]
 for every predicate $P$ over the set of all runs.  Let $S(P)$ be the number
 of successful runs in which $P$ is observed to be true at least once, and let $F(P)$ be the number of
-failing runs in which $P$ is observed to be true at least once.  Then we have
-\[ \crash(P) = \frac{F(P)}{S(P) + F(P)} \]
+failing runs in which $P$ is observed to be true at least once.  Then we can
+estimate $\crash(P)$ as:
+\[ \crash(P) = \frac{F(P)}{S(P) + F(P)} . \]
 
 Notice that $\crash(P)$ is not affected by the set of runs in which
 $P$ is observed to be false.  Thus, if $P$ is the cause of a bug, the
@@ -126,7 +127,7 @@ true does not increase the probability of failure at all; this coincides with
 the intuition that this predicate is irrelevant to the bug.
 
 This leads us to the following definition:
-\[ \context(P) \equiv \prob((P \lor \lnot P) \Rightarrow \fail) \]
+\[ \context(P) \equiv \prob((P \lor \lnot P) \Rightarrow \fail)  = \prob(\fail |  P \mbox{ observed}) \]
 Now, $P \lor \lnot P$ is not the set of all runs, because we are not working in a two-valued logic.
 In any given run, neither of $P$ or $\lnot P$ may be observed (because the site where this predicate is
 sampled is not reached), or one may be observed, or both may be observed (because the statement is executed
@@ -191,8 +192,8 @@ the sort order as desired.  This division works well; the first step of the algo
 
 \subsection{Statistical Interpretation}
 
-In this section we show that our test $\increase(P) > 0$ is a form of
-statistical hypothesis test.  Consider the two classes of trial runs
+Our test $\increase(P) > 0$ has the flavor of a likelihood ratio hypothesis
+test.  Consider the two classes of trial runs
 of the program: failed runs $F$ and successful runs $S$.  For each
 class, we can treat the predicate $P$ as a Bernoulli random variable
 with heads probabilities $\pi_f(P)$ and $\pi_s(P)$, respectively, for the
@@ -234,9 +235,9 @@ Then
   \iff \hat \pi_f > \hat \pi_s
 \end{gather*}
 
-Hence the $\increase(P) > 0$ criterion is not only well motivated
-from the program analysis point of view, but can also be seen as a
-version of a likelihood ratio test.
+%% Hence the $\increase(P) > 0$ criterion is not only well motivated
+%% from the program analysis point of view, but can also be seen as a
+%% version of a likelihood ratio test.
 
 \subsection{Comparison with Logistic Regression}
 \label{sec:comparison}
@@ -247,7 +248,7 @@ methods to select and rank the predicates in the order of their
 failure-prediction strength.  Independently others have used
 logistic regression with good results to cluster program failures (without
 identifying causes) related to the same bug \cite{ICSE`03*465}.  However, we have come
-to believe the logistic regression has limits
+to believe that logistic regression has limits
 in these sorts of applications. 
 
 Logistic regression and its variants use a linearly weighted
@@ -267,14 +268,21 @@ factor.  We have found the second issue is minor in practice.  For the
 first issue, one might guess that the difficulty, if it exists, shows
 up as the number and complexity of the program's bugs
 increases.  This will tend to increase the number of predicates that
-are at least somewhat predictive of failure and, more significantly,
-dramatically increase the number of combinations of predicates that could
-explain all failures, thereby making it more difficult for logistic
-regression to pick a good set of predicates and coefficients from a very large
-space.  
+are at least somewhat predictive of failure.  More significantly, it
+will dramatically increase the number of combinations of predicates that could
+explain all failures, thereby making it much more difficult to interpret the 
+importance of individual predicates.
+%% thereby making it more difficult for logistic
+%% regression to pick a good set of predicates and coefficients from a very large
+%% space.  
+%% (?? I changed the wording here because more combinations in fact makes
+%% it easier for logistic regression to find a good setting with
+%% good classification performance.  But the results are difficult to
+%% interpret and volatile. -- Alice)
 
-In fact, we observe that logistic regression performs significantly worse
-in more complex situations. For example, if a predicate is a
+%% In fact, we observe that logistic regression performs significantly worse
+%% in more complex situations. 
+For example, if a predicate is a
 common precondition for two different bugs, its coefficient
 can be greater than the coefficients of the actual causes of the bugs.
 In general, when the set of failed runs in
@@ -309,15 +317,19 @@ easier for logistic regression to select predicates and weights to
 represent all failures.  In others' work on failure clustering
 \cite{ICSE`03*465}, the number of features (predicates) is equal to
 the number of procedures in the program.  Using fewer features 
-improves the performance of logistic regression, as it has fewer choices to
+improves the feature selection performance of regularized logistic regression, as it has fewer choices to
 make from a coarser set of features; in this case the number of features is at least two orders of
 magnitude less than in our applications.
 
 For the reasons discussed above, regularized logistic regression has
 limitations for dealing with multiple bugs in our applications.  While logistic
 regression attempts to combine predicates, note that the algorithm we
-propose here focuses on how well each predicate $P$ explains the set of failed
-runs in which $P$ is observed.
+propose here focuses on the failure prediction power of individual 
+predicates.
+%% how well each predicate $P$ explains the set of failed
+%% runs in which $P$ is observed.
+The set of failed runs is then automatically separated into groups that
+are highly correlated with a few predicates.
 In essence, we circumvent the multiple bug problem by letting the
 predicates cluster the failed runs, not the other way around. 
 
