@@ -20,6 +20,7 @@
 #include "Score/LowerBound.h"
 #include "Score/TrueInFails.h"
 #include "Stylesheet.h"
+#include "Verbose.h"
 #include "ViewPrinter.h"
 #include "classify_runs.h"
 #include "fopen.h"
@@ -59,10 +60,16 @@ nextBest(const Rho &rho, list<Candidate> &candidates, const Dilution dilution)
   candidates.erase(winner);
   const double * const rhoSlice = rho[result.index];
 
+  if (Verbose::on)
+    cout << "winner: " << result << '\n';
+
   for (typename Candidates::iterator loser = candidates.begin(); loser != candidates.end(); ++loser)
     {
       const double correlation = min(1., abs(rhoSlice[loser->index]));
       loser->popularity *= dilution(correlation);
+
+      if (Verbose::on)
+	cout << "\tloser: " << *loser << ", correlation " << correlation << '\n';
     }
 
   return result;
@@ -80,7 +87,7 @@ buildView(const Rho &rho, const Schemes::value_type &scheme, const Score score, 
 
   // keep the user informed
   const string &schemeName = scheme.first;
-  cerr << "ranking " << candidates.size() << " predicates for scheme " << schemeName << ", score " << Score::code << ", dilution " << Dilution::name << '\n';
+  cout << "ranking " << candidates.size() << " predicates for scheme " << schemeName << ", score " << Score::code << ", dilution " << Dilution::name << '\n';
 
   // create XML output file and write initial header
   ViewPrinter view(Stylesheet::filename, "projected-view", schemeName, Score::code, Dilution::name);
@@ -116,6 +123,28 @@ buildViews(const Rho &rho, const Schemes::value_type &scheme)
 
 ////////////////////////////////////////////////////////////////////////
 //
+//  Command line processing
+//
+
+
+static void processCommandLine(int argc, char *argv[])
+{
+  static const argp_child children[] = {
+    { &Stylesheet::argp, 0, 0, 0 },
+    { &Verbose::argp, 0, 0, 0 },
+    { 0, 0, 0, 0 }
+  };
+
+  static const argp argp = {
+    0, 0, 0, 0, children, 0, 0
+  };
+
+  argp_parse(&argp, argc, argv, 0, 0, 0);
+}
+
+
+////////////////////////////////////////////////////////////////////////
+//
 //  The main event
 //
 
@@ -124,7 +153,7 @@ int
 main(int argc, char *argv[])
 {
   // command line processing and other initialization
-  argp_parse(&Stylesheet::argp, argc, argv, 0, 0, 0);
+  processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
   classify_runs();
 
