@@ -29,21 +29,30 @@ Candidates::filter()
 ////////////////////////////////////////////////////////////////////////
 
 
-static bool
+enum Reason { NotBetter, FirstInList, HighestScore, NonScalarPairs, NonDerived };
+
+
+static Reason
 better(Candidates::value_type &challenger, double challengerScore, double winnerScore)
 {
-  if (challengerScore > winnerScore)
-    return true;
-
   if (challengerScore < winnerScore)
-    return false;
+    return NotBetter;
+
+  if (challengerScore > winnerScore)
+    return HighestScore;
 
   // !!!: deviation from formal definitions:
   //   prefer non-scalar-pairs predictors
   if (units[challenger.first.unitIndex].scheme_code != 'S')
-    return true;
+    return NonScalarPairs;
 
-  return false;
+  // !!!: deviation from formal definitions:
+  //   prefer non-derived predictors, which are logically stronger
+  //   than derived predictors
+  if (challenger.first.predicate & 1 == 0)
+    return NonDerived;
+
+  return NotBetter;
 }
 
 
@@ -59,16 +68,39 @@ Candidates::best()
 
   iterator winner = begin();
   double winnerScore = winner->second->score();
+  Reason winnerReason = FirstInList;
 
   iterator challenger = winner;
   while (++challenger != end())
     {
       const double challengerScore = challenger->second->score();
-      if (better(*challenger, challengerScore, winnerScore))
+      const Reason challengerReason = better(*challenger, challengerScore, winnerScore);
+      if (challengerReason != NotBetter)
 	{
 	  winner = challenger;
 	  winnerScore = challengerScore;
+	  winnerReason = challengerReason;
 	}
+    }
+
+  cerr << "next best candidate selected due to: ";
+  switch (winnerReason)
+    {
+    case FirstInList:
+      cerr << "first in list\n";
+      break;
+    case HighestScore:
+      cerr << "highest score\n";
+      break;
+    case NonScalarPairs:
+      cerr << "not scalar-pairs\n";
+      break;
+    case NonDerived:
+      cerr << "not derived (logically stronger)\n";
+      break;
+    default:
+      cerr << "unknown reason\n";
+      exit(1);
     }
 
   return winner;
