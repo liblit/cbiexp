@@ -67,6 +67,37 @@ read_weights()
 }
 
 void
+print_scores0()
+{
+  // sort according to descending importance score
+  Stats list2 = predList;
+  unsigned npreds = list2.size();
+  // set importance to W(i,i)
+  unsigned i = 0;
+  for (Stats::iterator c = list2.begin(); c != list2.end(); ++c, ++i) {
+    (*c).ps.imp = W_data[i*npreds+i];
+  }
+  list2.sort(Sort::Descending<Score::Importance>());
+
+  ofstream outfp ("pred_scores0.xml");
+  outfp << "<?xml version=\"1.0\"?>" << endl
+        << "<?xml-stylesheet type=\"text/xsl\" href=\"" 
+	<< XMLTemplate::format("scores") << ".xsl\"?>" << endl
+	<< "<!DOCTYPE view SYSTEM \"scores.dtd\">" << endl
+	<< "<scores>" << endl;
+
+  for (Stats::iterator c = list2.begin(); c != list2.end(); ++c) {
+    outfp << "<predictor index=\"" << (*c).index+1
+          << "\" score=\"" << setprecision(10) << (*c).ps.imp
+	  << "\"/>" << endl;
+    outfp.unsetf(ios::floatfield);
+  }
+
+  outfp << "</scores>" << endl;
+  outfp.close();
+}
+ 
+void
 print_scores()
 {
   // sort according to descending order
@@ -186,6 +217,8 @@ int main (int argc, char** argv)
   read_preds();
 
   read_weights();
+
+  print_scores0();
 
   compute_scores();
 
