@@ -12,5 +12,5 @@
 <!ENTITY % bug-o-meter SYSTEM "bug-o-meter.dtd">
 %bug-o-meter;
 
-<!ENTITY % operands SYSTEM "operands.dtd">
-%operands;
+<!ENTITY % operand SYSTEM "operand.dtd">
+%operand;
