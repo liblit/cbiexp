@@ -64,11 +64,9 @@ sub run_task ($$$) {
 	unlink 'label';
 	return 1;
     } else {
+	$self->{updated} = 1;
 	return 0;
     }
-
-    # record that some work was done
-    $self->{updated} = 1;
 }
 
 
