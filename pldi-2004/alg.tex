@@ -1,7 +1,7 @@
 
 This section presents the algorithm that we have developed for
 isolating bugs in programs in which multiple bugs are present
-simultaneously.  As discussed in \autoref{sec:background}, our
+simultaneously.  As discussed in \Autoref{sec:background}, our
 approach is to count the number of times we observe pre-specified
 predicates at each program program point to be true during program
 execution.  Because our system has no {\em a priori} knowledge of what bugs
@@ -135,7 +135,7 @@ prefer to localize bugs at the earliest possible point, rather than
 as close to the crash site as possible.  For example, in the code fragment
 given above, the bug is attributed to the success of the conditional branch
 test {\tt f == NULL} on line {\tt (a)} rather than the pointer derefence
-on lince {\tt (c)}.  \autoref{sec:experiments:results} gives several examples of
+on lince {\tt (c)}.  \Autoref{sec:experiments:results} gives several examples of
 this phenomenon while hunting for real bugs.
 
 The purpose of sorting the surviving predicates in step (2) by
