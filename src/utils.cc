@@ -1,8 +1,9 @@
-#include <cstdio>
-#include <cmath>
 #include <cassert>
-#include "units.h"
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include "sites.h"
+#include "units.h"
 #include "utils.h"
 
 const float conf_map[10] = {
@@ -28,7 +29,7 @@ pred_stat compute_pred_stat(int s, int f, int os, int of, int confidence)
     return p;
 }
 
-bool retain_pred(int s, int f, float lb) { return lb > 0 && s + f >= 10; }
+bool retain_pred(int, int, float lb) { return lb > 0 && s + f >= 10; }
 
 bool retain_pred(int s, int f, int os, int of, int confidence)
 {
@@ -112,40 +113,51 @@ void process_report(FILE* fp,
                     void (*process_g_site)(int u, int c, int x, int y, int z, int w))
 {
     int u, c, x, y, z, w;
+    bool problem = false;
 
     while (1) {
         fscanf(fp, "%d\n", &u);
         if (feof(fp))
             break;
-        switch (units[u].scheme_code) {
-        case 'S':
-            for (c = 0; c < units[u].num_sites; c++) {
-                fscanf(fp, "%d %d %d\n", &x, &y, &z);
-                process_s_site(u, c, x, y, z);
-            }
-            break;
-        case 'B':
-            for (c = 0; c < units[u].num_sites; c++) {
-                fscanf(fp, "%d %d\n", &x, &y);
-                process_b_site(u, c, x, y);
-            }
-            break;
-        case 'R':
-            for (c = 0; c < units[u].num_sites; c++) {
-                fscanf(fp, "%d %d %d\n", &x, &y, &z);
-                process_r_site(u, c, x, y, z);
-            }
-            break;
-        case 'G':
-            for (c = 0; c < units[u].num_sites; c++) {
-                fscanf(fp, "%d %d %d %d\n", &x, &y, &z, &w);
-                process_g_site(u, c, x, y, z, w);
-            }
-            break;
-        default:
-            assert(0);
-        }
+	if (u < num_units)
+	    switch (units[u].scheme_code) {
+	    case 'S':
+		for (c = 0; c < units[u].num_sites; c++) {
+		    fscanf(fp, "%d %d %d\n", &x, &y, &z);
+		    process_s_site(u, c, x, y, z);
+		}
+		break;
+	    case 'B':
+		for (c = 0; c < units[u].num_sites; c++) {
+		    fscanf(fp, "%d %d\n", &x, &y);
+		    process_b_site(u, c, x, y);
+		}
+		break;
+	    case 'R':
+		for (c = 0; c < units[u].num_sites; c++) {
+		    fscanf(fp, "%d %d %d\n", &x, &y, &z);
+		    process_r_site(u, c, x, y, z);
+		}
+		break;
+	    case 'G':
+		for (c = 0; c < units[u].num_sites; c++) {
+		    fscanf(fp, "%d %d %d %d\n", &x, &y, &z, &w);
+		    process_g_site(u, c, x, y, z, w);
+		}
+		break;
+	    default:
+		fprintf(stderr, "unit %d has unknown scheme code '%c'\n",
+			u, units[u].scheme_code);
+		problem = true;
+	    }
+	else {
+	    fprintf(stderr, "unit %d exceeds unit count (%d)\n", u, num_units);
+	    problem = true;
+	}
     }
+
+    if (problem)
+	exit(1);
 }
 
 
