@@ -36,6 +36,9 @@ $ENV{XAUTHORITY} = "$tmpdir/xauth";
 $ENV{DISPLAY} = ":$run_id";
 $ENV{PATH} .= ':/usr/X11R6/bin/';
 
+# for modified ORBit2 library which looks at $TMPDIR
+$ENV{LD_LIBRARY_PATH}= $FindBin::Bin;
+
 
 END {
     # blow away various GNOME support daemons
