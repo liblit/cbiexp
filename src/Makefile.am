@@ -34,10 +34,23 @@ process_run_labels_SOURCES = process_run_labels.cc
 
 
 libanalyze_a_SOURCES =				\
+	AutoFD.cc				\
+	AutoFD.h				\
+	Candidate.h				\
+	Candidate.cc				\
+	Dilute.cc				\
+	Dilute.h				\
+	IndexedPredInfo.h			\
+	PredicatePrinter.cc			\
+	PredicatePrinter.h			\
+	Rho.cc					\
+	Rho.h					\
+	ViewPrinter.cc				\
+	ViewPrinter.h				\
 	classify_runs.cc			\
 	classify_runs.h				\
-	generate-view.cc			\
-	generate-view.h				\
+	preds_txt.cc				\
+	preds_txt.h				\
 	shell.cc				\
 	shell.h					\
 	sorts.h					\
@@ -67,7 +80,6 @@ liblate_a_SOURCES =				\
 	gen_preds_file.cc			\
 	gen_summary.cc				\
 	gen_views.cc				\
-	generate-view.cc			\
 	preds.h					\
 	project.cc				\
 	sites.h					\

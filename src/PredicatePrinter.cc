@@ -1,5 +1,6 @@
+#include <cmath>
 #include <iostream>
-#include "generate-view.h"
+#include "PredicatePrinter.h"
 #include "sites.h"
 
 using namespace std;

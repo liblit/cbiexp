@@ -5,8 +5,10 @@ noinst_LIBRARIES = libScore.a
 libScore_a_SOURCES =				\
 	Fail.cc					\
 	Fail.h					\
-	HarmonicMean.cc				\
-	HarmonicMean.h				\
+	HarmonicMeanLog.cc			\
+	HarmonicMeanLog.h			\
+	HarmonicMeanSqrt.cc			\
+	HarmonicMeanSqrt.h			\
 	Increase.cc				\
 	Increase.h				\
 	LowerBound.cc				\

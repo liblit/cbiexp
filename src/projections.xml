@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!DOCTYPE projections SYSTEM "projections.dtd">
+
+<projections>
+  <projection name="none"/>
+  <projection name="circular"/>
+  <projection name="linear"/>
+</projections>

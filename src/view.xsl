@@ -19,6 +19,8 @@
   <!-- where are we right now? -->
   <xsl:variable name="current-scheme" select="/view/@scheme"/>
   <xsl:variable name="current-sort" select="/view/@sort"/>
+  <xsl:variable name="current-projection" select="/view/@projection"/>
+  <xsl:variable name="current-view" select="concat($current-scheme, '_', $current-sort, '_', $current-projection)"/>
 
 
   <!-- main master template for generated page -->
@@ -42,8 +44,7 @@
 	<table class="views">
 	  <xsl:apply-templates select="document('summary.xml')/experiment/schemes"/>
 	  <xsl:apply-templates select="document('sorts.xml')/sorts"/>
-	  <xsl:apply-templates select="schemes"/>
-	  <xsl:apply-templates select="sorts"/>
+	  <xsl:apply-templates select="document('projections.xml')/projections"/>
 	  <tr>
 	    <th>Go to:</th>
 	    <td>
@@ -75,13 +76,11 @@
     </tr>
   </xsl:template>
 
-
   <!-- link to a single other scheme's page -->
   <xsl:template match="scheme[@retain > 0]">
     <xsl:call-template name="other-view">
       <xsl:with-param name="name" select="@name"/>
       <xsl:with-param name="scheme" select="@name"/>
-      <xsl:with-param name="sort" select="$current-sort"/>
     </xsl:call-template>
   </xsl:template>
 
@@ -89,18 +88,33 @@
   <!-- row of links to other sort orders -->
   <xsl:template match="sorts">
     <tr>
-      <th>Sort by:</th>
+      <th>Sorted by:</th>
       <td><xsl:apply-templates/></td>
     </tr>
   </xsl:template>
-
 
   <!-- link to a single other sort order -->
   <xsl:template match="sort">
     <xsl:call-template name="other-view">
       <xsl:with-param name="name" select="text()"/>
-      <xsl:with-param name="scheme" select="$current-scheme"/>
       <xsl:with-param name="sort" select="@code"/>
+    </xsl:call-template>
+  </xsl:template>
+
+
+  <!-- row of links to other projections -->
+  <xsl:template match="projections">
+    <tr>
+      <th>Projection:</th>
+      <td><xsl:apply-templates/></td>
+    </tr>
+  </xsl:template>
+
+  <!-- link to a single other projection -->
+  <xsl:template match="projection">
+    <xsl:call-template name="other-view">
+      <xsl:with-param name="name" select="@name"/>
+      <xsl:with-param name="projection" select="@name"/>
     </xsl:call-template>
   </xsl:template>
 
@@ -108,18 +122,22 @@
   <!-- a single link to an alternative view (different scheme or sort order) -->
   <xsl:template name="other-view">
     <xsl:param name="name"/>
-    <xsl:param name="scheme"/>
-    <xsl:param name="sort"/>
+    <xsl:param name="scheme" select="$current-scheme"/>
+    <xsl:param name="sort" select="$current-sort"/>
+    <xsl:param name="projection" select="$current-projection"/>
+
+    <xsl:variable name="label" select="translate($name, ' ', '&#160;')"/>
+    <xsl:variable name="target-view" select="concat($scheme, '_', $sort, '_', $projection)"/>
 
     <!-- output a placeholder or a true link -->
     [<xsl:choose>
-      <xsl:when test="$scheme = $current-scheme and $sort = $current-sort">
+      <xsl:when test="$target-view = $current-view">
 	<!-- placeholder for the link to ourself -->
-	<xsl:value-of select="$name"/>
+	<xsl:value-of select="$label"/>
       </xsl:when>
       <xsl:otherwise>
 	<!-- true link to someone else -->
-	<a href="{$scheme}_{$sort}.xml"><xsl:value-of select="$name"/></a>
+	<a href="{$target-view}.xml"><xsl:value-of select="$label"/></a>
       </xsl:otherwise>
     </xsl:choose>]
   </xsl:template>

@@ -1,7 +1,8 @@
 <!ELEMENT view (predictor)+>
 <!ATTLIST view
   scheme NMTOKEN #REQUIRED
-  sort NMTOKEN #REQUIRED>
+  sort NMTOKEN #REQUIRED
+  projection NMTOKEN #REQUIRED>
 
 <!ENTITY % predictor "(true, seen, scores, source)">
 <!ELEMENT predictor %predictor;>

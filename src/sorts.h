@@ -1,12 +1,7 @@
 #ifndef INCLUDE_sorts_h
 #define INCLUDE_sorts_h
 
-#include <vector>
-#include "utils.h"
-
-
-typedef size_t predIndex;
-typedef std::vector<pred_info> Stats;
+class pred_info;
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -18,18 +13,16 @@ namespace Sort
   class Ascending
   {
   public:
-    Ascending(const Stats &stats)
-      : stats(stats)
+    Ascending()
     {
     }
 
-    bool operator () (const predIndex &a, const predIndex &b)
+    bool operator () (const pred_info &a, const pred_info &b)
     {
-      return get(stats[a]) < get(stats[b]);
+      return get(a) < get(b);
     }
 
   private:
-    const Stats &stats;
     const Get get;
   };
 
@@ -38,18 +31,16 @@ namespace Sort
   class Descending
   {
   public:
-    Descending(const Stats &stats)
-      : stats(stats)
+    Descending()
     {
     }
 
-    bool operator () (const predIndex &a, const predIndex &b)
+    bool operator () (const pred_info &a, const pred_info &b)
     {
-      return get(stats[a]) > get(stats[b]);
+      return get(a) > get(b);
     }
 
   private:
-    const Stats &stats;
     const Get get;
   };
 }

@@ -138,7 +138,7 @@
 	      <td class="link"/>
 	    </xsl:when>
 	    <xsl:otherwise>
-	      <td class="link"><a href="{$name}_{@code}.xml">&link;</a></td>
+	      <td class="link"><a href="{$name}_{@code}_none.xml">&link;</a></td>
 	    </xsl:otherwise>
 	  </xsl:choose>
 	</xsl:for-each>

@@ -63,7 +63,7 @@ FILE *fopen_read(const char *filename)
     FILE * const fp = fopen(filename, "r");
     if (!fp) {
 	const int code = errno;
-	fprintf(stderr, "cannot read %s: %s\n", strerror(code));
+	fprintf(stderr, "cannot read %s: %s\n", filename, strerror(code));
 	exit(code || 1);
     }
 

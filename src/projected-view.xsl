@@ -9,7 +9,7 @@
   <xsl:import href="view.xsl"/>
 
   <!-- add column headers for our own additional information -->
-  <xsl:template match="projected-view">
+  <xsl:template match="view">
     <table class="predictors">
       <tr>
 	<th>initial<br/>popularity</th>

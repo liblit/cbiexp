@@ -3,10 +3,6 @@
 <!ENTITY % view SYSTEM "view.dtd">
 %view;
 
-<!ELEMENT projected-view (predictor)+>
-<!ATTLIST projected-view
-  sort NMTOKEN #REQUIRED>
-
 <!ELEMENT popularity EMPTY>
 <!ATTLIST popularity
   initial NMTOKEN #REQUIRED

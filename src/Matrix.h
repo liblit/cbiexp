@@ -4,20 +4,19 @@
 #include <cassert>
 
 
-// a single block of memory indexed as though it were a square matrix
+// access a single block of memory as though it were a 2D matrix
 
 
 template <typename Element>
 class Matrix
 {
 public:
-  Matrix(size_t);
-  ~Matrix();
-
-  Element *operator [] (size_t);
-  const Element *operator [] (size_t) const;
+  Matrix(size_t, Element *);
 
   const size_t size;
+
+  Element * operator [] (size_t);
+  const Element * operator [] (size_t) const;
 
  private:
   Element * const storage;
@@ -29,18 +28,10 @@ public:
 
 template <typename Element>
 inline
-Matrix<Element>::Matrix(size_t size)
+Matrix<Element>::Matrix(size_t size, Element *storage)
   : size(size),
-    storage(new Element [size * size])
+    storage(storage)
 {
-}
-
-
-template <typename Element>
-inline
-Matrix<Element>::~Matrix()
-{
-  delete [] storage;
 }
 
 

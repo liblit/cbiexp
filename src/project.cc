@@ -1,61 +1,43 @@
+#include <algorithm>
 #include <argp.h>
+#include <functional>
 #include <cmath>
-#include <fstream>
 #include <iostream>
 #include <list>
-#include <string>
-#include <vector>
+#include <map>
+#include <memory>
 
+#include "Candidate.h"
+#include "Dilute.h"
+#include "MappedArray.h"
 #include "Matrix.h"
-#include "Score/HarmonicMean.h"
+#include "PredicatePrinter.h"
+#include "Rho.h"
+#include "Score/Fail.h"
+#include "Score/HarmonicMeanLog.h"
+#include "Score/HarmonicMeanSqrt.h"
+#include "Score/Increase.h"
+#include "Score/LowerBound.h"
+#include "Score/TrueInFails.h"
+#include "ViewPrinter.h"
 #include "classify_runs.h"
-#include "generate-view.h"
+#include "preds_txt.h"
+#include "sites.h"
 #include "utils.h"
 
 using namespace std;
 
 
-typedef Matrix<double> Rho;
-
-
 ////////////////////////////////////////////////////////////////////////
 //
-//  A predicate with its current (discounted) popularity
-//
-//  To change the core ranking function on which the projection
-//  algorithm operates, change Candidate::Score.
+//  Assorted pieces of global state
 //
 
 
-typedef double score;
-
-
-struct Candidate : public pred_info
-{
-  Candidate(const pred_info &);
-  double firstImpression() const;
-  double popularity;
-
-  typedef Score::HarmonicMean Score;
-};
-
-
-inline
-Candidate::Candidate(const pred_info &stats)
-  : pred_info(stats),
-    popularity(firstImpression())
-{
-}
-
-
-inline double
-Candidate::firstImpression() const
-{
-  return Score()(*this);
-}
-
-
-static vector<Candidate> predStats;
+// predicates grouped by scheme
+// map key "all" includes all schemes
+typedef list<IndexedPredInfo> PredInfos;
+typedef map<string, PredInfos> Schemes;
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -64,138 +46,87 @@ static vector<Candidate> predStats;
 //
 
 
-// may be changed using line flags
-const char *predStatsName = "preds.txt";
-const char *rhoName = "rho.txt";
-
-static const char *successList = "s.runs";
-static const char *failureList = "f.runs";
-
-bool verbose = false;
-
-
-static const argp_option options[] = {
-  {
-    "predicates",
-    'p',
-    "preds.txt",
-    0,
-    "predicate statistics file",
-    0
-  },
-  {
-    "rho",
-    'r',
-    "rho.txt",
-    0,
-    "correlation matrix file",
-    0
-  },
-  {
-    "verbose",
-    'v',
-    0,
-    0,
-    "verbosely trace selection process",
-    0
-  },
-  {
-    "success-list",
-    's',
-    "s.runs",
-    0,
-    "file listing successful runs",
-    0
-  },
-  {
-    "failure-list",
-    'f',
-    "f.runs",
-    0,
-    "file listing failed runs",
-    0
-  },
-  { 0, 0, 0, 0, 0, 0 }
+static const argp_child argpChildren[] = {
+  { &Rho::argp, 0, 0, 0 },
+  { &preds_txt_argp, 0, 0, 0 },
+  { &classify_runs_argp, 0, "Outcome summary files:", 0 },
+  { 0, 0, 0, 0 }
 };
-
-
-static int
-parseFlag(int key, char *arg, argp_state *)
-{
-  switch (key)
-    {
-    case 'p':
-      predStatsName = arg;
-      return 0;
-    case 'r':
-      rhoName = arg;
-      return 0;
-    case 'v':
-      verbose = true;
-      return 0;
-    case 's':
-      successList = arg;
-      return 0;
-    case 'f':
-      failureList = arg;
-      return 0;
-    default:
-      return ARGP_ERR_UNKNOWN;
-    }
-}
 
 
 static const argp argp = {
-  options, parseFlag, 0, 0, 0, 0, 0
+  0, 0, 0, 0, argpChildren, 0, 0
 };
 
 
 ////////////////////////////////////////////////////////////////////////
 //
-//  File input
+//  Projective ranking
 //
 
 
-static void
-readPredStats(const char *filename)
+template <class Dilution>
+static Candidate
+nextBest(const Rho &rho, list<Candidate> &candidates, const Dilution dilution)
 {
-  cerr << "reading predicate stats: " << flush;
-  FILE * const file = fopen_read(filename);
+  typedef list<Candidate> Candidates;
+  const typename Candidates::iterator winner = max_element(candidates.begin(), candidates.end());
+  const Candidate result = *winner;
+  candidates.erase(winner);
+  const double * const rhoSlice = rho[result.index];
 
-  pred_info info;
-  while (read_pred_full(file, info))
-    predStats.push_back(info);
+  for (typename Candidates::iterator loser = candidates.begin(); loser != candidates.end(); ++loser)
+    {
+      const double correlation = min(1., abs(rhoSlice[loser->index]));
+      loser->popularity *= dilution(correlation);
+    }
 
-  fclose(file);
-  cerr << "got " << predStats.size() << '\n';
+  return result;
+}
+
+
+template <class Score, class Dilution>
+static void
+buildView(const Rho &rho, const Schemes::value_type &scheme, const Score score, const Dilution dilution)
+{
+  // assign initial scores
+  list<Candidate> candidates;
+  for (PredInfos::const_iterator indexed = scheme.second.begin(); indexed != scheme.second.end(); ++indexed)
+    candidates.push_back(Candidate(*indexed, score(*indexed)));
+
+  // keep the user informed
+  const string &schemeName = scheme.first;
+  cerr << "ranking " << candidates.size() << " predicates for scheme " << schemeName << ", score " << Score::code << ", dilution " << Dilution::name << '\n';
+
+  // create XML output file and write initial header
+  ViewPrinter view("projected-view", schemeName, Score::code, Dilution::name);
+
+  // pluck out predicates one by one, printing as we go
+  while (!candidates.empty())
+    view << nextBest(rho, candidates, dilution);
+}
+
+
+template <class Score>
+static void
+buildView(const Rho &rho, const Schemes::value_type &scheme, const Score score)
+{
+  using namespace Dilute;
+  buildView(rho, scheme, score, Circular());
+  buildView(rho, scheme, score, Linear());
 }
 
 
 static void
-readCorrelations(const char *filename, Rho &rho)
+buildViews(const Rho &rho, const Schemes::value_type &scheme)
 {
-  cerr << "reading " << rho.size << "² correlation matrix\n";
-
-  ifstream file;
-  file.exceptions(ios::eofbit | ios::failbit | ios::badbit);
-  file.open(filename);
-
-  for (predIndex row = 0; row < rho.size; ++row)
-    for (predIndex column = 0; column < rho.size; ++column)
-      file >> rho[row][column];
-}
-
-
-////////////////////////////////////////////////////////////////////////
-//
-//  Sorting and ranking
-//
-
-
-static bool
-lessPopularThan(predIndex a, predIndex b)
-{
-  return predStats[a].popularity < predStats[b].popularity;
+  using namespace Score;
+  buildView(rho, scheme, LowerBound());
+  buildView(rho, scheme, Increase());
+  buildView(rho, scheme, Fail());
+  buildView(rho, scheme, TrueInFails());
+  buildView(rho, scheme, HarmonicMeanLog());
+  buildView(rho, scheme, HarmonicMeanSqrt());
 }
 
 
@@ -208,70 +139,33 @@ lessPopularThan(predIndex a, predIndex b)
 int
 main(int argc, char *argv[])
 {
-  // command line processing and other simple initialization
+  // command line processing and other initialization
   ios::sync_with_stdio(false);
   argp_parse(&argp, argc, argv, 0, 0, 0);
-  classify_runs(successList, failureList);
 
-  // load up the standard stats: Increase, Fail, Context, etc.
-  readPredStats(predStatsName);
-  const predIndex size = predStats.size();
+  // predicates grouped by scheme
+  // map key "all" includes all schemes
+  Schemes schemes;
+  PredInfos &all = schemes["all"];
 
-  // load up the pairwise predicate correlation matrix
-  cerr << "preallocating " << size << "² correlation matrix\n";
-  Rho rho(size);
-  readCorrelations(rhoName, rho);
+  // load up predicates and note set of active schemes
+  FILE * const statsFile = fopen_read(preds_txt_filename);
+  pred_info info;
+  unsigned index = 0;
+  while (read_pred_full(statsFile, info)) {
+    const string &scheme = scheme_name(sites[info.site].scheme_code);
+    IndexedPredInfo indexed(info, index);
+    all.push_back(indexed);
+    schemes[scheme].push_back(indexed);
+    ++index;
+  }
 
-  // build an efficiently prunable list of not-yet-picked predicates
-  cerr << "ranking " << size << " predicates\n";
-  typedef list<predIndex> Candidates;
-  Candidates candidates;
-  for (predIndex index = 0; index < size; ++index)
-    candidates.push_back(index);
+  // load correlation matrix
+  const Rho rho(all.size(), Rho::filename);
 
-  // emit XML header; will emit predicates as we go along
-  cout << "<?xml version=\"1.0\"?>"
-       << "<?xml-stylesheet type=\"text/xsl\" href=\"projected-view.xsl\"?>"
-       << "<!DOCTYPE projected-view SYSTEM \"projected-view.dtd\">"
-       << "<projected-view sort=\"" << Candidate::Score::code << "\">";
-
-  while (!candidates.empty())
-    {
-      const Candidates::iterator element = max_element(candidates.begin(), candidates.end(), lessPopularThan);
-      const predIndex winner = *element;
-      candidates.erase(element);
-      const Candidate &stats = predStats[winner];
-
-      PredicatePrinter printer(cout, stats);
-      cout << "<popularity initial=\"" << stats.firstImpression()
-	   << "\" effective=\"" << stats.popularity
-	   << "\"/>";
-
-      if (verbose)
-	cerr << "winner " << winner << ":\n"
-	     << "\tpopularity:\t" << stats.popularity << '\n';
-
-      for (Candidates::const_iterator loser = candidates.begin();
-	   loser != candidates.end(); ++loser)
-	{
-	  const score correlation = rho[winner][*loser];
-	  const score dilution = abs(cos(M_PIl / 2 * correlation));
-	  score &slot = predStats[*loser].popularity;
-	  const score previous = slot;
-
-	  slot *= dilution;
-	  assert(slot >= 0);
-
-	  if (verbose)
-	    cerr << "loser " << *loser << ":\n"
-		 << "\told popularity:\t" << previous << '\n'
-		 << "\tcorrelation:\t" << correlation << '\n'
-		 << "\tdilution:\t" << dilution << '\n'
-		 << "\tnew popularity:\t" << slot << '\n';
-	}
-    }
-
-  cout << "</projected-view>\n";
+  // generate sorted views for each individual scheme
+  for(Schemes::const_iterator scheme = schemes.begin(); scheme != schemes.end(); ++scheme)
+    buildViews(rho, *scheme);
 
   return 0;
 }

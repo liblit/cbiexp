@@ -1,120 +1,102 @@
-#include <fstream>
 #include <iterator>
 #include <map>
-#include <sstream>
+#include <list>
 #include <string>
-#include <vector>
+#include "PredicatePrinter.h"
 #include "Score/Fail.h"
-#include "Score/HarmonicMean.h"
+#include "Score/HarmonicMeanLog.h"
+#include "Score/HarmonicMeanSqrt.h"
 #include "Score/Increase.h"
 #include "Score/LowerBound.h"
 #include "Score/TrueInFails.h"
-#include "generate-view.h"
+#include "ViewPrinter.h"
+#include "preds_txt.h"
 #include "sorts.h"
 #include "sites.h"
 #include "utils.h"
 
 using namespace std;
 
-
-typedef map<string, Stats> StatsMap;
-
-
-char* preds_txt_file = "preds.txt";
+typedef list<pred_info> Stats;
 
 
+template <class Get>
 static void
-process_cmdline(int argc, char** argv)
+gen_view(const string &scheme, Stats &stats)
 {
-    for (int i = 1; i < argc; i++) {
-	if (!strcmp(argv[i], "-p")) {
-	    i++;
-	    preds_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-h")) {
-	    puts("Usage: gen-views [-p <preds.txt>]");
-	    exit(0);
-	}
-	printf("Illegal option: %s\n", argv[i]);
-	exit(1);
-    }
-}
-
-
-template <template <class Get> class Sorter, class Get>
-static void
-gen_permutation(const string &scheme, const Stats &stats)
-{
+    // create XML output file and write initial header
     // make sure we will be able to write before we spend time sorting
-    ostringstream filename;
-    filename << scheme << '_' << Get::code << ".xml";
-    ofstream xml;
-    xml.exceptions(ios::eofbit | ios::failbit | ios::badbit);
-    xml.open(filename.str().c_str());
+    ViewPrinter view("view", scheme, Get::code, "none");
 
-    // build an initial identity permutation
-    const size_t size = stats.size();
-    Permutation permutation;
-    permutation.reserve(size);
-    for (unsigned index = 0; index < size; ++index)
-	permutation.push_back(index);
+    // sort using the given sorter
+    stats.sort(Sort::Descending<Get>());
 
-    // sort that permutation using the given sorter
-    Sorter<Get> sorter(stats);
-    sort(permutation.begin(), permutation.end(), sorter);
-
-    // generate XML
-    xml << "<?xml version=\"1.0\"?>"
-	<< "<?xml-stylesheet type=\"text/xsl\" href=\"view.xsl\"?>"
-	<< "<!DOCTYPE view SYSTEM \"view.dtd\">"
-	<< "<view scheme=\"" << scheme
-	<< "\" sort=\"" << Get::code << "\">";
-
-    for (Permutation::const_iterator index = permutation.begin();
-	 index != permutation.end(); ++index)
-	xml << stats[*index];
-
-    xml << "</view>\n";
+    // print predicates into view in sorted order
+    copy(stats.begin(), stats.end(), ostream_iterator<pred_info>(view));
 }
 
 
 static void
-gen_permutations(const string &scheme, const Stats &stats)
+gen_views(const string &scheme, Stats &stats)
 {
-    using namespace Sort;
     using namespace Score;
 
-    gen_permutation<Descending, LowerBound>(scheme, stats);
-    gen_permutation<Descending, Increase>(scheme, stats);
-    gen_permutation<Descending, Fail>(scheme, stats);
-    gen_permutation<Descending, TrueInFails>(scheme, stats);
-    // gen_permutation<Descending, HarmonicMean>(scheme, stats);
+    gen_view<LowerBound>(scheme, stats);
+    gen_view<Increase>(scheme, stats);
+    gen_view<Fail>(scheme, stats);
+    gen_view<TrueInFails>(scheme, stats);
+    gen_view<HarmonicMeanLog>(scheme, stats);
+    gen_view<HarmonicMeanSqrt>(scheme, stats);
 }
+
+
+////////////////////////////////////////////////////////////////////////
+//
+//  Command line processing
+//
+
+
+static const argp_child argpChildren[] = {
+    { &preds_txt_argp, 0, 0, 0 },
+    { &classify_runs_argp, 0, "Outcome summary files:", 0 },
+    { 0, 0, 0, 0 }
+};
+
+static const argp argp = {
+    0, 0, 0, 0, argpChildren, 0, 0
+};
+
+
+////////////////////////////////////////////////////////////////////////
+//
+//  The main event
+//
 
 
 int
 main(int argc, char** argv)
 {
-    process_cmdline(argc, argv);
+    // command line processing and other initialization
+    argp_parse(&argp, argc, argv, 0, 0, 0);
 
-    // group predicates by scheme for easier filtering later
-    // scheme code "all" lists predicates for all schemes
-    StatsMap stats_map;
+    // group predicates by scheme for easier iteraton later
+    // map key "all" includes all schemes
+    typedef map<string, Stats> StatsMap;
+    StatsMap statsMap;
 
-    // load up all of the predicates with computed statistics
-    FILE *stats_file = fopen_read(preds_txt_file);
+    // load up predicates, grouped by scheme
+    FILE * const statsFile = fopen_read(preds_txt_filename);
     pred_info info;
-    while (read_pred_full(stats_file, info)) {
+    while (read_pred_full(statsFile, info)) {
 	static const string all("all");
-	stats_map[all].push_back(info);
-	stats_map[scheme_name(sites[info.site].scheme_code)].push_back(info);
+	const string &scheme = scheme_name(sites[info.site].scheme_code);
+	statsMap[all].push_back(info);
+	statsMap[scheme].push_back(info);
     }
 
     // generate sorted views for each individual scheme
-    for (StatsMap::const_iterator stats = stats_map.begin();
-	 stats != stats_map.end(); ++stats)
-	gen_permutations(stats->first, stats->second);
+    for (StatsMap::iterator scheme = statsMap.begin(); scheme != statsMap.end(); ++scheme)
+	gen_views(scheme->first, scheme->second);
 
     return 0;
 }
