@@ -29,7 +29,7 @@ main(int argc, char** argv)
                 if (i == j) 
                     fprintf(fp, "[%s] ", scheme_names[j]);
                 else
-                    fprintf(fp, "[<a href=\"%s_%s_%s.html\">%s</a>] ", prefix, scheme_codes[j], sortby_codes[m], scheme_names[j]);
+                    fprintf(fp, "[<a href=\"%s%s_%s.html\">%s</a>] ", prefix, scheme_codes[j], sortby_codes[m], scheme_names[j]);
             }
             fprintf(fp, "</td>\n<td rowSpan=2 align=right>"
                         "<a href=\"http://www.cs.berkeley.edu/~liblit/sampler/\">"
@@ -40,7 +40,7 @@ main(int argc, char** argv)
                 if (m == n) 
                     fprintf(fp, "[%s] ", sortby_names[n]);
                 else
-                    fprintf(fp, "[<a href=\"%s_%s_%s.html\">%s</a>] ", prefix, scheme_codes[i], sortby_codes[n], sortby_names[n]);
+                    fprintf(fp, "[<a href=\"%s%s_%s.html\">%s</a>] ", prefix, scheme_codes[i], sortby_codes[n], sortby_names[n]);
             }
             fprintf(fp, "</td>\n</tr>\n</center></table>\n<table>\n<tr>\n" 
                         "<td></td>\n"

@@ -12,7 +12,7 @@ src/bc/bc: src/Makefile force
 	$(MAKE) -C $(@D)
 
 src/Makefile:
-	cd $(@D) && CC='sampler-cc --sampler-scheme=scalar-pairs --no-sample' ./configure
+	cd $(@D) && CC='sampler-cc --sampler-scheme=scalar-pairs --sampler-scheme=branches --sampler-scheme=returns --no-sample' ./configure
 
 force:
 .PHONY: force
