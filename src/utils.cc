@@ -52,11 +52,7 @@ bool read_pred_full(FILE* fp, pred_info &pi)
 			   &pi.ps.lb, &pi.ps.in, &pi.ps.fs, &pi.ps.co,
 			   &pi.s, &pi.f, &pi.os, &pi.of);
 
-    if (got == 13) {
-	assert(scheme_code == sites[pi.siteIndex].scheme_code);
-	return true;
-    } else
-	return false;
+    return got == 13;
 }
 
 
