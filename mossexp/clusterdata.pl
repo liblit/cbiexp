@@ -57,10 +57,9 @@ $dir = 0;
 
 
 sub check_system ($) {
-    if ((system $_[0]) == -1) {
-	die "system error: $!";
-    }
-    return $?
+    die "system error: $!" if (system $_[0]) == -1;
+    die "system command crashed" if $? & 127;
+    return $? >> 8;
 }
 
 
@@ -249,9 +248,16 @@ while ($numruns-- > 0) {
 	check_system "$watchdog 1000 $MPATH/moss $full_option_list -s db2 -a db2.manifest > output.db2 2> errors.db2";
     }
 
+    # various runs
     run_moss_good;
     run_moss_bad 'bad';
     run_moss_bad 'bad2';
+
+    # overall sanity checks
+    my $goodExit = (new FileHandle 'good/exit')->getline;
+    my $abnormality = ($goodExit !~ /^normal\t/) ? 'good run crashed or hung' : '';
+    $abnormality ||= (diff 'bad/exit', 'bad2/exit') ? 'bad and bad2 runs exited differently' : '';
+    (new FileHandle 'abnormal')->print("$abnormality\n") if $abnormality;
 
     chdir("..");
 }
