@@ -1,24 +1,11 @@
-<!-- "predictor-info" is an ordered collection of predicates believed
-  -- to be candidate failure predictors.  The order here is the same
-  -- as the order in "preds.txt".  In ranked predictor lists that
-  -- include index="nnn" attributes, the index number refers to the
-  -- order of the "info" children under this element.  In accordance
-  -- with general XPath conventions, those children are numbered
-  -- starting from 1, not 0. -->
-
+<!-- "predictor-info" is an ordered collection of predicates believed to be candidate failure predictors.  The order here is the same as the order in "preds.txt".  In ranked predictor lists that include index="nnn" attributes, the index number refers to the order of the "info" children under this element.  In accordance with general XPath conventions, those children are numbered starting from 1, not 0. -->
 <!ELEMENT predictor-info (info*)>
 
 
 <!--------------------------------------------------------------------->
 
 
-<!-- "info" gives detailed information about a single candidate
-  -- failure predictor.  This includes most of the static site
-  -- information originally found on a single line of some ".sites"
-  -- file.  This also includes some statistical information derived
-  -- from the statistical debugging analysis.  Thus, this element
-  -- contains both static and dynamic data. -->
-
+<!-- "info" gives detailed information about a single candidate failure predictor.  This includes most of the static site information originally found on a single line of some ".sites" file.  This also includes some statistical information derived from the statistical debugging analysis.  Thus, this element contains both static and dynamic data. -->
 <!ELEMENT info (bug-o-meter, operand*)>
 
 <!-- compilation unit signature expressed as 32 hex digits -->
@@ -43,10 +30,7 @@
   function NMTOKEN #REQUIRED>
 
 <!-- static control flow graph node number as given in ".sites" -->
-<!-- Nodes are numbered from 0, not from 1.  This is an exception to
-  -- the general policy of using 1-based numbering in XML.  CFG node
-  -- numbers here exactly match the node numbers as given in ".sites".
-  -- Do not apply any +1 or -1 offset. -->
+<!-- Nodes are numbered from 0, not from 1.  This is an exception to the general policy of using 1-based numbering in XML.  CFG node numbers here exactly match the node numbers as given in ".sites". Do not apply any +1 or -1 offset. -->
 <!ATTLIST info cfg-node NMTOKEN #REQUIRED>
 
 
