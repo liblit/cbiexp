@@ -5,7 +5,6 @@ experiment := /moa/sc5/cbi/best-known-datasets/mossexp
 view_flags := --stylesheet=moss-view.xsl
 projected_view_flags := --stylesheet=projected-moss-view.xsl
 corrected_view_flags := --stylesheet=corrected-moss-view.xsl
-xmlify_results_flags := --rare-sites=rare-sites.txt
 
 web_extras :=					\
 	corrected-moss-view.xsl			\
