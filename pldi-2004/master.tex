@@ -1,7 +1,6 @@
 %% -*- TeX-master: t -*-
 
-%% \documentclass[draft]{acm_proc_article-sp}
-\documentclass[final]{sig-alternate}
+\documentclass[preprint,final]{sigplanconf}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -29,7 +28,7 @@ bookmarks,
 breaklinks,
 draft=false,
 pdftitle={Scalable Statistical Bug Isolation},
-pdfauthor={Ben Liblit, Mayur Naik, Alice X. Zheng, Alex Aiken, and Michael I.  Jordan},
+pdfauthor={Ben Liblit, Mayur Naik, Alice X. Zheng, Alex Aiken, and Michael I. Jordan},
 pdfsubject={D.2.4 [Software Engineering]: Software/Program Verification -- statistical methods; D.2.5 [Software Engineering]: Testing and Debugging -- debugging aids, distributed debugging, monitors, tracing; I.5.2 [Pattern Recognition]: Design Methodology -- feature evaluation and selection},
 pdfkeywords={bug isolation, random sampling, invariants, feature selection, statistical debugging},
 pdfpagemode=UseOutlines
@@ -45,6 +44,7 @@ pdfpagemode=UseOutlines
 %% unique to this paper
 %%
 
+\usepackage{mailto}
 \usepackage{views/bug-o-meter}
 \usepackage{views/view}
 
@@ -83,7 +83,7 @@ pdfpagemode=UseOutlines
 
 \title{Scalable Statistical Bug Isolation
   %%
-  \renewcommand{\footnotemark}[0]{}
+  \renewcommand{\ast}[0]{}
   %%
   \thanks{This research was supported in part by NSF Grant Nos.\
     EIA-9802069, CCR-0085949, ACI-9619020, and IIS-9988642; NASA Grant
@@ -93,37 +93,17 @@ pdfpagemode=UseOutlines
     not necessarily reflect the position or the policy of the
     Government and no official endorsement should be inferred.}}
 
-\makeatletter
-\newcommand*{\eecsMark}[0]{\@fnsymbol{1}}
-\newcommand*{\statMark}[0]{\@fnsymbol{2}}
-\newcommand*{\stanMark}[0]{\@fnsymbol{3}}
-\makeatother
-\newcommand*{\eecs}[0]{\textsuperscript{\eecsMark}}
-\newcommand*{\stat}[0]{\textsuperscript{\statMark}}
-\newcommand*{\both}[0]{\textsuperscript{\eecsMark, \statMark}}
-\newcommand*{\stan}[0]{\textsuperscript{\stanMark}}
-
-\newcommand{\moreauthors}[0]{\end{tabular}\\\begin{tabular}[t]{c}}
-
-\author{%
-  Ben Liblit \eecs
-  \and Mayur Naik \stan
-  \and Alice X.\ Zheng \eecs
-  \and Alex Aiken \stan
-  \and Michael I.\ Jordan \both
-  \moreauthors
-  \eecs Department of Electrical \\
-  Engineering and Computer Science \\
-  \stat Department of Statistics \\
-  University of California, Berkeley \\
-  Berkeley, CA 94720-1776
-  \and
-  \stan Computer Science Department \\
-  Stanford University \\
-  Stanford CA 94305-9025
-}
+\authorinfo{Ben Liblit}{Computer Sciences Department \\ University of Wisconsin}{\mailto{liblit@cs.wisc.edu}}
+\authorinfo{Mayur Naik}{Computer Science Department \\ Stanford University}{\mailto{mhn@cs.stanford.edu}}
+\authorinfo{Alice X.\ Zheng}{Department of Electrical Engineering and Computer Science \\ University of California, Berkeley}{\mailto{alicez@cs.berkeley.edu}}
+\authorinfo{Alex Aiken}{Computer Science Department \\ Stanford University}{\mailto{aiken@cs.stanford.edu}}
+\authorinfo{Michael I.\ Jordan}{Department of Electrical Engineering \\ and Computer Science \\ Department of Statistics \\ University of California, Berkeley}{\mailto{jordan@cs.berkeley.edu}}
 
 \bibliographystyle{abbrv}
+
+\conferenceinfo{PLDI '05}{12--15 June 2005, Chicago, Illinois, USA}
+
+\copyrightyear{2005}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,7 +118,7 @@ pdfpagemode=UseOutlines
 
 \begin{abstract}
   We present a statistical debugging algorithm that is able to
-  isolate bugs in programs containing multiple undiagnosed bugs.  
+  isolate bugs in programs containing multiple undiagnosed bugs.
   Earlier statistical algorithms that focus solely on identifying
   predictors that correlate with program failure perform poorly
   when there are multiple bugs.  Our new technique separates the
@@ -146,25 +126,18 @@ pdfpagemode=UseOutlines
   associated with individual bugs.  These predictors reveal both the
   circumstances under which bugs occur as well as the frequencies of
   failure modes, making it easier to prioritize debugging efforts.
-  Our algorithm is validated using several case studies.  These 
-  case studies include examples in which the algorithm found previously 
-  unknown, significant crashing bugs in widely used systems.  
+  Our algorithm is validated using several case studies.  These
+  case studies include examples in which the algorithm found previously
+  unknown, significant crashing bugs in widely used systems.
 \end{abstract}
 
+\category{D.2.4}{Software Engineering}{Software/Program Verification}[statistical methods]
+\category{D.2.5}{Software Engineering}{Testing and Debugging}[debugging aids, distributed debugging, monitors, tracing]
+\category{I.5.2}{Pattern Recognition}{Design Methodology}[feature evaluation and selection]
 
-%\category{D.2.4}{Software Engineering}{Software/Program
-%  Verification}[statistical methods]
-%%
-%\category{D.2.5}{Software Engineering}{Testing and
-%  Debugging}[debugging aids, distributed debugging, monitors, tracing]
-%%
-%\category{I.5.2}{Pattern Recognition}{Design Methodology}[feature
-%  evaluation and selection]
+\terms{Experimentation, Reliability}
 
-%\terms{Experimentation, Reliability}
-
-%\keywords{bug isolation, random sampling, invariants, feature
-%  selection, statistical debugging}
+\keywords{bug isolation, random sampling, invariants, feature selection, statistical debugging}
 
 
 \section{Introduction}
@@ -474,7 +447,7 @@ distributed monitoring of deployed code.  GAMMA collects code coverage
 data to support a variety of code evolution tasks.  Our
 instrumentation exposes a broader family of data- and
 control-dependent predicates on program behavior and uses randomized
-sparse sampling to control overhead.  Our predicates do, 
+sparse sampling to control overhead.  Our predicates do,
 however, also give coverage information: the sum of all predicate counters at a site reveals the relative coverage of that site.
 
 Efforts to directly apply statistical modeling principles to debugging
@@ -549,9 +522,8 @@ detect a wide variety of both anticipated and unanticipated causes of failure
 in realistic systems and do so with a relatively modest number of program
 executions.
 
-\begin{small}
 \bibliography{cacm1990,gcbib,icse02,icse03,misc,nips16,paste02,pldi03,pods,ramss,refs}
-\end{small}
+
 \end{document}
 
 %% LocalWords:  DIDUCE Burnell Horvitz Podgurski Elbaum Hardojo SDF CCured
