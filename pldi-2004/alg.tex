@@ -75,12 +75,13 @@ the program fails nor that when the predicate is false that
 the program succeeds. But we can express the probability that a predicate
 being true implies failure.  Let $\fail$ be an atomic predicate that is
 true for failing runs and false for successful runs.  We want to compute:
-\[ \crash(P) \equiv \prob(P \Rightarrow \fail) = \prob(\fail | P \mbox{ is true}) \]
+\[ \crash(P) \equiv \prob(P \Rightarrow \fail) \]
+%= \prob(\fail | P \mbox{ is true}) \]
 for every predicate $P$ over the set of all runs.  Let $S(P)$ be the number
 of successful runs in which $P$ is observed to be true at least once, and let $F(P)$ be the number of
 failing runs in which $P$ is observed to be true at least once.  Then we can
 estimate $\crash(P)$ as:
-\[ \crash(P) = \frac{F(P)}{S(P) + F(P)} . \]
+\[ \crash(P) = \frac{F(P)}{S(P) + F(P)} \]
 
 Notice that $\crash(P)$ is not affected by the set of runs in which
 $P$ is observed to be false.  Thus, if $P$ is the cause of a bug, the
@@ -127,10 +128,11 @@ true does not increase the probability of failure at all; this coincides with
 the intuition that this predicate is irrelevant to the bug.
 
 This leads us to the following definition:
-\begin{gather*}
-\context(P) \equiv \prob((P \lor \lnot P) \Rightarrow \fail)  \\
-= \prob(\fail |  P \mbox{ observed}) 
-\end{gather*}
+\[
+\context(P) \equiv \prob((P \lor \lnot P) \Rightarrow \fail)  
+\]
+%= \prob(\fail |  P \mbox{ observed}) 
+%\end{gather*}
 Now, $P \lor \lnot P$ is not the set of all runs, because we are not working in a two-valued logic.
 In any given run, neither $P$ nor $\lnot P$ may be observed (because the site where this predicate is
 sampled is not reached), or one may be observed, or both may be observed (because the statement is executed
@@ -191,7 +193,7 @@ by other predicates.
 
 Thus, while the first step of our algorithm is off-line, the sorting step is on-line, allowing the user to change
 the sort order as desired.  This division works well; the first step of the algorithm eliminates so many predicates
-(well in excess of 99\%) that the second step can easily be performed at interactive speeds.
+(usually well in excess of 99\%) that the second step can easily be performed at interactive speeds.
 
 \subsection{Statistical Interpretation}
 

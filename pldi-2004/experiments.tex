@@ -114,7 +114,7 @@ config.dbfile != NULL
 \end{verbatim}
 We have added the last column by hand to show the bug each predicate indicates.  In
 each case these predicates give a very strong hint to the programmer about the conditions
-under which failure will occur.  We describe each briefly, in order.
+under which failure occurs.  We describe each briefly, in order.
 
 
 The first predicate marks the line where the decision is made about
@@ -126,10 +126,10 @@ the one that we removed to introduce bug 6, except that this test executes
 only when a \moss\ database is loaded.  In runs where this predicate
 is true bug 6 is inevitably triggered.  The next predicate says that
 the program fails with 97\% probability when comment matching is
-enabled, point to bug 1.  The fourth predicate is another indicator for
+enabled, pointing to bug 1.  The fourth predicate is another indicator for
 bug 6, saying that whenever the user sets the memory size on the command line,
-the program is very likely to fail.  The last two predicates say nearly the
-same thing and show that failure is much more likely when ever a
+the program is very likely to fail.  The last two predicates are nearly 
+equivalent and show that failure is much more likely whenever a
 database file is to be written (the first predicate is true when the
 command-line flag to save a database is supplied; the second predicate
 is true when the current configuration holds a non-null output
@@ -137,17 +137,17 @@ database file name).
 
 
 After the top six predicates, predicates 7-14 (not shown) are further useful predicates that
-point to one of the bugs detected by a higher-ranked predicate (1, 2, 5, or 6).  The 15th-ranked
+point to one of the bugs detected by a higher-ranked predicate (bugs 1, 2, 5, and 6).  The 15th-ranked
 predicate in the branches report would point a programmer to the cause of bug 3.  In the returns report,
 the first four predicate are all indicators for bug 5 and the next two are indicators for bug 2.
 
 The two remaining bugs 4 and 9 have predicates in the scalar-pairs report that point immediately to the
-bug; in particular, in both cases there are predicates say that an array subscript into the overrun
+bug; in particular, in both cases there are predicates that say an array subscript into the overrun
 array is larger than the declared size of the array.  The predicate for bug 4 is 16th
 in the scalar-pairs report; the higher-ranked predicates are all associated with other bugs.  
 
 The smoking-gun predicate
-for bug 9 appears 743rd on the scalar-pairs report.  This predicate is non-deterministic bug (a \crash\ score of .86) with a 
+for bug 9 appears 743rd on the scalar-pairs report.  This predicate is non-deterministic (a \crash\ score of .86) with a 
 low $\increase()$ score (.69) in comparison to other predicates.  Furthermore, this predicate
  is associated with relatively few failures; none of our suggested sort
 orders would rank this predicate close to the top of the list.  There are two basic approaches that can be taken

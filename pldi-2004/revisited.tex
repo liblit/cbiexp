@@ -10,7 +10,7 @@ instrumentation scheme, and the number of predicates retained by the
 test $\increase() > 0$.   Keep in mind that multiple predicates are
 derived from each instrumentation site.  For example, each branches
 site yields two predicates from two counters, while each scalar pairs
-site yields six predicates from three counters.
+site yields six predicates from three counters (see Section~\ref{sec:background}).
 
 The sampling rate for all of our experiments is \nicefrac{1}{1};
 i.e., we sampled every predicate every time it was reached.  An
@@ -31,11 +31,11 @@ file_exists() > 0    .35        .32         .67
 These are the same two predicates identified using a a simple process-of-elimination strategy in our previous work
 \cite{PLDI`03*141}.  Our new algorithm, however, provides enough information to also see the causal chain that
 leads to the crash: if the file exists, the probability of failure increases to .67, and if in addition the
-read returns EOF, the probability of failure increases to 1.00.  A property of our algorithm is that 
+read returns EOF, the probability of failure increases to 1.00.\footnote{Note that the context and increase scores do not always sum to the failure score due to roundoff error.}   A property of our algorithm is that 
 whenever a causal sequence of instrumented predicates must be true for a bug to occur, each predicate along the
 sequence shows a distinct step up in the probability of failure.
 
-Note also that the report is very short; only 6 predicates out of more than 8,000 are retained by the test $\increase() > 0$.
+Note also that the report is very short; only 6 predicates out of more than 3,000 are retained by the test $\increase() > 0$.
 Uniformly throughout our experiments the returns and branches reports are short enough that all predicates can
 easily be examined by hand; we discuss the larger scalar-pairs reports below.
 

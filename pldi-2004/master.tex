@@ -226,7 +226,7 @@ bugs.  The results show that the algorithm correctly
 isolates strong predictors for each of the bugs that occurred in our
 experiment, even though the algorithm has no knowledge of how many
 bugs are in the program or which bug caused any individual failure.
-In addition, our algorithm isolated an additional bug in this application that was previously unknown.
+In addition, our algorithm isolated another bug in this application that was previously unknown.
 
 We also use this third case study to investigate a speculative
 application of our techniques.  Our algorithm relies only on the
@@ -439,20 +439,20 @@ station) for \rhythmbox.  The interesting thing is that this source
 should never be {\tt NULL} while \rhythmbox\ is still playing.  This
 observation leads to the bug.  GTK is reference-counted, and the
 programmer has freed a complex data structure by removing references
-and nulling fields (thus the predicate above) in the belief that the objects are freed. However, there
+and nulling fields (thus the predicate above) in the belief that the objects are freed. But there
 is a race condition: one object sometimes survives long enough to
 invoke callbacks into the other objects that have been reclaimed,
 resulting in a crash.
 
-These bugs were by the most complex of any that we dealt with in any
-of our experiments (although one or two of the \moss\ bugs are close).  The
+These bugs were the most complex that we dealt with in 
+our experiments (although one or two of the \moss\ bugs are close).  The
 call stack at the point of crash for both bugs is unhelpful (see Section~\ref{sec:conclusions}).  We feel confident in saying that without the use of
 our tool we could not have isolated these bugs, and we believe
  the fact that these crashing bugs have gone undiscovered in \rhythmbox\ is
 good evidence that they are not easy to find without tool support.
 
 On the other hand, it should also be clear from our descriptions of the bugs
-that our techniques did not point us as directly to the bug as one might hope.
+that our techniques did not point us as directly to the bugs as one might hope.
 Working only from the output of our system and having no prior knowledge of
 the rather involved architecture of \rhythmbox, it took us considerable time
 to understand these two bugs.  
@@ -474,7 +474,7 @@ needed in many cases to obtain maximum benefit from our techniques.
 \label{sec:related-work}
 
 In this section we briefly survey related work. There is currently a great
-deal of interest in applying static analysis to software quality.  Some,
+deal of interest in applying static analysis to improve software quality.  Some,
 but certainly not all, of the bugs we found in our studies could also have
 been detected by known static analyses.  While we firmly believe in
 the use of static analysis to find and prevent bugs, our dynamic approach has
@@ -482,7 +482,7 @@ advantages. A dynamic analysis can observe actual run-time values, which is ofte
 better than either making a very conservative static assumption about runtime
 values to be sound, or allowing some even very simple bugs to escape undetected.
 Another advantage of dynamic analysis, especially one that uses actual user
-executions for its data, is that it is possible to assign an accurate importance to each
+executions for its data, is the ability to assign an accurate importance to each
 bug.
   
 The Daikon project \cite{ernst2001} monitors instrumented applications
@@ -503,10 +503,8 @@ distributed monitoring of deployed code.  GAMMA collects code coverage
 data to support a variety of code evolution tasks.  Our
 instrumentation exposes a broader family of data- and
 control-dependent predicates on program behavior and uses randomized
-sparse sampling to control overhead.  We observe, however, that the
-predicates injected by our instrumentor can approximate coverage: over
-many runs, the sum of all predicate counters at a site converges on
-the relative coverage of that site.
+sparse sampling to control overhead.  Our
+predicates, however, give coverage information: the sum of all predicate counters at a site converges to the relative coverage of that site.
 
 Efforts to directly apply statistical modeling principles to debugging
 have met with mixed results.  Early work in this area by Burnell and
@@ -569,8 +567,7 @@ occurring at all.  The Software Dependability Framework (SDF)
 \cite{Gross:2003:PSMUST} uses the multivariate state estimation
 technique to model and thereby predict impending system failures.
 Instrumentation is assumed to be complete and is typically
-domain-specific, whereas our sampled predicates cast a wider, less
-specialized net.
+domain-specific.
 
 \section{Conclusions and Future Work}
 \label{sec:conclusions}
