@@ -16,6 +16,7 @@ print $fd "%%%% input command: ./gencalcAdj.pl $datadir\n";
 print $fd "\naddpath ('$FindBin::Bin');\n\n";
 
 ## M is the number of predicates, and N is the number of runs
+&output_comments($fd);
 &output_calcAdj($fd, $datadir, $matdir, "f");
 &output_calcAdj($fd, $datadir, $matdir, "s");
 &output_calcCorr($fd, $matdir);
@@ -72,6 +73,45 @@ sub output_calcAdj {
   print $fd "clear A${pref}obs A${pref} W${pref}cross\n\n";
 }
 
+sub output_comments {
+  my ($fd) = (@_);
+  my $comments = <<END;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% This is an automatically generated file.  DO NOT MODIFY.
+%%%%
+%%%% This Matlab file loads the sparse predicate-run adjacency matrices
+%%%% and computes the pairwise correlation coefficients.
+%%%%
+%%%% Af, As, Afobs, and Asobs are the adjacency matrices for predicate
+%%%% true-ness in failed and successful runs, and predicate observed-ness
+%%%% in failed an successful runs, respectively.  That is to say,
+%%%% Af(i,j) indicates whether predicate j is found true in run i,
+%%%% and 
+%%%% Afobs(i,j) indicates whether predicate j is observed in run i.
+%%%% (Note: The adjacency matrices could also hold fractional values,
+%%%%        indicating the percentage of times a predicate is true out
+%%%%        of the times that it's observed.) 
+%%%% All of the Ax matrices have nruns number of rows and npredicates number
+%%%% of columns.
+%%%%  
+%%%% The W matrices are inner products between the A matrices.  In general,
+%%%%   Wx = Ax' * Ax;
+%%%% so that Wx(i,j) is the (possibly fractional) count of the number of
+%%%% of runs in which predicate i and j are both true/observed.
+%%%% Wxcross (where x = 'f' or 's') is the cross-observed-true co-occurrence
+%%%% matrix, i.e., 
+%%%% Wxcross(i,j) is the number of runs in which predicate i is observed
+%%%%              and predicate j is observed and found to be true.
+%%%%
+%%%% Wf, Ws, Wfobs, Wsobs, Wfcross, and Wscross are all npreds by npreds.
+%%%%
+%%%%
+END
+
+  print $fd $comments;
+
+}
+
 sub read_meta {
   my ($fn) = (@_);
   my ($M, $N, $nzmax);
@@ -94,3 +134,4 @@ sub read_meta {
   die "lack info" if !defined $M || !defined $N || !defined $nzmax;
   return ($M, $N, $nzmax);
 }
+
