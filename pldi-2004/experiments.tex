@@ -206,7 +206,7 @@ for (i = 0; i < n->count; i++) {
 \end{verbatim}
 This alone provided hardly any insights into the cause of the bug.
 But combined with the fact that the predicate {\tt o + s > buf\_size} in function
-{\tt exif\_mnote\_data\_canon\_load} is highlighted by our algorithm,
+{\tt exif\_mnote\_data\_canon\_load} was highlighted by our algorithm,
 it led us to construct the following call sequence by a quick inspection of the
 source code:
 \begin{verbatim}
