@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <list>
+#include <sstream>
 #include "IndexedPredInfo.h"
 #include "NumRuns.h"
 #include "PredStats.h"
@@ -21,7 +22,9 @@ using namespace std;
 
 const unsigned MAX_ITER = 100;
 const double thresh = 10e-12;
+const double smooth = 10e-12;
 
+static list<ostringstream> contribRuns;
 typedef list<IndexedPredInfo> Stats;
 static Stats predList;
 
@@ -78,6 +81,7 @@ read_preds()
   while (read_pred_full(pfp, pi)) {
     IndexedPredInfo indexed(pi, index++);
     predList.push_back(indexed);
+    contribRuns.push_back("");
   }
   fclose(pfp);
 
@@ -220,6 +224,10 @@ iterate_max(double * u, double * v, unsigned npreds)
   unsigned mode;
   unsigned ctr = 0;
 
+  for (unsigned i = 0; i < npreds; ++i) {
+    contribRuns[i].clear();
+  }
+
   Progress::Bounded progress("Giving weight to max pred", MAX_ITER);
   do {
     progress.step();
@@ -245,6 +253,7 @@ iterate_max(double * u, double * v, unsigned npreds)
       //if (denom_weights[mode][argmax] > 0.0)
         //u[argmax] += sign[mode] * Aij / denom_weights[mode][argmax];
       u[argmax] += sign[mode] * Aij / run_weights[j];
+      contribRuns[argmax] += 
       j++;
     }
 
@@ -253,8 +262,8 @@ iterate_max(double * u, double * v, unsigned npreds)
     change = compute_change(u, v, npreds);
     //copy over from u to v 
     memcpy(v, u, sizeof(double)*npreds);
-    logvalues (v, npreds);
-    logfp << "change: " << change << endl;
+    // logvalues (v, npreds);
+    logfp << "iterate_max: iteration: " << ctr << " change: " << change << endl;
   } while (change > thresh && ctr <= MAX_ITER);
 }
 
@@ -262,6 +271,7 @@ void
 iterate_sum(double * u, double * v, unsigned npreds)
 {
   double Aij, change;
+  double tempscore[2][npreds];
   unsigned mode;
   unsigned ctr = 0;
 
@@ -273,7 +283,7 @@ iterate_sum(double * u, double * v, unsigned npreds)
   do {
     progress.step();
     ctr++;
-    memset(u, 0, sizeof(double)*npreds);
+    memset(tempscore, 0, sizeof(double)*2*npreds);
     unsigned j = 0;
     for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
       if (!is_srun[r] && !is_frun[r])
@@ -288,21 +298,14 @@ iterate_sum(double * u, double * v, unsigned npreds)
       for (unsigned i = 0; i < npreds; ++i) {
 	Aij = W_data[j*npreds+i];
 	disci = (discount - contrib(i,j,r,v,npreds)) / run_weights[j];
-        //if (disci > 1.0 || disci < 0.0) {
-          //cerr << "run " << r << " pred " << i << " run_weights " << run_weights[j] << " disci " << setprecision(16) << disci << " contrib " << contrib(i,j,r,v,npreds) << " discount " << discount << endl;
-          //assert(0);
-        //}
-	u[i] += sign[mode] * Aij * ( 1.0 - disci);
-        //if (is_srun[r]) {
-          //if (denom_weights[mode][i] > 0.0)
-  	   // u[i] += sign[mode] * Aij * ( 1.0 - disci) / denom_weights[mode][i];
-        //}
-        //else {
-	  //u[i] += Aij * (1.0 - disci) / (double) num_fruns;
-        //}
+	tempscore[mode][i] += Aij * ( 1.0 - disci);
       }
 
       j++;
+    }
+
+    for (unsigned i = 0; i < npreds; ++i) {
+      u[i] = (tempscore[F][i] + smooth) / (tempscore[S][i] + smooth);
     }
 
     normalize(u, npreds, MAX);
@@ -311,7 +314,7 @@ iterate_sum(double * u, double * v, unsigned npreds)
     //copy over from u to v 
     memcpy(v, u, sizeof(double)*npreds);
     logvalues (v, npreds);
-    logfp << "change: " << change << endl;
+    logfp << "iterate_sum: iteration: " << ctr << " change: " << change << endl;
   } while (change > thresh && ctr <= MAX_ITER);
 }
 

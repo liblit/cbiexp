@@ -134,7 +134,6 @@ liblate_a_SOURCES =				\
 	compute_results.cc			\
 	compute_nonconst_preds.cc		\
 	compute_pred_scores.cc			\
-	compute_pred_scores2.cc			\
 	convert_reports.ll			\
 	est_hyperparms.cc			\
 	extract_timestamps.ll			\
