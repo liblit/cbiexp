@@ -1,73 +1,53 @@
-#include <cstdio>
-#include <cassert>
-#include <cstring>
-#include <cstdlib>
+#include <fstream>
+#include <iostream>
 #include "ClassifyRuns.h"
+#include "NumRuns.h"
+#include "Progress/Bounded.h"
 #include "classify_runs.h"
 #include "fopen.h"
 
+using namespace std;
+
 
 // global information provided by classify_runs()
-unsigned num_runs, num_sruns, num_fruns;
-bool *is_srun, *is_frun;
+unsigned num_sruns, num_fruns;
+vector<bool> is_srun, is_frun;
+
+
+static void
+read_runs(const char message[], const char filename[], vector<bool> &bits, unsigned &count)
+{
+    ifstream file(filename);
+    if (!file) {
+	const int code = errno;
+	cerr << "cannot read " << filename << ": " << strerror(code) << '\n';
+	exit(code || 1);
+    }
+
+    const unsigned numRuns = NumRuns::value();
+    bits.resize(numRuns);
+    Progress::Bounded progress(message, numRuns);
+
+    unsigned runId;
+    while (file >> runId && runId < numRuns) {
+	progress.stepTo(runId);
+	bits[runId] = 1;
+	++count;
+    }
+}
 
 
 void classify_runs()
 {
-    unsigned i;
+    read_runs("reading success list", ClassifyRuns::successesFilename, is_srun, num_sruns);
+    read_runs("reading failure list", ClassifyRuns:: failuresFilename, is_frun, num_fruns);
 
-    FILE* sfp = fopenRead(ClassifyRuns::successesFilename);
-    FILE* ffp = fopenRead(ClassifyRuns::failuresFilename);
-
-    while (1) {
-	fscanf(sfp, "%d", &i);
-	if (feof(sfp))
-	    break;
-	if (i > num_runs)
-	    num_runs = i;
-    }
-    rewind(sfp);
-
-    while (1) {
-	fscanf(ffp, "%d", &i);
-	if (feof(ffp))
-	    break;
-	if (i > num_runs)
-	    num_runs = i;
-    }
-    rewind(ffp);
-
-    num_runs += 1;
-
-    is_srun = new bool[num_runs];
-    assert(is_srun);
-    for (i = 0; i < num_runs; i++) is_srun[i] = false;
-    is_frun = new bool[num_runs];
-    assert(is_frun);
-    for (i = 0; i < num_runs; i++) is_frun[i] = false;
-
-    while (1) {
-	fscanf(sfp, "%d", &i);
-	if (feof(sfp))
-	    break;
-	is_srun[i] = 1;
-	num_sruns++;
-    }
-
-    while (1) {
-	fscanf(ffp, "%d", &i);
-	if (feof(ffp))
-	    break;
-	if (is_srun[i]) {
-	    printf("Run %d is both successful and failing\n", i);
+    const unsigned numRuns = NumRuns::value();
+    for (unsigned runId = 0; runId < numRuns; ++runId)
+	if (is_srun[runId] && is_frun[runId]) {
+	    cerr << "Run " << runId << " is both successful and failing\n";
 	    exit(1);
 	}
-	is_frun[i] = 1;
-	num_fruns++;
-    }
-
-    fclose(sfp);
-    fclose(ffp);
 }
 
 

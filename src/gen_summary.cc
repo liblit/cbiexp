@@ -2,6 +2,7 @@
 #include <iostream>
 #include <map>
 #include "Confidence.h"
+#include "NumRuns.h"
 #include "PredStats.h"
 #include "SourceDirectory.h"
 #include "classify_runs.h"
@@ -27,6 +28,7 @@ processCommandLine(int argc, char *argv[])
 {
   static const argp_child children[] = {
     { &Confidence::argp, 0, 0, 0 },
+    { &NumRuns::argp, 0, 0, 0 },
     { &SourceDirectory::argp, 0, 0, 0 },
     { 0, 0, 0, 0 }
   };
@@ -72,7 +74,7 @@ print_summary(ostream &out, Tally &tally)
 
       << "<runs success=\"" << num_sruns
       << "\" failure=\"" << num_fruns
-      << "\" ignore=\"" << num_runs - (num_sruns + num_fruns)
+      << "\" ignore=\"" << NumRuns::value() - (num_sruns + num_fruns)
       << "\"/>"
 
       << "<analysis confidence=\"" << Confidence::level << "\"/>"

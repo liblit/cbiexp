@@ -147,6 +147,7 @@ uint 0|[1-9][0-9]*
 
 #include <argp.h>
 #include "CompactReport.h"
+#include "NumRuns.h"
 #include "Progress/Bounded.h"
 #include "RawReport.h"
 #include "RunsDirectory.h"
@@ -169,6 +170,7 @@ static int get_unit_indx(char scheme_code, const string &signature)
 void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
+	{ &NumRuns::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
@@ -186,6 +188,7 @@ int main(int argc, char** argv)
 
     classify_runs();
 
+    const unsigned num_runs = NumRuns::value();
     Progress::Bounded progress("converting reports", num_runs);
 
     for (unsigned i = 0; i < num_runs; i++) {

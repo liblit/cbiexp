@@ -13,8 +13,6 @@ namespace Score
   {
     double operator () (const pred_info &pred) const
     {
-      assert(is_srun);
-      assert(is_frun);
       return 2 / (1 / pred.ps.lb + log(double(num_fruns)) / log(double(pred.f)));
     }
 

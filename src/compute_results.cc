@@ -4,6 +4,7 @@
 #include <vector>
 #include "CompactReport.h"
 #include "Confidence.h"
+#include "NumRuns.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
@@ -423,6 +424,7 @@ void process_cmdline(int argc, char** argv)
     static const argp_child children[] = {
 	{ &CompactReport::argp, 0, 0, 0 },
 	{ &Confidence::argp, 0, 0, 0 },
+	{ &NumRuns::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
@@ -448,6 +450,7 @@ int main(int argc, char** argv)
     for (unsigned u = 0; u < num_units; u++)
 	site_info[u].resize(units[u].num_sites);
 
+    const unsigned num_runs = NumRuns::value();
     Progress::Bounded progress("computing results", num_runs);
     for (cur_run = 0; cur_run < num_runs; cur_run++) {
 	progress.step();

@@ -6,6 +6,7 @@
 #include <queue>
 #include <vector>
 #include "CompactReport.h"
+#include "NumRuns.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
@@ -187,6 +188,7 @@ static void process_cmdline(int argc, char **argv)
 {
     static const argp_child children[] = {
 	{ &CompactReport::argp, 0, 0, 0 },
+	{ &NumRuns::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
@@ -227,6 +229,7 @@ int main (int argc, char** argv)
 
   fclose(pfp);
 
+  const unsigned num_runs = NumRuns::value();
   Progress::Bounded progress("Gathering empirical distribution", num_runs);
   for (cur_run = 0; cur_run < num_runs; cur_run++) {
     progress.step();
