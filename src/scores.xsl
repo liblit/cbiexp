@@ -28,6 +28,7 @@
 	  <xsl:apply-templates select="." mode="css"/>
 	</xsl:variable>
 	<link rel="stylesheet" type="text/css" href="{normalize-space($css)}"/>
+	<xsl:apply-templates select="." mode="head-extra"/>
       </head>
       <body>
 	<xsl:apply-templates select="." mode="page-header"/>
@@ -35,6 +36,9 @@
       </body>
     </html>
   </xsl:template>
+
+  <!-- default extra head elements -->
+  <xsl:template match="/" mode="head-extra"/>
 
   <!-- default page title -->
   <xsl:template match="/" mode="title">
