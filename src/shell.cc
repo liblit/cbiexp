@@ -17,7 +17,7 @@ void shell(const char format[], ...)
   free(command);
 
   if (result)
-    exit(result);
+    exit(WTERMSIG(result) || WEXITSTATUS(result) || 1);
 
   va_end(args);
 }
