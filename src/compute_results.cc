@@ -41,7 +41,6 @@ int   confidence = -1;
 char* sruns_txt_file = NULL;
 char* fruns_txt_file = NULL;
 char* compact_report_path_fmt = NULL;
-char* trace_txt_file = NULL;
 
 char* preds_txt_file = NULL;
 char* result_summary_htm_file = NULL;
