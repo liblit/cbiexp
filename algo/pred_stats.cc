@@ -140,7 +140,7 @@ main(int argc, char** argv)
     }
 
     char file[1000];
-    sprintf(file, "/moa/sc3/mhn/results/%s_%s.html", pred_kind, site_name);
+    sprintf(file, "/moa/sc3/mhn/r/%s_%s.html", pred_kind, site_name);
     FILE* fp = fopen(file, "w");
     assert(fp);
     fprintf(fp, "<html>\n<body>\n");
