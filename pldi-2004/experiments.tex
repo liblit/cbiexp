@@ -99,7 +99,7 @@ of failure might be. By looking at the failure log, we see that this predicate
 is highly correlated with a subset of the runs in which bug \#1 is
 triggered; an engineer with a deep understanding of how \moss\ works
 might be able to figure out the bug from this predicate alone.
-The next three predicates are obvious ``hits''. The second predicate
+The next three predicates are obvious ``hits.''  The second predicate
 tests whether comment matching should be turned on, and if it is turned on the program is
 guaranteed to fail. This is a much more obvious cause for bug \#1, and the predicate points directly
 to the fact that something is wrong in the comment matching
@@ -252,7 +252,7 @@ of our data. We plot the mean and the confidence interval (one
 standard deviation above and below the mean) in
 \Autoref{fig:predkept-a}.  When all $31,873$ trial
 runs are used, we retain $8129$ predicates when the data is not
-sampled (i.e.\ sampling rate is $\nicefrac{1}{1}$), $8807$ at sampling
+sampled (i.e.,\ sampling rate is $\nicefrac{1}{1}$), $8807$ at sampling
 rate $\nicefrac{1}{10}$, $8309$ at $\nicefrac{1}{100}$, and $8936$ at
 $\nicefrac{1}{1000}$.
 
@@ -282,7 +282,7 @@ very few trial runs).
 
 At the relatively high sampling rate of
 \nicefrac{1}{10}, there are still enough samples taken at most
-instrumentation sites, and there's a net increase in the number of
+instrumentation sites, and there is a net increase in the number of
 selected predicates.  Once the sampling rate shrinks to
 \nicefrac{1}{100} and below, however, the effect of sparse
 sampling sets in.  Fewer samples are taken overall on fewer predicates,

@@ -216,13 +216,14 @@ Although these proportion estimates of $\pi_f$ and $\pi_s$ approach the
 true heads probabilities as we increase the number of trial runs, they
 still differ from the true values.  With a certain probability, using these
 estimates instead of the true values will give us the wrong
-answer.  The \textit{Z test} takes into account this uncertainty, and
-makes use of the statistic $ Z = \frac{(\hat \pi_f - \hat
-  \pi_s)}{V_{f,s}}$, where $V_{f,s}$ is a sample variance term, and $Z$
-is distributed as a standard Gaussian random
-variable.  Performed independently for each predicate $P$, the test
-decides whether or not $\pi_f(P) \leq \pi_s(P)$ with a guaranteed
-false-positive probability (i.e.\ choosing $\H_1$ when $\H_0$ is true).
+answer.  A \textit{likelihood ratio test} takes this uncertainty into
+account, and makes use of the statistic $ Z = \frac{(\hat \pi_f - \hat
+  \pi_s)}{V_{f,s}}$, where $V_{f,s}$ is a sample variance term (see
+e.g., ~\cite{Lehmann:1986:hyptest}).  When
+the data size is large, $Z$ can be approximated as a standard Gaussian
+random variable.  Performed independently for each predicate $P$, the
+test decides whether or not $\pi_f(P) \leq \pi_s(P)$ with a guaranteed
+false-positive probability (i.e.,\ choosing $\H_1$ when $\H_0$ is true).
 A necessary (but not sufficient) condition for choosing $\H_1$ is that
 $\hat \pi_f(P) > \hat \pi_s(P)$.  This turns out to be
 equivalent to the condition that $\increase(P) > 0$.  To see this,
@@ -237,9 +238,8 @@ Then
 \end{gather*}
 
 Hence the $\increase(P) > 0$ criterion is not only well motivated
-from the program analysis point of view, but can also be seen as a much
-simplified version of the Z test for two populations of
-Bernoulli trials.
+from the program analysis point of view, but can also be seen as a
+version of a likelihood ratio test.
 
 \subsection{Comparison with Previous Approach}
 In earlier work \cite{PLDI`03*141,Zheng:2003:SDSP}
@@ -263,7 +263,7 @@ training process will give higher weights to sites shared by the
 program paths of all bugs.\footnote{Often times, these sites may also be
 shared by the paths of successful runs.  But their overall positive
 effect can be offset by giving large negative weights to predicates
-that are only present in successful runs (e.g.\ sites in unreached
+that are only present in successful runs (e.g.,\ sites in unreached
 portions of the code due to an early crash of the program).}
 
 Another problem is caused by correlated predicates.
@@ -282,8 +282,8 @@ the larger weights for something else.  This doesn't affect
 classification performance, but causes the ranking of
 some of the good predicates to drop down.
 
-For all of the above reasons, regularized logistic regression is not
-outrightly appropriate for dealing with multiple bugs.  While logistic
+For all of the above reasons, regularized logistic regression has
+limitations for dealing with multiple bugs.  While logistic
 regression attempts to combine predicates, note that the algorithm we
 propose in this paper assumes that a bug is caused by a single
 predicate---though more sophisticated bugs exist, the vast majority of
