@@ -76,6 +76,9 @@ close $handle;
 #  start the build
 #
 
+# scrub environment in case we are inside a larger makefile
+delete @ENV{'MAKEFILES', 'MAKFLAGS'};
+
 # do not use exec here; it interferes with tempfile cleanup
 system 'nice', 'make', '-s', '-k', '-C', "$FindBin::Bin/..", '-j', $jobs, '-f', $filename;
 exit($? >> 8 || $? & 127);
