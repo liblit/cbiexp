@@ -1,7 +1,7 @@
 %% -*- TeX-master: t -*-
 
 %% \documentclass[draft]{acm_proc_article-sp}
-\documentclass{sig-alternate}
+\documentclass[draft]{sig-alternate}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -22,16 +22,16 @@
 %% \usepackage{mathptmx}
 %% \usepackage{times}
 
-\usepackage[bookmarks, breaklinks,
-pdftitle={Scalable Statistical Debugging}, pdfauthor={Ben Liblit, Mayur Naik, Alice X.
-  Zheng, Alex Aiken, and Michael I.  Jordan}, pdfsubject={D.2.4
-  [Software Engineering]: Software/Program Verification -- statistical
-  methods; D.2.5 [Software Engineering]: Testing and Debugging --
-  debugging aids, distributed debugging, monitors, tracing; I.5.2
-  [Pattern Recognition]: Design Methodology -- feature evaluation and
-  selection}, pdfkeywords={bug isolation, random sampling, invariants,
-  feature selection, statistical debugging},
-pdfpagemode=UseOutlines]{hyperref}
+\usepackage[
+bookmarks,
+breaklinks,
+draft=false,
+pdftitle={Scalable Statistical Debugging},
+pdfauthor={Ben Liblit, Mayur Naik, Alice X. Zheng, Alex Aiken, and Michael I.  Jordan},
+pdfsubject={D.2.4 [Software Engineering]: Software/Program Verification -- statistical methods; D.2.5 [Software Engineering]: Testing and Debugging -- debugging aids, distributed debugging, monitors, tracing; I.5.2 [Pattern Recognition]: Design Methodology -- feature evaluation and selection},
+pdfkeywords={bug isolation, random sampling, invariants, feature selection, statistical debugging},
+pdfpagemode=UseOutlines
+]{hyperref}
 
 \ifthenelse{\isundefined{\pdfoutput}}{}{\usepackage{thumbpdf}}
 
