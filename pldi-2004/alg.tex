@@ -264,15 +264,15 @@ schemes (explained below) for one of our experiments.  We use a simple
 predicate.  The length of the thermometer is logarithmic in the number
 of runs in which the predicate was observed, so small increases in
 thermometer size indicate many more runs.  Each thermometer has a
-sequence of bands.  The black band on the left shows the context
-score.  The dark gray band (\textseg{red}) shows the lower bound of
-the increase score with 95\% confidence.  The light gray band
+sequence of bands.  The black band on the left shows $\context(P)$.
+The dark gray band (\textseg{red}) shows the lower bound of
+$\increase(P)$ with 95\% confidence.  The light gray band
 (\textseg{pink}) shows the size of that confidence interval.  It is
 either not visible or very small in most thermometers, indicating a
 tight interval.  The white space at the right end of the thermometer
-shows the successful runs in which the predicate was observed to be
-true.  The tables show the thermometer as well as the numbers for each
-of the quantities that make up the thermometer.
+shows $S(P)$, the number of successful runs in which the predicate was
+observed to be true.  The tables show the thermometer as well as the
+numbers for each of the quantities that make up the thermometer.
 
 The most important bug is the one that causes the greatest number
 of failed runs.  This observation suggests:
