@@ -10,6 +10,10 @@ texs :=						\
 	misc.bib				\
 	moss-view/bug-o-meter.sty		\
 	moss-view/rows.tex			\
+	moss-view/stats-breakout.tex		\
+	moss-view/stats-by-failure.tex		\
+	moss-view/stats-by-harmonic-dilute.tex	\
+	moss-view/stats-by-increase.tex		\
 	moss-view/table.tex			\
 	paste02.bib				\
 	pldi03.bib				\
@@ -42,7 +46,7 @@ master.dvi: %.dvi: $(texs) $(epss)
 $(pdfs): %.pdf: %.eps
 	epstopdf --outfile=$@ $<
 
-moss-view/rows.tex: force
+moss-view/rows.tex moss-view/stats-by-%.tex: force
 	$(MAKE) -C $(@D) $(@F)
 
 force:
