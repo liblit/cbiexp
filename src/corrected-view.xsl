@@ -21,9 +21,9 @@
   <!-- extra column headers for our own additional information -->
   <xsl:template mode="dynamic-headings" match="view">
     <th>Initial Score</th>
-    <th>Initial Bug-O-Meter&#8482;</th>
+    <th>Initial Thermometer</th>
     <th>Effective Score</th>
-    <th>Effective Bug-O-Meter&#8482;</th>
+    <th>Effective Thermometer</th>
     <th>Zoom</th>
   </xsl:template>
 

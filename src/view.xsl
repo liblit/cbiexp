@@ -169,7 +169,7 @@
 
   <!-- headings for the big predictor table -->
   <xsl:template mode="dynamic-headings" match="view">
-    <th>Bug-O-Meter&#8482;</th>
+    <th>Thermometer</th>
   </xsl:template>
 
   <xsl:template mode="static-headings" match="view">
