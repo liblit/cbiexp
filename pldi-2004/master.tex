@@ -40,6 +40,7 @@ pdfpagemode=UseOutlines]{hyperref}
 
 %% assorted handy macros
 \newcommand{\moss}{\textsc{Moss}\xspace}
+\newcommand{\rhythmbox}{\textsc{Rhythmbox}\xspace}
 \newcommand{\termdef}[1]{\textit{#1}}
 \newcommand{\prob}{\mbox{\textit{Prob}}}
 \newcommand{\fail}{\mbox{\textit{Crash}}}
@@ -190,7 +191,7 @@ that shows how important (in number of program crashes) each detected
 cause of a bug is.  Furthermore, the method is statistically sound, meaning that
 the results computed accurately summarize the analyzed program 
 executions, and the results can be directly understood in terms of program behavior.
-For example, here is a portion of a report generated for Rhythmbox,
+For example, here is a portion of a report generated for \rhythmbox,
 a popular Open Source jukebox:
 \begin{verbatim}
 Predicate: g_source_remove() > 0 
@@ -202,13 +203,13 @@ Failure: 1.00
 This information summarizes what is observed about a particular call site of the function {\tt g\_source\_remove}.
 Any execution that reaches this function call has an 8\% chance of failure (the Context score).  If, however,
 the function returns a
-positive value\footnote{A common C programming idiom is for functions to signal success or failure by an integer value returned from the function.}, the probability that the program fails is 100\%; i.e., when this predicate on this line is true the program always crashes eventually.  We say that the predicate contributes an increase in the probability of failure of 100\% - 8\% = 92\%.
+positive value\footnote{A common C programming idiom is for functions to signal success or failure by the sign of the return value.}, the probability that the program fails is 100\%; i.e., when this predicate on this line is true the program always crashes eventually.  We say that the predicate contributes an increase in the probability of failure of 100\% - 8\% = 92\%.
 
 It turns out that the crash happens long after the call to {\tt g\_source\_remove} completes,
 but the fact that {\tt g\_source\_remove} succeeds (indicated by the positive return value) is part of what causes the bug.  Thus,
 our approach can help engineers isolate bugs by showing the conditions and early events that trigger the bug, rather than just the
 program state at the point of failure.  Furthermore, our algorithm also allows accurate calculations of what fraction of all failures occur when this predicate
-is true; in the example above, the predicate was true in 184 of 1873 Rhythmbox executions that crashed in our dataset, which means that
+is true; in the example above, the predicate was true in 184 of 1873 \rhythmbox\ executions that crashed in our dataset, which means that
 it is involved in 9.8\% of all the failures observed.  This information allows engineers to assign accurate priorities to bug fixes.
 
 
@@ -252,12 +253,12 @@ non-crashing bugs that our system is able to isolate correctly.
 
 
 In the fourth study we apply our techniques to the current release
-of Rhythmbox, the Open Source jukebox mentioned above (see
-\Autoref{sec:rb}).  Rhythmbox is the largest and most complex of our
-case studies, and the bugs in Rhythmbox are unknown to us.  Thus far
-we have successfully isolated two serious crashing bugs in Rhythmbox
+of \rhythmbox, the Open Source jukebox mentioned above (see
+\Autoref{sec:rb}).  \rhythmbox\ is the largest and most complex of our
+case studies, and the bugs in \rhythmbox\ are unknown to us.  Thus far
+we have successfully isolated two serious crashing bugs in \rhythmbox\ 
 using our approach.  At least in part because we were able to
-quantify the importance of these bugs for the Rhythmbox developers, both
+quantify the importance of these bugs for the \rhythmbox\ developers, both
 bug reports were given high priority and fixes were applied to the
 main development branch within a few days.
 
@@ -464,7 +465,7 @@ equivalence classes.  Two crash reports showing the same stack trace,
 or perhaps only the same top-of-stack function, are presumed to be two
 reports of the same failure.  This works to the extent that a single
 cause corresponds to a single point of failure, but our experience
-with \moss suggests that this assumption may not often hold.  We find
+with \moss\ and \rhythmbox\ suggests that this assumption may not often hold.  We find
 that only bugs \#2 and \#5 have truly unique ``signature'' stacks: a
 crash location which is present if and only if the corresponding bug
 was actually triggered.  These bugs are also our most deterministic.
