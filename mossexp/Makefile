@@ -27,14 +27,14 @@ moss_includes.flex: moss.flex
 	cd languages; ./build
 	scripts/myinclude < moss.flex > moss_includes.flex
 
-mossbad: mossbad.o lib/regions-norc.o
-	$(SCC) $(CFLAGS) mossbad.o lib/regions-norc.o -o mossbad
+mossbad: mossbad.o lib/regions-norc.o reporting.o
+	$(SCC) $(CFLAGS) $^ -o $@
 
 mossbad.o: mossbad.c reporting.h
 	$(SCC) $(CFLAGS) $(CPPFLAGS) --exclude-file=mossbad.c -c mossbad.c
 
-mossbad2: mossbad2.o lib/regions-norc.o
-	$(SCC2) $(CFLAGS) mossbad2.o lib/regions-norc.o -o mossbad2
+mossbad2: mossbad2.o lib/regions-norc.o reporting.o
+	$(SCC2) $(CFLAGS) $^ -o $@
 
 mossbad2.o: mossbad.c reporting.h
 	cp mossbad.c mossbad2.c
