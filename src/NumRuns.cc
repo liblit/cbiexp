@@ -31,6 +31,7 @@ static int parseFlag(int key, char *arg, argp_state *state)
     {
     case 'n':
       char *tail;
+      errno = 0;
       explicitValue = strtoul(arg, &tail, 0);
       if (errno || *tail || !explicitValue)
 	argp_error(state, "invalid run count \"%s\"", arg);

@@ -27,6 +27,7 @@ parseFlag(int key, char *arg, argp_state *state)
   switch (key) {
   case 'c':
     char *tail;
+    errno = 0;
     level = strtol(arg, &tail, 0);
     if (errno || *tail || level <= 0 || level > 100)
       argp_error(state, "invalid confidence level \"%s\"", arg);
