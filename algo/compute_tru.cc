@@ -6,8 +6,10 @@
 
 using namespace std;
 
-bool is_srun[NUM_RUNS + 1];
-bool is_frun[NUM_RUNS + 1];
+bool is_srun[NUM_RUNS];
+bool is_frun[NUM_RUNS];
+
+FILE* tru_fp;
 
 struct site_t {
     bit_vector* b[6];
@@ -30,20 +32,16 @@ inline void print_pred(int u, int c, int p)
     int i;
 
     if (data[u][c].b[p]) {
-        char file[100];
-        sprintf(file, "/moa/sc3/mhn/new/obs/%d_%d_%d.txt", u, c, p);
-        FILE* fp = fopen(file, "w");
-        assert(fp);
-        fprintf(fp, "F: ");
-        for (i = 1; i <= NUM_RUNS; i++)
+        fprintf(tru_fp, "%s %d %d\n", units[u].s, c, p);
+        fprintf(tru_fp, "F: ");
+        for (i = 0; i < NUM_RUNS; i++)
             if (is_frun[i] && (*(data[u][c].b[p]))[i] == true)
-                fprintf(fp, "%d ", i);
-        fprintf(fp, "\nS: ");
-        for (i = 1; i <= NUM_RUNS; i++)
+                fprintf(tru_fp, "%d ", i);
+        fprintf(tru_fp, "\nS: ");
+        for (i = 0; i < NUM_RUNS; i++)
             if (is_srun[i] && (*(data[u][c].b[p]))[i] == true)
-                fprintf(fp, "%d ", i);
-        fprintf(fp, "\n");
-        fclose(fp);
+                fprintf(tru_fp, "%d ", i);
+        fprintf(tru_fp, "\n");
     }
 }
 
@@ -109,55 +107,59 @@ main(int argc, char** argv)
             continue;
         }
         if (strcmp(argv[i], "-h") == 0) {
-            printf("Usage: compute [-s runs_file] [-f runs_file] [-p pred_file]\n");
+            printf("Usage: compute -s runs_file -f runs_file -p pred_file\n");
             return 0;
         }
         printf("Illegal option: %s\n", argv[i]);
         return 1;
     }
 
-    /************************************************************************
-     ** read -s specified file (if any)
-     ************************************************************************/
-
-    if (sfp) {
-        while (1) {
-            fscanf(sfp, "%d", &i);
-            if (feof(sfp))
-                break;
-            if (i <= 0 || i > NUM_RUNS) {
-                printf("Illegal run %d in -s specified file\n", i);
-                return 1;
-            }
-            is_srun[i] = true;
-        }
-        fclose(sfp);
+    if (!sfp || !ffp || !pfp) {
+        printf("Incorrect usage; try -h\n");
+        return 1;
     }
 
+    tru_fp = fopen("/moa/sc3/mhn/rb/fix1/tru.txt", "w");
+    assert(tru_fp);
+
     /************************************************************************
-     ** read -f specified file (if any)
+     ** read -s specified file 
      ************************************************************************/
 
-    if (ffp) {
-        while (1) {
-            fscanf(ffp, "%d", &i);
-            if (feof(ffp))
-                break;
-            if (i <= 0 || i > NUM_RUNS) {
-                printf("Illegal run %d in -f specified file\n", i);
-                return 1;
-            }
-            is_frun[i] = true;
+    while (1) {
+        fscanf(sfp, "%d", &i);
+        if (feof(sfp))
+            break;
+        if (i < 0 || i >= NUM_RUNS) {
+            printf("Illegal run %d in -s specified file\n", i);
+            return 1;
         }
-        fclose(ffp);
+        is_srun[i] = true;
     }
+    fclose(sfp);
+
+    /************************************************************************
+     ** read -f specified file 
+     ************************************************************************/
+
+    while (1) {
+        fscanf(ffp, "%d", &i);
+        if (feof(ffp))
+            break;
+        if (i < 0 || i >= NUM_RUNS) {
+            printf("Illegal run %d in -f specified file\n", i);
+            return 1;
+        }
+        is_frun[i] = true;
+    }
+    fclose(ffp);
 
     /************************************************************************
      ** do sanity check (no run should be both successful and failing)
      ************************************************************************/
 
     int ns = 0, nf = 0;
-    for (i = 1; i <= NUM_RUNS; i++) {
+    for (i = 0; i < NUM_RUNS; i++) {
         if (is_srun[i] && is_frun[i]) {
             printf("Run %d is both successful and failing\n", i);
             return 1;
@@ -175,38 +177,36 @@ main(int argc, char** argv)
     }
 
     /************************************************************************
-     ** read -f specified file (if any)
+     ** read -p specified file 
      ************************************************************************/
 
-    if (pfp) {
-        while (1) {
-            int u, c, p;
-            fscanf(pfp, "%d %d %d", &u, &c, &p);
-            if (feof(pfp))
-                break;
-            assert(u >= 0 && u < NUM_UNITS );
-            assert(c >= 0 && c < units[u].c);
-            assert(p >= 0 && p < 6);
-            data[u][c].b[p] = new bit_vector(NUM_RUNS + 1);
-            assert(data[u][c].b[p]);
-        }
-        fclose(pfp);
+    while (1) {
+        int u, c, p;
+        fscanf(pfp, "%d %d %d", &u, &c, &p);
+        if (feof(pfp))
+            break;
+        assert(u >= 0 && u < NUM_UNITS );
+        assert(c >= 0 && c < units[u].c);
+        assert(p >= 0 && p < 6);
+        data[u][c].b[p] = new bit_vector(NUM_RUNS);
+        assert(data[u][c].b[p]);
     }
+    fclose(pfp);
 
     /************************************************************************
      ** compute for each predicate, number of successful and failing runs in
      ** which it is (1) just observed, and (2) observed to be true.
      ************************************************************************/
 
-    for (i = 1; i <= NUM_RUNS; i++) {
+    for (i = 0; i < NUM_RUNS; i++) {
         if (!is_srun[i] && !is_frun[i])
             continue;
         char file[100];
-        sprintf(file, "runs/%d.txt", i);
+        sprintf(file, "/moa/sc4/mhn/rb/fix1/%d.txt", i);
         FILE* fp = fopen(file, "r");
         assert(fp);
 
-        printf("r %d\n", i);
+        //printf("r %d\n", i);
 
         while (1) {
             fscanf(fp, "%d", &j);
@@ -215,22 +215,27 @@ main(int argc, char** argv)
             if (units[j].s[0] == 'S' || units[j].s[0] == 'R') {
                 for (k = 0; k < units[j].c; k++) {
                     fscanf(fp, "%d %d %d", &x, &y, &z); 
-                    if (x + y + z > 0) {
+                    if (x > 0) {
                         inc(i, j, k, 0);
-                        inc(i, j, k, 1);
-                        inc(i, j, k, 2);
                         inc(i, j, k, 3);
-                        inc(i, j, k, 4);
                         inc(i, j, k, 5);
+                    }
+                    if (y > 0) {
+                        inc(i, j, k, 2);
+                        inc(i, j, k, 1);
+                        inc(i, j, k, 5);
+                    }
+                    if (z > 0) {
+                        inc(i, j, k, 4);
+                        inc(i, j, k, 1);
+                        inc(i, j, k, 3);
                     }
                 }
             }  else {
                 for (k = 0; k < units[j].c; k++) {
                     fscanf(fp, "%d %d", &x, &y); 
-                    if (x + y > 0) {
-                        inc(i, j, k, 0);
-                        inc(i, j, k, 1);
-                    }
+                    if (x > 0) inc(i, j, k, 0);
+                    if (y > 0) inc(i, j, k, 1);
                 }
             } 
         }
@@ -261,6 +266,7 @@ main(int argc, char** argv)
         }
     }
 
+    fclose(tru_fp);
     return 0;
 }
 
