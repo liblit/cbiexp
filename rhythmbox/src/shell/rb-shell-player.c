@@ -532,8 +532,9 @@ rb_shell_player_init (RBShellPlayer *player)
 
 	player->priv->prev_button = gtk_button_new ();
 	gtk_container_add (GTK_CONTAINER (player->priv->prev_button), image);
-	g_signal_connect_swapped (G_OBJECT (player->priv->prev_button),
-				  "clicked", G_CALLBACK (rb_shell_player_do_previous), player);
+	g_signal_connect_object (G_OBJECT (player->priv->prev_button),
+				 "clicked", G_CALLBACK (rb_shell_player_do_previous),
+				 player, G_CONNECT_SWAPPED);
 	gtk_tooltips_set_tip (GTK_TOOLTIPS (player->priv->tooltips), 
 			      GTK_WIDGET (player->priv->prev_button), 
 			      _("Go to previous song"), NULL);
@@ -553,16 +554,18 @@ rb_shell_player_init (RBShellPlayer *player)
 	gtk_container_add (GTK_CONTAINER (player->priv->play_pause_stop_button), player->priv->play_image);
 	player->priv->playbutton_state = PLAY_BUTTON_PLAY;
 
-	g_signal_connect_swapped (G_OBJECT (player->priv->play_pause_stop_button),
-				  "clicked", G_CALLBACK (rb_shell_player_playpause), player);
+	g_signal_connect_object (G_OBJECT (player->priv->play_pause_stop_button),
+				 "clicked", G_CALLBACK (rb_shell_player_playpause),
+				 player, G_CONNECT_SWAPPED);
 
 	/* Next button */
 	image = gtk_image_new_from_stock (RB_STOCK_NEXT,
 					  GTK_ICON_SIZE_LARGE_TOOLBAR);
 	player->priv->next_button = gtk_button_new ();
 	gtk_container_add (GTK_CONTAINER (player->priv->next_button), image);
-	g_signal_connect_swapped (G_OBJECT (player->priv->next_button),
-				  "clicked", G_CALLBACK (rb_shell_player_do_next), player);
+	g_signal_connect_object (G_OBJECT (player->priv->next_button),
+				 "clicked", G_CALLBACK (rb_shell_player_do_next),
+				 player, G_CONNECT_SWAPPED);
 	gtk_tooltips_set_tip (GTK_TOOLTIPS (player->priv->tooltips), 
 			      GTK_WIDGET (player->priv->next_button), 
 			      _("Go to next song"), NULL);
@@ -674,19 +677,19 @@ rb_shell_player_set_property (GObject *object,
 			RBEntryView *songs = rb_source_get_entry_view (player->priv->selected_source);
 			GList *extra_views = rb_source_get_extra_views (player->priv->selected_source);
 
-			g_signal_connect (G_OBJECT (songs),
-					  "changed",
-					  G_CALLBACK (rb_shell_player_entry_view_changed_cb),
-					  player);
-			g_signal_connect (G_OBJECT (songs),
-					  "entry-activated",
-					  G_CALLBACK (rb_shell_player_entry_activated_cb),
-					  player);
+			g_signal_connect_object (G_OBJECT (songs),
+						 "changed",
+						 G_CALLBACK (rb_shell_player_entry_view_changed_cb),
+						 player, 0);
+			g_signal_connect_object (G_OBJECT (songs),
+						 "entry-activated",
+						 G_CALLBACK (rb_shell_player_entry_activated_cb),
+						 player, 0);
 			for (; extra_views; extra_views = extra_views->next)
-				g_signal_connect (G_OBJECT (extra_views->data),
-						  "property-activated",
-						  G_CALLBACK (rb_shell_player_property_row_activated_cb),
-						  player);
+				g_signal_connect_object (G_OBJECT (extra_views->data),
+							 "property-activated",
+							 G_CALLBACK (rb_shell_player_property_row_activated_cb),
+							 player, 0);
 
 			g_list_free (extra_views);
 			
@@ -1561,10 +1564,10 @@ rb_shell_player_set_playing_source_internal (RBShellPlayer *player,
 
 	if (source != NULL) {
 		RBEntryView *songs = rb_source_get_entry_view (player->priv->source);
-		g_signal_connect (G_OBJECT (songs),
-				  "playing_entry_deleted",
-				  G_CALLBACK (rb_shell_player_playing_entry_deleted_cb),
-				  player);
+		g_signal_connect_object (G_OBJECT (songs),
+					 "playing_entry_deleted",
+					 G_CALLBACK (rb_shell_player_playing_entry_deleted_cb),
+					 player, 0);
 	}
 
 	g_object_notify (G_OBJECT (player), "playing-source");
@@ -1918,9 +1921,9 @@ buffering_begin_cb (MonkeyMediaPlayer *mmplayer,
 		gtk_progress_bar_pulse (GTK_PROGRESS_BAR (player->priv->buffering_progress));
 
 		player->priv->buffering_dialog = glade_xml_get_widget (xml, "dialog");
-		g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "cancel_button")),
-				  "clicked", G_CALLBACK (cancel_buffering_clicked_cb),
-				  player);
+		g_signal_connect_object (G_OBJECT (glade_xml_get_widget (xml, "cancel_button")),
+					 "clicked", G_CALLBACK (cancel_buffering_clicked_cb),
+					 player, 0);
 	}
 	player->priv->buffering_progress_idle_id =
 		g_timeout_add (100, (GSourceFunc) buffering_tick_cb, player->priv->buffering_progress);

@@ -148,10 +148,10 @@ rb_shuffle_play_order_constructor (GType type, guint n_construct_properties,
 	player = rb_play_order_get_player (RB_PLAY_ORDER (sorder));
 
 	/* Init stuff */
-	g_signal_connect_swapped (G_OBJECT (player),
-				  "notify::playing-source",
-				  G_CALLBACK (playing_source_changed_cb),
-				  sorder);
+	g_signal_connect_object (G_OBJECT (player),
+				 "notify::playing-source",
+				 G_CALLBACK (playing_source_changed_cb),
+				 sorder, G_CONNECT_SWAPPED);
 	/* Initialize source */
 	playing_source_changed_cb (sorder);
 
@@ -434,22 +434,22 @@ playing_source_changed_cb (RBShufflePlayOrder *sorder)
 		sorder->priv->source = source;
 		if (sorder->priv->source != NULL) {
 			RBEntryView *entry_view = rb_source_get_entry_view (sorder->priv->source);
-			g_signal_connect (G_OBJECT (entry_view),
-					  "notify::playing-entry",
-					  G_CALLBACK (entry_view_playing_entry_changed_cb),
-					  sorder);
-			g_signal_connect_swapped (G_OBJECT (sorder->priv->source),
-						  "filter_changed",
-						  G_CALLBACK (entry_view_contents_changed_cb),
-						  sorder);
-			g_signal_connect_swapped (G_OBJECT (entry_view),
-						  "entry-added",
-						  G_CALLBACK (entry_view_contents_changed_cb),
-						  sorder);
-			g_signal_connect_swapped (G_OBJECT (entry_view),
-						  "entry-deleted",
-						  G_CALLBACK (entry_view_contents_changed_cb),
-						  sorder);
+			g_signal_connect_object (G_OBJECT (entry_view),
+						 "notify::playing-entry",
+						 G_CALLBACK (entry_view_playing_entry_changed_cb),
+						 sorder, 0);
+			g_signal_connect_object (G_OBJECT (sorder->priv->source),
+						 "filter_changed",
+						 G_CALLBACK (entry_view_contents_changed_cb),
+						 sorder, G_CONNECT_SWAPPED);
+			g_signal_connect_object (G_OBJECT (entry_view),
+						 "entry-added",
+						 G_CALLBACK (entry_view_contents_changed_cb),
+						 sorder, G_CONNECT_SWAPPED);
+			g_signal_connect_object (G_OBJECT (entry_view),
+						 "entry-deleted",
+						 G_CALLBACK (entry_view_contents_changed_cb),
+						 sorder, G_CONNECT_SWAPPED);
 
 			sorder->priv->entry_view_changed = TRUE;
 		}

@@ -202,19 +202,19 @@ rb_song_info_init (RBSongInfo *song_info)
 							   GTK_STOCK_GO_BACK,
 							   GTK_RESPONSE_NONE);
 	
-	g_signal_connect (G_OBJECT (song_info->priv->backward),
-			  "clicked",
-			  G_CALLBACK (rb_song_info_backward_clicked_cb),
-			  song_info);
+	g_signal_connect_object (G_OBJECT (song_info->priv->backward),
+				 "clicked",
+				 G_CALLBACK (rb_song_info_backward_clicked_cb),
+				 song_info, 0);
 	
 	song_info->priv->forward = gtk_dialog_add_button (GTK_DIALOG (song_info),
 							   GTK_STOCK_GO_FORWARD,
 							   GTK_RESPONSE_NONE);
 	
-	g_signal_connect (G_OBJECT (song_info->priv->forward),
-			  "clicked",
-			  G_CALLBACK (rb_song_info_forward_clicked_cb),
-			  song_info);
+	g_signal_connect_object (G_OBJECT (song_info->priv->forward),
+				 "clicked",
+				 G_CALLBACK (rb_song_info_forward_clicked_cb),
+				 song_info, 0);
 
 	close = gtk_dialog_add_button (GTK_DIALOG (song_info),
 				       GTK_STOCK_CLOSE,

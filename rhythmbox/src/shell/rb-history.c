@@ -230,10 +230,10 @@ rb_history_set_property (GObject *object,
 			}
 			hist->priv->db = db;
 			if (hist->priv->db) {
-				g_signal_connect (G_OBJECT (hist->priv->db),
-						  "entry_deleted",
-						  G_CALLBACK (rb_history_song_deleted_cb),
-						  hist);
+				g_signal_connect_object (G_OBJECT (hist->priv->db),
+							 "entry_deleted",
+							 G_CALLBACK (rb_history_song_deleted_cb),
+							 hist, 0);
 			}
 		}
 

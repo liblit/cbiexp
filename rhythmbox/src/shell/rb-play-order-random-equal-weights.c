@@ -138,10 +138,10 @@ rb_random_play_order_equal_weights_constructor (GType type, guint n_construct_pr
 		      "maximum-size", 50,
 		      NULL);
 
-	g_signal_connect_swapped (G_OBJECT (player),
-			"notify::playing-source",
-			G_CALLBACK (playing_source_changed_cb),
-			rorder);
+	g_signal_connect_object (G_OBJECT (player),
+				 "notify::playing-source",
+				 G_CALLBACK (playing_source_changed_cb),
+				 rorder, G_CONNECT_SWAPPED);
 	/* Initialize source */
 	playing_source_changed_cb (rorder);
 
@@ -306,10 +306,10 @@ playing_source_changed_cb (RBRandomPlayOrderEqualWeights *rorder)
 		rorder->priv->source = source;
 		if (rorder->priv->source != NULL) {
 			RBEntryView *entry_view = rb_source_get_entry_view (rorder->priv->source);
-			g_signal_connect (G_OBJECT (entry_view),
-					"notify::playing-entry",
-					G_CALLBACK (entry_view_playing_entry_changed_cb),
-					rorder);
+			g_signal_connect_object (G_OBJECT (entry_view),
+						 "notify::playing-entry",
+						 G_CALLBACK (entry_view_playing_entry_changed_cb),
+						 rorder, G_CONNECT_SWAPPED);
 
 		}
 	}

@@ -964,15 +964,15 @@ rb_shell_construct (RBShell *shell)
 
 	shell->priv->window = GTK_WIDGET (win);
 
-	g_signal_connect (G_OBJECT (win), "window-state-event",
-			  G_CALLBACK (rb_shell_window_state_cb),
-			  shell);
-	g_signal_connect (G_OBJECT (win), "configure-event",
-			  G_CALLBACK (rb_shell_window_state_cb),
-			  shell);
-	g_signal_connect (G_OBJECT (win), "delete_event",
-			  G_CALLBACK (rb_shell_window_delete_cb),
-			  shell);
+	g_signal_connect_object (G_OBJECT (win), "window-state-event",
+				 G_CALLBACK (rb_shell_window_state_cb),
+				 shell, 0);
+	g_signal_connect_object (G_OBJECT (win), "configure-event",
+				 G_CALLBACK (rb_shell_window_state_cb),
+				 shell, 0);
+	g_signal_connect_object (G_OBJECT (win), "delete_event",
+				 G_CALLBACK (rb_shell_window_delete_cb),
+				 shell, 0);
   
 	rb_debug ("shell: creating container area");
 	shell->priv->container = bonobo_window_get_ui_container (win);
@@ -1055,26 +1055,26 @@ rb_shell_construct (RBShell *shell)
 		shell->priv->player_shell = rb_shell_player_new (shell->priv->ui_component,
 								 tray_component);
 	}
-	g_signal_connect (G_OBJECT (shell->priv->player_shell), 
-			  "notify::repeat", 
-			  G_CALLBACK (rb_shell_property_changed_generic_cb), 
-			  shell);
-	g_signal_connect (G_OBJECT (shell->priv->player_shell), 
-			  "notify::shuffle", 
-			  G_CALLBACK (rb_shell_property_changed_generic_cb), 
-			  shell);
-	g_signal_connect (G_OBJECT (shell->priv->player_shell), 
-			  "notify::playing", 
-			  G_CALLBACK (rb_shell_property_changed_generic_cb), 
-			  shell);
-	g_signal_connect (G_OBJECT (shell->priv->player_shell),
-			  "window_title_changed",
-			  G_CALLBACK (rb_shell_player_window_title_changed_cb),
-			  shell);
-	g_signal_connect (G_OBJECT (shell->priv->player_shell),
-			  "duration_changed",
-			  G_CALLBACK (rb_shell_player_duration_changed_cb),
-			  shell);
+	g_signal_connect_object (G_OBJECT (shell->priv->player_shell), 
+				 "notify::repeat", 
+				 G_CALLBACK (rb_shell_property_changed_generic_cb), 
+				 shell, 0);
+	g_signal_connect_object (G_OBJECT (shell->priv->player_shell), 
+				 "notify::shuffle", 
+				 G_CALLBACK (rb_shell_property_changed_generic_cb), 
+				 shell, 0);
+	g_signal_connect_object (G_OBJECT (shell->priv->player_shell), 
+				 "notify::playing", 
+				 G_CALLBACK (rb_shell_property_changed_generic_cb), 
+				 shell, 0);
+	g_signal_connect_object (G_OBJECT (shell->priv->player_shell),
+				 "window_title_changed",
+				 G_CALLBACK (rb_shell_player_window_title_changed_cb),
+				 shell, 0);
+	g_signal_connect_object (G_OBJECT (shell->priv->player_shell),
+				 "duration_changed",
+				 G_CALLBACK (rb_shell_player_duration_changed_cb),
+				 shell, 0);
 	shell->priv->clipboard_shell = rb_shell_clipboard_new (shell->priv->ui_component,
 							       shell->priv->db);
 	shell->priv->source_header = rb_source_header_new (shell->priv->ui_component);
@@ -1082,12 +1082,12 @@ rb_shell_construct (RBShell *shell)
 	shell->priv->paned = gtk_hpaned_new ();
 
 	shell->priv->sourcelist = rb_sourcelist_new ();
-	g_signal_connect (G_OBJECT (shell->priv->sourcelist), "drop_received",
-			  G_CALLBACK (sourcelist_drag_received_cb), shell);
-	g_signal_connect (G_OBJECT (shell->priv->sourcelist), "source_activated",
-			  G_CALLBACK (source_activated_cb), shell);
-	g_signal_connect (G_OBJECT (shell->priv->sourcelist), "show_popup",
-			  G_CALLBACK (rb_shell_show_popup_cb), shell);
+	g_signal_connect_object (G_OBJECT (shell->priv->sourcelist), "drop_received",
+				 G_CALLBACK (sourcelist_drag_received_cb), shell, 0);
+	g_signal_connect_object (G_OBJECT (shell->priv->sourcelist), "source_activated",
+				 G_CALLBACK (source_activated_cb), shell, 0);
+	g_signal_connect_object (G_OBJECT (shell->priv->sourcelist), "show_popup",
+				 G_CALLBACK (rb_shell_show_popup_cb), shell, 0);
 
 	shell->priv->statusbar = rb_statusbar_new (shell->priv->db,
 						   shell->priv->ui_component,
@@ -1096,17 +1096,17 @@ rb_shell_construct (RBShell *shell)
 	rb_sourcelist_set_dnd_targets (RB_SOURCELIST (shell->priv->sourcelist), target_table,
 				       G_N_ELEMENTS (target_table));
 
-	g_signal_connect (G_OBJECT (shell->priv->sourcelist), "selected",
-			  G_CALLBACK (source_selected_cb), shell);
+	g_signal_connect_object (G_OBJECT (shell->priv->sourcelist), "selected",
+				 G_CALLBACK (source_selected_cb), shell, 0);
 
 	vbox = gtk_vbox_new (FALSE, 4);
 	shell->priv->notebook = gtk_notebook_new ();
 	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (shell->priv->notebook), FALSE);
 	gtk_notebook_set_show_border (GTK_NOTEBOOK (shell->priv->notebook), FALSE);
-	g_signal_connect (G_OBJECT (shell->priv->notebook),
-			  "size_allocate",
-			  G_CALLBACK (paned_size_allocate_cb),
-			  shell);
+	g_signal_connect_object (G_OBJECT (shell->priv->notebook),
+				 "size_allocate",
+				 G_CALLBACK (paned_size_allocate_cb),
+				 shell, 0);
 
 	gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (shell->priv->source_header), FALSE, TRUE, 0);
 	gtk_box_pack_start_defaults (GTK_BOX (vbox), shell->priv->notebook);
@@ -1152,11 +1152,11 @@ rb_shell_construct (RBShell *shell)
 
 	shell->priv->supported_media_extensions = monkey_media_get_supported_filename_extensions ();
 
-	g_signal_connect (G_OBJECT (shell->priv->db), "error",
-			  G_CALLBACK (rb_shell_db_error_cb), shell);
+	g_signal_connect_object (G_OBJECT (shell->priv->db), "error",
+				 G_CALLBACK (rb_shell_db_error_cb), shell, 0);
 
-	g_signal_connect (G_OBJECT (shell->priv->load_error_dialog), "response",
-			  G_CALLBACK (rb_shell_load_failure_dialog_response_cb), shell);
+	g_signal_connect_object (G_OBJECT (shell->priv->load_error_dialog), "response",
+				 G_CALLBACK (rb_shell_load_failure_dialog_response_cb), shell, 0);
 
 	/* initialize sources */
 	rb_debug ("shell: creating library source");
@@ -1175,12 +1175,12 @@ rb_shell_construct (RBShell *shell)
 								 RB_LIBRARY_SOURCE (shell->priv->library_source),
 								 RB_IRADIO_SOURCE (shell->priv->iradio_source));
 
-	g_signal_connect (G_OBJECT (shell->priv->playlist_manager), "playlist_added",
-			  G_CALLBACK (rb_shell_playlist_added_cb), shell);
-	g_signal_connect (G_OBJECT (shell->priv->playlist_manager), "load_start",
-			  G_CALLBACK (rb_shell_playlist_load_start_cb), shell);
-	g_signal_connect (G_OBJECT (shell->priv->playlist_manager), "load_finish",
-			  G_CALLBACK (rb_shell_playlist_load_finish_cb), shell);
+	g_signal_connect_object (G_OBJECT (shell->priv->playlist_manager), "playlist_added",
+				 G_CALLBACK (rb_shell_playlist_added_cb), shell, 0);
+	g_signal_connect_object (G_OBJECT (shell->priv->playlist_manager), "load_start",
+				 G_CALLBACK (rb_shell_playlist_load_start_cb), shell, 0);
+	g_signal_connect_object (G_OBJECT (shell->priv->playlist_manager), "load_finish",
+				 G_CALLBACK (rb_shell_playlist_load_finish_cb), shell, 0);
 
 	rb_shell_sync_window_state (shell);
 
@@ -1202,8 +1202,8 @@ rb_shell_construct (RBShell *shell)
 		else
 			rb_debug("CD is not available");
 
-		g_signal_connect (G_OBJECT (shell->priv->cd), "cd_changed",
-				  G_CALLBACK (audiocd_changed_cb), shell);
+		g_signal_connect_object (G_OBJECT (shell->priv->cd), "cd_changed",
+					 G_CALLBACK (audiocd_changed_cb), shell, 0);
         }
 	else
 		rb_debug ("No AudioCD device is available!");
@@ -1441,8 +1441,8 @@ rb_shell_append_source (RBShell *shell,
 	shell->priv->sources
 		= g_list_append (shell->priv->sources, source);
 
-	g_signal_connect (G_OBJECT (source), "deleted",
-			  G_CALLBACK (rb_shell_source_deleted_cb), shell);
+	g_signal_connect_object (G_OBJECT (source), "deleted",
+				 G_CALLBACK (rb_shell_source_deleted_cb), shell, 0);
 
 	gtk_notebook_append_page (GTK_NOTEBOOK (shell->priv->notebook),
 				  GTK_WIDGET (source),
@@ -1511,8 +1511,8 @@ rb_shell_select_source (RBShell *shell,
 	shell->priv->selected_source = source;
 	
 	view = rb_source_get_entry_view (shell->priv->selected_source);
-	g_signal_connect (view, "notify::playing-entry", 
-			  G_CALLBACK(rb_shell_entry_changed_cb), shell);
+	g_signal_connect_object (view, "notify::playing-entry", 
+				 G_CALLBACK(rb_shell_entry_changed_cb), shell, 0);
 
 	/* show source */
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (shell->priv->notebook),
@@ -1823,10 +1823,10 @@ rb_shell_cmd_add_to_library (BonoboUIComponent *component,
 			              GTK_WINDOW (shell->priv->window));
 	g_free (stored);
 
-	g_signal_connect (G_OBJECT (dialog),
-			  "response",
-			  G_CALLBACK (ask_file_response_cb),
-			  shell);
+	g_signal_connect_object (G_OBJECT (dialog),
+				 "response",
+				 G_CALLBACK (ask_file_response_cb),
+				 shell, 0);
 }
 
 static void
@@ -2174,8 +2174,8 @@ tray_deleted_cb (GtkWidget *win, GdkEventAny *event, RBShell *shell)
 						   shell->priv->ui_component,
 						   shell->priv->db,
 						   GTK_WINDOW (shell->priv->window));
-	g_signal_connect (G_OBJECT (shell->priv->tray_icon), "delete_event",
-			  G_CALLBACK (tray_deleted_cb), shell);
+	g_signal_connect_object (G_OBJECT (shell->priv->tray_icon), "delete_event",
+				 G_CALLBACK (tray_deleted_cb), shell, 0);
 }
 
 static void 
@@ -2207,13 +2207,13 @@ rb_shell_session_init (RBShell *shell)
 
         client = gnome_master_client ();
 
-        g_signal_connect (G_OBJECT (client), 
-                          "save_yourself",
-                          G_CALLBACK (save_yourself_cb),
-                          shell);
+        g_signal_connect_object (G_OBJECT (client), 
+				 "save_yourself",
+				 G_CALLBACK (save_yourself_cb),
+				 shell, 0);
 
-        g_signal_connect (G_OBJECT (client),
-                          "die",
-                          G_CALLBACK (session_die_cb),
-                          shell);
+        g_signal_connect_object (G_OBJECT (client),
+				 "die",
+				 G_CALLBACK (session_die_cb),
+				 shell, 0);
 }

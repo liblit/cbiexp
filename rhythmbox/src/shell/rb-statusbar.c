@@ -204,14 +204,14 @@ rb_statusbar_construct (GType                  type,
 	
 	statusbar = RB_STATUSBAR (object);
 
-	g_signal_connect_swapped (G_OBJECT (statusbar->priv->player),
-				  "notify::shuffle", 
-				  G_CALLBACK (rb_statusbar_sync_state), 
-				  statusbar);
-	g_signal_connect_swapped (G_OBJECT (statusbar->priv->player),
-				  "notify::repeat", 
-				  G_CALLBACK (rb_statusbar_sync_state), 
-				  statusbar);
+	g_signal_connect_object (G_OBJECT (statusbar->priv->player),
+				 "notify::shuffle", 
+				 G_CALLBACK (rb_statusbar_sync_state), 
+				 statusbar, G_CONNECT_SWAPPED);
+	g_signal_connect_object (G_OBJECT (statusbar->priv->player),
+				 "notify::repeat", 
+				 G_CALLBACK (rb_statusbar_sync_state), 
+				 statusbar, G_CONNECT_SWAPPED);
 
 	return object;
 }
@@ -234,10 +234,10 @@ rb_statusbar_init (RBStatusbar *statusbar)
 	gtk_tooltips_set_tip (GTK_TOOLTIPS (statusbar->priv->tooltips), 
 			      GTK_WIDGET (statusbar->priv->repeat), 
 			      _("Play first song again after all songs are played"), NULL);
-	g_signal_connect (G_OBJECT (statusbar->priv->shuffle), "toggled",
-			  G_CALLBACK (rb_statusbar_toggle_changed_cb), statusbar);
-	g_signal_connect (G_OBJECT (statusbar->priv->repeat), "toggled",
-			  G_CALLBACK (rb_statusbar_toggle_changed_cb), statusbar);
+	g_signal_connect_object (G_OBJECT (statusbar->priv->shuffle), "toggled",
+				 G_CALLBACK (rb_statusbar_toggle_changed_cb), statusbar, 0);
+	g_signal_connect_object (G_OBJECT (statusbar->priv->repeat), "toggled",
+				 G_CALLBACK (rb_statusbar_toggle_changed_cb), statusbar, 0);
 
 	statusbar->priv->status = gtk_label_new ("");
 	gtk_label_set_use_markup (GTK_LABEL (statusbar->priv->status), TRUE);
@@ -319,10 +319,10 @@ rb_statusbar_set_property (GObject *object,
 		if (statusbar->priv->selected_source != NULL) {
 			RBEntryView *songs = rb_source_get_entry_view (statusbar->priv->selected_source);
 
-			g_signal_connect (G_OBJECT (songs),
-					  "changed",
-					  G_CALLBACK (rb_statusbar_entry_view_changed_cb),
-					  statusbar);
+			g_signal_connect_object (G_OBJECT (songs),
+						 "changed",
+						 G_CALLBACK (rb_statusbar_entry_view_changed_cb),
+						 statusbar, 0);
 
 		}
 		rb_statusbar_sync_with_source (statusbar);

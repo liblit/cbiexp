@@ -193,16 +193,16 @@ rb_query_creator_init (RBQueryCreator *dlg)
 	dlg->priv->limit_entry = GTK_WIDGET (glade_xml_get_widget (xml, "limitEntry"));
 	dlg->priv->limit_option = GTK_WIDGET (glade_xml_get_widget (xml, "limitOption"));
 
-	g_signal_connect (G_OBJECT (dlg->priv->limit_check), "toggled", G_CALLBACK (limit_toggled_cb),
-			  dlg);
+	g_signal_connect_object (G_OBJECT (dlg->priv->limit_check), "toggled", G_CALLBACK (limit_toggled_cb),
+				 dlg, 0);
 	gtk_widget_set_sensitive (dlg->priv->limit_entry, FALSE);
 	gtk_widget_set_sensitive (dlg->priv->limit_option, FALSE);
 
 	dlg->priv->vbox = GTK_BOX (glade_xml_get_widget (xml, "sub_vbox"));
 	dlg->priv->addbutton = gtk_button_new_from_stock (GTK_STOCK_ADD);
 	gtk_size_group_add_widget (dlg->priv->button_size_group, dlg->priv->addbutton);
-	g_signal_connect (G_OBJECT (dlg->priv->addbutton), "clicked", G_CALLBACK (add_button_click_cb),
-			  dlg);
+	g_signal_connect_object (G_OBJECT (dlg->priv->addbutton), "clicked", G_CALLBACK (add_button_click_cb),
+				 dlg, 0);
 	first_option = create_option_menu (property_options,
 					   G_N_ELEMENTS (property_options),
 					   FALSE);
@@ -460,8 +460,8 @@ append_row (RBQueryCreator *dialog)
 			      dialog->priv->addbutton);
 
 	remove_button = gtk_button_new_from_stock (GTK_STOCK_REMOVE);
-	g_signal_connect (G_OBJECT (remove_button), "clicked", G_CALLBACK (remove_button_click_cb),
-			  dialog);
+	g_signal_connect_object (G_OBJECT (remove_button), "clicked", G_CALLBACK (remove_button_click_cb),
+				 dialog, 0);
 	gtk_size_group_add_widget (dialog->priv->button_size_group, remove_button);
 	gtk_box_pack_start_defaults (last_hbox, GTK_WIDGET (remove_button));
 

@@ -476,16 +476,16 @@ monkey_media_player_construct (MonkeyMediaPlayer *mp,
 	 *  { src ! spider ! volume ! sink }
 	 */
 	mp->priv->pipeline = gst_element_factory_make ("thread", "pipeline");
-	g_signal_connect (G_OBJECT (mp->priv->pipeline),
-			  "deep_notify",
-			  G_CALLBACK (deep_notify_cb),
-			  mp);
+	g_signal_connect_object (G_OBJECT (mp->priv->pipeline),
+				 "deep_notify",
+				 G_CALLBACK (deep_notify_cb),
+				 mp, 0);
 
 	mp->priv->error_signal_id =
-		g_signal_connect (G_OBJECT (mp->priv->pipeline),
-				  "error",
-				  G_CALLBACK (error_cb),
-				  mp);
+		g_signal_connect_object (G_OBJECT (mp->priv->pipeline),
+					 "error",
+					 G_CALLBACK (error_cb),
+					 mp, 0);
 
 	/* Construct the two threads */
 	if (iradio_mode) {
@@ -539,11 +539,11 @@ monkey_media_player_construct (MonkeyMediaPlayer *mp,
 			return;
 		}
 #if GST_VERSION_MAJOR == 0 && GST_VERSION_MINOR == 6
-		g_signal_connect (G_OBJECT (mp->priv->queue), "high_watermark",
-				  G_CALLBACK (queue_full_cb), mp);
+		g_signal_connect_object (G_OBJECT (mp->priv->queue), "high_watermark",
+					 G_CALLBACK (queue_full_cb), mp, 0);
 #else
-		g_signal_connect (G_OBJECT (mp->priv->queue), "overrun",
-				  G_CALLBACK (queue_full_cb), mp);
+		g_signal_connect_object (G_OBJECT (mp->priv->queue), "overrun",
+					 G_CALLBACK (queue_full_cb), mp, 0);
 #endif
 		gst_bin_add (GST_BIN (mp->priv->srcthread), mp->priv->queue);
 	}
@@ -619,8 +619,8 @@ monkey_media_player_construct (MonkeyMediaPlayer *mp,
 	else
 		gst_element_link_many (mp->priv->src, mp->priv->decoder, NULL);
 
-	g_signal_connect (G_OBJECT (mp->priv->sink), "eos",
-			  G_CALLBACK (eos_cb), mp);
+	g_signal_connect_object (G_OBJECT (mp->priv->sink), "eos",
+				 G_CALLBACK (eos_cb), mp, 0);
 
 	if (mp->priv->cur_volume > 1.0)
 		mp->priv->cur_volume = 1.0;

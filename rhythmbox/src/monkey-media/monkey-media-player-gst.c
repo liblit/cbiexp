@@ -428,13 +428,13 @@ monkey_media_player_construct (MonkeyMediaPlayer *mp,
 	 */
 	mp->priv->pipeline = gst_thread_new ("pipeline");
 
-	g_signal_connect (G_OBJECT (mp->priv->pipeline),
-			  "deep_notify",
-			  G_CALLBACK (deep_notify_cb),
-			  mp);
+	g_signal_connect_object (G_OBJECT (mp->priv->pipeline),
+				 "deep_notify",
+				 G_CALLBACK (deep_notify_cb),
+				 mp, 0);
 
 	mp->priv->error_signal_id =
-		g_signal_connect (G_OBJECT (mp->priv->pipeline),
+		g_signal_connect_object (G_OBJECT (mp->priv->pipeline),
 				  "error",
 				  G_CALLBACK (error_cb),
 				  mp);
@@ -500,11 +500,11 @@ monkey_media_player_construct (MonkeyMediaPlayer *mp,
 	}
 
 #if GST_VERSION_MAJOR == 0 && GST_VERSION_MINOR == 6
-	g_signal_connect (G_OBJECT (mp->priv->queue), "high_watermark",
-			  G_CALLBACK (queue_full_cb), mp);
+	g_signal_connect_object (G_OBJECT (mp->priv->queue), "high_watermark",
+				 G_CALLBACK (queue_full_cb), mp, 0);
 #else
-	g_signal_connect (G_OBJECT (mp->priv->queue), "full",
-			  G_CALLBACK (queue_full_cb), mp);
+	g_signal_connect_object (G_OBJECT (mp->priv->queue), "full",
+				 G_CALLBACK (queue_full_cb), mp, 0);
 #endif
 
 	g_signal_handlers_block_by_func (G_OBJECT (mp->priv->queue),
@@ -566,8 +566,8 @@ monkey_media_player_construct (MonkeyMediaPlayer *mp,
 	gst_element_link_many (mp->priv->src, mp->priv->queue, mp->priv->decoder,
 			       mp->priv->volume, mp->priv->sink, NULL);
 
-	g_signal_connect (G_OBJECT (mp->priv->sink), "eos",
-			  G_CALLBACK (eos_cb), mp);
+	g_signal_connect_object (G_OBJECT (mp->priv->sink), "eos",
+				 G_CALLBACK (eos_cb), mp, 0);
 
 	g_object_set (G_OBJECT (mp->priv->volume_dparam),
 		      "value_float", 1.0,

@@ -163,20 +163,20 @@ rb_new_station_dialog_init (RBNewStationDialog *dialog)
 	dialog->priv->title = glade_xml_get_widget (xml, "titleEntry");
 	dialog->priv->genre = glade_xml_get_widget (xml, "genreCombo");
 	dialog->priv->location = glade_xml_get_widget (xml, "locationEntry");
-	g_signal_connect (G_OBJECT (dialog->priv->title),
-			  "changed",
-			  G_CALLBACK (rb_new_station_dialog_entry_changed_cb),
-			  dialog);
+	g_signal_connect_object (G_OBJECT (dialog->priv->title),
+				 "changed",
+				 G_CALLBACK (rb_new_station_dialog_entry_changed_cb),
+				 dialog, 0);
 
-	g_signal_connect (G_OBJECT (GTK_COMBO (dialog->priv->genre)->entry),
-			  "changed",
-			  G_CALLBACK (rb_new_station_dialog_entry_changed_cb),
-			  dialog);
+	g_signal_connect_object (G_OBJECT (GTK_COMBO (dialog->priv->genre)->entry),
+				 "changed",
+				 G_CALLBACK (rb_new_station_dialog_entry_changed_cb),
+				 dialog, 0);
 
-	g_signal_connect (G_OBJECT (dialog->priv->location),
-			  "changed",
-			  G_CALLBACK (rb_new_station_dialog_entry_changed_cb),
-			  dialog);
+	g_signal_connect_object (G_OBJECT (dialog->priv->location),
+				 "changed",
+				 G_CALLBACK (rb_new_station_dialog_entry_changed_cb),
+				 dialog, 0);
 
 	gtk_combo_set_popdown_strings (GTK_COMBO (dialog->priv->genre),
 				       g_list_append (NULL, _("Unknown")));
