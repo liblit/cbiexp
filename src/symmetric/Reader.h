@@ -2,8 +2,6 @@
 #define INCLUDE_symmetric_Reader_h
 
 #include "../ReportReader.h"
-#include "Outcome.h"
-
 
 class Candidates;
 class Predicate;

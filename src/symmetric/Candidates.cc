@@ -1,3 +1,4 @@
+#include <cassert>
 #include "Candidates.h"
 #include "Predicate.h"
 
