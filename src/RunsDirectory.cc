@@ -4,6 +4,9 @@
 using namespace std;
 
 
+enum { RunsPerSubdirectory = 10000 };
+
+
 const char *RunsDirectory::root = ".";
 
 
@@ -41,7 +44,8 @@ const argp RunsDirectory::argp = {
 string
 RunsDirectory::format(unsigned runId, const char filename[])
 {
+  unsigned subdirectory = runId / RunsPerSubdirectory;
   ostringstream collect;
-  collect << root << '/' << runId << '/' << filename;
+  collect << root << '/' << subdirectory << '/' << runId << '/' << filename;
   return collect.str();
 }
