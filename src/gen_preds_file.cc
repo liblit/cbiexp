@@ -1,6 +1,6 @@
 #include <cstdio>
 
-main()
+int main(int argc, char** argv)
 {
     int i;
     float f;
@@ -11,4 +11,6 @@ main()
 	    break;
 	printf("%s\n", preds[i]);
     }
+
+    return 0;
 }

@@ -2,7 +2,7 @@
 #include <cassert>
 #include <cmath>
 
-main()
+int main(int argc, char** argv)
 {
     char str[8000];
     char sc;
@@ -31,4 +31,6 @@ main()
 	       "</tr>\n", (int) floor(log10(s + f) * 60), f1, f2, in * 100, fs * 100, s, f,
 			  f1, f2, f3, f4, pred);
     }
+
+    return 0;
 }
