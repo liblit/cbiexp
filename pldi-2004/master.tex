@@ -313,8 +313,8 @@ sample in all three schemes, we can easily determine the number of
 times a site was reached by summing all the counters for the site
 (two counters for the branches instrumentation and three counters for
 the others).  Thus, we can distinguish between predicates that are
-never reached during execution (all the counters at the site are 0)
-and predicates that are never true (the counter(s) for the predicate
+never observed during execution (all the counters at the site are 0)
+and predicates that are observed but never true (the counter(s) for the predicate
 is 0, but some other counter at the site is positive).
 
 The post-execution feedback report is a dump of the counter values for
