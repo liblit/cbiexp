@@ -1,0 +1,4 @@
+#include "compiler.h"
+
+const char compiler[] = "@CXX@ @CPPFLAGS@ @CXXFLAGS@ -W -Wall -Werror";
+const char linker[]   = "@CXX@ @CXXFLAGS@ @LDFLAGS@";

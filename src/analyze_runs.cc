@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <libgen.h>
+#include "compiler.h"
 #include "shell.h"
 
 #define PROCESS_RUN_LABELS "process_run_labels"
@@ -289,7 +290,7 @@ int main(int argc, char** argv)
 	      "sed 's/\\([0-9][0-9]*\\)ULL/\\1/g' | "
 	      "%s/%s -cs %s -u %s.cc",
 	      verbose_sites_file, bindir, MAP_SITES, compact_sites_file, units_file_base);
-	shell("g++ -O3 -I%s -c %s.cc", incdir, units_file_base);
+	shell("%s -I%s -c %s.cc", compiler, incdir, units_file_base);
     }
 
     if (do_convert_reports) {
@@ -298,8 +299,8 @@ int main(int argc, char** argv)
 	    exit(1);
 	}
 	puts("Converting reports ...");
-	shell("g++ -O3 %s/convert_reports.o %s/classify_runs.o %s.o -o %s",
-	      objdir, objdir, units_file_base, CONVERT_REPORTS);
+	shell("%s %s/convert_reports.o %s/classify_runs.o %s.o -o %s",
+	      linker, objdir, objdir, units_file_base, CONVERT_REPORTS);
 	shell("%s -s %s -f %s -vr %s -cr %s",
 	      CONVERT_REPORTS, sruns_file, fruns_file, verbose_report_path_fmt, compact_report_path_fmt);
     }
@@ -318,15 +319,15 @@ int main(int argc, char** argv)
 	preds_abbr_file = DEFAULT_PREDS_ABBR_FILE;
 	preds_file_base  = DEFAULT_PREDS_FILE_BASE;
 	result_summary_file = DEFAULT_RESULT_SUMMARY_FILE;
-	shell("g++ -O3 %s/compute_results.o %s/classify_runs.o %s/scaffold.o %s.o -o %s",
-	      objdir, objdir, objdir, units_file_base, COMPUTE_RESULTS);
+	shell("%s %s/compute_results.o %s/classify_runs.o %s/scaffold.o %s.o -o %s",
+	      linker, objdir, objdir, objdir, units_file_base, COMPUTE_RESULTS);
 	shell("%s -e %s -d %s -s %s -f %s -c %s -cs %s -cr %s %s %s -pf %s -pa %s -ps %s.cc -r %s",
 	      COMPUTE_RESULTS, experiment_name, program_src_dir,
 	      sruns_file, fruns_file, confidence,
 	      compact_sites_file, compact_report_path_fmt,
 	      ((trace_file) ? "-t" : ""), ((trace_file) ? trace_file : ""),
 	      preds_full_file, preds_abbr_file, preds_file_base, result_summary_file);
-	shell("g++ -O3 -I%s -c %s.cc", incdir, preds_file_base);
+	shell("%s -I%s -c %s.cc", compiler, incdir, preds_file_base);
     }
 
     if (do_compute_obs_tru) {
@@ -341,8 +342,8 @@ int main(int argc, char** argv)
 	puts("Computing obs and tru ...");
 	obs_file = DEFAULT_OBS_FILE;
 	tru_file = DEFAULT_TRU_FILE;
-	shell("g++ -O3 %s/compute_obs_tru.o %s/classify_runs.o %s/scaffold.o %s.o -o %s",
-	      objdir, objdir, objdir, units_file_base, COMPUTE_OBS_TRU);
+	shell("%s %s/compute_obs_tru.o %s/classify_runs.o %s/scaffold.o %s.o -o %s",
+	      linker, objdir, objdir, objdir, units_file_base, COMPUTE_OBS_TRU);
 	shell("%s -s %s -f %s -pa %s -cr %s -obs %s -tru %s",
 	      COMPUTE_OBS_TRU, sruns_file, fruns_file, preds_abbr_file,
 	      compact_report_path_fmt, obs_file, tru_file);
@@ -363,7 +364,7 @@ int main(int argc, char** argv)
 	    exit(1);
 	}
 	puts("Pretty-printing results-n ...");
-	shell("g++ -O3 %s/gen_preds_file.o %s.o -o %s", objdir, preds_file_base, GEN_PREDS_FILE);
+	shell("%s %s/gen_preds_file.o %s.o -o %s", linker, objdir, preds_file_base, GEN_PREDS_FILE);
 	FILE* all_fp = fopen(all_cluster_file, "r");
 	assert(all_fp);
 	while (1) {
