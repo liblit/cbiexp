@@ -11,5 +11,6 @@ struct site_t {
 
 extern const struct site_t sites[];
 
+extern const int num_sites;
 
 #endif // !INCLUDE_SITES_H
