@@ -101,50 +101,50 @@ int cur_run;
 
 void process_s_site(int u, int c, int x, int y, int z)
 {
-	if (x || y) {
-		inc_obs(cur_run, u, c, 0);
-		inc_obs(cur_run, u, c, 1);
-		inc_obs(cur_run, u, c, 2);
-		inc_obs(cur_run, u, c, 3);
-		inc_obs(cur_run, u, c, 4);
-		inc_obs(cur_run, u, c, 5);
-		if (x)
-			inc_tru(cur_run, u, c, 0);
-		if (y || z)
-			inc_tru(cur_run, u, c, 1);
-		if (y)
-			inc_tru(cur_run, u, c, 2);
-		if (x || z)
-			inc_tru(cur_run, u, c, 3);
-		if (z)
-			inc_tru(cur_run, u, c, 4);
-		if (x || y)
-			inc_tru(cur_run, u, c, 5);
-	}
+    if (x || y) {
+	inc_obs(cur_run, u, c, 0);
+	inc_obs(cur_run, u, c, 1);
+	inc_obs(cur_run, u, c, 2);
+	inc_obs(cur_run, u, c, 3);
+	inc_obs(cur_run, u, c, 4);
+	inc_obs(cur_run, u, c, 5);
+	if (x)
+	    inc_tru(cur_run, u, c, 0);
+	if (y || z)
+	    inc_tru(cur_run, u, c, 1);
+	if (y)
+	    inc_tru(cur_run, u, c, 2);
+	if (x || z)
+	    inc_tru(cur_run, u, c, 3);
+	if (z)
+	    inc_tru(cur_run, u, c, 4);
+	if (x || y)
+	    inc_tru(cur_run, u, c, 5);
+    }
 }
 
 void process_b_site(int u, int c, int x, int y)
 {
-	if (x || y) {
-		inc_obs(cur_run, u, c, 0);
-		inc_obs(cur_run, u, c, 1);
-		if (x) inc_tru(cur_run, u, c, 0);
-		if (y) inc_tru(cur_run, u, c, 1);
-	}
+    if (x || y) {
+	inc_obs(cur_run, u, c, 0);
+	inc_obs(cur_run, u, c, 1);
+	if (x) inc_tru(cur_run, u, c, 0);
+	if (y) inc_tru(cur_run, u, c, 1);
+    }
 }
 
 void process_g_site(int u, int c, int x, int y, int z, int w)
 {
-	if (x + y + z + w > 0) {
-		inc_obs(cur_run, u, c, 0);
-		inc_obs(cur_run, u, c, 1);
-		inc_obs(cur_run, u, c, 2);
-		inc_obs(cur_run, u, c, 3);
-		if (x > 0) inc_tru(cur_run, u, c, 0);
-		if (y > 0) inc_tru(cur_run, u, c, 1);
-		if (z > 0) inc_tru(cur_run, u, c, 2);
-		if (w > 0) inc_tru(cur_run, u, c, 3);
-	}
+    if (x + y + z + w > 0) {
+	inc_obs(cur_run, u, c, 0);
+	inc_obs(cur_run, u, c, 1);
+	inc_obs(cur_run, u, c, 2);
+	inc_obs(cur_run, u, c, 3);
+	if (x > 0) inc_tru(cur_run, u, c, 0);
+	if (y > 0) inc_tru(cur_run, u, c, 1);
+	if (z > 0) inc_tru(cur_run, u, c, 2);
+	if (w > 0) inc_tru(cur_run, u, c, 3);
+    }
 }
 
 
@@ -199,15 +199,15 @@ int main(int argc, char** argv)
     Progress progress("computing obs and tru", num_runs);
     for (cur_run = 0; cur_run < num_runs; cur_run++) {
 	progress.step();
-        if (!is_srun[cur_run] && !is_frun[cur_run])
-            continue;
+	if (!is_srun[cur_run] && !is_frun[cur_run])
+	    continue;
 
 	const string filename = CompactReport::format(cur_run);
-        FILE* fp = fopenRead(filename);
+	FILE* fp = fopenRead(filename);
 
-        process_report(fp, process_s_site, process_s_site, process_b_site, process_g_site);
+	process_report(fp, process_s_site, process_s_site, process_b_site, process_g_site);
 
-        fclose(fp);
+	fclose(fp);
     }
 
     for (u = 0; u < num_units; u++)
