@@ -12,8 +12,8 @@
 #define NUM_PREDS (NUM_2_PREDS + NUM_3_PREDS)
 
 /*********** input files ************/
-#define SUCCESS_FILE "success_data8.1_10000.txt"
-#define FAILURE_FILE "failure_data8.1_10000.txt"
+#define SUCCESS_FILE "data8.1/success_data8.1_10000.txt"
+#define FAILURE_FILE "data8.1/failure_data8.1_10000.txt"
 #define PATH_PREFIX  "/u/mhn/projects/cbi/src/data8.1"
 
 /*********** output files ************/

@@ -3,8 +3,8 @@
 
 /************** EDIT THE FOLLOWING PARAMETERS *******************/
 
-#define SITES_2_FILE "sites2_data8.1.txt"
-#define SITES_3_FILE "sites3_data8.1.txt"
+#define SITES_2_FILE "data8.1/sites2_data8.1.txt"
+#define SITES_3_FILE "data8.1/sites3_data8.1.txt"
 #define NUM_2_SITES 2145
 #define NUM_3_SITES 7896
 
