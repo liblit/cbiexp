@@ -225,16 +225,16 @@ The code in the vicinity of this crash site is as follows:
 \begin{verbatim}
 // snippet of exif_mnote_data_canon_save
 for (i = 0; i < n->count; i++) {
-     ...
-     memcpy(*buf + doff,             (c)
-            n->entries[i].data, s);
-     ...
+    ...
+    memcpy(*buf + doff,             (c)
+           n->entries[i].data, s);
+    ...
 }
 \end{verbatim}
 \end{quote}
 This stack trace alone provides little insight into the cause of the
 bug.  However, our algorithm highlights {\tt o + s > buf\_size} in
-function {\tt exif\_mnote\_data\_canon\_load} as a strong failure
+function {\tt exif\_mnote\_data\_canon\_load} as a strong bug
 predictor.  Thus, a quick inspection of the source code leads us to
 construct the following call sequence:
 \begin{quote}
@@ -258,13 +258,13 @@ The code in the vicinity of the predicate {\tt o + s > buf\_size} is as follows:
 \begin{verbatim}
 // snippet of exif_mnote_data_canon_load
 for (i = 0; i < c; i++) {
-     ...
-     n->count = i + 1;
-     ...
-     if (o + s > buf_size) return;     (a)
-     ...
-     n->entries[i].data = malloc(s);  (b)
-     ...
+    ...
+    n->count = i + 1;
+    ...
+    if (o + s > buf_size) return;    (a)
+    ...
+    n->entries[i].data = malloc(s);  (b)
+    ...
 }
 \end{verbatim}
 \end{quote}
@@ -278,14 +278,13 @@ call sequence that whenever the predicate {\tt o + s > buf\_size} is true,
   uninitialized for some value of \texttt{i}, and
 
 \item the function {\tt exif\_mnote\_data\_canon\_save} passes the
-  uninitialized {\tt n->entries[i]->data} to {\tt memcpy} on line
-  \texttt{(c)}, which reads it and eventually crashes.
+  uninitialized {\tt n->entries[i]->data} to {\tt memcpy} on line \texttt{(c)}, which reads it and eventually crashes.
 \end{itemize}
 
 In summary, our algorithm enabled us to effectively isolate the causes
 of several previously unknown bugs in source code unfamiliar to us in
-a couple of minutes and with no explicit specification beyond
-``software shouldn't crash.''
+a couple of minutes and without any explicit specification beyond
+``the program shouldn't crash.''
 
 \subsubsection{\rhythmbox}
 

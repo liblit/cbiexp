@@ -261,7 +261,7 @@ in ${\cal S}$ at all.
 
 \end{itemize}
 
-These problems with regularized logistic regression persist across many variations
+These problems with regularized logistic regression persist in many variations
 we have investigated. From this experimental work we did garner some
 key technical insights.  In addition to the bug predictors we wish to
 find among the instrumented predicates, there are several other kinds
@@ -340,19 +340,20 @@ library's API\@.  A simple syntactic static analysis subsequently showed
 more than one hundred instances of the same unsafe pattern throughout
 \rhythmbox.
 
-The paper is organized as follows.  After providing background
-(\autoref{sec:background}), we discuss our algorithm
-(\autoref{sec:algorithm}). The experimental results are presented in
-\autoref{sec:experiments}.  We then discuss related
-work (\autoref{sec:related-work}), including the advantages over our
-previous approach based on regularized logistic regression
-(\autoref{sec:comparison}).
+The rest of the paper is organized as follows.  After providing background
+in \autoref{sec:background}, we discuss our algorithm
+in \autoref{sec:algorithm}. The experimental results are presented in
+\autoref{sec:experiments}, including the advantages over our
+previous approach based on regularized logistic regression.
+%(\autoref{sec:comparison}).
+We discuss related work in \autoref{sec:related-work} and offer our conclusions
+in \autoref{sec:conclusions}.
 
 
 \section{Background}
 \label{sec:background}
 
-This section summarizes ideas and terminology needed to present our
+This section describes ideas and terminology needed to present our
 algorithm.  The ideal program monitoring system would gather complete
 execution traces and provide them to an engineer (or, more likely, a
 tool) to mine for the causes of bugs.  However, complete tracing of
@@ -439,10 +440,11 @@ is treated as a distinct instrumentation site.
 \end{description}
 
 All predicates at a given site are updated jointly.  For
-example, sampling a single negative return value would yield true
-observations of the $< 0$, $\leq 0$, and $\neq 0$ predicates in the
-returns scheme.  Note that the logical negation of each predicate is
-itself a predicate.
+example, sampling a single negative return
+value yields true observations of the $< 0$, $\leq 0$, and $\neq 0$ predicates and
+false observations of the $> 0$, $\geq 0$, and $= 0$ predicates
+at that site.  Also, note that in any scheme, the logical negation of every
+predicate at any given site is itself a predicate at that site.
 
   These are natural properties to check and provide good coverage of a
   program's scalar values and control flow.  This set is by no means
@@ -459,7 +461,7 @@ itself a predicate.
 
 
 
-\section{Previous and Related Work}
+\section{Related Work}
 \label{sec:related-work}
 
 In this section we briefly survey related work. There is currently a
