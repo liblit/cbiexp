@@ -81,16 +81,16 @@ pdfpagemode=UseOutlines
 
 
 \title{Scalable Statistical Debugging
+  %%
   \renewcommand{\footnotemark}[0]{}
-  \thanks{This research was supported in part by NASA Grant No.\
-    NAG2-1210; NSF Grant Nos.\ EIA-9802069, CCR-0085949, ACI-9619020,
-    and IIS-9988642; DOE Prime Contract No.\ W-7405-ENG-48 through
-    Memorandum Agreement No.\ B504962 with LLNL; and DARPA ARO-MURI 
-    ACCLIMATE DAAD-19-02-1-0383.  The information
-    presented here does not necessarily reflect the position or the
-    policy of the Government and no official endorsement should be
-    inferred.}
-}
+  %%
+  \thanks{This research was supported in part by NSF Grant Nos.\
+    EIA-9802069, CCR-0085949, ACI-9619020, and IIS-9988642; NASA Grant
+    No.\ NAG2-1210; DOE Prime Contract No.\ W-7405-ENG-48 through
+    Memorandum Agreement No.\ B504962 with LLNL; and DARPA ARO-MURI
+    ACCLIMATE DAAD-19-02-1-0383.  The information presented here does
+    not necessarily reflect the position or the policy of the
+    Government and no official endorsement should be inferred.}}
 
 \makeatletter
 \newcommand*{\eecsMark}[0]{\@fnsymbol{1}}
@@ -233,7 +233,7 @@ for lightweight instrumentation and sampling of program executions, but
 we also studied two preliminary algorithms for statistical debugging and
 presented experimental results on medium-size applications with a
 single bug \cite{PLDI`03*141,NIPS2003_AP05}.  The most general
-technique we studied is {\em regularized logistic regression}, a standard
+technique we studied is \termdef{regularized logistic regression}, a standard
 statistical procedure that tries to select a set of predicates that
 best predict the outcome of every run. As we worked to apply these
 methods to much larger programs under realistic conditions, we
