@@ -35,19 +35,6 @@ struct site_info_t {
 
 vector<vector<site_info_t> > site_info;
 
-const float conf_map[10] = {
-    1.645,  // 90%
-    0,
-    0,
-    0,
-    0,
-    1.96,   // 95%, default
-    2.05,   // 96%
-    0,
-    2.33,   // 98%
-    2.58    // 99%
-};
-
 char* experiment_name = NULL;
 char* program_src_dir = NULL;
 int   confidence = -1;
@@ -247,7 +234,7 @@ inline void cull(int u, int c, int p)
 {
     int s = site_info[u][c].S[p];
     int f = site_info[u][c].F[p];
-    float lb = compute_lb(s, f, site_info[u][c].os, site_info[u][c].of, conf);
+    float lb = compute_lb(s, f, site_info[u][c].os, site_info[u][c].of, confidence);
 
     if (lb > 0 && s + f >= 10) {
         site_info[u][c].retain[p] = true;
@@ -535,8 +522,6 @@ int main(int argc, char** argv)
     process_cmdline(argc, argv);
 
     classify_runs(sruns_txt_file, fruns_txt_file);
-
-    conf = conf_map[confidence - 90];
 
     site_info.resize(num_units);
     for (int u = 0; u < num_units; u++) site_info[u].resize(units[u].c);
