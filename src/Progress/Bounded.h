@@ -17,8 +17,11 @@ namespace Progress
     ~Bounded();
 
     void step();
+    void stepTo(unsigned);
 
   private:
+    void message() const;
+
     unsigned currentStep;
     const unsigned numSteps;
     const char * const task;

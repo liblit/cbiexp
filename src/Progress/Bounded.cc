@@ -16,7 +16,11 @@ Progress::Bounded::Bounded(const char task[], unsigned numSteps)
 Progress::Bounded::~Bounded()
 {
   if (enabled)
-    cout << endl;
+    {
+      if (currentStep < numSteps)
+	stepTo(numSteps);
+      cout << endl;
+    }
 }
 
 
@@ -26,6 +30,24 @@ Progress::Bounded::step()
   if (enabled)
     {
       ++currentStep;
-      cout << '\r' << task << ": " << currentStep << '/' << numSteps << ' ' << (100 * currentStep / numSteps) << '%' << flush;
+      message();
     }
+}
+
+
+void
+Progress::Bounded::stepTo(unsigned value)
+{
+  if (enabled)
+    {
+      currentStep = value;
+      message();
+    }
+}
+
+
+void
+Progress::Bounded::message() const
+{
+  cout << '\r' << task << ": " << currentStep << '/' << numSteps << ' ' << (100 * currentStep / numSteps) << '%' << flush;
 }
