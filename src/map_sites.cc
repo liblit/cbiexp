@@ -86,6 +86,7 @@ bool print_1_site(const Fields &fields)
     switch (fields.size()) {
     case 5:
 	operand = 4;
+	break;
     case 4:
 	operand = 3;
 	break;
