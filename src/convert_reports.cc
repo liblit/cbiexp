@@ -3,28 +3,15 @@
 #include <cstring>
 #include <cassert>
 #include <cstdlib>
-#include <iostream>
-#include <string>
 #include "classify_runs.h"
 #include "units.h"
 
-using namespace std;
-
-inline bool
-operator < (const Unit &unit, const char *signature)
+int get_indx(const char* s)
 {
-    return strcmp(unit.s, signature) < 0;
-}
-
-int get_indx(const char *signature)
-{
-    const Unit *candidate = lower_bound(units, units + NumUnits, signature);
-    if (!strcmp(signature, candidate->s))
-	return candidate - units;
-    else {
-	cerr << "cannot find index of compilation unit \"" << signature << '"' << endl;
-	exit(1);
-    }
+    for (int i = 0; i < NumUnits; i++)
+        if (strcmp(s, units[i].s) == 0)
+            return i;
+    assert(0);
 }
 
 char* sruns_txt_file = NULL;
@@ -35,16 +22,6 @@ char* compact_report_path_fmt = NULL;
 void process_cmdline(int argc, char** argv)
 {
     for (int i = 1; i < argc; i++) {
-	if (!strcmp(argv[i], "-s")) {
-	    i++;
-	    sruns_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-f")) {
-	    i++;
-	    fruns_txt_file = argv[i];
-	    continue;
-	}
 	if (!strcmp(argv[i], "-vr")) {
 	    i++;
 	    verbose_report_path_fmt = argv[i];
@@ -53,6 +30,16 @@ void process_cmdline(int argc, char** argv)
 	if (!strcmp(argv[i], "-cr")) {
 	    i++;
 	    compact_report_path_fmt = argv[i];
+	    continue;
+	}
+	if (!strcmp(argv[i], "-s")) {
+	    i++;
+	    sruns_txt_file = argv[i];
+	    continue;
+	}
+	if (!strcmp(argv[i], "-f")) {
+	    i++;
+	    fruns_txt_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-h")) {
@@ -68,8 +55,7 @@ void process_cmdline(int argc, char** argv)
 	exit(1);
     }
 
-    if (!sruns_txt_file || !fruns_txt_file ||
-        !verbose_report_path_fmt || !compact_report_path_fmt) {
+    if (!sruns_txt_file || !fruns_txt_file || !verbose_report_path_fmt || !compact_report_path_fmt) {
 	puts("Incorrect usage; try -h");
 	exit(1);
     }

@@ -9,6 +9,7 @@
 #include "classify_runs.h"
 #include "scaffold.h"
 #include "units.h"
+#include "sites.h"
 
 using namespace std;
 
@@ -47,16 +48,17 @@ const float conf_map[10] = {
 
 char* experiment_name = NULL;
 char* program_src_dir = NULL;
-char* sruns_file = NULL;
-char* fruns_file = NULL;
 int   confidence = -1;
-char* compact_sites_file = NULL;
+
+char* sruns_txt_file = NULL;
+char* fruns_txt_file = NULL;
 char* compact_report_path_fmt = NULL;
-char* trace_file = NULL;
-char* preds_full_file = NULL;
-char* preds_abbr_file = NULL;
+char* trace_txt_file = NULL;
+
+char* preds_full_txt_file = NULL;
+char* preds_abbr_txt_file = NULL;
 char* preds_src_file = NULL;
-char* result_summary_file = NULL;
+char* result_summary_htm_file = NULL;
 
 float conf;
 
@@ -64,12 +66,11 @@ int num_s_preds = 0;
 int num_r_preds = 0;
 int num_b_preds = 0;
 
-FILE* sites_fp = NULL;
-FILE* trace_fp = NULL;
-FILE* preds_full_fp = NULL;
-FILE* preds_abbr_fp = NULL;
+FILE* preds_full_txt_fp = NULL;
+FILE* preds_abbr_txt_fp = NULL;
 FILE* preds_src_fp = NULL;
-FILE* result_summary_fp = NULL;
+FILE* result_summary_htm_fp = NULL;
+FILE* trace_txt_fp = NULL;
 
 #define INC(r, u, c, p)            \
 {                                  \
@@ -87,33 +88,6 @@ FILE* result_summary_fp = NULL;
 	site_summary[u][c].of++;  \
 }
 
-
-struct pred_name {
-    char* file;
-    char* line;
-    char* func;
-    char* pred;
-};
-
-void extract_pred_name(char* s, pred_name* n)
-{
-    n->file = s;
-    n->line = strchr(n->file, '\t'); *(n->line) = '\0'; n->line++;
-    n->func = strchr(n->line, '\t'); *(n->func) = '\0'; n->func++;
-    n->pred = strchr(n->func, '\t'); *(n->pred) = '\0'; n->pred++;
-}
-
-void restore_site_name(pred_name* n)
-{
-    fprintf(preds_full_fp, "</td><td>%s</td><td><a href=\"%s/%s#%s\">%s:%s</a>\n",
-	n->func, program_src_dir, n->file, n->line, n->file, n->line);
-    fprintf(preds_src_fp , "</td><td>%s</td><td><a href=\\\"%s/%s#%s\\\">%s:%s</a>\",\n",
-	n->func, program_src_dir, n->file, n->line, n->file, n->line);
-
-    *(n->line - 1) = '\t';
-    *(n->func - 1) = '\t';
-    *(n->pred - 1) = '\t';
-}
 
 char  scalar_op[3] = { '<', '=', '>' };
 char* return_op[3] = { "< 0", "= 0", "> 0" };
@@ -134,7 +108,7 @@ bool is_bug_predictor(int u, int c, int p)
     return false;
 }
 
-void print_pred_stats(int u, int c, int p)
+void print_pred(int u, int c, int p)
 {
     int s  = site_summary[u][c].S[p];
     int f  = site_summary[u][c].F[p];
@@ -146,38 +120,34 @@ void print_pred_stats(int u, int c, int p)
     float in = fs - co;
     float lb = in - conf * sqrt(((fs * (1 - fs)) / (f + s)) + ((co * (1 - co))/(of + os)));
 
-    fprintf(preds_full_fp, "%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
+    fprintf(preds_full_txt_fp, "%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
 	units[u].s[0], u, c, p, lb, in, fs, co, s, f, os, of);
-    fprintf(preds_abbr_fp, "%d %d %d\n", u, c, p);
-    fprintf(preds_src_fp , "\t\"%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
+    fprintf(preds_abbr_txt_fp, "%d %d %d\n", u, c, p);
+    fprintf(preds_src_fp,  "\t\"%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
 	units[u].s[0], u, c, p, lb, in, fs, co, s, f, os, of);
 }
 
-void print_branch_pred(FILE* fp, char* pred, char* op)
+void print_branch_pred(FILE* fp, int i, char* op)
 {
-    fprintf(fp, "%s %s", pred, op);
+    fprintf(fp, "%s %s", sites[i].args[0], op);
 }
 
-void print_return_pred(FILE* fp, char* pred, char* op, bool is_neg)
+void print_return_pred(FILE* fp, int i, char* op, bool is_neg)
 {
     if (is_neg) fputs("!(", fp);
-    fprintf(fp, "%s %s", pred, op);
+    fprintf(fp, "%s %s", sites[i].args[0], op);
     if (is_neg) fputc(')',  fp);
 }
 
-void print_scalar_pred(FILE* fp, char* pred, char op, bool is_neg)
+void print_scalar_pred(FILE* fp, int i, char op, bool is_neg)
 {
     if (is_neg) fputs("!(", fp);
-    char* s = strchr(pred, '$');
-    *s = op;
-    fputs(pred, fp);
-    *s = '$';
+    fprintf(fp, "%s %c %s", sites[i].args[0], op, sites[i].args[1]);
     if (is_neg) fputc(')', fp);
 }
 
-void print_site_summary(int u, int c, char* site_name)
+void print_site_summary(int u, int c, int i)
 {
-    pred_name n;
     int p, count = 0;
 
     enum { LT, GEQ, EQ, NEQ, GT, LEQ };
@@ -236,11 +206,11 @@ void print_site_summary(int u, int c, char* site_name)
 	for (p = 0; p < 6; p++)
 	    if (a[p]) {
 		num_s_preds++;
-		print_pred_stats(u, c, p);
-		extract_pred_name(site_name, &n);
-		print_scalar_pred(preds_full_fp, n.pred, scalar_op[p / 2], p % 2 ? true : false);
-		print_scalar_pred(preds_src_fp , n.pred, scalar_op[p / 2], p % 2 ? true : false);
-		restore_site_name(&n);
+		print_pred(u, c, p);
+		print_scalar_pred(preds_full_txt_fp, i, scalar_op[p / 2], p % 2 ? true : false);
+                fprintf(preds_full_txt_fp, "</td><td>%s</td><td>%s:%d\n",    sites[i].fun, sites[i].file, sites[i].line);
+		print_scalar_pred(preds_src_fp,      i, scalar_op[p / 2], p % 2 ? true : false);
+                fprintf(preds_src_fp,      "</td><td>%s</td><td>%s:%d\",\n", sites[i].fun, sites[i].file, sites[i].line);
 	    }
 	break;
     case 'R':
@@ -288,29 +258,29 @@ void print_site_summary(int u, int c, char* site_name)
 	for (p = 0; p < 6; p++)
 	    if (a[p]) {
 		num_r_preds++;
-		print_pred_stats(u, c, p);
-		extract_pred_name(site_name, &n);
-		print_return_pred(preds_full_fp, n.pred, return_op[p / 2], p % 2 ? true : false);
-		print_return_pred(preds_src_fp , n.pred, return_op[p / 2], p % 2 ? true : false);
-		restore_site_name(&n);
+		print_pred(u, c, p);
+		print_return_pred(preds_full_txt_fp, i, return_op[p / 2], p % 2 ? true : false);
+                fprintf(preds_full_txt_fp, "</td><td>%s</td><td>%s:%d\n",    sites[i].fun, sites[i].file, sites[i].line);
+		print_return_pred(preds_src_fp,      i, return_op[p / 2], p % 2 ? true : false);
+                fprintf(preds_src_fp,      "</td><td>%s</td><td>%s:%d\",\n", sites[i].fun, sites[i].file, sites[i].line);
 	    }
 	break;
     case 'B':
 	if (is_bug_predictor(u, c, 0)) {
 	    num_b_preds++;
-	    print_pred_stats(u, c, 0);
-	    extract_pred_name(site_name, &n);
-	    print_branch_pred(preds_full_fp, n.pred, "is FALSE");
-	    print_branch_pred(preds_src_fp , n.pred, "is FALSE");
-	    restore_site_name(&n);
+	    print_pred(u, c, 0);
+	    print_branch_pred(preds_full_txt_fp, i, "is FALSE");
+            fprintf(preds_full_txt_fp, "</td><td>%s</td><td>%s:%d\n",    sites[i].fun, sites[i].file, sites[i].line);
+	    print_branch_pred(preds_src_fp,      i, "is FALSE");
+            fprintf(preds_src_fp,      "</td><td>%s</td><td>%s:%d\",\n", sites[i].fun, sites[i].file, sites[i].line);
 	}
 	if (is_bug_predictor(u, c, 1)) {
 	    num_b_preds++;
-	    print_pred_stats(u, c, 1);
-	    extract_pred_name(site_name, &n);
-	    print_branch_pred(preds_full_fp, n.pred, "is TRUE");
-	    print_branch_pred(preds_src_fp , n.pred, "is TRUE");
-	    restore_site_name(&n);
+	    print_pred(u, c, 1);
+	    print_branch_pred(preds_full_txt_fp, i, "is TRUE");
+            fprintf(preds_full_txt_fp, "</td><td>%s</td><td>%s:%d\n",    sites[i].fun, sites[i].file, sites[i].line);
+	    print_branch_pred(preds_src_fp ,     i, "is TRUE");
+            fprintf(preds_src_fp,      "</td><td>%s</td><td>%s:%d\",\n", sites[i].fun, sites[i].file, sites[i].line);
 	}
 	break;
     default: assert(0);
@@ -414,16 +384,16 @@ void print_result_summary()
 	  "<td rowSpan=2 align=right>"
 	  "<a href=\"" CBI_WEBPAGE "\"><img src=\"http://www.cs.berkeley.edu/~liblit/sampler/logo.png\" style=\"border-style: none\"></a></td>\n</tr>\n"
 	  "</table>\n<br>\n",
-	  result_summary_fp);
-    fprintf(result_summary_fp, "Experiment name: %s\n<p>\n", experiment_name);
-    fprintf(result_summary_fp, "Generated on %s<p>\n", ctime(&t));
-    fprintf(result_summary_fp, "# runs: %d [successful: %d failing: %d discarded: %d]\n<p>\n",
+	  result_summary_htm_fp);
+    fprintf(result_summary_htm_fp, "Experiment name: %s\n<p>\n", experiment_name);
+    fprintf(result_summary_htm_fp, "Generated on %s<p>\n", ctime(&t));
+    fprintf(result_summary_htm_fp, "# runs: %d [successful: %d failing: %d discarded: %d]\n<p>\n",
 	num_runs, num_sruns, num_fruns, num_runs - (num_sruns + num_fruns));
-    fprintf(result_summary_fp, "# predicates instrumented: %d [branch: %d return: %d scalar: %d]\n<p>\n",
+    fprintf(result_summary_htm_fp, "# predicates instrumented: %d [branch: %d return: %d scalar: %d]\n<p>\n",
 	NumBPreds + NumRPreds + NumSPreds, NumBPreds, NumRPreds, NumSPreds);
-    fprintf(result_summary_fp, "# predicates retained: %d [branch: %d return: %d scalar: %d]\n<p>\n",
+    fprintf(result_summary_htm_fp, "# predicates retained: %d [branch: %d return: %d scalar: %d]\n<p>\n",
 	num_b_preds + num_r_preds + num_s_preds, num_b_preds, num_r_preds, num_s_preds);
-    fprintf(result_summary_fp, "Confidence: %d%%\n<p>\n", confidence);
+    fprintf(result_summary_htm_fp, "Confidence: %d%%\n<p>\n", confidence);
 }
 
 void process_cmdline(int argc, char** argv)
@@ -439,25 +409,20 @@ void process_cmdline(int argc, char** argv)
 	    program_src_dir = argv[i];
 	    continue;
 	}
-	if (!strcmp(argv[i], "-s")) {
-	    i++;
-	    sruns_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-f")) {
-	    i++;
-	    fruns_file = argv[i];
-	    continue;
-	}
 	if (!strcmp(argv[i], "-c")) {
 	    i++;
 	    confidence = atoi(argv[i]);
 	    assert(confidence >= 90 && confidence < 100);
 	    continue;
 	}
-	if (!strcmp(argv[i], "-cs")) {
+	if (!strcmp(argv[i], "-s")) {
 	    i++;
-	    compact_sites_file = argv[i];
+	    sruns_txt_file = argv[i];
+	    continue;
+	}
+	if (!strcmp(argv[i], "-f")) {
+	    i++;
+	    fruns_txt_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-cr")) {
@@ -467,17 +432,17 @@ void process_cmdline(int argc, char** argv)
 	}
 	if (!strcmp(argv[i], "-t")) {
 	    i++;
-	    trace_file = argv[i];
+	    trace_txt_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-pf")) {
 	    i++;
-	    preds_full_file = argv[i];
+	    preds_full_txt_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-pa")) {
 	    i++;
-	    preds_abbr_file = argv[i];
+	    preds_abbr_txt_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-ps")) {
@@ -487,39 +452,59 @@ void process_cmdline(int argc, char** argv)
 	}
 	if (!strcmp(argv[i], "-r")) {
 	    i++;
-	    result_summary_file = argv[i];
+	    result_summary_htm_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-h")) {
-	    puts("Usage: compute-results -e <experiment-name> -d <program-src-dir> -s <sruns-file> -f <fruns-file> -c <confidence> -cs <compact-sites-file> -cr <compact-report-path-fmt> -t <trace-file> -pf <preds-full-file> -pa <preds-abbr-file> -ph <preds-hdr-file> -r <result-summary-file>");
+	    puts("Usage: compute-results <options>\n"
+                 "-e  <experiment-name>\n"
+                 "-d  <program-src-dir>\n"
+                 "-c  <confidence>\n"
+                 "READS:\n"
+                 "-s  <sruns-txt-file>\n"
+                 "-f  <fruns-txt-file>\n"
+                 "-cr <compact-report-path-fmt>\n"
+                 "-t  <trace-txt-file>\n"
+                 "WRITES:\n"
+                 "-pf <preds-full-txt-file>\n"
+                 "-pa <preds-abbr-txt-file>\n"
+                 "-ps <preds-src-file>\n"
+                 "-r  <result-summary-htm-file>\n");
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
 	exit(1);
     }
 
-    if (!experiment_name || !program_src_dir || !sruns_file || !fruns_file || confidence == -1 ||
-	!compact_sites_file || !compact_report_path_fmt ||
-	!preds_full_file || !preds_abbr_file || !preds_src_file || !result_summary_file) {
+    if (!experiment_name ||
+        !program_src_dir ||
+        confidence == -1 ||
+        !sruns_txt_file ||
+        !fruns_txt_file ||
+        !compact_report_path_fmt ||
+	!preds_full_txt_file ||
+        !preds_abbr_txt_file ||
+        !preds_src_file ||
+        !result_summary_htm_file) {
 	puts("Incorrect usage; try -h");
 	exit(1);
     }
 }
 
-void process_trace_file()
+void process_trace_txt_file()
 {
     int u, c, p, b;
 
-    if (!trace_file)
+    if (!trace_txt_file)
 	return;
 
-    trace_fp = fopen(trace_file, "r"); assert(trace_fp);
+    trace_txt_fp = fopen(trace_txt_file, "r"); assert(trace_txt_fp);
 
     while (1) {
-	fscanf(trace_fp, "%d %d %d %d", &u, &c, &p, &b);
-	if (feof(trace_fp))
+	fscanf(trace_txt_fp, "%d %d %d %d", &u, &c, &p, &b);
+	if (feof(trace_txt_fp))
 	    break;
-	assert(u >= 0 && u < NumUnits );
+	assert(u >= 0 && u < NumUnits);
 	assert(c >= 0 && c < units[u].c);
 	assert(p >= 0 && p < 6);
 	assert(b == 0 || b == 1);
@@ -527,7 +512,7 @@ void process_trace_file()
 	site_summary[u][c].is_true_pivot[p] = b;
     }
 
-    fclose(trace_fp);
+    fclose(trace_txt_fp);
     scaffold(compact_report_path_fmt, process_run);
 }
 
@@ -537,20 +522,18 @@ int main(int argc, char** argv)
 
     process_cmdline(argc, argv);
 
-    classify_runs(sruns_file, fruns_file);
+    classify_runs(sruns_txt_file, fruns_txt_file);
 
     conf = conf_map[confidence - 90];
 
-    sites_fp = fopen(compact_sites_file, "r");
-    assert(sites_fp);
-    preds_full_fp = fopen(preds_full_file, "w");
-    assert(preds_full_fp);
-    preds_abbr_fp = fopen(preds_abbr_file, "w");
-    assert(preds_abbr_fp);
+    preds_full_txt_fp = fopen(preds_full_txt_file, "w");
+    assert(preds_full_txt_fp);
+    preds_abbr_txt_fp = fopen(preds_abbr_txt_file, "w");
+    assert(preds_abbr_txt_fp);
     preds_src_fp = fopen(preds_src_file, "w");
     assert(preds_src_fp);
-    result_summary_fp = fopen(result_summary_file, "w");
-    assert(result_summary_fp);
+    result_summary_htm_fp = fopen(result_summary_htm_file, "w");
+    assert(result_summary_htm_fp);
 
     fputs("#include <preds.h>\n\n"
 	  "const char* const preds[] = {\n", preds_src_fp);
@@ -559,27 +542,26 @@ int main(int argc, char** argv)
     for (u = 0; u < NumUnits; u++)
 	site_summary[u].resize(units[u].c);
 
-    process_trace_file();
+    process_trace_txt_file();
 
     scaffold(compact_report_path_fmt, process_site);
 
+    int i = 0;
     for (u = 0; u < NumUnits; u++) {
 	for (c = 0; c < units[u].c; c++) {
-	    char site_name[10000];
-	    fscanf(sites_fp, "%[^\n]s", site_name); fgetc(sites_fp);
-	    print_site_summary(u, c, site_name);
-	}
+	    print_site_summary(u, c, i);
+            i++;
+        }
     }
 
     print_result_summary();
 
     fputs("};\n", preds_src_fp);
 
-    fclose(sites_fp);
-    fclose(preds_full_fp);
-    fclose(preds_abbr_fp);
+    fclose(preds_full_txt_fp);
+    fclose(preds_abbr_txt_fp);
     fclose(preds_src_fp);
-    fclose(result_summary_fp);
+    fclose(result_summary_htm_fp);
     return 0;
 }
 

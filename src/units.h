@@ -2,12 +2,12 @@
 #define INCLUDE_UNITS_H
 
 
-struct Unit {
+struct unit_t {
   const char *s;
   int c;
 };
 
-extern const struct Unit units[];
+extern const struct unit_t units[];
 
 extern const int NumUnits;
 extern const int NumBPreds;
