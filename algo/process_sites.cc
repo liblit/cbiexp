@@ -2,10 +2,11 @@
 #include <string.h>
 #include <assert.h>
 
-main(int argc, char** argv)
+#define SITES_FILE "/moa/sc3/cbi/rhythmbox/share/rhythmbox.sites"
+
+main()
 {
-    assert(argc == 2);
-    FILE* ifp = fopen(argv[1], "r");
+    FILE* ifp = fopen(SITES_FILE, "r");
     assert(ifp);
 
     FILE* ofpu = fopen("units.h", "w");

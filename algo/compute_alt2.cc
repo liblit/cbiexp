@@ -31,7 +31,7 @@ inline void print_pred(int u, int c, int p)
 
     if (data[u][c].b[p]) {
         char file[100];
-        sprintf(file, "/moa/sc3/mhn/for_alice/obs/%d_%d_%d.txt", u, c, p);
+        sprintf(file, "/moa/sc3/mhn/new/obs/%d_%d_%d.txt", u, c, p);
         FILE* fp = fopen(file, "w");
         assert(fp);
         fprintf(fp, "F: ");

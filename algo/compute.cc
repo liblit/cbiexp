@@ -37,7 +37,7 @@ site_t* data[NUM_UNITS];
         data[u][c].of++;          \
 }
 
-FILE* sites_fp;
+FILE* sites_fp = NULL;
 
 inline void print_pred(FILE* fp, int u, int c, int p, const char* pred_kind)
 {
@@ -103,8 +103,25 @@ main(int argc, char** argv)
             }
             continue;
         }
+        if (strcmp(argv[i], "-i") == 0) {
+            if (sites_fp) {
+                printf("-i specified multiple times\n");
+                return 1;
+            }
+            i++;
+            if (!argv[i]) {
+                printf("argument to -i missing\n");
+                return 1;
+            }
+            sites_fp = fopen(argv[i], "r");
+            if (!sites_fp) {
+                printf("Cannot open file %s for reading\n", argv[i]);
+                return 1;
+            }
+            continue;
+        }
         if (strcmp(argv[i], "-h") == 0) {
-            printf("Usage: compute [-s runs_file] [-f runs_file]\n");
+            printf("Usage: compute [-s runs_file] [-f runs_file] [-i sites_file]\n");
             return 0;
         }
         printf("Illegal option: %s\n", argv[i]);
@@ -178,7 +195,7 @@ main(int argc, char** argv)
         if (!is_srun[i] && !is_frun[i])
             continue;
         char file[100];
-        sprintf(file, "runs/%d.txt", i);
+        sprintf(file, "/moa/sc4/mhn/runs/%d.txt", i);
         FILE* fp = fopen(file, "r");
         assert(fp);
 
@@ -228,8 +245,6 @@ main(int argc, char** argv)
     FILE* out_r = fopen("R.html", "w");
     FILE* out_b = fopen("B.html", "w");
     assert(out_s && out_r && out_b);
-    sites_fp = fopen("sites.txt", "r");
-    assert(sites_fp);
 
     for (j = 0; j < NUM_UNITS; j++) {
         switch (units[j].s[0]) {

@@ -4,6 +4,9 @@
 #include "def.h"
 #include "units.h"
 
+bool is_srun[NUM_RUNS + 1];
+bool is_frun[NUM_RUNS + 1];
+
 int get_indx(char* s)
 {
     for (int i = 0; i < NUM_UNITS; i++)
@@ -16,13 +19,123 @@ main(int argc, char** argv)
 {
     char s[1000], *unit, *scheme, *t, u[100];
     char p[1000];
+    FILE *sfp = NULL, *ffp = NULL;
+    int i;
+                                                                                                                                                                                                     
+    /************************************************************************
+     ** process command line options
+     ************************************************************************/
 
-    for (int i = 1; i <= NUM_RUNS; i++) {
-        char ifile[1000], ofile[1000];
-        sprintf(ifile, "/moa/sc2/cbi/rhythmbox/analyze/ds1/%d.txt", i);
-        FILE* ifp = fopen(ifile, "r");
-        if (!ifp)
+    for (i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "-s") == 0) {
+            if (sfp) {
+                printf("-s specified multiple times\n");
+                return 1;
+            }
+            i++;
+            if (!argv[i]) {
+                printf("argument to -s missing\n");
+                return 1;
+            }
+            sfp = fopen(argv[i], "r");
+            if (!sfp) {
+                printf("Cannot open file %s for reading\n", argv[i]);
+                return 1;
+            }
             continue;
+        }
+        if (strcmp(argv[i], "-f") == 0) {
+            if (ffp) {
+                printf("-f specified multiple times\n");
+                return 1;
+            }
+            i++;
+            if (!argv[i]) {
+                printf("argument to -f missing\n");
+                return 1;
+            }
+            ffp = fopen(argv[i], "r");
+            if (!ffp) {
+                printf("Cannot open file %s for reading\n", argv[i]);
+                return 1;
+            }
+            continue;
+        }
+        if (strcmp(argv[i], "-h") == 0) {
+            printf("Usage: process_runs [-s runs_file] [-f runs_file]\n");
+            return 0;
+        }
+        printf("Illegal option: %s\n", argv[i]);
+        return 1;
+    }
+
+    /************************************************************************
+     ** read -s specified file (if any)
+     ************************************************************************/
+                                                                                                                                                                                                     
+    if (sfp) {
+        while (1) {
+            fscanf(sfp, "%d", &i);
+            if (feof(sfp))
+                break;
+            if (i <= 0 || i > NUM_RUNS) {
+                printf("Illegal run %d in -s specified file\n", i);
+                return 1;
+            }
+            is_srun[i] = true;
+        }
+        fclose(sfp);
+    }
+                                                                                                                                                                                                     
+    /************************************************************************
+     ** read -f specified file (if any)
+     ************************************************************************/
+                                                                                                                                                                                                     
+    if (ffp) {
+        while (1) {
+            fscanf(ffp, "%d", &i);
+            if (feof(ffp))
+                break;
+            if (i <= 0 || i > NUM_RUNS) {
+                printf("Illegal run %d in -f specified file\n", i);
+                return 1;
+            }
+            is_frun[i] = true;
+        }
+        fclose(ffp);
+    }
+                                                                                                                                                                                                     
+    /************************************************************************
+     ** do sanity check (no run should be both successful and failing)
+     ************************************************************************/
+                                                                                                                                                                                                     
+    int ns = 0, nf = 0;
+    for (i = 1; i <= NUM_RUNS; i++) {
+        if (is_srun[i] && is_frun[i]) {
+            printf("Run %d is both successful and failing\n", i);
+            return 1;
+        }
+        if (is_srun[i])
+            ns++;
+        else if (is_frun[i])
+            nf++;
+    }
+    printf("#S runs: %d #F runs: %d\n", ns, nf);
+
+    /************************************************************************
+     ** main loop
+     ************************************************************************/
+
+    for (i = 1; i <= NUM_RUNS; i++) {
+        if (!is_srun[i] && !is_frun[i])
+            continue;
+
+        char ifile[1000], ofile[1000];
+
+        sprintf(ifile, "/moa/sc3/cbi/rhythmbox/data/%d/client/reports", i);
+        FILE* ifp = fopen(ifile, "r");
+        assert(ifp);
+
         sprintf(ofile, "/moa/sc4/mhn/runs/%d.txt", i);
         FILE* ofp = fopen(ofile, "w");
         assert(ofp);

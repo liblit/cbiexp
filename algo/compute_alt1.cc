@@ -31,7 +31,7 @@ inline void print_pred(int u, int c, int p)
 
     if (data[u][c].b[p]) {
         char file[100];
-        sprintf(file, "/moa/sc3/mhn/r/%d_%d_%d.txt", u, c, p);
+        sprintf(file, "/moa/sc3/mhn/new/tru/%d_%d_%d.txt", u, c, p);
         FILE* fp = fopen(file, "w");
         assert(fp);
         fprintf(fp, "F: ");
@@ -194,15 +194,15 @@ main(int argc, char** argv)
     }
 
     /************************************************************************
-     ** compute for each predicate, number of successful and failing runs in
-     ** which it is (1) just observed, and (2) observed to be true.
+     ** main loop
      ************************************************************************/
 
     for (i = 1; i <= NUM_RUNS; i++) {
         if (!is_srun[i] && !is_frun[i])
             continue;
+
         char file[100];
-        sprintf(file, "runs/%d.txt", i);
+        sprintf(file, "/moa/sc4/mhn/runs/%d.txt", i);
         FILE* fp = fopen(file, "r");
         assert(fp);
 
