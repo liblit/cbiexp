@@ -51,6 +51,19 @@ processCommandLine(int argc, char *argv[])
 //
 
 
+static void
+open(ifstream &stream, const char filename[])
+{
+  stream.open(filename);
+  if (stream.fail())
+    {
+      const int code = errno;
+      cerr << "cannot read " << filename << ": " << strerror(code) << '\n';
+      exit(code || 1);
+    }
+}
+
+
 int
 main(int argc, char *argv[])
 {
@@ -63,8 +76,9 @@ main(int argc, char *argv[])
   Candidates candidates;
 
   {
-    ifstream runs(ClassifyRuns::failuresFilename);
+    ifstream runs;
     unsigned runId;
+    open(runs, ClassifyRuns::failuresFilename);
 
     while (runs >> runId && runId < NumRuns::end)
       if (runId >= NumRuns::begin)
@@ -75,9 +89,10 @@ main(int argc, char *argv[])
 
   {
     Progress::Bounded progress("reading failure reports", NumRuns::count());
-    ifstream runs(ClassifyRuns::failuresFilename);
+    ifstream runs;
     unsigned runId;
     unsigned failureId = 0;
+    open(runs, ClassifyRuns::failuresFilename);
 
     while (runs >> runId && runId < NumRuns::end)
       if (runId >= NumRuns::begin)
@@ -90,8 +105,10 @@ main(int argc, char *argv[])
 
   {
     Progress::Bounded progress("reading success reports", NumRuns::count());
-    ifstream runs(ClassifyRuns::successesFilename);
+    ifstream runs;
     unsigned runId;
+    open(runs, ClassifyRuns::successesFilename);
+
     while (runs >> runId && runId < NumRuns::end)
       if (runId >= NumRuns::begin)
 	{
