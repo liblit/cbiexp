@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include "def.h"
 #include "units.h"
 #include "classify_runs.h"
 

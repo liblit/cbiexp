@@ -2,9 +2,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
-
-char* SRUNS_FILE = "share/s.txt";
-char* FRUNS_FILE = "share/f.txt";
+#include "def.h"
 
 int num_runs, num_sruns, num_fruns;
 bool *is_srun, *is_frun;
@@ -14,7 +12,7 @@ void classify_runs()
     FILE *sfp, *ffp;
     int i;
 
-    sfp = fopen(SRUNS_FILE, "r"); assert(sfp);
+    sfp = fopen(SRUNS_TXT_FILE, "r"); assert(sfp);
     while (1) {
         fscanf(sfp, "%d", &i);
         if (feof(sfp))
@@ -24,7 +22,7 @@ void classify_runs()
     }
     fclose(sfp);
 
-    ffp = fopen(FRUNS_FILE, "r"); assert(ffp);
+    ffp = fopen(FRUNS_TXT_FILE, "r"); assert(ffp);
     while (1) {
         fscanf(ffp, "%d", &i);
         if (feof(ffp))
@@ -43,7 +41,7 @@ void classify_runs()
     assert(is_frun);
     for (i = 0; i < num_runs; i++) is_frun[i] = false;
 
-    sfp = fopen(SRUNS_FILE, "r"); assert(sfp);
+    sfp = fopen(SRUNS_TXT_FILE, "r"); assert(sfp);
     while (1) {
         fscanf(sfp, "%d", &i);
         if (feof(sfp))
@@ -53,7 +51,7 @@ void classify_runs()
     }
     fclose(sfp);
 
-    ffp = fopen(FRUNS_FILE, "r"); assert(ffp);
+    ffp = fopen(FRUNS_TXT_FILE, "r"); assert(ffp);
     while (1) {
         fscanf(ffp, "%d", &i);
         if (feof(ffp))

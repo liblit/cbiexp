@@ -4,6 +4,7 @@
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>
+#include "def.h"
 #include "units.h"
 #include "classify_runs.h"
 
@@ -18,10 +19,14 @@ int get_indx(char* s)
     assert(0);
 }
 
-main()
+void process_cmdline(int, char**);
+
+main(int argc, char** argv)
 {
     char s[3000], *unit, *scheme, *t, u[100];
     char p[3000];
+
+    process_cmdline(argc, argv);
 
     classify_runs();
 
