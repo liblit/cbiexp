@@ -190,7 +190,40 @@ reader that part of our goal is to triage bugs, and bugs that don't occur
 are triaged out of existence.}
 
 \subsection{Analysis of Predicate Elimination}
-\placeholder{Mayur writes this}
+
+Figure \ref{predelim} characterizes the predicates that are eliminated by
+the algorithm, namely, predicates $P$ such that $Increase(P) \leq 0$.
+A {\it dead} predicate is one that is not observed in any run and hence
+deemed unreachable.
+An {\it invariant} is a predicate that is observed in some run and, moreover,
+is either true every time it is observed or false every time it is observed,
+and is therefore presumed to be a program invariant.
+An {\it aftermath} is a predicate that is not observed in any successful run but
+is observed in some failing run, and is therefore deemed to be a secondary consequence
+of a bug.
+                                                                                                                                                                                                     
+\begin{figure}[h]
+\begin{center}
+\begin{tabular}{|l|r|r|r|r|}
+\hline
+predicate &  \multicolumn{4}{c|}{sampling rate} \\
+\cline{2-5}
+category  &  1/1 & 1/10 & 1/100 & 1/1000 \\
+\hline
+\hline
+dead      &  92810 & 92810 & 92834 & 95210 \\
+\hline
+invariant &  56418 & 56614 & 57082 & 57034 \\
+\hline
+aftermath &  5666  & 5954  & 6534  & 7032 \\
+\hline
+misc.     &  38762 & 36768 & 36504 & 33023 \\
+\hline
+\end{tabular}
+\caption{Classification of eliminated predicates.}
+\label{predelim}
+\end{center}
+\end{figure}
 
 \subsection{Effect of Sampling on Convergence}
 \placeholder{Alice writes this}
