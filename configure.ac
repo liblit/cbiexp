@@ -68,13 +68,29 @@ AC_SUBST(BOOST_CPPFLAGS)
 #  instrumenting compiler
 #
 
-AC_ARG_VAR(SAMPLER_CC, [instrumenting C compiler command])
-if test -z "$SAMPLER_CC"; then
-  AC_CHECK_PROGS(SAMPLER_CC, sampler-cc)
+AC_ARG_WITH(sampler-build,
+  AC_HELP_STRING([--with-sampler-build=DIR],
+                 [use sampler tools from build tree DIR]),
+  sampler_builddir="$withval")
+
+if test -z "$with_sampler_build"; then
+  AC_CHECK_PROGS(sampler_cc, sampler-cc)
+  if test -z "$sampler_cc"; then
+    AC_MSG_ERROR(cannot find sampler-cc; please use "--with-sampler-build=DIR")
+  fi
+  AC_PATH_PROG(EXTRACT_SECTION, extract-section, false, $sampler_tooldir)
+  if test -z "$EXTRACT_SECTION"; then
+    AC_MSG_ERROR(cannot find sampler tools; please use "--with-sampler-build=DIR")
+  fi
+  sampler_tooldir="`dirname $EXTRACT_SECTION`"
 else
-  AC_MSG_CHECKING(sampler-cc)
-  AC_MSG_RESULT($SAMPLER_CC)
+  AC_SUBST(sampler_builddir, $with_sampler_build)
+  sampler_cc='${sampler_builddir}/instrumentor/driver/sampler-cc-here'
+  sampler_tooldir='${sampler_builddir}/tools'
 fi
+
+AC_SUBST(sampler_cc)
+AC_SUBST(sampler_tooldir)
 
 
 ########################################################################
@@ -86,7 +102,15 @@ AM_CONFIG_HEADER(config.h)
 
 AC_CONFIG_FILES([
 Makefile
+bc/Makefile
+bc/config.site
+ccrypt/Makefile
+ccrypt/config.site
 correlations/Makefile
+exif/Makefile
+exif/config.site
+mossexp/Makefile
+rhythmbox/Makefile
 rhythmbox/config.site
 src/Makefile
 src/corrective-ranking/Makefile

@@ -1,6 +1,9 @@
+.deps
+Makefile
+Makefile.in
 build
+config.site
 data
 image-list
 install
 thumbnail-list
-

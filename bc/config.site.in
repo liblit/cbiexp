@@ -1,0 +1,7 @@
+#-*- sh -*-
+
+sampler_builddir="@sampler_builddir@"
+
+CC="@sampler_cc@"
+CC="$CC --no-sample"
+CC="$CC --sampler-scheme=scalar-pairs"
