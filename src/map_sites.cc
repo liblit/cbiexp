@@ -199,7 +199,7 @@ int main(int argc, char** argv)
     }
 
     fputs("};\n\n", sfp);
-    fprintf(sfp, "const int num_sites = %d;\n", num_sites);
+    fprintf(sfp, "const unsigned num_sites = %d;\n", num_sites);
 
     fputs("};\n\n", ufp);
     fprintf(ufp, "const unsigned num_units = %d;\n", num_units);
