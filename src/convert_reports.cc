@@ -9,7 +9,9 @@ int get_indx(char* s)
     for (int i = 0; i < NUM_UNITS; i++)
 	if (strcmp(s, units[i].s) == 0)
 	    return i;
-    assert(0);
+
+    fprintf("cannot find index of compilation unit \"%s\"\n", s);
+    exit(1);
 }
 
 char* sruns_file = NULL;
