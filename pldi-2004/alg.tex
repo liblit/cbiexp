@@ -135,7 +135,7 @@ As this example
 shows, just because $\crash(P)$ is high does not
 mean $P$ is the cause of a bug.  In the case of {\tt x == 0}, the
 decision that eventually causes the crash is made earlier, and the
-$\crash(\mbox{\tt x == 0})$ score merely reflects the fact that this
+high $\crash(\mbox{\tt x == 0})$ score merely reflects the fact that this
 predicate is checked on a path where the program is already doomed.
 
 \issue[Alice]{The Failure score is not a perfect definition of
@@ -149,8 +149,8 @@ that it implies failure, but by how much difference it makes that the predicate
 is observed to be true versus simply reaching the line where the predicate is checked.
 That is, on line {\tt (c)}, the probability of crashing is already 1.0 regardless
 of the value of the predicate {\tt x == 0}, and thus the fact that {\tt x == 0} is
-true does not increase the probability of failure at all; this coincides with
-the intuition that this predicate is irrelevant to the bug.
+true does not increase the probability of failure at all.  This coincides with
+our intuition that this predicate is irrelevant to the bug.
 
 This leads us to the following definition:
 \[
@@ -164,8 +164,8 @@ or is reached but not sampled.
 %(b) one of $P$ or $\lnot P$ is observed, or (c) both are observed (because the statement is executed
 %multiple times and $P$ is sometimes true and sometimes false).
 Thus, $\context(P)$ is the probability that
-in the set of runs where the site containing predicate $P$ is reached and sampled, the program fails.
-We can compute $\context(P)$ as follows:
+in the subset of runs where the site containing predicate $P$ is reached and sampled, the program fails.
+We can estimate $\context(P)$ as follows:
 \[ \context(P) = \frac{F(P \lor \lnot P)}{S(P \lor \lnot P) + F(P \lor \lnot P)} \]
 
 The interesting quantity, then, is
@@ -179,7 +179,7 @@ we have
 \[\crash(\mbox{\tt x == 0}) = \context(\mbox{\tt x == 0}) = 1.0 \]
 and so $\increase(\mbox{\tt x == 0}) = 0$.
 
-A predicate $P$ with $\increase(P) \leq 0$ has no predictive power; whether it is true does not increase the
+A predicate $P$ with $\increase(P) \leq 0$ has no predictive power.  Being true does not increase the
 probability of failure, and we can safely discard all such predicates.
 But because some $\increase(P)$ scores may be based on few observations of $P$, it is important
 to attach confidence intervals to the scores.  Since $\increase()$ is a statistic, computing
@@ -187,10 +187,6 @@ a confidence interval for the underlying parameter is a well-understood problem.
 only if $\increase(P) > 0$ with 95\% confidence; this removes predicates from consideration that have high
 increase scores but very low confidence because of few observations. 
 
-\issue{Modified by Mike: "Pruning predicates using Increase(P) \leq 0"
--> "Pruning predicates based on Increase(P)"
-[Since we're using confidence intervals, the former statement
-isn't strictly correct].}
 Pruning predicates based on $\increase(P)$ has many desirable
 properties.  It is easy to prove that large classes of irrelevant
 predicates always have scores $\leq 0$.  For example, any predicate
@@ -240,8 +236,8 @@ random variable.  Performed independently for each predicate $P$, the
 test decides whether or not $\pi_f(P) \leq \pi_s(P)$ with a guaranteed
 false-positive probability (i.e.,\ choosing $\H_1$ when $\H_0$ is true).
 A necessary (but not sufficient) condition for choosing $\H_1$ is that
-$\hat \pi_f(P) > \hat \pi_s(P)$.  This turns out to be
-equivalent to the condition that $\increase(P) > 0$.  To see this,
+$\hat \pi_f(P) > \hat \pi_s(P)$.  However, this is
+equivalent to the condition that $\increase(P) > 0$.  To see why,
 let $a = F(P)$, $b = S(P)$, $c = F(P\lor\lnot P)$, and $d = S(P\lor\lnot P)$.
 Then
 \begin{gather*}
