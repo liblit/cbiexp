@@ -1,6 +1,6 @@
 # @configure_input@
 
-root := ../..
+root ?= ../..
 experiment ?= ..
 datadir ?= $(experiment)/data
 corrdir := $(root)/correlations
