@@ -28,9 +28,15 @@ print "Outputting sparse matrix ftr\n";
 output_sparse("$outdir/ftr", $ftr, $farr, $fhash);
 print "Outputting sparse matrix str\n";
 output_sparse("$outdir/str", $str, $sarr, $shash);
+$ftr = undef;
+$str = undef;
 
 sub output_sparse {
   my ($fn, $rlist, $arr, $hash) = (@_);
+  if (-e "$fn.") {
+    print "Skipping outputting $fn since file already exists.\n";
+    return;
+  }
   open (DATA, "> $fn.") || die "Open: $!";
   open (IR, "> $fn.ir") || die "Open: $!";
   open (JC, "> $fn.jc") || die "Open: $!";
@@ -47,7 +53,7 @@ sub output_sparse {
     ## S: [run1] [val1] [run2] [val2] ...
     my (@runs) = split / /, $rs;
     for my $r (@runs) {
-      my $ind = $hash->{$r} || die "No run defined for $r";
+      my $ind = $hash->{$r} || die "No run defined for $r\n$p: $rs";
       ## [[ need actual fractional count as opposed to 1 -- Alice]]
       print DATA "1\n";
       print IR $ind-1, "\n";
@@ -67,10 +73,10 @@ sub read_counts {
   my $k = 0;
   open (IN, "$fn") || die "Open $fn: $!";
   while (<IN>) {
-    chomp; s/^F: //; s/\s+$//;
+    chomp; s/^F://; s/^\s+//; s/\s+$//;
     $farr[$k] = $_; 
     $_ = <IN>;
-    chomp; s/^S: //; s/\s+$//;
+    chomp; s/^S://; s/^\s+//; s/\s+$//;
     $sarr[$k] = $_;
     $k++;
   }
