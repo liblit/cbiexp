@@ -169,7 +169,7 @@
   <xsl:template match="source">
     <td><xsl:value-of select="translate(@predicate, ' ', '&#160;')"/></td>
     <td><xsl:value-of select="@function"/></td>
-    <td><xsl:value-of select="@function"/>:<xsl:value-of select="@line"/></td>
+    <td><xsl:value-of select="@file"/>:<xsl:value-of select="@line"/></td>
   </xsl:template>
 
 
