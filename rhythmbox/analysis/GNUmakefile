@@ -19,7 +19,7 @@ clean: clean-dynamic clean-static
 
 clean-dynamic:
 	rm -f stamp-dynamic
-	rm -f *.xml *.dtd *.xsl *.css
+	rm -f *.xml *.dtd *.xsl *.css *.txt
 	rm -f compute-results convert-reports gen-views
 	rm -f f.runs s.runs
 .PHONY: clean-dynamic
