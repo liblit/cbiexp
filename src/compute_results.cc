@@ -10,6 +10,7 @@
 #include "def.h"
 #include UNITS_HDR_FILE
 #include "classify_runs.h"
+#include "scaffold.h"
 
 struct site_summary_t {
     int S[6], F[6];
@@ -188,132 +189,41 @@ bool print_site_summary(int u, int c, char* site_name)
     }
 }
 
-void process_cmdline(int, char**);
-void print_result_summary();
-
-int main(int argc, char** argv)
+void process_site(FILE* fp, int r, int u, int c)
 {
-    int i, j, k, x, y, z, w, u, c, p;
+    int x, y, z, w;
 
-    process_cmdline(argc, argv);
-
-    conf = conf_map[conf_percent - 90];
-
-    classify_runs();
-
-    sites_txt_fp = fopen(SITES_TXT_FILE, "r"); assert(sites_txt_fp);
-    preds_txt_fp = fopen(PREDS_TXT_FILE, "w"); assert(preds_txt_fp);
-    preds_hdr_fp = fopen(PREDS_HDR_FILE, "w"); assert(preds_hdr_fp);
-    result_summary_fp = fopen(RESULT_SUMMARY_FILE, "w"); assert(result_summary_fp);
-
-    fprintf(preds_hdr_fp, "#ifndef PREDS_H\n#define PREDS_H\n\n");
-    fprintf(preds_hdr_fp, "const char* preds[] = {\n");
-
-    for (u = 0; u < NUM_UNITS; u++) {
-        site_summary[u] = new (site_summary_t) [units[u].c];
-        assert(site_summary[u]);
-    }
-
-    for (i = 0; i < num_runs; i++) {
-        if (!is_srun[i] && !is_frun[i])
-            continue;
-        printf("(pass 2) run %d\n", i);
-        char file[1000];
-        sprintf(file, O_REPORT_PATH_FMT, i);
-        FILE* fp = fopen(file, "r");
-        assert(fp);
-
-        while (1) {
-            fscanf(fp, "%d\n", &j);
-            if (feof(fp))
-                break;
-            switch (units[j].s[0]) {
-            case 'S':
-            case 'R':
-                for (k = 0; k < units[j].c; k++) {
-                    fscanf(fp, "%d %d %d\n", &x, &y, &z); 
-                    if (x + y + z > 0) {
-                        obs(i, j, k);
-                        if (x > 0) {
-                            inc(i, j, k, 0);
-                            inc(i, j, k, 3);
-                            inc(i, j, k, 5);
-                            if (y > 0) {
-                                inc(i, j, k, 1);
-                                inc(i, j, k, 2);
-                                if (z > 0)
-                                    inc(i, j, k, 4);
-                            } else if (z > 0) {
-                                inc(i, j, k, 1);
-                                inc(i, j, k, 4);
-                            }
-                        } else {
-                            inc(i, j, k, 1);
-                            if (y > 0) {
-                                inc(i, j, k, 2);
-                                inc(i, j, k, 5);
-                                if (z > 0) {
-                                    inc(i, j, k, 3);
-                                    inc(i, j, k, 4);
-                                }
-                            } else {
-                                inc(i, j, k, 3);
-                                inc(i, j, k, 4);
-                            }
-                        }
-                    }
-                }
-                break;
-            case 'B':
-                for (k = 0; k < units[j].c; k++) {
-                    fscanf(fp, "%d %d\n", &x, &y); 
-                    if (x + y > 0) {
-                        obs(i, j, k);
-                        if (x > 0) inc(i, j, k, 0);
-                        if (y > 0) inc(i, j, k, 1);
-                    }
-                }
-                break;
-            case 'U':
-                for (k = 0; k < units[j].c; k++) {
-                    fscanf(fp, "%d %d %d %d\n", &x, &y, &z, &w);
-                    if (x + y + z + w > 0) {
-                        obs(i, j, k);
-                        if (x > 0) inc(i, j, k, 0);
-                        if (y > 0) inc(i, j, k, 1);
-                        if (z > 0) inc(i, j, k, 2);
-                        if (w > 0) inc(i, j, k, 3);
-                    }
-                }
-                break;
-            default:
-                assert(0);
-            }
+    switch (units[u].s[0]) {
+    case 'S':
+    case 'R':
+        fscanf(fp, "%d %d %d\n", &x, &y, &z); 
+        if (x + y + z > 0) {
+            obs(r, u, c);
+            if (x > 0)
+                inc(r, u, c, 0);
+            if (y > 0)
+                inc(r, u, c, 2);
+            if (z > 0)
+                inc(r, u, c, 4);
+            if (y + z > 0)
+                inc(r, u, c, 1);
+            if (x + z > 0)
+                inc(r, u, c, 3);
+            if (x + y > 0)
+                inc(r, u, c, 5);
         }
-        fclose(fp);
-    }
-
-    for (u = 0; u < NUM_UNITS; u++) {
-        for (c = 0; c < units[u].c; c++) {
-            char site_name[10000];
-            fscanf(sites_txt_fp, "%[^\n]s", site_name);
-            fgetc (sites_txt_fp);
-            print_site_summary(u, c, site_name);
+        break;
+    case 'B':
+        fscanf(fp, "%d %d\n", &x, &y); 
+        if (x + y > 0) {
+            obs(r, u, c);
+            if (x > 0) inc(r, u, c, 0);
+            if (y > 0) inc(r, u, c, 1);
         }
+        break;
+    default:
+        assert(0);
     }
-
-    print_result_summary();
-
-    for (i = 0; i < NUM_UNITS; i++)
-        delete [] (site_summary[i]);
-
-    fprintf(preds_hdr_fp, "};\n\n#endif\n");
-
-    fclose(sites_txt_fp);
-    fclose(preds_txt_fp);
-    fclose(preds_hdr_fp);
-    fclose(result_summary_fp);
-    return 0;
 }
 
 void print_result_summary()
@@ -321,14 +231,16 @@ void print_result_summary()
     time_t t;
     time(&t);
 
-    fprintf(result_summary_fp, "<html><body>\n<table>\n<tr>\n"
-                               "<td align=middle><font size=\"+2\">Cooperative Bug Isolation Report</font></td>\n"
-                               "<td rowSpan=2 align=right>"
-                               "<a href=\"%s\"><img src=\"http://www.cs.berkeley.edu/~liblit/sampler/logo.png\" style=\"border-style: none\"></a></td>\n</tr>\n"
-                               "</table>\n<br>\n", CBI_WEBPAGE);
+    fprintf(result_summary_fp,
+        "<html><body>\n<table>\n<tr>\n"
+        "<td align=middle><font size=\"+2\">Cooperative Bug Isolation Report</font></td>\n"
+        "<td rowSpan=2 align=right>"
+        "<a href=\"%s\"><img src=\"http://www.cs.berkeley.edu/~liblit/sampler/logo.png\" style=\"border-style: none\"></a></td>\n</tr>\n"
+        "</table>\n<br>\n", CBI_WEBPAGE);
     fprintf(result_summary_fp, "Experiment name: %s\n<p>\n", program_name);
     fprintf(result_summary_fp, "Generated on %s<p>\n", ctime(&t));
-    fprintf(result_summary_fp, "# runs: %d [successful: %d failing: %d discarded: %d]\n<p>\n", num_runs, num_sruns, num_fruns, num_runs - (num_sruns + num_fruns));
+    fprintf(result_summary_fp, "# runs: %d [successful: %d failing: %d discarded: %d]\n<p>\n", 
+        num_runs, num_sruns, num_fruns, num_runs - (num_sruns + num_fruns));
     fprintf(result_summary_fp, "# predicates instrumented: %d [branch: %d return: %d scalar: %d]\n<p>\n",
         NUM_B_PREDS + NUM_R_PREDS + NUM_S_PREDS, NUM_B_PREDS, NUM_R_PREDS, NUM_S_PREDS);
     fprintf(result_summary_fp, "# predicates retained: %d [branch: %d return: %d scalar: %d]\n<p>\n",
@@ -356,7 +268,7 @@ void process_cmdline(int argc, char** argv)
             continue;
         } 
         if (!strcmp(argv[i], "-h")) {
-            printf("Usage: compute -p program_name -d program_src_dir -c confidence\n");
+            printf("Usage: compute -p program_name -d program_src_dir [-c confidence]\n");
             exit(0);
         }
         printf("Illegal option: %s\n", argv[i]);
@@ -367,5 +279,53 @@ void process_cmdline(int argc, char** argv)
         printf("Incorrect usage; try -h\n");
         exit(1);
     }
+}
+
+int main(int argc, char** argv)
+{
+    int  u, c, p;
+
+    process_cmdline(argc, argv);
+
+    conf = conf_map[conf_percent - 90];
+
+    classify_runs();
+
+    sites_txt_fp = fopen(SITES_TXT_FILE, "r"); assert(sites_txt_fp);
+    preds_txt_fp = fopen(PREDS_TXT_FILE, "w"); assert(preds_txt_fp);
+    preds_hdr_fp = fopen(PREDS_HDR_FILE, "w"); assert(preds_hdr_fp);
+    result_summary_fp = fopen(RESULT_SUMMARY_FILE, "w"); assert(result_summary_fp);
+
+    fprintf(preds_hdr_fp, "#ifndef PREDS_H\n#define PREDS_H\n\n");
+    fprintf(preds_hdr_fp, "const char* preds[] = {\n");
+
+    for (u = 0; u < NUM_UNITS; u++) {
+        site_summary[u] = new (site_summary_t) [units[u].c];
+        assert(site_summary[u]);
+    }
+
+    scaffold(process_site);
+
+    for (u = 0; u < NUM_UNITS; u++) {
+        for (c = 0; c < units[u].c; c++) {
+            char site_name[10000];
+            fscanf(sites_txt_fp, "%[^\n]s", site_name);
+            fgetc (sites_txt_fp);
+            print_site_summary(u, c, site_name);
+        }
+    }
+
+    print_result_summary();
+
+    for (u = 0; u < NUM_UNITS; u++)
+        delete [] (site_summary[u]);
+
+    fprintf(preds_hdr_fp, "};\n\n#endif\n");
+
+    fclose(sites_txt_fp);
+    fclose(preds_txt_fp);
+    fclose(preds_hdr_fp);
+    fclose(result_summary_fp);
+    return 0;
 }
 
