@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <cmath>
 #include <ctime>
-#include <iostream>
 #include <vector>
 #include "classify_runs.h"
 #include "units.h"
