@@ -145,7 +145,7 @@ void print_retained_preds()
     FILE* fp = fopen(preds_txt_file, "w");
     assert(fp);
 
-    for (u = 0; u < NumUnits; u++) {
+    for (u = 0; u < num_units; u++) {
 	for (c = 0; c < units[u].c; c++, i++) {
             switch (units[u].s[0]) {
             case 'S':
@@ -264,7 +264,7 @@ void cull_preds()
 {
     int u, c, p;
 
-    for (u = 0; u < NumUnits; u++) {
+    for (u = 0; u < num_units; u++) {
 	for (c = 0; c < units[u].c; c++) {
 	    switch (units[u].s[0]) {
             case 'S':
@@ -295,7 +295,7 @@ void cull_preds_aggressively1()
 {
     int u, c;
 
-    for (u = 0; u < NumUnits; u++) {
+    for (u = 0; u < num_units; u++) {
 	for (c = 0; c < units[u].c; c++) {
 	    switch (units[u].s[0]) {
             case 'S':
@@ -438,7 +438,7 @@ void cull_preds_aggressively2()
 {
     int u, c, s;
 
-    for (s = 0, u = 0; u < NumUnits; s += units[u].c, u++) {
+    for (s = 0, u = 0; u < num_units; s += units[u].c, u++) {
         if (units[u].s[0] == 'S') {
 	    for (c = 0; c < units[u].c; c++) {
                 if (is_eligible(u, c, GT , s))
@@ -543,8 +543,8 @@ int main(int argc, char** argv)
 
     conf = conf_map[confidence - 90];
 
-    site_summary.resize(NumUnits);
-    for (int u = 0; u < NumUnits; u++) site_summary[u].resize(units[u].c);
+    site_summary.resize(num_units);
+    for (int u = 0; u < num_units; u++) site_summary[u].resize(units[u].c);
 
     scaffold(compact_report_path_fmt, process_site);
 
