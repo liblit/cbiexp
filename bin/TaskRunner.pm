@@ -65,6 +65,7 @@ sub reap ($) {
     wait;
     $self->error if $?;
     --$self->{children};
+    $self->{updated} = 1;
 }
 
 
