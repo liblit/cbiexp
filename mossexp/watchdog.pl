@@ -31,10 +31,10 @@ while ($ready = $select->can_read($timeout)
 }
 
 my $elapsed = time - $start;
-my $timeHandle = new FileHandle "$basename.time";
+my $timeHandle = new FileHandle "$basename.time", 'w';
 $timeHandle->print("$elapsed\n");
 
-my $exitHandle = new FileHandle "$elapsed.exit";
+my $exitHandle = new FileHandle "$elapsed.exit", 'w';
 if ($ready) {
     $handle->close;
     my $signal = $? & 127;

@@ -96,7 +96,7 @@ sub run_moss ($$$) {
     $command = "$environment $command" if $environment;
 
     # record it for posterity
-    my $commandHandle = new FileHandle "$basename.command";
+    my $commandHandle = new FileHandle "$basename.command", 'w';
     $commandHandle->print("$command\n");
 
     # run the command
@@ -118,7 +118,7 @@ sub run_moss_bad ($) {
     # compare with reference
     my $outputDiff = diff "$basename.stdout", 'good.stdout';
     my $exitDiff = diff "$basename.exit", 'good.exit';
-    my $failHandle = new FileHandle "$basename.fail";
+    my $failHandle = new FileHandle "$basename.fail", 'w';
     $failHandle->print($outputDiff || $exitDiff);
 }
 
