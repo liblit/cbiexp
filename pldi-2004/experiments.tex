@@ -182,6 +182,74 @@ The three predicates are predictors of three separate, and previously unknown, c
 than 20 minutes of work to find and verify the cause of each of the bugs using these predicates
 and the additional highly correlated predicates on their affinity lists.
 
+We will next elucidate how one of the predicates reported in \autoref{tab:views-exif},
+\exifpred, enabled us to effectively isolate the cause of one of the bugs.
+The bug has the following unique stack trace:
+\begin{verbatim}
+main
+    exif_data_save_data
+        exif_data_save_data_content
+            exif_data_save_data_content
+                exif_data_save_data_entry
+                    exif_mnote_data_save
+                        exif_mnote_data_canon_save
+                            memcpy
+\end{verbatim}
+and the code in the vicinity of the crash site is as follows:
+\begin{verbatim}
+// snippet of exif_mnote_data_canon_save
+for (i = 0; i < n->count; i++) {
+     ...
+(c)  memcpy(*buf + doff, n->entries[i].data, s);
+     ...
+}
+\end{verbatim}
+This alone provided hardly any insights into the cause of the bug.
+But combined with the fact that the predicate {\tt o + s > buf\_size} in function
+{\tt exif\_mnote\_data\_canon\_load} is highlighted by our algorithm,
+it led us to construct the following call sequence by a quick inspection of the
+source code:
+\begin{verbatim}
+main
+    exif_loader_get_data 
+        exif_data_load_data
+            exif_mnote_data_canon_load
+    exif_data_save_data
+        exif_data_save_data_content
+            exif_data_save_data_content
+                exif_data_save_data_entry
+                    exif_mnote_data_save
+                        exif_mnote_data_canon_save
+                            memcpy
+\end{verbatim}
+The code in the vicinity of the predicate {\tt o + s > buf\_size} is as follows:
+\begin{verbatim}
+// snippet of exif_mnote_data_canon_load
+for (i = 0; i < c; i++) {
+     ...
+     n->count = i + 1;
+     ...
+(a)  if (o + s > buf_size) return;
+     ...
+(b)  n->entries[i].data = malloc(s); 
+     ...
+}
+\end{verbatim}
+It is apparent from the above code snippets and the
+call sequence that whenever the predicate {\tt o + s > buf\_size} is true:
+\begin{itemize}
+\item
+the function {\tt exif\_mnote\_data\_canon\_load} returns on line (a),
+thereby skipping the call to {\tt malloc} on line (b) and leaving {\tt n->entries[i]->data}
+uninitialized for some value of {\tt i}, and
+\item
+the function {\tt exif\_mnote\_data\_canon\_save} passes the uninitialized
+{\tt n->entries[i]->data} to {\tt memcpy} on line (c), which reads it
+and eventually crashes.
+\end{itemize}
+In summary, our algorithm enabled us to effectively isolate
+the cause of a previously unknown, crashing bug in source code unfamiliar to us in
+a couple of minutes and without explicit specifications.
 \subsubsection{\rhythmbox}
 
 \autoref{tab:views-rhythmbox} shows our results for \rhythmbox
