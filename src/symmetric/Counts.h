@@ -30,6 +30,7 @@ private:
 
 inline
 Counts::Counts()
+  : trueInSuccesses(0)
 {
 }
 
