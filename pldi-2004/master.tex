@@ -504,22 +504,26 @@ domain-specific.
 \label{sec:comparison}
 
 \begin{table}
-\centering
-\begin{tabular}{l|l}
-{\em Coefficient} & {\em Predicate} \\ \hline
-0.769379 & {\tt (p + passage\_index)->last\_line < 4}  \\
-0.686149 & {\tt (p + passage\_index)->first\_line < i} \\
-0.675982 & {\tt i > 20} \\
-0.671991 & {\tt i > 26} \\
-0.619479 & {\tt (p + passage\_index)->last\_line < i}  \\
-0.600712 & {\tt i > 23} \\
-0.591044 & {\tt (p + passage\_index)->last\_line == next} \\
-0.567753 & {\tt i > 22} \\
-0.544829 & {\tt i > 25} \\
-0.536122 & {\tt i > 28} 
-\end{tabular}
 \caption{Results of logistic regression for Moss.}
 \label{tab:logregression}
+\centering
+\small
+\begin{tabular}{ll}
+  \toprule
+  Coefficient & Predicate \\
+  \midrule
+  0.769379 & \verb|p + passage_index)->last_line < 4| \\
+  0.686149 & \verb|(p + passage_index)->first_line < i| \\
+  0.675982 & \verb|i > 20| \\
+  0.671991 & \verb|i > 26| \\
+  0.619479 & \verb|(p + passage_index)->last_line < i| \\
+  0.600712 & \verb|i > 23| \\
+  0.591044 & \verb|(p + passage_index)->last_line == next| \\
+  0.567753 & \verb|i > 22| \\
+  0.544829 & \verb|i > 25| \\
+  0.536122 & \verb|i > 28| \\
+  \bottomrule
+\end{tabular}
 \end{table}
 
 
