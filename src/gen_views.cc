@@ -1,13 +1,12 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
-#include "def.h"
 
 #define NUM_SCHEMES 4
 #define NUM_SORTBYS 4
 
 char* scheme_codes[NUM_SCHEMES] = { "B", "R", "S", "preds" };
-char* scheme_names[NUM_SCHEMES] = { "branch", "return", "scalar", "preds" };
+char* scheme_names[NUM_SCHEMES] = { "branch", "return", "scalar", "all" };
 char* sortby_codes[NUM_SORTBYS] = { "lb", "is", "fs", "nf" };
 char* sortby_names[NUM_SORTBYS] = { "lower bound of confidence interval", "increase score", "fail score", "true in # F runs" };
 int   sortby_indices[NUM_SORTBYS] = { 5, 6, 7, 10 };
@@ -15,8 +14,7 @@ int   sortby_indices[NUM_SORTBYS] = { 5, 6, 7, 10 };
 
 main(int argc, char** argv)
 {
-    assert(argc == 2);
-    char* prefix = argv[1];
+    const char* prefix = (argv[1]) ? argv[1] : "";
 
     for (int i = 0; i < NUM_SCHEMES; i++) {
         for (int m = 0; m < NUM_SORTBYS; m++) {
