@@ -54,38 +54,31 @@ bool read_pred_full(FILE* fp, pred_info &pi)
 
 void print_pred_full(FILE* fp, pred_info pi)
 {
+    fputs("<predictor>", fp);
     print_pred_stat(fp, pi);
     print_pred_name(fp, pi.site, pi.p);
+    fputs("</predictor>", fp);
 }
 
 void print_pred_stat(FILE* fp, pred_info pi)
 {
-    float f1 = pi.ps.co * 100;
-    float f2 = pi.ps.lb * 100;
-    float f3 = (pi.ps.fs - (pi.ps.co + pi.ps.lb)) * 100;
-    float f4 = (1.0 - pi.ps.fs) * 100;
-    fprintf(fp, "<td>"
-                "<table class=\"scores\" style=\"width: %dpx\" "
-                "title=\"Ctxt: %.0f%% LB: %.0f%%, Incr: %.0f%%, Fail: %.0f%%; tru in %d S and %d F; obs in %d S and %d F\">"
-                "<tr>"
-                "<td class=\"f1\" style=\"width: %.2f%%\"/>"
-                "<td class=\"f2\" style=\"width: %.2f%%\"/>"
-                "<td class=\"f3\" style=\"width: %.2f%%\"/>"
-                "<td class=\"f4\" style=\"width: %.2f%%\"/>"
-                "</tr>"
-                "</table>"
-                "</td>",
-        (int) floor(log10(pi.s + pi.f) * 60), f1, f2, pi.ps.in * 100, pi.ps.fs * 100, pi.s, pi.f, pi.os, pi.of, f1, f2, f3, f4);
+    fprintf(fp,
+	    "<true success=\"%d\" failure=\"%d\"/>"
+	    "<seen success=\"%d\" failure=\"%d\"/>"
+	    "<scores log10-seen=\"%g\" context=\"%g\" lower-bound=\"%g\" increase=\"%g\" badness=\"%g\"/>",
+	    pi.s, pi.f,
+	    pi.os, pi.of,
+	    log10(pi.s + pi.f), pi.ps.co, pi.ps.lb, pi.ps.in, pi.ps.fs);
 }
 
-const char* s_op[6] = { "<", ">=", "==", "!=", ">", "<=" };
-const char* r_op[6] = { "<", ">=", "==", "!=", ">", "<=" };
+const char* s_op[6] = { "&lt;", "&gt;=", "==", "!=", "&gt;", "&lt;=" };
+const char* r_op[6] = { "&lt;", "&gt;=", "==", "!=", "&gt;", "&lt;=" };
 const char* b_op[2] = { "is FALSE", "is TRUE" };
-const char* g_op[4] = { "= 0", "= 1", "> 1", "invalid" };
+const char* g_op[4] = { "= 0", "= 1", "&gt; 1", "invalid" };
 
 void print_pred_name(FILE* fp, int site, int p)
 {
-    fputs("<td>", fp);
+    fputs("<source predicate=\"", fp);
 
     switch(sites[site].scheme_code) {
     case 'S':
@@ -108,10 +101,8 @@ void print_pred_name(FILE* fp, int site, int p)
         assert(0);
     }
 
-    fputs("</td>", fp);
-
-    fprintf(fp, "<td>%s</td><td>%s:%d</td>",
-        sites[site].fun, sites[site].file, sites[site].line);
+    fprintf(fp, "\" function=\"%s\" file=\"%s\" line=\"%d\"/>",
+	    sites[site].fun, sites[site].file, sites[site].line);
 }
 
 void process_report(FILE* fp,

@@ -1,0 +1,40 @@
+a.logo {
+  width: 96px;
+  height: 96px;
+  float: right
+}
+
+a.logo img {
+  border-style: none
+}
+
+table.views th {
+  text-align: right
+}
+
+table.predictors, p.predictors {
+  clear: right
+}
+
+table.scores {
+  border-collapse: collapse;
+  height: 12px;
+  border: 2px solid silver
+}
+
+td.f1 {
+  background-color: black;
+}
+
+td.f2 {
+  background-color: red;
+}
+
+td.f3 {
+  background-color: pink;
+  border: 0px;
+}
+
+td.f4 {
+  background-color: white;
+}

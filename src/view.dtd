@@ -1,0 +1,37 @@
+<!ELEMENT view (schemes, sorts, predictors)>
+<!ATTLIST view prefix NMTOKEN #REQUIRED>
+<!ATTLIST view summary NMTOKEN #REQUIRED>
+
+<!ELEMENT schemes (scheme+)>
+<!ATTLIST schemes current IDREF #REQUIRED>
+
+<!ELEMENT scheme EMPTY>
+<!ATTLIST scheme code ID #REQUIRED>
+<!ATTLIST scheme name CDATA #REQUIRED>
+
+<!ELEMENT sorts EMPTY>
+<!ATTLIST sorts current (lb|is|fs|nf) #REQUIRED>
+
+<!ELEMENT predictors (predictor+)>
+<!ELEMENT predictor (true, seen, scores, source)>
+
+<!ELEMENT true EMPTY>
+<!ELEMENT seen EMPTY>
+<!ENTITY % tally "success NMTOKEN #REQUIRED failure NMTOKEN #REQUIRED">
+<!ATTLIST true %tally;>
+<!ATTLIST seen %tally;>
+
+<!ELEMENT scores EMPTY>
+<!ATTLIST scores
+  log10-seen NMTOKEN #REQUIRED
+  badness NMTOKEN #REQUIRED
+  context NMTOKEN #REQUIRED
+  increase NMTOKEN #REQUIRED
+  lower-bound NMTOKEN #REQUIRED>
+
+<!ELEMENT source EMPTY>
+<!ATTLIST source
+  predicate CDATA #REQUIRED
+  function NMTOKEN #REQUIRED
+  file CDATA #REQUIRED
+  line NMTOKEN #REQUIRED>

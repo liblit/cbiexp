@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-  <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output
     method="html"
-    doctype-system="http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd"
-    doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"/>
+    doctype-system="http://www.w3.org/TR/html4/strict.dtd"
+    doctype-public="-//W3C//DTD HTML 4.01//EN"/>
 
   <xsl:variable name="projectURL" select="'http://www.cs.berkeley.edu/~liblit/sampler/'"/>
   <xsl:variable name="prefix" select="/experiment/prefix"/>
@@ -102,10 +102,10 @@
     <xsl:param name="code"/> <!-- sort scheme code for file names -->
     <tr>
       <td class="scheme"><xsl:value-of select="$name"/></td>
-      <td><a href="{$code}_lb.{$prefix}.html">X</a></td>
-      <td><a href="{$code}_is.{$prefix}.html">X</a></td>
-      <td><a href="{$code}_fs.{$prefix}.html">X</a></td>
-      <td><a href="{$code}_nf.{$prefix}.html">X</a></td>
+      <td><a href="{$code}_lb.{$prefix}.xml">X</a></td>
+      <td><a href="{$code}_is.{$prefix}.xml">X</a></td>
+      <td><a href="{$code}_fs.{$prefix}.xml">X</a></td>
+      <td><a href="{$code}_nf.{$prefix}.xml">X</a></td>
     </tr>
   </xsl:template>
 

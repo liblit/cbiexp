@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <libgen.h>
+#include <sys/stat.h>
 #include "def.h"
 #include "shell.h"
 #include "utils.h"
@@ -54,44 +55,23 @@ int main(int argc, char** argv)
 	for ( m = 0; m < NUM_SORTBYS; m++) {
 
             char file[1000];
-	    sprintf(file, "%s_%s.%s.html", scheme_codes[i], sortby_codes[m], prefix);
+	    sprintf(file, "%s_%s.%s.xml", scheme_codes[i], sortby_codes[m], prefix);
 	    fp = fopen(file, "w");
             assert(fp);
 
-	    fputs("<html>\n"
-		  "<head><link type=\"text/css\" rel=\"stylesheet\" href=\"http://www.stanford.edu/~mhn/style.css\"/></head>\n"
-		  "<body>\n<center><table>\n"
-		  "<tr>\n<td align=right>Scheme:</td><td align=left>",
-		  fp);
+	    fprintf(fp,
+		    "<?xml version=\"1.0\"?>"
+		    "<?xml-stylesheet type=\"text/xsl\" href=\"view.xsl\"?>"
+		    "<!DOCTYPE view SYSTEM \"view.dtd\">"
+		    "<view prefix=\"%s\" summary=\"%s\">"
+		    "<schemes current=\"%s\">",
+		    prefix, result_summary_file,
+		    scheme_codes[i]);
 
-	    for (int j = 0; j < NUM_SCHEMES; j++) {
-		if (i == j)
-		    fprintf(fp, "[%s] ", scheme_names[j]);
-		else
-		    fprintf(fp, "[<a href=\"%s_%s.%s.html\">%s</a>] ", scheme_codes[j], sortby_codes[m], prefix, scheme_names[j]);
-	    }
-	    fputs("</td>\n<td rowSpan=3 align=right>"
-		  "<a href=\"" CBI_WEBPAGE "\">"
-		  "<img src=\"http://www.cs.berkeley.edu/~liblit/sampler/logo.png\" style=\"border-style: none\">"
-		  "</a></td>\n</tr>\n"
-		  "<tr>\n<td align=right>Sorted by:</td><td align=left>",
-		  fp);
-	    for (int n = 0; n < NUM_SORTBYS; n++) {
-		if (m == n)
-		    fprintf(fp, "[%s] ", sortby_names[n]);
-		else
-		    fprintf(fp, "[<a href=\"%s_%s.%s.html\">%s</a>] ", scheme_codes[i], sortby_codes[n], prefix, sortby_names[n]);
-	    }
-	    fputs("</td>\n</tr>\n", fp);
-	    fprintf(fp, "<tr><td align=right>Go to:</td><td align=left>[<a href=\"%s\">report summary</a>] [<a href=\"" CBI_WEBPAGE "\">CBI webpage</a>]</td></tr>\n",
-		    result_summary_file);
-	    fputs("</center></table>\n<center><table>\n<tr>\n"
-		  "<td></td>\n"
-		  "<td align=middle>predicate</td>\n"
-		  "<td align=middle>function</td>\n"
-		  "<td align=middle>file:line</td>\n"
-		  "</tr>\n",
-		  fp);
+	    for (int j = 0; j < NUM_SCHEMES; j++)
+		fprintf(fp, "<scheme code=\"%s\" name=\"%s\"/>", scheme_codes[j], scheme_names[j]);
+
+	    fprintf(fp, "</schemes><sorts current=\"%s\"/><predictors>", sortby_codes[m]);
 
             char file2[100];
             sprintf(file2, "%s.tmp.txt", scheme_codes[i]);
@@ -106,14 +86,12 @@ int main(int argc, char** argv)
 		const bool got = read_pred_full(fp2, pi);
                 if (!got)
                     break;
-                fputs("<tr>\n", fp);
                 print_pred_full(fp, pi);
-                fputs("</tr>\n", fp);
             }
 
             fclose(fp2);
 
-	    fputs("</table></center>\n</body>\n</html>\n", fp);
+	    fputs("</predictors></view>\n", fp);
 
             fclose(fp);
 	}

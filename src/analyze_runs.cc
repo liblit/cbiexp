@@ -393,6 +393,8 @@ int main(int argc, char** argv)
 	REQUIRE("-do-print-results-1", "-p", preds_txt_file);
         REQUIRE("-do-print-results-1", "-ss", sites_src_file);
         REQUIRE("-do-print-results-1", "-us", units_src_file);
+	shell("ln -s %s/view.css %s/view.dtd %s/view.xsl %s",
+	      incdir, incdir, incdir, dirname(result_summary_xml_file));
 	shell("%s %s/gen_views.o %s.o %s.o -L%s -lanalyze -o %s",
 	      linker, objdir, sites_src_file, units_src_file, objdir, GEN_VIEWS);
 	puts("Pretty-printing results-1 ...");
