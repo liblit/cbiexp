@@ -134,6 +134,7 @@ liblate_a_SOURCES =				\
 	compute_results.cc			\
 	compute_nonconst_preds.cc		\
 	compute_pred_scores.cc			\
+	compute_pred_scores2.cc			\
 	convert_reports.ll			\
 	est_hyperparms.cc			\
 	extract_timestamps.ll			\
@@ -147,6 +148,7 @@ liblate_a_SOURCES =				\
 	get_ts_ordering.cc			\
 	logreg.cc				\
 	max-observed.cc				\
+	mult_WX.cc				\
 	partial_order.cc			\
 	preds.h					\
 	project.cc				\

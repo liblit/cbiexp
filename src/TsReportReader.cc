@@ -14,11 +14,12 @@ void TsReportReader::read(unsigned runId, const char *when)
 
   SiteCoords coords;
   timestamp ts;
+  unsigned ctr;
 
   while (true)
     {
-      fscanf(report, "%u\t%u\t%Lu\n", &coords.unitIndex, &coords.siteOffset, &ts);
-      if (feof(report))
+      ctr = fscanf(report, "%u\t%u\t%Lu\n", &coords.unitIndex, &coords.siteOffset, &ts);
+      if (ctr != 3)
         break;
 
       assert(coords.unitIndex < num_units);

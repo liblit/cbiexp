@@ -134,11 +134,12 @@ read_rates()
   FILE *const rates = fopenRead(sampleRateFile.c_str());
   SiteCoords coords;
   double rho;
+  unsigned ctr;
 
   while (true) {
-    fscanf(rates, "%u\t%u\t%lg\n", &coords.unitIndex, &coords.siteOffset, &rho);
-    if (feof(rates))
-      break;
+    ctr = fscanf(rates, "%u\t%u\t%lg\n", &coords.unitIndex, &coords.siteOffset, &rho);
+    if (ctr != 3)
+	break;
 
     assert(coords.unitIndex < num_units);
     const unit_t unit = units[coords.unitIndex];

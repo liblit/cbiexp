@@ -37,8 +37,6 @@ class ts_hash_t : public hash_map<SiteCoords, timestamp>
 {
 };
 
-static unsigned nruns_used = 0;
-
 /****************************************************************
  * Run-specific storage
  ***************************************************************/
@@ -86,7 +84,7 @@ Reader::siteTs(const SiteCoords &coords, timestamp ts)
 
 void compute_weights()
 {
-    timestamp n = (timestamp) curr_run.ts.size();
+    double n = (double) curr_run.ts.size();
     double total = 0.0;
     double weight = 0.0;
     for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
@@ -95,6 +93,7 @@ void compute_weights()
 	if (found != curr_run.ts.end()) {
 	    weight = (double) n - found->second;
 	    c->second = weight;
+	    assert(weight > 0.0);
 	    total += weight;
 	}
     }
@@ -192,10 +191,7 @@ operator<< (ostream &out, const vector<PredCoords> &pv)
 	const PredCoords pc = pv[i];
 	pred_hash_t::iterator found = predHash.find(pc);
 	assert(found != predHash.end());
-	if (is_srun[curr_run.runId])
-	    weight = -(double) found->second / num_sruns;
-	if (is_frun[curr_run.runId])
-	    weight = (double) found->second / num_fruns;
+        weight = (double) found->second;
 	out << weight << ' ';
     }
     return out;
@@ -247,7 +243,6 @@ int main(int argc, char** argv)
       if (!is_srun[r] && !is_frun[r])
         continue;
 
-      nruns_used++;
       Reader(r).read(r);
       // sort sites by their timestamps and compute predicate weights accordingly
       process_ts();

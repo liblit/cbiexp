@@ -26,6 +26,7 @@ using namespace std;
 using __gnu_cxx::hash_map;
 
 static double score1 = 0.0, score2 = 0.0, score_n1 = 0.0, score_n2 = 0.0;
+static double score3 = 0.0;
 static ofstream logfp("truthprobs.txt", ios_base::trunc);
 static ofstream datfp("X.dat", ios_base::trunc);
 
@@ -74,10 +75,12 @@ struct PredInfo
         calc_prob_n(dst, dso, realo);
 	calc_prob_n2(dst, dso, realo);
         double answer = (realt > 0) ? 1.0 : 0.0;
+	double obstru = (dst > 0) ? 1.0 : 0.0;
         score1 += abs(answer - tp);
         score2 += abs(answer - tp2);
         score_n1 += abs(answer - tp_n);
         score_n2 += abs(answer - tp_n2);
+	score3 += abs(answer - obstru);
     }
 };
 
@@ -138,6 +141,8 @@ PredInfo::calc_prob2(unsigned t, unsigned o)
 	    denom = gamma*exp(-lambda*rho) + 1.0 - gamma;
 	}
 	tp2 = 1.0 - numer / denom;
+        if (tp2 < 0.0) 
+          tp2 = 0.0;
     }
 }
 
@@ -439,6 +444,7 @@ int main(int argc, char** argv)
     logfp << "------\nScores over " << ctr << " runs:\n";
     logfp << "Model 1: " << score1/ctr << " Given n: " << score_n1/ctr <<endl;
     logfp << "Model 2: " << score2/ctr << " Given n: " << score_n2/ctr << endl;
+    logfp << "Compare observed with real val: " << score3/ctr << endl;
     logfp.close();
     datfp.close();
     return 0;
