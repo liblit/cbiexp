@@ -1,0 +1,25 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+
+########################################################################
+
+
+die "Usage: $0 <sparsity>\n"
+    unless @ARGV == 1;
+
+my ($sparsity) = @ARGV;
+
+
+########################################################################
+
+
+local ($,, $\) = ("\t", "\n");
+my $rate = 1 / $sparsity;
+
+while (<STDIN>) {
+    chomp;
+    my ($unit, $site, undef) = split /\t/;
+    print $unit, $site, $rate;
+}

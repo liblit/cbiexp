@@ -174,11 +174,17 @@ $(tooldir)/corrective-ranking/%: force
 
 .PHONY: clean
 
-rare-sites.txt: %.txt: find-% s.runs f.runs
-	$(time) ./$< --runs-directory=$(datadir) --report-suffix=$(sparsity) >$@
+plan-inverse-100.txt: $(tooldir)/sampling-plans/inverse max-observed.txt
+	$< 100 <max-observed.txt >$@
+clean:: ; rm -f plan-inverse-100.txt
 
-find-rare-sites: %: $(tooldir)/%.o units.o $(tooldir)/libanalyze.a
+max-observed.txt: %.txt: % s.runs f.runs
+	$(time) ./$< --runs-directory=$(datadir) --number-of-runs=1000 >$@
+clean:: ; rm -f max-observed.txt
+
+max-observed: %: $(tooldir)/%.o units.o $(tooldir)/libanalyze.a
 	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
+clean:: ; rm -f max-observed
 
 force:
 .PHONY: force

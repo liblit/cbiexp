@@ -33,8 +33,7 @@ sub run_task ($$$) {
     if ($pid) {
 	$pipe->reader;
 
-	my $output = "$input.$self->{sparsity}";
-	$output .= '-ex' if @{$self->{exempts}};
+	my $output = "$input.$self->{suffix}";
 	my $filtered = new FileHandle $output, 'w' or die "cannot write $output: $!\n";
 
 	while (<$pipe>) {
@@ -50,8 +49,7 @@ sub run_task ($$$) {
 	open STDIN, '<', "$input" or die "cannot read $input: $!\n";
 	open STDOUT, '>&', $pipe or die "cannot redirect stdout into pipe: $!\n";
 	my @command = $self->{decimator};
-	push @command, '--sparsity', $self->{sparsity};
-	push @command, '--exempt-sites', $_ foreach @{$self->{exempts}};
+	push @command, '--plan', $_ foreach @{$self->{plans}};
 	exec @command;
 	die "cannot spawn $decimator: $!\n";
     }

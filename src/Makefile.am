@@ -114,11 +114,11 @@ liblate_a_SOURCES =				\
 	compute_results.cc			\
 	compute_nonconst_preds.cc		\
 	convert_reports.ll			\
-	find-rare-sites.cc			\
 	gather_prior_dist.cc			\
 	gen_preds_file.cc			\
 	gen_summary.cc				\
 	gen_views.cc				\
+	max-observed.cc				\
 	preds.h					\
 	project.cc				\
 	sites.h					\
