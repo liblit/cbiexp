@@ -2,15 +2,17 @@
 
 %{
 #include <iostream>
-#include <ext/hash_set>
+#include <ext/hash_map>
 #include <gsl/gsl_randist.h>
 #include "SiteCoords.h"
 
 static gsl_rng *generator;
-static double probability = NAN;
 
-static unsigned unitIndex; 
-__gnu_cxx::hash_set<SiteCoords> exempt;
+ static double probability;
+static unsigned unitIndex;
+
+typedef __gnu_cxx::hash_map<SiteCoords, double> Plan;
+static Plan plan;
 %}
 
 
@@ -35,10 +37,14 @@ __gnu_cxx::hash_set<SiteCoords> exempt;
   fputs(yytext, stdout);
   const unsigned siteOffset = strtoul(yytext, 0, 10);
   const SiteCoords coords(unitIndex, siteOffset);
-  if (exempt.find(coords) == exempt.end())
-    BEGIN(COUNTS);
-  else
+  const Plan::const_iterator found = plan.find(coords);
+  if (found == plan.end() || found->second == 1)
     BEGIN(EXEMPT);
+  else
+    {
+      probability = found->second;
+      BEGIN(COUNTS);
+    }
 }
 
 <COUNTS>[1-9][0-9]*	{
@@ -72,7 +78,11 @@ using namespace std;
 //
 
 
-unsigned sparsity;
+static istream &
+operator>>(istream &in, pair<SiteCoords, double> &entry)
+{
+  return in >> entry.first >> entry.second;
+}
 
 
 static int
@@ -80,30 +90,18 @@ parseFlag(int key, char *arg, argp_state *state)
 {
   switch (key)
     {
-    case 'x':
+    case 'p':
       {
 	ifstream file(arg);
 	if (!file)
-	  argp_failure(state, EX_NOINPUT, errno, "cannot read exemption list %s", arg);
+	  argp_failure(state, EX_NOINPUT, errno, "cannot read sampling plan %s", arg);
 	file.exceptions(ios::badbit);
-	copy(istream_iterator<SiteCoords>(file), istream_iterator<SiteCoords>(), inserter(exempt, exempt.end()));
+
+	typedef istream_iterator<pair<SiteCoords, double> > reader;
+	copy(reader(file), reader(), inserter(plan, plan.end()));
+
 	return 0;
       }
-
-    case 's':
-      {
-	char *tail;
-	errno = 0;
-	const unsigned sparsity = strtoul(arg, &tail, 0);
-	probability = 1. / sparsity;
-	if (errno || *tail || sparsity == 0 || isnan(probability))
-	  argp_error(state, "invalid sparsity \"%s\"", arg);
-	return 0;
-      }
-
-    case ARGP_KEY_END:
-      if (isnan(probability))
-	argp_failure(state, EX_USAGE, 0, "must use \"--sparsity=NUM\" flag to set target sparsity");
 
     default:
       return ARGP_ERR_UNKNOWN;
@@ -115,8 +113,7 @@ static void
 processCommandLine(int argc, char *argv[])
 {
   static const argp_option options[] = {
-    { "exempt-sites", 'x', "FILE", 0, "do not downsample sites listed in FILE (default: no exemptions)", 0 },
-    { "sparsity", 's', "NUM", 0, "downsample to average sampling rate 1/NUM (no default)", 0 },
+    { "plan", 'p', "FILE", 0, "downsample according to sampling plan in FILE", 0 },
     { 0, 0, 0, 0, 0, 0 }
   };
 
