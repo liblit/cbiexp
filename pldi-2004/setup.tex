@@ -16,13 +16,13 @@ results.  We discuss what we did for each of these steps.
 We chose \moss\ \cite{SWA03} as our benchmark program.  \moss\ is a
 software plagiarism detection service that has been in use since the
 late '90's and has several thousand users worldwide.\footnote{That is,
-\moss\ detects copying in large sets of programs.  The typical \moss\
+\moss\ detects copying in large sets of programs.  The typical \moss
 user is a professor teaching assistant in a programming course.}  As
 such, \moss\ has many of the characteristics of real software: it has
 users who depend on it, it is constantly undergoing revision as its
 purpose and the environment in which it runs evolves, and it is
 complex enough to be composed of several interacting subsystems.  The
-last point, in particular, means that it is reasonable that \moss\
+last point, in particular, means that it is reasonable that \moss
 could have multiple bugs.  From our point of view, \moss\ has the
 additional advantage that it was written and is maintained by one of
 the authors.
@@ -37,7 +37,7 @@ had evolved since the original bug had been fixed, in which case we
 had to judge how to modify the bug to inject it into the code.  We
 feel the modifications, where needed at all, were straightforward.  We
 also included two bugs from the bug logs of other programs; that is,
-we took a known bug from another system and simply added it to \moss\
+we took a known bug from another system and simply added it to \moss
 in the place where \moss\ performed the analogous operation (see
 below).
 
