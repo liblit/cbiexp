@@ -1,5 +1,6 @@
 \documentclass[times,10pt,twocolumn]{article}
 
+\usepackage{url}
 \usepackage{latex8}
 \usepackage{times}
 \usepackage{amsmath}
@@ -36,16 +37,18 @@
 \maketitle
 
 \begin{abstract}
-As part of our work on cooperative bug isolation we have undertaken to 
+As part of our work on Cooperative Bug Isolation (CBI) we have undertaken to 
 instrument and distribute binaries for a number of large open source projects.
-This paper describes a number of significant engineering issues that arise in 
-instrumenting the source code of realistic applications.  This
+This
 public deployment is an important  step towards a large experiment involving (we hope) hundreds or thousands of users that will measure the effectiveness of cooperative bug isolation.
+This paper describes several of the significant engineering issues that arise in 
+instrumenting the source code of realistic applications.  
+More information on CBI can be found at \cite{Liblit:CBIP}.
 \end{abstract}
 
 \section{Introduction}
 
-Cooperative bug isolation (CBI) is based on exploiting the
+Cooperative Bug Isolation (CBI) is based on exploiting the
 huge amount of computation done by the end users of software.  By
 gathering a little bit of information from every execution of a
 program performed by its user community, we should be able to make
@@ -53,7 +56,7 @@ inferences automatically about the causes of bugs experienced in the field.
 
 Our approach to CBI is based upon compile-time instrumentation of the
 program's source code.  We insert instrumentation into the program to
-test a large number of predicates on program values throughout
+test a large number of predicates on program values during
 execution and to count how many times each predicate is observed to be
 true or false.  On termination of the program the list of predicate
 counters is uploaded to a central server together with a record of
@@ -61,7 +64,7 @@ whether the program terminated successfully or not.  Subsequent
 statistical analysis of which predicates are correlated with program
 failure can than indicate to engineers which values and what parts of
 the program are the sources of crashes; in at least some cases even
-the exact line of code that is at fault can be identified \cite{}.
+the exact line of code that is at fault can be identified \cite{Liblit:2003:SUEBI,Zheng:2003:SDSP,PLDI`03*141}.
 
 We believe that CBI and other related research efforts to leverage the 
 computation of end users have great potential to make software development
@@ -82,12 +85,13 @@ this point all components are good enough to support the deployment of
 realistic instrumented applications and the collection of feedback
 reports from a large user community.
 
-There are both interesting technical and social problems involved in the
-design of a CBI system.  We focus on the solutions to technical problems 
-most likely to be useful to the designers of similar systems and experiments:
-dealing with shared libraries, plugins, and threads.  We also briefly discuss
-how users interact with our system, as well as give some static and
-dynamic measures of the applications we instrument.
+There are both interesting technical and social problems involved in
+the design of a CBI system.  In this paper, we focus on the solutions
+to technical problems most likely to be useful to the designers of
+similar systems and experiments: dealing with shared libraries,
+plugins, and threads.  We also briefly discuss how users interact with
+our system, as well as give some static and dynamic measures of the
+applications we instrument.
 
 \begin{table*}
   \centering
@@ -105,10 +109,10 @@ dynamic measures of the applications we instrument.
 \end{table*}
 
 
-\section{Link Ordering, Libraries, and Plugins}
+\section{Libraries and Plugins}
 
 Designing a feedback system for CBI is easy for an application that consists of
-a single object file.  We simply out the predicate counters in the
+a single object file.  We simply write out the predicate counters in the
 order in which they appear in that file, and that list constitutes a complete
 report.
 
@@ -121,13 +125,13 @@ libraries and plugins that are resident only on the end user's
 machine.  Thus, the running environment will be a mix of code that has
 been instrumented by CBI and code that we have never seen before.
 Shared libraries are also interesting because they may be used by
-other applications that we have not instrumented.  So not only must
+other applications that we have not instrumented.  Thus, not only must
 instrumented applications cope with uninstrumented code, but
 instrumented code must cope with finding itself in an
 uninstrumented application.
 
 An orthogonal set of problems arise from static linking and dynamic
-loading.  Our system does not have control over link order, and so
+loading.  Our system does not have control over the linker and
 cannot assume that object files appear in any particular order.
 Plugins may be loaded late and unloaded at any time.  If an
 instrumented plugin is about to be unloaded, we must capture its part
@@ -137,20 +141,20 @@ longer be accessed.
 
 Our solution to all of these problems is to make each object file
 self-managing, with some initialization code that runs when it is
-logically loaded, and finalization code that runs if it is logically
-unloaded.  For objects which are part of the main application binary,
-the initialization code runs early in program execution, before
+loaded, and finalization code that runs when it is unloaded.  For
+objects which are part of the main application binary, the
+initialization code runs early in program execution, before
 \texttt{main()}.  The finalization code runs after \texttt{main()}
 returns or after \texttt{exit()} is called.  Shared libraries are
 similar.  For plugins, the initialization code runs within
 \texttt{dlopen()} after the plugin has been mapped into memory.
 Plugin finalization code runs within \texttt{dlclose()} just before
-the plugin is removed from memory.  Each object file also maintains its
-own instrumentation state; in particular, the predicate counters for each
-object file are stored within the object file.
+the plugin is removed from memory.  Each object file also maintains
+its own instrumentation state; in particular, each object file maintains
+its own predicate counters.
 
-There is one situation in which we need a global registry of the loaded
-object files.  If the program crashes, we need to be able to gather
+There is one situation in which we need global knowledge of the loaded
+object files.  If the program crashes, we must gather
 the predicate counters from each loaded object file for the feedback report.
 We maintain a doubly-linked list of loaded object files, and the
 initialization/finalization code for each object file add/removes that
@@ -159,29 +163,27 @@ facilities provided by the ELF executable format; these are the same
 facilities used by C++ code to run constructors and destructors on
 global variables.
 
-We have also given some attention to the fact that the global registry
-could itself be trashed by a buggy program.  We maintain a global
-counter of the expected size of that list.  When walking the list in a
-signal handler, we stop when that counter tells us to stop regardless
-of whether we have actually reached the end of the list data
-structure.  This prevents us from getting an infinitely long feedback
-report if a memory error introduced a cycle into the doubly linked
-list.  The global registry can be damaged in other ways by a
-misbehaving program, of course, but avoiding cycles is the most
-important one.
+We have also given some attention to the fact that this global
+registry could itself be corrupted by a buggy program.  We maintain a
+global counter of the expected size of the global registry.  When
+walking the list in a signal handler, we use the counter to decide
+when to stop even if we have not reached the end of the list data
+structure.  This prevents an infinite loop if a memory error in the
+application introduces a cycle into the doubly-linked list.  The
+global registry can be damaged in other ways by a misbehaving program,
+of course, but avoiding cycles is the most important case to handle.
 
 The complications in checking for a corrupted global registry are just
-an example of a general phenomenon that it is not possible to completely
-isolate program instrumentation from the program in unsafe languages such
-as C and C++.  As a result it is necessary sanity check feedback reports
-at the central server and discard any that are ill-formed.  In practice
-we do receive ill-formed reports, but the number is only a few percent
-of the total number of reports.
-
+an example of the general problem that it is not possible to
+completely isolate program instrumentation from the program itself in
+unsafe languages such as C and C++.  As a result it is necessary to
+sanity check feedback reports at the central server and discard any
+that are ill-formed.  In practice we do receive ill-formed reports,
+but the number is only a tiny fraction of all reports.
 
 \subsection{Threads}
 
-Our system maintains three kinds of global data that 
+Our CBI system maintains three kinds of global data that 
 need special attention in multithreaded
 applications.  In each case thread-safety can hurt performance, 
 so we only take this extra care if in fact the application is multithreaded
@@ -192,11 +194,11 @@ skipping over some instrumentation and instead executing a ``fast path''
 with no instrumentation at all.  We use a global countdown to determine
 how many instrumentation sites to skip before testing one predicate and
 recording its result.  Thus, in a multi-threaded system, the global variable
-holding the next-sample countdown could be a source of high contention between
+holding the next-sample countdown could be a source of high contention among
 threads.
 
 The simple solution to this problem is to give each thread its own,
-independent countdown variable.  The behavior of the system with multiple 
+independent countdown variable.  The behavior of the system with per-thread
 countdowns is indistinguishable from having a single global countdown,
 and in addition we avoid all locking.
 
@@ -204,35 +206,36 @@ Enacting this plan requires compiler support.  We use the
 \texttt{\_\_thread} storage qualifier to declare thread-specific
 storage.  This is a GCC extension and also requires support from the
 POSIX threading runtime, C library, and even the runtime loader.  
-We also need to alter thread creation so we can initialize the
+We also must alter thread creation so we can initialize the
 new thread's global state.  We use the \texttt{--wrap} flag provided
 by the GNU linker to replace \texttt{pthread\_create()} with our own
 special version.  
 
-The second class of data is the predicate counters.
-Recall that the  predicate counters keep track of how often a particular
-predicate at a particular line of code is observed to be true or false.
-Because, for efficiency,  predicates are tested rarely (say once in every 100
-times the line of code associated with the predicate is executed), 
-any individual counter is accessed rarely even by a single thread.
+The second class of data that must be handled specially in
+multi-threaded applications is the predicate counters.  Recall that
+the predicate counters keep track of how often a particular predicate
+at a particular line of code is observed to be true or false.
+Because, for efficiency, predicates are tested rarely (say once in
+every 100 times the line of code associated with the predicate is
+executed), any individual counter is accessed rarely even by a single
+thread.  For this reason, we maintain only one copy of each predicate
+counter, shared by all threads.  The critical operation on these
+counters, an increment by one, is so basic that every CPU architecture
+has some way of doing this atomically without resorting to explicit
+locking.
 
-For this reason, there is only one copy of each predicate counter
-shared by all threads.  In addition, the standard access pattern, an
-increment by one, is so basic that every CPU architecture has
-some way of doing this without resorting to a system call.
-
-Finally, the global registry of compilation units and the report file
-must be protected from concurrent access.  Because these items are very
-rarely accessed, we simply guarantee single access to both by guarding
-each with its own POSIX mutex lock.
+Finally, the third class of data that must be protected from concurrent access
+is the global registry of compilation units and the report file.
+Because these structures are accessed very rarely, we guarantee single 
+access by guarding each with its own mutex lock.
 
 
-\section{User Interaction and Wrapping}
+\section{User Interaction}
 
 When a user launches an instrumented application, he does not run the
 instrumented binary directly.  Instead, we install a wrapper script in
 the expected location (e.g. \texttt{/usr/bin/nautilus}) and put the
-real instrumented binary elsewhere.  The wrapper script has several
+instrumented binary elsewhere.  The wrapper script has several
 responsibilities:  it performs all user interaction
 that goes beyond what the underlying application would normally do, and
 it collects the raw feedback report from the instrumented
@@ -263,12 +266,11 @@ It provides a simple popup menu with a toggle to globally disable or
 enable sampling.  A second menu item launches the sampler control
 panel.  The status icon changes depending on whether sampling is
 enabled or disabled globally, and remains present as long as at least
-one instrumented application is running.  It vanishes when the last
-instrumented application goes away.
+one instrumented application is running.  
 
-Because the wrapper script launched the real instrumented binary as a
+Because the wrapper script launches the real instrumented binary as a
 subprocess, it can also check that subprocess's exit status (either a
-result code or a fatal signal).  This will be included in the report
+result code or a fatal signal), which is included in the report
 uploaded to our feedback collection server.
 The wrapper script compresses the raw feedback report for transit
 using gzip-compatible compression.  This is a huge benefit, as reports
@@ -276,29 +278,30 @@ are mostly zeros and compress very well.  The average compression
 of the reports we have received is 96\%; Table~\ref{report-sizes} shows
 the range of report sizes we have received by application.  As can be
 seen, even the largest reports are less than 40K bytes, which can be uploaded
-even over a slow modem connection in seconds.
+over even a slow modem connection in seconds.
 
-Before submitting a report, the wrapper checks one more time whether
+Before submitting a report, the wrapper checks once more whether
 sampling is enabled both globally and for this application.  If the
 user changed his mind after program launch, this gives a second chance
 for stopping an unwanted feedback report from going out.
 
-Because the submission is an HTTP request, it can have a response.
+Because we transmit our reports using HTTP requests, every submission
+can also have a response from the server.
 Ordinarily the collection server does not give any response beyond a
 success code.  However, if the server does give a response, the
 wrapper script will receive it and present it to the user as an HTML
-page.  This gives us the ability to communicate information back to
-our users.  It might be used, for example, if a critical security
+page.  This feature might be used, for example, if a critical security
 issue were found requiring immediate upgrades.  
 The HTTP reply can also include a few special reply headers which
 update the local sampling configuration on the client.  We have the
 ability to promote a different destination URL for future reports,
 which may be useful if we need to relocate the collection server.  We
-can change the sampling density from its default of 100, which may be
+can change the sampling density from its default of $1/100$, which may be
 useful if performance problems arise.  We can also issue a ``poison
-pill'' which turns off sampling for future runs of this application.
-This is intended as a shutoff value should the Cooperative Bug
-Isolation project be discontinued at some future date.  It might also
+pill'' which turns off sampling for future runs of the application.
+This is intended as a shutoff should the Cooperative Bug
+Isolation project be discontinued at some future date (a feature we
+learned would be useful from the prior experience of \cite{Elbaum:2003:DISATA}), and it might also
 be used to quash future reports from individual misbehaving users.  So
 far we have not had need to use any of these facilities.  
 
@@ -338,15 +341,15 @@ expanded onto disk.
 
 Another potential issue is application performance, but thus far we
 have received no complaints about the performance of any of our
-instrumented applications.  We used \nicefrac{1}{100} sampling, which
+instrumented applications.  We use \nicefrac{1}{100} sampling, which
 apparently is sparse enough; we probably could have sampled even more
 densely for these interactive applications which spend most of their
-time waiting for the user to do something.  Note however that even
+time waiting for the user to do something.  Note however that 
 these applications do have CPU-intensive phases, such as when
 Rhythmbox is loading up a library with thousands of music files or
 when Gnumeric is recalculating a very large spreadsheet.
 
-Finally, Figure~\ref{reports-per-app} summarizes the current state of
+Finally, Table~\ref{reports-per-app} summarizes the current state of
 the data for each of our instrumented applications.  In this table,
 ``count'' is the total number of feedback reports received so far,
 which is broken out into ``good'' runs, runs that exited with a
@@ -355,22 +358,23 @@ fatal signal.  The applications are ordered by decreasing crash rate;
 Rhythmbox ends by crashing 15\% of the time.
 
 There is both good news and bad news in these figures.  The bad news
-is that we have not yet received enough executions to carry out statistically
-significant analysis of the results.  Based on our previous experience with
-studies done ``in the lab'' running applications on synthetic data to simulate
-a large user community, we need between 10,000 and 20,000 executions with
-our current methods to achieve accurate analysis of the results, which is
-more than ten times the number of runs we have received for any of these
-applications.  Our situation here reflects an inherent aspect of CBI and
-similar approaches, which is that these methods work well only beyond a
-certain minimum scale.
+is that we have not yet received enough executions to carry out
+statistically significant analysis of the results.  Based on our
+previous experience with studies done ``in the lab'' running
+applications on synthetic data to simulate a large user community, we
+need between 10,000 and 20,000 executions with our current methods to
+achieve accurate analysis of the results, which is more than ten times
+the number of runs we have received to date for any of these
+applications.  Our situation here reflects an inherent aspect of CBI
+and similar approaches, which is that these methods work well only
+beyond a certain minimum scale.
 
 The good news is that these applications do crash,
-showing us that with enough runs there is potential to improve the state
+indicating to us that there is potential to improve the state
 of the software given enough users participating in CBI.  In addition,
 we have enough data to demonstrate that the complete system works, from
 instrumenting code through gathering of reports, and we continue to
-receive new feedback reports.  The next step in our experiment will be
+receive new feedback reports daily.  The next step in our experiment will be
 to find ways to recruit enough users to validate the advantages of CBI
 for large user communities of complex applications.
 
@@ -389,5 +393,7 @@ for large user communities of complex applications.
   \caption{Number of runs received for each application.}  
   \label{reports-per-app}
 \end{table}
+
+\bibliography{personal,pldi03,ramss}
 
 \end{document}
