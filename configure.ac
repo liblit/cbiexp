@@ -74,25 +74,23 @@ AC_ARG_WITH(sampler-build,
 
 if test -z "$with_sampler_build"; then
   AC_PATH_PROG(sampler_cc, sampler-cc)
-  if test -z "$sampler_cc"; then
-    AC_MSG_ERROR(cannot find sampler-cc; please use "--with-sampler-build=DIR")
-  fi
-  AC_MSG_CHECKING(sampler tools)
-  sampler_tooldir="`dirname $sampler_cc`/../lib/sampler/tools"
-  if test -x "$sampler_tooldir/extract-section"; then
-    sampler_tooldir="`cd $sampler_tooldir; pwd`"
-    AC_MSG_RESULT($sampler_tooldir)
-  else
-    AC_MSG_ERROR(cannot find sampler tools in $sampler_tooldir; please use "--with-sampler-build=DIR")
-  fi
+  sampler_tooldir="`cd \`dirname $sampler_cc\`/../lib/sampler/tools; pwd`"
 else
-  AC_SUBST(sampler_builddir, $with_sampler_build)
-  sampler_cc='${sampler_builddir}/instrumentor/driver/sampler-cc-here'
-  sampler_tooldir='${sampler_builddir}/tools'
+  AC_PATH_PROG(sampler_cc, sampler-cc-here, , $with_sampler_build/instrumentor/driver)
+  sampler_tooldir="$with_sampler_build/tools"
 fi
 
-AC_SUBST(sampler_cc)
-AC_SUBST(sampler_tooldir)
+if test -z "$sampler_cc"; then
+  AC_MSG_ERROR(cannot find sampler-cc; please use "--with-sampler-build=DIR")
+fi
+
+AC_MSG_CHECKING(sampler tools)
+if test -x "$sampler_tooldir/extract-section"; then
+  AC_MSG_RESULT($sampler_tooldir)
+  AC_SUBST(sampler_tooldir)
+else
+  AC_MSG_ERROR(cannot find sampler tools in $sampler_tooldir; please use "--with-sampler-build=DIR")
+fi
 
 
 ########################################################################
