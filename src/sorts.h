@@ -14,6 +14,7 @@ namespace Sort
   {
   public:
     Ascending()
+      : get()
     {
     }
 
@@ -32,6 +33,7 @@ namespace Sort
   {
   public:
     Descending()
+      : get()
     {
     }
 
