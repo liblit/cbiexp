@@ -41,11 +41,18 @@ const argp RunsDirectory::argp = {
 };
 
 
+void
+RunsDirectory::format(ostream &sink, unsigned runId, const char filename[])
+{
+  unsigned subdirectory = runId / RunsPerSubdirectory;
+  sink << root << '/' << subdirectory << '/' << runId << '/' << filename;
+}
+
+
 string
 RunsDirectory::format(unsigned runId, const char filename[])
 {
-  unsigned subdirectory = runId / RunsPerSubdirectory;
   ostringstream collect;
-  collect << root << '/' << subdirectory << '/' << runId << '/' << filename;
+  format(collect, runId, filename);
   return collect.str();
 }

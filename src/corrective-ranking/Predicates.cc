@@ -1,5 +1,7 @@
 #include <cassert>
+#include <cerrno>
 #include <fstream>
+#include <iostream>
 
 #include "../Progress/Bounded.h"
 #include "../Progress/Unbounded.h"
@@ -12,10 +14,32 @@ using namespace std;
 Predicates::Predicates()
   : count(0)
 {
-  ifstream tru("tru.txt");
-  ifstream obs("obs.txt");
-  assert(tru);
-  assert(obs);
+}
+
+
+static void
+open(ifstream &stream, const char directory[], const char filename[])
+{
+  string path(directory);
+  path += '/';
+  path += filename;
+
+  stream.open(path.c_str());
+
+  if (!stream)
+    {
+      const int error = errno;
+      cerr << "cannot read " << path << ": " << strerror(error) << endl;
+      exit(error || 1);
+    }
+}
+
+
+void Predicates::load(const char directory[])
+{
+  ifstream tru, obs;
+  open(tru, directory, "tru.txt");
+  open(obs, directory, "obs.txt");
 
   Progress::Unbounded progress("reading predicates");
   while (tru && obs)

@@ -8,7 +8,7 @@ using namespace std;
 
 
 void
-RunSet::dilute(const RunSet &winner)
+RunSet::dilute(const Predicate &, const RunSet &winner)
 {
   list<unsigned> difference;
   set_difference(begin(), end(), winner.begin(), winner.end(), back_inserter(difference));

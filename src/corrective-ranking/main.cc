@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "../Confidence.h"
+#include "../NumRuns.h"
 #include "../Progress/Bounded.h"
 #include "../Stylesheet.h"
 #include "../ViewPrinter.h"
@@ -50,7 +51,7 @@ buildView(Predicates &candidates, const char projection[])
 	   << "</predictor>";
 
       // cerr << "winner " << winner->index << " dilutes all failures\n";
-      allFailures.dilute(winner->tru.failures);
+      allFailures.dilute(*winner, winner->tru.failures);
       if (allFailures.count <= 0)
 	break;
 
@@ -77,11 +78,12 @@ buildView(Predicates &candidates, const char projection[])
 const char *Stylesheet::filename = "corrected-view.xsl";
 
 
-void
+static void
 processCommandLine(int argc, char *argv[])
 {
   static const argp_child children[] = {
     { &Confidence::argp, 0, 0, 0 },
+    { &NumRuns::argp, 0, 0, 0 },
     { &Stylesheet::argp, 0, 0, 0 },
     { 0, 0, 0, 0 }
   };
@@ -116,7 +118,6 @@ rankMain(int argc, char *argv[], const char projection[])
   }
 
   Predicates candidates;
+  candidates.load();
   buildView(candidates, projection);
-
-  cerr << "allFailures.count == " << allFailures.count << '\n';
 }

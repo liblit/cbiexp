@@ -44,13 +44,6 @@ bool operator<(const Predicate &, const Predicate &);
 #include <cassert>
 
 
-inline
-Predicate::Predicate(unsigned index)
-  : index(index)
-{
-}
-
-
 inline double
 Predicate::badness() const
 {

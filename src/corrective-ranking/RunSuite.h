@@ -5,6 +5,8 @@
 
 #include "RunSet.h"
 
+class Predicate;
+
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -17,13 +19,14 @@ struct RunSuite
   RunSet failures;
   RunSet successes;
 
+  RunSuite();
   void load(std::istream &);
 
   double count() const;
   double failRate() const;
   double errorPart() const;
 
-  void dilute(const RunSuite &winner);
+  void dilute(const Predicate &, const RunSuite &);
 };
 
 

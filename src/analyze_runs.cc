@@ -8,6 +8,7 @@
 #include <libgen.h>
 #include <string>
 #include <unistd.h>
+#include "CompactReport.h"
 #include "Confidence.h"
 #include "MapSites.h"
 #include "NumRuns.h"
@@ -105,6 +106,7 @@ static void process_cmdline(int argc, char *argv[])
     };
 
     static const argp_child children[] = {
+	{ &CompactReport::argp, 0, 0, 0 },
 	{ &Confidence::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
@@ -185,15 +187,16 @@ int main(int argc, char** argv)
 	add_links(incdir, "summary");
 	shell("%s %s/compute_results.o %s.o %s.o -L%s -lanalyze -o compute-results",
 	      linker, objdir, MapSites::sitesBasename, MapSites::unitsBasename, objdir);
-	shell("./compute-results --confidence=%u --runs-directory=%s",
-	      Confidence::level, RunsDirectory::root);
+	shell("./compute-results --confidence=%u --runs-directory=%s --sparsity=%u",
+	      Confidence::level, RunsDirectory::root, CompactReport::sparsity);
     }
 
     if (phaseSelected[DoComputeObsTru]) {
 	puts("Computing obs and tru ...");
 	shell("%s %s/compute_obs_tru.o %s.o %s.o -L%s -lanalyze -o compute-obs-tru",
 	      linker, objdir, MapSites::sitesBasename, MapSites::unitsBasename, objdir);
-	shell("./compute-obs-tru --runs-directory=%s", RunsDirectory::root);
+	shell("./compute-obs-tru --runs-directory=%s --sparsity=%u",
+	      RunsDirectory::root, CompactReport::sparsity);
     }
 
     if (phaseSelected[DoPrintSummary]) {

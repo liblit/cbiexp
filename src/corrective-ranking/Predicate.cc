@@ -10,6 +10,12 @@
 using namespace std;
 
 
+Predicate::Predicate(unsigned index)
+  : index(index)
+{
+}
+
+
 void
 Predicate::load(istream &truFile, istream &obsFile)
 {
@@ -86,6 +92,6 @@ Predicate::harmonic() const
 void
 Predicate::dilute(const Predicate &winner)
 {
-  tru.dilute(winner.tru);
-  obs.dilute(winner.tru);
+  tru.dilute(winner, winner.tru);
+  obs.dilute(winner, winner.tru);
 }

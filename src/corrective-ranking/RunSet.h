@@ -3,6 +3,9 @@
 
 #include <iosfwd>
 #include <list>
+#include "Outcome.h"
+
+class Predicate;
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -11,12 +14,19 @@
 //
 
 
-struct RunSet : public std::list<unsigned>
+class RunSet : public std::list<unsigned>
 {
-  double count;
-  void load(std::istream &, char expected);
+public:
+  Outcome outcome;
+  RunSet(Outcome);
 
-  void dilute(const RunSet &winner);
+  double count;
+  void load(std::istream &);
+
+  void dilute(const Predicate &, const RunSet &);
+
+private:
+  size_t intersectionSize(const RunSet &);
 };
 
 

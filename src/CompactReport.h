@@ -7,7 +7,10 @@
 
 namespace CompactReport
 {
-  extern std::string format(unsigned runId);
+  extern const argp argp;
+
+  extern unsigned sparsity;
+  extern std::string format(unsigned runId, unsigned = sparsity);
 }
 
 

@@ -6,11 +6,18 @@
 using namespace std;
 
 
+RunSuite::RunSuite()
+  : failures(Failure),
+    successes(Success)
+{
+}
+
+
 void
 RunSuite::load(istream &in)
 {
-  failures.load(in, 'F');
-  successes.load(in, 'S');
+  failures.load(in);
+  successes.load(in);
 }
 
 
@@ -39,8 +46,8 @@ RunSuite::errorPart() const
 
 
 void
-RunSuite::dilute(const RunSuite &winner)
+RunSuite::dilute(const Predicate &winPredicate, const RunSuite &winSuite)
 {
-  failures.dilute(winner.failures);
-  successes.dilute(winner.successes);
+  failures.dilute(winPredicate, winSuite.failures);
+  successes.dilute(winPredicate, winSuite.successes);
 }

@@ -1,20 +1,15 @@
 #include <cassert>
-#include "CountingIterator.h"
 #include "RunSet.h"
 #include "main.h"
 
 
 void
-RunSet::dilute(const RunSet &winner)
+RunSet::dilute(const Predicate &, const RunSet &winner)
 {
   if (!empty())
     {
-      // how many runs do these two sets have in common?
-      size_t intersectionSize = 0;
-      CountingIterator<unsigned> result(intersectionSize);
-      set_intersection(begin(), end(), winner.begin(), winner.end(), result);
-
-      count -= double(intersectionSize);
+      const size_t common = intersectionSize(winner);
+      count -= common;
       if (count < 0)
 	count = 0;
     }

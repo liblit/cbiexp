@@ -1,0 +1,78 @@
+#!/usr/bin/perl -w
+
+########################################################################
+#
+#  utility for decimating an entire dataset
+#
+
+
+use strict;
+
+use FileHandle;
+use FindBin;
+use IO::Pipe;
+
+
+my $RunsPerSubdirectory = 10000;
+
+my $decimator = "$FindBin::Bin/decimate-sparse";
+-x $decimator or die "$decimator is not executable\n";
+
+
+########################################################################
+
+
+die "Usage: $0 <data-directory> <sparsity>\n"
+    unless @ARGV == 2;
+
+my ($datadir, $sparsity) = @ARGV;
+
+
+my $numRuns = new FileHandle "$datadir/stamp-labels" or die "cannot read $datadir/stamp-labels: $!\n";
+$numRuns = <$numRuns>;
+chomp $numRuns;
+
+
+sub progress ($) {
+    if (-t && $ENV{TERM}) {
+	my $runId = shift;
+	my $step = $runId + 1;
+	my $percent = 100 * $step / $numRuns;
+
+	print "\rdecimating runs: $step/$numRuns $percent%";
+    }
+}
+
+
+foreach my $runId (0 .. $numRuns - 1) {
+    progress $runId;
+
+    my $subdir = int($runId / $RunsPerSubdirectory);
+    my $rundir = "$datadir/$subdir/$runId";
+    my $input = "$datadir/$subdir/$runId/reports.sparse";
+
+    my $pipe = new IO::Pipe;
+    my $pid = fork;
+    die "cannot fork: $!\n" unless defined $pid;
+
+    if ($pid) {
+	$pipe->reader;
+
+	my $output = "$input.$sparsity";
+	my $filtered = new FileHandle $output, 'w' or die "cannot write $output: $!\n";
+
+	while (<$pipe>) {
+	    $filtered->print($_) unless /^\d+\t\d+(\t0)*\n$/;
+	}
+
+	$pipe->close or exit 1;
+	wait or exit 1;
+
+    } else {
+	$pipe->writer;
+	open STDIN, '<', "$input" or die "cannot read $input: $!\n";
+	open STDOUT, '>&', $pipe or die "cannot redirect stdout into pipe: $!\n";
+	exec $decimator, $sparsity;
+	die "cannot spawn $decimator: $!\n";
+    }
+}

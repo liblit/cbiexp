@@ -5,6 +5,7 @@
 #include <fstream>
 #include <queue>
 #include <vector>
+#include "CompactReport.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
@@ -204,6 +205,7 @@ void Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, 
 static void process_cmdline(int argc, char **argv)
 {
     static const argp_child children[] = {
+	{ &CompactReport::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };

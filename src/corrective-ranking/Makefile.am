@@ -1,12 +1,17 @@
 AM_CPPFLAGS = -W -Wall -Werror -Wformat
 
-noinst_LIBRARIES = libcorrective.a
+noinst_LIBRARIES =				\
+	libadaptive-sampled.a			\
+	libcorrective.a
 
 noinst_PROGRAMS =				\
 	approximate-complete			\
 	exact-complete
 
 libcorrective_a_SOURCES =			\
+	CountingIterator.h			\
+	Outcome.cc				\
+	Outcome.h				\
 	Predicates.cc				\
 	Predicates.h				\
 	Predicate.cc				\
@@ -26,10 +31,14 @@ exact_complete_SOURCES =			\
 exact_complete_LDADD = libcorrective.a ../libanalyze.a
 
 approximate_complete_SOURCES =			\
-	CountingIterator.h			\
 	approximate-complete.cc
 
 approximate_complete_LDADD = libcorrective.a ../libanalyze.a
+
+libadaptive_sampled_a_SOURCES =			\
+	AlternateRunsDirectory.h		\
+	adaptive-sampled.cc
+
 
 ../libanalyze.a: force
 	$(MAKE) -C $(@D) $(@F)

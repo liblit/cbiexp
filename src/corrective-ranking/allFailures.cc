@@ -1,4 +1,4 @@
 #include "allFailures.h"
 
 
-RunSet allFailures;
+RunSet allFailures(Failure);

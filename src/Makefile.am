@@ -9,6 +9,7 @@ EXTRA_DIST =					\
 
 noinst_PROGRAMS =				\
 	analyze_runs				\
+	decimate-sparse				\
 	map_sites				\
 	process_run_labels
 
@@ -30,6 +31,10 @@ map_sites_LDADD = libanalyze.a
 
 process_run_labels_SOURCES = process_run_labels.cc
 process_run_labels_LDADD = libanalyze.a
+
+decimate_sparse_SOURCES = decimate-sparse.l
+decimate_sprase_INCLUDES = $(CSL_CFLAGS)
+decimate_sparse_LDADD = $(GSL_LIBS)
 
 
 ########################################################################

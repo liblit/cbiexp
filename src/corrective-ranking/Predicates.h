@@ -17,6 +17,7 @@ namespace Progress { class Bounded; }
 struct Predicates : public std::list<Predicate>
 {
   Predicates();
+  void load(const char[] = ".");
   unsigned count;
 
   void rescore(Progress::Bounded &);

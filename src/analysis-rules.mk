@@ -9,6 +9,8 @@ sitesglob := $(experiment)/share/*.sites
 sites := $(wildcard $(sitesglob))
 sites := $(if $(sites), $(sites), $(error no sites files in $(sitesglob)))
 
+sparsity := 1
+
 time := /usr/bin/time
 
 sparsebase := fobs sobs ftr str
@@ -121,7 +123,7 @@ all_hl_corrected-%.xml: $(tooldir)/corrective-ranking/% f.runs obs.txt tru.txt
 clean:: ; rm -f all_hl_corrected-exact-complete.xml all_hl_corrected-approximate-complete.xml
 
 obs.txt tru.txt: $(tooldir)/compute_obs_tru.o stamp-convert-reports preds.txt s.runs f.runs sites.o units.o
-	$(time) $(tooldir)/analyze_runs --do=compute-obs-tru --runs-directory=$(datadir)
+	$(time) $(tooldir)/analyze_runs --do=compute-obs-tru --runs-directory=$(datadir) --sparsity=$(sparsity)
 clean:: ; rm -f obs.txt tru.txt compute-obs-tru
 
 $(filter %_none.xml, $(views)): $(tooldir)/gen_views.o sites.o units.o preds.txt
@@ -135,7 +137,7 @@ summary.xml: $(tooldir)/gen_summary.o preds.txt s.runs f.runs sites.o units.o
 clean:: ; rm -f summary.xml gen-summary
 
 preds.txt: $(tooldir)/compute_results.o sites.o units.o s.runs f.runs stamp-convert-reports
-	$(time) $(tooldir)/analyze_runs --do=compute-results --runs-directory=$(datadir)
+	$(time) $(tooldir)/analyze_runs --do=compute-results --runs-directory=$(datadir) --sparsity=$(sparsity)
 clean:: ; rm -f preds.txt compute-results
 
 stamp-convert-reports: $(tooldir)/convert_reports.o $(datadir)/stamp-labels s.runs f.runs units.o

@@ -5,6 +5,8 @@ TAGS
 analyze_runs
 compiler.cc
 convert_reports.cc
+decimate-sparse
+decimate-sparse.c
 format
 gen_views
 map_sites

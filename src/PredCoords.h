@@ -7,6 +7,7 @@
 struct PredCoords : public SiteCoords
 {
   PredCoords();
+  PredCoords(const SiteCoords &, unsigned pred);
   PredCoords(unsigned unit, unsigned site, unsigned pred);
   unsigned predicate;
 
@@ -28,6 +29,14 @@ namespace __gnu_cxx
 
 inline
 PredCoords::PredCoords()
+{
+}
+
+
+inline
+PredCoords::PredCoords(const SiteCoords &siteCoords, unsigned pred)
+  : SiteCoords(siteCoords),
+    predicate(pred)
 {
 }
 

@@ -421,6 +421,7 @@ void cull_preds_aggressively2()
 void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
+	{ &CompactReport::argp, 0, 0, 0 },
 	{ &Confidence::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
