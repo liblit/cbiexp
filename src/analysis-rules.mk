@@ -15,8 +15,26 @@ sorts := lb is fs nf hl hs
 projections := none circular linear
 views := $(foreach scheme, $(schemes), $(foreach sort, $(sorts), $(foreach projection, $(projections), $(scheme)_$(sort)_$(projection).xml)))
 
-links := logo.css logo.xsl predictor-info.dtd projected-view.dtd projected-view.xsl projections.dtd projections.xml sorts.dtd sorts.xml summary.css summary.dtd summary.xsl view.css view.dtd view.xsl
-web := $(views) $(links) predictor-info.xml summary.xml
+topRho := $(foreach sort, hl hs, $(foreach proj, circular linear, top-rho_$(sort)_$(proj).xml))
+links :=					\
+	logo.css				\
+	logo.xsl				\
+	predictor-info.dtd			\
+	projected-view.dtd			\
+	projected-view.xsl			\
+	projections.dtd				\
+	projections.xml				\
+	rho.dtd					\
+	rho.xsl					\
+	sorts.dtd				\
+	sorts.xml				\
+	summary.css				\
+	summary.dtd				\
+	summary.xsl				\
+	view.css				\
+	view.dtd				\
+	view.xsl
+web := $(views) $(links) $(topRho) predictor-info.xml summary.xml $(web_extras)
 publish := $(HOME)/www/project/$(name)-new
 
 all: $(web)
@@ -44,7 +62,7 @@ xmlify-results: %: $(tooldir)/%.o sites.o units.o $(tooldir)/libanalyze.a
 	$(LINK.cc) $^ -o $@
 
 $(filter-out %_none.xml, $(views)): project preds.txt rho.bin
-	$(time) ./$<
+	$(time) ./$< $(projected_view_flags)
 	$(MAKE) projected-view.dtd
 	xmllint --valid --noout $(filter-out %_none.xml, $(views))
 clean:: ; rm -f $(filter-out %_none.xml, $(views))
@@ -52,6 +70,10 @@ clean:: ; rm -f $(filter-out %_none.xml, $(views))
 project: $(tooldir)/project.o sites.o units.o $(tooldir)/libanalyze.a $(tooldir)/Score/libScore.a
 	$(LINK.cc) $^ -o $@
 clean:: ; rm -f project
+
+$(topRho): top-rho_%: top-rho all_% rho.bin
+	./$<
+	xmllint --valid --noout $(topRho)
 
 rho.bin: calculate.m $(sparse)
 	echo "fwrite(fopen('rho.bin','w'), rho, 'double');" | $(time) matlab -nodisplay -nojvm -r calculate
@@ -70,7 +92,7 @@ obs.txt tru.txt: $(tooldir)/compute_obs_tru.o stamp-convert-reports preds.txt s.
 clean:: ; rm -f obs.txt tru.txt compute-obs-tru
 
 $(filter %_none.xml, $(views)): $(tooldir)/gen_views.o sites.o units.o preds.txt
-	$(time) $(tooldir)/analyze_runs --do=print-results-1
+	$(time) $(tooldir)/analyze_runs --do=print-results-1 $(view_flags)
 	xmllint --valid --noout $(filter %_none.xml, $(views))
 clean:: ; rm -f $(filter %_none.xml, $(views)) gen-views
 
