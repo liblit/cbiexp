@@ -18,7 +18,7 @@ offline downsampling program allows us generate sparser samples from this
 full data; thus, we were able to use the same set of runs to test the
 effect of different sampling rates on the results.  
 
-We analyzed {\tt ccrypt} version 1.2, which has a known bug \cite{Selinger:2003:cqual}.  At one point in the code the program attempts to write a file.  If the file already exists, the user is presented with a prompt asking for confirmation that the file should be written; if the user input is EOF (i.e., the user hits {\tt Enter} without typing anything) the program will crash.  We used only the {\tt returns}
+We analyzed {\tt ccrypt} version 1.2, which has a known bug \cite{Selinger:2003:cqual}.  At one point in the code the program attempts to write a file.  If the file already exists, the user is presented with a prompt asking for confirmation that the file should be written; if the user input is EOF (i.e., the user hits {\tt Enter} without typing anything) the program will crash.  We used only the returns
 instrumentation scheme for this experiment. The top
 two entries of the report are (most information is elided for
 brevity):
@@ -36,8 +36,8 @@ whenever a causal sequence of instrumented predicates must be true for a bug to 
 sequence shows a distinct step up in the probability of failure.
 
 Note also that the report is very short; only 6 predicates out of more than 8,000 are retained by the test $\increase() > 0$.
-Uniformly throughout our experiments the {\tt returns} and {\tt branches} reports are short enough that all predicates can
-easily be examined by hand; we discuss the larger {\tt scalar-pairs} reports below.
+Uniformly throughout our experiments the returns and branches reports are short enough that all predicates can
+easily be examined by hand; we discuss the larger scalar-pairs reports below.
 
 Our second experiment isolates a buffer overrun in version 1.06 of GNU's {\tt bc}.  In our
 previous work, which used an algorithm based on logistic regression, all of the top
@@ -75,7 +75,8 @@ of a moment to discover this fact.}  Changing the rank order to list
 the predicates with a large number of failing runs first, the first
 group of predicates mostly involve {\tt indx} being larger than
 something else on the first line of the code fragment given above.
-Also in this cluster is the predicate {\tt v\_count > a\_count}, as
+Also in this cluster is the predicate {\tt v\_count > a\_count} (which is sampled at an assignment
+to {\tt a\_count} a few lines before the loop), as
 expected.
 
 In summary, our new algorithm performed at least as well as either of

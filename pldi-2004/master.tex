@@ -195,15 +195,17 @@ a popular Open Source jukebox:
 \begin{verbatim}
 Predicate: g_source_remove() > 0 
 Location: line 77 of disclosure-widget.c
+Context: 0.08
 Increase: 0.92   
 Failure: 1.00   
 \end{verbatim}
-This line says that when a particular call site of the function {\tt g\_source\_remove} returns a 
-positive value\footnote{A common C programming idiom is for functions to signal error conditions by returning non-zero values.}, the probability that the program fails 
-increases 92\% to 100\%; i.e., when this predicate on this line is true the program always crashes eventually, but in executions where this predicate is not
-%%(?? I don't understand the phrase "increases 92\% to 100\%", are you citing a confidence interval? --Alice)
-observed to be true the failure rate is 8\%.  It turns out that the crash happens long after the call to {\tt g\_source\_remove} completes,
-but that the actual cause of the bug is closely connected to what goes wrong inside of this function call.  Thus,
+This information summarizes what is observed about a particular call site of the function {\tt g\_source\_remove}.
+Any execution that reaches this function call has an 8\% chance of failure (the Context score).  If, however,
+the function returns a
+positive value\footnote{A common C programming idiom is for functions to signal success or failure by an integer value returned from the function.}, the probability that the program fails is 100\%; i.e., when this predicate on this line is true the program always crashes eventually.  We say that the predicate contributes an increase in the probability of failure of 100\% - 8\% = 92\%.
+
+It turns out that the crash happens long after the call to {\tt g\_source\_remove} completes,
+but the fact that {\tt g\_source\_remove} succeeds (indicated by the positive return value) is part of what causes the bug.  Thus,
 our approach can help engineers isolate bugs by showing the conditions and early events that trigger the bug, rather than just the
 program state at the point of failure.  Furthermore, our algorithm also allows accurate calculations of what fraction of all failures occur when this predicate
 is true; in the example above, the predicate was true in 184 of 1873 Rhythmbox executions that crashed in our dataset, which means that
