@@ -94,7 +94,7 @@
     <table class="scheme-links">
       <tr class="headers">
 	<th>Scheme</th>
-	<th colspan="4">Predicates Retained</th>
+	<th colspan="4">Predicates<br/>Retained</th>
 	<th>Lower Bound of Confidence Interval</th>
 	<th>Increase Score</th>
 	<th>Fail Score</th>
