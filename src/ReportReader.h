@@ -7,12 +7,12 @@ class SiteCoords;
 class ReportReader
 {
 public:
-  void read(unsigned runId) const;
+  void read(unsigned runId);
 
-  virtual void branchesSite(    const SiteCoords &, unsigned, unsigned) const = 0;
-  virtual void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned) const = 0;
-  virtual void returnsSite(     const SiteCoords &, unsigned, unsigned, unsigned) const = 0;
-  virtual void scalarPairsSite( const SiteCoords &, unsigned, unsigned, unsigned) const = 0;
+  virtual void branchesSite(    const SiteCoords &, unsigned, unsigned) = 0;
+  virtual void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned) = 0;
+  virtual void returnsSite(     const SiteCoords &, unsigned, unsigned, unsigned) = 0;
+  virtual void scalarPairsSite( const SiteCoords &, unsigned, unsigned, unsigned) = 0;
 };
 
 

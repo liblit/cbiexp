@@ -11,7 +11,7 @@ using namespace std;
 
 
 void
-ReportReader::read(unsigned runId) const
+ReportReader::read(unsigned runId)
 {
   FILE * const report = fopenRead(CompactReport::format(runId));
 

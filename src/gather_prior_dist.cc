@@ -104,10 +104,10 @@ class Reader : public ReportReader
 public:
   Reader(Dist);
 
-  void branchesSite(const SiteCoords &, unsigned, unsigned) const;
-  void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned) const;
-  void returnsSite(const SiteCoords &, unsigned, unsigned, unsigned) const;
-  void scalarPairsSite(const SiteCoords &, unsigned, unsigned, unsigned) const;
+  void branchesSite(const SiteCoords &, unsigned, unsigned);
+  void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned);
+  void returnsSite(const SiteCoords &, unsigned, unsigned, unsigned);
+  void scalarPairsSite(const SiteCoords &, unsigned, unsigned, unsigned);
 
   void countZeros();
 
@@ -144,23 +144,23 @@ void Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsign
   notice(coords, x+y+z);
 }
 
-void Reader::scalarPairsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
+void Reader::scalarPairsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z)
 {
   tripleSite(coords, x, y, z);
 }
 
-void Reader::returnsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
+void Reader::returnsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z)
 {
   tripleSite(coords, x, y, z);
 }
 
-void Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y) const
+void Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y)
 {
   assert (x || y);
   notice(coords, x+y);
 }
 
-void Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z, unsigned w) const
+void Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z, unsigned w)
 {
   assert (x || y || z || w);
   notice(coords, x+y+z+w);
