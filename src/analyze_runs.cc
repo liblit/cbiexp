@@ -11,7 +11,7 @@
 #define CONVERT_REPORTS    "./convert-reports"
 #define COMPUTE_RESULTS    "./compute-results"
 #define COMPUTE_OBS_TRU    "./compute-obs-tru"
-#define GEN_VIEWS          "gen_views"
+#define GEN_VIEWS          "./gen-views"
 #define GEN_PREDS_FILE     "./gen-preds-file"
 
 #define DEFAULT_EXPERIMENT_NAME "dummy"
@@ -29,9 +29,7 @@
 #define DEFAULT_FRUNS_TXT_FILE "f.runs"
 #define DEFAULT_SITES_SRC_FILE "sites"
 #define DEFAULT_UNITS_SRC_FILE "units"
-#define DEFAULT_PREDS_FULL_TXT_FILE "preds.full.txt"
-#define DEFAULT_PREDS_ABBR_TXT_FILE "preds.abbr.txt"
-#define DEFAULT_PREDS_SRC_FILE "preds"
+#define DEFAULT_PREDS_TXT_FILE "preds.txt"
 #define DEFAULT_RESULT_SUMMARY_HTM_FILE "summary.html"
 #define DEFAULT_OBS_TXT_FILE "obs.txt"
 #define DEFAULT_TRU_TXT_FILE "tru.txt"
@@ -58,9 +56,7 @@ char* fruns_txt_file = NULL;
 char* sites_txt_file = NULL;
 char* sites_src_file = NULL;
 char* units_src_file = NULL;
-char* preds_full_txt_file = NULL;
-char* preds_abbr_txt_file = NULL;
-char* preds_src_file = NULL;
+char* preds_txt_file = NULL;
 char* result_summary_htm_file = NULL;
 char* obs_txt_file = NULL;
 char* tru_txt_file = NULL;
@@ -164,19 +160,9 @@ void process_cmdline(int argc, char** argv)
 	    units_src_file = argv[i];
 	    continue;
 	}
-	if (!strcmp(argv[i], "-pf")) {
+	if (!strcmp(argv[i], "-p")) {
 	    i++;
-	    preds_full_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-pa")) {
-	    i++;
-	    preds_abbr_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-ps")) {
-	    i++;
-	    preds_src_file = argv[i];
+	    preds_txt_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-r")) {
@@ -252,8 +238,7 @@ void process_cmdline(int argc, char** argv)
 		 "-st  <sites-txt-file>\n"
 		 "-ss  <sites-src-file>\n"
 		 "-us  <units-src-file>\n"
-		 "-pf  <preds-full-txt-file>\n"
-		 "-pa  <preds-abbr-txt-file>\n"
+		 "-pt  <preds-txt-file>\n"
 		 "-ps  <preds-src-file>\n"
 		 "-r   <result-summary-htm-file>\n"
 		 "-ot  <obs-txt-file>\n"
@@ -272,14 +257,13 @@ void process_cmdline(int argc, char** argv)
     }
 }
 
-void gen_views(const char bindir[], char* preds_file, int prefix)
+void gen_views(char* preds_file, int prefix)
 {
     shell("awk '{ if ($1~/B/) print $0 }' < %s > B.txt", preds_file);
     shell("awk '{ if ($1~/R/) print $0 }' < %s > R.txt", preds_file);
     shell("awk '{ if ($1~/S/) print $0 }' < %s > S.txt", preds_file);
-    shell("cp %s preds.txt", preds_file);
 
-    shell("%s/%s -r %s -p %d", bindir, GEN_VIEWS, result_summary_htm_file, prefix);
+    shell("%s -r %s -p %d", GEN_VIEWS, result_summary_htm_file, prefix);
 }
 
 void REQUIRE(char* main_opt, char* sub_opt, char* s)
@@ -357,14 +341,10 @@ int main(int argc, char** argv)
 	REQUIRE("-do-compute-results", "-s" , sruns_txt_file);
 	REQUIRE("-do-compute-results", "-f" , fruns_txt_file);
 	REQUIRE("-do-compute-results", "-cr", compact_report_path_fmt);
-	FORBID ("-do-compute-results", "-pf", preds_full_txt_file);
-	FORBID ("-do-compute-results", "-pa", preds_abbr_txt_file);
-	FORBID ("-do-compute-results", "-ps", preds_src_file);
+	FORBID ("-do-compute-results", "-p" , preds_txt_file);
 	FORBID ("-do-compute-results", "-r" , result_summary_htm_file);
 	puts("Computing results ...");
-	preds_full_txt_file = DEFAULT_PREDS_FULL_TXT_FILE;
-	preds_abbr_txt_file = DEFAULT_PREDS_ABBR_TXT_FILE;
-	preds_src_file = DEFAULT_PREDS_SRC_FILE;
+	preds_txt_file = DEFAULT_PREDS_TXT_FILE;
 	result_summary_htm_file = DEFAULT_RESULT_SUMMARY_HTM_FILE;
 	shell("%s %s/compute_results.o %s/classify_runs.o %s/utils.o %s.o %s.o -o %s",
 	      linker, objdir, objdir, objdir, sites_src_file, units_src_file, COMPUTE_RESULTS);
@@ -372,21 +352,23 @@ int main(int argc, char** argv)
 	      COMPUTE_RESULTS, experiment_name, program_src_dir, confidence,
               sruns_txt_file, fruns_txt_file, compact_report_path_fmt,
 	      ((trace_txt_file) ? "-t" : ""), ((trace_txt_file) ? trace_txt_file : ""),
-	      preds_full_txt_file, result_summary_htm_file);
+	      preds_txt_file, result_summary_htm_file);
+/*
 	shell("%s -I%s -c %s.cc", compiler, incdir, preds_src_file);
-        shell("awk '{ print $2 " " $3 " " $4 }' %s > %s", preds_full_txt_file, preds_abbr_txt_file);
 
         shell("echo \"#include <preds.h>\" > %s.cc", preds_src_file);
         shell("echo \"const char* const preds[] = {\" >> %s.cc", preds_src_file);
         shell("awk '{ print \"\t\\\"\" $n \"\\\",\" }' %s >> %s.cc", preds_full_txt_file, preds_src_file);
         shell("echo \"};\" >> %s.cc", preds_src_file);
+*/
     }
 
+/*
     if (do_compute_obs_tru) {
         REQUIRE("-do-compute-obs-tru", "-us", units_src_file);
 	REQUIRE("-do-compute-obs-tru", "-s" , sruns_txt_file);
 	REQUIRE("-do-compute-obs-tru", "-f" , fruns_txt_file);
-        REQUIRE("-do-compute-obs-tru", "-pa", preds_abbr_txt_file);
+        REQUIRE("-do-compute-obs-tru", "-p" , preds_txt_file);
         REQUIRE("-do-compute-obs-tru", "-cr", compact_report_path_fmt);
 	FORBID ("-do-compute-obs-tru", "-ot", obs_txt_file);
 	FORBID ("-do-compute-obs-tru", "-tt", tru_txt_file);
@@ -399,14 +381,20 @@ int main(int argc, char** argv)
 	      COMPUTE_OBS_TRU, sruns_txt_file, fruns_txt_file, preds_abbr_txt_file,
               compact_report_path_fmt, obs_txt_file, tru_txt_file);
     }
+*/
 
     if (do_print_results_1) {
-	REQUIRE("do-print-results-1", "-r" , result_summary_htm_file);
-	REQUIRE("do-print-results-1", "-pf", preds_full_txt_file);
+	REQUIRE("do-print-results-1", "-r", result_summary_htm_file);
+	REQUIRE("do-print-results-1", "-p", preds_txt_file);
+        REQUIRE("-do-compute-obs-tru", "-ss", sites_src_file);
+        REQUIRE("-do-compute-obs-tru", "-us", units_src_file);
+	shell("%s %s/gen_views.o  %s/shell.o %s/utils.o %s.o %s.o -o %s",
+	      linker, objdir, objdir, objdir, sites_src_file, units_src_file, GEN_VIEWS);
 	puts("Pretty-printing results-1 ...");
-	gen_views(bindir, preds_full_txt_file, 0);
+	gen_views(preds_txt_file, 0);
     }
 
+/*
     if (do_print_results_n) {
 	REQUIRE("-do-print-results-n", "-r" , result_summary_htm_file);
 	REQUIRE("-do-print-results-n", "-ps", preds_src_file);
@@ -425,10 +413,11 @@ int main(int argc, char** argv)
 	    sprintf(file, per_cluster_txt_file, x);
 	    shell("%s < %s > preds.%d.txt", GEN_PREDS_FILE, file, x);
 	    sprintf(file, "preds.%d.txt", x);
-	    gen_views(bindir, file, x);
+	    gen_views(file, x);
 	}
 	fclose(all_fp);
     }
+*/
 
     return 0;
 }

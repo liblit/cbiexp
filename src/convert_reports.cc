@@ -6,18 +6,26 @@
 #include "classify_runs.h"
 #include "units.h"
 
-int get_indx(const char* s)
-{
-    for (int i = 0; i < num_units; i++)
-        if (strcmp(s, units[i].s) == 0)
-            return i;
-    assert(0);
-}
-
 char* sruns_txt_file = NULL;
 char* fruns_txt_file = NULL;
 char* verbose_report_path_fmt = NULL;
 char* compact_report_path_fmt = NULL;
+
+char get_scheme_code(char* scheme_str)
+{
+    if (!strcmp(scheme_str, "scalar-pairs")) return 'S';
+    if (!strcmp(scheme_str, "branches"    )) return 'B';
+    if (!strcmp(scheme_str, "returns"     )) return 'R';
+    assert(0);
+}
+
+int get_unit_indx(char scheme_code, const char* signature)
+{
+    for (int i = 0; i < num_units; i++)
+        if (scheme_code == units[i].scheme_code && strcmp(signature, units[i].signature) == 0)
+            return i;
+    assert(0);
+}
 
 void process_cmdline(int argc, char** argv)
 {
@@ -63,7 +71,7 @@ void process_cmdline(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-    char s[3000], *unit, *scheme, *t, u[100];
+    char s[3000], *signature, *scheme_str, *t;
     char p[3000];
 
     process_cmdline(argc, argv);
@@ -95,26 +103,17 @@ int main(int argc, char** argv)
 		break;
 	    if (strncmp(s, "<sam", 4) != 0)
 		break;
-	    unit = strchr(s, '\"');
-	    unit++;
-	    t = strchr(unit, '\"');
+	    signature = strchr(s, '\"');
+	    signature++;
+	    t = strchr(signature, '\"');
 	    *t = '\0';
 	    t++;
-	    scheme = strchr(t, '\"');
-	    scheme++;
-	    t = strchr(scheme, '\"');
+	    scheme_str = strchr(t, '\"');
+	    scheme_str++;
+	    t = strchr(scheme_str, '\"');
 	    *t = '\0';
 
-	    if (strcmp(scheme, "scalar-pairs") == 0)
-		sprintf(u, "S%s", unit);
-	    else if (strcmp(scheme, "branches") == 0)
-		sprintf(u, "B%s", unit);
-	    else if (strcmp(scheme, "returns") == 0)
-		sprintf(u, "R%s", unit);
-	    else
-		assert(0);
-
-	    int indx = get_indx(u);
+            int indx = get_unit_indx(get_scheme_code(scheme_str), signature);
 	    fprintf(ofp, "%d\n", indx);
 
 	    int count = 0;
@@ -125,7 +124,7 @@ int main(int argc, char** argv)
 		fputs(p, ofp);
 		count++;
 	    }
-	    assert(count == units[indx].c);
+	    assert(count == units[indx].num_sites);
 	}
 	fclose(ifp);
 	fclose(ofp);

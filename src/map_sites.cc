@@ -8,18 +8,15 @@ char* units_src_file = NULL;
 FILE* sfp = NULL;
 FILE* ufp = NULL;
 
-inline char scheme_code(char* s)
+char get_scheme_code(char* scheme_str)
 {
-    if (!strcmp(s, "scalar-pairs"))
-	return 'S';
-    if (!strcmp(s, "branches"))
-	return 'B';
-    if (!strcmp(s, "returns"))
-	return 'R';
+    if (!strcmp(scheme_str, "scalar-pairs")) return 'S';
+    if (!strcmp(scheme_str, "branches"    )) return 'B';
+    if (!strcmp(scheme_str, "returns"     )) return 'R';
     assert(0);
 }
 
-char* get_scheme_and_signature(char* x)
+char* get_scheme_code_and_signature(char* x)
 {
     char *u, *t, *s;
 
@@ -35,7 +32,7 @@ char* get_scheme_and_signature(char* x)
     assert(t);
     *t = '\0';
 
-    *u = scheme_code(s);
+    *u = get_scheme_code(s);
     return u;
 }
 
@@ -49,22 +46,22 @@ void print_s_site(char* s)
 
     y = strchr(x , '\t'); *y = '\0'; y++;
 
-    fprintf(sfp, "{ \"%s\", \"%s\" } ", s, x);
+    fprintf(sfp, "\'S\', { \"%s\", \"%s\" } ", s, x);
 }
 
 void print_b_site(char* s)
 {
     char* x = strchr(s, '\n'); assert(x); *x = '\0';
-    fprintf(sfp, "{ \"%s\" } ", s);
+    fprintf(sfp, "\'B\', { \"%s\" } ", s);
 }
 
 void print_r_site(char* s)
 {
     char* x = strchr(s, '\n'); assert(x); *x = '\0';
-    fprintf(sfp, "{ \"%s\" } ", s);
+    fprintf(sfp, "\'R\', { \"%s\" } ", s);
 }
 
-void print_site(char site_kind, char* s)
+void print_site(char scheme_code, char* s)
 {
     char *x, *y, *z;
 
@@ -89,7 +86,7 @@ void print_site(char site_kind, char* s)
 
     // z points to scheme-specific predicate name
 
-    switch (site_kind) {
+    switch (scheme_code) {
     case 'S': print_s_site(z); break;
     case 'B': print_b_site(z); break;
     case 'R': print_r_site(z); break;
@@ -152,7 +149,7 @@ int main(int argc, char** argv)
         if (feof(stdin))
             break;
         assert(!strncmp(s, "<sites", 6));
-        char* t = get_scheme_and_signature(s);
+        char* t = get_scheme_code_and_signature(s);
         int count = 0;
         while (1) {
             char p[3000];
@@ -162,9 +159,10 @@ int main(int argc, char** argv)
             print_site(t[0], p);
             count++;
         }
-        fprintf(ufp, "\t{ \"%s\", %d },\n", t, count);
+        fprintf(ufp, "\t{ '%c', \"%s\", %d },\n", t[0], t + 1, count);
         num_sites += count;
         num_units++;
+
         switch (t[0]) {
         case 'S': num_s_preds += 6 * count; break;
         case 'R': num_r_preds += 6 * count; break;

@@ -5,6 +5,7 @@
 #include <libgen.h>
 #include "def.h"
 #include "shell.h"
+#include "utils.h"
 
 #define CBI_WEBPAGE "http://www.cs.berkeley.edu/~liblit/sampler/"
 
@@ -43,19 +44,22 @@ int main(int argc, char** argv)
     int i, j, m;
     FILE* fp;
 
-    const char * const bindir = dirname(argv[0]);
     process_cmdline(argc, argv);
 
     for (i = 0; i < NUM_SCHEMES; i++) {
 	for ( m = 0; m < NUM_SORTBYS; m++) {
-	    char file[1000];
+
+            char file[1000];
 	    sprintf(file, "%s_%s.%s.html", scheme_codes[i], sortby_codes[m], prefix);
-	    fp = fopen(file, "w"); assert(fp);
+	    fp = fopen(file, "w");
+            assert(fp);
+
 	    fputs("<html>\n"
 		  "<head><link type=\"text/css\" rel=\"stylesheet\" href=\"http://www.stanford.edu/~mhn/style.css\"/></head>\n"
 		  "<body>\n<center><table>\n"
 		  "<tr>\n<td align=right>Scheme:</td><td align=left>",
 		  fp);
+
 	    for (int j = 0; j < NUM_SCHEMES; j++) {
 		if (i == j)
 		    fprintf(fp, "[%s] ", scheme_names[j]);
@@ -84,10 +88,36 @@ int main(int argc, char** argv)
 		  "<td align=middle>file:line</td>\n"
 		  "</tr>\n",
 		  fp);
-	    fclose(fp);
 
-	    shell("sort -k%d -r -n < %s.txt | %s/format >> %s\n", sortby_indices[m], scheme_codes[i], bindir, file);
-	    shell("echo \"</table></center>\n</body>\n</html>\" >> %s\n", file);
+            char file2[100];
+            sprintf(file2, "%s.tmp.txt", scheme_codes[i]);
+
+	    shell("sort -k%d -r -n < %s.txt > %s", sortby_indices[m], scheme_codes[i], file2);
+
+            FILE* fp2 = fopen(file2, "r");
+            assert(fp2);
+
+            while (1) {
+                char scheme_code;
+                int u, c, p, site, s, f, os, of;
+                pred_stat ps;
+                fscanf(fp2, "%1s %d %d %d %d %f %f %f %f %d %d %d %d",
+                    &scheme_code,
+                    &u, &c, &p, &site,
+                    &ps.lb, &ps.in, &ps.fs, &ps.co,
+                    &s, &f, &os, &of);
+                if (feof(fp2))
+                    break;
+                fputs("<tr>\n", fp);
+                print_pred_full(fp, ps, s, f, site, p);
+                fputs("</tr>\n", fp);
+            }
+
+            fclose(fp2);
+
+	    fputs("</table></center>\n</body>\n</html>\n", fp);
+
+            fclose(fp);
 	}
     }
 
@@ -108,7 +138,7 @@ int main(int argc, char** argv)
     }
 
     fputs("</table>\n", fp);
-    fclose (fp);
+    fclose(fp);
 
     return 0;
 }

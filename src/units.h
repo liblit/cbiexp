@@ -3,8 +3,9 @@
 
 
 struct unit_t {
-  const char *s;
-  int c;
+  char scheme_code;
+  const char *signature;
+  int num_sites;
 };
 
 extern const struct unit_t units[];

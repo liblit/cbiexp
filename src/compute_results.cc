@@ -84,62 +84,51 @@ void print_result_summary()
     fclose(fp);
 }
 
-inline void print_pred_info(FILE* fp, int u, int c, int p, int site)
+inline void print_pred(FILE* fp, int u, int c, int p, int site)
 {
     int s  = site_info[u][c].S[p];
     int f  = site_info[u][c].F[p];
     int os = site_info[u][c].os;
     int of = site_info[u][c].of;
 
-    float fs = ((float)  f) / ( s +  f);
-    float co = ((float) of) / (os + of);
+    pred_stat ps = compute_pred_stat(s, f, os, of, confidence);
 
-    fprintf(fp, "%c %d %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
-	units[u].s[0], u, c, p, site,
-        compute_lb(s, f, os, of, confidence),
-        fs - co, fs, co, s, f, os, of);
-}
-
-inline void print_site_info(FILE* fp, int i)
-{
-    fprintf(fp, "</td><td>%s</td><td>%s:%d\n", sites[i].fun, sites[i].file, sites[i].line);
+    fprintf(fp, "%c %d %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d\n",
+	units[u].scheme_code,
+        u, c, p, site, 
+        ps.lb, ps.in, ps.fs, ps.co,
+        s, f, os, of);
 }
 
 void print_retained_preds()
 {
-    int u, c, p, i = 0;
+    int u, c, p, site = 0;
 
     FILE* fp = fopen(preds_txt_file, "w");
     assert(fp);
 
     for (u = 0; u < num_units; u++) {
-	for (c = 0; c < units[u].c; c++, i++) {
-            switch (units[u].s[0]) {
+	for (c = 0; c < units[u].num_sites; c++, site++) {
+            switch (units[u].scheme_code) {
             case 'S':
 	        for (p = 0; p < 6; p++)
 	            if (site_info[u][c].retain[p]) {
 		        num_s_preds++;
-		        print_pred_info(fp, u, c, p, i);
-		        print_s_pred(fp, p, i);
-                        print_site_info(fp, i);
+		        print_pred(fp, u, c, p, site);
 	            }
 	        break;
             case 'R':
 	        for (p = 0; p < 6; p++)
 	            if (site_info[u][c].retain[p]) {
 		        num_r_preds++;
-	                print_pred_info(fp, u, c, p, i);
-		        print_r_pred(fp, p, i);
-                        print_site_info(fp, i);
+	                print_pred(fp, u, c, p, site);
                     }
 	        break;
             case 'B':
 	        for (p = 0; p < 2; p++)
 	            if (site_info[u][c].retain[p]) {
 	                num_b_preds++;
-	                print_pred_info(fp, u, c, p, i);
-	                print_b_pred(fp, p, i);
-                        print_site_info(fp, i);
+	                print_pred(fp, u, c, p, site);
                     }
 	        break;
             default:
@@ -206,11 +195,11 @@ inline void cull(int u, int c, int p)
 {
     int s = site_info[u][c].S[p];
     int f = site_info[u][c].F[p];
-    float lb = compute_lb(s, f, site_info[u][c].os, site_info[u][c].of, confidence);
+    pred_stat ps = compute_pred_stat(s, f, site_info[u][c].os, site_info[u][c].of, confidence);
 
-    if (retain_pred(s, f, lb)) {
+    if (retain_pred(s, f, ps.lb)) {
         site_info[u][c].retain[p] = true;
-        site_info[u][c].lb[p] = (int) rint(lb * 100);
+        site_info[u][c].lb[p] = (int) rint(ps.lb * 100);
     }
 }
 
@@ -219,8 +208,8 @@ void cull_preds()
     int u, c, p;
 
     for (u = 0; u < num_units; u++) {
-	for (c = 0; c < units[u].c; c++) {
-	    switch (units[u].s[0]) {
+	for (c = 0; c < units[u].num_sites; c++) {
+	    switch (units[u].scheme_code) {
             case 'S':
                 for (p = 0; p < 6; p++)
                     cull(u, c, p);
@@ -250,8 +239,8 @@ void cull_preds_aggressively1()
     int u, c;
 
     for (u = 0; u < num_units; u++) {
-	for (c = 0; c < units[u].c; c++) {
-	    switch (units[u].s[0]) {
+	for (c = 0; c < units[u].num_sites; c++) {
+	    switch (units[u].scheme_code) {
             case 'S':
             case 'R':
             {
@@ -360,7 +349,7 @@ inline bool is_eligible(int u, int c, int p, int s)
 
 void checkG(int u, int c, int p, int s)
 {
-    for (int d = 0; d < units[u].c; d++) {
+    for (int d = 0; d < units[u].num_sites; d++) {
         if (c != d &&
             sites[s + c].line == sites[s + d].line &&
             strcmp(sites[s + c].args[0], sites[s + d].args[0]) == 0 &&
@@ -375,7 +364,7 @@ void checkG(int u, int c, int p, int s)
 
 void checkL(int u, int c, int p, int s)
 {
-    for (int d = 0; d < units[u].c; d++) {
+    for (int d = 0; d < units[u].num_sites; d++) {
         if (c != d &&
             sites[s + c].line == sites[s + d].line &&
             strcmp(sites[s + c].args[0], sites[s + d].args[0]) == 0 &&
@@ -392,9 +381,9 @@ void cull_preds_aggressively2()
 {
     int u, c, s;
 
-    for (s = 0, u = 0; u < num_units; s += units[u].c, u++) {
-        if (units[u].s[0] == 'S') {
-	    for (c = 0; c < units[u].c; c++) {
+    for (s = 0, u = 0; u < num_units; s += units[u].num_sites, u++) {
+        if (units[u].scheme_code == 'S') {
+	    for (c = 0; c < units[u].num_sites; c++) {
                 if (is_eligible(u, c, GT , s))
                     checkG(u, c, GT , s);
                 if (is_eligible(u, c, GEQ, s))
@@ -496,8 +485,7 @@ int main(int argc, char** argv)
     classify_runs(sruns_txt_file, fruns_txt_file);
 
     site_info.resize(num_units);
-    for (int u = 0; u < num_units; u++)
-        site_info[u].resize(units[u].c);
+    for (int u = 0; u < num_units; u++) site_info[u].resize(units[u].num_sites);
 
     for (cur_run = 0; cur_run < num_runs; cur_run++) {
         if (!is_srun[cur_run] && !is_frun[cur_run])

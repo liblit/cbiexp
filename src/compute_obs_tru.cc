@@ -43,7 +43,7 @@ inline void inc_tru(int r, int u, int c, int p)
     if (site_info[u][c].tru[p]) (*(site_info[u][c].tru[p]))[r] = true;
 }
 
-void print_pred_details(int u, int c, int p)
+void print_pred_info(int u, int c, int p)
 {
     int r;
 
@@ -76,15 +76,15 @@ void print_site_info(int u, int c)
 {
     int p;
 
-    switch (units[u].s[0]) {
+    switch (units[u].scheme_code) {
     case 'S':
     case 'R':
 	for (p = 0; p < 6; p++)
-	    print_pred_details(u, c, p);
+	    print_pred_info(u, c, p);
 	break;
     case 'B':
 	for (p = 0; p < 2; p++)
-	    print_pred_details(u, c, p);
+	    print_pred_info(u, c, p);
 	break;
     default:
 	assert(0);
@@ -198,7 +198,7 @@ int main(int argc, char** argv)
     assert(tfp);
 
     site_info.resize(num_units);
-    for (u = 0; u < num_units; u++) site_info[u].resize(units[u].c);
+    for (u = 0; u < num_units; u++) site_info[u].resize(units[u].num_sites);
 
     pfp = fopen(preds_txt_file, "r");
     assert(pfp);
@@ -207,7 +207,7 @@ int main(int argc, char** argv)
 	if (feof(pfp))
 	    break;
 	assert(u >= 0 && u < num_units);
-	assert(c >= 0 && c < units[u].c);
+	assert(c >= 0 && c < units[u].num_sites);
 	assert(p >= 0 && p < 6);
 	site_info[u][c].obs[p] = new bit_vector(num_runs);
 	assert(site_info[u][c].obs[p]);
@@ -233,7 +233,7 @@ int main(int argc, char** argv)
     }
 
     for (u = 0; u < num_units; u++)
-	for (c = 0; c < units[u].c; c++)
+	for (c = 0; c < units[u].num_sites; c++)
 	    print_site_info(u, c);
 
     fclose(ofp);
