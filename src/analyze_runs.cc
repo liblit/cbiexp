@@ -27,7 +27,6 @@
 
 #define DEFAULT_SRUNS_TXT_FILE "s.runs"
 #define DEFAULT_FRUNS_TXT_FILE "f.runs"
-#define DEFAULT_SITES_TXT_FILE "sites.txt"
 #define DEFAULT_SITES_SRC_FILE "sites"
 #define DEFAULT_UNITS_SRC_FILE "units"
 #define DEFAULT_PREDS_FULL_TXT_FILE "preds.full.txt"
@@ -307,9 +306,9 @@ int main(int argc, char** argv)
     process_cmdline(argc, argv);
 
     if (do_process_labels) {
+        REQUIRE("-do-process-labels", "-l", label_path_fmt);
         FORBID ("-do-process-labels", "-s", sruns_txt_file);
         FORBID ("-do-process-labels", "-f", fruns_txt_file);
-        REQUIRE("-do-process-labels", "-l", label_path_fmt);
 	if (num_runs == -1) {
 	    puts("When you specify -do-process-labels, you must also specify -n");
 	    exit(1);
@@ -322,9 +321,9 @@ int main(int argc, char** argv)
     }
 
     if (do_map_sites) {
+	REQUIRE("-do-map-sites", "-st", sites_txt_file);
 	FORBID ("-do-map-sites", "-ss", sites_src_file);
 	FORBID ("-do-map-sites", "-us", units_src_file);
-	REQUIRE("-do-map-sites", "-st", sites_txt_file);
 	puts("Mapping sites ...");
 	sites_src_file = DEFAULT_SITES_SRC_FILE;
 	units_src_file = DEFAULT_UNITS_SRC_FILE;
@@ -369,20 +368,21 @@ int main(int argc, char** argv)
 	result_summary_htm_file = DEFAULT_RESULT_SUMMARY_HTM_FILE;
 	shell("%s %s/compute_results.o %s/classify_runs.o %s/scaffold.o %s.o %s.o -o %s",
 	      linker, objdir, objdir, objdir, sites_src_file, units_src_file, COMPUTE_RESULTS);
-	shell("%s -e %s -d %s -c %s -s %s -f %s -cr %s %s %s -pf %s -pa %s -ps %s.cc -r %s",
+	shell("%s -e %s -d %s -c %s -s %s -f %s -cr %s %s %s -p %s -ps %s.cc -r %s",
 	      COMPUTE_RESULTS, experiment_name, program_src_dir, confidence,
               sruns_txt_file, fruns_txt_file, compact_report_path_fmt,
 	      ((trace_txt_file) ? "-t" : ""), ((trace_txt_file) ? trace_txt_file : ""),
-	      preds_full_txt_file, preds_abbr_txt_file, preds_src_file, result_summary_htm_file);
+	      preds_full_txt_file, preds_src_file, result_summary_htm_file);
 	shell("%s -I%s -c %s.cc", compiler, incdir, preds_src_file);
+        shell("awk '{ print $2 " " $3 " " $4 }' %s > %s", preds_full_txt_file, preds_abbr_txt_file);
     }
 
     if (do_compute_obs_tru) {
         REQUIRE("-do-compute-obs-tru", "-us", units_src_file);
 	REQUIRE("-do-compute-obs-tru", "-s" , sruns_txt_file);
 	REQUIRE("-do-compute-obs-tru", "-f" , fruns_txt_file);
-        REQUIRE("-do-compute-obs-tru", "-cr", compact_report_path_fmt);
         REQUIRE("-do-compute-obs-tru", "-pa", preds_abbr_txt_file);
+        REQUIRE("-do-compute-obs-tru", "-cr", compact_report_path_fmt);
 	FORBID ("-do-compute-obs-tru", "-ot", obs_txt_file);
 	FORBID ("-do-compute-obs-tru", "-tt", tru_txt_file);
 	puts("Computing obs and tru ...");
@@ -390,9 +390,9 @@ int main(int argc, char** argv)
 	tru_txt_file = DEFAULT_TRU_TXT_FILE;
 	shell("%s %s/compute_obs_tru.o %s/classify_runs.o %s/scaffold.o %s.o -o %s",
 	      linker, objdir, objdir, objdir, units_src_file, COMPUTE_OBS_TRU);
-	shell("%s -s %s -f %s -pa %s -cr %s -ot %s -tt %s",
-	      COMPUTE_OBS_TRU, sruns_txt_file, fruns_txt_file, compact_report_path_fmt, 
-              preds_abbr_txt_file, obs_txt_file, tru_txt_file);
+	shell("%s -s %s -f %s -p %s -cr %s -ot %s -tt %s",
+	      COMPUTE_OBS_TRU, sruns_txt_file, fruns_txt_file, preds_abbr_txt_file,
+              compact_report_path_fmt, obs_txt_file, tru_txt_file);
     }
 
     if (do_print_results_1) {

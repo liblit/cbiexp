@@ -55,8 +55,7 @@ char* fruns_txt_file = NULL;
 char* compact_report_path_fmt = NULL;
 char* trace_txt_file = NULL;
 
-char* preds_full_txt_file = NULL;
-char* preds_abbr_txt_file = NULL;
+char* preds_txt_file = NULL;
 char* preds_src_file = NULL;
 char* result_summary_htm_file = NULL;
 
@@ -66,8 +65,7 @@ int num_s_preds = 0;
 int num_r_preds = 0;
 int num_b_preds = 0;
 
-FILE* preds_full_txt_fp = NULL;
-FILE* preds_abbr_txt_fp = NULL;
+FILE* preds_txt_fp = NULL;
 FILE* preds_src_fp = NULL;
 FILE* result_summary_htm_fp = NULL;
 FILE* trace_txt_fp = NULL;
@@ -120,9 +118,8 @@ void print_pred(int u, int c, int p)
     float in = fs - co;
     float lb = in - conf * sqrt(((fs * (1 - fs)) / (f + s)) + ((co * (1 - co))/(of + os)));
 
-    fprintf(preds_full_txt_fp, "%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
+    fprintf(preds_txt_fp, "%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
 	units[u].s[0], u, c, p, lb, in, fs, co, s, f, os, of);
-    fprintf(preds_abbr_txt_fp, "%d %d %d\n", u, c, p);
     fprintf(preds_src_fp,  "\t\"%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
 	units[u].s[0], u, c, p, lb, in, fs, co, s, f, os, of);
 }
@@ -207,10 +204,10 @@ void print_site_summary(int u, int c, int i)
 	    if (a[p]) {
 		num_s_preds++;
 		print_pred(u, c, p);
-		print_scalar_pred(preds_full_txt_fp, i, scalar_op[p / 2], p % 2 ? true : false);
-                fprintf(preds_full_txt_fp, "</td><td>%s</td><td>%s:%d\n",    sites[i].fun, sites[i].file, sites[i].line);
-		print_scalar_pred(preds_src_fp,      i, scalar_op[p / 2], p % 2 ? true : false);
-                fprintf(preds_src_fp,      "</td><td>%s</td><td>%s:%d\",\n", sites[i].fun, sites[i].file, sites[i].line);
+		print_scalar_pred(preds_txt_fp, i, scalar_op[p / 2], p % 2 ? true : false);
+                fprintf(preds_txt_fp, "</td><td>%s</td><td>%s:%d\n",    sites[i].fun, sites[i].file, sites[i].line);
+		print_scalar_pred(preds_src_fp, i, scalar_op[p / 2], p % 2 ? true : false);
+                fprintf(preds_src_fp, "</td><td>%s</td><td>%s:%d\",\n", sites[i].fun, sites[i].file, sites[i].line);
 	    }
 	break;
     case 'R':
@@ -259,28 +256,28 @@ void print_site_summary(int u, int c, int i)
 	    if (a[p]) {
 		num_r_preds++;
 		print_pred(u, c, p);
-		print_return_pred(preds_full_txt_fp, i, return_op[p / 2], p % 2 ? true : false);
-                fprintf(preds_full_txt_fp, "</td><td>%s</td><td>%s:%d\n",    sites[i].fun, sites[i].file, sites[i].line);
-		print_return_pred(preds_src_fp,      i, return_op[p / 2], p % 2 ? true : false);
-                fprintf(preds_src_fp,      "</td><td>%s</td><td>%s:%d\",\n", sites[i].fun, sites[i].file, sites[i].line);
+		print_return_pred(preds_txt_fp, i, return_op[p / 2], p % 2 ? true : false);
+                fprintf(preds_txt_fp, "</td><td>%s</td><td>%s:%d\n",    sites[i].fun, sites[i].file, sites[i].line);
+		print_return_pred(preds_src_fp, i, return_op[p / 2], p % 2 ? true : false);
+                fprintf(preds_src_fp, "</td><td>%s</td><td>%s:%d\",\n", sites[i].fun, sites[i].file, sites[i].line);
 	    }
 	break;
     case 'B':
 	if (is_bug_predictor(u, c, 0)) {
 	    num_b_preds++;
 	    print_pred(u, c, 0);
-	    print_branch_pred(preds_full_txt_fp, i, "is FALSE");
-            fprintf(preds_full_txt_fp, "</td><td>%s</td><td>%s:%d\n",    sites[i].fun, sites[i].file, sites[i].line);
-	    print_branch_pred(preds_src_fp,      i, "is FALSE");
-            fprintf(preds_src_fp,      "</td><td>%s</td><td>%s:%d\",\n", sites[i].fun, sites[i].file, sites[i].line);
+	    print_branch_pred(preds_txt_fp, i, "is FALSE");
+            fprintf(preds_txt_fp, "</td><td>%s</td><td>%s:%d\n",    sites[i].fun, sites[i].file, sites[i].line);
+	    print_branch_pred(preds_src_fp, i, "is FALSE");
+            fprintf(preds_src_fp, "</td><td>%s</td><td>%s:%d\",\n", sites[i].fun, sites[i].file, sites[i].line);
 	}
 	if (is_bug_predictor(u, c, 1)) {
 	    num_b_preds++;
 	    print_pred(u, c, 1);
-	    print_branch_pred(preds_full_txt_fp, i, "is TRUE");
-            fprintf(preds_full_txt_fp, "</td><td>%s</td><td>%s:%d\n",    sites[i].fun, sites[i].file, sites[i].line);
-	    print_branch_pred(preds_src_fp ,     i, "is TRUE");
-            fprintf(preds_src_fp,      "</td><td>%s</td><td>%s:%d\",\n", sites[i].fun, sites[i].file, sites[i].line);
+	    print_branch_pred(preds_txt_fp, i, "is TRUE");
+            fprintf(preds_txt_fp, "</td><td>%s</td><td>%s:%d\n",    sites[i].fun, sites[i].file, sites[i].line);
+	    print_branch_pred(preds_src_fp, i, "is TRUE");
+            fprintf(preds_src_fp, "</td><td>%s</td><td>%s:%d\",\n", sites[i].fun, sites[i].file, sites[i].line);
 	}
 	break;
     default: assert(0);
@@ -435,14 +432,9 @@ void process_cmdline(int argc, char** argv)
 	    trace_txt_file = argv[i];
 	    continue;
 	}
-	if (!strcmp(argv[i], "-pf")) {
+	if (!strcmp(argv[i], "-p")) {
 	    i++;
-	    preds_full_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-pa")) {
-	    i++;
-	    preds_abbr_txt_file = argv[i];
+	    preds_txt_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-ps")) {
@@ -457,19 +449,16 @@ void process_cmdline(int argc, char** argv)
 	}
 	if (!strcmp(argv[i], "-h")) {
 	    puts("Usage: compute-results <options>\n"
-                 "-e  <experiment-name>\n"
-                 "-d  <program-src-dir>\n"
-                 "-c  <confidence>\n"
-                 "READS:\n"
-                 "-s  <sruns-txt-file>\n"
-                 "-f  <fruns-txt-file>\n"
-                 "-cr <compact-report-path-fmt>\n"
-                 "-t  <trace-txt-file>\n"
-                 "WRITES:\n"
-                 "-pf <preds-full-txt-file>\n"
-                 "-pa <preds-abbr-txt-file>\n"
-                 "-ps <preds-src-file>\n"
-                 "-r  <result-summary-htm-file>\n");
+                 "    -e  <experiment-name>\n"
+                 "    -d  <program-src-dir>\n"
+                 "    -c  <confidence>\n"
+                 "(r) -s  <sruns-txt-file>\n"
+                 "(r) -f  <fruns-txt-file>\n"
+                 "(r) -cr <compact-report-path-fmt>\n"
+                 "(r) -t  <trace-txt-file>\n"
+                 "(w) -p  <preds-txt-file>\n"
+                 "(w) -ps <preds-src-file>\n"
+                 "(w) -r  <result-summary-htm-file>\n");
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
@@ -482,8 +471,7 @@ void process_cmdline(int argc, char** argv)
         !sruns_txt_file ||
         !fruns_txt_file ||
         !compact_report_path_fmt ||
-	!preds_full_txt_file ||
-        !preds_abbr_txt_file ||
+	!preds_txt_file ||
         !preds_src_file ||
         !result_summary_htm_file) {
 	puts("Incorrect usage; try -h");
@@ -526,10 +514,8 @@ int main(int argc, char** argv)
 
     conf = conf_map[confidence - 90];
 
-    preds_full_txt_fp = fopen(preds_full_txt_file, "w");
-    assert(preds_full_txt_fp);
-    preds_abbr_txt_fp = fopen(preds_abbr_txt_file, "w");
-    assert(preds_abbr_txt_fp);
+    preds_txt_fp = fopen(preds_txt_file, "w");
+    assert(preds_txt_fp);
     preds_src_fp = fopen(preds_src_file, "w");
     assert(preds_src_fp);
     result_summary_htm_fp = fopen(result_summary_htm_file, "w");
@@ -558,8 +544,7 @@ int main(int argc, char** argv)
 
     fputs("};\n", preds_src_fp);
 
-    fclose(preds_full_txt_fp);
-    fclose(preds_abbr_txt_fp);
+    fclose(preds_txt_fp);
     fclose(preds_src_fp);
     fclose(result_summary_htm_fp);
     return 0;
