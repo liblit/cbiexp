@@ -1,4 +1,6 @@
 <?xml version="1.0"?>
+<!DOCTYPE stylesheet>
+
 <xsl:stylesheet
   version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -14,20 +16,15 @@
   />
 
 
-  <!-- look up schemes by their short id codes -->
-  <xsl:key name="scheme" match="scheme" use="@code"/>
-
   <!-- where are we right now? -->
-  <xsl:variable name="current-scheme-code" select="/view/schemes/@current"/>
-  <xsl:variable name="current-scheme-name" select="key('scheme', $current-scheme-code)/@name"/>
-  <xsl:variable name="current-page">
-    <xsl:value-of select="$current-scheme-code"/>_<xsl:value-of select="/view/sorts/@current"/>
-  </xsl:variable>
+  <xsl:variable name="current-scheme" select="/view/@scheme"/>
+  <xsl:variable name="current-sort" select="/view/@sort"/>
+
 
   <!-- main master template for generated page -->
-  <xsl:template match="/view">
+  <xsl:template match="/">
     <xsl:variable name="title">
-      Cooperative Bug Isolation Report: <xsl:value-of select="$current-scheme-name"/> predicates
+      Cooperative Bug Isolation Report: <br/><xsl:value-of select="$current-scheme"/> predicates
     </xsl:variable>
     <html>
       <head>
@@ -39,21 +36,24 @@
 	<!-- generic page header -->
 	<h1>
 	  <xsl:copy-of select="$logo-icon"/>
+	  <xsl:copy-of select="$title"/>
 	</h1>
 
 	<table class="views">
+	  <xsl:apply-templates select="document('summary.xml')/experiment/schemes"/>
+	  <xsl:apply-templates select="document('sorts.xml')/sorts"/>
 	  <xsl:apply-templates select="schemes"/>
 	  <xsl:apply-templates select="sorts"/>
 	  <tr>
 	    <th>Go to:</th>
 	    <td>
-	      [<a href="{@summary}">report summary</a>]
+	      [<a href="summary.xml">report summary</a>]
 	      [<a href="{$projectURL}">CBI web page</a>]
 	    </td>
 	  </tr>
 	</table>
 
-	<xsl:apply-templates select="predictors"/>
+	<xsl:apply-templates/>
 
       </body>
     </html>
@@ -64,48 +64,44 @@
   <xsl:template match="schemes">
     <tr>
       <th>Scheme:</th>
-      <td><xsl:apply-templates/></td>
+      <td>
+	<xsl:apply-templates/>
+	<xsl:call-template name="other-view">
+	  <xsl:with-param name="name" select="'all'"/>
+	  <xsl:with-param name="scheme" select="'all'"/>
+	  <xsl:with-param name="sort" select="$current-sort"/>
+	</xsl:call-template>
+      </td>
     </tr>
   </xsl:template>
 
 
   <!-- link to a single other scheme's page -->
-  <xsl:template match="scheme">
+  <xsl:template match="scheme[@retain > 0]">
     <xsl:call-template name="other-view">
       <xsl:with-param name="name" select="@name"/>
-      <xsl:with-param name="scheme" select="@code"/>
-      <xsl:with-param name="order" select="../../sorts/@current"/>
+      <xsl:with-param name="scheme" select="@name"/>
+      <xsl:with-param name="sort" select="$current-sort"/>
     </xsl:call-template>
   </xsl:template>
 
 
-  <!-- row of links to other sorting orders' pages -->
+  <!-- row of links to other sort orders -->
   <xsl:template match="sorts">
     <tr>
-      <th>Sorted by:</th>
-      <td>
-	<xsl:call-template name="other-view">
-	  <xsl:with-param name="name" select="'lower bound of confidence interval'"/>
-	  <xsl:with-param name="scheme" select="../schemes/@current"/>
-	  <xsl:with-param name="order" select="'lb'"/>
-	</xsl:call-template>
-	<xsl:call-template name="other-view">
-	  <xsl:with-param name="name" select="'increase score'"/>
-	  <xsl:with-param name="scheme" select="../schemes/@current"/>
-	  <xsl:with-param name="order" select="'is'"/>
-	</xsl:call-template>
-	<xsl:call-template name="other-view">
-	  <xsl:with-param name="name" select="'fail score'"/>
-	  <xsl:with-param name="scheme" select="../schemes/@current"/>
-	  <xsl:with-param name="order" select="'fs'"/>
-	</xsl:call-template>
-	<xsl:call-template name="other-view">
-	  <xsl:with-param name="name" select="'true in # F runs'"/>
-	  <xsl:with-param name="scheme" select="../schemes/@current"/>
-	  <xsl:with-param name="order" select="'nf'"/>
-	</xsl:call-template>
-      </td>
+      <th>Sort by:</th>
+      <td><xsl:apply-templates/></td>
     </tr>
+  </xsl:template>
+
+
+  <!-- link to a single other sort order -->
+  <xsl:template match="sort">
+    <xsl:call-template name="other-view">
+      <xsl:with-param name="name" select="text()"/>
+      <xsl:with-param name="scheme" select="$current-scheme"/>
+      <xsl:with-param name="sort" select="@code"/>
+    </xsl:call-template>
   </xsl:template>
 
 
@@ -113,29 +109,23 @@
   <xsl:template name="other-view">
     <xsl:param name="name"/>
     <xsl:param name="scheme"/>
-    <xsl:param name="order"/>
-
-    <!-- where are we going? -->
-    <xsl:variable name="destination">
-      <xsl:value-of select="$scheme"/>_<xsl:value-of select="$order"/>
-    </xsl:variable>
+    <xsl:param name="sort"/>
 
     <!-- output a placeholder or a true link -->
     [<xsl:choose>
-      <xsl:when test="$destination = $current-page">
+      <xsl:when test="$scheme = $current-scheme and $sort = $current-sort">
 	<!-- placeholder for the link to ourself -->
 	<xsl:value-of select="$name"/>
       </xsl:when>
       <xsl:otherwise>
 	<!-- true link to someone else -->
-	<a href="{$destination}.{/view/@prefix}.xml"><xsl:value-of select="$name"/></a>
+	<a href="{$scheme}_{$sort}.xml"><xsl:value-of select="$name"/></a>
       </xsl:otherwise>
     </xsl:choose>]
   </xsl:template>
 
 
-  <!-- table of all retained predictors -->
-  <xsl:template match="predictors">
+  <xsl:template match="view">
     <table class="predictors">
       <tr>
 	<th/>
@@ -175,7 +165,17 @@
       <xsl:value-of select="@function"/>
     </td>
     <td>
-      <a href="{@file}#{@line}">
+      <xsl:variable name="source-dir" select="document('summary.xml')/experiment/@source-dir"/>
+      <xsl:variable name="prefix">
+	<xsl:choose>
+	  <xsl:when test="starts-with(@file, '/')"/>
+	  <xsl:when test="not($source-dir)"/>
+	  <xsl:otherwise>
+	    <xsl:value-of select="concat($source-dir, '/')"/>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </xsl:variable>
+      <a href="{$prefix}{@file}#{@line}">
 	<xsl:value-of select="@file"/>:<xsl:value-of select="@line"/>
       </a>
     </td>

@@ -14,6 +14,7 @@
 #define CONVERT_REPORTS    "./convert-reports"
 #define COMPUTE_RESULTS    "./compute-results"
 #define COMPUTE_OBS_TRU    "./compute-obs-tru"
+#define GEN_SUMMARY        "./gen-summary"
 #define GEN_VIEWS          "./gen-views"
 #define GEN_PREDS_FILE     "./gen-preds-file"
 
@@ -48,6 +49,7 @@ bool do_map_sites = false;
 bool do_convert_reports = false;
 bool do_compute_results = false;
 bool do_compute_obs_tru = false;
+bool do_print_summary   = false;
 bool do_print_results_1 = false;
 bool do_print_results_n = false;
 
@@ -98,6 +100,10 @@ void process_cmdline(int argc, char** argv)
 	}
 	if (!strcmp(argv[i], "-do-compute-obs-tru")) {
 	    do_compute_obs_tru = true;
+	    continue;
+	}
+	if (!strcmp(argv[i], "-do-print-summary")) {
+	    do_print_summary = true;
 	    continue;
 	}
 	if (!strcmp(argv[i], "-do-print-results-1")) {
@@ -266,19 +272,6 @@ void process_cmdline(int argc, char** argv)
     }
 }
 
-void gen_views(char* preds_file, int prefix)
-{
-    shell("awk '{ if ($1~/B/) print $0 }' < %s > B.txt", preds_file);
-    shell("awk '{ if ($1~/R/) print $0 }' < %s > R.txt", preds_file);
-    shell("awk '{ if ($1~/S/) print $0 }' < %s > S.txt", preds_file);
-    shell("awk '{ if ($1~/G/) print $0 }' < %s > G.txt", preds_file);
-
-    shell("%s -r %s -p %d -d %s %s", GEN_VIEWS,
-	  result_summary_xml_file, prefix,
-	  verbose ? "-verbose" : "",
-	  program_src_dir);
-}
-
 void REQUIRE(char* main_opt, char* sub_opt, bool s)
 {
     if (!s) {
@@ -380,17 +373,16 @@ int main(int argc, char** argv)
 	REQUIRE("-do-compute-results", "-f" , fruns_txt_file);
 	REQUIRE("-do-compute-results", "-cr", compact_report_path_fmt);
 	FORBID ("-do-compute-results", "-p" , preds_txt_file);
-	FORBID ("-do-compute-results", "-r" , result_summary_xml_file);
 	puts("Computing results ...");
 	preds_txt_file = DEFAULT_PREDS_TXT_FILE;
 	result_summary_xml_file = DEFAULT_RESULT_SUMMARY_XML_FILE;
 	add_links(incdir, "summary", dirname(result_summary_xml_file));
 	shell("%s %s/compute_results.o %s.o %s.o -L%s -lanalyze -o %s",
 	      linker, objdir, sites_src_file, units_src_file, objdir, COMPUTE_RESULTS);
-	shell("%s -e %s -c %s -s %s -f %s -cr %s -p %s -r %s -prefix 0",
+	shell("%s -e %s -c %s -s %s -f %s -cr %s -p %s",
 	      COMPUTE_RESULTS, experiment_name, confidence,
               sruns_txt_file, fruns_txt_file, compact_report_path_fmt,
-	      preds_txt_file, result_summary_xml_file);
+	      preds_txt_file);
 /*
 	shell("%s -I%s -c %s.cc", compiler, incdir, preds_src_file);
 
@@ -420,16 +412,47 @@ int main(int argc, char** argv)
               compact_report_path_fmt, obs_txt_file, tru_txt_file);
     }
 
+    if (do_print_summary) {
+        REQUIRE("-do-print-summary", "-ss", sites_src_file);
+        REQUIRE("-do-print-summary", "-us", units_src_file);
+	REQUIRE("-do-print-summary", "-p", preds_txt_file);
+	REQUIRE("-do-print-summary", "-e", experiment_name);
+	REQUIRE("-do-print-summary", "-c", confidence);
+	REQUIRE("-do-print-summary", "-s", sruns_txt_file);
+	REQUIRE("-do-print-summary", "-f", fruns_txt_file);
+	REQUIRE("-do-print-summary", "-r", result_summary_xml_file);
+	puts("Printing summary ...");
+	const char * const destdir = dirname(result_summary_xml_file);
+	add_links(incdir, "summary", destdir);
+	add_link(incdir, "sorts", "dtd", destdir);
+	add_link(incdir, "sorts", "xml", destdir);
+	shell("%s %s/gen_summary.o %s.o %s.o -L%s -lanalyze -o gen-summary",
+	      linker, objdir, sites_src_file, units_src_file, objdir);
+	shell("./gen-summary -p %s -e %s -c %s -s %s -f %s -d %s >%s",
+	      preds_txt_file, experiment_name, confidence,
+              sruns_txt_file, fruns_txt_file,
+	      program_src_dir,
+	      result_summary_xml_file);
+/*
+	shell("%s -I%s -c %s.cc", compiler, incdir, preds_src_file);
+
+        shell("echo \"#include <preds.h>\" > %s.cc", preds_src_file);
+        shell("echo \"const char* const preds[] = {\" >> %s.cc", preds_src_file);
+        shell("awk '{ print \"\t\\\"\" $n \"\\\",\" }' %s >> %s.cc", preds_full_txt_file, preds_src_file);
+        shell("echo \"};\" >> %s.cc", preds_src_file);
+*/
+    }
+
     if (do_print_results_1) {
 	REQUIRE("-do-print-results-1", "-r", result_summary_xml_file);
 	REQUIRE("-do-print-results-1", "-p", preds_txt_file);
         REQUIRE("-do-print-results-1", "-ss", sites_src_file);
         REQUIRE("-do-print-results-1", "-us", units_src_file);
+	puts("Pretty-printing results-1 ...");
 	add_links(incdir, "view", dirname(result_summary_xml_file));
 	shell("%s %s/gen_views.o %s.o %s.o -L%s -lanalyze -o %s",
 	      linker, objdir, sites_src_file, units_src_file, objdir, GEN_VIEWS);
-	puts("Pretty-printing results-1 ...");
-	gen_views(preds_txt_file, 0);
+	shell(GEN_VIEWS " -p %s", preds_txt_file);
     }
 
     if (do_compute_results || do_print_results_1) {

@@ -1,7 +1,9 @@
 <!-- results from a single experiment -->
 <!ELEMENT experiment (runs, analysis, schemes)>
-<!ATTLIST experiment title CDATA #REQUIRED>
-<!ATTLIST experiment date CDATA #REQUIRED>
+<!ATTLIST experiment
+  title CDATA #REQUIRED
+  date CDATA #REQUIRED
+  source-dir CDATA #IMPLIED>
 
 <!-- outcome summary for the runs in an experiment -->
 <!ELEMENT runs EMPTY>
@@ -12,7 +14,6 @@
 <!-- data analysis parameters -->
 <!ELEMENT analysis EMPTY>
 <!ATTLIST analysis confidence NMTOKEN #REQUIRED>
-<!ATTLIST analysis prefix NMTOKEN #REQUIRED>
 
 <!-- list of instrumentation schemes -->
 <!ELEMENT schemes (scheme+)>
@@ -20,6 +21,5 @@
 <!-- names and predicate counts for one scheme -->
 <!ELEMENT scheme EMPTY>
 <!ATTLIST scheme name CDATA #REQUIRED>
-<!ATTLIST scheme code NMTOKEN #REQUIRED>
 <!ATTLIST scheme total NMTOKEN #REQUIRED>
 <!ATTLIST scheme retain NMTOKEN #REQUIRED>

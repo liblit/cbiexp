@@ -18,9 +18,6 @@
   />
 
 
-  <xsl:variable name="prefix" select="/experiment/analysis/@prefix"/>
-
-
   <!-- main master template for generated page -->
   <xsl:template match="/experiment">
     <html>
@@ -94,10 +91,9 @@
       <tr class="headers">
 	<th>Scheme</th>
 	<th colspan="4">Predicates<br/>Retained</th>
-	<th>Lower Bound of Confidence Interval</th>
-	<th>Increase Score</th>
-	<th>Fail Score</th>
-	<th>True in # Failed Runs</th>
+	<xsl:for-each select="document('sorts.xml')/sorts/sort">
+	  <th><xsl:apply-templates/></th>
+	</xsl:for-each>
       </tr>
 
       <!-- one row per scheme -->
@@ -106,7 +102,6 @@
       <!-- summary row -->
       <xsl:call-template name="scheme-links-row">
 	<xsl:with-param name="name" select="'all'"/>
-	<xsl:with-param name="code" select="'preds'"/>
 	<xsl:with-param name="retain" select="sum(*/@retain)"/>
 	<xsl:with-param name="total" select="sum(*/@total)"/>
       </xsl:call-template>
@@ -119,7 +114,6 @@
   <xsl:template match="scheme">
     <xsl:call-template name="scheme-links-row">
       <xsl:with-param name="name" select="@name"/>
-      <xsl:with-param name="code" select="@code"/>
       <xsl:with-param name="retain" select="@retain"/>
       <xsl:with-param name="total" select="@total"/>
     </xsl:call-template>
@@ -128,8 +122,7 @@
 
   <!-- named template for generating one row of links -->
   <xsl:template name="scheme-links-row">
-    <xsl:param name="name"/> <!-- human-readable scheme name -->
-    <xsl:param name="code"/> <!-- sort scheme code for file names -->
+    <xsl:param name="name"/> <!-- scheme name -->
     <xsl:param name="retain"/> <!-- number of predicates retained -->
     <xsl:param name="total"/> <!-- number of predicates before filtering -->
     <xsl:if test="$total > 0">
@@ -139,20 +132,16 @@
 	<td class="solidus">&#160;of&#160;</td>
 	<td class="total count"><xsl:number value="$total" grouping-size="3" grouping-separator=","/></td>
 	<td class="percent">&#160;(<xsl:number value="round($retain div $total * 100)"/>%)</td>
-	<xsl:choose>
-	  <xsl:when test="$retain = 0">
-	    <td class="link"/>
-	    <td class="link"/>
-	    <td class="link"/>
-	    <td class="link"/>
-	  </xsl:when>
-	  <xsl:otherwise>
-	    <td class="link"><a href="{$code}_lb.{$prefix}.xml">&link;</a></td>
-	    <td class="link"><a href="{$code}_is.{$prefix}.xml">&link;</a></td>
-	    <td class="link"><a href="{$code}_fs.{$prefix}.xml">&link;</a></td>
-	    <td class="link"><a href="{$code}_nf.{$prefix}.xml">&link;</a></td>
-	  </xsl:otherwise>
-	</xsl:choose>
+	<xsl:for-each select="document('sorts.xml')/sorts/sort">
+	  <xsl:choose>
+	    <xsl:when test="$retain = 0">
+	      <td class="link"/>
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <td class="link"><a href="{$name}_{@code}.xml">&link;</a></td>
+	    </xsl:otherwise>
+	  </xsl:choose>
+	</xsl:for-each>
       </tr>
     </xsl:if>
   </xsl:template>

@@ -34,8 +34,12 @@ process_run_labels_SOURCES = process_run_labels.cc
 libanalyze_a_SOURCES =				\
 	classify_runs.cc			\
 	classify_runs.h				\
+	generate-view.cc			\
+	generate-view.h				\
 	shell.cc				\
 	shell.h					\
+	sorts.cc				\
+	sorts.h					\
 	utils.cc				\
 	utils.h
 
@@ -60,7 +64,10 @@ liblate_a_SOURCES =				\
 	compute_results.cc			\
 	convert_reports.ll			\
 	gen_preds_file.cc			\
+	gen_summary.cc				\
 	gen_views.cc				\
+	generate-view.cc			\
 	preds.h					\
+	project.cc				\
 	sites.h					\
 	units.h

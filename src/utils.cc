@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cerrno>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -57,67 +58,16 @@ bool read_pred_full(FILE* fp, pred_info &pi)
 	return false;
 }
 
-void print_pred_full(FILE* fp, const string &srcdir, pred_info pi)
+FILE *fopen_read(const char *filename)
 {
-    fputs("<predictor>", fp);
-    print_pred_stat(fp, pi);
-    print_pred_name(fp, srcdir, pi.site, pi.p);
-    fputs("</predictor>", fp);
-}
-
-void print_pred_stat(FILE* fp, pred_info pi)
-{
-    fprintf(fp,
-	    "<true success=\"%d\" failure=\"%d\"/>"
-	    "<seen success=\"%d\" failure=\"%d\"/>"
-	    "<scores log10-seen=\"%g\" context=\"%g\" lower-bound=\"%g\" increase=\"%g\" badness=\"%g\"/>",
-	    pi.s, pi.f,
-	    pi.os, pi.of,
-	    log10(pi.s + pi.f), pi.ps.co, pi.ps.lb, pi.ps.in, pi.ps.fs);
-}
-
-const char* s_op[6] = { "&lt;", "&gt;=", "==", "!=", "&gt;", "&lt;=" };
-const char* r_op[6] = { "&lt;", "&gt;=", "==", "!=", "&gt;", "&lt;=" };
-const char* b_op[2] = { "is FALSE", "is TRUE" };
-const char* g_op[4] = { "= 0", "= 1", "&gt; 1", "invalid" };
-
-void print_pred_name(FILE* fp, const string &srcdir, int site, int p)
-{
-    fputs("<source predicate=\"", fp);
-
-    switch(sites[site].scheme_code) {
-    case 'S':
-        fprintf(fp, "%s %s %s",
-            sites[site].args[0], s_op[p], sites[site].args[1]);
-        break;
-    case 'R':
-        fprintf(fp, "%s %s 0",
-            sites[site].args[0], r_op[p]);
-        break;
-    case 'B':
-        fprintf(fp, "%s %s",
-            sites[site].args[0], b_op[p]);
-        break;
-    case 'G':
-        fprintf(fp, "old_refcount(%s) %s",
-            sites[site].args[0], g_op[p]);
-        break;
-    default:
-        assert(0);
+    FILE * const fp = fopen(filename, "r");
+    if (!fp) {
+	const int code = errno;
+	fprintf(stderr, "cannot read %s: %s\n", strerror(code));
+	exit(code || 1);
     }
 
-    string collect;
-    const char *filename = sites[site].file;
-
-    if (filename[0] != '/' && !srcdir.empty() && srcdir != ".") {
-	collect = srcdir;
-	collect += '/';
-	collect += filename;
-	filename = collect.c_str();
-    }
-
-    fprintf(fp, "\" function=\"%s\" file=\"%s\" line=\"%d\"/>",
-	    sites[site].fun, filename, sites[site].line);
+    return fp;
 }
 
 void process_report(FILE* fp,
@@ -174,6 +124,32 @@ void process_report(FILE* fp,
 	exit(1);
 }
 
+
+const string &
+scheme_name(char code)
+{
+    switch (code) {
+    case 'B': {
+	static const string name("branches");
+	return name;
+    }
+    case 'G': {
+	static const string name("g-object-unref");
+	return name;
+    }
+    case 'R': {
+	static const string name("returns");
+	return name;
+    }
+    case 'S': {
+	static const string name("scalar-pairs");
+	return name;
+    }
+    default:
+	fprintf(stderr, "unrecognized scheme code: %c\n", code);
+	exit(1);
+    }
+}
 
 // Local variables:
 // c-file-style: "cc-mode"

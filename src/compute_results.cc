@@ -1,17 +1,13 @@
-#include <cstdio>
 #include <cassert>
-#include <cstring>
-#include <cstdlib>
 #include <cmath>
-#include <ctime>
-#include <cctype>
 #include <vector>
 #include "classify_runs.h"
-#include "units.h"
 #include "sites.h"
+#include "units.h"
 #include "utils.h"
 
 using namespace std;
+
 
 enum { LT, GEQ, EQ, NEQ, GT, LEQ };
 
@@ -42,8 +38,6 @@ char* fruns_txt_file = NULL;
 char* compact_report_path_fmt = NULL;
 
 char* preds_txt_file = NULL;
-char* prefix = NULL;
-char* result_summary_xml_file = NULL;
 
 int num_s_preds = 0;
 int num_r_preds = 0;
@@ -53,46 +47,8 @@ int num_g_preds = 0;
 FILE* preds_txt_fp = NULL;
 
 /****************************************************************************
- * Procedures for printing (1) result summary and (2) retained predicates
+ * Procedures for printing retained predicates
  ***************************************************************************/
-
-static void print_scheme_summary(FILE *fp,
-				 const char name[], char code,
-				 int total, int retain)
-{
-    fprintf(fp, "<scheme name=\"%s\" code=\"%c\" total=\"%d\" retain=\"%d\"/>",
-	    name, code, total, retain);
-}
-
-void print_result_summary()
-{
-    time_t t;
-    time(&t);
-
-    FILE* fp = fopen(result_summary_xml_file, "w");
-    assert(fp);
-
-    fprintf(fp,
-	    "<?xml version=\"1.0\"?>"
-	    "<?xml-stylesheet type=\"text/xsl\" href=\"summary.xsl\"?>"
-	    "<!DOCTYPE experiment SYSTEM \"summary.dtd\">"
-	    "<experiment title=\"%s\" date=\"%s\">"
-	    "<runs success=\"%d\" failure=\"%d\" ignore=\"%d\"/>"
-	    "<analysis confidence=\"%d\" prefix=\"%s\"/>"
-	    "<schemes>",
-	    experiment_name, ctime(&t),
-	    num_sruns, num_fruns, num_runs - (num_sruns + num_fruns),
-	    confidence, prefix);
-
-    print_scheme_summary(fp, "branches", 'B', NumBPreds, num_b_preds);
-    print_scheme_summary(fp, "returns", 'R', NumRPreds, num_r_preds);
-    print_scheme_summary(fp, "scalar-pairs", 'S', NumSPreds, num_s_preds);
-    print_scheme_summary(fp, "g-object-unref", 'G', NumGPreds, num_g_preds);
-
-    fputs("</schemes></experiment>\n", fp);
-
-    fclose(fp);
-}
 
 inline void print_pred(FILE* fp, int u, int c, int p, int site)
 {
@@ -470,26 +426,14 @@ void process_cmdline(int argc, char** argv)
 	    preds_txt_file = argv[i];
 	    continue;
 	}
-	if (!strcmp(argv[i], "-prefix")) {
-	    i++;
-	    prefix = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-r")) {
-	    i++;
-	    result_summary_xml_file = argv[i];
-	    continue;
-	}
 	if (!strcmp(argv[i], "-h")) {
 	    puts("Usage: compute-results <options>\n"
                  "    -e       <experiment-name>\n"
                  "    -c       <confidence>\n"
-                 "    -prefix  <views-prefix>\n"
                  "(r) -s       <sruns-txt-file>\n"
                  "(r) -f       <fruns-txt-file>\n"
                  "(r) -cr      <compact-report-path-fmt>\n"
-                 "(w) -p       <preds-txt-file>\n"
-                 "(w) -r       <result-summary-xml-file>\n");
+                 "(w) -p       <preds-txt-file>\n");
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
@@ -501,9 +445,7 @@ void process_cmdline(int argc, char** argv)
         !sruns_txt_file ||
         !fruns_txt_file ||
         !compact_report_path_fmt ||
-	!preds_txt_file ||
-	!prefix ||
-        !result_summary_xml_file) {
+	!preds_txt_file) {
 	puts("Incorrect usage; try -h");
 	exit(1);
     }
@@ -543,7 +485,6 @@ int main(int argc, char** argv)
     cull_preds_aggressively2();
 
     print_retained_preds();
-    print_result_summary();
 
     return 0;
 }
