@@ -1,0 +1,91 @@
+
+\input{table}
+
+In this section we compare our new algorithm with our previous
+approaches on the programs {\tt ccrypt} and {\tt bc}.
+Table~\ref{tab:exps} shows raw counts for all four experiments of the
+successful and unsuccessful runs, number of instrumentation sites in
+the program, the number of predicates for each
+instrumentation scheme, and the number of predicates retained by the
+test $\increase() > 0$.   Keep in mind that multiple predicates are
+derived from each instrumentation site.  For example, each branches
+site yields two predicates from two counters, while each scalar pairs
+site yields six predicates from three counters.
+
+The sampling rate for all of our experiments is \nicefrac{1}{1};
+i.e., we sampled every predicate every time it was reached.  An
+offline downsampling program allows us generate sparser samples from this
+full data; thus, we were able to use the same set of runs to test the
+effect of different sampling rates on the results.  
+
+We analyzed {\tt ccrypt} version 1.2, which has a known bug \cite{Selinger:2003:cqual}.  At one point in the code the program attempts to write a file.  If the file already exists, the user is presented with a prompt asking for confirmation that the file should be written; if the user input is EOF (i.e., the user hits {\tt Enter} without typing anything) the program will crash.  We used only the {\tt returns}
+instrumentation scheme for this experiment. The top
+two entries of the report are (most information is elided for
+brevity):
+\begin{verbatim}
+Predicate            Context    Increase   Failure
+xreadline() == 0     .67        .33        1.00
+file_exists() > 0    .35        .32         .67
+\end{verbatim}
+
+These are the same two predicates identified using a a simple process-of-elimination strategy in our previous work
+\cite{PLDI`03*141}.  Our new algorithm, however, provides enough information to also see the causal chain that
+leads to the crash: if the file exists, the probability of failure increases to .67, and if in addition the
+read returns EOF, the probability of failure increases to 1.00.  A property of our algorithm is that 
+whenever a causal sequence of instrumented predicates must be true for a bug to occur, each predicate along the
+sequence shows a distinct step up in the probability of failure.
+
+Note also that the report is very short; only 6 predicates out of more than 8,000 are retained by the test $\increase() > 0$.
+Uniformly throughout our experiments the {\tt returns} and {\tt branches} reports are short enough that all predicates can
+easily be examined by hand; we discuss the larger {\tt scalar-pairs} reports below.
+
+Our second experiment isolates a buffer overrun in version 1.06 of GNU's {\tt bc}.  In our
+previous work, which used an algorithm based on logistic regression, all of the top
+predictors showed that the variable {\tt indx} was bigger than some other value on the first line of the following
+code fragment:
+\begin{verbatim}
+for(; indx < v_count; indx++)
+      arrays[index] = NULL;
+\end{verbatim}
+The problem is indeed that {\tt indx} gets too big, resulting in an overrun of {\tt arrays}.  The bug
+is that {\tt v\_count} is the wrong loop bound; it should be {\tt a\_count} instead.  
+
+Using our new algorithm, the top 11 predicates (sorted by descending
+$\increase()$ score) involve predicates within a few lines of the line
+with the actual overrun.  However, these predicates also predict only
+20-100 failing runs, a small fraction of the number of failing runs
+for {\tt bc} in Table~\ref{tab:exps}.  We have observed that this
+phenomenon is fairly common: if there are enough failures caused by a
+bug, some predicates will predict failure for small subsets of the failure set.
+
+We have found it useful, especially when examining the larger
+scalar-pairs reports, to be able to distinguish whether a
+highly-ranked predicate largely captures an entire bug or just an aspect of a bug.  To
+this end, we compute correlation matrices, showing the correlation of
+each retained predicate with every other retained predicate; intuitively, the
+correlations show how often the bugs occur in the same failing run.  High correlations
+indicate that the two predicates are very likely caused by the same bug.
+
+In this experiment, a moment's work shows that the top-ranked predicates are highly
+correlated with other predicates that are observed in many more of the
+failing runs.\footnote{Our system hyperlinks each predicate to a
+rank-ordered list of correlated predicates; it is literally the work
+of a moment to discover this fact.}  Changing the rank order to list
+the predicates with a large number of failing runs first, the first
+group of predicates mostly involve {\tt indx} being larger than
+something else on the first line of the code fragment given above.
+Also in this cluster is the predicate {\tt v\_count > a\_count}, as
+expected.
+
+In summary, our new algorithm performed at least as well as either of
+our previous proposals on both a deterministic and a non-deterministic
+bug.     Furthermore, additional information, computed by our new
+approach but not by our old ones, is also useful in understanding the
+sources of bugs.
+
+
+
+
+
+
+
