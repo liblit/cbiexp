@@ -5,14 +5,13 @@
   xmlns="http://www.w3.org/1999/xhtml"
 >
 
+  <xsl:import href="logo.xsl"/>
+
   <xsl:output
     method="xml"
     doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"
     doctype-public="-//W3C//DTD XHTML 1.1//EN"
   />
-
-
-  <xsl:variable name="projectURL" select="'http://www.cs.berkeley.edu/~liblit/sampler/'"/>
 
 
   <!-- look up schemes by their short id codes -->
@@ -39,9 +38,7 @@
       <body>
 	<!-- generic page header -->
 	<h1>
-	  <a href="{$projectURL}" class="logo">
-	    <img src="{$projectURL}logo.png" alt="" style="border-style: none"/>
-	  </a>
+	  <xsl:copy-of select="$logo-icon"/>
 	</h1>
 
 	<table class="views">

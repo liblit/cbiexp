@@ -292,30 +292,33 @@ void FORBID(char* main_opt, char* sub_opt, char* s)
     }
 }
 
+static void add_link(const char srcdir[], const char basename[], const char suffix[], const char destdir[])
+{
+    char oldpath[PATH_MAX];
+    {
+	const int needed = snprintf(oldpath, sizeof(oldpath), "%s/%s.%s", srcdir, basename, suffix);
+	assert(needed <= int(sizeof(oldpath)));
+    }
+
+    char newpath[PATH_MAX];
+    {
+	const int needed = snprintf(newpath, sizeof(newpath), "%s/%s.%s", destdir, basename, suffix);
+	assert(needed <= int(sizeof(newpath)));
+    }
+
+    unlink(newpath);
+
+    if (symlink(oldpath, newpath) != 0) {
+	fprintf(stderr, "symlink from %s to %s failed: %s\n", oldpath, newpath, strerror(errno));
+	exit(1);
+    }
+}
+
 static void add_links(const char srcdir[], const char basename[], const char destdir[])
 {
     static const char * const suffixes[] = {"css", "dtd", "xsl"};
-    for (unsigned i = 0; i < sizeof(suffixes) / sizeof(*suffixes); ++i) {
-
-	char oldpath[PATH_MAX];
-	{
-	    const int needed = snprintf(oldpath, sizeof(oldpath), "%s/%s.%s", srcdir, basename, suffixes[i]);
-	    assert(needed <= int(sizeof(oldpath)));
-	}
-
-	char newpath[PATH_MAX];
-	{
-	    const int needed = snprintf(newpath, sizeof(newpath), "%s/%s.%s", destdir, basename, suffixes[i]);
-	    assert(needed <= int(sizeof(newpath)));
-	}
-
-	unlink(newpath);
-
-	if (symlink(oldpath, newpath) != 0) {
-	    fprintf(stderr, "symlink from %s to %s failed: %s\n", oldpath, newpath, strerror(errno));
-	    exit(1);
-	}
-    }
+    for (unsigned i = 0; i < sizeof(suffixes) / sizeof(*suffixes); ++i)
+	add_link(srcdir, basename, suffixes[i], destdir);
 }
 
 int main(int argc, char** argv)
@@ -424,6 +427,11 @@ int main(int argc, char** argv)
 	      linker, objdir, sites_src_file, units_src_file, objdir, GEN_VIEWS);
 	puts("Pretty-printing results-1 ...");
 	gen_views(preds_txt_file, 0);
+    }
+
+    if (do_compute_results || do_print_results_1) {
+	add_link(incdir, "logo", "css", dirname(result_summary_xml_file));
+	add_link(incdir, "logo", "xsl", dirname(result_summary_xml_file));
     }
 
 /*

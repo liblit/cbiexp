@@ -5,13 +5,15 @@
   xmlns="http://www.w3.org/1999/xhtml"
 >
 
+  <xsl:import href="logo.xsl"/>
+
   <xsl:output
     method="xml"
     doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"
     doctype-public="-//W3C//DTD XHTML 1.1//EN"
   />
 
-  <xsl:variable name="projectURL" select="'http://www.cs.berkeley.edu/~liblit/sampler/'"/>
+
   <xsl:variable name="prefix" select="/experiment/analysis/@prefix"/>
 
 
@@ -25,9 +27,10 @@
 
       <body>
 	<!-- generic page header -->
-	<h1><a href="{$projectURL}" class="logo"><img
-	src="{$projectURL}logo.png" alt="" style="border-style:
-	none"/></a>Cooperative Bug Isolation Report</h1>
+	<h1>
+	  <xsl:copy-of select="$logo-icon"/>
+	  Cooperative Bug Isolation Report
+	</h1>
 
 	<!-- miscellaneous information about the experiment -->
 	<p>Experiment name: <xsl:value-of select="@title"/></p>
