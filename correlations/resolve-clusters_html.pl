@@ -19,9 +19,9 @@ my $footer = "</body>\n</html>\n";
 
 ## read in the predicate statistics first
 my @plist;
-push @plist, &read_htmlinfo("$pfiledir/B.html");
-push @plist, &read_htmlinfo("$pfiledir/R.html");
-push @plist, &read_htmlinfo("$pfiledir/S.html");
+push @plist, &read_htmlinfo("$pfiledir/B.html") if -e "$pfiledir/B.html";
+push @plist, &read_htmlinfo("$pfiledir/R.html") if -e "$pfiledir/R.html";
+push @plist, &read_htmlinfo("$pfiledir/S.html") if -e "$pfiledir/S.html";
 die "Oops" if $#plist < 3;
 
 sub read_htmlinfo {
@@ -46,6 +46,7 @@ while (<>) {
   chomp;
   $k++;
   print OUT "Cluster $k:<br>\n";
+  next if /^$/;
   my ($p1, $str) = split /:/;
   die "Can't find predicate $p1" if !defined $plist[$p1-1];
   print OUT $plist[$p1-1], "\n";;

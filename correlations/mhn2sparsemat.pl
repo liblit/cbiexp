@@ -88,6 +88,8 @@ sub read_info {
   open (INFO, "$fn") || die "Open: $!";
   while (<INFO>) {
     chomp;
+    ## kluge for to get rid of leading zero's in the runlist of ccrypt and bc
+    s/^0*//; 
     push @info, $_;
     $info{$_} = $k++;
   }
