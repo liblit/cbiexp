@@ -155,15 +155,12 @@ int main(int argc, char** argv)
 	ofp = fopen(ofile, "w");
 	assert(ofp);
 
-	printf("r %d...", i);
-	fflush(stdout);
-
+	printf("r %d\n", i);
 	yyrestart(ifp);
 	yylex();
 
 	fclose(ifp);
 	fclose(ofp);
-	puts("done");
     }
     return 0;
 }
