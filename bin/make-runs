@@ -33,11 +33,13 @@ unless (-x $run_once && -x $label_once) {
 
 my $jobs;
 my $verbose;
+my $datadir 'data';
 
 my $understood = GetOptions('jobs=i' => \$jobs,
-			    'verbose' => \$verbose);
+			    'verbose' => \$verbose,
+			    'datadir' => \$datadir);
 
-die "Usage: $0 [--jobs=<count>] [--verbose] <num-runs>\n",
+die "Usage: $0 [--jobs=<count>] [--verbose] [--datadir=<dir>] <num-runs>\n",
     unless $understood && @ARGV == 1;
 
 
@@ -93,7 +95,6 @@ close $handle;
 delete @ENV{'MAKEFILES', 'MAKFLAGS'};
 
 # prepare data storage area
-my $datadir = 'data';
 mkdir $datadir;
 
 # perform any other setup work needed before the runs begin
