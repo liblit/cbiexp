@@ -115,7 +115,7 @@ guaranteed to fail; this is bug \#1, and the predicate points directly
 to the fact that something is wrong in the comment matching code.
 Recall that bug \#1 is non-deterministic; why then is the crash score 1.0?
 The discrepancy is the result of sampling error.  In the full data set
-(with 1/1 sampling) the crash measure for this predicate is .88.  The
+(with 1/1 sampling) the crash measure for this predicate is 0.88.  The
 next predicate marks the test for whether \moss\ is analyzing Lisp
 programs; the crash score of 1.0 tells us that whenever a Lisp program is
 processed, \moss\ crashes.  The last predicate in
@@ -146,7 +146,7 @@ cause of bug \#2.
 The fourth entry of the full data (not the 1/100 downsampled data)
 returns report is very interesting.  This predicate shows that one of
 the file read operations in the function that loads a database can
-fail, and when it does \moss\ itself fails with probability .64.
+fail, and when it does \moss\ itself fails with probability 0.64.
 It turns out that \moss\ was written assuming that the databases it
 loaded would never be corrupt, because it does no checking to ensure
 that the file reads that load databases succeed.  This is a previously
@@ -173,7 +173,7 @@ predicates ranked higher than these two are either more obscure,
 but more deterministic, indicators for bug \#4 or for one of the other five observed bugs.
 Given the emphasis on determinism in our ranking function, bug \#9 could not be listed
 higher, as it is the most non-deterministic bug in our data set with a
-$\crash(\ldots)$ score of .72.
+$\crash(\ldots)$ score of 0.72.
 
 Finally, we compared the reports generated from 1/100 sampled data
 with the reports generated from 1/1 sampled data.  The reports were
