@@ -13,11 +13,11 @@ void TsReportReader::read(unsigned runId, const char *when)
   FILE * const report = fopenRead(TimestampReport::format(runId, when));
 
   SiteCoords coords;
-  unsigned ts;
+  timestamp ts;
 
   while (true)
     {
-      fscanf(report, "%u\t%u\t%u\n", &coords.unitIndex, &coords.siteOffset, &ts);
+      fscanf(report, "%u\t%u\t%Lu\n", &coords.unitIndex, &coords.siteOffset, &ts);
       if (feof(report))
         break;
 

@@ -3,7 +3,8 @@
 #include <boost/property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/johnson_all_pairs_shortest.hpp>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdlib>
 #include <cassert>
 #include <fstream>
 #include <iostream>
@@ -35,11 +36,11 @@ typedef adjacency_list<setS, vecS, directedS, Vprops, Eprops> Graph;
 typedef graph_traits<Graph>::vertex_descriptor VertexD;
 typedef graph_traits<Graph>::edge_descriptor EdgeD;
 
-class ts_hash_t : public hash_map<SiteCoords, unsigned>
+class ts_hash_t : public hash_map<SiteCoords, timestamp>
 {
 };
 
-typedef pair<SiteCoords,unsigned> ts_pair_t;
+typedef pair<SiteCoords,timestamp> ts_pair_t;
 
 
 static Graph G;
@@ -66,7 +67,7 @@ class Reader : public TsReportReader
 {
 public:
   Reader(unsigned);
-  void siteTs(const SiteCoords &, unsigned);
+  void siteTs(const SiteCoords &, timestamp);
 };
 
 inline
@@ -77,7 +78,7 @@ Reader::Reader(unsigned r)
 }
 
 inline void
-Reader::siteTs(const SiteCoords &coords, unsigned ts)
+Reader::siteTs(const SiteCoords &coords, timestamp ts)
 {
   const ts_hash_t::iterator found = curr_run.ts.find(coords);
   if (found == curr_run.ts.end()) {
@@ -238,7 +239,7 @@ void calc_apsp()
     cout << "Computing all-pairs shortest paths.\n";
     const unsigned V = num_vertices(G);
     vector<weight_t> d(V, maxweight);
-    weight_t **D = new (weight_t*)[V];
+    weight_t **D = new weight_t* [V];
     for (unsigned i = 0; i < V; i++)
       D[i] = new weight_t[V];
 
