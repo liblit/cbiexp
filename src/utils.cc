@@ -97,8 +97,8 @@ void print_pred_name(FILE* fp, int site, int p)
             sites[site].args[0], b_op[p]);
         break;
     case 'G':
-        fprintf(fp, "old_refcount(%s) %s for site %d, pred %d",
-            sites[site].args[0], g_op[p], site, p);
+        fprintf(fp, "old_refcount(%s) %s",
+            sites[site].args[0], g_op[p]);
         break;
     default:
         assert(0);

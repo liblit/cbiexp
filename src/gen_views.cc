@@ -97,7 +97,6 @@ int main(int argc, char** argv)
             sprintf(file2, "%s.tmp.txt", scheme_codes[i]);
 
 	    shell("sort -k%d -r -n < %s.txt > %s", sortby_indices[m], scheme_codes[i], file2);
-	    shell("cat %s", file2);
 
             FILE* fp2 = fopen(file2, "r");
             assert(fp2);
