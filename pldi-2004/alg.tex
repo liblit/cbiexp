@@ -1,7 +1,7 @@
 This section presents our algorithm for automatically isolating
 multiple bugs.  As discussed in \autoref{sec:background}, the input is
 a set of feedback reports from individual program runs $R$, where
-$R(P) = 1$ if predicate $P$ is observed to be true during the
+$\report{P} = 1$ if predicate $P$ is observed to be true during the
 execution of $R$.
 
 The idea behind the algorithm is to simulate the iterative manner in which  human programmers
@@ -25,10 +25,11 @@ importance.
 For the second step, while we cannot literally fix the bug
 corresponding to the chosen predictor $P$, we can simulate what
 happens if the bug does not occur.  We discard any run $R$ such that
-$R(P) = 1$ and repeat.  Discarding all the runs where $R(P) = 1$
-reduces the importance of other predictors of ${\cal B}$, allowing predicates
-that predict different bugs (i.e., different sets of failing runs) to
-rise to the top in subsequent iterations.
+$\report{P} = 1$ and repeat.  Discarding all the runs where
+$\report{P} = 1$ reduces the importance of other predictors of ${\cal
+  B}$, allowing predicates that predict different bugs (i.e.,
+different sets of failing runs) to rise to the top in subsequent
+iterations.
 
 \subsection{Increase Scores}
 \label{sec:increase}
@@ -369,7 +370,8 @@ redundant predicates:
 
 \item Rank predicates by $\importance$.
 
-\item Remove the top-ranked predicate $P$ and discard all runs $R$ (feedback reports) where  $R(P) = 1$.
+\item Remove the top-ranked predicate $P$ and discard all runs $R$
+  (feedback reports) where $\report{P} = 1$.
 
 \item Repeat these steps until the set of runs is empty or the set of predicates is empty.
 \end{enumerate}
@@ -393,7 +395,7 @@ We can now state an easy but important property of this algorithm.
 \begin{lemma}
 \rm
 Let $P_1,\ldots,P_n$ be a set of instrumented predicates and let ${\cal B}_1,\ldots,{\cal B}_m$ be a set of bugs.  Let
-\[ {\cal Z} = \bigcup_{1 \leq i \leq n} \{ R | R(P_i) = 1 \} \]
+\[ {\cal Z} = \bigcup_{1 \leq i \leq n} \{ R | \report{P_i} = 1 \} \]
 Then if for all $1 \leq j \leq m$ we have ${\cal B}_j \cap {\cal Z} \neq \emptyset$, then 
 the algorithm chooses at least one predicate from the list $P_1,\ldots,P_n$ that predicts
 at least one failure due to ${\cal B}_j$.

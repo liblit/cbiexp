@@ -69,6 +69,7 @@ pdfpagemode=UseOutlines
 \newcommand{\importance}{\ensuremath{\textit{Importance}}}
 \newcommand{\numfail}{\ensuremath{\textit{NumF}}}
 \renewcommand{\H}{{\mathcal{H}}}
+\newcommand{\report}[1]{\ensuremath{R[#1]}}
 
 \newcommand{\issue}[2][]{}
 
@@ -193,13 +194,7 @@ tested each time the program point is reached).  A feedback report $R$
 consists of one bit indicating whether a run of the program
 succeeded or failed, as well as a bit vector with one bit for each
 predicate $P$; if $P$ is observed to be true at least once during run
-$R$ then $R(P) = 1$, otherwise $R(P) = 0$.
-
-\issue[Alice]{Comment about notation: the f(x) usually denotes some
-  kind of function, do we want to treat R (a run) as a function?  I'd
-  much prefer the subscript or superscript notation, which usually
-  refers to an element of a vector.  How about R_P instead of R(P)?
-  [I didn't make this change in the text]}
+$R$ then $\report{P} = 1$, otherwise $\report{P} = 0$.
     
 \issue{modified by Alice}
 
@@ -216,16 +211,16 @@ set of failing runs, but note that ${\cal B}_i \cap {\cal B}_j \neq
 of a bug as someone that characterizes a program, not a set of runs.
 What about calling a set of a failing runs a "bug profile"?}
 
-A predicate $P$ is a \termdef{bug predictor} (or simply a \termdef{predictor})
-of bug ${\cal B}$ if whenever $R(P) = 1$ then it is statistically
-likely that $R \in {\cal B}$ (see \autoref{sec:increase}).
-\termdef{Statistical debugging} selects a small subset ${\cal S}$ of the set of
-all instrumented predicates ${\cal P}$ such that ${\cal S}$ has
-predictors of all bugs.  We also rank the predictors in ${\cal S}$
-from the most to least important.  The set ${\cal S}$ and associated
-metrics (see \autoref{sec:experiments}) are then available to
-engineers to help speed the process of finding and fixing the most
-serious bugs.
+A predicate $P$ is a \termdef{bug predictor} (or simply a
+\termdef{predictor}) of bug ${\cal B}$ if whenever $\report{P} = 1$
+then it is statistically likely that $R \in {\cal B}$ (see
+\autoref{sec:increase}).  \termdef{Statistical debugging} selects a
+small subset ${\cal S}$ of the set of all instrumented predicates
+${\cal P}$ such that ${\cal S}$ has predictors of all bugs.  We also
+rank the predictors in ${\cal S}$ from the most to least important.
+The set ${\cal S}$ and associated metrics (see
+\autoref{sec:experiments}) are then available to engineers to help
+speed the process of finding and fixing the most serious bugs.
 
 In previous work, we focused on techniques
 for lightweight instrumentation and sampling of program executions, but

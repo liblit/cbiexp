@@ -149,13 +149,13 @@ is not easy to identify the predicates to which a predicate is closely
 related.  Such a feature is useful in confirming whether two selected
 predicates represent different bugs or are in fact related to the same
 bug.  We do have a measure of how strongly $P$ implies another
-predicate $P'$: How does removing the runs where $R(P) = 1$ affect the
-importance of $P'$?  The more closely related $P$ and $P'$ are, the
-more $P'$'s importance drops when $P$'s failing runs are removed.  In
-the interactive version of our analysis tools, each predicate $P$ in
-the final, ranked list of predicates can zoom in to a linked
-\termdef{affinity list} of all predicates ranked by how much $P$
-causes their ranking score to decrease.
+predicate $P'$: How does removing the runs where $\report{P} = 1$
+affect the importance of $P'$?  The more closely related $P$ and $P'$
+are, the more $P'$'s importance drops when $P$'s failing runs are
+removed.  In the interactive version of our analysis tools, each
+predicate $P$ in the final, ranked list of predicates can zoom in to a
+linked \termdef{affinity list} of all predicates ranked by how much
+$P$ causes their ranking score to decrease.
 
 \subsection{Additional Experiments}
 
