@@ -178,7 +178,30 @@ supports a family of sampling rates selectable on a per-site basis.
   This is a bit vague, but should at least discuss problems we
   encountered using logistic regression in the Moss experiment.}
 
-\placeholder{Yet to be addressed: exploiting program structure.}
+The sampling instrumentor uses several program analyses to boost the
+performance of instrumented code.  However, the post-run data analysis
+described in \autoref{sec:algorithm} is largely ignorant of program
+structure.  Exploiting properties visible in the source code can allow
+further filtering of suspect predicates.  We expect that in any given
+failed execution, there are two points of greatest interest to an
+engineer: the place where things first started to go wrong, and the
+place where an immediate failure became truly inevitable.  Thus,
+predicates with high crash scores \placeholder{Is ``crash score'' the
+  right term here?  Check against \autoref{sec:algorithm}.} are most
+interesting when they appear close to program entry or close to the
+location of an actual crash.
+
+This suggests an approach based on traversal of the control flow
+graph.  To find earliest causes, search forward from program entry for
+points at which the chance of failure substantially increases.  To
+find latest causes, search backward from crash locations for points at
+which the chance of failure substantially decreases.  Predicate
+observations provide additional clues, and could be incorporated to
+further restrict the search to only those paths which are consistent
+with observed behavior.  \placeholder{The preceding feels too detailed
+  for an algorithm we haven't actually implemented.  I'd rather
+  provide sketches of more distinct ideas rather than presenting just
+  one idea in this much detail.}
 
 \section{Related Work}
 \label{sec:related-work}
