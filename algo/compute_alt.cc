@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include <vector>
 #include "units.h"
+
+using namespace std;
 
 bool is_srun[NUM_RUNS + 1];
 bool is_frun[NUM_RUNS + 1];
@@ -9,6 +12,7 @@ bool is_frun[NUM_RUNS + 1];
 struct site_t {
     int S[6], F[6];
     int os, of;
+    bit_vector* b[6];
     site_t() 
     { 
         os = of = 0;
@@ -60,7 +64,7 @@ inline void print_pred(FILE* fp, int u, int c, int p, const char* pred_kind)
 main(int argc, char** argv)
 {
     int i, j, k, x, y, z;
-    FILE *sfp = NULL, *ffp = NULL;
+    FILE *sfp = NULL, *ffp = NULL, *pfp;
 
     /************************************************************************
      ** process command line options
@@ -101,8 +105,25 @@ main(int argc, char** argv)
             }
             continue;
         }
+        if (strcmp(argv[i], "-p") == 0) {
+            if (pfp) {
+                printf("-p specified multiple times\n");
+                return 1;
+            }
+            i++;
+            if (!argv[i]) {
+                printf("argument to -p missing\n");
+                return 1;
+            }
+            pfp = fopen(argv[i], "r");
+            if (!pfp) {
+                printf("Cannot open file %s for reading\n", argv[i]);
+                return 1;
+            }
+            continue;
+        }
         if (strcmp(argv[i], "-h") == 0) {
-            printf("Usage: compute [-s runs_file] [-f runs_file]\n");
+            printf("Usage: compute [-s runs_file] [-f runs_file] [-p pred_file]\n");
             return 0;
         }
         printf("Illegal option: %s\n", argv[i]);
@@ -170,6 +191,21 @@ main(int argc, char** argv)
     for (i = 0; i < NUM_UNITS; i++) {
         data[i] = new (site_t) [units[i].c];
         assert(data[i]);
+    }
+
+    if (pfp) {
+        while (1) {
+            int u, c, p;
+            fscanf(pfp, "%d %d %d", &u, &c, &p);
+            if (feof(pfp))
+                break;
+            assert(u >= 0 && u < NUM_UNITS );
+            assert(c >= 0 && c < units[u].c);
+            assert(p >= 0 && p < 6);
+            data[u][c].b[p] = new bit_vector(NUM_RUNS + 1);
+            assert(data[u][c].b[p]);
+        }
+        fclose(pfp);
     }
 
     for (i = 1; i <= NUM_RUNS; i++) {
