@@ -16,20 +16,20 @@ struct site_t {
 
 site_t* data[NUM_UNITS];
 
-inline void inc(int r, int u, int c, int p)
-{ 
-    if (is_srun[r]) 
-        data[u][c].S[p]++; 
-    else if (is_frun[r])
-        data[u][c].F[p]++; 
+#define inc(r, u, c, p)  \
+{                                        \
+    if (is_srun[r])                      \
+        data[u][c].S[p]++;               \
+    else if (is_frun[r])                 \
+        data[u][c].F[p]++;               \
 }
 
-inline void obs(int r, int u, int c) 
-{ 
-    if (is_srun[r]) 
-        data[u][c].os++;
-    else if (is_frun[r]) 
-        data[u][c].of++; 
+#define obs(r, u, c)  \
+{                                 \
+    if (is_srun[r])               \
+        data[u][c].os++;          \
+    else if (is_frun[r])          \
+        data[u][c].of++;          \
 }
 
 FILE* sites_fp;
@@ -177,7 +177,7 @@ main(int argc, char** argv)
         FILE* fp = fopen(file, "r");
         assert(fp);
 
-        // printf("r %d\n", i);
+        printf("r %d\n", i);
 
         while (1) {
             fscanf(fp, "%d", &j);
@@ -186,22 +186,33 @@ main(int argc, char** argv)
             if (units[j].s[0] == 'S' || units[j].s[0] == 'R') {
                 for (k = 0; k < units[j].c; k++) {
                     fscanf(fp, "%d %d %d", &x, &y, &z); 
-                    if (x + y + z > 0) 
+                    if (x + y + z > 0) {
                         obs(i, j, k);
-                    if (x     > 0) inc(i, j, k, 0);
-                    if (y + z > 0) inc(i, j, k, 1);
-                    if (y     > 0) inc(i, j, k, 2);
-                    if (x + z > 0) inc(i, j, k, 3);
-                    if (z     > 0) inc(i, j, k, 4);
-                    if (x + y > 0) inc(i, j, k, 5);
+                        if (x > 0) {
+                            inc(i, j, k, 0);
+                            inc(i, j, k, 3);
+                            inc(i, j, k, 5);
+                        }
+                        if (y > 0) {
+                            inc(i, j, k, 2);
+                            inc(i, j, k, 1);
+                            inc(i, j, k, 5);
+                        }
+                        if (z > 0) {
+                            inc(i, j, k, 4);
+                            inc(i, j, k, 1);
+                            inc(i, j, k, 3);
+                        }
+                    }
                 }
             }  else {
                 for (k = 0; k < units[j].c; k++) {
                     fscanf(fp, "%d %d", &x, &y); 
-                    if (x + y > 0)
+                    if (x + y > 0) {
                         obs(i, j, k);
-                    if (x > 0) inc(i, j, k, 0);
-                    if (y > 0) inc(i, j, k, 1);
+                        if (x > 0) inc(i, j, k, 0);
+                        if (y > 0) inc(i, j, k, 1);
+                    }
                 }
             } 
         }
