@@ -329,11 +329,11 @@ redundant predicates:
 We can now state an easy, but important, property of this algorithm.  
 \begin{lemma}
 \rm
-Let $P_1,\ldots,P_n$ be a set of instrumented predicates and let ${\cal B_1},\ldots,{\cal B_m}$ be a set of bugs.  Let
+Let $P_1,\ldots,P_n$ be a set of instrumented predicates and let ${\cal B}_1,\ldots,{\cal B}_m$ be a set of bugs.  Let
 \[ {\cal Z} = \bigcup_{1 \leq i \leq n} \{ R | R(P_i) = 1 \} \]
-Then if for all $1 \leq j \leq m$ we have ${\cal B_j} \cap {\cal Z} \neq \emptyset$, then 
+Then if for all $1 \leq j \leq m$ we have ${\cal B}_j \cap {\cal Z} \neq \emptyset$, then 
 the algorithm chooses at least one predicate from the list $P_1,\ldots,P_n$ that predicts
-at least one failure due to ${\cal B_j}$.
+at least one failure due to ${\cal B}_j$.
 \end{lemma}
 
 Thus, the elimination algorithm chooses at least one predicate 
