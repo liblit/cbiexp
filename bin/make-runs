@@ -33,7 +33,7 @@ unless (-x $run_once && -x $label_once) {
 
 my $jobs;
 my $verbose;
-my $datadir 'data';
+my $datadir = 'data';
 
 my $understood = GetOptions('jobs=i' => \$jobs,
 			    'verbose' => \$verbose,
