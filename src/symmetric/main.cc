@@ -97,7 +97,7 @@ main(int argc, char *argv[])
   // stop when we run out of predicates
   while (true)
     {
-      cerr << candidates.size() << " candidates left to explain " << allFailures.count() << " failures\n";
+      cerr << '\n' << candidates.size() << " candidates left to explain " << allFailures.count() << " failures\n";
       candidates.filter();
       cerr << candidates.size() << " candidates left that could explain at least one failure\n";
       if (candidates.empty()) break;
@@ -107,18 +107,20 @@ main(int argc, char *argv[])
 	static bool dumped = false;
 	if (!dumped)
 	  {
+	    cerr << "dumping initial candidates list into \"debug.xml\": ";
 	    dumped = true;
 	    ViewPrinter debug(Stylesheet::filename, "symmetric", "debug.xml");
 	    debug << candidates;
+	    cerr << "done\n";
 	  }
       }
 
       const Candidates::iterator winner(candidates.best());
-      view << *winner << '\n';
+      view << *winner;
 
       const Predicate &winnerCounts = *winner->second;
       const RunSet &explainedFailures = winnerCounts.trueInFailures;
-      cerr << "next selected predictor was true in " << explainedFailures.count() << " failures and has score " << winner->second->score() << '\n';
+      cerr << "next best candidate was true in " << explainedFailures.count() << " failures and has score " << winner->second->score() << '\n';
 
       for (unsigned explained = explainedFailures.find_first();
 	   explained != RunSet::npos;
@@ -129,14 +131,13 @@ main(int argc, char *argv[])
 
 	  assert(allFailures.test(explained));
 	  allFailures.reset(explained);
-	  cerr << "  failure " << explained << " has been explained\n";
 	}
 
       candidates.erase(winner);
       // progress.step();
     }
 
-  cerr << "ranking complete with " << allFailures.count() << " unexplained failures\n";
+  cerr << "\nranking complete with " << allFailures.count() << " unexplained failures\n";
 
   return 0;
 }
