@@ -39,7 +39,7 @@ subsequent iterations.
 \subsection{Increase Scores}
 \label{sec:increase}
 
-We now discuss the first step, how to find the cause of the most important bug.
+We now discuss the first step: how to find the cause of the most important bug.
 We break this step into two sub-steps.  First, we eliminate predicates that have no
 predictive power at all; this typically reduces the number of predicates we need
 to consider by two orders of magnitude (e.g., from hundreds of thousands to thousands).
@@ -279,7 +279,7 @@ space limitations we omit additional per-predicate information, such
 as source file and line number, which is available in the interactive
 version of our analysis tools.
 
-We use a terse \termdef{bug thermometer} to visualize the information
+We use a concise \termdef{bug thermometer} to visualize the information
 for each predicate.  The length of the thermometer is logarithmic in
 the number of runs in which the predicate was observed, so small
 increases in thermometer size indicate many more runs.  Each
@@ -315,7 +315,7 @@ of failed runs is similar.  They select predicates involved in many
 failing, but also many successful, runs.  The best of these predicates
 (the ones with high $\increase$ scores) are \termdef{super-bug
   predictors}: predictors that include failures from more than one
-bug.  Super-bug predictors is that they account for a
+bug.  Super-bug predictors account for a
 very large number of failures (by combining the failures of multiple
 bugs) but are also highly non-deterministic despite reasonably high
 $\increase$ scores.
@@ -406,13 +406,13 @@ redundant predicates:
   will look out for it during a future scan of the paper.}
 
 \issue[Alice]{Modified to differentiate between bugs and bug profiles.}
-We can now state an easy but important property of this algorithm.
+We can now state an easy-to-prove but important property of this algorithm.
 \begin{lemma}
 Let $P_1,\ldots,P_n$ be a set of instrumented predicates, $\bug_1,\ldots,\bug_m$
 a set of bugs, and $\bugprofile_1,\ldots, \bugprofile_2$ the corresponding
 bug profiles.  Let
-\[ {\cal Z} = \bigcup_{1 \leq i \leq n} \{ R | \report{P_i} = 1 \} \]
-Then if for all $1 \leq j \leq m$ we have $\bugprofile_j \cap {\cal Z} \neq \emptyset$, then
+\[ {\cal Z} = \bigcup_{1 \leq i \leq n} \{ R | \report{P_i} = 1 \} . \]
+If for all $1 \leq j \leq m$ we have $\bugprofile_j \cap {\cal Z} \neq \emptyset$, then
 the algorithm chooses at least one predicate from the list $P_1,\ldots,P_n$ that predicts
 at least one failure due to $\bug_j$.
 \end{lemma}
@@ -423,7 +423,9 @@ We are, in effect, covering the set of bugs with a ranked subset of predicates.
 The other property we might like, that the algorithm chooses exactly
 one predicate to represent each bug, does not hold; we shall see in
 \autoref{sec:experiments} that the algorithm sometimes selects a
-strong sub-bug predictor as well as a more natural predictor.  Beyond
+strong sub-bug predictor as well as a more natural predictor.
+
+Beyond
 always representing each bug, the algorithm works well for two other
 reasons.  First, two predicates are redundant if they predict the same
 (or nearly the same) set of failing runs.  Thus, simply removing the

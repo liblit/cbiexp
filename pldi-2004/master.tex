@@ -71,7 +71,7 @@ pdfpagemode=UseOutlines
 \newcommand{\importance}{\ensuremath{\textit{Importance}}}
 \newcommand{\numfail}{\ensuremath{\textit{NumF}}}
 \renewcommand{\H}{{\mathcal{H}}}
-\newcommand{\report}[1]{\ensuremath{R[#1]}}
+\newcommand{\report}[1]{\ensuremath{R(#1)}}
 
 \newcommand{\issue}[2][]{}
 
@@ -204,16 +204,16 @@ What about calling a set of a failing runs a "bug profile"?}
 
 \issue{modified by Alice}
 
-Let $\bug$ denote a bug (i.e., something causes incorrect behavior in
+Let $\bug$ denote a bug (i.e., something which causes incorrect behavior in
 a program).  We use $\bugprofile$ to denote a \termdef{bug profile},
 i.e., a set of failing runs (feedback reports)
 that share a cause of failure.  The meaning becomes clear in context.  The
-union of all bugs profiles is exactly the
+union of all bug profiles is exactly the
 set of failing runs, but note that $\bugprofile_i \cap \bugprofile_j \neq
 \emptyset$ in general; more than one bug can occur in some runs.
 
 A predicate $P$ is a \termdef{bug predictor} (or simply a
-\termdef{predictor}) of bug profile $\bugprofile$ if whenever $\report{P} = 1$
+\termdef{predictor}) of bug $\bug$ if whenever $\report{P} = 1$
 then it is statistically likely that $R \in \bugprofile$ (see
 \autoref{sec:increase}).  \termdef{Statistical debugging} selects a
 small subset ${\cal S}$ of the set of all instrumented predicates
@@ -239,7 +239,7 @@ discovered a number of serious scalability problems:
 \item For large applications the set ${\cal P}$ numbers in the hundreds of
 thousands of predicates, many of which are, or are very nearly,
 logically redundant.  In our experience, this redundancy in ${\cal P}$
-causes logistic regression to choose highly redundant lists of
+causes regularized logistic regression to choose highly redundant lists of
 predictors ${\cal S}$.  Redundancy is
 already evident in prior work \cite{PLDI`03*141} but becomes much
 worse for larger programs.
@@ -261,7 +261,7 @@ in ${\cal S}$ at all.
 
 \end{itemize}
 
-These problems with logistic regression persist across many variations
+These problems with regularized logistic regression persist across many variations
 we have investigated. From this experimental work we did garner some
 key technical insights.  In addition to the bug predictors we wish to
 find among the instrumented predicates, there are several other kinds
@@ -305,6 +305,8 @@ to isolate all of the bugs described in this paper, showing that our
 approach is feasible for in-house automatic testing as well as use
 post-deployment.
 
+\issue[Alice]{``use post-deployment'' doesn't make sense}
+
 \item We report on the effectiveness of the current industry practice
 of collecting stack traces from failing runs.  We find that across all
 of our experiments, in about half the cases the stack is useful in
@@ -343,14 +345,14 @@ The paper is organized as follows.  After providing background
 (\autoref{sec:algorithm}). The experimental results are presented in
 \autoref{sec:experiments}.  We then discuss related
 work (\autoref{sec:related-work}), including the advantages over our
-previous approach based on logistic regression
+previous approach based on regularized logistic regression
 (\autoref{sec:comparison}).
 
 
 \section{Background}
 \label{sec:background}
 
-This section summarizes ideas and terminology needed to to present our
+This section summarizes ideas and terminology needed to present our
 algorithm.  The ideal program monitoring system would gather complete
 execution traces and provide them to an engineer (or, more likely, a
 tool) to mine for the causes of bugs.  However, complete tracing of
@@ -430,8 +432,9 @@ indicating whether the true or false branches were ever taken.
   same-typed in-scope variable $\mathtt{y}_i$ and each
   constant expression $\mathtt{c}_j$.  For each   $\mathtt{y}_i$ and each $\mathtt{c}_j$,
   we track six relationships to the new value of \texttt{x}: $<, \leq, >, \geq, =, \neq$.
-Each compared-to $\mathtt{y}_i$
-  or $\mathtt{c}_j$ is treated as a distinct instrumentation site.
+Each $(\mathtt{y}_i, \mathtt{c}_j)$ pair
+%% compared-to $\mathtt{y}_i$ or $\mathtt{c}_j$
+is treated as a distinct instrumentation site.
   %%
 \end{description}
 
@@ -465,7 +468,7 @@ quality.  While we firmly believe in the use of static analysis to
 find and prevent bugs, our dynamic approach has advantages as well.  A dynamic
 analysis can observe actual run-time values, which is often better
 than either making a very conservative static assumption about run-time
-values for the sake of soundness, or allowing some even very simple bugs to escape
+values for the sake of soundness, or allowing some very simple bugs to escape
 undetected.  Another advantage of dynamic analysis, especially one
 that uses actual user executions for its data, is the ability to
 assign an accurate importance to each bug.  Additionally, as we have shown,
@@ -477,12 +480,12 @@ analysis.
 The Daikon project \cite{ernst2001} monitors instrumented applications
 to discover likely program invariants.  It collects extensive trace
 information at run time and mines traces offline to accept or reject any
-of a wide variety of guessed candidate predicates.  The DIDUCE project
+of a wide variety of hypothesized candidate predicates.  The DIDUCE project
 \cite{ICSE02*291} tests a more restricted set of predicates within the
 client program, and attempts to relate state changes in candidate
 predicates to manifestation of bugs.  Both projects assume complete
 monitoring, such as within a controlled test environment.  Our goal is
-to use lightweight partial monitoring, suitable for either for testing
+to use lightweight partial monitoring, suitable for either testing
 or deployment to end users.  We never have complete information, and
 therefore we must use a more statistical approach.
 
@@ -493,7 +496,7 @@ data to support a variety of code evolution tasks.  Our
 instrumentation exposes a broader family of data- and
 control-dependent predicates on program behavior and uses randomized
 sparse sampling to control overhead.  Our
-predicates do, however, give coverage information: the sum of all predicate counters at a site converges to the relative coverage of that site.
+predicates do, however, give coverage information: the sum of all predicate counters at a site reveals the relative coverage of that site.
 
 Efforts to directly apply statistical modeling principles to debugging
 have met with mixed results.  Early work in this area by Burnell and
@@ -539,6 +542,9 @@ observed after a variety of different bugs, and each triggered bug
 causes failure in a variety of different stack states.  \rhythmbox and \exif
 bugs caused crashes so long after the bad behavior that the crash stacks
 were not useful at all.
+
+\issue[Alice]{It's not correct to say that the crash stacks weren't
+  useful at all for \exif, is it?}
 
 Studies that attempt real-world deployment of monitored software must
 address a host of practical engineering concerns, from distribution to

@@ -27,7 +27,7 @@ To address this problem, we set the sampling rates of predicates to be
 inversely proportional to their frequency of execution.  Based on a
 training set of 1,000 executions, we set the sampling rate of each predicate so
 as to obtain an expected 100 samples of each predicate in subsequent program
-executions; the sampling rate is clamped to a minimum of $\nicefrac{1}{100}$.
+executions.  On the low end, the sampling rate is clamped to a minimum of $\nicefrac{1}{100}$.
 Thus, rarely executed code has a
 much higher sampling rate than very frequently executed code.  (A
 similar strategy has been pursued for similar reasons in related work \cite{chil04}.)  We
@@ -102,7 +102,7 @@ the buffer overruns.  Bug \#7 is not strongly predicted by any
 predicate on the list but in fact occurs in at least a few of the
 failing runs of most predicates.  We have examined the runs of bug \#7
 in detail and found that the bug \#7 only occurs in runs that also
-trigger at least one other bug.  That is, even though the bug \#7 overrun
+trigger at least one other bug.  That is, even when the bug \#7 overrun
 happens (though rarely), it never causes incorrect output or a crash
 in any run.  Bug \#8, another overrun, is not even shown because the
 overrun is never triggered in our data (its column would be all
@@ -170,7 +170,7 @@ all experiments may be browsed interactively at
 
 We analyzed \ccrypt 1.2, which has a known input validation bug.  The
 results are shown in \autoref{tab:views-ccrypt}.  Our algorithm
-reports two predictors, which both point directly to the single bug.
+reports two predictors, both of which point directly to the single bug.
 It is easy to discover that the two predictors are for the same bug;
 the first predicate is listed first in the second predicate's affinity
 list, indicating the first predicate is a sub-bug predictor associated
@@ -184,7 +184,7 @@ GNU \bc 1.06 has a previously reported buffer overrun.  Our results
 are shown in \autoref{tab:views-bc}.  The outcome is the same as for
 \ccrypt: two predicates are retained by elimination, and the second
 predicate lists the first predicate at the top of its affinity list,
-indicating the first predicate is a sub-bug predictor of the second.
+indicating that the first predicate is a sub-bug predictor of the second.
 Both predicates point to the cause of the overrun.  This bug causes a
 crash long after the overrun occurs and there is no useful information
 on the stack at the point of the crash to assist in isolating this
@@ -201,8 +201,9 @@ of a distinct and previously unknown crashing bug.  It took less than
 using these predicates and the additional highly correlated predicates
 on their affinity lists.
 
-To illustrate how statistical debugging is used in practice, we will
-elucidate how the last of these three failure predictors enabled us to
+To illustrate how statistical debugging is used in practice, we
+use the last of these three failure predictors as an example, and
+describe how it enabled us to
 effectively isolate the cause of one of the bugs.  Failed runs
 exhibiting \texttt{o + s > buf\_size} show the following unique stack
 trace at the point of termination:
@@ -225,7 +226,7 @@ The code in the vicinity of this crash site is as follows:
 // snippet of exif_mnote_data_canon_save
 for (i = 0; i < n->count; i++) {
      ...
-(c)  memcpy(*buf + doff,
+     memcpy(*buf + doff,             (c)
             n->entries[i].data, s);
      ...
 }
@@ -234,7 +235,7 @@ for (i = 0; i < n->count; i++) {
 This stack trace alone provides little insight into the cause of the
 bug.  However, our algorithm highlights {\tt o + s > buf\_size} in
 function {\tt exif\_mnote\_data\_canon\_load} as a strong failure
-predictor.  A quick inspection of the source code this leads us to
+predictor.  Thus, a quick inspection of the source code leads us to
 construct the following call sequence:
 \begin{quote}
   \small
@@ -260,9 +261,9 @@ for (i = 0; i < c; i++) {
      ...
      n->count = i + 1;
      ...
-(a)  if (o + s > buf_size) return;
+     if (o + s > buf_size) return;     (a)
      ...
-(b)  n->entries[i].data = malloc(s);
+     n->entries[i].data = malloc(s);  (b)
      ...
 }
 \end{verbatim}
@@ -307,7 +308,7 @@ main event loop is unchanging and all of the interesting state is in
 the queues.
 
 We isolated two distinct bugs in \rhythmbox.  The first predicate led
-us to a race condition.  The second predicate was not useful directly,
+us to the discovery of a race condition.  The second predicate was not useful directly,
 but we were able to isolate the bug using the predicates in its
 affinity list.  This second bug revealed what turned out to be a very
 common incorrect pattern of accessing the underlying object library
@@ -340,7 +341,7 @@ future work.
   \toprule
   Coefficient & Predicate \\
   \midrule
-  0.769379 & \verb|p + passage_index)->last_line < 4| \\
+  0.769379 & \verb|(p + passage_index)->last_line < 4| \\
   0.686149 & \verb|(p + passage_index)->first_line < i| \\
   0.675982 & \verb|i > 20| \\
   0.671991 & \verb|i > 26| \\
@@ -371,8 +372,8 @@ of the selected predicates (i.e., whether they represent distinct
 bugs).  This problem can be seen in \autoref{tab:logregression},
 which gives the top ten predicates selected by logistic regression
 for \moss.  The striking fact is that all selected predicates are
-either sub-bug or super-bug predictors.  The predicates beginning {\tt
-p + \ldots} are all sub-bug predictors of bug \#1 (see
+either sub-bug or super-bug predictors.  The predicates beginning with
+{\tt p + \ldots} are all sub-bug predictors of bug \#1 (see
 \autoref{tab:mossdilute}).  The predicates {\tt i > \ldots} are
 super-bug predictors: {\tt i} is the length of the command line and
 the predicates say program crashes are more likely for long command
@@ -381,11 +382,11 @@ lines (recall \autoref{sec:introduction}).
 The prevalence of super-bug predictors on the list shows the
 difficulty of making use of the penalty term.  Limiting the number of
 predicates that can be selected via a penalty has the effect of
-encouraging logistic regression to choose super-bug predictors, as
+encouraging regularized logistic regression to choose super-bug predictors, as
 these cover more failing runs at the expense of poorer predictive
 power compared to predictors of individual bugs.  On the other hand,
-some of the predicates are apparently excellent sub-bug predictors,
-and are therefore chosen over others.
+the sub-bug predictors are chosen based on their excellent prediction
+power of those small subsets of failed runs.
 %%Relaxing the penalty
 %%allows logistic regression to add more predicates to improve its
 %%prediction, but the sub-bug predictors apparently are favored.
