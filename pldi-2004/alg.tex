@@ -55,10 +55,10 @@ this predicate is highly correlated with failure; in fact, whenever it
 is true this program inevitably crashes.\footnote{We also note that this bug could 
 be detected by a simple static analysis; this example is meant to be concise rather than 
 a significant application of our techniques.}   An important observation,
-however, is that even a ``smoking gun'' such as {\tt f == NULL} at
-line {\tt (b)} cannot be a perfect predictor of failure when there are
-multiple bugs in the program---since there are other bugs, the run can fail
-even if the predicate is never true in a run.
+however, is that there is no one perfect predictor of failure in a
+program with multiple bugs.  Even a ``smoking gun'' such as {\tt f ==
+  NULL} at line {\tt (b)} has little or no predictive power for
+failures due to unrelated bugs in the same program.
 
 The bug in the code fragment above is \termdef{deterministic} with
 respect to {\tt f == NULL}: if {\tt f == NULL} is true at line {\tt
