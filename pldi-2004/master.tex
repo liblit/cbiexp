@@ -114,12 +114,16 @@ pdfpagemode=UseOutlines]{hyperref}
 
 \begin{abstract}
   We present a statistical debugging algorithm that operates on very
-  sparsely sampled data drawn from large numbers of user runs.  By
-  identifying program behaviors that significantly increase the
-  likelihood of failure, our technique helps guide software engineers
-  to the most significant flaws in an application.  The approach has
-  connections to statistical hypothesis testing and is validated
-  using several case studies.
+  sparsely sampled data drawn from large numbers of runs and which is
+  robust in the face of multiple undiagnosed bugs.  The algorithm
+  identifies program behaviors that significantly increase the
+  likelihood of failure.  These failure predictors reveal both the
+  circumstances under which bugs occur as well as the frequencies of
+  failure modes, making it easier to prioritize debugging efforts.
+  The approach has connections to statistical hypothesis testing and
+  is validated using several case studies.  We compare our technique
+  with an earlier algorithm and find it more accurate, efficient, and
+  scalable.
 \end{abstract}
 
 
