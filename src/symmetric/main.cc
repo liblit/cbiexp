@@ -100,18 +100,17 @@ main(int argc, char *argv[])
 	}
   }
 
+  cerr << '\n' << candidates.size() << " candidates to explain " << allFailures.count() << " failures\n";
+  candidates.filter();
+
   // create XML output file and write initial header
   ViewPrinter view(Stylesheet::filename, "symmetric", "symmetric.xml");
-
-  // Progress::Bounded progress("ranking predicates", candidates.size());
 
   // pluck out predicates one by one, printing as we go
   // stop when we run out of predicates
   while (true)
     {
-      cerr << '\n' << candidates.size() << " candidates left to explain " << allFailures.count() << " failures\n";
-      candidates.filter();
-      cerr << candidates.size() << " candidates left that could explain at least one failure\n";
+      cerr << '\n' << candidates.size() << " candidates left that could explain at least one of " << allFailures.count() << " failures\n";
       if (candidates.empty()) break;
       assert(allFailures.any());
 
@@ -131,22 +130,16 @@ main(int argc, char *argv[])
       view << *winner;
 
       const Predicate &winnerCounts = *winner->second;
-      const RunSet &explainedFailures = winnerCounts.trueInFailures;
+      const RunSet explainedFailures = winnerCounts.trueInFailures;
       cerr << "next best candidate was true in " << explainedFailures.count() << " failures and has score " << winner->second->score() << '\n';
 
-      for (unsigned explained = explainedFailures.find_first();
-	   explained != RunSet::npos;
-	   explained = explainedFailures.find_next(explained))
-	{
-	  for (Candidates::iterator affected = candidates.begin(); affected != candidates.end(); ++affected)
-	    affected->second->reclassify(explained);
+      __gnu_cxx::hash_map<PredCoords, Predicate *> newCandidates;
+      for (Candidates::iterator candidate = candidates.begin(); candidate != candidates.end(); ++candidate)
+	if (candidate->second->reclassifyFailures(explainedFailures))
+	  newCandidates.insert(*candidate);
+      candidates.swap(newCandidates);
 
-	  assert(allFailures.test(explained));
-	  allFailures.reset(explained);
-	}
-
-      candidates.erase(winner);
-      // progress.step();
+      allFailures -= explainedFailures;
     }
 
   cerr << "\nranking complete with " << allFailures.count() << " unexplained failures\n";

@@ -7,15 +7,16 @@ using namespace std;
 
 
 bool
-Counts::reclassify(unsigned runId)
+Counts::reclassifyFailures(const RunSet &explained)
 {
-  const bool removed = trueInFailures.test(runId);
-  trueInFailures.reset(runId);
+  const size_t oldCount = trueInFailures.count();
+  trueInFailures -= explained;
+  const size_t newCount = trueInFailures.count();
+  
+  assert(oldCount >= newCount);
+  trueInSuccesses += oldCount - newCount;
 
-  if (removed)
-    ++trueInSuccesses;
-
-  return removed;
+  return newCount > 0;
 }
 
 

@@ -10,7 +10,7 @@ class Counts
 public:
   Counts();
 
-  bool reclassify(unsigned runId);
+  bool reclassifyFailures(const RunSet &);
   void print(std::ostream &, const char tag[]) const;
 
   RunSet trueInFailures;

@@ -5,6 +5,7 @@
 #include "Counts.h"
 
 class Both;
+class RunSet;
 
 
 class Predicate : public Counts
@@ -12,7 +13,7 @@ class Predicate : public Counts
 public:
   Predicate(Both &, Predicate &);
 
-  void reclassify(unsigned);
+  bool reclassifyFailures(const RunSet &);
   double score() const;
   void print(std::ostream &) const;
 

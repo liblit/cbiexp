@@ -21,11 +21,11 @@ Predicate::Predicate(Both &both, Predicate &inverse)
 ////////////////////////////////////////////////////////////////////////
 
 
-void
-Predicate::reclassify(unsigned runId)
+bool
+Predicate::reclassifyFailures(const RunSet &explained)
 {
-  if (Counts::reclassify(runId))
-    both.reclassify(runId);
+  both.reclassifyFailures(explained);
+  return Counts::reclassifyFailures(explained);
 }
 
 
