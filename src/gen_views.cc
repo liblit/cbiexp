@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <cstring>
+#include <libgen.h>
 #include "def.h"
 #include "shell.h"
 
@@ -42,6 +43,7 @@ int main(int argc, char** argv)
     int i, j, m;
     FILE* fp;
 
+    const char * const bindir = dirname(argv[0]);
     process_cmdline(argc, argv);
 
     for (i = 0; i < NUM_SCHEMES; i++) {
@@ -81,7 +83,7 @@ int main(int argc, char** argv)
 			"</tr>\n");
 	    fclose(fp);
 
-	    shell("sort -k%d -r -n < %s.txt | /moa/sc3/mhn/bin/format >> %s\n", sortby_indices[m], scheme_codes[i], file);
+	    shell("sort -k%d -r -n < %s.txt | %s/format >> %s\n", sortby_indices[m], scheme_codes[i], bindir, file);
 	    shell("echo \"</table></center>\n</body>\n</html>\" >> %s\n", file);
 	}
     }
