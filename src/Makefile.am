@@ -5,6 +5,9 @@ noinst_PROGRAMS =				\
 	map_sites				\
 	process_run_labels
 
+noinst_SCRIPTS =				\
+	map_sites.sed
+
 analyze_runs_SOURCES =				\
 	analyze_runs.cc				\
 	compiler.cc				\

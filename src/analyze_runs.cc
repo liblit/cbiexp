@@ -311,13 +311,8 @@ int main(int argc, char** argv)
 	puts("Mapping sites ...");
 	sites_src_file = DEFAULT_SITES_SRC_FILE;
 	units_src_file = DEFAULT_UNITS_SRC_FILE;
-	shell("cat %s | "
-	      "sed 's/[a-zA-Z_][a-zA-Z_0-9]*\\$//g' | "
-	      "sed 's/\\([0-9][0-9]*\\)LL/\\1/g' | "
-	      "sed 's/\\([0-9][0-9]*\\)ULL/\\1/g' | "
-	      "sed 's/\"/\\\\\"/g' | "
-	      "%s/%s -ss %s.cc -us %s.cc",
-	      sites_txt_file, bindir, MAP_SITES, sites_src_file, units_src_file);
+	shell("%s/map_sites.sed %s | %s/" MAP_SITES " -ss %s.cc -us %s.cc",
+	      bindir, sites_txt_file, bindir, sites_src_file, units_src_file);
 	shell("%s -I%s -c %s.cc", compiler, incdir, sites_src_file);
 	shell("%s -I%s -c %s.cc", compiler, incdir, units_src_file);
     }
