@@ -152,7 +152,7 @@
   <xsl:template match="predictor">
     <tr>
       <td>
-	<table class="scores" width="{scores/@log10-seen * 60}px" title="Ctxt: {round(scores/@context * 100)}%, LB: {round(scores/@lower-bound * 100)}%, Incr: {round(scores/@increase * 100)}%, Fail: {round(scores/@badness * 100)}%&#10;tru in {true/@success} S and {true/@failure} F&#10;obs in {seen/@success} S and {seen/@failure} F">
+	<table class="scores" width="{scores/@log10-seen * 60 + 1}px" title="Ctxt: {round(scores/@context * 100)}%, LB: {round(scores/@lower-bound * 100)}%, Incr: {round(scores/@increase * 100)}%, Fail: {round(scores/@badness * 100)}%&#10;tru in {true/@success} S and {true/@failure} F&#10;obs in {seen/@success} S and {seen/@failure} F">
 	  <tr>
 	    <td class="f1" style="width: {scores/@context * 100}%"/>
 	    <td class="f2" style="width: {scores/@lower-bound * 100}%"/>
