@@ -335,7 +335,6 @@ void print_result_summary()
     fprintf(result_summary_fp, "# predicates retained: %d [branch: %d return: %d scalar: %d]\n<p>\n",
         num_b_preds + num_r_preds + num_s_preds, num_b_preds, num_r_preds, num_s_preds);
     fprintf(result_summary_fp, "Confidence: %d%%\n<p>\n", conf_percent);
-
     
     fprintf(result_summary_fp, "<table border=1>\n<tr>\n"
                                "<td></td>\n"
