@@ -20,9 +20,6 @@ const float conf_map[10] = {
 
 float compute_lb(int s, int f, int os, int of, int conf)
 {
-#ifdef LIB_DEBUG
-    assert(conf >= 90 && conf < 100);
-#endif
     float fs = ((float)  f) / ( s +  f);
     float co = ((float) of) / (os + of);
     float in = fs - co;
