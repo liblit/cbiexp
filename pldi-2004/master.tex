@@ -52,6 +52,7 @@ pdfpagemode=UseOutlines]{hyperref}
 
 \usepackage{color}
 \newcommand{\placeholder}[1]{{\color[cmyk]{0,0.61,0.87,0}[#1]}}
+\newcommand{\comment}[1]{}
 \pagenumbering{arabic}
 
 
@@ -476,14 +477,14 @@ derived offline from fine-grained execution traces without sampling;
 this reduces the noise level of the data but may be impractical to
 deploy outside of a controlled testing environment.  As in our own
 earlier work, Podgurski uses logistic regression to select features
-which are highly predictive of failure.  \placeholder{Is it worth
-  noting that we use different strategies for limiting the size of the
-  set of selected features?  We use regularized logistic regression
-  whereas Podgurski applies standard logistic regression to randomly
-  selected subsets of the complete feature set and keeps the
-  best-performing subset.}  Clustering tends to identify small, tight
-groups of runs which do share a single cause but which are not always
-maximal.  (That is, one cause may be split across several clusters.)
+which are highly predictive of failure.  \comment{Is it worth noting
+  that we use different strategies for limiting the size of the set of
+  selected features?  We use regularized logistic regression whereas
+  Podgurski applies standard logistic regression to randomly selected
+  subsets of the complete feature set and keeps the best-performing
+  subset.}  Clustering tends to identify small, tight groups of runs
+which do share a single cause but which are not always maximal.  (That
+is, one cause may be split across several clusters.)
 
 Studies that attempt real-world deployment of monitored software must
 address a host of practical engineering concerns, from distribution to
@@ -494,7 +495,7 @@ have helped to guide our own design of a wide public deployment of
 applications with sampled instrumentation, presently underway
 \cite{Liblit:2003:CBIP}.
 
-\placeholder{More recent work of interest:
+\comment{More recent work of interest:
 
   \begin{itemize}
   \item S.\ Elbaum, S.\ Kanduri and A.\ Andrews, ``Anomalies as
@@ -518,13 +519,13 @@ occurring at all.  The Software Dependability Framework (SDF)
 technique to model and thereby predict impending system failures.
 Instrumentation is assumed to be complete and is typically
 domain-specific, whereas our sampled predicates cast a wider, less
-specialized net.  \placeholder{We understand through informal
+specialized net.  \comment{We understand through informal
   communication that the SDF is able to anticipate when a player is
   about to lose an instrumented game of Tetris, and can intervene by
   removing rows to allow the game to continue.  But maybe I shouldn't
   say that, as it kind of makes their system sound like a joke.}
 
-\placeholder{Cannot find any more recent work by these people in this
+\comment{Cannot find any more recent work by these people in this
   area.  Where did they all go?  Porter has plenty of other recent
   work, but apparently nothing related.  Gross and McMaster have zero
   publication information on their home pages, while Umranov and Votta
