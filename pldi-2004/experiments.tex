@@ -226,11 +226,11 @@ for (i = 0; i < n->count; i++) {
 }
 \end{verbatim}
 \end{quote}
-This alone provides little insight into the cause of the bug.
-However, our algorithm highlights {\tt o + s > buf\_size} in function
-{\tt exif\_mnote\_data\_canon\_load} as a strong failure predictor.  A
-quick inspection of the source code this leads us to construct the
-following call sequence:
+This stack trace alone provides little insight into the cause of the
+bug.  However, our algorithm highlights {\tt o + s > buf\_size} in
+function {\tt exif\_mnote\_data\_canon\_load} as a strong failure
+predictor.  A quick inspection of the source code this leads us to
+construct the following call sequence:
 \begin{quote}
 \begin{verbatim}
 main
