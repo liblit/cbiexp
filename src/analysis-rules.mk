@@ -132,7 +132,7 @@ $(filter %_none.xml, $(views)): $(tooldir)/gen_views.o sites.o units.o preds.txt
 clean:: ; rm -f $(filter %_none.xml, $(views)) gen-views
 
 summary.xml: $(tooldir)/gen_summary.o preds.txt s.runs f.runs sites.o units.o
-	$(time) $(tooldir)/analyze_runs --do=print-summary --source-directory=../src
+	$(time) $(tooldir)/analyze_runs --do=print-summary --runs-directory=$(datadir) --source-directory=../src
 	[ -r $@ ]
 clean:: ; rm -f summary.xml gen-summary
 
