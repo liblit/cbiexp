@@ -29,6 +29,8 @@ projections := none #circular linear
 views := $(foreach scheme, $(schemes), $(foreach sort, $(sorts), $(foreach projection, $(projections), $(scheme)_$(sort)_$(projection).xml)))
 #topRho := $(foreach sort, hl hs, $(foreach proj, circular linear, top-rho_$(sort)_$(proj).xml))
 
+find-zooms := find . -maxdepth 1 -name 'zoom-corrected-*.xml'
+
 links :=					\
 	bug-o-meter.css				\
 	bug-o-meter.dtd				\
@@ -78,7 +80,7 @@ all: $(web)
 .PHONY: all
 
 publish: $(web:%=$(publish)/%)
-	cp zoom-corrected-*.xml $(publish)
+	$(find-zooms) -exec cp '{}' $(publish) ';'
 .PHONY: publish
 
 $(publish)/stamp-src: stamp-src
@@ -145,7 +147,8 @@ clean:: ; rm -f $(sparse)
 $(corrected): all_hl_corrected-%.xml: $(tooldir)/corrective-ranking/% f.runs obs.txt tru.txt
 	$(time) ./$< --zoom --begin-runs=$(training-runs) --runs-directory=$(datadir) $(corrected_view_flags)
 	$(build) bug-o-meter.dtd corrected-view.dtd link-cell.css logo.css projected-view.dtd view.dtd
-	xmllint --valid --noout $@ zoom-corrected-*.xml
+	xmllint --valid --noout $@
+	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
 clean:: ; rm -f all_hl_corrected-exact-complete.xml all_hl_corrected-approximate-complete.xml zoom-corrected-*.xml
 
 ifndef report-series
