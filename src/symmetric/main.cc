@@ -120,6 +120,14 @@ main(int argc, char *argv[])
   cerr << '\n' << candidates.size() << " candidates to explain " << allFailures.count() << " failures\n";
   candidates.filter();
 
+  {
+    cerr << "dumping initial candidates list into \"debug.xml\": ";
+    dumped = true;
+    ViewPrinter debug(Stylesheet::filename, "symmetric", "debug.xml");
+    debug << candidates;
+    cerr << "done\n";
+  }
+
   // create XML output file and write initial header
   ViewPrinter view(Stylesheet::filename, "symmetric", "symmetric.xml");
 
@@ -130,18 +138,6 @@ main(int argc, char *argv[])
       cerr << '\n' << candidates.size() << " candidates left that could explain at least one of " << allFailures.count() << " failures\n";
       if (candidates.empty()) break;
       assert(allFailures.any());
-
-      {
-	static bool dumped = false;
-	if (!dumped)
-	  {
-	    cerr << "dumping initial candidates list into \"debug.xml\": ";
-	    dumped = true;
-	    ViewPrinter debug(Stylesheet::filename, "symmetric", "debug.xml");
-	    debug << candidates;
-	    cerr << "done\n";
-	  }
-      }
 
       const Candidates::iterator winner(candidates.best());
       view << *winner;
