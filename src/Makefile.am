@@ -36,7 +36,9 @@ libanalyze_a_SOURCES =				\
 	classify_runs.cc			\
 	classify_runs.h				\
 	scaffold.cc				\
-	scaffold.h
+	scaffold.h				\
+	utils.cc				\
+	utils.h
 
 
 ########################################################################
