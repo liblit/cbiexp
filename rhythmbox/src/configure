@@ -20085,7 +20085,7 @@ fi
      PKG_CONFIG_MIN_VERSION=0.9.0
      if $PKG_CONFIG --atleast-pkgconfig-version $PKG_CONFIG_MIN_VERSION; then
         echo "$as_me:$LINENO: checking for \
-                  gtk+-2.0 >= 2.2.2             \
+                  gtk+-2.0 >= 2.2.0             \
                   libgnomeui-2.0                \
 		  libglade-2.0                  \
 		  gnome-vfs-2.0                 \
@@ -20093,7 +20093,7 @@ fi
 		  libbonobo-2.0			\
 		  bonobo-activation-2.0" >&5
 echo $ECHO_N "checking for \
-                  gtk+-2.0 >= 2.2.2             \
+                  gtk+-2.0 >= 2.2.0             \
                   libgnomeui-2.0                \
 		  libglade-2.0                  \
 		  gnome-vfs-2.0                 \
@@ -20102,7 +20102,7 @@ echo $ECHO_N "checking for \
 		  bonobo-activation-2.0... $ECHO_C" >&6
 
         if $PKG_CONFIG --exists "\
-                  gtk+-2.0 >= 2.2.2             \
+                  gtk+-2.0 >= 2.2.0             \
                   libgnomeui-2.0                \
 		  libglade-2.0                  \
 		  gnome-vfs-2.0                 \
@@ -20116,7 +20116,7 @@ echo "${ECHO_T}yes" >&6
             echo "$as_me:$LINENO: checking RHYTHMBOX_CFLAGS" >&5
 echo $ECHO_N "checking RHYTHMBOX_CFLAGS... $ECHO_C" >&6
             RHYTHMBOX_CFLAGS=`$PKG_CONFIG --cflags "\
-                  gtk+-2.0 >= 2.2.2             \
+                  gtk+-2.0 >= 2.2.0             \
                   libgnomeui-2.0                \
 		  libglade-2.0                  \
 		  gnome-vfs-2.0                 \
@@ -20129,7 +20129,7 @@ echo "${ECHO_T}$RHYTHMBOX_CFLAGS" >&6
             echo "$as_me:$LINENO: checking RHYTHMBOX_LIBS" >&5
 echo $ECHO_N "checking RHYTHMBOX_LIBS... $ECHO_C" >&6
             RHYTHMBOX_LIBS=`$PKG_CONFIG --libs "\
-                  gtk+-2.0 >= 2.2.2             \
+                  gtk+-2.0 >= 2.2.0             \
                   libgnomeui-2.0                \
 		  libglade-2.0                  \
 		  gnome-vfs-2.0                 \
@@ -20144,7 +20144,7 @@ echo "${ECHO_T}$RHYTHMBOX_LIBS" >&6
             ## If we have a custom action on failure, don't print errors, but
             ## do set a variable so people can do so.
             RHYTHMBOX_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "\
-                  gtk+-2.0 >= 2.2.2             \
+                  gtk+-2.0 >= 2.2.0             \
                   libgnomeui-2.0                \
 		  libglade-2.0                  \
 		  gnome-vfs-2.0                 \
@@ -20166,7 +20166,7 @@ echo "${ECHO_T}$RHYTHMBOX_LIBS" >&6
      :
   else
      { { echo "$as_me:$LINENO: error: Library requirements (\
-                  gtk+-2.0 >= 2.2.2             \
+                  gtk+-2.0 >= 2.2.0             \
                   libgnomeui-2.0                \
 		  libglade-2.0                  \
 		  gnome-vfs-2.0                 \
@@ -20174,7 +20174,7 @@ echo "${ECHO_T}$RHYTHMBOX_LIBS" >&6
 		  libbonobo-2.0			\
 		  bonobo-activation-2.0) not met; consider adjusting the PKG_CONFIG_PATH environment variable if your libraries are in a nonstandard prefix so pkg-config can find them." >&5
 echo "$as_me: error: Library requirements (\
-                  gtk+-2.0 >= 2.2.2             \
+                  gtk+-2.0 >= 2.2.0             \
                   libgnomeui-2.0                \
 		  libglade-2.0                  \
 		  gnome-vfs-2.0                 \
