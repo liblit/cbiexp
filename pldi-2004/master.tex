@@ -407,12 +407,21 @@ indicating whether the true or false branches were ever taken.
   %%
 \end{description}
 
-All predicates at a given site are updated jointly.  For
-example, sampling a single negative return
-value yields true observations of the $< 0$, $\leq 0$, and $\neq 0$ predicates and
-false observations of the $> 0$, $\geq 0$, and $= 0$ predicates
-at that site.  Also, note that in any scheme, the logical negation of every
-predicate at any given site is also a predicate at that site.
+All predicates at a site are sampled jointly.  To be more precise, an
+\termdef{observation} is a single dynamic check of all predicates at a
+single instrumentation site.  We write ``$P$ observed'' when the site
+containing $P$ has been sampled, regardless of whether $P$ was
+actually true or false.  We write ``$P$ observed to be true'' or
+merely ``$P$'' when the site containing $P$ has been sampled and $P$
+was actually found to be true.
+
+For example, sampling a single negative return value means that all
+six returns predicates ($< 0$, $\leq 0$, $> 0$, $\geq 0$, $= 0$, and
+$\neq 0$) are ``observed.''  However only three of them ($< 0$, $\leq
+0$, and $\neq 0$) are ``observed to be true.''  \footnote{In reality,
+  we count the number of times $P$ is observed to be true, but the
+  analysis of the feedback reports only uses whether $P$ is observed
+  to be true at least once.}
 
   These are natural properties to check and provide good coverage of a
   program's scalar values and control flow.  This set is by no means
