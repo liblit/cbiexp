@@ -90,7 +90,9 @@ static int get_unit_indx(char scheme_code, const char* signature)
     for (int i = 0; i < num_units; i++)
         if (scheme_code == units[i].scheme_code && strcmp(signature, units[i].signature) == 0)
             return i;
-    assert(0);
+
+    fprintf(stderr, "no static site information for dynamic report:\n\tsignature: %s\n\tscheme: %c\n", signature, scheme_code);
+    exit(1);
 }
 
 void process_cmdline(int argc, char** argv)
