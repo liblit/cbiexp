@@ -3,10 +3,8 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
+#include "Verbose.h"
 #include "shell.h"
-
-
-bool verbose = false;
 
 
 void shell(const char format[], ...)
@@ -17,7 +15,7 @@ void shell(const char format[], ...)
   char *command;
   vasprintf(&command, format, args);
 
-  if (verbose)
+  if (Verbose::on)
     fprintf(stderr, "+ %s\n", command);
 
   const int result = system(command);

@@ -70,6 +70,8 @@ libanalyze_a_SOURCES =				\
 	SourceDirectory.h			\
 	Stylesheet.cc				\
 	Stylesheet.h				\
+	Verbose.cc				\
+	Verbose.h				\
 	ViewPrinter.cc				\
 	ViewPrinter.h				\
 	classify_runs.cc			\

@@ -14,6 +14,7 @@
 #include "RunsDirectory.h"
 #include "SourceDirectory.h"
 #include "Stylesheet.h"
+#include "Verbose.h"
 #include "compiler.h"
 #include "shell.h"
 
@@ -85,9 +86,6 @@ static int parse_flag(int key, char *arg, argp_state *state)
 	sites_txt_files += arg;
 	sites_txt_files += ' ';
 	return 0;
-    case 'v':
-	verbose = true;
-	return 0;
     case 'h':
 	copy(phaseNames, phaseNames + PhaseCount, ostream_iterator<const char *>(cout, "\n"));
 	exit(0);
@@ -102,7 +100,6 @@ static void process_cmdline(int argc, char *argv[])
     static const argp_option options[] = {
 	{ "do", 'd', "PHASES", 0, "perform the comma-delimited list of PHASES; can be given multiple times", 0 },
 	{ "sites-text", 's', "FILE", 0, "read raw static site information from FILE; can be given multiple times", 0 },
-	{ "verbose", 'v', 0, 0, "trace command execution in greater detail", 0 },
 	{ "help-phases", 'h', 0, 0, "list known phases for use with \"--do\" flag", -1 },
 	{ 0, 0, 0, 0, 0, 0 }
     };
@@ -113,6 +110,7 @@ static void process_cmdline(int argc, char *argv[])
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ &SourceDirectory::argp, 0, 0, 0 },
 	{ &Stylesheet::argp, 0, 0, 0 },
+	{ &Verbose::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
 
