@@ -1,0 +1,26 @@
+%% -*- TeX-master: "../master.tex" -*-
+
+\begin{table*}
+  \caption{Comparison of ranking strategies for Moss}
+  \label{tab:sorts}
+  \centering
+
+  \newcommand{\stats}[2]{%
+    \subtable[#1]{%
+      \small
+      \label{tab:sorts-#2}
+      \begin{tabular}{l|rr@{$\:\pm\:$}rr|rrl}
+        \toprule
+        Bug-O-Meter & Context & \multicolumn{2}{r}{Increase} &
+        S & F & F + S & Predicate \\
+        \midrule
+        \input{moss-view/stats-by-#2}
+        \bottomrule
+      \end{tabular}}
+
+  }
+
+  \stats{Sort by number of failing runs where predicate is true}{failure}
+  \stats{Sort by lower bound of confidence interval for increase in failure likelihood}{increase}
+  \stats{Iteratively rank and dilute using harmonic mean}{harmonic-dilute}
+\end{table*}

@@ -15,7 +15,7 @@
 \usepackage{ifthen}
 \usepackage{nicefrac}
 \usepackage{fancyvrb}
-\usepackage{subfigure}
+\usepackage[TABTOPCAP]{subfigure}
 \usepackage{xspace}
 
 \usepackage[bookmarks, pdftitle={Statistical Debugging in the Presence of
@@ -614,6 +614,12 @@ statistical correlations between predicates.
 \end{itemize}
 
 \input{moss-view/table}
+
+\input{moss-view/stats-breakout}
+
+This paragraph shows how to cite subtables within \autoref{tab:sorts}.
+See also \autoref{tab:sorts-failure}, \autoref{tab:sorts-increase},
+and \autoref{tab:sorts-harmonic-dilute}.
 
 \bibliography{cacm1990,icse02,icse03,misc,paste02,pldi03,pods,ramss,refs}
 
