@@ -32,6 +32,8 @@ pdfpagemode=UseOutlines]{hyperref}
 
 \usepackage{Autoref}
 
+\usepackage{amsmath}
+
 %% assorted handy macros
 \newcommand{\moss}{\textsc{Moss}\xspace}
 \newcommand{\termdef}[1]{\textit{#1}}
@@ -40,6 +42,7 @@ pdfpagemode=UseOutlines]{hyperref}
 \newcommand{\crash}{\mbox{\textit{Crash}}}
 \newcommand{\context}{\mbox{\textit{Context}}}
 \newcommand{\increase}{\mbox{\textit{Increase}}}
+\renewcommand{\H}{{\mathcal{H}}}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,7 +62,7 @@ pdfpagemode=UseOutlines]{hyperref}
 
 \title{Statistical Debugging in the Presence of Multiple Bugs
   %%
-  \thanks{This research was supported in part by NASA Grant No.\ 
+  \thanks{This research was supported in part by NASA Grant No.\
     NAG2-1210; NSF Grant Nos.\ EIA-9802069, CCR-0085949, ACI-9619020,
     and IIS-9988642; DOE Prime Contract No.\ W-7405-ENG-48 through
     Memorandum Agreement No.\ B504962 with LLNL; and a Lucent GRPW
@@ -249,7 +252,7 @@ possibly observe once sampling is applied.  A useful instrumentation
 scheme should be fairly general but selected to capture behaviors
 which are likely to be of interest when hunting for bugs.  At present
 our system offers the following instrumentation schemes:
-  
+
 \begin{description}
 \item[branches:] Control flow is interesting.  At each conditional,
   count how often each branch is taken (equivalently, how often the
@@ -260,7 +263,7 @@ our system offers the following instrumentation schemes:
   \texttt{?:}).  Each conditional induces one instrumentation site
   with two counters: number of times branched true and number of times
   branched false.
-  
+
 \item[returns:] Function return values are interesting.  In C, the
   sign of a result often used to encode the success or failure of some
   operation.  At each scalar-returning function call site, count how
@@ -273,7 +276,7 @@ our system offers the following instrumentation schemes:
   values are a common source of bugs.  Each call site induces one
   instrumentation site with three counters: number of negative
   returns, number of zero returns, and number of positive returns.
-  
+
 \item[scalar-pairs:] Values of variables are interesting.  Many bugs
   concern boundary issues exposed by the relationship between a pair
   of variables, or between a variable and some program constant.  At
@@ -314,7 +317,7 @@ only one of $\mathtt{x} < \mathtt{y}$, $\mathtt{x} = \mathtt{y}$, or
 $\mathtt{x} > \mathtt{y}$ can be true.  Thus one observation at one
 site always updates exactly one of that site's counters.  An
 observation that $\mathtt{x} < \mathtt{y}$ is therefore equivalent to
-an observation that $\mathtt{x} \ge \mathtt{y}$.  This property is
+an observation that $\mathtt{x} \geq \mathtt{y}$.  This property is
 exploited in \Autoref{sec:algorithm} to synthesize new predicates out
 of existing observations.
 
@@ -497,13 +500,13 @@ applications with sampled instrumentation, presently underway
   \item S.\ Elbaum, S.\ Kanduri and A.\ Andrews, ``Anomalies as
     Precursors of Field Failures, International Symposium of Software
     Reliability Engineering'', IEEE, November 2003.
-    
+
   \item S.\ Elbaum and M.\ Hardojo, ``An Empirical Study on Profiling
     Strategies for Released Software and Their Application to QA
     Activities'', Technical Report TR03-09-01, University of Nebraska
     - Lincoln, September 2003.
   \end{itemize}
-  
+
   Cannot find either online, but have written to Elbaum asking him for
   copies.}
 

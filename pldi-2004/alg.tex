@@ -4,11 +4,15 @@ algorithm.  We have made the point that this is possible in
 \Autoref{sec:background}, but I [Ben] feel that stating we do this is
 properly part of the algorithm discussion.}
 
+\placeholder{[Alice] I took out all the $\#$ signs in the formulas
+  because they make the formulas unnecessarily clunky.  Does the
+  current form look acceptable to everyone?}
+
 This section presents the algorithm that we have developed for
 isolating bugs in programs where multiple bugs are present
 simultaneously.  As discussed in \Autoref{sec:background}, our
 approach is to count the number of times we observe pre-specified
-predicates at each program program point to be true during program
+predicates at each program point to be true during program
 execution.  Because our system has no \textit{a priori} knowledge of
 what bugs may be in the program, or even any model of what the program
 does, our strategy is to make the set of predicates large in the
@@ -34,7 +38,7 @@ Consider the following C code fragment, which we use to motivate and illustrate
 our technique:
 \begin{quote}
 \begin{verbatim}
-f = ...;          (a)  
+f = ...;          (a)
 if (f == NULL) {  (b)
         x = 0;    (c)
         *f;       (d)
@@ -72,29 +76,48 @@ if (random) f = ... some valid pointer ...;
 \end{quote}
 then the bug becomes non-deterministic.
 
-To summarize, even for predicates that truly are the causes of bugs, we can neither assume that 
+\placeholder{[Alice] I think this example needs to be made more
+  explicit.  By {\tt if (random)}, do you mean an event that
+  may or may not happen?  so that {\tt f} may become a valid pointer
+  with some probability less than 1, and may remain an invalid pointer
+  otherwise?  It may be clearer to say
+
+  \begin{quote}
+if (something) f = \ldots some valid points\ldots;
+
+else { /* f remains invalid */ }
+
+*f;
+  \end{quote}
+}
+
+To summarize, even for predicates that truly are the causes of bugs, we can neither assume that
 when the predicate is true that
 the program fails nor that when the predicate is false that
 the program succeeds. But we can express the probability that a predicate
 being true implies failure.  Let $\fail$ be an atomic predicate that is
 true for failing runs and false for successful runs.  We want to compute:
 \[ \crash(P) = \prob(P \Rightarrow \fail) \]
-for every predicate $P$ over the set of all runs.  Let $\#S(P)$ be the number
-of successful runs in which $P$ is observed to be true, and let $\#F(P)$ be the number of
+for every predicate $P$ over the set of all runs.  Let $S(P)$ be the number
+of successful runs in which $P$ is observed to be true, and let $F(P)$ be the number of
 failing runs in which $P$ is observed to be true.  Then we have
-\[ \crash(P) = \frac{\#F(P)}{\#S(P) + \#F(P)} \]
+\[ \crash(P) = \frac{F(P)}{S(P) + F(P)} \]
+
+\placeholder{[Alice] Have we already talked about how to tell
+  whether or not a site is sampled by summing over all the predicate
+  counts at that site?}
 
 Notice that $\crash(P)$ is not affected by the set of runs in which
 $P$ is observed to be false.  Thus, if $P$ is the cause of a bug, the
-causes of other independent bugs do not affect $\crash(P)$.  
+causes of other independent bugs do not affect $\crash(P)$.
 Also note that runs in which $P$ is not observed at all (either because
 the line of code on which $P$ is checked is not reached, or the line is reached
 but $P$ is not sampled) have no effect on $\crash(P)$.
 Finally, observe that the definition of $\crash(P)$
 generalizes the idea of deterministic and non-deterministic bugs.  A
 bug is deterministic for $P$ if $\crash(P) = 1.0$ or, equivalently,
-$P$ is never observed to be true in a successful run ($\#S(P) =
-0$) and $P$ is observed to be true in at least one failing run ($\#F(P) > 0$). 
+$P$ is never observed to be true in a successful run ($S(P) =
+0$) and $P$ is observed to be true in at least one failing run ($F(P) > 0$).
 If $\crash(P) < 1.0$ then the bug is non-deterministic, with
 lower scores showing weaker correlation between the predicate and
 program failure.
@@ -104,13 +127,13 @@ enough for step (1) of our algorithm. To see this, consider again the
 code fragment given above (in its original form, not with the
 modification to make the bug non-deterministic).  At line {\tt (b)} we
 have $\crash(\mbox{\tt f == NULL}) = 1.0$, so this predicate is a good
-candidate for the cause of the bug.  
+candidate for the cause of the bug.
 But on line {\tt (c)} we have the surprising fact that $\crash(\mbox{\tt x == 0}) = 1.0$ as well.
 To understand why, observe that the scalar-pairs instrumentation
 predicate \texttt{x == 0} is always true at line {\tt (c)} and, in
 addition,
 only failing runs reach this line.
-Thus $\#S(\mbox{\tt x == 0}) = 0$, and, so long as there is at least one run that
+Thus $S(\mbox{\tt x == 0}) = 0$, and, so long as there is at least one run that
 reaches line {\tt (c)} at all, the crash value of {\tt x == 0} at line {\tt (c)} is 1.0.
 
 As the predicate {\tt x == 0} at line {\tt (c)} of the example
@@ -129,19 +152,22 @@ true does not increase the probability of failure at all; this coincides with
 the intuition that this predicate is irrelevant to the bug.
 
 This leads us to the following definition:
-\[ \context(P) = \prob((P \vee \neg P) \Rightarrow \fail) \]
-Now, $P \vee \neg P$ is not the set of all runs, because we are not working in a two-valued logic.
-In any given run, neither of $P$ or $\neg P$ may be observed (because the site where this predicate is
+\[ \context(P) = \prob((P \lor \lnot P) \Rightarrow \fail) \]
+Now, $P \lor \lnot P$ is not the set of all runs, because we are not working in a two-valued logic.
+In any given run, neither of $P$ or $\lnot P$ may be observed (because the site where this predicate is
 sampled is not reached), or one may be observed, or both may be observed (because the statement is executed
 multiple times and $P$ is sometimes true and sometimes false).  Thus, $\context(P)$ is the probability that
 in the set of runs where the value of $P$ is observed at all, the program fails. We can compute $\context(P)$ as follows:
-\[ \context(P) = \frac{\#F(P \vee \neg P)}{\#S(P \vee \neg P) + \#F(P \vee \neg P)} \]
+\[ \context(P) = \frac{F(P \lor \lnot P)}{S(P \lor \lnot P) + F(P \lor \lnot P)} \]
 
-The interesting quantity, then, is 
-\[ \increase(P) = \crash(P) - \context(P) \]
+The interesting quantity, then, is
+\begin{equation}
+ \increase(P) = \crash(P) - \context(P) \label{eqn:1}
+\end{equation}
+
 which can be read as: How much does $P$ being true increase the probability of failure
 over simply reaching the line where $P$ is sampled?  For example, for the predicate {\tt x == 0} on line {\tt (c)},
-we have 
+we have
 \[\crash(\mbox{\tt x == 0}) = \context(\mbox{\tt x == 0}) = 1.0 \]
 and so $\increase(\mbox{\tt x == 0}) = 0$.
 We can now state our algorithm:
@@ -168,6 +194,9 @@ the line on which it occurs (which is usually available anyway in the
 stack trace). \Autoref{sec:experiments:results} gives several examples
 of this phenomenon while hunting for real bugs.
 
+\placeholder{[Alice]  The motivation for this ranking function is not
+  very convincing\ldots}
+
 The purpose of sorting the surviving predicates in step (2) by
 $\crash(\ldots)$ is to ensure that the highest confidence predicates (those
 most likely to actually cause crashes) are listed first in the final
@@ -192,6 +221,50 @@ write {\tt f != NULL} as the predicate of the conditional instead of
 Finally, it should be clear that the algorithm is efficient.
 Step (1) requires only a single pass over the data, and step (2) is
 simply sorting.
+
+\subsection{Statistical Interpretation}
+
+The selection criterion of $\increase(P) > 0$ turns out to be a simplified
+statistical hypothesis test.  Consider the two classes of trial runs
+of the the program, failed runs $F$ and successful runs $S$.  For each
+class, we can treat the predicate $P$ as a Bernoulli random variable
+with heads probability $\pi_f(P)$ and $\pi_s(P)$, respectively.  The heads
+probability is the probability that the predicate is observed to be
+true.  If a predicate is causes a set of crashes, then its heads
+probability would be much higher than for the successful runs.  In
+other words, a good criterion of relevance is that $\pi_f > \pi_s$.  We
+can formulate two statistical hypotheses: the null hypothesis $\H_0:
+\pi_f \leq \pi_s$, vs. the alternate hypothesis $\H_1: \pi_f > \pi_s$.  Since
+$\pi_f$ and $\pi_s$ are not known, we have to estimate them from our
+data.
+\begin{eqnarray}
+  \hat \pi_f(P) &=& \frac{F(P)}{F(P \lor \lnot P)} \\
+  \hat \pi_s(P) &=& \frac{S(P)}{S(P \lor \lnot P)}
+\end{eqnarray}
+These proportion estimates of $\pi_f$ and $\pi_s$ differ from the true
+heads probabilities, but should approach the truth as we increase the
+number of trial runs.  With a certain probability, using these
+estimates instead of the true probabilities will give us the wrong
+answer.  The {\it Z test} makes use of the statistic $ Z =
+\frac{(\hat \pi_f - \hat \pi_s)}{V_{f,s}}$, where $V_{f,s}$ is a sample
+variance term, and $Z$ is distributed as a standard Gaussian random
+variable.  With a certain guarantee of false-positive error
+probability, the test can conclude whether or not $\pi_f(P) > \pi_s(P)$,
+separately for each predicate $P$.  A necessary (but not sufficient)
+condition is that $\hat \pi_f(P) > \hat \pi_s(P)$.  This turns out to be
+equivalent to the condition that $\increase(P) > 0$.  For simplicity,
+let $a = F(P)$, $b = S(P)$, $c = F(P\lor\lnot P)$, and $d = S(P\lor\lnot P)$.
+\begin{gather*}
+  \increase(P) > 0 \Leftrightarrow \crash(P) > \context(P) \\
+  \Leftrightarrow \frac{a}{a+b)} > \frac{c}{c+d}
+  \Leftrightarrow a (c+d) > (a+b) c \\
+  \Leftrightarrow ad > bc \Leftrightarrow \frac{a}{c} > \frac{b}{d} \\
+  \Leftrightarrow \hat \pi_f > \hat \pi_s
+\end{gather*}
+Hence the $\increase(P) > 0$ criterion, while being well motivated in
+from the program analysis point of view, can also be seen as a much
+simplified version of the {\it Z test} for two populations of trial
+runs (failed vs. successful).
 
 
 % LocalWords:  pre
