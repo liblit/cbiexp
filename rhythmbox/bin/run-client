@@ -52,7 +52,7 @@ delete $ENV{SAMPLER_REPORT_FD};
 my $song = $music[int rand @music];
 Utils::note 'initial-song', $song;
 
-system { $SiteConfig::rhythmbox } $SiteConfig::rhythmbox, $song;
+system { $SiteConfig::rhythmbox } $SiteConfig::rhythmbox, '--debug', $song;
 Utils::note 'outcome', $?;
 
 
