@@ -142,6 +142,65 @@ pdfpagemode=UseOutlines]{hyperref}
 
 \placeholder{Page budget: 1.}
 
+Programs are buggy.  We all know this, and yet we use them anyway.
+The commercial reality is that most software ships with many known
+bugs and untold numbers of bugs not yet discovered.  Software
+engineers understand that it is neither practical nor feasible to
+delay releasing code until the last bug has been fixed.
+
+Statistical debugging is a body of tools and techniques that help to
+improve software quality in an imperfect world.  Specially
+instrumented programs monitor their own behavior and send feedback
+reports to a central collection server.  Monitoring is both sparse and
+random, which means that complete information is never available about
+any single run.  However, monitoring is also lightweight and therefore
+practical to deploy to user communities numbering in the thousands or
+millions.  Statistical debugging does not seek to understand the
+single cause of a single failure on one machine; rather, it identifies
+broad statistical trends that isolate bug causes across many thousands
+or millions of runs.  Because the process is driven by data from real
+users, it implicitly attends to those program behaviors that cause the
+most problems for the most users, most often.
+
+Of course, our imperfect world is rarely so kind as to provide
+programs with only a single bug.  A single complex commercial
+application may have hundreds or thousands of latent flaws waiting to
+be triggered.  Multiple bugs may come into play even within a single
+run of an application.  Some errors may allow execution to continue
+more-or-less normally, while one may eventually cause a crash.
+Consider the fact that the Mozilla web browser project has a
+``topcrash'' software QA team specifically dedicated to identifying
+and tracking the top forty most common crash bugs.  This cut-off is
+not because anyone believes that there are only forty bugs; it is an
+acknowledgment that engineering resources are finite so one should
+target the most important bugs first.  Fix one bug and another comes
+into view.
+
+Statistical isolation of a single bug is well understood
+\cite{Zheng:2003:SDSP}.  In general terms, one looks for predicates on
+program behavior which are strongly correlated with the binary outcome
+of bug/no-bug, or crash/no-crash.  Both sparse sampling and
+nondeterministic failure modes add noise to the process, but with a
+large population of runs consistent trends emerge.  The presence of
+multiple bugs complicates matters significantly, especially if we
+assume that the number of distinct bugs is itself unknown.  Even if we
+believe we have identified the direct cause of one bug, and even if we
+had complete instead of sampled data, we should expect that the
+``smoking gun'' will be absent from most failed runs, because no one
+bug accounts for more than some small fraction of failures.
+
+This paper presents an effective approach to isolating multiple bugs
+in the face of such challenges.  Our discussion is organized as
+follows.  \Autoref{sec:background} reviews the sampling
+instrumentation infrastructure and the kind of feedback data that it
+provides.  In \Autoref{sec:algorithm} we describe the main filtering
+and ranking algorithm used to mine feedback data for bug causes.
+\Autoref{sec:experiments:setup} defines the parameters of a case study
+in multiple-bug isolation, while \Autoref{sec:experiments:results}
+presents our results.  Our experience with this study suggests areas
+for future development, which we outline in \Autoref{sec:future-work}.
+\Autoref{sec:related-work} reviews related work and
+\Autoref{sec:conclusions} concludes.
 
 \section{Background}
 \label{sec:background}
