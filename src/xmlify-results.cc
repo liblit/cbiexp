@@ -99,11 +99,14 @@ int main(int argc, char *argv[])
 	    break;
 	  }
 
-      xml << "<info scheme=\"" << scheme
+      xml << "<info unit=\"" << unit.signature
+	  << "\" scheme=\"" << scheme
+	  << "\" site=\"" << stats.siteIndex + 1
+	  << "\" predicate=\"" << stats.predicate
 	  << "\" file=\"" << filename
 	  << "\" line=\"" << site.line
 	  << "\" function=\"" << site.fun
-	  << "\" predicate=\"" << stats.predicate;
+	  << "\" cfg-node=\"" << site.cfg_node;
 
       if (rareSites.find(stats) != rareSites.end())
 	xml << "\" class=\"rare";

@@ -6,6 +6,7 @@ struct site_t {
     char* file;
     int line;
     char* fun;
+    unsigned cfg_node;
     char scheme_code;
     char* args[2];
 };

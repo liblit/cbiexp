@@ -117,7 +117,8 @@ void print_site(char scheme_code, char* s)
     const char * const file = fields[0];
     const char * const line = fields[1];
     const char * const func = fields[2];
-    fprintf(sfp, "\t{ \"%s\", %s, \"%s\", ", file, line, func);
+    const char * const node = fields[3];
+    fprintf(sfp, "\t{ \"%s\", %s, \"%s\", %s, ", file, line, func, node);
 
     bool ok;
     switch (scheme_code) {
@@ -188,8 +189,8 @@ int main(int argc, char** argv)
             fgets(p, 3000, stdin);
             if (!strncmp(p, "</sites", 7))
                 break;
-            print_site(t[0], p);
             count++;
+            print_site(t[0], p);
         }
         fprintf(ufp, "\t{ '%c', \"%s\", %d },\n", t[0], t + 1, count);
         num_sites += count;
