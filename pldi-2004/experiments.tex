@@ -182,7 +182,7 @@ few observations or a low $\increase(\ldots)$ score, and thus very
 sensitive to whether one or two successful or failing runs were
 observed or not, appeared on
 %one list and not the other.
-the 1/1 list but not the 1/100 sampled list.
+the \nicefrac{1}{1} list but not the \nicefrac{1}{100} sampled list.
 
 In summary, our algorithm did a good job of producing concise reports that not
 only identified the bugs, but also gave useful information about the root causes and
@@ -221,9 +221,9 @@ neatly into one of the other categories.
 \vspace{\baselineskip}
 \begin{tabular}{|l|r|r|r|r|}
 \hline
-predicate &  \multicolumn{4}{c|}{sampling rate} \\
+\multicolumn{1}{|c|}{\textbf{predicate}} &  \multicolumn{4}{c|}{\textbf{sampling rate}} \\
 \cline{2-5}
-category  &  1/1 & 1/10 & 1/100 & 1/1000 \\
+\multicolumn{1}{|c|}{\textbf{category}}  &  \textbf{\nicefrac{1}{1}} & \textbf{\nicefrac{1}{10}} & \textbf{\nicefrac{1}{100}} & \textbf{\nicefrac{1}{1000}} \\
 \hline
 \hline
 dead      &  92810 & 92810 & 92834 & 95210 \\
