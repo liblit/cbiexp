@@ -356,14 +356,14 @@ predicates on this list indeed have both high specificity and
 sensitivity.  Each of these predictors accurately describes a large
 number of failures.
 
-\subsection{Predicate Elimination}
+\subsection{Redundancy Elimination}
 \label{sec:elimination}
 
 The remaining problem with the results in \autoref{tab:sorts-harmonic}
 is that there is substantial redundancy; it is easy to see that several of these
-predicates are related, hiding other, distinct bugs that either have
+predicates are related.  This hides other, distinct bugs that either have
 fewer failed runs or more non-deterministic predictors further down the
-list.  As discussed above, we use a simple recursive algorithm to eliminate
+list.  As discussed above, we use a simple iterative algorithm to eliminate
 redundant predicates:
 \begin{enumerate}
 
@@ -371,7 +371,7 @@ redundant predicates:
 
 \item Remove the top-ranked predicate $P$ and discard all runs $R$ (feedback reports) where  $R(P) = 1$.
 
-\item Repeat (1) and (2) until the set of runs is empty or the set of predicates is empty.
+\item Repeat these steps until the set of runs is empty or the set of predicates is empty.
 \end{enumerate}
 
 \issue[Mayur]{We should mention somewhere in the text that we do
@@ -389,7 +389,7 @@ redundant predicates:
   point where we say we discard predicates with Increase <= 0) but
   will look out for it during a future scan of the paper.}
 
-We can now state an easy, but important, property of this algorithm.  
+We can now state an easy but important property of this algorithm.  
 \begin{lemma}
 \rm
 Let $P_1,\ldots,P_n$ be a set of instrumented predicates and let ${\cal B}_1,\ldots,{\cal B}_m$ be a set of bugs.  Let
@@ -401,6 +401,7 @@ at least one failure due to ${\cal B}_j$.
 
 Thus, the elimination algorithm chooses at least one predicate 
 predictive of each bug represented by the input set of predicates.
+We are, in effect, covering the set of bugs with a ranked subset of predicates.
 The other property we might like, that the algorithm chooses exactly
 one predicate to represent each bug, does not hold; we shall see in
 \autoref{sec:experiments} that the algorithm sometimes selects a
