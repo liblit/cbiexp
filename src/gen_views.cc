@@ -36,7 +36,7 @@ main(int argc, char** argv)
             fprintf(fp, "</td>\n</tr>\n");
             fprintf(fp, "<tr><td align=right>Go to:</td><td align=left>[<a href=\"%s\">report summary</a>] [<a href=\"%s\">CBI webpage</a>]</td></tr>\n",
                     RESULT_SUMMARY_FILE, CBI_WEBPAGE);
-            fprintf(fp, "</center></table>\n<table>\n<tr>\n" 
+            fprintf(fp, "</center></table>\n<center><table>\n<tr>\n" 
                         "<td></td>\n"
                         "<td align=middle>predicate</td>\n"
                         "<td align=middle>function</td>\n"
@@ -47,7 +47,7 @@ main(int argc, char** argv)
             char cmd[1000];
             sprintf(cmd, "sort -k%d -r -n < %s.txt | ../bin/format >> %s\n", sortby_indices[m], scheme_codes[i], file);
             system (cmd);
-            sprintf(cmd, "echo \"</table>\n</body>\n</html>\" >> %s\n", file);
+            sprintf(cmd, "echo \"</table></center>\n</body>\n</html>\" >> %s\n", file);
         }
     }
     return 0;
