@@ -31,8 +31,10 @@ read_runs(const char message[], const char filename[], vector<bool> &bits, unsig
     unsigned runId;
     while (file >> runId && runId < numRuns) {
 	progress.stepTo(runId);
-	bits[runId] = 1;
-	++count;
+	if (runId >= NumRuns::begin) {
+	    bits[runId] = 1;
+	    ++count;
+	}
     }
 }
 
