@@ -34,7 +34,7 @@ main(int argc, char** argv)
         FILE* ofp = fopen(ofile, "w");
         assert(ofp);
 
-        printf("r %d\n", i);
+        printf("(pass 1) run %d\n", i);
 
         fgets(s, 3000, ifp);
         assert(strncmp(s, "<rep", 4) == 0);

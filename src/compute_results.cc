@@ -217,7 +217,7 @@ int main(int argc, char** argv)
     for (i = 0; i < num_runs; i++) {
         if (!is_srun[i] && !is_frun[i])
             continue;
-        printf("r %d\n", i);
+        printf("(pass 2) run %d\n", i);
         char file[1000];
         sprintf(file, O_REPORT_PATH_FMT, i);
         FILE* fp = fopen(file, "r");
