@@ -324,7 +324,7 @@ compute_pred_scores: $(tooldir)/compute_pred_scores.o sites.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -o $@
 
 predscores: compute_pred_scores
-	$(time) $< 
+	$(time) $< --xmltemplate-prefix=$(name)
 
 collect_parmstats: $(tooldir)/collect_parmstats.o units.o sites.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@

@@ -11,6 +11,7 @@ struct pred_stat {
     float in;
     float fs;
     float co;
+    double imp;
 };
 
 struct pred_info : public PredCoords {

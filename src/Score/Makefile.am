@@ -9,6 +9,8 @@ libScore_a_SOURCES =				\
 	HarmonicMeanLog.h			\
 	HarmonicMeanSqrt.cc			\
 	HarmonicMeanSqrt.h			\
+	Importance.cc				\
+	Importance.h				\
 	Increase.cc				\
 	Increase.h				\
 	LowerBound.cc				\

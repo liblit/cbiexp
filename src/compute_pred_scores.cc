@@ -3,29 +3,27 @@
 #include <cstdio>
 #include <iomanip>
 #include <iostream>
-#include <ext/hash_map>
 #include <fstream>
 #include <gsl/gsl_blas.h>
-#include <queue>
-#include <vector>
+#include <list>
+#include "IndexedPredInfo.h"
 #include "PredStats.h"
-#include "PredCoords.h"
+#include "Score/Importance.h"
+#include "XMLTemplate.h"
 #include "fopen.h"
+#include "sorts.h"
 #include "utils.h"
 
 using namespace std;
-using __gnu_cxx::hash_map;
 
 const double thresh = 10e-12;
 
-typedef hash_map<PredCoords, double> pred_hash_t;
-static pred_hash_t predHash;
-
-static vector<PredCoords> predVec;
+typedef list<IndexedPredInfo> Stats;
+static Stats predList;
 
 static double * W_data;
 
-static ofstream logfp ("predscores.log", ios_base::trunc);
+static ofstream logfp ("pred_scores.log", ios_base::trunc);
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -35,28 +33,22 @@ static ofstream logfp ("predscores.log", ios_base::trunc);
 void 
 read_preds()
 {
-  queue<PredCoords> predQueue;
 
   FILE * const pfp = fopenRead(PredStats::filename);
   pred_info pi;
+  unsigned index = 0;
   while (read_pred_full(pfp, pi)) {
-    predHash[pi] = 0.0;
-    predQueue.push(pi);
+    IndexedPredInfo indexed(pi, index++);
+    predList.push_back(indexed);
   }
   fclose(pfp);
 
-  predVec.resize(predQueue.size());
-  int i = 0;
-  while (!predQueue.empty()) {
-    predVec[i++] = predQueue.front();
-    predQueue.pop();
-  }
 }
 
 void 
 read_weights()
 {
-  unsigned npreds = predVec.size();
+  unsigned npreds = predList.size();
 
   W_data = new double[npreds*npreds];
 
@@ -77,14 +69,24 @@ read_weights()
 void
 print_scores()
 {
-  ofstream outfp ("pred_scores.txt");
-  for (unsigned i = 0; i < predVec.size(); ++i) {
-    PredCoords &pc = predVec[i];
-    pred_hash_t::iterator found = predHash.find(pc);
-    assert(found != predHash.end());
-    outfp << pc << ' ' << scientific << setprecision(10) << found->second << endl;
+  // sort according to descending order
+  predList.sort(Sort::Descending<Score::Importance>());
+
+  ofstream outfp ("pred_scores.xml");
+  outfp << "<?xml version=\"1.0\"?>" << endl
+        << "<?xml-stylesheet type=\"text/xsl\" href=\"" 
+	<< XMLTemplate::format("scores") << ".xsl\"?>" << endl
+	<< "<!DOCTYPE view SYSTEM \"scores.dtd\">" << endl
+	<< "<scores>" << endl;
+
+  for (Stats::iterator c = predList.begin(); c != predList.end(); ++c) {
+    outfp << "<predictor index=\"" << (*c).index+1
+          << "\" score=\"" << setprecision(10) << (*c).ps.imp
+	  << "\"/>" << endl;
     outfp.unsetf(ios::floatfield);
   }
+
+  outfp << "</scores>" << endl;
   outfp.close();
 }
 
@@ -119,7 +121,7 @@ void
 compute_scores()
 {
   double change = 0.0;
-  unsigned npreds = predVec.size();
+  unsigned npreds = predList.size();
   gsl_vector * onevec = gsl_vector_alloc(npreds);
   gsl_vector * v = gsl_vector_alloc(npreds);
   gsl_matrix_view W = gsl_matrix_view_array(W_data, npreds, npreds);
@@ -142,11 +144,10 @@ compute_scores()
     logfp << "change: " << change << endl;
   } while (change > thresh);
 
-  // transfer scores over to the hash table
-  for (unsigned i = 0; i < predVec.size(); ++i) {
-    double score = gsl_vector_get (v, i);
-    PredCoords &pc = predVec[i];
-    predHash[pc] = score;
+  unsigned i = 0;
+  for (Stats::iterator c = predList.begin(); c != predList.end(); ++c) {
+    double score = gsl_vector_get (v, i++);
+    (*c).ps.imp = score;
   }
 
   gsl_vector_free (onevec);
@@ -162,6 +163,7 @@ compute_scores()
 static void process_cmdline(int argc, char **argv)
 {
     static const argp_child children[] = {
+	{ &XMLTemplate::argp, 0, 0, 0},
 	{ 0, 0, 0, 0 }
     };
 
