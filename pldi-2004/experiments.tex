@@ -293,7 +293,7 @@ sampling sets in.  Fewer samples are taken overall on fewer predicates,
 and as a result, fewer predicates have a nonzero $\increase(\ldots)$ score.
 Incorporating more runs tends to alleviate the situation; at above
 10,000 runs, roughly the same number of predicates are retained for
-the \nicefrac{1}{100} sampled data as the unsampled data.  The very
+the \nicefrac{1}{100} sampled data as the complete data.  The very
 sparse sampling rate of \nicefrac{1}{1000}, on the other hand,
 causes much more change in the final result.  A lot more predicates
 are eliminated when using fewer trials, and a lot more predicates are
@@ -301,11 +301,11 @@ retained using more trials.
 
 Most of the volatility in the results come from the scalar-pairs
 predicates.  \Autoref{fig:predkept-b} shows the same graph for
-only the branch and return predicates.  Here, across all datasizes,
+only the branch and return predicates.  Here, across all data sizes,
 the number of selected predicates remains roughly constant at each
-sampling rate.  The unsampled data is still able to select the fewest
+sampling rate.  The complete data is still able to select the fewest
 number of predicates, with \nicefrac{1}{100} sampled data following
 close behind.  The \nicefrac{1}{1000} sampled data still produces a
 net increase in the number of selected predicates.
 
-%% LocalWords:  downsampling lang downsampled
+%% LocalWords:  downsampling lang downsampled predelim predkept
