@@ -351,8 +351,8 @@ int main(int argc, char** argv)
 	puts("Computing results ...");
 	preds_txt_file = DEFAULT_PREDS_TXT_FILE;
 	result_summary_xml_file = DEFAULT_RESULT_SUMMARY_XML_FILE;
-	shell("ln -s %s/summary.xsl %s/summary.css %s",
-	      incdir, incdir, dirname(result_summary_xml_file));
+	shell("ln -s %s/summary.css %s/summary.dtd %s/summary.xsl %s",
+	      incdir, incdir, incdir, dirname(result_summary_xml_file));
 	shell("%s %s/compute_results.o %s.o %s.o -L%s -lanalyze -o %s",
 	      linker, objdir, sites_src_file, units_src_file, objdir, COMPUTE_RESULTS);
 	shell("%s -e %s -d %s -c %s -s %s -f %s -cr %s -p %s -r %s -prefix 0",
