@@ -1,0 +1,24 @@
+-*- outline -*-
+
+The following files in the "share" directory may be of use in decoding
+and interpreting raw feedback reports:
+
+* rhythmbox.sites
+
+Extracted static site information.  Note that this one file contains
+information from multiple compilation units and from multiple schemes
+within those units.  Use the "unit" and "scheme" attributes to match
+up "<sites>" sections in this file with corresponding "<samples>"
+sections in raw feedback reports.  There is no guarantee that
+corresponding sections will be in the same order, so it is important
+to use those attributes to make the correspondence.  However, within a
+matched pair of "<samples>" and "<sites>" sections, the lines
+corresponding to individual sites are guaranteed appear in the same
+order.
+
+If that all seems too complicated, this file is also suitable for use
+with the "bin/resolve-samples" script.  For example:
+
+	% zcat data/1/client/reports.gz |
+	/usr/lib/sampler/tools/extract-report samples |
+	bin/resolve-samples share/rhythmbox.sites
