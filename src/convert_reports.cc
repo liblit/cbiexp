@@ -1,5 +1,3 @@
-// Usage: convert_reports -i <i_report_path_fmt> -o <o_report_path_fmt>
-
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
@@ -7,9 +5,6 @@
 #include "def.h"
 #include "units.h"
 #include "classify_runs.h"
-
-char* i_report_path_fmt = NULL;
-char* o_report_path_fmt = NULL;
 
 int get_indx(char* s)
 {
@@ -19,14 +14,10 @@ int get_indx(char* s)
     assert(0);
 }
 
-void process_cmdline(int, char**);
-
 main(int argc, char** argv)
 {
     char s[3000], *unit, *scheme, *t, u[100];
     char p[3000];
-
-    process_cmdline(argc, argv);
 
     classify_runs();
 
@@ -35,11 +26,11 @@ main(int argc, char** argv)
             continue;
         char ifile[1000], ofile[1000];
 
-        sprintf(ifile, i_report_path_fmt, i);
+        sprintf(ifile, I_REPORT_PATH_FMT, i);
         FILE* ifp = fopen(ifile, "r");
         assert(ifp);
 
-        sprintf(ofile, o_report_path_fmt, i);
+        sprintf(ofile, O_REPORT_PATH_FMT, i);
         FILE* ofp = fopen(ofile, "w");
         assert(ofp);
 
@@ -90,33 +81,6 @@ main(int argc, char** argv)
         fclose(ofp);
     }
     return 0;
-}
-
-void process_cmdline(int argc, char** argv)
-{
-    for (int i = 1; i < argc; i++) {
-        if (!strcmp(argv[i], "-i")) {
-            i++;
-            i_report_path_fmt = argv[i];
-            continue;
-        }
-        if (!strcmp(argv[i], "-o")) {
-            i++;
-            o_report_path_fmt = argv[i];
-            continue;
-        }
-        if (!strcmp(argv[i], "-h")) {
-            printf("Usage: convert_reports -i i_report_path_fmt -o o_report_path_fmt\n");
-            exit(0);
-        }
-        printf("Illegal option: %s\n", argv[i]);
-        exit(1);
-    }
-
-    if (!i_report_path_fmt || !o_report_path_fmt) {
-        printf("Incorrect usage; try -h\n");
-        exit(1);
-    }
 }
 
 

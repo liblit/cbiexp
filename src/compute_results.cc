@@ -1,4 +1,4 @@
-// Usage: compute -p <program_name> -r <report_path_fmt> -d <program_src_dir> -c <confidence>
+// Usage: compute -p <program_name> -d <program_src_dir> -c <confidence>
 // Creates files PRED_TXT_FILE and PRED_HDR_FILE and RESULT_SUMMARY_FILE
 
 #include <stdio.h>
@@ -43,7 +43,6 @@ int   conf_percent = 95;
 float conf;
 
 char* program_name = NULL;
-char* report_path_fmt = NULL;
 char* program_src_dir = NULL;
 
 int num_s_preds = 0;
@@ -220,7 +219,7 @@ int main(int argc, char** argv)
             continue;
         printf("r %d\n", i);
         char file[1000];
-        sprintf(file, report_path_fmt, i);
+        sprintf(file, O_REPORT_PATH_FMT, i);
         FILE* fp = fopen(file, "r");
         assert(fp);
 
@@ -335,38 +334,6 @@ void print_result_summary()
     fprintf(result_summary_fp, "# predicates retained: %d [branch: %d return: %d scalar: %d]\n<p>\n",
         num_b_preds + num_r_preds + num_s_preds, num_b_preds, num_r_preds, num_s_preds);
     fprintf(result_summary_fp, "Confidence: %d%%\n<p>\n", conf_percent);
-    
-    fprintf(result_summary_fp, "<table border=1>\n<tr>\n"
-                               "<td></td>\n"
-                               "<td align=middle>lower bound of<br>confidence interval</td>\n"
-                               "<td align=middle>increase<br>score</td>\n"
-                               "<td align=middle>fail<br>score</td>\n"
-                               "<td align=middle>true in<br># F runs</td>\n"
-                               "</tr>\n<tr>\n"
-                               "<td>branch</td>\n"
-                               "<td align=middle><a href=\"B_lb.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"B_is.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"B_fs.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"B_nf.html\">X</a></td>\n"
-                               "</tr>\n<tr>\n"
-                               "<td>return</td>\n"
-                               "<td align=middle><a href=\"R_lb.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"R_is.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"R_fs.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"R_nf.html\">X</a></td>\n"
-                               "</tr>\n<tr>\n"
-                               "<td>scalar</td>\n"
-                               "<td align=middle><a href=\"S_lb.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"S_is.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"S_fs.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"S_nf.html\">X</a></td>\n"
-                               "</tr>\n<tr>\n"
-                               "<td>all</td>\n"
-                               "<td align=middle><a href=\"all_lb.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"all_is.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"all_fs.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"all_nf.html\">X</a></td>\n"
-                               "</tr>\n</table>\n</body></html>\n");
 }
 
 void process_cmdline(int argc, char** argv)
@@ -375,11 +342,6 @@ void process_cmdline(int argc, char** argv)
         if (!strcmp(argv[i], "-p")) {
             i++;
             program_name = argv[i];
-            continue;
-        }
-        if (!strcmp(argv[i], "-r")) {
-            i++;
-            report_path_fmt = argv[i];
             continue;
         }
         if (!strcmp(argv[i], "-d")) {
@@ -394,14 +356,14 @@ void process_cmdline(int argc, char** argv)
             continue;
         } 
         if (!strcmp(argv[i], "-h")) {
-            printf("Usage: compute -p program_name -r report_path_format -d program_src_dir -c confidence\n");
+            printf("Usage: compute -p program_name -d program_src_dir -c confidence\n");
             exit(0);
         }
         printf("Illegal option: %s\n", argv[i]);
         exit(1);
     }
 
-    if (!program_name || !report_path_fmt || !program_src_dir) {
+    if (!program_name || !program_src_dir) {
         printf("Incorrect usage; try -h\n");
         exit(1);
     }

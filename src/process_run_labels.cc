@@ -17,7 +17,7 @@ main(int argc, char** argv)
 
     for (int i = 0; i < num_runs; i++) {
         char s[100];
-        sprintf(s, "data/%d/label", i);
+        sprintf(s, LABEL_PATH_FMT, i);
         FILE* fp = fopen(s, "r");
         assert(fp);
         fscanf(fp, "%s", s);

@@ -51,7 +51,7 @@ main(int argc, char** argv)
             fclose(fp);
 
             char cmd[1000];
-            sprintf(cmd, "sort -k%d -r -n < %s.txt | ../bin/format >> %s\n", sortby_indices[m], scheme_codes[i], file);
+            sprintf(cmd, "sort -k%d -r -n < %s.txt | ./format >> %s\n", sortby_indices[m], scheme_codes[i], file);
             system (cmd);
             sprintf(cmd, "echo \"</table>\n</body>\n</html>\" >> %s\n", file);
         }
