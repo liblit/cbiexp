@@ -1,7 +1,7 @@
 f.runs
 s.runs
 *.txt
-*.html
+*.xml
 
 sites.cc
 sites.o
