@@ -71,8 +71,8 @@ sub check_system ($) {
 sub snapshot_moss_bad ($) {
     my $executable = shift;
     check_system "cp -p $MPATH/$executable ." and die "copy error";
-    check_system "/usr/lib/sampler/tools/extract-section .debug_sampler_cfg $executable | gzip >$executable.cfg" and die "cfg extraction error";
-    check_system "/usr/lib/sampler/tools/extract-section .debug_site_info $executable | gzip >$executable.sites" and die "site info extraction error";
+    check_system "/usr/lib/sampler/tools/extract-section .debug_sampler_cfg $executable >$executable.cfg" and die "cfg extraction error";
+    check_system "/usr/lib/sampler/tools/extract-section .debug_site_info $executable >$executable.sites" and die "site info extraction error";
 }
 
 snapshot_moss_bad 'mossbad';
