@@ -368,13 +368,18 @@ int main(int argc, char** argv)
 	result_summary_htm_file = DEFAULT_RESULT_SUMMARY_HTM_FILE;
 	shell("%s %s/compute_results.o %s/classify_runs.o %s/scaffold.o %s.o %s.o -o %s",
 	      linker, objdir, objdir, objdir, sites_src_file, units_src_file, COMPUTE_RESULTS);
-	shell("%s -e %s -d %s -c %s -s %s -f %s -cr %s %s %s -p %s -ps %s.cc -r %s",
+	shell("%s -e %s -d %s -c %s -s %s -f %s -cr %s %s %s -p %s -r %s",
 	      COMPUTE_RESULTS, experiment_name, program_src_dir, confidence,
               sruns_txt_file, fruns_txt_file, compact_report_path_fmt,
 	      ((trace_txt_file) ? "-t" : ""), ((trace_txt_file) ? trace_txt_file : ""),
-	      preds_full_txt_file, preds_src_file, result_summary_htm_file);
+	      preds_full_txt_file, result_summary_htm_file);
 	shell("%s -I%s -c %s.cc", compiler, incdir, preds_src_file);
         shell("awk '{ print $2 " " $3 " " $4 }' %s > %s", preds_full_txt_file, preds_abbr_txt_file);
+
+        shell("echo \"#include <preds.h>\" > %s.cc", preds_src_file);
+        shell("echo \"const char* const preds[] = {\" >> %s.cc", preds_src_file);
+        shell("awk '{ print \"\t\\\"\" $n \"\\\",\" }' %s >> %s.cc", preds_full_txt_file, preds_src_file);
+        shell("echo \"};\" >> %s.cc", preds_src_file);
     }
 
     if (do_compute_obs_tru) {

@@ -56,7 +56,6 @@ char* compact_report_path_fmt = NULL;
 char* trace_txt_file = NULL;
 
 char* preds_txt_file = NULL;
-char* preds_src_file = NULL;
 char* result_summary_htm_file = NULL;
 
 float conf;
@@ -66,7 +65,6 @@ int num_r_preds = 0;
 int num_b_preds = 0;
 
 FILE* preds_txt_fp = NULL;
-FILE* preds_src_fp = NULL;
 FILE* result_summary_htm_fp = NULL;
 FILE* trace_txt_fp = NULL;
 
@@ -119,8 +117,6 @@ void print_pred(int u, int c, int p)
     float lb = in - conf * sqrt(((fs * (1 - fs)) / (f + s)) + ((co * (1 - co))/(of + os)));
 
     fprintf(preds_txt_fp, "%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
-	units[u].s[0], u, c, p, lb, in, fs, co, s, f, os, of);
-    fprintf(preds_src_fp,  "\t\"%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
 	units[u].s[0], u, c, p, lb, in, fs, co, s, f, os, of);
 }
 
@@ -206,8 +202,6 @@ void print_site_summary(int u, int c, int i)
 		print_pred(u, c, p);
 		print_scalar_pred(preds_txt_fp, i, scalar_op[p / 2], p % 2 ? true : false);
                 fprintf(preds_txt_fp, "</td><td>%s</td><td>%s:%d\n",    sites[i].fun, sites[i].file, sites[i].line);
-		print_scalar_pred(preds_src_fp, i, scalar_op[p / 2], p % 2 ? true : false);
-                fprintf(preds_src_fp, "</td><td>%s</td><td>%s:%d\",\n", sites[i].fun, sites[i].file, sites[i].line);
 	    }
 	break;
     case 'R':
@@ -258,8 +252,6 @@ void print_site_summary(int u, int c, int i)
 		print_pred(u, c, p);
 		print_return_pred(preds_txt_fp, i, return_op[p / 2], p % 2 ? true : false);
                 fprintf(preds_txt_fp, "</td><td>%s</td><td>%s:%d\n",    sites[i].fun, sites[i].file, sites[i].line);
-		print_return_pred(preds_src_fp, i, return_op[p / 2], p % 2 ? true : false);
-                fprintf(preds_src_fp, "</td><td>%s</td><td>%s:%d\",\n", sites[i].fun, sites[i].file, sites[i].line);
 	    }
 	break;
     case 'B':
@@ -268,16 +260,12 @@ void print_site_summary(int u, int c, int i)
 	    print_pred(u, c, 0);
 	    print_branch_pred(preds_txt_fp, i, "is FALSE");
             fprintf(preds_txt_fp, "</td><td>%s</td><td>%s:%d\n",    sites[i].fun, sites[i].file, sites[i].line);
-	    print_branch_pred(preds_src_fp, i, "is FALSE");
-            fprintf(preds_src_fp, "</td><td>%s</td><td>%s:%d\",\n", sites[i].fun, sites[i].file, sites[i].line);
 	}
 	if (is_bug_predictor(u, c, 1)) {
 	    num_b_preds++;
 	    print_pred(u, c, 1);
 	    print_branch_pred(preds_txt_fp, i, "is TRUE");
             fprintf(preds_txt_fp, "</td><td>%s</td><td>%s:%d\n",    sites[i].fun, sites[i].file, sites[i].line);
-	    print_branch_pred(preds_src_fp, i, "is TRUE");
-            fprintf(preds_src_fp, "</td><td>%s</td><td>%s:%d\",\n", sites[i].fun, sites[i].file, sites[i].line);
 	}
 	break;
     default: assert(0);
@@ -437,11 +425,6 @@ void process_cmdline(int argc, char** argv)
 	    preds_txt_file = argv[i];
 	    continue;
 	}
-	if (!strcmp(argv[i], "-ps")) {
-	    i++;
-	    preds_src_file = argv[i];
-	    continue;
-	}
 	if (!strcmp(argv[i], "-r")) {
 	    i++;
 	    result_summary_htm_file = argv[i];
@@ -457,7 +440,6 @@ void process_cmdline(int argc, char** argv)
                  "(r) -cr <compact-report-path-fmt>\n"
                  "(r) -t  <trace-txt-file>\n"
                  "(w) -p  <preds-txt-file>\n"
-                 "(w) -ps <preds-src-file>\n"
                  "(w) -r  <result-summary-htm-file>\n");
 	    exit(0);
 	}
@@ -472,7 +454,6 @@ void process_cmdline(int argc, char** argv)
         !fruns_txt_file ||
         !compact_report_path_fmt ||
 	!preds_txt_file ||
-        !preds_src_file ||
         !result_summary_htm_file) {
 	puts("Incorrect usage; try -h");
 	exit(1);
@@ -486,7 +467,8 @@ void process_trace_txt_file()
     if (!trace_txt_file)
 	return;
 
-    trace_txt_fp = fopen(trace_txt_file, "r"); assert(trace_txt_fp);
+    trace_txt_fp = fopen(trace_txt_file, "r");
+    assert(trace_txt_fp);
 
     while (1) {
 	fscanf(trace_txt_fp, "%d %d %d %d", &u, &c, &p, &b);
@@ -516,13 +498,8 @@ int main(int argc, char** argv)
 
     preds_txt_fp = fopen(preds_txt_file, "w");
     assert(preds_txt_fp);
-    preds_src_fp = fopen(preds_src_file, "w");
-    assert(preds_src_fp);
     result_summary_htm_fp = fopen(result_summary_htm_file, "w");
     assert(result_summary_htm_fp);
-
-    fputs("#include <preds.h>\n\n"
-	  "const char* const preds[] = {\n", preds_src_fp);
 
     site_summary.resize(NumUnits);
     for (u = 0; u < NumUnits; u++)
@@ -542,10 +519,7 @@ int main(int argc, char** argv)
 
     print_result_summary();
 
-    fputs("};\n", preds_src_fp);
-
     fclose(preds_txt_fp);
-    fclose(preds_src_fp);
     fclose(result_summary_htm_fp);
     return 0;
 }
