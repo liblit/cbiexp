@@ -227,14 +227,14 @@ The second class of data that must be handled specially in
 multi-threaded applications is the predicate counters.  Recall that
 the predicate counters keep track of how often a particular predicate
 at a particular line of code is observed to be true or false.
-Because, for efficiency, predicates are tested rarely (say on average once in
-every 100 times the line of code associated with the predicate is
-executed), any individual counter is accessed rarely even by a single
-thread.  For this reason, we maintain only one copy of each predicate
-counter, shared by all threads.  The critical operation on these
-counters, an increment by one, is so basic that every CPU architecture
-has some way of doing this atomically without resorting to explicit
-locking.
+Because, for efficiency, we use low sampling rates (say on average
+once in every 100 times the line of code associated with the predicate
+is executed), predicates are tested rarely and any individual counter
+is accessed rarely even by a single thread.  For this reason, we
+maintain only one copy of each predicate counter, shared by all
+threads.  The critical operation on these counters, an increment by
+one, is so basic that every CPU architecture has some way of doing
+this atomically without resorting to explicit locking.
 
 Finally, the third class of data that must be protected from concurrent access
 is the global registry of compilation units and the report file.
