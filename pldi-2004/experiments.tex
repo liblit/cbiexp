@@ -4,9 +4,7 @@
 
 In this section we present the results of applying the algorithm
 described in \autoref{sec:algorithm} in five case
-studies.\footnote{More complete data may be browsed interactively at
-  \url{http://www.cs.berkeley.edu/~liblit/pldi-2005}.}
-\autoref{tab:exps} shows the summary statistics for each of the
+studies.  \autoref{tab:exps} shows the summary statistics for each of the
 experiments.  In each study we ran the programs on about 32,000 random
 inputs.  The number of instrumentation sites varies with the size of
 the program, as does the number of predicates those instrumentation
@@ -133,50 +131,38 @@ with very little redundancy.
 Below the eighth position there are no new bugs to report and every
 predicate is correlated with predicates higher on the list.  Even
 without the table of numbers at the right it is easy to spot the
-eighth position as the natural cutoff.  Keep in mind that the length of 
-the thermometer is on a log scale, hence changes in larger magnitudes may 
-appear less evident.  Notice that the initial and
+eighth position as the natural cutoff.  Keep in mind that the length
+of the thermometer is on a log scale, hence changes in larger
+magnitudes may appear less evident.  Notice that the initial and
 effective thermometers for the first eight predicates are essentially
-identical, with the exception of the predicate at position six, indicating
-that it is somewhat affected by a predicate listed earlier (i.e., its companion
-sub-bug predictor 
-at position two).  All of the predicates below the eighth line have very
-different initial and effective thermometers (either many fewer
-failing runs, or much more non-deterministic, or both) showing that these
-predicates are strongly affected by 
+identical.  Only the predicate at position six is noticeably
+different, indicating that this predicate is somewhat affected by a
+predicate listed earlier (specifically, its companion sub-bug
+predictor at position two).  However, all of the predicates below the
+eighth line have very different initial and effective thermometers
+(either many fewer failing runs, or much more non-deterministic, or
+both) showing that these predicates are strongly affected by
 higher-ranked predicates.
-
-\issue[Mayur]{This is a good way to explain why we have the initial
-  and effective thermometers in the table, but I don't see much
-  difference b/w them even for the predicate at position six.  I guess
-  the key difference is the number of failing runs, and since the
-  lenght of the thermometer is on a log scale, the difference is not
-  evident.  Alex, is this the only difference?  If yes, we can remind
-  the reader again that it is a log scale (you have already mentioned
-  this in sec 3.3 but we can mention it again).}
-
-\issue[Alex]{Mentioning the log scale again would be fine.  The
-  context score has decreased as has the number of failing runs in
-  number 6.  You could change it to say "somewhat affected"; certainly
-  it is not as dramatically affected as the predicates further down
-  the list.}
-
-\issue[Alice]{I've implemented Alex's suggestion above.  Mayur or Alex,
-  check to see if you like it.}
-
-\subsection{Additional Experiments}
 
 Our algorithm has a drawback illustrated by the \moss\ experiment: It
 is not easy to identify the predicates to which a predicate is closely
 related.  Such a feature is useful in confirming whether two selected
 predicates represent different bugs or are in fact related to the same
-bug.  We have a measure of how strongly $P$ implies another predicate
-$P'$: How does removing the runs where $R(P) = 1$ affect the
+bug.  We do have a measure of how strongly $P$ implies another
+predicate $P'$: How does removing the runs where $R(P) = 1$ affect the
 importance of $P'$?  The more closely related $P$ and $P'$ are, the
 more $P'$'s importance drops when $P$'s failing runs are removed.  In
-our implementation, each predicate $P$ in the final, ranked list of
-predicates is hyperlinked to an {\em affinity} list of all predicates
-ranked by how much $P$ causes their ranking score to decrease.
+the interactive version of our analysis tools, each predicate $P$ in
+the final, ranked list of predicates can zoom in to a linked
+\termdef{affinity list} of all predicates ranked by how much $P$
+causes their ranking score to decrease.
+
+\subsection{Additional Experiments}
+
+We briefly report here on experiments with additional applications
+containing both known and unknown bugs.  Complete analysis results for
+all experiments may be browsed interactively at
+\url{http://www.cs.berkeley.edu/~liblit/pldi-2005}.
 
 \input{views/table}
 
