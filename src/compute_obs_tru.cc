@@ -204,8 +204,8 @@ int main(int argc, char** argv)
     tfp = fopen(tru_txt_file, "w");
     assert(tfp);
 
-    site_details.resize(NumUnits);
-    for (u = 0; u < NumUnits; u++)
+    site_details.resize(num_units);
+    for (u = 0; u < num_units; u++)
 	site_details[u].resize(units[u].c);
 
     pfp = fopen(preds_txt_file, "r");
@@ -214,7 +214,7 @@ int main(int argc, char** argv)
 	fscanf(pfp, "%d %d %d", &u, &c, &p);
 	if (feof(pfp))
 	    break;
-	assert(u >= 0 && u < NumUnits);
+	assert(u >= 0 && u < num_units);
 	assert(c >= 0 && c < units[u].c);
 	assert(p >= 0 && p < 6);
 	site_details[u][c].obs[p] = new bit_vector(num_runs);
@@ -226,7 +226,7 @@ int main(int argc, char** argv)
 
     scaffold(compact_report_path_fmt, process_site);
 
-    for (u = 0; u < NumUnits; u++)
+    for (u = 0; u < num_units; u++)
 	for (c = 0; c < units[u].c; c++)
 	    print_site_details(u, c);
 
