@@ -79,7 +79,7 @@ bool print_s_site(const Fields &fields)
     return true;
 }
 
-bool print_1_site(const Fields &fields)
+bool print_1_site(const Fields &fields, char scheme_code)
 {
     size_t operand;
 
@@ -94,7 +94,7 @@ bool print_1_site(const Fields &fields)
 	return false;
     }
 
-    fprintf(sfp, "\'B\', { \"%s\" } ", fields[operand]);
+    fprintf(sfp, "\'%c\', { \"%s\" } ", scheme_code, fields[operand]);
     return true;
 }
 
@@ -112,9 +112,9 @@ void print_site(char scheme_code, char* s)
     bool ok;
     switch (scheme_code) {
     case 'S': ok = print_s_site(fields); break;
-    case 'B': ok = print_1_site(fields); break;
-    case 'R': ok = print_1_site(fields); break;
-    case 'G': ok = print_1_site(fields); break;
+    case 'B':
+    case 'R':
+    case 'G': ok = print_1_site(fields, scheme_code); break;
     default: assert(0);
     }
 
