@@ -18,10 +18,14 @@ offline downsampling program allows us generate sparser samples from this
 full data; thus, we were able to use the same set of runs to test the
 effect of different sampling rates on the results.  
 
-We analyzed \ccrypt version 1.2, which has a known bug \cite{Selinger:2003:cqual}.  At one point in the code the program attempts to write a file.  If the file already exists, the user is presented with a prompt asking for confirmation that the file should be written; if the user input is EOF (i.e., the user hits {\tt Enter} without typing anything) the program will crash.  We used only the returns
-instrumentation scheme for this experiment. The top
-two entries of the report are (most information is elided for
-brevity):
+We analyzed \ccrypt version 1.2, which has a known input validation
+bug.  At one point in the code the program attempts to write a file.
+If the file already exists, the user is presented with a prompt asking
+for confirmation that the file should be written; if the user input is
+EOF (i.e., the user hits {\tt Enter} without typing anything) the
+program will crash.  We used only the returns instrumentation scheme
+for this experiment.  The top two entries of the report are (most
+information is elided for brevity):
 \begin{verbatim}
 Predicate            Context    Increase   Failure
 xreadline() == 0     .67        .33        1.00
