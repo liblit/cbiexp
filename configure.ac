@@ -36,6 +36,20 @@ fi
 
 ########################################################################
 #
+#  instrumenting compiler
+#
+
+AC_ARG_VAR(SAMPLER_CC, [instrumenting C compiler command])
+if test -z "$SAMPLER_CC"; then
+  AC_CHECK_PROGS(SAMPLER_CC, sampler-cc)
+else
+  AC_MSG_CHECKING(sampler-cc)
+  AC_MSG_RESULT($SAMPLER_CC)
+fi
+
+
+########################################################################
+#
 #  generate output files
 #
 
@@ -43,6 +57,7 @@ AM_CONFIG_HEADER(config.h)
 
 AC_CONFIG_FILES([
 Makefile
+rhythmbox/config.site
 src/Makefile
 src/compiler.cc
 ])
