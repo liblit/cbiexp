@@ -57,6 +57,7 @@ AM_CONFIG_HEADER(config.h)
 
 AC_CONFIG_FILES([
 Makefile
+correlations/Makefile
 rhythmbox/config.site
 src/Makefile
 src/compiler.cc

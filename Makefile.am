@@ -1,3 +1,5 @@
 AUTOMAKE_OPTIONS = foreign
 
-SUBDIRS = src
+SUBDIRS =					\
+	correlations				\
+	src
