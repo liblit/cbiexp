@@ -194,10 +194,10 @@ expand_collapse_timeout (gpointer data)
 		ret = FALSE;
 	} 
 
-	GDK_THREADS_LEAVE ();
-
 	if (ret == FALSE)
 		disclosure->priv->expand_id = 0;
+
+	GDK_THREADS_LEAVE ();
 	return ret;
 }
 
