@@ -48,6 +48,7 @@ libanalyze_a_SOURCES =				\
 	Confidence.h				\
 	Dilute.cc				\
 	Dilute.h				\
+	IndexedPredInfo.cc			\
 	IndexedPredInfo.h			\
 	MapSites.cc				\
 	MapSites.h				\
@@ -55,8 +56,6 @@ libanalyze_a_SOURCES =				\
 	NumRuns.h				\
 	PredStats.cc				\
 	PredStats.h				\
-	PredicatePrinter.cc			\
-	PredicatePrinter.h			\
 	Progress.cc				\
 	Progress.h				\
 	RawReport.cc				\
@@ -69,6 +68,8 @@ libanalyze_a_SOURCES =				\
 	RunsDirectory.h				\
 	SourceDirectory.cc			\
 	SourceDirectory.h			\
+	Stylesheet.cc				\
+	Stylesheet.h				\
 	ViewPrinter.cc				\
 	ViewPrinter.h				\
 	classify_runs.cc			\
@@ -107,4 +108,5 @@ liblate_a_SOURCES =				\
 	preds.h					\
 	project.cc				\
 	sites.h					\
-	units.h
+	units.h					\
+	xmlify-results.cc

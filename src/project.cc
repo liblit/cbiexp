@@ -12,7 +12,6 @@
 #include "MappedArray.h"
 #include "Matrix.h"
 #include "PredStats.h"
-#include "PredicatePrinter.h"
 #include "Rho.h"
 #include "Score/Fail.h"
 #include "Score/HarmonicMeanLog.h"
@@ -20,6 +19,7 @@
 #include "Score/Increase.h"
 #include "Score/LowerBound.h"
 #include "Score/TrueInFails.h"
+#include "Stylesheet.h"
 #include "ViewPrinter.h"
 #include "classify_runs.h"
 #include "fopen.h"
@@ -27,6 +27,8 @@
 #include "utils.h"
 
 using namespace std;
+
+const char *Stylesheet::filename = "view.xsl";
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -81,7 +83,7 @@ buildView(const Rho &rho, const Schemes::value_type &scheme, const Score score, 
   cerr << "ranking " << candidates.size() << " predicates for scheme " << schemeName << ", score " << Score::code << ", dilution " << Dilution::name << '\n';
 
   // create XML output file and write initial header
-  ViewPrinter view("projected-view", schemeName, Score::code, Dilution::name);
+  ViewPrinter view(Stylesheet::filename, "projected-view", schemeName, Score::code, Dilution::name);
 
   // pluck out predicates one by one, printing as we go
   while (!candidates.empty())
@@ -122,7 +124,7 @@ int
 main(int argc, char *argv[])
 {
   // command line processing and other initialization
-  argp_parse(0, argc, argv, 0, 0, 0);
+  argp_parse(&Stylesheet::argp, argc, argv, 0, 0, 0);
   ios::sync_with_stdio(false);
   classify_runs();
 

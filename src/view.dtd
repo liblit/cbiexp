@@ -4,26 +4,8 @@
   sort NMTOKEN #REQUIRED
   projection NMTOKEN #REQUIRED>
 
-<!ENTITY % predictor "(true, seen, scores, source)">
-<!ELEMENT predictor %predictor;>
-
-<!ELEMENT true EMPTY>
-<!ELEMENT seen EMPTY>
-<!ENTITY % tally "success NMTOKEN #REQUIRED failure NMTOKEN #REQUIRED">
-<!ATTLIST true %tally;>
-<!ATTLIST seen %tally;>
-
-<!ELEMENT scores EMPTY>
-<!ATTLIST scores
-  log10-seen NMTOKEN #REQUIRED
-  badness NMTOKEN #REQUIRED
-  context NMTOKEN #REQUIRED
-  increase NMTOKEN #REQUIRED
-  lower-bound NMTOKEN #REQUIRED>
-
-<!ELEMENT source EMPTY>
-<!ATTLIST source
-  predicate CDATA #REQUIRED
-  function NMTOKEN #REQUIRED
-  file CDATA #REQUIRED
-  line NMTOKEN #REQUIRED>
+<!ELEMENT predictor EMPTY>
+<!ENTITY % predictor.extra-attrs "">
+<!ATTLIST predictor
+  index NMTOKEN #REQUIRED
+  %predictor.extra-attrs;>

@@ -13,10 +13,14 @@
 #include "NumRuns.h"
 #include "RunsDirectory.h"
 #include "SourceDirectory.h"
+#include "Stylesheet.h"
 #include "compiler.h"
 #include "shell.h"
 
 using namespace std;
+
+
+const char *Stylesheet::filename = "view.xsl";
 
 
 static string sites_txt_files;
@@ -108,6 +112,7 @@ static void process_cmdline(int argc, char *argv[])
 	{ &NumRuns::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ &SourceDirectory::argp, 0, 0, 0 },
+	{ &Stylesheet::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
 
@@ -211,7 +216,7 @@ int main(int argc, char** argv)
 	shell("%s %s/gen_views.o %s.o %s.o -L%s -lanalyze -L%s/Score -lScore -o gen-views",
 	      linker, objdir, MapSites::sitesBasename, MapSites::unitsBasename,
 	      objdir, objdir);
-	shell("./gen-views");
+	shell("./gen-views --stylesheet=%s", Stylesheet::filename);
 	needLogoLinks = true;
     }
 

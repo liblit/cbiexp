@@ -15,7 +15,7 @@ sorts := lb is fs nf hl hs
 projections := none circular linear
 views := $(foreach scheme, $(schemes), $(foreach sort, $(sorts), $(foreach projection, $(projections), $(scheme)_$(sort)_$(projection).xml)))
 
-web := logo.css logo.xsl sorts.dtd sorts.xml summary.css summary.dtd summary.xml summary.xsl $(views) projected-view.dtd projected-view.xsl view.css view.dtd view.xsl projections.xml projections.dtd
+web := logo.css logo.xsl sorts.dtd sorts.xml summary.css summary.dtd summary.xml summary.xsl $(views) projected-view.dtd projected-view.xsl view.css view.dtd view.xsl projections.xml projections.dtd predictor-info.xml predictor-info.dtd moss-view.xsl projected-moss-view.xsl histograms.xml histograms.dtd
 publish := $(HOME)/www/project/moss-new
 
 all: $(web)
@@ -28,18 +28,26 @@ $(publish)/%: %
 	[ -d $(@D) ] || mkdir $(@D)
 	cp $< $@
 
-projected-view.dtd projected-view.xsl projections.xml projections.dtd logo.css logo.xsl summary.css summary.dtd sorts.dtd sorts.xml:
+projected-view.dtd projected-view.xsl projections.xml projections.dtd logo.css logo.xsl summary.css summary.dtd sorts.dtd sorts.xml predictor-info.dtd:
 	ln -s $(tooldir)/$@ .
 clean:: ; rm -f projected-view.dtd projected-view.xsl projections.dtd projections.xml summary.css summary.dtd sorts.dtd sorts.xml logo.css logo.xsl
 
+predictor-info.xml: xmlify-results preds.txt
+	./$<
+	$(MAKE) $(@:.xml=.dtd)
+	xmllint --valid --noout $@
+
+xmlify-results: %: $(tooldir)/%.o sites.o units.o $(tooldir)/libanalyze.a
+	$(LINK.cc) $^ -o $@
+
 $(filter-out %_none.xml, $(views)): project preds.txt rho.bin
-	$(time) ./$<
+	$(time) ./$< --stylesheet=projected-moss-view.xsl
 	$(MAKE) projected-view.dtd
 	xmllint --valid --noout $(filter-out %_none.xml, $(views))
 clean:: ; rm -f $(filter-out %_none.xml, $(views))
 
 project: $(tooldir)/project.o sites.o units.o $(tooldir)/libanalyze.a $(tooldir)/Score/libScore.a
-	$(time) $(LINK.cc) $^ -o $@
+	$(LINK.cc) $^ -o $@
 clean:: ; rm -f project
 
 rho.bin: calculate.m $(sparse)
@@ -59,7 +67,7 @@ obs.txt tru.txt: $(tooldir)/compute_obs_tru.o $(datadir)/0/reports.sparse preds.
 clean:: ; rm -f obs.txt tru.txt compute-obs-tru
 
 $(filter %_none.xml, $(views)): $(tooldir)/gen_views.o sites.o units.o preds.txt
-	$(time) $(tooldir)/analyze_runs --do=print-results-1
+	$(time) $(tooldir)/analyze_runs --do=print-results-1 --stylesheet=moss-view.xsl
 	xmllint --valid --noout $(filter %_none.xml, $(views))
 clean:: ; rm -f $(filter %_none.xml, $(views)) view.css view.dtd view.xsl gen-views
 
@@ -80,9 +88,14 @@ s.runs f.runs: $(tooldir)/process_run_labels.o $(datadir)/stamp-labels
 	$(time) $(tooldir)/analyze_runs --do=process-labels --runs-directory=$(datadir)
 clean:: ; rm -f s.runs f.runs
 
-bugs-in-run.txt: %.txt: $(datadir)/stamp-labels %
+histograms.xml: %.xml: % run-bug.txt tru.txt
+	./$< >$@
+	$(MAKE) $*.dtd
+	xmllint --valid --noout $@
+
+run-bug.txt: %.txt: $(datadir)/stamp-labels %
 	$(time) ./$* `cat $<` >$@
-clean:: ; rm -f bugs-in-run.txt
+clean:: ; rm -f run-bug.txt
 
 sites.o units.o: $(tooldir)/map_sites.o $(sites)
 	$(time) $(tooldir)/analyze_runs --do=map-sites $(sites:%=--sites-text=%)
@@ -95,3 +108,5 @@ $(tooldir)/%: force
 
 force:
 .PHONY: force
+
+.DELETE_ON_ERROR:

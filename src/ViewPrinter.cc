@@ -5,7 +5,7 @@
 using namespace std;
 
 
-ViewPrinter::ViewPrinter(const char dtd[], const string &scheme, const char sort[], const char projection[])
+ViewPrinter::ViewPrinter(const char *stylesheet, const char dtd[], const string &scheme, const char sort[], const char projection[])
 {
   ostringstream filename;
   filename << scheme << '_' << sort << '_' << projection << ".xml";
@@ -14,7 +14,7 @@ ViewPrinter::ViewPrinter(const char dtd[], const string &scheme, const char sort
   open(filename.str().c_str());
 
   (*this) << "<?xml version=\"1.0\"?>"
-	  << "<?xml-stylesheet type=\"text/xsl\" href=\"" << dtd << ".xsl\"?>"
+	  << "<?xml-stylesheet type=\"text/xsl\" href=\"" << stylesheet << "\"?>"
 	  << "<!DOCTYPE view SYSTEM \"" << dtd << ".dtd\">"
 	  << "<view scheme=\"" << scheme
 	  << "\" sort=\"" << sort

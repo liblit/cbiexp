@@ -15,12 +15,15 @@ ftr.jc
 ftr.meta
 gen-summary
 gen-views
+histograms.xml
 log
 mats
 obs.txt
+predictor-info.xml
 preds.txt
 project
 rho.bin
+run-bug.txt
 s.runs
 sites.cc
 sobs.
@@ -34,3 +37,4 @@ str.meta
 summary.xml
 tru.txt
 units.cc
+xmlify-results

@@ -6,7 +6,7 @@
 
 ////////////////////////////////////////////////////////////////////////
 //
-//  Predicate with rho index
+//  Predicate with master index within "preds.txt"
 //
 
 
@@ -15,6 +15,15 @@ struct IndexedPredInfo : public pred_info
   IndexedPredInfo(const pred_info &, unsigned);
   unsigned index;
 };
+
+
+std::ostream & operator << (std::ostream &, const IndexedPredInfo &);
+
+
+////////////////////////////////////////////////////////////////////////
+
+
+#include <cassert>
 
 
 inline

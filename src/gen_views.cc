@@ -3,14 +3,15 @@
 #include <map>
 #include <list>
 #include <string>
+#include "IndexedPredInfo.h"
 #include "PredStats.h"
-#include "PredicatePrinter.h"
 #include "Score/Fail.h"
 #include "Score/HarmonicMeanLog.h"
 #include "Score/HarmonicMeanSqrt.h"
 #include "Score/Increase.h"
 #include "Score/LowerBound.h"
 #include "Score/TrueInFails.h"
+#include "Stylesheet.h"
 #include "ViewPrinter.h"
 #include "classify_runs.h"
 #include "fopen.h"
@@ -20,7 +21,9 @@
 
 using namespace std;
 
-typedef list<pred_info> Stats;
+typedef list<IndexedPredInfo> Stats;
+
+const char *Stylesheet::filename = "view.xsl";
 
 
 template <class Get>
@@ -29,13 +32,13 @@ gen_view(const string &scheme, Stats &stats)
 {
     // create XML output file and write initial header
     // make sure we will be able to write before we spend time sorting
-    ViewPrinter view("view", scheme, Get::code, "none");
+    ViewPrinter view(Stylesheet::filename, "view", scheme, Get::code, "none");
 
     // sort using the given sorter
     stats.sort(Sort::Descending<Get>());
 
     // print predicates into view in sorted order
-    copy(stats.begin(), stats.end(), ostream_iterator<pred_info>(view));
+    copy(stats.begin(), stats.end(), ostream_iterator<IndexedPredInfo>(view));
 }
 
 
@@ -63,7 +66,7 @@ int
 main(int argc, char** argv)
 {
     // command line processing and other initialization
-    argp_parse(0, argc, argv, 0, 0, 0);
+    argp_parse(&Stylesheet::argp, argc, argv, 0, 0, 0);
     classify_runs();
 
     // group predicates by scheme for easier iteraton later
@@ -74,11 +77,13 @@ main(int argc, char** argv)
     // load up predicates, grouped by scheme
     FILE * const statsFile = fopenRead(PredStats::filename);
     pred_info info;
+    unsigned index = 0;
     while (read_pred_full(statsFile, info)) {
 	static const string all("all");
 	const string &scheme = scheme_name(sites[info.siteIndex].scheme_code);
-	statsMap[all].push_back(info);
-	statsMap[scheme].push_back(info);
+	const IndexedPredInfo indexed(info, index++);
+	statsMap[all].push_back(indexed);
+	statsMap[scheme].push_back(indexed);
     }
 
     // generate sorted views for each individual scheme

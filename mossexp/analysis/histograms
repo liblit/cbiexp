@@ -1,0 +1,90 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use Data::Dumper;
+use FileHandle;
+
+
+my $bug_count = 10;
+
+
+########################################################################
+#
+#  Each run contains which bugs?
+#
+
+my %run_to_bugs;
+
+{
+    my $run_bug_file = new FileHandle 'run-bug.txt' or die;
+    while (<$run_bug_file>) {
+	chomp;
+	my ($run, $bug) = split;
+	$run_to_bugs{$run}{$bug} = 1;
+    }
+
+    while (my ($run, $bugs) = each %run_to_bugs) {
+	$run_to_bugs{$run} = [keys %$bugs];
+    }
+}
+
+
+########################################################################
+#
+#  Each predicate is true in which runs?
+#
+
+my @pred_to_runs;
+
+{
+    my $tru_file = new FileHandle 'tru.txt' or die;
+    my $pred_index = 0;
+
+    while (<$tru_file>) {
+	chomp;
+	my @runs = split;
+	my $label = shift @runs;
+	die unless $label eq 'F:';
+	$pred_to_runs[$pred_index] = \@runs;
+	<$tru_file>;
+	++$pred_index
+	}
+}
+
+
+########################################################################
+#
+#  For each predicate, how often was each bug seen on any failing run?
+#
+
+my @pred_to_bug_counts;
+
+{
+    foreach my $pred_index (0 .. $#pred_to_runs) {
+	$pred_to_bug_counts[$pred_index] = [undef, (0) x $bug_count];
+	foreach my $run (@{$pred_to_runs[$pred_index]}) {
+	    foreach my $bug (@{$run_to_bugs{$run}}) {
+		++$pred_to_bug_counts[$pred_index][$bug];
+	    }
+	}
+    }
+}
+
+
+########################################################################
+#
+#  Serialize our findings in the same order used by tru.txt.
+#
+
+print '<?xml version="1.0"?><!DOCTYPE histograms SYSTEM "histograms.dtd"><histograms>';
+
+foreach my $counts (@pred_to_bug_counts) {
+    shift @$counts;
+    print '<predictor>';
+    print "<bug count=\"$_\"/>"
+	foreach @$counts;
+    print '</predictor>';
+}
+
+print "</histograms>\n";

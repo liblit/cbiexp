@@ -1,0 +1,21 @@
+<!ELEMENT predictor-info (predictor)+>
+
+<!ELEMENT predictor (operand)*>
+<!ATTLIST predictor
+  scheme (branches|g-object-unref|returns|scalar-pairs) #REQUIRED
+  file CDATA #REQUIRED
+  line NMTOKEN #REQUIRED
+  function NMTOKEN #REQUIRED
+  predicate NMTOKEN #REQUIRED
+  lower-bound NMTOKEN #REQUIRED
+  increase NMTOKEN #REQUIRED
+  fail NMTOKEN #REQUIRED
+  context NMTOKEN #REQUIRED
+  true-success NMTOKEN #REQUIRED
+  true-failure NMTOKEN #REQUIRED
+  seen-success NMTOKEN #REQUIRED
+  seen-failure NMTOKEN #REQUIRED
+  log10-true NMTOKEN #REQUIRED>
+
+<!ELEMENT operand EMPTY>
+<!ATTLIST operand source CDATA #REQUIRED>
