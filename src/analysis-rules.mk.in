@@ -7,7 +7,8 @@ datadir ?= $(experiment)/data
 corrdir := $(root)/correlations
 tooldir := $(root)/src
 srcdir ?= $(experiment)/src
-training-runs ?= 0
+training-runs ?= 1000
+report-series ?= inverse-100
 
 sitesdir ?= $(experiment)/share
 sitesglob := $(experiment)/share/*.sites
@@ -48,6 +49,7 @@ links :=					\
 	logreg.xsl				\
 	operand.dtd				\
 	operands.xsl				\
+	pred-scores.dtd				\
 	predictor-info.dtd			\
 	projected-view.dtd			\
 	projected-view.xsl			\
@@ -341,7 +343,9 @@ compute_pred_scores: $(tooldir)/compute_pred_scores.o sites.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
 
 predscores: compute_pred_scores
+	$(build) pred-scores.dtd scores.dtd
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name)
+	xmllint --valid --noout pred_scores.xml
 
 collect_parmstats: $(tooldir)/collect_parmstats.o units.o sites.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
@@ -380,7 +384,7 @@ clean:: ; rm -f symmetric.html
 
 symmetric.xml: %.xml: % $(stamp-decimate) s.runs f.runs
 	$(build) $*.dtd scores.dtd bug-o-meter.dtd
-	./$< --runs-directory=$(datadir) --begin-runs=$(training-runs)
+	$(time) ./$< --runs-directory=$(datadir) --begin-runs=$(training-runs) --report-suffix=$(report-series)
 	xmllint --valid --noout $@
 clean:: ; rm -f symmetric.xml debug.xml
 
@@ -393,6 +397,12 @@ static-site-info.xml: %.xml: $(tooldir)/% $(sites)
 	$^ $(source-strip-prefixes:%=--strip-prefix=%) >$@
 	xmllint --valid --noout $@
 clean:: ; rm -f static-site-info.xml
+
+results: symmetric static-site-info.xml
+	{ $(time) ./$< --runs-directory=$(datadir) --begin-runs=$(training-runs) --end-runs=1100 --report-suffix=$(report-series) ; } 2>&1 | tee symmetric.log
+	xmllint --valid --noout $<.xml
+	$(build) links
+	xsltproc $<.xml | xmllint --valid --catalogs --format >| $<.html
 
 
 ########################################################################

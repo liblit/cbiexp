@@ -155,7 +155,7 @@ print_scores()
   outfp << "<?xml version=\"1.0\"?>" << endl
         << "<?xml-stylesheet type=\"text/xsl\" href=\"" 
 	<< XMLTemplate::format("scores") << ".xsl\"?>" << endl
-	<< "<!DOCTYPE view SYSTEM \"scores.dtd\">" << endl
+	<< "<!DOCTYPE scores SYSTEM \"pred-scores.dtd\">" << endl
 	<< "<scores>" << endl;
 
   for (Stats::iterator c = predList.begin(); c != predList.end(); ++c) {

@@ -1,0 +1,7 @@
+<!ENTITY % scores.dtd SYSTEM "scores.dtd">
+%scores.dtd;
+
+<!ATTLIST predictor
+  stat1 CDATA #REQUIRED
+  stat2 CDATA #REQUIRED
+>

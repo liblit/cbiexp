@@ -6,10 +6,6 @@
 
 <!ELEMENT predictor %predictor.content;>
 <!ATTLIST predictor
-  index NMTOKEN #REQUIRED
-  scores CDATA #REQUIRED
-  stat1 CDATA #REQUIRED
-  stat2 CDATA #REQUIRED
   %predictor.coordinates;
   %predictor.extra-attrs;
 >
