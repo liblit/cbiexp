@@ -14,9 +14,9 @@ noinst_LIBRARIES = libanalyze.a liblate.a
 analyze_runs_SOURCES =				\
 	analyze_runs.cc				\
 	compiler.cc				\
-	compiler.h				\
-	shell.cc				\
-	shell.h
+	compiler.h
+
+analyze_runs_LDADD = libanalyze.a
 
 map_sites_SOURCES = map_sites.cc
 
@@ -29,6 +29,8 @@ process_run_labels_SOURCES = process_run_labels.cc
 libanalyze_a_SOURCES =				\
 	classify_runs.cc			\
 	classify_runs.h				\
+	shell.cc				\
+	shell.h					\
 	utils.cc				\
 	utils.h
 

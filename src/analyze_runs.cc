@@ -380,8 +380,8 @@ int main(int argc, char** argv)
 	REQUIRE("-do-print-results-1", "-p", preds_txt_file);
         REQUIRE("-do-print-results-1", "-ss", sites_src_file);
         REQUIRE("-do-print-results-1", "-us", units_src_file);
-	shell("%s %s/gen_views.o  %s/shell.o %s/utils.o %s.o %s.o -o %s",
-	      linker, objdir, objdir, objdir, sites_src_file, units_src_file, GEN_VIEWS);
+	shell("%s %s/gen_views.o %s/utils.o %s.o %s.o -L%s -lanalyze -o %s",
+	      linker, objdir, objdir, sites_src_file, units_src_file, objdir, GEN_VIEWS);
 	puts("Pretty-printing results-1 ...");
 	gen_views(preds_txt_file, 0);
     }
