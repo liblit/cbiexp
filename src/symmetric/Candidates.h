@@ -10,7 +10,7 @@ class Predicate;
 struct Candidates : public __gnu_cxx::hash_map<PredCoords, Predicate *>
 {
   void filter();
-  iterator best();
+  const_iterator best() const;
 };
 
 std::ostream &operator<<(std::ostream &, const Candidates::value_type &);

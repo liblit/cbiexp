@@ -54,8 +54,8 @@ operator<<(ostream &out, Reason reason)
 
 
 static Reason
-better(Candidates::value_type &challenger, double challengerScore,
-       Candidates::value_type &leader, double leaderScore)
+better(const Candidates::value_type &challenger, double challengerScore,
+       const Candidates::value_type &leader, double leaderScore)
 {
   if (challengerScore < leaderScore)
     return NotBetter;
@@ -80,8 +80,8 @@ better(Candidates::value_type &challenger, double challengerScore,
 }
 
 
-Candidates::iterator
-Candidates::best()
+Candidates::const_iterator
+Candidates::best() const
 {
   // It would be nice to use std::max_element here instead of looping
   // ourselves, but then we would no longer be able to cache the score
@@ -90,11 +90,11 @@ Candidates::best()
 
   assert(begin() != end());
 
-  iterator leader = begin();
+  const_iterator leader = begin();
   double leaderScore = leader->second->score();
   Reason leaderReason = FirstInList;
 
-  iterator challenger = leader;
+  const_iterator challenger = leader;
   while (++challenger != end())
     {
       const double challengerScore = challenger->second->score();

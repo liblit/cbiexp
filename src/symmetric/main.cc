@@ -138,7 +138,7 @@ main(int argc, char *argv[])
       if (candidates.empty()) break;
       assert(allFailures.any());
 
-      const Candidates::iterator winner(candidates.best());
+      const Candidates::const_iterator winner(candidates.best());
       view << *winner;
 
       const Predicate &winnerCounts = *winner->second;
