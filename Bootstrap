@@ -1,0 +1,9 @@
+#!/bin/sh -e
+
+srcdir=`dirname $0`
+
+set -x
+
+cd $srcdir
+[ -d config-aux ] || mkdir config-aux
+autoreconf --force --verbose --install --warnings=all,no-obsolete,error "$@"
