@@ -450,9 +450,8 @@ int main(int argc, char** argv)
     for (unsigned u = 0; u < num_units; u++)
 	site_info[u].resize(units[u].num_sites);
 
-    const unsigned num_runs = NumRuns::value();
-    Progress::Bounded progress("computing results", num_runs);
-    for (cur_run = 0; cur_run < num_runs; cur_run++) {
+    Progress::Bounded progress("computing results", NumRuns::count());
+    for (cur_run = NumRuns::begin; cur_run < NumRuns::end; cur_run++) {
 	progress.step();
 	if (!is_srun[cur_run] && !is_frun[cur_run])
 	    continue;

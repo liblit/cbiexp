@@ -186,8 +186,7 @@ void print_runsplit ()
 {
   ofstream tfp ("train.runs");
   ofstream vfp ("val.runs");
-  unsigned num_runs = NumRuns::value();
-  for (unsigned i = 0; i < num_runs; i++) {
+  for (unsigned i = NumRuns::begin; i < NumRuns::end; i++) {
     assert(! (is_trainrun[i] && is_valrun[i]));
 
     if (is_trainrun[i])
@@ -252,11 +251,10 @@ inline void free_gsl_generator ()
  **********************************************************/
 void split_runs()
 {
-  const unsigned num_runs = NumRuns::value();
-  is_trainrun.resize(num_runs);
-  is_valrun.resize(num_runs);
+  is_trainrun.resize(NumRuns::end);
+  is_valrun.resize(NumRuns::end);
 
-  for (unsigned r = 0; r < num_runs; r++) {
+  for (unsigned r = NumRuns::begin; r < NumRuns::end; r++) {
     if (!is_srun[r] && !is_frun[r])  // skip discarded runs
       continue;
 
@@ -290,9 +288,8 @@ int main(int argc, char** argv)
     for (unsigned u = 0; u < num_units; u++)
 	site_info[u].resize(units[u].num_sites);
 
-    const unsigned num_runs = NumRuns::value();
-    Progress::Bounded progress("computing non-constant predicates", num_runs);
-    for (cur_run = 0; cur_run < num_runs; cur_run++) {
+    Progress::Bounded progress("computing non-constant predicates", NumRuns::count());
+    for (cur_run = NumRuns::begin; cur_run < NumRuns::end; cur_run++) {
 	progress.step();
 	if (!is_trainrun[cur_run])
 	  continue;

@@ -40,7 +40,7 @@ public:
 
 inline
 RunSet::RunSet()
-    : vector<bool>(NumRuns::value())
+    : vector<bool>(NumRuns::end)
 {
 }
 
@@ -287,9 +287,8 @@ int main(int argc, char** argv)
     }
 
     {
-	const unsigned numRuns = NumRuns::value();
-	Progress::Bounded progress("computing obs and tru", numRuns);
-	for (unsigned runId = 0; runId < numRuns; runId++) {
+	Progress::Bounded progress("computing obs and tru", NumRuns::count());
+	for (unsigned runId = NumRuns::begin; runId < NumRuns::end; ++runId) {
 	    progress.step();
 
 	    Outcome outcome = 0;

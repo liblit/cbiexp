@@ -24,7 +24,7 @@ read_runs(const char message[], const char filename[], vector<bool> &bits, unsig
 	exit(code || 1);
     }
 
-    const unsigned numRuns = NumRuns::value();
+    const unsigned numRuns = NumRuns::end;
     bits.resize(numRuns);
     Progress::Bounded progress(message, numRuns);
 
@@ -42,8 +42,7 @@ void classify_runs()
     read_runs("reading success list", ClassifyRuns::successesFilename, is_srun, num_sruns);
     read_runs("reading failure list", ClassifyRuns:: failuresFilename, is_frun, num_fruns);
 
-    const unsigned numRuns = NumRuns::value();
-    for (unsigned runId = 0; runId < numRuns; ++runId)
+    for (unsigned runId = 0; runId < NumRuns::end; ++runId)
 	if (is_srun[runId] && is_frun[runId]) {
 	    cerr << "Run " << runId << " is both successful and failing\n";
 	    exit(1);

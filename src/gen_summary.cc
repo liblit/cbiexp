@@ -78,7 +78,7 @@ print_summary(ostream &out, Tally &tally)
 
       << "<runs success=\"" << num_sruns
       << "\" failure=\"" << num_fruns
-      << "\" ignore=\"" << NumRuns::value() - (num_sruns + num_fruns)
+      << "\" ignore=\"" << NumRuns::count() - (num_sruns + num_fruns)
       << "\"/>"
 
       << "<analysis confidence=\"" << Confidence::level << "\"/>"

@@ -8,7 +8,6 @@ EXTRA_DIST =					\
 	summary.xsl
 
 noinst_PROGRAMS =				\
-	analyze_runs				\
 	decimate-sparse				\
 	map_sites				\
 	process_run_labels
@@ -18,13 +17,8 @@ noinst_SCRIPTS =				\
 
 noinst_LIBRARIES = libanalyze.a liblate.a
 
+all-local: analysis-rules.mk
 
-analyze_runs_SOURCES =				\
-	analyze_runs.cc				\
-	compiler.cc				\
-	compiler.h
-
-analyze_runs_LDADD = libanalyze.a
 
 map_sites_SOURCES = map_sites.cc
 map_sites_LDADD = libanalyze.a
@@ -100,9 +94,9 @@ libanalyze_a_SOURCES =				\
 #
 #  Some programs depend on data extracted from a particular suite of
 #  runs.  We can compile them ahead of time, but linking is postponed.
-#  The "analyze_runs" program takes care of preparing the extra data
-#  objects and linking them with these previously-compiled objects to
-#  produce complete programs.
+#  The "analysis-rules.mk" makefile fragment takes care of preparing
+#  the extra data objects and linking them with these
+#  previously-compiled objects to produce complete programs.
 #
 #  The actual library archive is not used.  This is simply a hack to
 #  trick automake into adding the appropriate build rules for the

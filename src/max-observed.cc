@@ -123,12 +123,11 @@ main(int argc, char** argv)
 
   {
     classify_runs();
-    const unsigned numRuns = NumRuns::value();
 
-    Progress::Bounded progress("scanning reports", numRuns);
+    Progress::Bounded progress("scanning reports", NumRuns::count());
     ofstream increases("max-observed-increases.txt");
 
-    for (unsigned runId = 0; runId < numRuns; runId++)
+    for (unsigned runId = NumRuns::begin; runId < NumRuns::end; runId++)
       {
 	progress.step();
 	if (is_srun[runId] || is_frun[runId])

@@ -33,10 +33,9 @@ int main(int argc, char** argv)
     FILE* sfp = fopenWrite(ClassifyRuns::successesFilename);
     FILE* ffp = fopenWrite(ClassifyRuns::failuresFilename);
 
-    const unsigned numRuns = NumRuns::value();
-    Progress::Bounded progress("scanning labels", numRuns);
+    Progress::Bounded progress("scanning labels", NumRuns::count());
 
-    for (unsigned i = 0; i < numRuns; i++) {
+    for (unsigned i = NumRuns::begin; i < NumRuns::end; i++) {
 	progress.step();
 
 	char s[100];

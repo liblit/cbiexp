@@ -2,7 +2,7 @@
 Makefile
 Makefile.in
 TAGS
-analyze_runs
+analysis-rules.mk
 compiler.cc
 convert_reports.cc
 decimate-sparse

@@ -192,10 +192,9 @@ int main(int argc, char** argv)
     classify_runs();
 
     bool failed = false;
-    const unsigned num_runs = NumRuns::value();
-    Progress::Bounded progress("converting reports", num_runs);
+    Progress::Bounded progress("converting reports", NumRuns::count());
 
-    for (unsigned i = 0; i < num_runs; i++) {
+    for (unsigned i = NumRuns::begin; i < NumRuns::end; i++) {
 	progress.step();
 	if (!is_srun[i] && !is_frun[i])
 	    continue;

@@ -8,7 +8,9 @@ namespace NumRuns
 {
   extern const argp argp;
 
-  extern unsigned value();
+  extern unsigned begin;
+  extern unsigned end;
+  inline unsigned count() { return end - begin; }
 }
 
 
