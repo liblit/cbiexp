@@ -37,8 +37,8 @@ my $verbose;
 my $understood = GetOptions('jobs=i' => \$jobs,
 			    'verbose' => \$verbose);
 
-die "Usage: $0 [--jobs=<count>] [--verbose] <first-run-number> <last-run-number>\n",
-    unless $understood && @ARGV == 2;
+die "Usage: $0 [--jobs=<count>] [--verbose] <num-runs>\n",
+    unless $understood && @ARGV == 1;
 
 
 unless ($jobs) {
@@ -53,7 +53,7 @@ unless ($jobs) {
 $jobs = 1 if $jobs < 1;
 
 
-my ($first, $last) = @ARGV;
+my ($numruns) = @ARGV;
 
 
 ########################################################################
@@ -65,7 +65,7 @@ local ($,, $\) = ("\n", "\n");
 
 my ($handle, $filename) = tempfile(UNLINK => 1);
 
-print $handle "all: $_/label" foreach $first .. $last;
+print $handle "all: $_/label" foreach 0 .. ($numruns - 1);
 
 print $handle ("%/label: %/stamp $cwd/$label_once",
 	       "\tcd \$* && $cwd/$label_once \$* >\$(\@F).",
