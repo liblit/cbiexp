@@ -16,7 +16,7 @@
       </head>
 
       <body>
-	<!-- generic page header --> 
+	<!-- generic page header -->
 	<h1><a href="{$projectURL}" class="logo"><img
 	src="{$projectURL}logo.png" alt="" style="border-style:
 	none"/></a>Cooperative Bug Isolation Report</h1>
