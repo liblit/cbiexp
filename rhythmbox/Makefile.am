@@ -1,5 +1,4 @@
-noinst_DATA := share/rhythmbox.sites
-noinst_PROGRAMS := build/shell/rhythmbox
+noinst_DATA := share/rhythmbox.sites build/shell/rhythmbox
 
 share/rhythmbox.sites: build/shell/rhythmbox
 	$(sampler_tooldir)/extract-section .debug_site_info $< >$@

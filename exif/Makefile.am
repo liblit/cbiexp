@@ -1,4 +1,4 @@
-noinst_PROGRAMS := install/bin/exif
+noinst_DATA := install/bin/exif
 
 pwd := $(shell pwd)
 

@@ -1,6 +1,6 @@
 AM_CFLAGS := -O9 -W -Wall -Werror
-noinst_DATA := share/bc.sites
-noinst_PROGRAMS := bin/fuzz build/bc/bc
+noinst_DATA := share/bc.sites build/bc/bc
+noinst_PROGRAMS := bin/fuzz
 
 share/bc.sites: build/bc/bc
 	$(sampler_tooldir)/extract-section .debug_site_info $< >$@.

@@ -4,8 +4,7 @@ inputs := share/inputs
 cleartext := $(shell find $(inputs) -type f -maxdepth 1 ! -name '*.cpt' ! -name .cvsignore)
 cyphertext := $(cleartext:=.cpt)
 
-noinst_PROGRAMS := $(ccrypt)
-noinst_DATA := share/ccrypt.sites $(cyphertext)
+noinst_DATA := share/ccrypt.sites $(ccrypt) $(cyphertext)
 
 share/ccrypt.sites: $(ccrypt)
 	$(sampler_tooldir)/extract-section .debug_site_info $< >$@.

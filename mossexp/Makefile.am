@@ -1,5 +1,4 @@
-noinst_DATA := share/mossbad.sites
-noinst_PROGRAMS := src/moss src/mossbad
+noinst_DATA := share/mossbad.sites src/moss src/mossbad
 
 share/%.sites: src/%
 	$(sampler_tooldir)/extract-section .debug_site_info $< >$@.
