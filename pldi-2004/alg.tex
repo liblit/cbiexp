@@ -22,7 +22,7 @@ observation is reflected in our algorithm, which consists of two phases:
 \item Eliminate predicates that are not predictive of program failure.
 
 \item Rank the predicates that remain.  The higher a predicate is ranked,
-the more confident we are that is involved in a bug.
+the more confident we are that it is involved in a bug.
 \end{enumerate}
 
 Consider the following C code fragment, which we use to motivate and illustrate
@@ -175,7 +175,7 @@ eliminating unimportant predicates, it is rather poorer as a measure
 of the most important predicates.  Consider line {\tt (a)} in the
 example above.  If {\tt (a)} has, say, a 90\% probability of assigning
 a {\tt NULL} pointer to {\tt f}, then the value of
-$\increase(\mbox{\tt f == NULL})$ will be be high at line {\tt (a)}
+$\increase(\mbox{\tt f == NULL})$ will be high at line {\tt (a)}
 and lower, but still positive, at line {\tt (b)}.  While both {\tt
 (a)} and {\tt (b)} contribute to the bug, it is our experience that,
 once irrelevant predicates are discarded, it is most natural to
