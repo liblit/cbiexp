@@ -14,9 +14,8 @@ typedef std::vector<pred_info> Stats;
 
 namespace Get
 {
-  class LowerBound
+  struct LowerBound
   {
-  public:
     double operator () (const pred_info &pred) const
     {
       return pred.ps.lb;
@@ -26,9 +25,8 @@ namespace Get
   };
 
 
-  class IncreaseScore
+  struct IncreaseScore
   {
-  public:
     double operator () (const pred_info &pred) const
     {
       return pred.ps.in;
@@ -38,9 +36,8 @@ namespace Get
   };
 
 
-  class FailScore
+  struct FailScore
   {
-  public:
     double operator () (const pred_info &pred) const
     {
       return pred.ps.fs;
@@ -50,9 +47,8 @@ namespace Get
   };
 
 
-  class TrueInFails
+  struct TrueInFails
   {
-  public:
     double operator () (const pred_info &pred) const
     {
       return pred.f;
