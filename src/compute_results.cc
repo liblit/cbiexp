@@ -180,12 +180,7 @@ void print_site_summary(int u, int c, char* site_name)
     pred_name n;
     int p, count = 0;
 
-#define LT  0
-#define GEQ 1
-#define EQ  2
-#define NEQ 3
-#define GT  4
-#define LEQ 5
+    enum { LT, GEQ, EQ, NEQ, GT, LEQ };
 
     bool a[6] = { false, // 0 LT
 		  false, // 1 GEQ
