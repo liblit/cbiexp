@@ -43,6 +43,7 @@ enum {
     DoPrintSummary,
     DoPrintResults1,
     DoGatherPriorDist,
+    DoComputeNonconstPreds,
     // DoPrintResultsN,
 
     PhaseCount
@@ -58,6 +59,7 @@ static char * const phaseNames[PhaseCount + 1] = {
     "print-summary",
     "print-results-1",
     "gather-prior-dist",
+    "compute-nonconst-preds",
     // "print-results-n",
     0
 };
@@ -231,6 +233,14 @@ int main(int argc, char** argv)
 	      linker, objdir, MapSites::sitesBasename, MapSites::unitsBasename, objdir);
 	shell("./gather_prior_dist --runs-directory=%s", RunsDirectory::root);
     }
+
+    if (phaseSelected[DoComputeNonconstPreds]) {
+	puts("Computing nonconstant predicates...");
+	shell("%s %s/compute_nonconst_preds.o %s.o %s.o -L%s -lanalyze -lgsl -lgslcblas -lm -o compute_nonconst_preds",
+	      linker, objdir, MapSites::sitesBasename, MapSites::unitsBasename, objdir);
+	shell("./compute_nonconst_preds --runs-directory=%s", RunsDirectory::root);
+    }
+
 
     if (needLogoLinks) {
 	add_link(incdir, "logo", "css");

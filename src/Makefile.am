@@ -112,6 +112,7 @@ libanalyze_a_SOURCES =				\
 liblate_a_SOURCES =				\
 	compute_obs_tru.cc			\
 	compute_results.cc			\
+	compute_nonconst_preds.cc		\
 	convert_reports.ll			\
 	find-rare-sites.cc			\
 	gather_prior_dist.cc			\

@@ -1,6 +1,7 @@
 #include <argp.h>
 #include <cassert>
 #include <cstdio>
+#include <iostream>
 #include <ext/hash_map>
 #include <fstream>
 #include <queue>
@@ -214,7 +215,7 @@ int main (int argc, char** argv)
   ofstream ffp("fpriors.dat");
   ofstream sfp("spriors.dat");
 
-  typedef queue<SiteInfo> Sites;
+  typedef queue<SiteCoords> Sites;
   Sites retainedSites;
 
   FILE * const pfp = fopenRead(PredStats::filename);
@@ -222,8 +223,10 @@ int main (int argc, char** argv)
   while (read_pred_full(pfp, pi)) {
     const SiteSeen::iterator found = siteSeen.find(pi);
     if (found == siteSeen.end()) {
-      const SiteInfo &siteInfo = siteSeen[pi];
-      retainedSites.push(siteInfo);
+      SiteInfo &siteInfo = siteSeen[pi];
+      siteInfo.reached.first.clear();
+      siteInfo.reached.second.clear();
+      retainedSites.push(pi);
     }
   }
 
@@ -249,10 +252,18 @@ int main (int argc, char** argv)
   }
 
   while (!retainedSites.empty()) {
-    const SiteInfo &info = retainedSites.front();
-    //info.print(ffp, sfp);
-    ffp << info.reached.first;
-    sfp << info.reached.second;
+    const SiteCoords &coords = retainedSites.front();
+    const SiteSeen::iterator found = siteSeen.find(coords);
+    if (found == siteSeen.end())
+      cerr << "Error: Cannot find site " << coords.unitIndex << ' ' 
+	<< coords.siteOffset << '\n';
+    else {
+      const SiteInfo &info = found->second;
+      ffp << coords.unitIndex << ' ' << coords.siteOffset << '\n';
+      ffp << info.reached.first;
+      sfp << coords.unitIndex << ' ' << coords.siteOffset << '\n';
+      sfp << info.reached.second;
+    }
     retainedSites.pop();
   }
 

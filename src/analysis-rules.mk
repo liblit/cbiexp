@@ -158,6 +158,10 @@ prior-dist: $(tooldir)/gather_prior_dist.o s.runs f.runs preds.txt
 	$(time) $(tooldir)/analyze_runs --do=gather-prior-dist --runs-directory=$(datadir)
 clean:: ; rm -f fpriors.dat spriors.dat
 
+compute-nonconst-preds: $(tooldir)/compute_nonconst_preds.o s.runs f.runs
+	$(time) $(tooldir)/analyze_runs --do=compute-nonconst-preds --runs-directory=$(datadir)
+clean:: ; rm -f train.runs val.runs nonconst_preds.txt
+
 sites.o units.o: $(tooldir)/map_sites.o $(sites)
 	$(time) $(tooldir)/analyze_runs --do=map-sites $(sites:%=--sites-text=%)
 clean:: ; rm -f sites.o units.o sites.cc units.cc
