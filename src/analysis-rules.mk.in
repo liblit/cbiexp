@@ -220,15 +220,29 @@ logreg: %: $(tooldir)/%.o sites.o units.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
 clean:: ; rm -f logreg
 
-prior-dist: fpriors.dat spriors.dat
-fpriors.dat spriors.dat: $(tooldir)/gather_prior_dist s.runs f.runs preds.txt
-	$(time) ./$< --runs-directory=$(datadir)
+gather_prior_dist: %: $(tooldir)/%.o sites.o units.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
+clean:: ; rm -f gather_prior_dist
+
+prior-dist: gather_prior_dist s.runs f.runs preds.txt
+	$(time) ./$< --runs-directory=$(datadir) --report-suffix=$(report-series)
 clean:: ; rm -f fpriors.dat spriors.dat
 
-compute-nonconst-preds: train.runs val.runs nonconst_preds.txt
-train.runs val.runs nonconst_preds.txt: compute_nonconst_preds s.runs f.runs
-	$(time) ./$< --begin-runs=$(training-runs) --runs-directory=$(datadir)
+compute_nonconst_preds: %: $(tooldir)/%.o sites.o units.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -lm -o $@
+clean:: ; rm -f compute_nonconst_preds
+
+nonconst-preds: compute_nonconst_preds s.runs f.runs
+	$(time) ./$< --runs-directory=$(datadir) --report-suffix=$(report-series)
 clean:: ; rm -f train.runs val.runs nonconst_preds.txt
+
+train_utillog: %: $(tooldir)/%.o sites.o units.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -lm -o $@
+clean:: ; rm -f train_utillog
+
+theta.txt: train_utillog train.runs val.runs nonconst_preds.txt
+	$(time) ./$< --runs-directory=$(datadir) --report-suffix=$(report-series)
+clean:: ; rm -f theta.txt train_lls.txt val_lls.txt confmat.txt
 
 sites.o units.o: %.o: %.cc
 clean:: ; rm -f sites.o units.o

@@ -20,7 +20,6 @@ using namespace std;
 /****************************************************************************
  * Definition of necessary constants, functions, structures, and classes
  ***************************************************************************/
-
 #define MAX_INT 1<<31;
 unsigned cur_run;
 static unsigned num_train_runs = 0;
@@ -43,14 +42,13 @@ struct site_info_t {
       var[i] = 0.0;
       min[i] = MAX_INT;
       max[i] = 0;
-      ntallied = 0;
       retain[i] = false;
     }
+    ntallied = 0;
   }
 };
 
 static vector<vector<site_info_t> > site_info;
-
 
 /**********************
  * Reader
@@ -67,15 +65,20 @@ private:
   void tripleSite(const SiteCoords &, unsigned, unsigned, unsigned) const;
 };
 
+inline void obs (const SiteCoords &coords) 
+{
+    site_info_t &site = site_info[coords.unitIndex][coords.siteOffset];
+    site.ntallied += 1;
+}
+
 inline void inc (const SiteCoords &coords, unsigned p, unsigned count)
 {
   site_info_t &site = site_info[coords.unitIndex][coords.siteOffset];
-  unsigned n = site.ntallied;
-  site.ntallied += 1;
-  site.mean[p] = site.mean[p] * ((double) n / (n+1.0)) 
-      + (double) count / (n+1.0);
-  site.var[p] = site.var[p] * ((double) n/(n+1.0)) 
-      + (double) (count * count)/(n+1.0);
+  unsigned n = site.ntallied;  // n should have just been increased by obs()
+  site.mean[p] = site.mean[p] * ((double) (n-1.0) / n) 
+      + (double) count / n;
+  site.var[p] = site.var[p] * ((double) (n-1.0)/n) 
+      + (double) (count * count)/n;
   site.min[p] = (count < site.min[p]) ? count : site.min[p];
   site.max[p] = (count > site.max[p]) ? count : site.max[p];
 }
@@ -83,6 +86,7 @@ inline void inc (const SiteCoords &coords, unsigned p, unsigned count)
 void Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
 {
   assert(x||y||z);
+  obs(coords);
   inc(coords, 0, x);
   inc(coords, 1, y);
   inc(coords, 2, z);
@@ -101,6 +105,7 @@ void Reader::returnsSite(const SiteCoords &coords, unsigned x, unsigned y, unsig
 void Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y)
 {
   assert (x||y);
+  obs(coords);
   inc(coords, 0, x);
   inc(coords, 1, y);
 }
@@ -108,6 +113,7 @@ void Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y)
 void Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z, unsigned w)
 {
   assert (x || y || z || w);
+  obs(coords);
   inc(coords, 0, x);
   inc(coords, 1, y);
   inc(coords, 2, z);
@@ -118,7 +124,21 @@ void Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, 
  * Procedures for deciding whether to retain/discard
  * each instrumented predicate
  ***************************************************************************/
+inline void adj_for_zeros(int u, int c, int p) {
+    site_info_t &site = site_info[u][c];
+    unsigned n = site.ntallied;
+    // (num_trainruns - ntallied) is the number of omitted zeros
+    double adj = (double)  (num_train_runs - n)/(num_train_runs);
+    site.mean[p] = site.mean[p] * adj;
+    site.var[p] = site.var[p] * adj;
+    site.min[p] = (0 < site.min[p]) ? 0 : site.min[p];
+    // the maximum is set to zero by default
+}
+
 inline void cull(int u, int c, int p) {
+  // adjust the stats for the zeros omitted in the compact report
+  adj_for_zeros(u,c,p);
+
   double var = site_info[u][c].var[p];
   if (var < 0.0) {
     cerr << "Variance is not non-negative: " << var << '\n';
@@ -138,7 +158,7 @@ void cull_preds()
 	for (c = 0; c < units[u].num_sites; c++) {
 	    switch (units[u].scheme_code) {
 	    case 'S':
-		for (p = 0; p < 3; p++)
+		for (p = 0; p < 3; p++) 
 		    cull(u, c, p);
 		break;
 	    case 'R':
@@ -174,6 +194,7 @@ void print_retained_preds()
 	if (site.retain[p]) {
 	  fp << u << ' ' << c << ' ' << p << ' ' << site.mean[p] << ' '
 	     << site.var[p] << ' ' << site.min[p] << ' ' << site.max[p] 
+	     << ' ' << site.ntallied 
 	     << '\n';
 	}
       }

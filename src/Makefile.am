@@ -89,7 +89,15 @@ libanalyze_a_SOURCES =				\
 	shell.h					\
 	sorts.h					\
 	utils.cc				\
-	utils.h
+	utils.h					\
+	split_runs.cc				\
+	split_runs.h				\
+	RunsSplit.cc				\
+	RunsSplit.h				\
+	Nonconst_PredStats.cc			\
+	Nonconst_PredStats.h			\
+	UtilLogReg.cc				\
+	UtilLogReg.h
 
 
 ########################################################################
@@ -111,6 +119,7 @@ liblate_a_SOURCES =				\
 	compute_obs_tru.cc			\
 	compute_results.cc			\
 	compute_nonconst_preds.cc		\
+	train_utillog.cc			\
 	convert_reports.ll			\
 	gather_prior_dist.cc			\
 	gen_preds_file.cc			\

@@ -43,9 +43,22 @@ operator<<(ostream &out, const Predictor &predictor)
       << "scheme=\"" << scheme_name(site.scheme_code)
       << "\" file=\"" << site.file
       << "\" line=\"" << site.line
-      << "\" function=\"" << site.fun
-      << "\" predicate=\"" << predictor.predicate
-      << "\" importance=\"" << predictor.importance
+      << "\" function=\"" << site.fun;
+
+  // hack to get the right predicate offset
+  switch (units[predictor.unitIndex].scheme_code)
+  {
+    case 'B':
+    case 'G':
+      out << "\" predicate=\"" << predictor.predicate;
+      break;
+    case 'S':
+    case 'R':
+      out << "\" predicate=\"" << predictor.predicate*2;
+      break;
+  }
+      
+  out << "\" importance=\"" << predictor.importance
       << "\">";
 
   switch (units[predictor.unitIndex].scheme_code)
