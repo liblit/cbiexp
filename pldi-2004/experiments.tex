@@ -61,7 +61,7 @@ To measure the accuracy of our techniques we logged
 when each bug was triggered.  Of course, this logging 
 code was excluded from the sampling instrumentation.
 To determine whether a run produced correct output we compared it against a run
-of the reference version of \moss.  As discussed in Section~\ref{sec:introduction},
+of the reference version of \moss.  As discussed in \Autoref{sec:introduction},
 in practice the labeling of runs as successful or failed is done by either detecting
 crashes, internal assertion failures, or (speculatively) by direct user feedback that the output
 of the program appears incorrect.  Our use of a reference version in this experiment made
@@ -100,7 +100,7 @@ Predicate      Context    Increase   Failure
 strcmp(s,"lisp") == 0  
                0.11       0.89       1.00
 *pstart + numpassages > pmax - 1 
-	       0.10       0.85       0.95
+               0.10       0.85       0.95
 strmp(argv[i],"-p") == 0
                0.11       0.83       0.93
 strmp(argv[i],"-s") == 0
