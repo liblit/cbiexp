@@ -14,7 +14,7 @@
 /*********** input files ************/
 #define SUCCESS_FILE "success_data8.1_10000.txt"
 #define FAILURE_FILE "failure_data8.1_10000.txt"
-#define PATH_PREFIX  "data8.1"
+#define PATH_PREFIX  "/u/mhn/projects/cbi/src/data8.1"
 
 /*********** output files ************/
 #define PHASE1_CAUSES_FILE "phase1_causes.txt"

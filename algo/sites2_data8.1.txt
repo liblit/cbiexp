@@ -1,0 +1,2145 @@
+mossbad.c	168916	yylex	5	yy_init
+mossbad.c	168924	yylex	10	! yy_start
+mossbad.c	168927	yylex	15	! ((int )yyin)
+mossbad.c	168930	yylex	20	! ((int )yyout)
+mossbad.c	168933	yylex	25	! ((int )yy_current_buffer)
+mossbad.c	168954	yylex	39	yy_current_state > 0
+mossbad.c	168956	yylex	44	yy_accept[yy_current_state]
+mossbad_includes.flex	1978	yylex	179	htmlscope == 0
+mossbad_includes.flex	1995	yylex	200	config.match_comment
+mossbad_includes.flex	1996	yylex	208	config.match_comment
+mossbad_includes.flex	2264	yylex	812	config.match_comment
+mossbad_includes.flex	2339	yylex	1006	config.match_comment
+mossbad_includes.flex	2596	yylex	1655	config.match_comment
+mossbad_includes.flex	3741	yylex	4834	config.match_comment
+mossbad_includes.flex	4133	yylex	5706	lispscope == 0
+mossbad.c	178696	yylex	5805	yy_current_buffer->yy_buffer_status == 0
+mossbad.c	178719	yylex	5813	(unsigned int )yy_c_buf_p <= (unsigned int )(yy_current_buffer->yy_ch_buf + yy_n_chars)
+mossbad.c	178740	yylex	5822	yy_next_state
+mossbad.c	178832	yy_get_next_buffer	5	(unsigned int )yy_c_buf_p > (unsigned int )(yy_current_buffer->yy_ch_buf + (yy_n_chars + 1))
+mossbad.c	178836	yy_get_next_buffer	10	yy_current_buffer->yy_fill_buffer == 0
+mossbad.c	178838	yy_get_next_buffer	14	(yy_c_buf_p - yytext) - 0 == 1
+mossbad.c	178860	yy_get_next_buffer	24	i < number_to_move
+mossbad.c	178863	yy_get_next_buffer	37	yy_current_buffer->yy_buffer_status == 2
+mossbad.c	178874	yy_get_next_buffer	46	num_to_read <= 0
+mossbad.c	178887	yy_get_next_buffer	54	b->yy_is_our_buffer
+mossbad.c	178891	yy_get_next_buffer	59	new_size <= 0
+mossbad.c	178905	yy_get_next_buffer	67	! ((int )b->yy_ch_buf)
+mossbad.c	178916	yy_get_next_buffer	76	num_to_read > 8192
+mossbad.c	178920	yy_get_next_buffer	82	yy_n_chars < 0
+mossbad.c	178926	yy_get_next_buffer	88	yy_n_chars == 0
+mossbad.c	178928	yy_get_next_buffer	92	number_to_move == 0
+mossbad.c	178964	yy_get_previous_state	6	(unsigned int )yy_cp < (unsigned int )yy_c_buf_p
+mossbad.c	178966	yy_get_previous_state	11	(*yy_cp)
+mossbad.c	178972	yy_get_previous_state	17	yy_accept[yy_current_state]
+mossbad.c	179002	yy_try_NUL_trans	6	! yy_is_jam
+mossbad.c	179004	yy_try_NUL_trans	10	yy_accept[yy_current_state]
+mossbad.c	179011	yy_try_NUL_trans	17	yy_is_jam
+mossbad.c	179029	yyunput	5	(unsigned int )yy_cp < (unsigned int )(yy_current_buffer->yy_ch_buf + 2)
+mossbad.c	179038	yyunput	14	(unsigned int )source > (unsigned int )yy_current_buffer->yy_ch_buf
+mossbad.c	179046	yyunput	29	(unsigned int )yy_cp < (unsigned int )(yy_current_buffer->yy_ch_buf + 2)
+mossbad.c	179141	yyrestart	2	! ((int )yy_current_buffer)
+mossbad.c	179156	yy_switch_to_buffer	2	(unsigned int )yy_current_buffer == (unsigned int )new_buffer
+mossbad.c	179159	yy_switch_to_buffer	7	yy_current_buffer
+mossbad.c	179203	yy_create_buffer	3	! ((int )b)
+mossbad.c	179212	yy_create_buffer	11	! ((int )b->yy_ch_buf)
+mossbad.c	179230	yy_delete_buffer	2	! ((int )b)
+mossbad.c	179233	yy_delete_buffer	7	(unsigned int )b == (unsigned int )yy_current_buffer
+mossbad.c	179236	yy_delete_buffer	12	b->yy_is_our_buffer
+mossbad.c	179265	yy_init_buffer	6	file
+mossbad.c	179279	yy_flush_buffer	2	! ((int )b)
+mossbad.c	179296	yy_flush_buffer	14	(unsigned int )b == (unsigned int )yy_current_buffer
+mossbad.c	179312	yy_scan_buffer	2	size < 2U
+mossbad.c	179312	yy_scan_buffer	7	(int )(*(base + (size - 2U))) != 0
+mossbad.c	179312	yy_scan_buffer	12	(int )(*(base + (size - 1U))) != 0
+mossbad.c	179319	yy_scan_buffer	18	! ((int )b)
+mossbad.c	179348	yy_scan_string	4	(*(yy_str + len))
+mossbad.c	179373	yy_scan_bytes	5	! ((int )buf)
+mossbad.c	179376	yy_scan_bytes	12	i < len
+mossbad.c	179382	yy_scan_bytes	25	! ((int )b)
+mossbad_includes.flex	4273	clearhash	7	key < 293
+mossbad_includes.flex	4282	hash	4	(*str)
+mossbad_includes.flex	4294	startfun	2	(int )config.language == 18
+mossbad_includes.flex	4294	startfun	9	(int )config.language == 17
+mossbad_includes.flex	4342	code_dynamic	6	p
+mossbad_includes.flex	4343	code_dynamic	11	tmp___55
+mossbad_includes.flex	4343	code_dynamic	16	tmp___56
+mossbad_includes.flex	4343	code_dynamic	23	! ((unsigned int )((void const   *)(str + 1)) - (unsigned int )((void const   *)str) == 1U)
+mossbad_includes.flex	4343	code_dynamic	28	__s1_len >= 4U
+mossbad_includes.flex	4343	code_dynamic	32	! ((unsigned int )((void const   *)(p->name + 1)) - (unsigned int )((void const   *)p->name) == 1U)
+mossbad_includes.flex	4343	code_dynamic	37	__s2_len >= 4U
+mossbad_includes.flex	4343	code_dynamic	44	tmp___57
+mossbad_includes.flex	4343	code_dynamic	48	__s1_len < __s2_len
+mossbad_includes.flex	4343	code_dynamic	58	tmp___54
+mossbad_includes.flex	4343	code_dynamic	62	(unsigned int )((void const   *)(str + 1)) - (unsigned int )((void const   *)str) == 1U
+mossbad_includes.flex	4343	code_dynamic	67	__s1_len < 4U
+mossbad_includes.flex	4343	code_dynamic	72	tmp___45
+mossbad_includes.flex	4343	code_dynamic	76	(unsigned int )((void const   *)(p->name + 1)) - (unsigned int )((void const   *)p->name) == 1U
+mossbad_includes.flex	4343	code_dynamic	81	__s1_len > 0U
+mossbad_includes.flex	4343	code_dynamic	85	__result___37 == 0
+mossbad_includes.flex	4343	code_dynamic	90	__s1_len > 1U
+mossbad_includes.flex	4343	code_dynamic	94	__result___37 == 0
+mossbad_includes.flex	4343	code_dynamic	99	__s1_len > 2U
+mossbad_includes.flex	4343	code_dynamic	103	__result___37 == 0
+mossbad_includes.flex	4343	code_dynamic	113	__s1_len > 0U
+mossbad_includes.flex	4343	code_dynamic	117	__result___38 == 0
+mossbad_includes.flex	4343	code_dynamic	122	__s1_len > 1U
+mossbad_includes.flex	4343	code_dynamic	126	__result___38 == 0
+mossbad_includes.flex	4343	code_dynamic	131	__s1_len > 2U
+mossbad_includes.flex	4343	code_dynamic	135	__result___38 == 0
+mossbad_includes.flex	4343	code_dynamic	144	tmp___53
+mossbad_includes.flex	4343	code_dynamic	148	(unsigned int )((void const   *)(p->name + 1)) - (unsigned int )((void const   *)p->name) == 1U
+mossbad_includes.flex	4343	code_dynamic	153	__s2_len < 4U
+mossbad_includes.flex	4343	code_dynamic	158	tmp___52
+mossbad_includes.flex	4343	code_dynamic	162	(unsigned int )((void const   *)(str + 1)) - (unsigned int )((void const   *)str) == 1U
+mossbad_includes.flex	4343	code_dynamic	167	__s2_len > 0U
+mossbad_includes.flex	4343	code_dynamic	171	__result___45 == 0
+mossbad_includes.flex	4343	code_dynamic	176	__s2_len > 1U
+mossbad_includes.flex	4343	code_dynamic	180	__result___45 == 0
+mossbad_includes.flex	4343	code_dynamic	185	__s2_len > 2U
+mossbad_includes.flex	4343	code_dynamic	189	__result___45 == 0
+mossbad_includes.flex	4343	code_dynamic	199	__s2_len > 0U
+mossbad_includes.flex	4343	code_dynamic	203	__result___46 == 0
+mossbad_includes.flex	4343	code_dynamic	208	__s2_len > 1U
+mossbad_includes.flex	4343	code_dynamic	212	__result___46 == 0
+mossbad_includes.flex	4343	code_dynamic	217	__s2_len > 2U
+mossbad_includes.flex	4343	code_dynamic	221	__result___46 == 0
+mossbad_includes.flex	4343	code_dynamic	230	tmp___29 == 0
+mossbad_includes.flex	4354	code_dynamic	242	! ((int )p)
+mossbad_includes.flex	4368	string2lang	5	tmp___55
+mossbad_includes.flex	4368	string2lang	10	tmp___56
+mossbad_includes.flex	4368	string2lang	17	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4368	string2lang	22	__s1_len >= 4U
+mossbad_includes.flex	4368	string2lang	26	! ((unsigned int )((void const   *)("c" + 1)) - (unsigned int )((void const   *)"c") == 1U)
+mossbad_includes.flex	4368	string2lang	31	__s2_len >= 4U
+mossbad_includes.flex	4368	string2lang	38	tmp___57
+mossbad_includes.flex	4368	string2lang	42	__s1_len < __s2_len
+mossbad_includes.flex	4368	string2lang	52	tmp___54
+mossbad_includes.flex	4368	string2lang	56	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4368	string2lang	61	__s1_len < 4U
+mossbad_includes.flex	4368	string2lang	66	tmp___45
+mossbad_includes.flex	4368	string2lang	70	(unsigned int )((void const   *)("c" + 1)) - (unsigned int )((void const   *)"c") == 1U
+mossbad_includes.flex	4368	string2lang	75	__s1_len > 0U
+mossbad_includes.flex	4368	string2lang	79	__result___37 == 0
+mossbad_includes.flex	4368	string2lang	84	__s1_len > 1U
+mossbad_includes.flex	4368	string2lang	88	__result___37 == 0
+mossbad_includes.flex	4368	string2lang	93	__s1_len > 2U
+mossbad_includes.flex	4368	string2lang	97	__result___37 == 0
+mossbad_includes.flex	4368	string2lang	107	__s1_len > 0U
+mossbad_includes.flex	4368	string2lang	111	__result___38 == 0
+mossbad_includes.flex	4368	string2lang	116	__s1_len > 1U
+mossbad_includes.flex	4368	string2lang	120	__result___38 == 0
+mossbad_includes.flex	4368	string2lang	125	__s1_len > 2U
+mossbad_includes.flex	4368	string2lang	129	__result___38 == 0
+mossbad_includes.flex	4368	string2lang	138	tmp___53
+mossbad_includes.flex	4368	string2lang	142	(unsigned int )((void const   *)("c" + 1)) - (unsigned int )((void const   *)"c") == 1U
+mossbad_includes.flex	4368	string2lang	147	__s2_len < 4U
+mossbad_includes.flex	4368	string2lang	152	tmp___52
+mossbad_includes.flex	4368	string2lang	156	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4368	string2lang	161	__s2_len > 0U
+mossbad_includes.flex	4368	string2lang	165	__result___45 == 0
+mossbad_includes.flex	4368	string2lang	170	__s2_len > 1U
+mossbad_includes.flex	4368	string2lang	174	__result___45 == 0
+mossbad_includes.flex	4368	string2lang	179	__s2_len > 2U
+mossbad_includes.flex	4368	string2lang	183	__result___45 == 0
+mossbad_includes.flex	4368	string2lang	193	__s2_len > 0U
+mossbad_includes.flex	4368	string2lang	197	__result___46 == 0
+mossbad_includes.flex	4368	string2lang	202	__s2_len > 1U
+mossbad_includes.flex	4368	string2lang	206	__result___46 == 0
+mossbad_includes.flex	4368	string2lang	211	__s2_len > 2U
+mossbad_includes.flex	4368	string2lang	215	__result___46 == 0
+mossbad_includes.flex	4368	string2lang	224	tmp___29 == 0
+mossbad_includes.flex	4370	string2lang	230	tmp___114
+mossbad_includes.flex	4370	string2lang	235	tmp___115
+mossbad_includes.flex	4370	string2lang	242	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4370	string2lang	247	__s1_len___0 >= 4U
+mossbad_includes.flex	4370	string2lang	251	! ((unsigned int )((void const   *)("cc" + 1)) - (unsigned int )((void const   *)"cc") == 1U)
+mossbad_includes.flex	4370	string2lang	256	__s2_len___0 >= 4U
+mossbad_includes.flex	4370	string2lang	263	tmp___116
+mossbad_includes.flex	4370	string2lang	267	__s1_len___0 < __s2_len___0
+mossbad_includes.flex	4370	string2lang	277	tmp___113
+mossbad_includes.flex	4370	string2lang	281	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4370	string2lang	286	__s1_len___0 < 4U
+mossbad_includes.flex	4370	string2lang	291	tmp___104
+mossbad_includes.flex	4370	string2lang	295	(unsigned int )((void const   *)("cc" + 1)) - (unsigned int )((void const   *)"cc") == 1U
+mossbad_includes.flex	4370	string2lang	300	__s1_len___0 > 0U
+mossbad_includes.flex	4370	string2lang	304	__result___85 == 0
+mossbad_includes.flex	4370	string2lang	309	__s1_len___0 > 1U
+mossbad_includes.flex	4370	string2lang	313	__result___85 == 0
+mossbad_includes.flex	4370	string2lang	318	__s1_len___0 > 2U
+mossbad_includes.flex	4370	string2lang	322	__result___85 == 0
+mossbad_includes.flex	4370	string2lang	332	__s1_len___0 > 0U
+mossbad_includes.flex	4370	string2lang	336	__result___86 == 0
+mossbad_includes.flex	4370	string2lang	341	__s1_len___0 > 1U
+mossbad_includes.flex	4370	string2lang	345	__result___86 == 0
+mossbad_includes.flex	4370	string2lang	350	__s1_len___0 > 2U
+mossbad_includes.flex	4370	string2lang	354	__result___86 == 0
+mossbad_includes.flex	4370	string2lang	363	tmp___112
+mossbad_includes.flex	4370	string2lang	367	(unsigned int )((void const   *)("cc" + 1)) - (unsigned int )((void const   *)"cc") == 1U
+mossbad_includes.flex	4370	string2lang	372	__s2_len___0 < 4U
+mossbad_includes.flex	4370	string2lang	377	tmp___111
+mossbad_includes.flex	4370	string2lang	381	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4370	string2lang	386	__s2_len___0 > 0U
+mossbad_includes.flex	4370	string2lang	390	__result___93 == 0
+mossbad_includes.flex	4370	string2lang	395	__s2_len___0 > 1U
+mossbad_includes.flex	4370	string2lang	399	__result___93 == 0
+mossbad_includes.flex	4370	string2lang	404	__s2_len___0 > 2U
+mossbad_includes.flex	4370	string2lang	408	__result___93 == 0
+mossbad_includes.flex	4370	string2lang	418	__s2_len___0 > 0U
+mossbad_includes.flex	4370	string2lang	422	__result___94 == 0
+mossbad_includes.flex	4370	string2lang	427	__s2_len___0 > 1U
+mossbad_includes.flex	4370	string2lang	431	__result___94 == 0
+mossbad_includes.flex	4370	string2lang	436	__s2_len___0 > 2U
+mossbad_includes.flex	4370	string2lang	440	__result___94 == 0
+mossbad_includes.flex	4370	string2lang	449	tmp___88 == 0
+mossbad_includes.flex	4372	string2lang	455	tmp___173
+mossbad_includes.flex	4372	string2lang	460	tmp___174
+mossbad_includes.flex	4372	string2lang	467	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4372	string2lang	472	__s1_len___1 >= 4U
+mossbad_includes.flex	4372	string2lang	476	! ((unsigned int )((void const   *)("java" + 1)) - (unsigned int )((void const   *)"java") == 1U)
+mossbad_includes.flex	4372	string2lang	481	__s2_len___1 >= 4U
+mossbad_includes.flex	4372	string2lang	488	tmp___175
+mossbad_includes.flex	4372	string2lang	492	__s1_len___1 < __s2_len___1
+mossbad_includes.flex	4372	string2lang	502	tmp___172
+mossbad_includes.flex	4372	string2lang	506	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4372	string2lang	511	__s1_len___1 < 4U
+mossbad_includes.flex	4372	string2lang	516	tmp___163
+mossbad_includes.flex	4372	string2lang	520	(unsigned int )((void const   *)("java" + 1)) - (unsigned int )((void const   *)"java") == 1U
+mossbad_includes.flex	4372	string2lang	525	__s1_len___1 > 0U
+mossbad_includes.flex	4372	string2lang	529	__result___133 == 0
+mossbad_includes.flex	4372	string2lang	534	__s1_len___1 > 1U
+mossbad_includes.flex	4372	string2lang	538	__result___133 == 0
+mossbad_includes.flex	4372	string2lang	543	__s1_len___1 > 2U
+mossbad_includes.flex	4372	string2lang	547	__result___133 == 0
+mossbad_includes.flex	4372	string2lang	557	__s1_len___1 > 0U
+mossbad_includes.flex	4372	string2lang	561	__result___134 == 0
+mossbad_includes.flex	4372	string2lang	566	__s1_len___1 > 1U
+mossbad_includes.flex	4372	string2lang	570	__result___134 == 0
+mossbad_includes.flex	4372	string2lang	575	__s1_len___1 > 2U
+mossbad_includes.flex	4372	string2lang	579	__result___134 == 0
+mossbad_includes.flex	4372	string2lang	588	tmp___171
+mossbad_includes.flex	4372	string2lang	592	(unsigned int )((void const   *)("java" + 1)) - (unsigned int )((void const   *)"java") == 1U
+mossbad_includes.flex	4372	string2lang	597	__s2_len___1 < 4U
+mossbad_includes.flex	4372	string2lang	602	tmp___170
+mossbad_includes.flex	4372	string2lang	606	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4372	string2lang	611	__s2_len___1 > 0U
+mossbad_includes.flex	4372	string2lang	615	__result___141 == 0
+mossbad_includes.flex	4372	string2lang	620	__s2_len___1 > 1U
+mossbad_includes.flex	4372	string2lang	624	__result___141 == 0
+mossbad_includes.flex	4372	string2lang	629	__s2_len___1 > 2U
+mossbad_includes.flex	4372	string2lang	633	__result___141 == 0
+mossbad_includes.flex	4372	string2lang	643	__s2_len___1 > 0U
+mossbad_includes.flex	4372	string2lang	647	__result___142 == 0
+mossbad_includes.flex	4372	string2lang	652	__s2_len___1 > 1U
+mossbad_includes.flex	4372	string2lang	656	__result___142 == 0
+mossbad_includes.flex	4372	string2lang	661	__s2_len___1 > 2U
+mossbad_includes.flex	4372	string2lang	665	__result___142 == 0
+mossbad_includes.flex	4372	string2lang	674	tmp___147 == 0
+mossbad_includes.flex	4374	string2lang	680	tmp___232
+mossbad_includes.flex	4374	string2lang	685	tmp___233
+mossbad_includes.flex	4374	string2lang	692	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4374	string2lang	697	__s1_len___2 >= 4U
+mossbad_includes.flex	4374	string2lang	701	! ((unsigned int )((void const   *)("ml" + 1)) - (unsigned int )((void const   *)"ml") == 1U)
+mossbad_includes.flex	4374	string2lang	706	__s2_len___2 >= 4U
+mossbad_includes.flex	4374	string2lang	713	tmp___234
+mossbad_includes.flex	4374	string2lang	717	__s1_len___2 < __s2_len___2
+mossbad_includes.flex	4374	string2lang	727	tmp___231
+mossbad_includes.flex	4374	string2lang	731	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4374	string2lang	736	__s1_len___2 < 4U
+mossbad_includes.flex	4374	string2lang	741	tmp___222
+mossbad_includes.flex	4374	string2lang	745	(unsigned int )((void const   *)("ml" + 1)) - (unsigned int )((void const   *)"ml") == 1U
+mossbad_includes.flex	4374	string2lang	750	__s1_len___2 > 0U
+mossbad_includes.flex	4374	string2lang	754	__result___181 == 0
+mossbad_includes.flex	4374	string2lang	759	__s1_len___2 > 1U
+mossbad_includes.flex	4374	string2lang	763	__result___181 == 0
+mossbad_includes.flex	4374	string2lang	768	__s1_len___2 > 2U
+mossbad_includes.flex	4374	string2lang	772	__result___181 == 0
+mossbad_includes.flex	4374	string2lang	782	__s1_len___2 > 0U
+mossbad_includes.flex	4374	string2lang	786	__result___182 == 0
+mossbad_includes.flex	4374	string2lang	791	__s1_len___2 > 1U
+mossbad_includes.flex	4374	string2lang	795	__result___182 == 0
+mossbad_includes.flex	4374	string2lang	800	__s1_len___2 > 2U
+mossbad_includes.flex	4374	string2lang	804	__result___182 == 0
+mossbad_includes.flex	4374	string2lang	813	tmp___230
+mossbad_includes.flex	4374	string2lang	817	(unsigned int )((void const   *)("ml" + 1)) - (unsigned int )((void const   *)"ml") == 1U
+mossbad_includes.flex	4374	string2lang	822	__s2_len___2 < 4U
+mossbad_includes.flex	4374	string2lang	827	tmp___229
+mossbad_includes.flex	4374	string2lang	831	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4374	string2lang	836	__s2_len___2 > 0U
+mossbad_includes.flex	4374	string2lang	840	__result___189 == 0
+mossbad_includes.flex	4374	string2lang	845	__s2_len___2 > 1U
+mossbad_includes.flex	4374	string2lang	849	__result___189 == 0
+mossbad_includes.flex	4374	string2lang	854	__s2_len___2 > 2U
+mossbad_includes.flex	4374	string2lang	858	__result___189 == 0
+mossbad_includes.flex	4374	string2lang	868	__s2_len___2 > 0U
+mossbad_includes.flex	4374	string2lang	872	__result___190 == 0
+mossbad_includes.flex	4374	string2lang	877	__s2_len___2 > 1U
+mossbad_includes.flex	4374	string2lang	881	__result___190 == 0
+mossbad_includes.flex	4374	string2lang	886	__s2_len___2 > 2U
+mossbad_includes.flex	4374	string2lang	890	__result___190 == 0
+mossbad_includes.flex	4374	string2lang	899	tmp___206 == 0
+mossbad_includes.flex	4376	string2lang	905	tmp___291
+mossbad_includes.flex	4376	string2lang	910	tmp___292
+mossbad_includes.flex	4376	string2lang	917	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4376	string2lang	922	__s1_len___3 >= 4U
+mossbad_includes.flex	4376	string2lang	926	! ((unsigned int )((void const   *)("lisp" + 1)) - (unsigned int )((void const   *)"lisp") == 1U)
+mossbad_includes.flex	4376	string2lang	931	__s2_len___3 >= 4U
+mossbad_includes.flex	4376	string2lang	938	tmp___293
+mossbad_includes.flex	4376	string2lang	942	__s1_len___3 < __s2_len___3
+mossbad_includes.flex	4376	string2lang	952	tmp___290
+mossbad_includes.flex	4376	string2lang	956	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4376	string2lang	961	__s1_len___3 < 4U
+mossbad_includes.flex	4376	string2lang	966	tmp___281
+mossbad_includes.flex	4376	string2lang	970	(unsigned int )((void const   *)("lisp" + 1)) - (unsigned int )((void const   *)"lisp") == 1U
+mossbad_includes.flex	4376	string2lang	975	__s1_len___3 > 0U
+mossbad_includes.flex	4376	string2lang	979	__result___229 == 0
+mossbad_includes.flex	4376	string2lang	984	__s1_len___3 > 1U
+mossbad_includes.flex	4376	string2lang	988	__result___229 == 0
+mossbad_includes.flex	4376	string2lang	993	__s1_len___3 > 2U
+mossbad_includes.flex	4376	string2lang	997	__result___229 == 0
+mossbad_includes.flex	4376	string2lang	1007	__s1_len___3 > 0U
+mossbad_includes.flex	4376	string2lang	1011	__result___230 == 0
+mossbad_includes.flex	4376	string2lang	1016	__s1_len___3 > 1U
+mossbad_includes.flex	4376	string2lang	1020	__result___230 == 0
+mossbad_includes.flex	4376	string2lang	1025	__s1_len___3 > 2U
+mossbad_includes.flex	4376	string2lang	1029	__result___230 == 0
+mossbad_includes.flex	4376	string2lang	1038	tmp___289
+mossbad_includes.flex	4376	string2lang	1042	(unsigned int )((void const   *)("lisp" + 1)) - (unsigned int )((void const   *)"lisp") == 1U
+mossbad_includes.flex	4376	string2lang	1047	__s2_len___3 < 4U
+mossbad_includes.flex	4376	string2lang	1052	tmp___288
+mossbad_includes.flex	4376	string2lang	1056	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4376	string2lang	1061	__s2_len___3 > 0U
+mossbad_includes.flex	4376	string2lang	1065	__result___237 == 0
+mossbad_includes.flex	4376	string2lang	1070	__s2_len___3 > 1U
+mossbad_includes.flex	4376	string2lang	1074	__result___237 == 0
+mossbad_includes.flex	4376	string2lang	1079	__s2_len___3 > 2U
+mossbad_includes.flex	4376	string2lang	1083	__result___237 == 0
+mossbad_includes.flex	4376	string2lang	1093	__s2_len___3 > 0U
+mossbad_includes.flex	4376	string2lang	1097	__result___238 == 0
+mossbad_includes.flex	4376	string2lang	1102	__s2_len___3 > 1U
+mossbad_includes.flex	4376	string2lang	1106	__result___238 == 0
+mossbad_includes.flex	4376	string2lang	1111	__s2_len___3 > 2U
+mossbad_includes.flex	4376	string2lang	1115	__result___238 == 0
+mossbad_includes.flex	4376	string2lang	1124	tmp___265 == 0
+mossbad_includes.flex	4378	string2lang	1130	tmp___350
+mossbad_includes.flex	4378	string2lang	1135	tmp___351
+mossbad_includes.flex	4378	string2lang	1142	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4378	string2lang	1147	__s1_len___4 >= 4U
+mossbad_includes.flex	4378	string2lang	1151	! ((unsigned int )((void const   *)("scheme" + 1)) - (unsigned int )((void const   *)"scheme") == 1U)
+mossbad_includes.flex	4378	string2lang	1156	__s2_len___4 >= 4U
+mossbad_includes.flex	4378	string2lang	1163	tmp___352
+mossbad_includes.flex	4378	string2lang	1167	__s1_len___4 < __s2_len___4
+mossbad_includes.flex	4378	string2lang	1177	tmp___349
+mossbad_includes.flex	4378	string2lang	1181	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4378	string2lang	1186	__s1_len___4 < 4U
+mossbad_includes.flex	4378	string2lang	1191	tmp___340
+mossbad_includes.flex	4378	string2lang	1195	(unsigned int )((void const   *)("scheme" + 1)) - (unsigned int )((void const   *)"scheme") == 1U
+mossbad_includes.flex	4378	string2lang	1200	__s1_len___4 > 0U
+mossbad_includes.flex	4378	string2lang	1204	__result___277 == 0
+mossbad_includes.flex	4378	string2lang	1209	__s1_len___4 > 1U
+mossbad_includes.flex	4378	string2lang	1213	__result___277 == 0
+mossbad_includes.flex	4378	string2lang	1218	__s1_len___4 > 2U
+mossbad_includes.flex	4378	string2lang	1222	__result___277 == 0
+mossbad_includes.flex	4378	string2lang	1232	__s1_len___4 > 0U
+mossbad_includes.flex	4378	string2lang	1236	__result___278 == 0
+mossbad_includes.flex	4378	string2lang	1241	__s1_len___4 > 1U
+mossbad_includes.flex	4378	string2lang	1245	__result___278 == 0
+mossbad_includes.flex	4378	string2lang	1250	__s1_len___4 > 2U
+mossbad_includes.flex	4378	string2lang	1254	__result___278 == 0
+mossbad_includes.flex	4378	string2lang	1263	tmp___348
+mossbad_includes.flex	4378	string2lang	1267	(unsigned int )((void const   *)("scheme" + 1)) - (unsigned int )((void const   *)"scheme") == 1U
+mossbad_includes.flex	4378	string2lang	1272	__s2_len___4 < 4U
+mossbad_includes.flex	4378	string2lang	1277	tmp___347
+mossbad_includes.flex	4378	string2lang	1281	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4378	string2lang	1286	__s2_len___4 > 0U
+mossbad_includes.flex	4378	string2lang	1290	__result___285 == 0
+mossbad_includes.flex	4378	string2lang	1295	__s2_len___4 > 1U
+mossbad_includes.flex	4378	string2lang	1299	__result___285 == 0
+mossbad_includes.flex	4378	string2lang	1304	__s2_len___4 > 2U
+mossbad_includes.flex	4378	string2lang	1308	__result___285 == 0
+mossbad_includes.flex	4378	string2lang	1318	__s2_len___4 > 0U
+mossbad_includes.flex	4378	string2lang	1322	__result___286 == 0
+mossbad_includes.flex	4378	string2lang	1327	__s2_len___4 > 1U
+mossbad_includes.flex	4378	string2lang	1331	__result___286 == 0
+mossbad_includes.flex	4378	string2lang	1336	__s2_len___4 > 2U
+mossbad_includes.flex	4378	string2lang	1340	__result___286 == 0
+mossbad_includes.flex	4378	string2lang	1349	tmp___324 == 0
+mossbad_includes.flex	4380	string2lang	1355	tmp___409
+mossbad_includes.flex	4380	string2lang	1360	tmp___410
+mossbad_includes.flex	4380	string2lang	1367	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4380	string2lang	1372	__s1_len___5 >= 4U
+mossbad_includes.flex	4380	string2lang	1376	! ((unsigned int )((void const   *)("ascii" + 1)) - (unsigned int )((void const   *)"ascii") == 1U)
+mossbad_includes.flex	4380	string2lang	1381	__s2_len___5 >= 4U
+mossbad_includes.flex	4380	string2lang	1388	tmp___411
+mossbad_includes.flex	4380	string2lang	1392	__s1_len___5 < __s2_len___5
+mossbad_includes.flex	4380	string2lang	1402	tmp___408
+mossbad_includes.flex	4380	string2lang	1406	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4380	string2lang	1411	__s1_len___5 < 4U
+mossbad_includes.flex	4380	string2lang	1416	tmp___399
+mossbad_includes.flex	4380	string2lang	1420	(unsigned int )((void const   *)("ascii" + 1)) - (unsigned int )((void const   *)"ascii") == 1U
+mossbad_includes.flex	4380	string2lang	1425	__s1_len___5 > 0U
+mossbad_includes.flex	4380	string2lang	1429	__result___325 == 0
+mossbad_includes.flex	4380	string2lang	1434	__s1_len___5 > 1U
+mossbad_includes.flex	4380	string2lang	1438	__result___325 == 0
+mossbad_includes.flex	4380	string2lang	1443	__s1_len___5 > 2U
+mossbad_includes.flex	4380	string2lang	1447	__result___325 == 0
+mossbad_includes.flex	4380	string2lang	1457	__s1_len___5 > 0U
+mossbad_includes.flex	4380	string2lang	1461	__result___326 == 0
+mossbad_includes.flex	4380	string2lang	1466	__s1_len___5 > 1U
+mossbad_includes.flex	4380	string2lang	1470	__result___326 == 0
+mossbad_includes.flex	4380	string2lang	1475	__s1_len___5 > 2U
+mossbad_includes.flex	4380	string2lang	1479	__result___326 == 0
+mossbad_includes.flex	4380	string2lang	1488	tmp___407
+mossbad_includes.flex	4380	string2lang	1492	(unsigned int )((void const   *)("ascii" + 1)) - (unsigned int )((void const   *)"ascii") == 1U
+mossbad_includes.flex	4380	string2lang	1497	__s2_len___5 < 4U
+mossbad_includes.flex	4380	string2lang	1502	tmp___406
+mossbad_includes.flex	4380	string2lang	1506	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4380	string2lang	1511	__s2_len___5 > 0U
+mossbad_includes.flex	4380	string2lang	1515	__result___333 == 0
+mossbad_includes.flex	4380	string2lang	1520	__s2_len___5 > 1U
+mossbad_includes.flex	4380	string2lang	1524	__result___333 == 0
+mossbad_includes.flex	4380	string2lang	1529	__s2_len___5 > 2U
+mossbad_includes.flex	4380	string2lang	1533	__result___333 == 0
+mossbad_includes.flex	4380	string2lang	1543	__s2_len___5 > 0U
+mossbad_includes.flex	4380	string2lang	1547	__result___334 == 0
+mossbad_includes.flex	4380	string2lang	1552	__s2_len___5 > 1U
+mossbad_includes.flex	4380	string2lang	1556	__result___334 == 0
+mossbad_includes.flex	4380	string2lang	1561	__s2_len___5 > 2U
+mossbad_includes.flex	4380	string2lang	1565	__result___334 == 0
+mossbad_includes.flex	4380	string2lang	1574	tmp___383 == 0
+mossbad_includes.flex	4382	string2lang	1580	tmp___468
+mossbad_includes.flex	4382	string2lang	1585	tmp___469
+mossbad_includes.flex	4382	string2lang	1592	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4382	string2lang	1597	__s1_len___6 >= 4U
+mossbad_includes.flex	4382	string2lang	1601	! ((unsigned int )((void const   *)("test" + 1)) - (unsigned int )((void const   *)"test") == 1U)
+mossbad_includes.flex	4382	string2lang	1606	__s2_len___6 >= 4U
+mossbad_includes.flex	4382	string2lang	1613	tmp___470
+mossbad_includes.flex	4382	string2lang	1617	__s1_len___6 < __s2_len___6
+mossbad_includes.flex	4382	string2lang	1627	tmp___467
+mossbad_includes.flex	4382	string2lang	1631	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4382	string2lang	1636	__s1_len___6 < 4U
+mossbad_includes.flex	4382	string2lang	1641	tmp___458
+mossbad_includes.flex	4382	string2lang	1645	(unsigned int )((void const   *)("test" + 1)) - (unsigned int )((void const   *)"test") == 1U
+mossbad_includes.flex	4382	string2lang	1650	__s1_len___6 > 0U
+mossbad_includes.flex	4382	string2lang	1654	__result___373 == 0
+mossbad_includes.flex	4382	string2lang	1659	__s1_len___6 > 1U
+mossbad_includes.flex	4382	string2lang	1663	__result___373 == 0
+mossbad_includes.flex	4382	string2lang	1668	__s1_len___6 > 2U
+mossbad_includes.flex	4382	string2lang	1672	__result___373 == 0
+mossbad_includes.flex	4382	string2lang	1682	__s1_len___6 > 0U
+mossbad_includes.flex	4382	string2lang	1686	__result___374 == 0
+mossbad_includes.flex	4382	string2lang	1691	__s1_len___6 > 1U
+mossbad_includes.flex	4382	string2lang	1695	__result___374 == 0
+mossbad_includes.flex	4382	string2lang	1700	__s1_len___6 > 2U
+mossbad_includes.flex	4382	string2lang	1704	__result___374 == 0
+mossbad_includes.flex	4382	string2lang	1713	tmp___466
+mossbad_includes.flex	4382	string2lang	1717	(unsigned int )((void const   *)("test" + 1)) - (unsigned int )((void const   *)"test") == 1U
+mossbad_includes.flex	4382	string2lang	1722	__s2_len___6 < 4U
+mossbad_includes.flex	4382	string2lang	1727	tmp___465
+mossbad_includes.flex	4382	string2lang	1731	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4382	string2lang	1736	__s2_len___6 > 0U
+mossbad_includes.flex	4382	string2lang	1740	__result___381 == 0
+mossbad_includes.flex	4382	string2lang	1745	__s2_len___6 > 1U
+mossbad_includes.flex	4382	string2lang	1749	__result___381 == 0
+mossbad_includes.flex	4382	string2lang	1754	__s2_len___6 > 2U
+mossbad_includes.flex	4382	string2lang	1758	__result___381 == 0
+mossbad_includes.flex	4382	string2lang	1768	__s2_len___6 > 0U
+mossbad_includes.flex	4382	string2lang	1772	__result___382 == 0
+mossbad_includes.flex	4382	string2lang	1777	__s2_len___6 > 1U
+mossbad_includes.flex	4382	string2lang	1781	__result___382 == 0
+mossbad_includes.flex	4382	string2lang	1786	__s2_len___6 > 2U
+mossbad_includes.flex	4382	string2lang	1790	__result___382 == 0
+mossbad_includes.flex	4382	string2lang	1799	tmp___442 == 0
+mossbad_includes.flex	4384	string2lang	1805	tmp___527
+mossbad_includes.flex	4384	string2lang	1810	tmp___528
+mossbad_includes.flex	4384	string2lang	1817	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4384	string2lang	1822	__s1_len___7 >= 4U
+mossbad_includes.flex	4384	string2lang	1826	! ((unsigned int )((void const   *)("perl" + 1)) - (unsigned int )((void const   *)"perl") == 1U)
+mossbad_includes.flex	4384	string2lang	1831	__s2_len___7 >= 4U
+mossbad_includes.flex	4384	string2lang	1838	tmp___529
+mossbad_includes.flex	4384	string2lang	1842	__s1_len___7 < __s2_len___7
+mossbad_includes.flex	4384	string2lang	1852	tmp___526
+mossbad_includes.flex	4384	string2lang	1856	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4384	string2lang	1861	__s1_len___7 < 4U
+mossbad_includes.flex	4384	string2lang	1866	tmp___517
+mossbad_includes.flex	4384	string2lang	1870	(unsigned int )((void const   *)("perl" + 1)) - (unsigned int )((void const   *)"perl") == 1U
+mossbad_includes.flex	4384	string2lang	1875	__s1_len___7 > 0U
+mossbad_includes.flex	4384	string2lang	1879	__result___421 == 0
+mossbad_includes.flex	4384	string2lang	1884	__s1_len___7 > 1U
+mossbad_includes.flex	4384	string2lang	1888	__result___421 == 0
+mossbad_includes.flex	4384	string2lang	1893	__s1_len___7 > 2U
+mossbad_includes.flex	4384	string2lang	1897	__result___421 == 0
+mossbad_includes.flex	4384	string2lang	1907	__s1_len___7 > 0U
+mossbad_includes.flex	4384	string2lang	1911	__result___422 == 0
+mossbad_includes.flex	4384	string2lang	1916	__s1_len___7 > 1U
+mossbad_includes.flex	4384	string2lang	1920	__result___422 == 0
+mossbad_includes.flex	4384	string2lang	1925	__s1_len___7 > 2U
+mossbad_includes.flex	4384	string2lang	1929	__result___422 == 0
+mossbad_includes.flex	4384	string2lang	1938	tmp___525
+mossbad_includes.flex	4384	string2lang	1942	(unsigned int )((void const   *)("perl" + 1)) - (unsigned int )((void const   *)"perl") == 1U
+mossbad_includes.flex	4384	string2lang	1947	__s2_len___7 < 4U
+mossbad_includes.flex	4384	string2lang	1952	tmp___524
+mossbad_includes.flex	4384	string2lang	1956	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4384	string2lang	1961	__s2_len___7 > 0U
+mossbad_includes.flex	4384	string2lang	1965	__result___429 == 0
+mossbad_includes.flex	4384	string2lang	1970	__s2_len___7 > 1U
+mossbad_includes.flex	4384	string2lang	1974	__result___429 == 0
+mossbad_includes.flex	4384	string2lang	1979	__s2_len___7 > 2U
+mossbad_includes.flex	4384	string2lang	1983	__result___429 == 0
+mossbad_includes.flex	4384	string2lang	1993	__s2_len___7 > 0U
+mossbad_includes.flex	4384	string2lang	1997	__result___430 == 0
+mossbad_includes.flex	4384	string2lang	2002	__s2_len___7 > 1U
+mossbad_includes.flex	4384	string2lang	2006	__result___430 == 0
+mossbad_includes.flex	4384	string2lang	2011	__s2_len___7 > 2U
+mossbad_includes.flex	4384	string2lang	2015	__result___430 == 0
+mossbad_includes.flex	4384	string2lang	2024	tmp___501 == 0
+mossbad_includes.flex	4386	string2lang	2030	tmp___586
+mossbad_includes.flex	4386	string2lang	2035	tmp___587
+mossbad_includes.flex	4386	string2lang	2042	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4386	string2lang	2047	__s1_len___8 >= 4U
+mossbad_includes.flex	4386	string2lang	2051	! ((unsigned int )((void const   *)("haskell" + 1)) - (unsigned int )((void const   *)"haskell") == 1U)
+mossbad_includes.flex	4386	string2lang	2056	__s2_len___8 >= 4U
+mossbad_includes.flex	4386	string2lang	2063	tmp___588
+mossbad_includes.flex	4386	string2lang	2067	__s1_len___8 < __s2_len___8
+mossbad_includes.flex	4386	string2lang	2077	tmp___585
+mossbad_includes.flex	4386	string2lang	2081	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4386	string2lang	2086	__s1_len___8 < 4U
+mossbad_includes.flex	4386	string2lang	2091	tmp___576
+mossbad_includes.flex	4386	string2lang	2095	(unsigned int )((void const   *)("haskell" + 1)) - (unsigned int )((void const   *)"haskell") == 1U
+mossbad_includes.flex	4386	string2lang	2100	__s1_len___8 > 0U
+mossbad_includes.flex	4386	string2lang	2104	__result___469 == 0
+mossbad_includes.flex	4386	string2lang	2109	__s1_len___8 > 1U
+mossbad_includes.flex	4386	string2lang	2113	__result___469 == 0
+mossbad_includes.flex	4386	string2lang	2118	__s1_len___8 > 2U
+mossbad_includes.flex	4386	string2lang	2122	__result___469 == 0
+mossbad_includes.flex	4386	string2lang	2132	__s1_len___8 > 0U
+mossbad_includes.flex	4386	string2lang	2136	__result___470 == 0
+mossbad_includes.flex	4386	string2lang	2141	__s1_len___8 > 1U
+mossbad_includes.flex	4386	string2lang	2145	__result___470 == 0
+mossbad_includes.flex	4386	string2lang	2150	__s1_len___8 > 2U
+mossbad_includes.flex	4386	string2lang	2154	__result___470 == 0
+mossbad_includes.flex	4386	string2lang	2163	tmp___584
+mossbad_includes.flex	4386	string2lang	2167	(unsigned int )((void const   *)("haskell" + 1)) - (unsigned int )((void const   *)"haskell") == 1U
+mossbad_includes.flex	4386	string2lang	2172	__s2_len___8 < 4U
+mossbad_includes.flex	4386	string2lang	2177	tmp___583
+mossbad_includes.flex	4386	string2lang	2181	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4386	string2lang	2186	__s2_len___8 > 0U
+mossbad_includes.flex	4386	string2lang	2190	__result___477 == 0
+mossbad_includes.flex	4386	string2lang	2195	__s2_len___8 > 1U
+mossbad_includes.flex	4386	string2lang	2199	__result___477 == 0
+mossbad_includes.flex	4386	string2lang	2204	__s2_len___8 > 2U
+mossbad_includes.flex	4386	string2lang	2208	__result___477 == 0
+mossbad_includes.flex	4386	string2lang	2218	__s2_len___8 > 0U
+mossbad_includes.flex	4386	string2lang	2222	__result___478 == 0
+mossbad_includes.flex	4386	string2lang	2227	__s2_len___8 > 1U
+mossbad_includes.flex	4386	string2lang	2231	__result___478 == 0
+mossbad_includes.flex	4386	string2lang	2236	__s2_len___8 > 2U
+mossbad_includes.flex	4386	string2lang	2240	__result___478 == 0
+mossbad_includes.flex	4386	string2lang	2249	tmp___560 == 0
+mossbad_includes.flex	4388	string2lang	2255	tmp___645
+mossbad_includes.flex	4388	string2lang	2260	tmp___646
+mossbad_includes.flex	4388	string2lang	2267	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4388	string2lang	2272	__s1_len___9 >= 4U
+mossbad_includes.flex	4388	string2lang	2276	! ((unsigned int )((void const   *)("matlab" + 1)) - (unsigned int )((void const   *)"matlab") == 1U)
+mossbad_includes.flex	4388	string2lang	2281	__s2_len___9 >= 4U
+mossbad_includes.flex	4388	string2lang	2288	tmp___647
+mossbad_includes.flex	4388	string2lang	2292	__s1_len___9 < __s2_len___9
+mossbad_includes.flex	4388	string2lang	2302	tmp___644
+mossbad_includes.flex	4388	string2lang	2306	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4388	string2lang	2311	__s1_len___9 < 4U
+mossbad_includes.flex	4388	string2lang	2316	tmp___635
+mossbad_includes.flex	4388	string2lang	2320	(unsigned int )((void const   *)("matlab" + 1)) - (unsigned int )((void const   *)"matlab") == 1U
+mossbad_includes.flex	4388	string2lang	2325	__s1_len___9 > 0U
+mossbad_includes.flex	4388	string2lang	2329	__result___517 == 0
+mossbad_includes.flex	4388	string2lang	2334	__s1_len___9 > 1U
+mossbad_includes.flex	4388	string2lang	2338	__result___517 == 0
+mossbad_includes.flex	4388	string2lang	2343	__s1_len___9 > 2U
+mossbad_includes.flex	4388	string2lang	2347	__result___517 == 0
+mossbad_includes.flex	4388	string2lang	2357	__s1_len___9 > 0U
+mossbad_includes.flex	4388	string2lang	2361	__result___518 == 0
+mossbad_includes.flex	4388	string2lang	2366	__s1_len___9 > 1U
+mossbad_includes.flex	4388	string2lang	2370	__result___518 == 0
+mossbad_includes.flex	4388	string2lang	2375	__s1_len___9 > 2U
+mossbad_includes.flex	4388	string2lang	2379	__result___518 == 0
+mossbad_includes.flex	4388	string2lang	2388	tmp___643
+mossbad_includes.flex	4388	string2lang	2392	(unsigned int )((void const   *)("matlab" + 1)) - (unsigned int )((void const   *)"matlab") == 1U
+mossbad_includes.flex	4388	string2lang	2397	__s2_len___9 < 4U
+mossbad_includes.flex	4388	string2lang	2402	tmp___642
+mossbad_includes.flex	4388	string2lang	2406	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4388	string2lang	2411	__s2_len___9 > 0U
+mossbad_includes.flex	4388	string2lang	2415	__result___525 == 0
+mossbad_includes.flex	4388	string2lang	2420	__s2_len___9 > 1U
+mossbad_includes.flex	4388	string2lang	2424	__result___525 == 0
+mossbad_includes.flex	4388	string2lang	2429	__s2_len___9 > 2U
+mossbad_includes.flex	4388	string2lang	2433	__result___525 == 0
+mossbad_includes.flex	4388	string2lang	2443	__s2_len___9 > 0U
+mossbad_includes.flex	4388	string2lang	2447	__result___526 == 0
+mossbad_includes.flex	4388	string2lang	2452	__s2_len___9 > 1U
+mossbad_includes.flex	4388	string2lang	2456	__result___526 == 0
+mossbad_includes.flex	4388	string2lang	2461	__s2_len___9 > 2U
+mossbad_includes.flex	4388	string2lang	2465	__result___526 == 0
+mossbad_includes.flex	4388	string2lang	2474	tmp___619 == 0
+mossbad_includes.flex	4390	string2lang	2480	tmp___704
+mossbad_includes.flex	4390	string2lang	2485	tmp___705
+mossbad_includes.flex	4390	string2lang	2492	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4390	string2lang	2497	__s1_len___10 >= 4U
+mossbad_includes.flex	4390	string2lang	2501	! ((unsigned int )((void const   *)("html" + 1)) - (unsigned int )((void const   *)"html") == 1U)
+mossbad_includes.flex	4390	string2lang	2506	__s2_len___10 >= 4U
+mossbad_includes.flex	4390	string2lang	2513	tmp___706
+mossbad_includes.flex	4390	string2lang	2517	__s1_len___10 < __s2_len___10
+mossbad_includes.flex	4390	string2lang	2527	tmp___703
+mossbad_includes.flex	4390	string2lang	2531	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4390	string2lang	2536	__s1_len___10 < 4U
+mossbad_includes.flex	4390	string2lang	2541	tmp___694
+mossbad_includes.flex	4390	string2lang	2545	(unsigned int )((void const   *)("html" + 1)) - (unsigned int )((void const   *)"html") == 1U
+mossbad_includes.flex	4390	string2lang	2550	__s1_len___10 > 0U
+mossbad_includes.flex	4390	string2lang	2554	__result___565 == 0
+mossbad_includes.flex	4390	string2lang	2559	__s1_len___10 > 1U
+mossbad_includes.flex	4390	string2lang	2563	__result___565 == 0
+mossbad_includes.flex	4390	string2lang	2568	__s1_len___10 > 2U
+mossbad_includes.flex	4390	string2lang	2572	__result___565 == 0
+mossbad_includes.flex	4390	string2lang	2582	__s1_len___10 > 0U
+mossbad_includes.flex	4390	string2lang	2586	__result___566 == 0
+mossbad_includes.flex	4390	string2lang	2591	__s1_len___10 > 1U
+mossbad_includes.flex	4390	string2lang	2595	__result___566 == 0
+mossbad_includes.flex	4390	string2lang	2600	__s1_len___10 > 2U
+mossbad_includes.flex	4390	string2lang	2604	__result___566 == 0
+mossbad_includes.flex	4390	string2lang	2613	tmp___702
+mossbad_includes.flex	4390	string2lang	2617	(unsigned int )((void const   *)("html" + 1)) - (unsigned int )((void const   *)"html") == 1U
+mossbad_includes.flex	4390	string2lang	2622	__s2_len___10 < 4U
+mossbad_includes.flex	4390	string2lang	2627	tmp___701
+mossbad_includes.flex	4390	string2lang	2631	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4390	string2lang	2636	__s2_len___10 > 0U
+mossbad_includes.flex	4390	string2lang	2640	__result___573 == 0
+mossbad_includes.flex	4390	string2lang	2645	__s2_len___10 > 1U
+mossbad_includes.flex	4390	string2lang	2649	__result___573 == 0
+mossbad_includes.flex	4390	string2lang	2654	__s2_len___10 > 2U
+mossbad_includes.flex	4390	string2lang	2658	__result___573 == 0
+mossbad_includes.flex	4390	string2lang	2668	__s2_len___10 > 0U
+mossbad_includes.flex	4390	string2lang	2672	__result___574 == 0
+mossbad_includes.flex	4390	string2lang	2677	__s2_len___10 > 1U
+mossbad_includes.flex	4390	string2lang	2681	__result___574 == 0
+mossbad_includes.flex	4390	string2lang	2686	__s2_len___10 > 2U
+mossbad_includes.flex	4390	string2lang	2690	__result___574 == 0
+mossbad_includes.flex	4390	string2lang	2699	tmp___678 == 0
+mossbad_includes.flex	4392	string2lang	2705	tmp___763
+mossbad_includes.flex	4392	string2lang	2710	tmp___764
+mossbad_includes.flex	4392	string2lang	2717	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4392	string2lang	2722	__s1_len___11 >= 4U
+mossbad_includes.flex	4392	string2lang	2726	! ((unsigned int )((void const   *)("fortran" + 1)) - (unsigned int )((void const   *)"fortran") == 1U)
+mossbad_includes.flex	4392	string2lang	2731	__s2_len___11 >= 4U
+mossbad_includes.flex	4392	string2lang	2738	tmp___765
+mossbad_includes.flex	4392	string2lang	2742	__s1_len___11 < __s2_len___11
+mossbad_includes.flex	4392	string2lang	2752	tmp___762
+mossbad_includes.flex	4392	string2lang	2756	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4392	string2lang	2761	__s1_len___11 < 4U
+mossbad_includes.flex	4392	string2lang	2766	tmp___753
+mossbad_includes.flex	4392	string2lang	2770	(unsigned int )((void const   *)("fortran" + 1)) - (unsigned int )((void const   *)"fortran") == 1U
+mossbad_includes.flex	4392	string2lang	2775	__s1_len___11 > 0U
+mossbad_includes.flex	4392	string2lang	2779	__result___613 == 0
+mossbad_includes.flex	4392	string2lang	2784	__s1_len___11 > 1U
+mossbad_includes.flex	4392	string2lang	2788	__result___613 == 0
+mossbad_includes.flex	4392	string2lang	2793	__s1_len___11 > 2U
+mossbad_includes.flex	4392	string2lang	2797	__result___613 == 0
+mossbad_includes.flex	4392	string2lang	2807	__s1_len___11 > 0U
+mossbad_includes.flex	4392	string2lang	2811	__result___614 == 0
+mossbad_includes.flex	4392	string2lang	2816	__s1_len___11 > 1U
+mossbad_includes.flex	4392	string2lang	2820	__result___614 == 0
+mossbad_includes.flex	4392	string2lang	2825	__s1_len___11 > 2U
+mossbad_includes.flex	4392	string2lang	2829	__result___614 == 0
+mossbad_includes.flex	4392	string2lang	2838	tmp___761
+mossbad_includes.flex	4392	string2lang	2842	(unsigned int )((void const   *)("fortran" + 1)) - (unsigned int )((void const   *)"fortran") == 1U
+mossbad_includes.flex	4392	string2lang	2847	__s2_len___11 < 4U
+mossbad_includes.flex	4392	string2lang	2852	tmp___760
+mossbad_includes.flex	4392	string2lang	2856	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4392	string2lang	2861	__s2_len___11 > 0U
+mossbad_includes.flex	4392	string2lang	2865	__result___621 == 0
+mossbad_includes.flex	4392	string2lang	2870	__s2_len___11 > 1U
+mossbad_includes.flex	4392	string2lang	2874	__result___621 == 0
+mossbad_includes.flex	4392	string2lang	2879	__s2_len___11 > 2U
+mossbad_includes.flex	4392	string2lang	2883	__result___621 == 0
+mossbad_includes.flex	4392	string2lang	2893	__s2_len___11 > 0U
+mossbad_includes.flex	4392	string2lang	2897	__result___622 == 0
+mossbad_includes.flex	4392	string2lang	2902	__s2_len___11 > 1U
+mossbad_includes.flex	4392	string2lang	2906	__result___622 == 0
+mossbad_includes.flex	4392	string2lang	2911	__s2_len___11 > 2U
+mossbad_includes.flex	4392	string2lang	2915	__result___622 == 0
+mossbad_includes.flex	4392	string2lang	2924	tmp___737 == 0
+mossbad_includes.flex	4394	string2lang	2930	tmp___822
+mossbad_includes.flex	4394	string2lang	2935	tmp___823
+mossbad_includes.flex	4394	string2lang	2942	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4394	string2lang	2947	__s1_len___12 >= 4U
+mossbad_includes.flex	4394	string2lang	2951	! ((unsigned int )((void const   *)("spice" + 1)) - (unsigned int )((void const   *)"spice") == 1U)
+mossbad_includes.flex	4394	string2lang	2956	__s2_len___12 >= 4U
+mossbad_includes.flex	4394	string2lang	2963	tmp___824
+mossbad_includes.flex	4394	string2lang	2967	__s1_len___12 < __s2_len___12
+mossbad_includes.flex	4394	string2lang	2977	tmp___821
+mossbad_includes.flex	4394	string2lang	2981	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4394	string2lang	2986	__s1_len___12 < 4U
+mossbad_includes.flex	4394	string2lang	2991	tmp___812
+mossbad_includes.flex	4394	string2lang	2995	(unsigned int )((void const   *)("spice" + 1)) - (unsigned int )((void const   *)"spice") == 1U
+mossbad_includes.flex	4394	string2lang	3000	__s1_len___12 > 0U
+mossbad_includes.flex	4394	string2lang	3004	__result___661 == 0
+mossbad_includes.flex	4394	string2lang	3009	__s1_len___12 > 1U
+mossbad_includes.flex	4394	string2lang	3013	__result___661 == 0
+mossbad_includes.flex	4394	string2lang	3018	__s1_len___12 > 2U
+mossbad_includes.flex	4394	string2lang	3022	__result___661 == 0
+mossbad_includes.flex	4394	string2lang	3032	__s1_len___12 > 0U
+mossbad_includes.flex	4394	string2lang	3036	__result___662 == 0
+mossbad_includes.flex	4394	string2lang	3041	__s1_len___12 > 1U
+mossbad_includes.flex	4394	string2lang	3045	__result___662 == 0
+mossbad_includes.flex	4394	string2lang	3050	__s1_len___12 > 2U
+mossbad_includes.flex	4394	string2lang	3054	__result___662 == 0
+mossbad_includes.flex	4394	string2lang	3063	tmp___820
+mossbad_includes.flex	4394	string2lang	3067	(unsigned int )((void const   *)("spice" + 1)) - (unsigned int )((void const   *)"spice") == 1U
+mossbad_includes.flex	4394	string2lang	3072	__s2_len___12 < 4U
+mossbad_includes.flex	4394	string2lang	3077	tmp___819
+mossbad_includes.flex	4394	string2lang	3081	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4394	string2lang	3086	__s2_len___12 > 0U
+mossbad_includes.flex	4394	string2lang	3090	__result___669 == 0
+mossbad_includes.flex	4394	string2lang	3095	__s2_len___12 > 1U
+mossbad_includes.flex	4394	string2lang	3099	__result___669 == 0
+mossbad_includes.flex	4394	string2lang	3104	__s2_len___12 > 2U
+mossbad_includes.flex	4394	string2lang	3108	__result___669 == 0
+mossbad_includes.flex	4394	string2lang	3118	__s2_len___12 > 0U
+mossbad_includes.flex	4394	string2lang	3122	__result___670 == 0
+mossbad_includes.flex	4394	string2lang	3127	__s2_len___12 > 1U
+mossbad_includes.flex	4394	string2lang	3131	__result___670 == 0
+mossbad_includes.flex	4394	string2lang	3136	__s2_len___12 > 2U
+mossbad_includes.flex	4394	string2lang	3140	__result___670 == 0
+mossbad_includes.flex	4394	string2lang	3149	tmp___796 == 0
+mossbad_includes.flex	4396	string2lang	3155	tmp___881
+mossbad_includes.flex	4396	string2lang	3160	tmp___882
+mossbad_includes.flex	4396	string2lang	3167	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4396	string2lang	3172	__s1_len___13 >= 4U
+mossbad_includes.flex	4396	string2lang	3176	! ((unsigned int )((void const   *)("8086" + 1)) - (unsigned int )((void const   *)"8086") == 1U)
+mossbad_includes.flex	4396	string2lang	3181	__s2_len___13 >= 4U
+mossbad_includes.flex	4396	string2lang	3188	tmp___883
+mossbad_includes.flex	4396	string2lang	3192	__s1_len___13 < __s2_len___13
+mossbad_includes.flex	4396	string2lang	3202	tmp___880
+mossbad_includes.flex	4396	string2lang	3206	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4396	string2lang	3211	__s1_len___13 < 4U
+mossbad_includes.flex	4396	string2lang	3216	tmp___871
+mossbad_includes.flex	4396	string2lang	3220	(unsigned int )((void const   *)("8086" + 1)) - (unsigned int )((void const   *)"8086") == 1U
+mossbad_includes.flex	4396	string2lang	3225	__s1_len___13 > 0U
+mossbad_includes.flex	4396	string2lang	3229	__result___709 == 0
+mossbad_includes.flex	4396	string2lang	3234	__s1_len___13 > 1U
+mossbad_includes.flex	4396	string2lang	3238	__result___709 == 0
+mossbad_includes.flex	4396	string2lang	3243	__s1_len___13 > 2U
+mossbad_includes.flex	4396	string2lang	3247	__result___709 == 0
+mossbad_includes.flex	4396	string2lang	3257	__s1_len___13 > 0U
+mossbad_includes.flex	4396	string2lang	3261	__result___710 == 0
+mossbad_includes.flex	4396	string2lang	3266	__s1_len___13 > 1U
+mossbad_includes.flex	4396	string2lang	3270	__result___710 == 0
+mossbad_includes.flex	4396	string2lang	3275	__s1_len___13 > 2U
+mossbad_includes.flex	4396	string2lang	3279	__result___710 == 0
+mossbad_includes.flex	4396	string2lang	3288	tmp___879
+mossbad_includes.flex	4396	string2lang	3292	(unsigned int )((void const   *)("8086" + 1)) - (unsigned int )((void const   *)"8086") == 1U
+mossbad_includes.flex	4396	string2lang	3297	__s2_len___13 < 4U
+mossbad_includes.flex	4396	string2lang	3302	tmp___878
+mossbad_includes.flex	4396	string2lang	3306	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4396	string2lang	3311	__s2_len___13 > 0U
+mossbad_includes.flex	4396	string2lang	3315	__result___717 == 0
+mossbad_includes.flex	4396	string2lang	3320	__s2_len___13 > 1U
+mossbad_includes.flex	4396	string2lang	3324	__result___717 == 0
+mossbad_includes.flex	4396	string2lang	3329	__s2_len___13 > 2U
+mossbad_includes.flex	4396	string2lang	3333	__result___717 == 0
+mossbad_includes.flex	4396	string2lang	3343	__s2_len___13 > 0U
+mossbad_includes.flex	4396	string2lang	3347	__result___718 == 0
+mossbad_includes.flex	4396	string2lang	3352	__s2_len___13 > 1U
+mossbad_includes.flex	4396	string2lang	3356	__result___718 == 0
+mossbad_includes.flex	4396	string2lang	3361	__s2_len___13 > 2U
+mossbad_includes.flex	4396	string2lang	3365	__result___718 == 0
+mossbad_includes.flex	4396	string2lang	3374	tmp___855 == 0
+mossbad_includes.flex	4397	string2lang	3380	tmp___940
+mossbad_includes.flex	4397	string2lang	3385	tmp___941
+mossbad_includes.flex	4397	string2lang	3392	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4397	string2lang	3397	__s1_len___14 >= 4U
+mossbad_includes.flex	4397	string2lang	3401	! ((unsigned int )((void const   *)("ada" + 1)) - (unsigned int )((void const   *)"ada") == 1U)
+mossbad_includes.flex	4397	string2lang	3406	__s2_len___14 >= 4U
+mossbad_includes.flex	4397	string2lang	3413	tmp___942
+mossbad_includes.flex	4397	string2lang	3417	__s1_len___14 < __s2_len___14
+mossbad_includes.flex	4397	string2lang	3427	tmp___939
+mossbad_includes.flex	4397	string2lang	3431	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4397	string2lang	3436	__s1_len___14 < 4U
+mossbad_includes.flex	4397	string2lang	3441	tmp___930
+mossbad_includes.flex	4397	string2lang	3445	(unsigned int )((void const   *)("ada" + 1)) - (unsigned int )((void const   *)"ada") == 1U
+mossbad_includes.flex	4397	string2lang	3450	__s1_len___14 > 0U
+mossbad_includes.flex	4397	string2lang	3454	__result___757 == 0
+mossbad_includes.flex	4397	string2lang	3459	__s1_len___14 > 1U
+mossbad_includes.flex	4397	string2lang	3463	__result___757 == 0
+mossbad_includes.flex	4397	string2lang	3468	__s1_len___14 > 2U
+mossbad_includes.flex	4397	string2lang	3472	__result___757 == 0
+mossbad_includes.flex	4397	string2lang	3482	__s1_len___14 > 0U
+mossbad_includes.flex	4397	string2lang	3486	__result___758 == 0
+mossbad_includes.flex	4397	string2lang	3491	__s1_len___14 > 1U
+mossbad_includes.flex	4397	string2lang	3495	__result___758 == 0
+mossbad_includes.flex	4397	string2lang	3500	__s1_len___14 > 2U
+mossbad_includes.flex	4397	string2lang	3504	__result___758 == 0
+mossbad_includes.flex	4397	string2lang	3513	tmp___938
+mossbad_includes.flex	4397	string2lang	3517	(unsigned int )((void const   *)("ada" + 1)) - (unsigned int )((void const   *)"ada") == 1U
+mossbad_includes.flex	4397	string2lang	3522	__s2_len___14 < 4U
+mossbad_includes.flex	4397	string2lang	3527	tmp___937
+mossbad_includes.flex	4397	string2lang	3531	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4397	string2lang	3536	__s2_len___14 > 0U
+mossbad_includes.flex	4397	string2lang	3540	__result___765 == 0
+mossbad_includes.flex	4397	string2lang	3545	__s2_len___14 > 1U
+mossbad_includes.flex	4397	string2lang	3549	__result___765 == 0
+mossbad_includes.flex	4397	string2lang	3554	__s2_len___14 > 2U
+mossbad_includes.flex	4397	string2lang	3558	__result___765 == 0
+mossbad_includes.flex	4397	string2lang	3568	__s2_len___14 > 0U
+mossbad_includes.flex	4397	string2lang	3572	__result___766 == 0
+mossbad_includes.flex	4397	string2lang	3577	__s2_len___14 > 1U
+mossbad_includes.flex	4397	string2lang	3581	__result___766 == 0
+mossbad_includes.flex	4397	string2lang	3586	__s2_len___14 > 2U
+mossbad_includes.flex	4397	string2lang	3590	__result___766 == 0
+mossbad_includes.flex	4397	string2lang	3599	tmp___914 == 0
+mossbad_includes.flex	4398	string2lang	3605	tmp___999
+mossbad_includes.flex	4398	string2lang	3610	tmp___1000
+mossbad_includes.flex	4398	string2lang	3617	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4398	string2lang	3622	__s1_len___15 >= 4U
+mossbad_includes.flex	4398	string2lang	3626	! ((unsigned int )((void const   *)("csharp" + 1)) - (unsigned int )((void const   *)"csharp") == 1U)
+mossbad_includes.flex	4398	string2lang	3631	__s2_len___15 >= 4U
+mossbad_includes.flex	4398	string2lang	3638	tmp___1001
+mossbad_includes.flex	4398	string2lang	3642	__s1_len___15 < __s2_len___15
+mossbad_includes.flex	4398	string2lang	3652	tmp___998
+mossbad_includes.flex	4398	string2lang	3656	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4398	string2lang	3661	__s1_len___15 < 4U
+mossbad_includes.flex	4398	string2lang	3666	tmp___989
+mossbad_includes.flex	4398	string2lang	3670	(unsigned int )((void const   *)("csharp" + 1)) - (unsigned int )((void const   *)"csharp") == 1U
+mossbad_includes.flex	4398	string2lang	3675	__s1_len___15 > 0U
+mossbad_includes.flex	4398	string2lang	3679	__result___805 == 0
+mossbad_includes.flex	4398	string2lang	3684	__s1_len___15 > 1U
+mossbad_includes.flex	4398	string2lang	3688	__result___805 == 0
+mossbad_includes.flex	4398	string2lang	3693	__s1_len___15 > 2U
+mossbad_includes.flex	4398	string2lang	3697	__result___805 == 0
+mossbad_includes.flex	4398	string2lang	3707	__s1_len___15 > 0U
+mossbad_includes.flex	4398	string2lang	3711	__result___806 == 0
+mossbad_includes.flex	4398	string2lang	3716	__s1_len___15 > 1U
+mossbad_includes.flex	4398	string2lang	3720	__result___806 == 0
+mossbad_includes.flex	4398	string2lang	3725	__s1_len___15 > 2U
+mossbad_includes.flex	4398	string2lang	3729	__result___806 == 0
+mossbad_includes.flex	4398	string2lang	3738	tmp___997
+mossbad_includes.flex	4398	string2lang	3742	(unsigned int )((void const   *)("csharp" + 1)) - (unsigned int )((void const   *)"csharp") == 1U
+mossbad_includes.flex	4398	string2lang	3747	__s2_len___15 < 4U
+mossbad_includes.flex	4398	string2lang	3752	tmp___996
+mossbad_includes.flex	4398	string2lang	3756	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4398	string2lang	3761	__s2_len___15 > 0U
+mossbad_includes.flex	4398	string2lang	3765	__result___813 == 0
+mossbad_includes.flex	4398	string2lang	3770	__s2_len___15 > 1U
+mossbad_includes.flex	4398	string2lang	3774	__result___813 == 0
+mossbad_includes.flex	4398	string2lang	3779	__s2_len___15 > 2U
+mossbad_includes.flex	4398	string2lang	3783	__result___813 == 0
+mossbad_includes.flex	4398	string2lang	3793	__s2_len___15 > 0U
+mossbad_includes.flex	4398	string2lang	3797	__result___814 == 0
+mossbad_includes.flex	4398	string2lang	3802	__s2_len___15 > 1U
+mossbad_includes.flex	4398	string2lang	3806	__result___814 == 0
+mossbad_includes.flex	4398	string2lang	3811	__s2_len___15 > 2U
+mossbad_includes.flex	4398	string2lang	3815	__result___814 == 0
+mossbad_includes.flex	4398	string2lang	3824	tmp___973 == 0
+mossbad_includes.flex	4399	string2lang	3830	tmp___1058
+mossbad_includes.flex	4399	string2lang	3835	tmp___1059
+mossbad_includes.flex	4399	string2lang	3842	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4399	string2lang	3847	__s1_len___16 >= 4U
+mossbad_includes.flex	4399	string2lang	3851	! ((unsigned int )((void const   *)("javascript" + 1)) - (unsigned int )((void const   *)"javascript") == 1U)
+mossbad_includes.flex	4399	string2lang	3856	__s2_len___16 >= 4U
+mossbad_includes.flex	4399	string2lang	3863	tmp___1060
+mossbad_includes.flex	4399	string2lang	3867	__s1_len___16 < __s2_len___16
+mossbad_includes.flex	4399	string2lang	3877	tmp___1057
+mossbad_includes.flex	4399	string2lang	3881	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4399	string2lang	3886	__s1_len___16 < 4U
+mossbad_includes.flex	4399	string2lang	3891	tmp___1048
+mossbad_includes.flex	4399	string2lang	3895	(unsigned int )((void const   *)("javascript" + 1)) - (unsigned int )((void const   *)"javascript") == 1U
+mossbad_includes.flex	4399	string2lang	3900	__s1_len___16 > 0U
+mossbad_includes.flex	4399	string2lang	3904	__result___853 == 0
+mossbad_includes.flex	4399	string2lang	3909	__s1_len___16 > 1U
+mossbad_includes.flex	4399	string2lang	3913	__result___853 == 0
+mossbad_includes.flex	4399	string2lang	3918	__s1_len___16 > 2U
+mossbad_includes.flex	4399	string2lang	3922	__result___853 == 0
+mossbad_includes.flex	4399	string2lang	3932	__s1_len___16 > 0U
+mossbad_includes.flex	4399	string2lang	3936	__result___854 == 0
+mossbad_includes.flex	4399	string2lang	3941	__s1_len___16 > 1U
+mossbad_includes.flex	4399	string2lang	3945	__result___854 == 0
+mossbad_includes.flex	4399	string2lang	3950	__s1_len___16 > 2U
+mossbad_includes.flex	4399	string2lang	3954	__result___854 == 0
+mossbad_includes.flex	4399	string2lang	3963	tmp___1056
+mossbad_includes.flex	4399	string2lang	3967	(unsigned int )((void const   *)("javascript" + 1)) - (unsigned int )((void const   *)"javascript") == 1U
+mossbad_includes.flex	4399	string2lang	3972	__s2_len___16 < 4U
+mossbad_includes.flex	4399	string2lang	3977	tmp___1055
+mossbad_includes.flex	4399	string2lang	3981	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4399	string2lang	3986	__s2_len___16 > 0U
+mossbad_includes.flex	4399	string2lang	3990	__result___861 == 0
+mossbad_includes.flex	4399	string2lang	3995	__s2_len___16 > 1U
+mossbad_includes.flex	4399	string2lang	3999	__result___861 == 0
+mossbad_includes.flex	4399	string2lang	4004	__s2_len___16 > 2U
+mossbad_includes.flex	4399	string2lang	4008	__result___861 == 0
+mossbad_includes.flex	4399	string2lang	4018	__s2_len___16 > 0U
+mossbad_includes.flex	4399	string2lang	4022	__result___862 == 0
+mossbad_includes.flex	4399	string2lang	4027	__s2_len___16 > 1U
+mossbad_includes.flex	4399	string2lang	4031	__result___862 == 0
+mossbad_includes.flex	4399	string2lang	4036	__s2_len___16 > 2U
+mossbad_includes.flex	4399	string2lang	4040	__result___862 == 0
+mossbad_includes.flex	4399	string2lang	4049	tmp___1032 == 0
+mossbad_includes.flex	4400	string2lang	4055	tmp___1117
+mossbad_includes.flex	4400	string2lang	4060	tmp___1118
+mossbad_includes.flex	4400	string2lang	4067	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4400	string2lang	4072	__s1_len___17 >= 4U
+mossbad_includes.flex	4400	string2lang	4076	! ((unsigned int )((void const   *)("mips" + 1)) - (unsigned int )((void const   *)"mips") == 1U)
+mossbad_includes.flex	4400	string2lang	4081	__s2_len___17 >= 4U
+mossbad_includes.flex	4400	string2lang	4088	tmp___1119
+mossbad_includes.flex	4400	string2lang	4092	__s1_len___17 < __s2_len___17
+mossbad_includes.flex	4400	string2lang	4102	tmp___1116
+mossbad_includes.flex	4400	string2lang	4106	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4400	string2lang	4111	__s1_len___17 < 4U
+mossbad_includes.flex	4400	string2lang	4116	tmp___1107
+mossbad_includes.flex	4400	string2lang	4120	(unsigned int )((void const   *)("mips" + 1)) - (unsigned int )((void const   *)"mips") == 1U
+mossbad_includes.flex	4400	string2lang	4125	__s1_len___17 > 0U
+mossbad_includes.flex	4400	string2lang	4129	__result___901 == 0
+mossbad_includes.flex	4400	string2lang	4134	__s1_len___17 > 1U
+mossbad_includes.flex	4400	string2lang	4138	__result___901 == 0
+mossbad_includes.flex	4400	string2lang	4143	__s1_len___17 > 2U
+mossbad_includes.flex	4400	string2lang	4147	__result___901 == 0
+mossbad_includes.flex	4400	string2lang	4157	__s1_len___17 > 0U
+mossbad_includes.flex	4400	string2lang	4161	__result___902 == 0
+mossbad_includes.flex	4400	string2lang	4166	__s1_len___17 > 1U
+mossbad_includes.flex	4400	string2lang	4170	__result___902 == 0
+mossbad_includes.flex	4400	string2lang	4175	__s1_len___17 > 2U
+mossbad_includes.flex	4400	string2lang	4179	__result___902 == 0
+mossbad_includes.flex	4400	string2lang	4188	tmp___1115
+mossbad_includes.flex	4400	string2lang	4192	(unsigned int )((void const   *)("mips" + 1)) - (unsigned int )((void const   *)"mips") == 1U
+mossbad_includes.flex	4400	string2lang	4197	__s2_len___17 < 4U
+mossbad_includes.flex	4400	string2lang	4202	tmp___1114
+mossbad_includes.flex	4400	string2lang	4206	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4400	string2lang	4211	__s2_len___17 > 0U
+mossbad_includes.flex	4400	string2lang	4215	__result___909 == 0
+mossbad_includes.flex	4400	string2lang	4220	__s2_len___17 > 1U
+mossbad_includes.flex	4400	string2lang	4224	__result___909 == 0
+mossbad_includes.flex	4400	string2lang	4229	__s2_len___17 > 2U
+mossbad_includes.flex	4400	string2lang	4233	__result___909 == 0
+mossbad_includes.flex	4400	string2lang	4243	__s2_len___17 > 0U
+mossbad_includes.flex	4400	string2lang	4247	__result___910 == 0
+mossbad_includes.flex	4400	string2lang	4252	__s2_len___17 > 1U
+mossbad_includes.flex	4400	string2lang	4256	__result___910 == 0
+mossbad_includes.flex	4400	string2lang	4261	__s2_len___17 > 2U
+mossbad_includes.flex	4400	string2lang	4265	__result___910 == 0
+mossbad_includes.flex	4400	string2lang	4274	tmp___1091 == 0
+mossbad_includes.flex	4401	string2lang	4280	tmp___1176
+mossbad_includes.flex	4401	string2lang	4285	tmp___1177
+mossbad_includes.flex	4401	string2lang	4292	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4401	string2lang	4297	__s1_len___18 >= 4U
+mossbad_includes.flex	4401	string2lang	4301	! ((unsigned int )((void const   *)("modula2" + 1)) - (unsigned int )((void const   *)"modula2") == 1U)
+mossbad_includes.flex	4401	string2lang	4306	__s2_len___18 >= 4U
+mossbad_includes.flex	4401	string2lang	4313	tmp___1178
+mossbad_includes.flex	4401	string2lang	4317	__s1_len___18 < __s2_len___18
+mossbad_includes.flex	4401	string2lang	4327	tmp___1175
+mossbad_includes.flex	4401	string2lang	4331	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4401	string2lang	4336	__s1_len___18 < 4U
+mossbad_includes.flex	4401	string2lang	4341	tmp___1166
+mossbad_includes.flex	4401	string2lang	4345	(unsigned int )((void const   *)("modula2" + 1)) - (unsigned int )((void const   *)"modula2") == 1U
+mossbad_includes.flex	4401	string2lang	4350	__s1_len___18 > 0U
+mossbad_includes.flex	4401	string2lang	4354	__result___949 == 0
+mossbad_includes.flex	4401	string2lang	4359	__s1_len___18 > 1U
+mossbad_includes.flex	4401	string2lang	4363	__result___949 == 0
+mossbad_includes.flex	4401	string2lang	4368	__s1_len___18 > 2U
+mossbad_includes.flex	4401	string2lang	4372	__result___949 == 0
+mossbad_includes.flex	4401	string2lang	4382	__s1_len___18 > 0U
+mossbad_includes.flex	4401	string2lang	4386	__result___950 == 0
+mossbad_includes.flex	4401	string2lang	4391	__s1_len___18 > 1U
+mossbad_includes.flex	4401	string2lang	4395	__result___950 == 0
+mossbad_includes.flex	4401	string2lang	4400	__s1_len___18 > 2U
+mossbad_includes.flex	4401	string2lang	4404	__result___950 == 0
+mossbad_includes.flex	4401	string2lang	4413	tmp___1174
+mossbad_includes.flex	4401	string2lang	4417	(unsigned int )((void const   *)("modula2" + 1)) - (unsigned int )((void const   *)"modula2") == 1U
+mossbad_includes.flex	4401	string2lang	4422	__s2_len___18 < 4U
+mossbad_includes.flex	4401	string2lang	4427	tmp___1173
+mossbad_includes.flex	4401	string2lang	4431	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4401	string2lang	4436	__s2_len___18 > 0U
+mossbad_includes.flex	4401	string2lang	4440	__result___957 == 0
+mossbad_includes.flex	4401	string2lang	4445	__s2_len___18 > 1U
+mossbad_includes.flex	4401	string2lang	4449	__result___957 == 0
+mossbad_includes.flex	4401	string2lang	4454	__s2_len___18 > 2U
+mossbad_includes.flex	4401	string2lang	4458	__result___957 == 0
+mossbad_includes.flex	4401	string2lang	4468	__s2_len___18 > 0U
+mossbad_includes.flex	4401	string2lang	4472	__result___958 == 0
+mossbad_includes.flex	4401	string2lang	4477	__s2_len___18 > 1U
+mossbad_includes.flex	4401	string2lang	4481	__result___958 == 0
+mossbad_includes.flex	4401	string2lang	4486	__s2_len___18 > 2U
+mossbad_includes.flex	4401	string2lang	4490	__result___958 == 0
+mossbad_includes.flex	4401	string2lang	4499	tmp___1150 == 0
+mossbad_includes.flex	4402	string2lang	4505	tmp___1235
+mossbad_includes.flex	4402	string2lang	4510	tmp___1236
+mossbad_includes.flex	4402	string2lang	4517	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4402	string2lang	4522	__s1_len___19 >= 4U
+mossbad_includes.flex	4402	string2lang	4526	! ((unsigned int )((void const   *)("pascal" + 1)) - (unsigned int )((void const   *)"pascal") == 1U)
+mossbad_includes.flex	4402	string2lang	4531	__s2_len___19 >= 4U
+mossbad_includes.flex	4402	string2lang	4538	tmp___1237
+mossbad_includes.flex	4402	string2lang	4542	__s1_len___19 < __s2_len___19
+mossbad_includes.flex	4402	string2lang	4552	tmp___1234
+mossbad_includes.flex	4402	string2lang	4556	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4402	string2lang	4561	__s1_len___19 < 4U
+mossbad_includes.flex	4402	string2lang	4566	tmp___1225
+mossbad_includes.flex	4402	string2lang	4570	(unsigned int )((void const   *)("pascal" + 1)) - (unsigned int )((void const   *)"pascal") == 1U
+mossbad_includes.flex	4402	string2lang	4575	__s1_len___19 > 0U
+mossbad_includes.flex	4402	string2lang	4579	__result___997 == 0
+mossbad_includes.flex	4402	string2lang	4584	__s1_len___19 > 1U
+mossbad_includes.flex	4402	string2lang	4588	__result___997 == 0
+mossbad_includes.flex	4402	string2lang	4593	__s1_len___19 > 2U
+mossbad_includes.flex	4402	string2lang	4597	__result___997 == 0
+mossbad_includes.flex	4402	string2lang	4607	__s1_len___19 > 0U
+mossbad_includes.flex	4402	string2lang	4611	__result___998 == 0
+mossbad_includes.flex	4402	string2lang	4616	__s1_len___19 > 1U
+mossbad_includes.flex	4402	string2lang	4620	__result___998 == 0
+mossbad_includes.flex	4402	string2lang	4625	__s1_len___19 > 2U
+mossbad_includes.flex	4402	string2lang	4629	__result___998 == 0
+mossbad_includes.flex	4402	string2lang	4638	tmp___1233
+mossbad_includes.flex	4402	string2lang	4642	(unsigned int )((void const   *)("pascal" + 1)) - (unsigned int )((void const   *)"pascal") == 1U
+mossbad_includes.flex	4402	string2lang	4647	__s2_len___19 < 4U
+mossbad_includes.flex	4402	string2lang	4652	tmp___1232
+mossbad_includes.flex	4402	string2lang	4656	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4402	string2lang	4661	__s2_len___19 > 0U
+mossbad_includes.flex	4402	string2lang	4665	__result___1005 == 0
+mossbad_includes.flex	4402	string2lang	4670	__s2_len___19 > 1U
+mossbad_includes.flex	4402	string2lang	4674	__result___1005 == 0
+mossbad_includes.flex	4402	string2lang	4679	__s2_len___19 > 2U
+mossbad_includes.flex	4402	string2lang	4683	__result___1005 == 0
+mossbad_includes.flex	4402	string2lang	4693	__s2_len___19 > 0U
+mossbad_includes.flex	4402	string2lang	4697	__result___1006 == 0
+mossbad_includes.flex	4402	string2lang	4702	__s2_len___19 > 1U
+mossbad_includes.flex	4402	string2lang	4706	__result___1006 == 0
+mossbad_includes.flex	4402	string2lang	4711	__s2_len___19 > 2U
+mossbad_includes.flex	4402	string2lang	4715	__result___1006 == 0
+mossbad_includes.flex	4402	string2lang	4724	tmp___1209 == 0
+mossbad_includes.flex	4403	string2lang	4730	tmp___1294
+mossbad_includes.flex	4403	string2lang	4735	tmp___1295
+mossbad_includes.flex	4403	string2lang	4742	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4403	string2lang	4747	__s1_len___20 >= 4U
+mossbad_includes.flex	4403	string2lang	4751	! ((unsigned int )((void const   *)("plsql" + 1)) - (unsigned int )((void const   *)"plsql") == 1U)
+mossbad_includes.flex	4403	string2lang	4756	__s2_len___20 >= 4U
+mossbad_includes.flex	4403	string2lang	4763	tmp___1296
+mossbad_includes.flex	4403	string2lang	4767	__s1_len___20 < __s2_len___20
+mossbad_includes.flex	4403	string2lang	4777	tmp___1293
+mossbad_includes.flex	4403	string2lang	4781	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4403	string2lang	4786	__s1_len___20 < 4U
+mossbad_includes.flex	4403	string2lang	4791	tmp___1284
+mossbad_includes.flex	4403	string2lang	4795	(unsigned int )((void const   *)("plsql" + 1)) - (unsigned int )((void const   *)"plsql") == 1U
+mossbad_includes.flex	4403	string2lang	4800	__s1_len___20 > 0U
+mossbad_includes.flex	4403	string2lang	4804	__result___1045 == 0
+mossbad_includes.flex	4403	string2lang	4809	__s1_len___20 > 1U
+mossbad_includes.flex	4403	string2lang	4813	__result___1045 == 0
+mossbad_includes.flex	4403	string2lang	4818	__s1_len___20 > 2U
+mossbad_includes.flex	4403	string2lang	4822	__result___1045 == 0
+mossbad_includes.flex	4403	string2lang	4832	__s1_len___20 > 0U
+mossbad_includes.flex	4403	string2lang	4836	__result___1046 == 0
+mossbad_includes.flex	4403	string2lang	4841	__s1_len___20 > 1U
+mossbad_includes.flex	4403	string2lang	4845	__result___1046 == 0
+mossbad_includes.flex	4403	string2lang	4850	__s1_len___20 > 2U
+mossbad_includes.flex	4403	string2lang	4854	__result___1046 == 0
+mossbad_includes.flex	4403	string2lang	4863	tmp___1292
+mossbad_includes.flex	4403	string2lang	4867	(unsigned int )((void const   *)("plsql" + 1)) - (unsigned int )((void const   *)"plsql") == 1U
+mossbad_includes.flex	4403	string2lang	4872	__s2_len___20 < 4U
+mossbad_includes.flex	4403	string2lang	4877	tmp___1291
+mossbad_includes.flex	4403	string2lang	4881	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4403	string2lang	4886	__s2_len___20 > 0U
+mossbad_includes.flex	4403	string2lang	4890	__result___1053 == 0
+mossbad_includes.flex	4403	string2lang	4895	__s2_len___20 > 1U
+mossbad_includes.flex	4403	string2lang	4899	__result___1053 == 0
+mossbad_includes.flex	4403	string2lang	4904	__s2_len___20 > 2U
+mossbad_includes.flex	4403	string2lang	4908	__result___1053 == 0
+mossbad_includes.flex	4403	string2lang	4918	__s2_len___20 > 0U
+mossbad_includes.flex	4403	string2lang	4922	__result___1054 == 0
+mossbad_includes.flex	4403	string2lang	4927	__s2_len___20 > 1U
+mossbad_includes.flex	4403	string2lang	4931	__result___1054 == 0
+mossbad_includes.flex	4403	string2lang	4936	__s2_len___20 > 2U
+mossbad_includes.flex	4403	string2lang	4940	__result___1054 == 0
+mossbad_includes.flex	4403	string2lang	4949	tmp___1268 == 0
+mossbad_includes.flex	4404	string2lang	4955	tmp___1353
+mossbad_includes.flex	4404	string2lang	4960	tmp___1354
+mossbad_includes.flex	4404	string2lang	4967	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4404	string2lang	4972	__s1_len___21 >= 4U
+mossbad_includes.flex	4404	string2lang	4976	! ((unsigned int )((void const   *)("prolog" + 1)) - (unsigned int )((void const   *)"prolog") == 1U)
+mossbad_includes.flex	4404	string2lang	4981	__s2_len___21 >= 4U
+mossbad_includes.flex	4404	string2lang	4988	tmp___1355
+mossbad_includes.flex	4404	string2lang	4992	__s1_len___21 < __s2_len___21
+mossbad_includes.flex	4404	string2lang	5002	tmp___1352
+mossbad_includes.flex	4404	string2lang	5006	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4404	string2lang	5011	__s1_len___21 < 4U
+mossbad_includes.flex	4404	string2lang	5016	tmp___1343
+mossbad_includes.flex	4404	string2lang	5020	(unsigned int )((void const   *)("prolog" + 1)) - (unsigned int )((void const   *)"prolog") == 1U
+mossbad_includes.flex	4404	string2lang	5025	__s1_len___21 > 0U
+mossbad_includes.flex	4404	string2lang	5029	__result___1093 == 0
+mossbad_includes.flex	4404	string2lang	5034	__s1_len___21 > 1U
+mossbad_includes.flex	4404	string2lang	5038	__result___1093 == 0
+mossbad_includes.flex	4404	string2lang	5043	__s1_len___21 > 2U
+mossbad_includes.flex	4404	string2lang	5047	__result___1093 == 0
+mossbad_includes.flex	4404	string2lang	5057	__s1_len___21 > 0U
+mossbad_includes.flex	4404	string2lang	5061	__result___1094 == 0
+mossbad_includes.flex	4404	string2lang	5066	__s1_len___21 > 1U
+mossbad_includes.flex	4404	string2lang	5070	__result___1094 == 0
+mossbad_includes.flex	4404	string2lang	5075	__s1_len___21 > 2U
+mossbad_includes.flex	4404	string2lang	5079	__result___1094 == 0
+mossbad_includes.flex	4404	string2lang	5088	tmp___1351
+mossbad_includes.flex	4404	string2lang	5092	(unsigned int )((void const   *)("prolog" + 1)) - (unsigned int )((void const   *)"prolog") == 1U
+mossbad_includes.flex	4404	string2lang	5097	__s2_len___21 < 4U
+mossbad_includes.flex	4404	string2lang	5102	tmp___1350
+mossbad_includes.flex	4404	string2lang	5106	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4404	string2lang	5111	__s2_len___21 > 0U
+mossbad_includes.flex	4404	string2lang	5115	__result___1101 == 0
+mossbad_includes.flex	4404	string2lang	5120	__s2_len___21 > 1U
+mossbad_includes.flex	4404	string2lang	5124	__result___1101 == 0
+mossbad_includes.flex	4404	string2lang	5129	__s2_len___21 > 2U
+mossbad_includes.flex	4404	string2lang	5133	__result___1101 == 0
+mossbad_includes.flex	4404	string2lang	5143	__s2_len___21 > 0U
+mossbad_includes.flex	4404	string2lang	5147	__result___1102 == 0
+mossbad_includes.flex	4404	string2lang	5152	__s2_len___21 > 1U
+mossbad_includes.flex	4404	string2lang	5156	__result___1102 == 0
+mossbad_includes.flex	4404	string2lang	5161	__s2_len___21 > 2U
+mossbad_includes.flex	4404	string2lang	5165	__result___1102 == 0
+mossbad_includes.flex	4404	string2lang	5174	tmp___1327 == 0
+mossbad_includes.flex	4405	string2lang	5180	tmp___1412
+mossbad_includes.flex	4405	string2lang	5185	tmp___1413
+mossbad_includes.flex	4405	string2lang	5192	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4405	string2lang	5197	__s1_len___22 >= 4U
+mossbad_includes.flex	4405	string2lang	5201	! ((unsigned int )((void const   *)("python" + 1)) - (unsigned int )((void const   *)"python") == 1U)
+mossbad_includes.flex	4405	string2lang	5206	__s2_len___22 >= 4U
+mossbad_includes.flex	4405	string2lang	5213	tmp___1414
+mossbad_includes.flex	4405	string2lang	5217	__s1_len___22 < __s2_len___22
+mossbad_includes.flex	4405	string2lang	5227	tmp___1411
+mossbad_includes.flex	4405	string2lang	5231	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4405	string2lang	5236	__s1_len___22 < 4U
+mossbad_includes.flex	4405	string2lang	5241	tmp___1402
+mossbad_includes.flex	4405	string2lang	5245	(unsigned int )((void const   *)("python" + 1)) - (unsigned int )((void const   *)"python") == 1U
+mossbad_includes.flex	4405	string2lang	5250	__s1_len___22 > 0U
+mossbad_includes.flex	4405	string2lang	5254	__result___1141 == 0
+mossbad_includes.flex	4405	string2lang	5259	__s1_len___22 > 1U
+mossbad_includes.flex	4405	string2lang	5263	__result___1141 == 0
+mossbad_includes.flex	4405	string2lang	5268	__s1_len___22 > 2U
+mossbad_includes.flex	4405	string2lang	5272	__result___1141 == 0
+mossbad_includes.flex	4405	string2lang	5282	__s1_len___22 > 0U
+mossbad_includes.flex	4405	string2lang	5286	__result___1142 == 0
+mossbad_includes.flex	4405	string2lang	5291	__s1_len___22 > 1U
+mossbad_includes.flex	4405	string2lang	5295	__result___1142 == 0
+mossbad_includes.flex	4405	string2lang	5300	__s1_len___22 > 2U
+mossbad_includes.flex	4405	string2lang	5304	__result___1142 == 0
+mossbad_includes.flex	4405	string2lang	5313	tmp___1410
+mossbad_includes.flex	4405	string2lang	5317	(unsigned int )((void const   *)("python" + 1)) - (unsigned int )((void const   *)"python") == 1U
+mossbad_includes.flex	4405	string2lang	5322	__s2_len___22 < 4U
+mossbad_includes.flex	4405	string2lang	5327	tmp___1409
+mossbad_includes.flex	4405	string2lang	5331	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4405	string2lang	5336	__s2_len___22 > 0U
+mossbad_includes.flex	4405	string2lang	5340	__result___1149 == 0
+mossbad_includes.flex	4405	string2lang	5345	__s2_len___22 > 1U
+mossbad_includes.flex	4405	string2lang	5349	__result___1149 == 0
+mossbad_includes.flex	4405	string2lang	5354	__s2_len___22 > 2U
+mossbad_includes.flex	4405	string2lang	5358	__result___1149 == 0
+mossbad_includes.flex	4405	string2lang	5368	__s2_len___22 > 0U
+mossbad_includes.flex	4405	string2lang	5372	__result___1150 == 0
+mossbad_includes.flex	4405	string2lang	5377	__s2_len___22 > 1U
+mossbad_includes.flex	4405	string2lang	5381	__result___1150 == 0
+mossbad_includes.flex	4405	string2lang	5386	__s2_len___22 > 2U
+mossbad_includes.flex	4405	string2lang	5390	__result___1150 == 0
+mossbad_includes.flex	4405	string2lang	5399	tmp___1386 == 0
+mossbad_includes.flex	4406	string2lang	5405	tmp___1471
+mossbad_includes.flex	4406	string2lang	5410	tmp___1472
+mossbad_includes.flex	4406	string2lang	5417	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4406	string2lang	5422	__s1_len___23 >= 4U
+mossbad_includes.flex	4406	string2lang	5426	! ((unsigned int )((void const   *)("vb" + 1)) - (unsigned int )((void const   *)"vb") == 1U)
+mossbad_includes.flex	4406	string2lang	5431	__s2_len___23 >= 4U
+mossbad_includes.flex	4406	string2lang	5438	tmp___1473
+mossbad_includes.flex	4406	string2lang	5442	__s1_len___23 < __s2_len___23
+mossbad_includes.flex	4406	string2lang	5452	tmp___1470
+mossbad_includes.flex	4406	string2lang	5456	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4406	string2lang	5461	__s1_len___23 < 4U
+mossbad_includes.flex	4406	string2lang	5466	tmp___1461
+mossbad_includes.flex	4406	string2lang	5470	(unsigned int )((void const   *)("vb" + 1)) - (unsigned int )((void const   *)"vb") == 1U
+mossbad_includes.flex	4406	string2lang	5475	__s1_len___23 > 0U
+mossbad_includes.flex	4406	string2lang	5479	__result___1189 == 0
+mossbad_includes.flex	4406	string2lang	5484	__s1_len___23 > 1U
+mossbad_includes.flex	4406	string2lang	5488	__result___1189 == 0
+mossbad_includes.flex	4406	string2lang	5493	__s1_len___23 > 2U
+mossbad_includes.flex	4406	string2lang	5497	__result___1189 == 0
+mossbad_includes.flex	4406	string2lang	5507	__s1_len___23 > 0U
+mossbad_includes.flex	4406	string2lang	5511	__result___1190 == 0
+mossbad_includes.flex	4406	string2lang	5516	__s1_len___23 > 1U
+mossbad_includes.flex	4406	string2lang	5520	__result___1190 == 0
+mossbad_includes.flex	4406	string2lang	5525	__s1_len___23 > 2U
+mossbad_includes.flex	4406	string2lang	5529	__result___1190 == 0
+mossbad_includes.flex	4406	string2lang	5538	tmp___1469
+mossbad_includes.flex	4406	string2lang	5542	(unsigned int )((void const   *)("vb" + 1)) - (unsigned int )((void const   *)"vb") == 1U
+mossbad_includes.flex	4406	string2lang	5547	__s2_len___23 < 4U
+mossbad_includes.flex	4406	string2lang	5552	tmp___1468
+mossbad_includes.flex	4406	string2lang	5556	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4406	string2lang	5561	__s2_len___23 > 0U
+mossbad_includes.flex	4406	string2lang	5565	__result___1197 == 0
+mossbad_includes.flex	4406	string2lang	5570	__s2_len___23 > 1U
+mossbad_includes.flex	4406	string2lang	5574	__result___1197 == 0
+mossbad_includes.flex	4406	string2lang	5579	__s2_len___23 > 2U
+mossbad_includes.flex	4406	string2lang	5583	__result___1197 == 0
+mossbad_includes.flex	4406	string2lang	5593	__s2_len___23 > 0U
+mossbad_includes.flex	4406	string2lang	5597	__result___1198 == 0
+mossbad_includes.flex	4406	string2lang	5602	__s2_len___23 > 1U
+mossbad_includes.flex	4406	string2lang	5606	__result___1198 == 0
+mossbad_includes.flex	4406	string2lang	5611	__s2_len___23 > 2U
+mossbad_includes.flex	4406	string2lang	5615	__result___1198 == 0
+mossbad_includes.flex	4406	string2lang	5624	tmp___1445 == 0
+mossbad_includes.flex	4407	string2lang	5630	tmp___1530
+mossbad_includes.flex	4407	string2lang	5635	tmp___1531
+mossbad_includes.flex	4407	string2lang	5642	! ((unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U)
+mossbad_includes.flex	4407	string2lang	5647	__s1_len___24 >= 4U
+mossbad_includes.flex	4407	string2lang	5651	! ((unsigned int )((void const   *)("vhdl" + 1)) - (unsigned int )((void const   *)"vhdl") == 1U)
+mossbad_includes.flex	4407	string2lang	5656	__s2_len___24 >= 4U
+mossbad_includes.flex	4407	string2lang	5663	tmp___1532
+mossbad_includes.flex	4407	string2lang	5667	__s1_len___24 < __s2_len___24
+mossbad_includes.flex	4407	string2lang	5677	tmp___1529
+mossbad_includes.flex	4407	string2lang	5681	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4407	string2lang	5686	__s1_len___24 < 4U
+mossbad_includes.flex	4407	string2lang	5691	tmp___1520
+mossbad_includes.flex	4407	string2lang	5695	(unsigned int )((void const   *)("vhdl" + 1)) - (unsigned int )((void const   *)"vhdl") == 1U
+mossbad_includes.flex	4407	string2lang	5700	__s1_len___24 > 0U
+mossbad_includes.flex	4407	string2lang	5704	__result___1237 == 0
+mossbad_includes.flex	4407	string2lang	5709	__s1_len___24 > 1U
+mossbad_includes.flex	4407	string2lang	5713	__result___1237 == 0
+mossbad_includes.flex	4407	string2lang	5718	__s1_len___24 > 2U
+mossbad_includes.flex	4407	string2lang	5722	__result___1237 == 0
+mossbad_includes.flex	4407	string2lang	5732	__s1_len___24 > 0U
+mossbad_includes.flex	4407	string2lang	5736	__result___1238 == 0
+mossbad_includes.flex	4407	string2lang	5741	__s1_len___24 > 1U
+mossbad_includes.flex	4407	string2lang	5745	__result___1238 == 0
+mossbad_includes.flex	4407	string2lang	5750	__s1_len___24 > 2U
+mossbad_includes.flex	4407	string2lang	5754	__result___1238 == 0
+mossbad_includes.flex	4407	string2lang	5763	tmp___1528
+mossbad_includes.flex	4407	string2lang	5767	(unsigned int )((void const   *)("vhdl" + 1)) - (unsigned int )((void const   *)"vhdl") == 1U
+mossbad_includes.flex	4407	string2lang	5772	__s2_len___24 < 4U
+mossbad_includes.flex	4407	string2lang	5777	tmp___1527
+mossbad_includes.flex	4407	string2lang	5781	(unsigned int )((void const   *)(s + 1)) - (unsigned int )((void const   *)s) == 1U
+mossbad_includes.flex	4407	string2lang	5786	__s2_len___24 > 0U
+mossbad_includes.flex	4407	string2lang	5790	__result___1245 == 0
+mossbad_includes.flex	4407	string2lang	5795	__s2_len___24 > 1U
+mossbad_includes.flex	4407	string2lang	5799	__result___1245 == 0
+mossbad_includes.flex	4407	string2lang	5804	__s2_len___24 > 2U
+mossbad_includes.flex	4407	string2lang	5808	__result___1245 == 0
+mossbad_includes.flex	4407	string2lang	5818	__s2_len___24 > 0U
+mossbad_includes.flex	4407	string2lang	5822	__result___1246 == 0
+mossbad_includes.flex	4407	string2lang	5827	__s2_len___24 > 1U
+mossbad_includes.flex	4407	string2lang	5831	__result___1246 == 0
+mossbad_includes.flex	4407	string2lang	5836	__s2_len___24 > 2U
+mossbad_includes.flex	4407	string2lang	5840	__result___1246 == 0
+mossbad_includes.flex	4407	string2lang	5849	tmp___1504 == 0
+mossbad_includes.flex	4466	passage_leq	5	p1->tile < p2->tile
+mossbad_includes.flex	4468	passage_leq	10	p1->tile > p2->tile
+mossbad_includes.flex	4470	passage_leq	15	files[p1->fileid].setid > files[p2->fileid].setid
+mossbad_includes.flex	4472	passage_leq	20	files[p1->fileid].setid < files[p2->fileid].setid
+mossbad_includes.flex	4474	passage_leq	25	p1->fileid < p2->fileid
+mossbad_includes.flex	4476	passage_leq	30	p1->fileid > p2->fileid
+mossbad_includes.flex	4510	write_database	5	(unsigned int )f == (unsigned int )((void *)0)
+mossbad_includes.flex	4515	write_database	14	i < fsize
+mossbad_includes.flex	4559	read_database	5	(unsigned int )f == (unsigned int )((void *)0)
+mossbad_includes.flex	4565	read_database	12	(*fstart) + numfiles > fmax - 1
+mossbad_includes.flex	4570	read_database	20	i < numfiles
+mossbad_includes.flex	4581	read_database	36	(*pstart) + numpassages > pmax - 1
+mossbad_includes.flex	4587	read_database	46	i < numpassages
+mossbad_includes.flex	4595	read_database	59	numdatabases > 1
+mossbad_includes.flex	4666	match_info_leq	7	p1->fileid < p2->fileid
+mossbad_includes.flex	4668	match_info_leq	12	p1->fileid > p2->fileid
+mossbad_includes.flex	4670	match_info_leq	17	p1->first_token > p2->first_token
+mossbad_includes.flex	4672	match_info_leq	22	p1->first_token < p2->first_token
+mossbad_includes.flex	4674	match_info_leq	27	p1->tile < p2->tile
+mossbad_includes.flex	4676	match_info_leq	32	p1->tile > p2->tile
+mossbad_includes.flex	4723	dump_match_list	3	(unsigned int )f != (unsigned int )((void *)0)
+mossbad_includes.flex	4736	dump_circular_buffer	7	i < num
+mossbad_includes.flex	4797	base_calc	6	i < substringlen
+mossbad_includes.flex	4813	first_hash	7	i < tile_size
+mossbad_includes.flex	4846	open_file	3	(unsigned int )fin == (unsigned int )((void *)0)
+mossbad_includes.flex	4863	read_token	3	tmp != 0
+mossbad_includes.flex	4880	initialize_token_sequence	4	i < config.token_window_size
+mossbad_includes.flex	4885	initialize_token_sequence	17	i < config.tile_size
+mossbad_includes.flex	4929	first_tile	2	i == 0
+mossbad_includes.flex	4929	first_tile	7	(passages + (i - 1))->tile != (passages + i)->tile
+mossbad_includes.flex	4933	first_tile_in_file	2	i == 0
+mossbad_includes.flex	4933	first_tile_in_file	7	(passages + (i - 1))->tile != (passages + i)->tile
+mossbad_includes.flex	4933	first_tile_in_file	12	(passages + (i - 1))->fileid != (passages + i)->fileid
+mossbad_includes.flex	4938	init_passage_array	3	(unsigned int )passages == (unsigned int )((void *)0)
+mossbad_includes.flex	4950	store_passage	7	pindex >= 2 << config.passage_power
+mossbad_includes.flex	4957	dump_passage_array	4	i < pindex
+mossbad_includes.flex	4969	dump_file_array	4	i < filesindex
+mossbad_includes.flex	4988	build_passage_array_index	7	i < (2 << config.passage_power) >> 3
+mossbad_includes.flex	4989	build_passage_array_index	13	(int )((passages + j)->tile >> (64 - (config.passage_power - 3))) < i
+mossbad_includes.flex	4989	build_passage_array_index	17	j < pindex
+mossbad_includes.flex	5011	num_copies_of_tile	6	i < pindex
+mossbad_includes.flex	5011	num_copies_of_tile	10	(passages + i)->tile == tile
+mossbad_includes.flex	5021	num_copies_of_tile_in_file	7	i < pindex
+mossbad_includes.flex	5021	num_copies_of_tile_in_file	11	(passages + i)->tile == tile
+mossbad_includes.flex	5021	num_copies_of_tile_in_file	15	(passages + i)->fileid == fileid
+mossbad_includes.flex	5031	next_file_for_tile	5	i + count < pindex
+mossbad_includes.flex	5031	next_file_for_tile	9	(passages + i)->tile == (passages + (i + count))->tile
+mossbad_includes.flex	5047	which_duplicate_in_file	6	j >= pindex
+mossbad_includes.flex	5050	which_duplicate_in_file	12	(passages + j)->tile == tile
+mossbad_includes.flex	5050	which_duplicate_in_file	16	(passages + j)->fileid == fileid
+mossbad_includes.flex	5050	which_duplicate_in_file	20	(passages + j)->first_token != p->first_token
+mossbad_includes.flex	5051	which_duplicate_in_file	27	j >= pindex
+mossbad_includes.flex	5055	which_duplicate_in_file	34	j < pindex
+mossbad_includes.flex	5055	which_duplicate_in_file	38	(passages + j)->tile == tile
+mossbad_includes.flex	5055	which_duplicate_in_file	42	(passages + j)->fileid == fileid
+mossbad_includes.flex	5064	nth_duplicate_in_file	2	i + n >= pindex
+mossbad_includes.flex	5068	nth_duplicate_in_file	7	(passages + i)->tile == (passages + (i + n))->tile
+mossbad_includes.flex	5068	nth_duplicate_in_file	11	(passages + i)->fileid == (passages + (i + n))->fileid
+mossbad_includes.flex	5081	dont_match_common_tiles	6	i < pindex
+mossbad_includes.flex	5083	dont_match_common_tiles	12	count > config.max_matches
+mossbad_includes.flex	5091	dump_passage_array_index	6	i < (2 << config.passage_power) >> 3
+mossbad_includes.flex	5103	lookup_tile	4	(passages + i)->tile < p->tile
+mossbad_includes.flex	5103	lookup_tile	8	i < pindex
+mossbad_includes.flex	5104	lookup_tile	16	i == pindex
+mossbad_includes.flex	5104	lookup_tile	21	(passages + i)->tile != p->tile
+mossbad_includes.flex	5118	lookup_tile_in_file	4	i < pindex
+mossbad_includes.flex	5118	lookup_tile_in_file	8	(passages + i)->tile == tile
+mossbad_includes.flex	5118	lookup_tile_in_file	12	(passages + i)->fileid != fileid
+mossbad_includes.flex	5119	lookup_tile_in_file	21	i < pindex
+mossbad_includes.flex	5119	lookup_tile_in_file	25	(passages + i)->tile == tile
+mossbad_includes.flex	5119	lookup_tile_in_file	29	(passages + i)->fileid == fileid
+mossbad_includes.flex	5149	process	5	(passages + match_index)->fileid == config.nomatch_index
+mossbad_includes.flex	5156	process	10	files[(passages + match_index)->fileid].setid == config.nomatch_set
+mossbad_includes.flex	5169	process	20	next != -1
+mossbad_includes.flex	5173	process	26	next_duplicate == -1
+mossbad_includes.flex	5180	process	31	files[(passages + (match_index + duplicate))->fileid].setid == files[(passages + next_duplicate)->fileid].setid
+mossbad_includes.flex	5205	process_cap	6	match_index == -1
+mossbad_includes.flex	5218	process_cap	13	q->tile == p->tile
+mossbad_includes.flex	5219	process_cap	21	tmp___0 == 0
+mossbad_includes.flex	5266	process_file_pass1	13	(unsigned int )fin___0 == (unsigned int )((void *)0)
+mossbad_includes.flex	5274	process_file_pass1	22	i < config.winnowing_window_size
+mossbad_includes.flex	5294	process_file_pass1	44	tmp == 0
+mossbad_includes.flex	5320	process_file_pass1	58	min_index == passage_index___0
+mossbad_includes.flex	5322	process_file_pass1	64	i___0 > passage_index___0
+mossbad_includes.flex	5323	process_file_pass1	69	(p + i___0 % config.winnowing_window_size)->tile <= (p + min_index)->tile
+mossbad_includes.flex	5329	process_file_pass1	77	(p + passage_index___0)->tile <= (p + min_index)->tile
+mossbad_includes.flex	5373	size_of_match	3	(unsigned int )r == (unsigned int )((void *)0)
+mossbad_includes.flex	5374	size_of_match	10	f
+mossbad_includes.flex	5375	size_of_match	15	f->this.last_token - f->this.first_token > f->other.last_token - f->other.first_token
+mossbad_includes.flex	5396	process_file_pass2	3	(unsigned int )f == (unsigned int )((void *)0)
+mossbad_includes.flex	5403	process_file_pass2	10	(unsigned int )f != (unsigned int )((void *)0)
+mossbad_includes.flex	5405	process_file_pass2	17	(unsigned int )r != (unsigned int )((void *)0)
+mossbad_includes.flex	5406	process_file_pass2	22	f->other.fileid == r->fileid
+mossbad_includes.flex	5414	process_file_pass2	34	(unsigned int )r == (unsigned int )((void *)0)
+mossbad_includes.flex	5425	process_file_pass2	46	(unsigned int )r != (unsigned int )((void *)0)
+mossbad_includes.flex	5433	process_file_pass2	55	(unsigned int )f___0 != (unsigned int )((void *)0)
+mossbad_includes.flex	5440	process_file_pass2	72	(unsigned int )f___0 != (unsigned int )((void *)0)
+mossbad_includes.flex	5450	process_file_pass2	87	i < len
+mossbad_includes.flex	5451	process_file_pass2	92	(unsigned int )(*(fi + i)) == (unsigned int )((void *)0)
+mossbad_includes.flex	5452	process_file_pass2	99	j < len
+mossbad_includes.flex	5453	process_file_pass2	104	(unsigned int )(*(fi + j)) == (unsigned int )((void *)0)
+mossbad_includes.flex	5454	process_file_pass2	109	((*(fi + i)))->this.fileid == ((*(fi + j)))->this.fileid
+mossbad_includes.flex	5454	process_file_pass2	113	((*(fi + i)))->this.last_token <= ((*(fi + j)))->this.last_token
+mossbad_includes.flex	5454	process_file_pass2	117	((*(fi + i)))->this.first_token <= ((*(fi + j)))->this.first_token
+mossbad_includes.flex	5454	process_file_pass2	121	((*(fi + j)))->this.first_token - ((*(fi + i)))->this.last_token <= config.gap
+mossbad_includes.flex	5454	process_file_pass2	125	((*(fi + i)))->other.fileid == ((*(fi + j)))->other.fileid
+mossbad_includes.flex	5454	process_file_pass2	129	((*(fi + i)))->other.last_token <= ((*(fi + j)))->other.last_token
+mossbad_includes.flex	5454	process_file_pass2	133	((*(fi + i)))->other.first_token <= ((*(fi + j)))->other.first_token
+mossbad_includes.flex	5454	process_file_pass2	137	((*(fi + j)))->other.first_token - ((*(fi + i)))->other.last_token <= config.gap
+mossbad_includes.flex	5454	process_file_pass2	141	((*(fi + j)))->this.last_token - ((*(fi + i)))->this.last_token == ((*(fi + j)))->other.last_token - ((*(fi + i)))->other.last_token
+mossbad_includes.flex	5471	process_file_pass2	159	((*(fi + i)))->this.fileid == ((*(fi + j)))->this.fileid
+mossbad_includes.flex	5471	process_file_pass2	163	((*(fi + i)))->this.last_token <= ((*(fi + j)))->this.last_token
+mossbad_includes.flex	5471	process_file_pass2	167	((*(fi + i)))->this.first_token <= ((*(fi + j)))->this.first_token
+mossbad_includes.flex	5471	process_file_pass2	171	((*(fi + j)))->this.first_token - ((*(fi + i)))->this.last_token <= config.gap
+mossbad_includes.flex	5479	process_file_pass2	187	i < len
+mossbad_includes.flex	5480	process_file_pass2	192	(unsigned int )(*(fi + i)) == (unsigned int )((void *)0)
+mossbad_includes.flex	5498	process_file_pass2	208	max != -1
+mossbad_includes.flex	5501	process_file_pass2	218	i < len
+mossbad_includes.flex	5502	process_file_pass2	223	(unsigned int )(*(fi + i)) == (unsigned int )((void *)0)
+mossbad_includes.flex	5503	process_file_pass2	228	max == -1
+mossbad_includes.flex	5503	process_file_pass2	233	((*(fi + i)))->this.last_token - ((*(fi + i)))->this.first_token > ((*(fi + i)))->other.last_token - ((*(fi + i)))->other.first_token
+mossbad_includes.flex	5503	process_file_pass2	239	((*(fi + max)))->this.last_token - ((*(fi + max)))->this.first_token > ((*(fi + max)))->other.last_token - ((*(fi + max)))->other.first_token
+mossbad_includes.flex	5503	process_file_pass2	245	tmp___1 > tmp___2
+mossbad_includes.flex	5506	process_file_pass2	252	max != -1
+mossbad_includes.flex	5509	process_file_pass2	261	i < len
+mossbad_includes.flex	5510	process_file_pass2	266	(unsigned int )(*(fi + i)) != (unsigned int )((void *)0)
+mossbad_includes.flex	5511	process_file_pass2	270	((*(fi + i)))->this.fileid == ((*(final + j)))->this.fileid
+mossbad_includes.flex	5511	process_file_pass2	274	((*(fi + i)))->this.first_token < ((*(final + j)))->this.last_token
+mossbad_includes.flex	5511	process_file_pass2	278	((*(final + j)))->this.first_token < ((*(fi + i)))->this.last_token
+mossbad_includes.flex	5523	process_file_pass2	282	((*(fi + i)))->this.fileid == ((*(final + j)))->this.fileid
+mossbad_includes.flex	5523	process_file_pass2	286	((*(fi + i)))->this.first_token >= ((*(final + j)))->this.first_token
+mossbad_includes.flex	5523	process_file_pass2	290	((*(fi + i)))->this.last_token <= ((*(final + j)))->this.last_token
+mossbad_includes.flex	5529	process_file_pass2	297	((*(fi + i)))->this.first_token < ((*(final + j)))->this.first_token
+mossbad_includes.flex	5537	process_file_pass2	308	((*(fi + i)))->this.last_token > ((*(final + j)))->this.last_token
+mossbad_includes.flex	5545	process_file_pass2	319	((*(fi + i)))->this.last_token - ((*(fi + i)))->this.first_token <= threshold
+mossbad_includes.flex	5545	process_file_pass2	324	((*(fi + i)))->other.last_line < ((*(fi + i)))->other.first_line
+mossbad_includes.flex	5545	process_file_pass2	329	((*(fi + i)))->this.last_line < ((*(fi + i)))->this.first_line
+mossbad_includes.flex	5552	process_file_pass2	334	! ((unsigned int )(*(fi + i)) == (unsigned int )((void *)0))
+mossbad_includes.flex	5552	process_file_pass2	338	((*(fi + i)))->other.fileid == ((*(final + j)))->other.fileid
+mossbad_includes.flex	5552	process_file_pass2	342	((*(fi + i)))->other.first_token < ((*(final + j)))->other.last_token
+mossbad_includes.flex	5552	process_file_pass2	346	((*(final + j)))->other.first_token < ((*(fi + i)))->other.last_token
+mossbad_includes.flex	5556	process_file_pass2	350	((*(fi + i)))->other.fileid == ((*(final + j)))->other.fileid
+mossbad_includes.flex	5556	process_file_pass2	354	((*(fi + i)))->other.first_token >= ((*(final + j)))->other.first_token
+mossbad_includes.flex	5556	process_file_pass2	358	((*(fi + i)))->other.last_token <= ((*(final + j)))->other.last_token
+mossbad_includes.flex	5562	process_file_pass2	365	((*(fi + i)))->other.first_token < ((*(final + j)))->other.first_token
+mossbad_includes.flex	5570	process_file_pass2	376	((*(fi + i)))->other.last_token > ((*(final + j)))->other.last_token
+mossbad_includes.flex	5578	process_file_pass2	387	((*(fi + i)))->other.last_token - ((*(fi + i)))->other.first_token <= threshold
+mossbad_includes.flex	5578	process_file_pass2	392	((*(fi + i)))->other.last_line < ((*(fi + i)))->other.first_line
+mossbad_includes.flex	5578	process_file_pass2	397	((*(fi + i)))->this.last_line < ((*(fi + i)))->this.first_line
+mossbad_includes.flex	5596	process_file_pass2	409	j >= 0
+mossbad_includes.flex	5607	process_file_pass2	422	(unsigned int )result != (unsigned int )((void *)0)
+mossbad_includes.flex	5617	process_file_pass2	434	(unsigned int )m != (unsigned int )((void *)0)
+mossbad_includes.flex	5622	process_file_pass2	444	numlines_this > numlines_other
+mossbad_includes.flex	5628	process_file_pass2	455	(unsigned int )m != (unsigned int )((void *)0)
+mossbad_includes.flex	5629	process_file_pass2	460	m->this.last_token - m->this.first_token > m->other.last_token - m->other.first_token
+mossbad_includes.flex	5722	print_statistics	4	i < 50000
+mossbad_includes.flex	5731	print_statistics	22	i < pindex
+mossbad_includes.flex	5736	print_statistics	33	i < pindex
+mossbad_includes.flex	5736	print_statistics	37	(passages + i)->tile == (unsigned long long )tile
+mossbad_includes.flex	5737	print_statistics	43	i > 0
+mossbad_includes.flex	5737	print_statistics	47	(passages + i)->tile == (passages + (i - 1))->tile
+mossbad_includes.flex	5737	print_statistics	51	(passages + i)->fileid == (passages + (i - 1))->fileid
+mossbad_includes.flex	5741	print_statistics	60	j >= 50000
+mossbad_includes.flex	5742	print_statistics	67	j > min_times
+mossbad_includes.flex	5743	print_statistics	71	same_file
+mossbad_includes.flex	5747	print_statistics	84	i < 50000
+mossbad_includes.flex	5748	print_statistics	89	distribution[i] != 0
+mossbad_includes.flex	5759	handle_options	4	i < argc
+mossbad_includes.flex	5761	handle_options	10	tmp___55
+mossbad_includes.flex	5761	handle_options	15	tmp___56
+mossbad_includes.flex	5761	handle_options	22	! ((unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U)
+mossbad_includes.flex	5761	handle_options	27	__s1_len >= 4U
+mossbad_includes.flex	5761	handle_options	31	! ((unsigned int )((void const   *)("-a" + 1)) - (unsigned int )((void const   *)"-a") == 1U)
+mossbad_includes.flex	5761	handle_options	36	__s2_len >= 4U
+mossbad_includes.flex	5761	handle_options	43	tmp___57
+mossbad_includes.flex	5761	handle_options	47	__s1_len < __s2_len
+mossbad_includes.flex	5761	handle_options	57	tmp___54
+mossbad_includes.flex	5761	handle_options	61	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5761	handle_options	66	__s1_len < 4U
+mossbad_includes.flex	5761	handle_options	71	tmp___45
+mossbad_includes.flex	5761	handle_options	75	(unsigned int )((void const   *)("-a" + 1)) - (unsigned int )((void const   *)"-a") == 1U
+mossbad_includes.flex	5761	handle_options	80	__s1_len > 0U
+mossbad_includes.flex	5761	handle_options	84	__result___37 == 0
+mossbad_includes.flex	5761	handle_options	89	__s1_len > 1U
+mossbad_includes.flex	5761	handle_options	93	__result___37 == 0
+mossbad_includes.flex	5761	handle_options	98	__s1_len > 2U
+mossbad_includes.flex	5761	handle_options	102	__result___37 == 0
+mossbad_includes.flex	5761	handle_options	112	__s1_len > 0U
+mossbad_includes.flex	5761	handle_options	116	__result___38 == 0
+mossbad_includes.flex	5761	handle_options	121	__s1_len > 1U
+mossbad_includes.flex	5761	handle_options	125	__result___38 == 0
+mossbad_includes.flex	5761	handle_options	130	__s1_len > 2U
+mossbad_includes.flex	5761	handle_options	134	__result___38 == 0
+mossbad_includes.flex	5761	handle_options	143	tmp___53
+mossbad_includes.flex	5761	handle_options	147	(unsigned int )((void const   *)("-a" + 1)) - (unsigned int )((void const   *)"-a") == 1U
+mossbad_includes.flex	5761	handle_options	152	__s2_len < 4U
+mossbad_includes.flex	5761	handle_options	157	tmp___52
+mossbad_includes.flex	5761	handle_options	161	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5761	handle_options	166	__s2_len > 0U
+mossbad_includes.flex	5761	handle_options	170	__result___45 == 0
+mossbad_includes.flex	5761	handle_options	175	__s2_len > 1U
+mossbad_includes.flex	5761	handle_options	179	__result___45 == 0
+mossbad_includes.flex	5761	handle_options	184	__s2_len > 2U
+mossbad_includes.flex	5761	handle_options	188	__result___45 == 0
+mossbad_includes.flex	5761	handle_options	198	__s2_len > 0U
+mossbad_includes.flex	5761	handle_options	202	__result___46 == 0
+mossbad_includes.flex	5761	handle_options	207	__s2_len > 1U
+mossbad_includes.flex	5761	handle_options	211	__result___46 == 0
+mossbad_includes.flex	5761	handle_options	216	__s2_len > 2U
+mossbad_includes.flex	5761	handle_options	220	__result___46 == 0
+mossbad_includes.flex	5761	handle_options	229	tmp___29 == 0
+mossbad_includes.flex	5764	handle_options	238	tmp___114
+mossbad_includes.flex	5764	handle_options	243	tmp___115
+mossbad_includes.flex	5764	handle_options	250	! ((unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U)
+mossbad_includes.flex	5764	handle_options	255	__s1_len___0 >= 4U
+mossbad_includes.flex	5764	handle_options	259	! ((unsigned int )((void const   *)("-c" + 1)) - (unsigned int )((void const   *)"-c") == 1U)
+mossbad_includes.flex	5764	handle_options	264	__s2_len___0 >= 4U
+mossbad_includes.flex	5764	handle_options	271	tmp___116
+mossbad_includes.flex	5764	handle_options	275	__s1_len___0 < __s2_len___0
+mossbad_includes.flex	5764	handle_options	285	tmp___113
+mossbad_includes.flex	5764	handle_options	289	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5764	handle_options	294	__s1_len___0 < 4U
+mossbad_includes.flex	5764	handle_options	299	tmp___104
+mossbad_includes.flex	5764	handle_options	303	(unsigned int )((void const   *)("-c" + 1)) - (unsigned int )((void const   *)"-c") == 1U
+mossbad_includes.flex	5764	handle_options	308	__s1_len___0 > 0U
+mossbad_includes.flex	5764	handle_options	312	__result___85 == 0
+mossbad_includes.flex	5764	handle_options	317	__s1_len___0 > 1U
+mossbad_includes.flex	5764	handle_options	321	__result___85 == 0
+mossbad_includes.flex	5764	handle_options	326	__s1_len___0 > 2U
+mossbad_includes.flex	5764	handle_options	330	__result___85 == 0
+mossbad_includes.flex	5764	handle_options	340	__s1_len___0 > 0U
+mossbad_includes.flex	5764	handle_options	344	__result___86 == 0
+mossbad_includes.flex	5764	handle_options	349	__s1_len___0 > 1U
+mossbad_includes.flex	5764	handle_options	353	__result___86 == 0
+mossbad_includes.flex	5764	handle_options	358	__s1_len___0 > 2U
+mossbad_includes.flex	5764	handle_options	362	__result___86 == 0
+mossbad_includes.flex	5764	handle_options	371	tmp___112
+mossbad_includes.flex	5764	handle_options	375	(unsigned int )((void const   *)("-c" + 1)) - (unsigned int )((void const   *)"-c") == 1U
+mossbad_includes.flex	5764	handle_options	380	__s2_len___0 < 4U
+mossbad_includes.flex	5764	handle_options	385	tmp___111
+mossbad_includes.flex	5764	handle_options	389	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5764	handle_options	394	__s2_len___0 > 0U
+mossbad_includes.flex	5764	handle_options	398	__result___93 == 0
+mossbad_includes.flex	5764	handle_options	403	__s2_len___0 > 1U
+mossbad_includes.flex	5764	handle_options	407	__result___93 == 0
+mossbad_includes.flex	5764	handle_options	412	__s2_len___0 > 2U
+mossbad_includes.flex	5764	handle_options	416	__result___93 == 0
+mossbad_includes.flex	5764	handle_options	426	__s2_len___0 > 0U
+mossbad_includes.flex	5764	handle_options	430	__result___94 == 0
+mossbad_includes.flex	5764	handle_options	435	__s2_len___0 > 1U
+mossbad_includes.flex	5764	handle_options	439	__result___94 == 0
+mossbad_includes.flex	5764	handle_options	444	__s2_len___0 > 2U
+mossbad_includes.flex	5764	handle_options	448	__result___94 == 0
+mossbad_includes.flex	5764	handle_options	457	tmp___88 == 0
+mossbad_includes.flex	5767	handle_options	464	tmp___174
+mossbad_includes.flex	5767	handle_options	469	tmp___175
+mossbad_includes.flex	5767	handle_options	476	! ((unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U)
+mossbad_includes.flex	5767	handle_options	481	__s1_len___1 >= 4U
+mossbad_includes.flex	5767	handle_options	485	! ((unsigned int )((void const   *)("-v" + 1)) - (unsigned int )((void const   *)"-v") == 1U)
+mossbad_includes.flex	5767	handle_options	490	__s2_len___1 >= 4U
+mossbad_includes.flex	5767	handle_options	497	tmp___176
+mossbad_includes.flex	5767	handle_options	501	__s1_len___1 < __s2_len___1
+mossbad_includes.flex	5767	handle_options	511	tmp___173
+mossbad_includes.flex	5767	handle_options	515	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5767	handle_options	520	__s1_len___1 < 4U
+mossbad_includes.flex	5767	handle_options	525	tmp___164
+mossbad_includes.flex	5767	handle_options	529	(unsigned int )((void const   *)("-v" + 1)) - (unsigned int )((void const   *)"-v") == 1U
+mossbad_includes.flex	5767	handle_options	534	__s1_len___1 > 0U
+mossbad_includes.flex	5767	handle_options	538	__result___133 == 0
+mossbad_includes.flex	5767	handle_options	543	__s1_len___1 > 1U
+mossbad_includes.flex	5767	handle_options	547	__result___133 == 0
+mossbad_includes.flex	5767	handle_options	552	__s1_len___1 > 2U
+mossbad_includes.flex	5767	handle_options	556	__result___133 == 0
+mossbad_includes.flex	5767	handle_options	566	__s1_len___1 > 0U
+mossbad_includes.flex	5767	handle_options	570	__result___134 == 0
+mossbad_includes.flex	5767	handle_options	575	__s1_len___1 > 1U
+mossbad_includes.flex	5767	handle_options	579	__result___134 == 0
+mossbad_includes.flex	5767	handle_options	584	__s1_len___1 > 2U
+mossbad_includes.flex	5767	handle_options	588	__result___134 == 0
+mossbad_includes.flex	5767	handle_options	597	tmp___172
+mossbad_includes.flex	5767	handle_options	601	(unsigned int )((void const   *)("-v" + 1)) - (unsigned int )((void const   *)"-v") == 1U
+mossbad_includes.flex	5767	handle_options	606	__s2_len___1 < 4U
+mossbad_includes.flex	5767	handle_options	611	tmp___171
+mossbad_includes.flex	5767	handle_options	615	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5767	handle_options	620	__s2_len___1 > 0U
+mossbad_includes.flex	5767	handle_options	624	__result___141 == 0
+mossbad_includes.flex	5767	handle_options	629	__s2_len___1 > 1U
+mossbad_includes.flex	5767	handle_options	633	__result___141 == 0
+mossbad_includes.flex	5767	handle_options	638	__s2_len___1 > 2U
+mossbad_includes.flex	5767	handle_options	642	__result___141 == 0
+mossbad_includes.flex	5767	handle_options	652	__s2_len___1 > 0U
+mossbad_includes.flex	5767	handle_options	656	__result___142 == 0
+mossbad_includes.flex	5767	handle_options	661	__s2_len___1 > 1U
+mossbad_includes.flex	5767	handle_options	665	__result___142 == 0
+mossbad_includes.flex	5767	handle_options	670	__s2_len___1 > 2U
+mossbad_includes.flex	5767	handle_options	674	__result___142 == 0
+mossbad_includes.flex	5767	handle_options	683	tmp___148 == 0
+mossbad_includes.flex	5771	handle_options	694	tmp___233
+mossbad_includes.flex	5771	handle_options	699	tmp___234
+mossbad_includes.flex	5771	handle_options	706	! ((unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U)
+mossbad_includes.flex	5771	handle_options	711	__s1_len___2 >= 4U
+mossbad_includes.flex	5771	handle_options	715	! ((unsigned int )((void const   *)("-e" + 1)) - (unsigned int )((void const   *)"-e") == 1U)
+mossbad_includes.flex	5771	handle_options	720	__s2_len___2 >= 4U
+mossbad_includes.flex	5771	handle_options	727	tmp___235
+mossbad_includes.flex	5771	handle_options	731	__s1_len___2 < __s2_len___2
+mossbad_includes.flex	5771	handle_options	741	tmp___232
+mossbad_includes.flex	5771	handle_options	745	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5771	handle_options	750	__s1_len___2 < 4U
+mossbad_includes.flex	5771	handle_options	755	tmp___223
+mossbad_includes.flex	5771	handle_options	759	(unsigned int )((void const   *)("-e" + 1)) - (unsigned int )((void const   *)"-e") == 1U
+mossbad_includes.flex	5771	handle_options	764	__s1_len___2 > 0U
+mossbad_includes.flex	5771	handle_options	768	__result___181 == 0
+mossbad_includes.flex	5771	handle_options	773	__s1_len___2 > 1U
+mossbad_includes.flex	5771	handle_options	777	__result___181 == 0
+mossbad_includes.flex	5771	handle_options	782	__s1_len___2 > 2U
+mossbad_includes.flex	5771	handle_options	786	__result___181 == 0
+mossbad_includes.flex	5771	handle_options	796	__s1_len___2 > 0U
+mossbad_includes.flex	5771	handle_options	800	__result___182 == 0
+mossbad_includes.flex	5771	handle_options	805	__s1_len___2 > 1U
+mossbad_includes.flex	5771	handle_options	809	__result___182 == 0
+mossbad_includes.flex	5771	handle_options	814	__s1_len___2 > 2U
+mossbad_includes.flex	5771	handle_options	818	__result___182 == 0
+mossbad_includes.flex	5771	handle_options	827	tmp___231
+mossbad_includes.flex	5771	handle_options	831	(unsigned int )((void const   *)("-e" + 1)) - (unsigned int )((void const   *)"-e") == 1U
+mossbad_includes.flex	5771	handle_options	836	__s2_len___2 < 4U
+mossbad_includes.flex	5771	handle_options	841	tmp___230
+mossbad_includes.flex	5771	handle_options	845	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5771	handle_options	850	__s2_len___2 > 0U
+mossbad_includes.flex	5771	handle_options	854	__result___189 == 0
+mossbad_includes.flex	5771	handle_options	859	__s2_len___2 > 1U
+mossbad_includes.flex	5771	handle_options	863	__result___189 == 0
+mossbad_includes.flex	5771	handle_options	868	__s2_len___2 > 2U
+mossbad_includes.flex	5771	handle_options	872	__result___189 == 0
+mossbad_includes.flex	5771	handle_options	882	__s2_len___2 > 0U
+mossbad_includes.flex	5771	handle_options	886	__result___190 == 0
+mossbad_includes.flex	5771	handle_options	891	__s2_len___2 > 1U
+mossbad_includes.flex	5771	handle_options	895	__result___190 == 0
+mossbad_includes.flex	5771	handle_options	900	__s2_len___2 > 2U
+mossbad_includes.flex	5771	handle_options	904	__result___190 == 0
+mossbad_includes.flex	5771	handle_options	913	tmp___207 == 0
+mossbad_includes.flex	5773	handle_options	920	(unsigned int )config.errfile == (unsigned int )((void *)0)
+mossbad_includes.flex	5777	handle_options	929	tmp___292
+mossbad_includes.flex	5777	handle_options	934	tmp___293
+mossbad_includes.flex	5777	handle_options	941	! ((unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U)
+mossbad_includes.flex	5777	handle_options	946	__s1_len___3 >= 4U
+mossbad_includes.flex	5777	handle_options	950	! ((unsigned int )((void const   *)("-g" + 1)) - (unsigned int )((void const   *)"-g") == 1U)
+mossbad_includes.flex	5777	handle_options	955	__s2_len___3 >= 4U
+mossbad_includes.flex	5777	handle_options	962	tmp___294
+mossbad_includes.flex	5777	handle_options	966	__s1_len___3 < __s2_len___3
+mossbad_includes.flex	5777	handle_options	976	tmp___291
+mossbad_includes.flex	5777	handle_options	980	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5777	handle_options	985	__s1_len___3 < 4U
+mossbad_includes.flex	5777	handle_options	990	tmp___282
+mossbad_includes.flex	5777	handle_options	994	(unsigned int )((void const   *)("-g" + 1)) - (unsigned int )((void const   *)"-g") == 1U
+mossbad_includes.flex	5777	handle_options	999	__s1_len___3 > 0U
+mossbad_includes.flex	5777	handle_options	1003	__result___229 == 0
+mossbad_includes.flex	5777	handle_options	1008	__s1_len___3 > 1U
+mossbad_includes.flex	5777	handle_options	1012	__result___229 == 0
+mossbad_includes.flex	5777	handle_options	1017	__s1_len___3 > 2U
+mossbad_includes.flex	5777	handle_options	1021	__result___229 == 0
+mossbad_includes.flex	5777	handle_options	1031	__s1_len___3 > 0U
+mossbad_includes.flex	5777	handle_options	1035	__result___230 == 0
+mossbad_includes.flex	5777	handle_options	1040	__s1_len___3 > 1U
+mossbad_includes.flex	5777	handle_options	1044	__result___230 == 0
+mossbad_includes.flex	5777	handle_options	1049	__s1_len___3 > 2U
+mossbad_includes.flex	5777	handle_options	1053	__result___230 == 0
+mossbad_includes.flex	5777	handle_options	1062	tmp___290
+mossbad_includes.flex	5777	handle_options	1066	(unsigned int )((void const   *)("-g" + 1)) - (unsigned int )((void const   *)"-g") == 1U
+mossbad_includes.flex	5777	handle_options	1071	__s2_len___3 < 4U
+mossbad_includes.flex	5777	handle_options	1076	tmp___289
+mossbad_includes.flex	5777	handle_options	1080	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5777	handle_options	1085	__s2_len___3 > 0U
+mossbad_includes.flex	5777	handle_options	1089	__result___237 == 0
+mossbad_includes.flex	5777	handle_options	1094	__s2_len___3 > 1U
+mossbad_includes.flex	5777	handle_options	1098	__result___237 == 0
+mossbad_includes.flex	5777	handle_options	1103	__s2_len___3 > 2U
+mossbad_includes.flex	5777	handle_options	1107	__result___237 == 0
+mossbad_includes.flex	5777	handle_options	1117	__s2_len___3 > 0U
+mossbad_includes.flex	5777	handle_options	1121	__result___238 == 0
+mossbad_includes.flex	5777	handle_options	1126	__s2_len___3 > 1U
+mossbad_includes.flex	5777	handle_options	1130	__result___238 == 0
+mossbad_includes.flex	5777	handle_options	1135	__s2_len___3 > 2U
+mossbad_includes.flex	5777	handle_options	1139	__result___238 == 0
+mossbad_includes.flex	5777	handle_options	1148	tmp___266 == 0
+mossbad_includes.flex	5779	handle_options	1155	config.gap < 1
+mossbad_includes.flex	5785	handle_options	1164	tmp___351
+mossbad_includes.flex	5785	handle_options	1169	tmp___352
+mossbad_includes.flex	5785	handle_options	1176	! ((unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U)
+mossbad_includes.flex	5785	handle_options	1181	__s1_len___4 >= 4U
+mossbad_includes.flex	5785	handle_options	1185	! ((unsigned int )((void const   *)("-m" + 1)) - (unsigned int )((void const   *)"-m") == 1U)
+mossbad_includes.flex	5785	handle_options	1190	__s2_len___4 >= 4U
+mossbad_includes.flex	5785	handle_options	1197	tmp___353
+mossbad_includes.flex	5785	handle_options	1201	__s1_len___4 < __s2_len___4
+mossbad_includes.flex	5785	handle_options	1211	tmp___350
+mossbad_includes.flex	5785	handle_options	1215	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5785	handle_options	1220	__s1_len___4 < 4U
+mossbad_includes.flex	5785	handle_options	1225	tmp___341
+mossbad_includes.flex	5785	handle_options	1229	(unsigned int )((void const   *)("-m" + 1)) - (unsigned int )((void const   *)"-m") == 1U
+mossbad_includes.flex	5785	handle_options	1234	__s1_len___4 > 0U
+mossbad_includes.flex	5785	handle_options	1238	__result___277 == 0
+mossbad_includes.flex	5785	handle_options	1243	__s1_len___4 > 1U
+mossbad_includes.flex	5785	handle_options	1247	__result___277 == 0
+mossbad_includes.flex	5785	handle_options	1252	__s1_len___4 > 2U
+mossbad_includes.flex	5785	handle_options	1256	__result___277 == 0
+mossbad_includes.flex	5785	handle_options	1266	__s1_len___4 > 0U
+mossbad_includes.flex	5785	handle_options	1270	__result___278 == 0
+mossbad_includes.flex	5785	handle_options	1275	__s1_len___4 > 1U
+mossbad_includes.flex	5785	handle_options	1279	__result___278 == 0
+mossbad_includes.flex	5785	handle_options	1284	__s1_len___4 > 2U
+mossbad_includes.flex	5785	handle_options	1288	__result___278 == 0
+mossbad_includes.flex	5785	handle_options	1297	tmp___349
+mossbad_includes.flex	5785	handle_options	1301	(unsigned int )((void const   *)("-m" + 1)) - (unsigned int )((void const   *)"-m") == 1U
+mossbad_includes.flex	5785	handle_options	1306	__s2_len___4 < 4U
+mossbad_includes.flex	5785	handle_options	1311	tmp___348
+mossbad_includes.flex	5785	handle_options	1315	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5785	handle_options	1320	__s2_len___4 > 0U
+mossbad_includes.flex	5785	handle_options	1324	__result___285 == 0
+mossbad_includes.flex	5785	handle_options	1329	__s2_len___4 > 1U
+mossbad_includes.flex	5785	handle_options	1333	__result___285 == 0
+mossbad_includes.flex	5785	handle_options	1338	__s2_len___4 > 2U
+mossbad_includes.flex	5785	handle_options	1342	__result___285 == 0
+mossbad_includes.flex	5785	handle_options	1352	__s2_len___4 > 0U
+mossbad_includes.flex	5785	handle_options	1356	__result___286 == 0
+mossbad_includes.flex	5785	handle_options	1361	__s2_len___4 > 1U
+mossbad_includes.flex	5785	handle_options	1365	__result___286 == 0
+mossbad_includes.flex	5785	handle_options	1370	__s2_len___4 > 2U
+mossbad_includes.flex	5785	handle_options	1374	__result___286 == 0
+mossbad_includes.flex	5785	handle_options	1383	tmp___325 == 0
+mossbad_includes.flex	5787	handle_options	1390	threshold < 0
+mossbad_includes.flex	5793	handle_options	1399	tmp___410
+mossbad_includes.flex	5793	handle_options	1404	tmp___411
+mossbad_includes.flex	5793	handle_options	1411	! ((unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U)
+mossbad_includes.flex	5793	handle_options	1416	__s1_len___5 >= 4U
+mossbad_includes.flex	5793	handle_options	1420	! ((unsigned int )((void const   *)("-n" + 1)) - (unsigned int )((void const   *)"-n") == 1U)
+mossbad_includes.flex	5793	handle_options	1425	__s2_len___5 >= 4U
+mossbad_includes.flex	5793	handle_options	1432	tmp___412
+mossbad_includes.flex	5793	handle_options	1436	__s1_len___5 < __s2_len___5
+mossbad_includes.flex	5793	handle_options	1446	tmp___409
+mossbad_includes.flex	5793	handle_options	1450	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5793	handle_options	1455	__s1_len___5 < 4U
+mossbad_includes.flex	5793	handle_options	1460	tmp___400
+mossbad_includes.flex	5793	handle_options	1464	(unsigned int )((void const   *)("-n" + 1)) - (unsigned int )((void const   *)"-n") == 1U
+mossbad_includes.flex	5793	handle_options	1469	__s1_len___5 > 0U
+mossbad_includes.flex	5793	handle_options	1473	__result___325 == 0
+mossbad_includes.flex	5793	handle_options	1478	__s1_len___5 > 1U
+mossbad_includes.flex	5793	handle_options	1482	__result___325 == 0
+mossbad_includes.flex	5793	handle_options	1487	__s1_len___5 > 2U
+mossbad_includes.flex	5793	handle_options	1491	__result___325 == 0
+mossbad_includes.flex	5793	handle_options	1501	__s1_len___5 > 0U
+mossbad_includes.flex	5793	handle_options	1505	__result___326 == 0
+mossbad_includes.flex	5793	handle_options	1510	__s1_len___5 > 1U
+mossbad_includes.flex	5793	handle_options	1514	__result___326 == 0
+mossbad_includes.flex	5793	handle_options	1519	__s1_len___5 > 2U
+mossbad_includes.flex	5793	handle_options	1523	__result___326 == 0
+mossbad_includes.flex	5793	handle_options	1532	tmp___408
+mossbad_includes.flex	5793	handle_options	1536	(unsigned int )((void const   *)("-n" + 1)) - (unsigned int )((void const   *)"-n") == 1U
+mossbad_includes.flex	5793	handle_options	1541	__s2_len___5 < 4U
+mossbad_includes.flex	5793	handle_options	1546	tmp___407
+mossbad_includes.flex	5793	handle_options	1550	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5793	handle_options	1555	__s2_len___5 > 0U
+mossbad_includes.flex	5793	handle_options	1559	__result___333 == 0
+mossbad_includes.flex	5793	handle_options	1564	__s2_len___5 > 1U
+mossbad_includes.flex	5793	handle_options	1568	__result___333 == 0
+mossbad_includes.flex	5793	handle_options	1573	__s2_len___5 > 2U
+mossbad_includes.flex	5793	handle_options	1577	__result___333 == 0
+mossbad_includes.flex	5793	handle_options	1587	__s2_len___5 > 0U
+mossbad_includes.flex	5793	handle_options	1591	__result___334 == 0
+mossbad_includes.flex	5793	handle_options	1596	__s2_len___5 > 1U
+mossbad_includes.flex	5793	handle_options	1600	__result___334 == 0
+mossbad_includes.flex	5793	handle_options	1605	__s2_len___5 > 2U
+mossbad_includes.flex	5793	handle_options	1609	__result___334 == 0
+mossbad_includes.flex	5793	handle_options	1618	tmp___384 == 0
+mossbad_includes.flex	5798	handle_options	1628	tmp___469
+mossbad_includes.flex	5798	handle_options	1633	tmp___470
+mossbad_includes.flex	5798	handle_options	1640	! ((unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U)
+mossbad_includes.flex	5798	handle_options	1645	__s1_len___6 >= 4U
+mossbad_includes.flex	5798	handle_options	1649	! ((unsigned int )((void const   *)("-o" + 1)) - (unsigned int )((void const   *)"-o") == 1U)
+mossbad_includes.flex	5798	handle_options	1654	__s2_len___6 >= 4U
+mossbad_includes.flex	5798	handle_options	1661	tmp___471
+mossbad_includes.flex	5798	handle_options	1665	__s1_len___6 < __s2_len___6
+mossbad_includes.flex	5798	handle_options	1675	tmp___468
+mossbad_includes.flex	5798	handle_options	1679	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5798	handle_options	1684	__s1_len___6 < 4U
+mossbad_includes.flex	5798	handle_options	1689	tmp___459
+mossbad_includes.flex	5798	handle_options	1693	(unsigned int )((void const   *)("-o" + 1)) - (unsigned int )((void const   *)"-o") == 1U
+mossbad_includes.flex	5798	handle_options	1698	__s1_len___6 > 0U
+mossbad_includes.flex	5798	handle_options	1702	__result___373 == 0
+mossbad_includes.flex	5798	handle_options	1707	__s1_len___6 > 1U
+mossbad_includes.flex	5798	handle_options	1711	__result___373 == 0
+mossbad_includes.flex	5798	handle_options	1716	__s1_len___6 > 2U
+mossbad_includes.flex	5798	handle_options	1720	__result___373 == 0
+mossbad_includes.flex	5798	handle_options	1730	__s1_len___6 > 0U
+mossbad_includes.flex	5798	handle_options	1734	__result___374 == 0
+mossbad_includes.flex	5798	handle_options	1739	__s1_len___6 > 1U
+mossbad_includes.flex	5798	handle_options	1743	__result___374 == 0
+mossbad_includes.flex	5798	handle_options	1748	__s1_len___6 > 2U
+mossbad_includes.flex	5798	handle_options	1752	__result___374 == 0
+mossbad_includes.flex	5798	handle_options	1761	tmp___467
+mossbad_includes.flex	5798	handle_options	1765	(unsigned int )((void const   *)("-o" + 1)) - (unsigned int )((void const   *)"-o") == 1U
+mossbad_includes.flex	5798	handle_options	1770	__s2_len___6 < 4U
+mossbad_includes.flex	5798	handle_options	1775	tmp___466
+mossbad_includes.flex	5798	handle_options	1779	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5798	handle_options	1784	__s2_len___6 > 0U
+mossbad_includes.flex	5798	handle_options	1788	__result___381 == 0
+mossbad_includes.flex	5798	handle_options	1793	__s2_len___6 > 1U
+mossbad_includes.flex	5798	handle_options	1797	__result___381 == 0
+mossbad_includes.flex	5798	handle_options	1802	__s2_len___6 > 2U
+mossbad_includes.flex	5798	handle_options	1806	__result___381 == 0
+mossbad_includes.flex	5798	handle_options	1816	__s2_len___6 > 0U
+mossbad_includes.flex	5798	handle_options	1820	__result___382 == 0
+mossbad_includes.flex	5798	handle_options	1825	__s2_len___6 > 1U
+mossbad_includes.flex	5798	handle_options	1829	__result___382 == 0
+mossbad_includes.flex	5798	handle_options	1834	__s2_len___6 > 2U
+mossbad_includes.flex	5798	handle_options	1838	__result___382 == 0
+mossbad_includes.flex	5798	handle_options	1847	tmp___443 == 0
+mossbad_includes.flex	5800	handle_options	1854	(unsigned int )config.outfile == (unsigned int )((void *)0)
+mossbad_includes.flex	5806	handle_options	1863	tmp___528
+mossbad_includes.flex	5806	handle_options	1868	tmp___529
+mossbad_includes.flex	5806	handle_options	1875	! ((unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U)
+mossbad_includes.flex	5806	handle_options	1880	__s1_len___7 >= 4U
+mossbad_includes.flex	5806	handle_options	1884	! ((unsigned int )((void const   *)("-p" + 1)) - (unsigned int )((void const   *)"-p") == 1U)
+mossbad_includes.flex	5806	handle_options	1889	__s2_len___7 >= 4U
+mossbad_includes.flex	5806	handle_options	1896	tmp___530
+mossbad_includes.flex	5806	handle_options	1900	__s1_len___7 < __s2_len___7
+mossbad_includes.flex	5806	handle_options	1910	tmp___527
+mossbad_includes.flex	5806	handle_options	1914	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5806	handle_options	1919	__s1_len___7 < 4U
+mossbad_includes.flex	5806	handle_options	1924	tmp___518
+mossbad_includes.flex	5806	handle_options	1928	(unsigned int )((void const   *)("-p" + 1)) - (unsigned int )((void const   *)"-p") == 1U
+mossbad_includes.flex	5806	handle_options	1933	__s1_len___7 > 0U
+mossbad_includes.flex	5806	handle_options	1937	__result___421 == 0
+mossbad_includes.flex	5806	handle_options	1942	__s1_len___7 > 1U
+mossbad_includes.flex	5806	handle_options	1946	__result___421 == 0
+mossbad_includes.flex	5806	handle_options	1951	__s1_len___7 > 2U
+mossbad_includes.flex	5806	handle_options	1955	__result___421 == 0
+mossbad_includes.flex	5806	handle_options	1965	__s1_len___7 > 0U
+mossbad_includes.flex	5806	handle_options	1969	__result___422 == 0
+mossbad_includes.flex	5806	handle_options	1974	__s1_len___7 > 1U
+mossbad_includes.flex	5806	handle_options	1978	__result___422 == 0
+mossbad_includes.flex	5806	handle_options	1983	__s1_len___7 > 2U
+mossbad_includes.flex	5806	handle_options	1987	__result___422 == 0
+mossbad_includes.flex	5806	handle_options	1996	tmp___526
+mossbad_includes.flex	5806	handle_options	2000	(unsigned int )((void const   *)("-p" + 1)) - (unsigned int )((void const   *)"-p") == 1U
+mossbad_includes.flex	5806	handle_options	2005	__s2_len___7 < 4U
+mossbad_includes.flex	5806	handle_options	2010	tmp___525
+mossbad_includes.flex	5806	handle_options	2014	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5806	handle_options	2019	__s2_len___7 > 0U
+mossbad_includes.flex	5806	handle_options	2023	__result___429 == 0
+mossbad_includes.flex	5806	handle_options	2028	__s2_len___7 > 1U
+mossbad_includes.flex	5806	handle_options	2032	__result___429 == 0
+mossbad_includes.flex	5806	handle_options	2037	__s2_len___7 > 2U
+mossbad_includes.flex	5806	handle_options	2041	__result___429 == 0
+mossbad_includes.flex	5806	handle_options	2051	__s2_len___7 > 0U
+mossbad_includes.flex	5806	handle_options	2055	__result___430 == 0
+mossbad_includes.flex	5806	handle_options	2060	__s2_len___7 > 1U
+mossbad_includes.flex	5806	handle_options	2064	__result___430 == 0
+mossbad_includes.flex	5806	handle_options	2069	__s2_len___7 > 2U
+mossbad_includes.flex	5806	handle_options	2073	__result___430 == 0
+mossbad_includes.flex	5806	handle_options	2082	tmp___502 == 0
+mossbad_includes.flex	5807	handle_options	2086	i != 0
+mossbad_includes.flex	5811	handle_options	2094	config.passage_power <= 0
+mossbad_includes.flex	5822	handle_options	2107	tmp___587
+mossbad_includes.flex	5822	handle_options	2112	tmp___588
+mossbad_includes.flex	5822	handle_options	2119	! ((unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U)
+mossbad_includes.flex	5822	handle_options	2124	__s1_len___8 >= 4U
+mossbad_includes.flex	5822	handle_options	2128	! ((unsigned int )((void const   *)("-q" + 1)) - (unsigned int )((void const   *)"-q") == 1U)
+mossbad_includes.flex	5822	handle_options	2133	__s2_len___8 >= 4U
+mossbad_includes.flex	5822	handle_options	2140	tmp___589
+mossbad_includes.flex	5822	handle_options	2144	__s1_len___8 < __s2_len___8
+mossbad_includes.flex	5822	handle_options	2154	tmp___586
+mossbad_includes.flex	5822	handle_options	2158	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5822	handle_options	2163	__s1_len___8 < 4U
+mossbad_includes.flex	5822	handle_options	2168	tmp___577
+mossbad_includes.flex	5822	handle_options	2172	(unsigned int )((void const   *)("-q" + 1)) - (unsigned int )((void const   *)"-q") == 1U
+mossbad_includes.flex	5822	handle_options	2177	__s1_len___8 > 0U
+mossbad_includes.flex	5822	handle_options	2181	__result___469 == 0
+mossbad_includes.flex	5822	handle_options	2186	__s1_len___8 > 1U
+mossbad_includes.flex	5822	handle_options	2190	__result___469 == 0
+mossbad_includes.flex	5822	handle_options	2195	__s1_len___8 > 2U
+mossbad_includes.flex	5822	handle_options	2199	__result___469 == 0
+mossbad_includes.flex	5822	handle_options	2209	__s1_len___8 > 0U
+mossbad_includes.flex	5822	handle_options	2213	__result___470 == 0
+mossbad_includes.flex	5822	handle_options	2218	__s1_len___8 > 1U
+mossbad_includes.flex	5822	handle_options	2222	__result___470 == 0
+mossbad_includes.flex	5822	handle_options	2227	__s1_len___8 > 2U
+mossbad_includes.flex	5822	handle_options	2231	__result___470 == 0
+mossbad_includes.flex	5822	handle_options	2240	tmp___585
+mossbad_includes.flex	5822	handle_options	2244	(unsigned int )((void const   *)("-q" + 1)) - (unsigned int )((void const   *)"-q") == 1U
+mossbad_includes.flex	5822	handle_options	2249	__s2_len___8 < 4U
+mossbad_includes.flex	5822	handle_options	2254	tmp___584
+mossbad_includes.flex	5822	handle_options	2258	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5822	handle_options	2263	__s2_len___8 > 0U
+mossbad_includes.flex	5822	handle_options	2267	__result___477 == 0
+mossbad_includes.flex	5822	handle_options	2272	__s2_len___8 > 1U
+mossbad_includes.flex	5822	handle_options	2276	__result___477 == 0
+mossbad_includes.flex	5822	handle_options	2281	__s2_len___8 > 2U
+mossbad_includes.flex	5822	handle_options	2285	__result___477 == 0
+mossbad_includes.flex	5822	handle_options	2295	__s2_len___8 > 0U
+mossbad_includes.flex	5822	handle_options	2299	__result___478 == 0
+mossbad_includes.flex	5822	handle_options	2304	__s2_len___8 > 1U
+mossbad_includes.flex	5822	handle_options	2308	__result___478 == 0
+mossbad_includes.flex	5822	handle_options	2313	__s2_len___8 > 2U
+mossbad_includes.flex	5822	handle_options	2317	__result___478 == 0
+mossbad_includes.flex	5822	handle_options	2326	tmp___561 == 0
+mossbad_includes.flex	5826	handle_options	2333	tmp___646
+mossbad_includes.flex	5826	handle_options	2338	tmp___647
+mossbad_includes.flex	5826	handle_options	2345	! ((unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U)
+mossbad_includes.flex	5826	handle_options	2350	__s1_len___9 >= 4U
+mossbad_includes.flex	5826	handle_options	2354	! ((unsigned int )((void const   *)("-r" + 1)) - (unsigned int )((void const   *)"-r") == 1U)
+mossbad_includes.flex	5826	handle_options	2359	__s2_len___9 >= 4U
+mossbad_includes.flex	5826	handle_options	2366	tmp___648
+mossbad_includes.flex	5826	handle_options	2370	__s1_len___9 < __s2_len___9
+mossbad_includes.flex	5826	handle_options	2380	tmp___645
+mossbad_includes.flex	5826	handle_options	2384	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5826	handle_options	2389	__s1_len___9 < 4U
+mossbad_includes.flex	5826	handle_options	2394	tmp___636
+mossbad_includes.flex	5826	handle_options	2398	(unsigned int )((void const   *)("-r" + 1)) - (unsigned int )((void const   *)"-r") == 1U
+mossbad_includes.flex	5826	handle_options	2403	__s1_len___9 > 0U
+mossbad_includes.flex	5826	handle_options	2407	__result___517 == 0
+mossbad_includes.flex	5826	handle_options	2412	__s1_len___9 > 1U
+mossbad_includes.flex	5826	handle_options	2416	__result___517 == 0
+mossbad_includes.flex	5826	handle_options	2421	__s1_len___9 > 2U
+mossbad_includes.flex	5826	handle_options	2425	__result___517 == 0
+mossbad_includes.flex	5826	handle_options	2435	__s1_len___9 > 0U
+mossbad_includes.flex	5826	handle_options	2439	__result___518 == 0
+mossbad_includes.flex	5826	handle_options	2444	__s1_len___9 > 1U
+mossbad_includes.flex	5826	handle_options	2448	__result___518 == 0
+mossbad_includes.flex	5826	handle_options	2453	__s1_len___9 > 2U
+mossbad_includes.flex	5826	handle_options	2457	__result___518 == 0
+mossbad_includes.flex	5826	handle_options	2466	tmp___644
+mossbad_includes.flex	5826	handle_options	2470	(unsigned int )((void const   *)("-r" + 1)) - (unsigned int )((void const   *)"-r") == 1U
+mossbad_includes.flex	5826	handle_options	2475	__s2_len___9 < 4U
+mossbad_includes.flex	5826	handle_options	2480	tmp___643
+mossbad_includes.flex	5826	handle_options	2484	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5826	handle_options	2489	__s2_len___9 > 0U
+mossbad_includes.flex	5826	handle_options	2493	__result___525 == 0
+mossbad_includes.flex	5826	handle_options	2498	__s2_len___9 > 1U
+mossbad_includes.flex	5826	handle_options	2502	__result___525 == 0
+mossbad_includes.flex	5826	handle_options	2507	__s2_len___9 > 2U
+mossbad_includes.flex	5826	handle_options	2511	__result___525 == 0
+mossbad_includes.flex	5826	handle_options	2521	__s2_len___9 > 0U
+mossbad_includes.flex	5826	handle_options	2525	__result___526 == 0
+mossbad_includes.flex	5826	handle_options	2530	__s2_len___9 > 1U
+mossbad_includes.flex	5826	handle_options	2534	__result___526 == 0
+mossbad_includes.flex	5826	handle_options	2539	__s2_len___9 > 2U
+mossbad_includes.flex	5826	handle_options	2543	__result___526 == 0
+mossbad_includes.flex	5826	handle_options	2552	tmp___620 == 0
+mossbad_includes.flex	5832	handle_options	2563	tmp___705
+mossbad_includes.flex	5832	handle_options	2568	tmp___706
+mossbad_includes.flex	5832	handle_options	2575	! ((unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U)
+mossbad_includes.flex	5832	handle_options	2580	__s1_len___10 >= 4U
+mossbad_includes.flex	5832	handle_options	2584	! ((unsigned int )((void const   *)("-R" + 1)) - (unsigned int )((void const   *)"-R") == 1U)
+mossbad_includes.flex	5832	handle_options	2589	__s2_len___10 >= 4U
+mossbad_includes.flex	5832	handle_options	2596	tmp___707
+mossbad_includes.flex	5832	handle_options	2600	__s1_len___10 < __s2_len___10
+mossbad_includes.flex	5832	handle_options	2610	tmp___704
+mossbad_includes.flex	5832	handle_options	2614	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5832	handle_options	2619	__s1_len___10 < 4U
+mossbad_includes.flex	5832	handle_options	2624	tmp___695
+mossbad_includes.flex	5832	handle_options	2628	(unsigned int )((void const   *)("-R" + 1)) - (unsigned int )((void const   *)"-R") == 1U
+mossbad_includes.flex	5832	handle_options	2633	__s1_len___10 > 0U
+mossbad_includes.flex	5832	handle_options	2637	__result___565 == 0
+mossbad_includes.flex	5832	handle_options	2642	__s1_len___10 > 1U
+mossbad_includes.flex	5832	handle_options	2646	__result___565 == 0
+mossbad_includes.flex	5832	handle_options	2651	__s1_len___10 > 2U
+mossbad_includes.flex	5832	handle_options	2655	__result___565 == 0
+mossbad_includes.flex	5832	handle_options	2665	__s1_len___10 > 0U
+mossbad_includes.flex	5832	handle_options	2669	__result___566 == 0
+mossbad_includes.flex	5832	handle_options	2674	__s1_len___10 > 1U
+mossbad_includes.flex	5832	handle_options	2678	__result___566 == 0
+mossbad_includes.flex	5832	handle_options	2683	__s1_len___10 > 2U
+mossbad_includes.flex	5832	handle_options	2687	__result___566 == 0
+mossbad_includes.flex	5832	handle_options	2696	tmp___703
+mossbad_includes.flex	5832	handle_options	2700	(unsigned int )((void const   *)("-R" + 1)) - (unsigned int )((void const   *)"-R") == 1U
+mossbad_includes.flex	5832	handle_options	2705	__s2_len___10 < 4U
+mossbad_includes.flex	5832	handle_options	2710	tmp___702
+mossbad_includes.flex	5832	handle_options	2714	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5832	handle_options	2719	__s2_len___10 > 0U
+mossbad_includes.flex	5832	handle_options	2723	__result___573 == 0
+mossbad_includes.flex	5832	handle_options	2728	__s2_len___10 > 1U
+mossbad_includes.flex	5832	handle_options	2732	__result___573 == 0
+mossbad_includes.flex	5832	handle_options	2737	__s2_len___10 > 2U
+mossbad_includes.flex	5832	handle_options	2741	__result___573 == 0
+mossbad_includes.flex	5832	handle_options	2751	__s2_len___10 > 0U
+mossbad_includes.flex	5832	handle_options	2755	__result___574 == 0
+mossbad_includes.flex	5832	handle_options	2760	__s2_len___10 > 1U
+mossbad_includes.flex	5832	handle_options	2764	__result___574 == 0
+mossbad_includes.flex	5832	handle_options	2769	__s2_len___10 > 2U
+mossbad_includes.flex	5832	handle_options	2773	__result___574 == 0
+mossbad_includes.flex	5832	handle_options	2782	tmp___679 == 0
+mossbad_includes.flex	5838	handle_options	2789	(unsigned int )dblist == (unsigned int )((void *)0)
+mossbad_includes.flex	5841	handle_options	2796	result == -1
+mossbad_includes.flex	5848	handle_options	2808	tmp___764
+mossbad_includes.flex	5848	handle_options	2813	tmp___765
+mossbad_includes.flex	5848	handle_options	2820	! ((unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U)
+mossbad_includes.flex	5848	handle_options	2825	__s1_len___11 >= 4U
+mossbad_includes.flex	5848	handle_options	2829	! ((unsigned int )((void const   *)("-s" + 1)) - (unsigned int )((void const   *)"-s") == 1U)
+mossbad_includes.flex	5848	handle_options	2834	__s2_len___11 >= 4U
+mossbad_includes.flex	5848	handle_options	2841	tmp___766
+mossbad_includes.flex	5848	handle_options	2845	__s1_len___11 < __s2_len___11
+mossbad_includes.flex	5848	handle_options	2855	tmp___763
+mossbad_includes.flex	5848	handle_options	2859	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5848	handle_options	2864	__s1_len___11 < 4U
+mossbad_includes.flex	5848	handle_options	2869	tmp___754
+mossbad_includes.flex	5848	handle_options	2873	(unsigned int )((void const   *)("-s" + 1)) - (unsigned int )((void const   *)"-s") == 1U
+mossbad_includes.flex	5848	handle_options	2878	__s1_len___11 > 0U
+mossbad_includes.flex	5848	handle_options	2882	__result___613 == 0
+mossbad_includes.flex	5848	handle_options	2887	__s1_len___11 > 1U
+mossbad_includes.flex	5848	handle_options	2891	__result___613 == 0
+mossbad_includes.flex	5848	handle_options	2896	__s1_len___11 > 2U
+mossbad_includes.flex	5848	handle_options	2900	__result___613 == 0
+mossbad_includes.flex	5848	handle_options	2910	__s1_len___11 > 0U
+mossbad_includes.flex	5848	handle_options	2914	__result___614 == 0
+mossbad_includes.flex	5848	handle_options	2919	__s1_len___11 > 1U
+mossbad_includes.flex	5848	handle_options	2923	__result___614 == 0
+mossbad_includes.flex	5848	handle_options	2928	__s1_len___11 > 2U
+mossbad_includes.flex	5848	handle_options	2932	__result___614 == 0
+mossbad_includes.flex	5848	handle_options	2941	tmp___762
+mossbad_includes.flex	5848	handle_options	2945	(unsigned int )((void const   *)("-s" + 1)) - (unsigned int )((void const   *)"-s") == 1U
+mossbad_includes.flex	5848	handle_options	2950	__s2_len___11 < 4U
+mossbad_includes.flex	5848	handle_options	2955	tmp___761
+mossbad_includes.flex	5848	handle_options	2959	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5848	handle_options	2964	__s2_len___11 > 0U
+mossbad_includes.flex	5848	handle_options	2968	__result___621 == 0
+mossbad_includes.flex	5848	handle_options	2973	__s2_len___11 > 1U
+mossbad_includes.flex	5848	handle_options	2977	__result___621 == 0
+mossbad_includes.flex	5848	handle_options	2982	__s2_len___11 > 2U
+mossbad_includes.flex	5848	handle_options	2986	__result___621 == 0
+mossbad_includes.flex	5848	handle_options	2996	__s2_len___11 > 0U
+mossbad_includes.flex	5848	handle_options	3000	__result___622 == 0
+mossbad_includes.flex	5848	handle_options	3005	__s2_len___11 > 1U
+mossbad_includes.flex	5848	handle_options	3009	__result___622 == 0
+mossbad_includes.flex	5848	handle_options	3014	__s2_len___11 > 2U
+mossbad_includes.flex	5848	handle_options	3018	__result___622 == 0
+mossbad_includes.flex	5848	handle_options	3027	tmp___738 == 0
+mossbad_includes.flex	5852	handle_options	3036	tmp___823
+mossbad_includes.flex	5852	handle_options	3041	tmp___824
+mossbad_includes.flex	5852	handle_options	3048	! ((unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U)
+mossbad_includes.flex	5852	handle_options	3053	__s1_len___12 >= 4U
+mossbad_includes.flex	5852	handle_options	3057	! ((unsigned int )((void const   *)("-t" + 1)) - (unsigned int )((void const   *)"-t") == 1U)
+mossbad_includes.flex	5852	handle_options	3062	__s2_len___12 >= 4U
+mossbad_includes.flex	5852	handle_options	3069	tmp___825
+mossbad_includes.flex	5852	handle_options	3073	__s1_len___12 < __s2_len___12
+mossbad_includes.flex	5852	handle_options	3083	tmp___822
+mossbad_includes.flex	5852	handle_options	3087	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5852	handle_options	3092	__s1_len___12 < 4U
+mossbad_includes.flex	5852	handle_options	3097	tmp___813
+mossbad_includes.flex	5852	handle_options	3101	(unsigned int )((void const   *)("-t" + 1)) - (unsigned int )((void const   *)"-t") == 1U
+mossbad_includes.flex	5852	handle_options	3106	__s1_len___12 > 0U
+mossbad_includes.flex	5852	handle_options	3110	__result___661 == 0
+mossbad_includes.flex	5852	handle_options	3115	__s1_len___12 > 1U
+mossbad_includes.flex	5852	handle_options	3119	__result___661 == 0
+mossbad_includes.flex	5852	handle_options	3124	__s1_len___12 > 2U
+mossbad_includes.flex	5852	handle_options	3128	__result___661 == 0
+mossbad_includes.flex	5852	handle_options	3138	__s1_len___12 > 0U
+mossbad_includes.flex	5852	handle_options	3142	__result___662 == 0
+mossbad_includes.flex	5852	handle_options	3147	__s1_len___12 > 1U
+mossbad_includes.flex	5852	handle_options	3151	__result___662 == 0
+mossbad_includes.flex	5852	handle_options	3156	__s1_len___12 > 2U
+mossbad_includes.flex	5852	handle_options	3160	__result___662 == 0
+mossbad_includes.flex	5852	handle_options	3169	tmp___821
+mossbad_includes.flex	5852	handle_options	3173	(unsigned int )((void const   *)("-t" + 1)) - (unsigned int )((void const   *)"-t") == 1U
+mossbad_includes.flex	5852	handle_options	3178	__s2_len___12 < 4U
+mossbad_includes.flex	5852	handle_options	3183	tmp___820
+mossbad_includes.flex	5852	handle_options	3187	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5852	handle_options	3192	__s2_len___12 > 0U
+mossbad_includes.flex	5852	handle_options	3196	__result___669 == 0
+mossbad_includes.flex	5852	handle_options	3201	__s2_len___12 > 1U
+mossbad_includes.flex	5852	handle_options	3205	__result___669 == 0
+mossbad_includes.flex	5852	handle_options	3210	__s2_len___12 > 2U
+mossbad_includes.flex	5852	handle_options	3214	__result___669 == 0
+mossbad_includes.flex	5852	handle_options	3224	__s2_len___12 > 0U
+mossbad_includes.flex	5852	handle_options	3228	__result___670 == 0
+mossbad_includes.flex	5852	handle_options	3233	__s2_len___12 > 1U
+mossbad_includes.flex	5852	handle_options	3237	__result___670 == 0
+mossbad_includes.flex	5852	handle_options	3242	__s2_len___12 > 2U
+mossbad_includes.flex	5852	handle_options	3246	__result___670 == 0
+mossbad_includes.flex	5852	handle_options	3255	tmp___797 == 0
+mossbad_includes.flex	5855	handle_options	3263	config.token_window_size >= 500
+mossbad_includes.flex	5860	handle_options	3270	tmp___882
+mossbad_includes.flex	5860	handle_options	3275	tmp___883
+mossbad_includes.flex	5860	handle_options	3282	! ((unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U)
+mossbad_includes.flex	5860	handle_options	3287	__s1_len___13 >= 4U
+mossbad_includes.flex	5860	handle_options	3291	! ((unsigned int )((void const   *)("-w" + 1)) - (unsigned int )((void const   *)"-w") == 1U)
+mossbad_includes.flex	5860	handle_options	3296	__s2_len___13 >= 4U
+mossbad_includes.flex	5860	handle_options	3303	tmp___884
+mossbad_includes.flex	5860	handle_options	3307	__s1_len___13 < __s2_len___13
+mossbad_includes.flex	5860	handle_options	3317	tmp___881
+mossbad_includes.flex	5860	handle_options	3321	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5860	handle_options	3326	__s1_len___13 < 4U
+mossbad_includes.flex	5860	handle_options	3331	tmp___872
+mossbad_includes.flex	5860	handle_options	3335	(unsigned int )((void const   *)("-w" + 1)) - (unsigned int )((void const   *)"-w") == 1U
+mossbad_includes.flex	5860	handle_options	3340	__s1_len___13 > 0U
+mossbad_includes.flex	5860	handle_options	3344	__result___709 == 0
+mossbad_includes.flex	5860	handle_options	3349	__s1_len___13 > 1U
+mossbad_includes.flex	5860	handle_options	3353	__result___709 == 0
+mossbad_includes.flex	5860	handle_options	3358	__s1_len___13 > 2U
+mossbad_includes.flex	5860	handle_options	3362	__result___709 == 0
+mossbad_includes.flex	5860	handle_options	3372	__s1_len___13 > 0U
+mossbad_includes.flex	5860	handle_options	3376	__result___710 == 0
+mossbad_includes.flex	5860	handle_options	3381	__s1_len___13 > 1U
+mossbad_includes.flex	5860	handle_options	3385	__result___710 == 0
+mossbad_includes.flex	5860	handle_options	3390	__s1_len___13 > 2U
+mossbad_includes.flex	5860	handle_options	3394	__result___710 == 0
+mossbad_includes.flex	5860	handle_options	3403	tmp___880
+mossbad_includes.flex	5860	handle_options	3407	(unsigned int )((void const   *)("-w" + 1)) - (unsigned int )((void const   *)"-w") == 1U
+mossbad_includes.flex	5860	handle_options	3412	__s2_len___13 < 4U
+mossbad_includes.flex	5860	handle_options	3417	tmp___879
+mossbad_includes.flex	5860	handle_options	3421	(unsigned int )((void const   *)((*(argv + i)) + 1)) - (unsigned int )((void const   *)(*(argv + i))) == 1U
+mossbad_includes.flex	5860	handle_options	3426	__s2_len___13 > 0U
+mossbad_includes.flex	5860	handle_options	3430	__result___717 == 0
+mossbad_includes.flex	5860	handle_options	3435	__s2_len___13 > 1U
+mossbad_includes.flex	5860	handle_options	3439	__result___717 == 0
+mossbad_includes.flex	5860	handle_options	3444	__s2_len___13 > 2U
+mossbad_includes.flex	5860	handle_options	3448	__result___717 == 0
+mossbad_includes.flex	5860	handle_options	3458	__s2_len___13 > 0U
+mossbad_includes.flex	5860	handle_options	3462	__result___718 == 0
+mossbad_includes.flex	5860	handle_options	3467	__s2_len___13 > 1U
+mossbad_includes.flex	5860	handle_options	3471	__result___718 == 0
+mossbad_includes.flex	5860	handle_options	3476	__s2_len___13 > 2U
+mossbad_includes.flex	5860	handle_options	3480	__result___718 == 0
+mossbad_includes.flex	5860	handle_options	3489	tmp___856 == 0
+mossbad_includes.flex	5862	handle_options	3496	config.winnowing_window_size > 100
+mossbad_includes.flex	5878	read_manifest	3	(unsigned int )manifest_filename == (unsigned int )((void *)0)
+mossbad_includes.flex	5881	read_manifest	9	(unsigned int )manifest == (unsigned int )((void *)0)
+mossbad_includes.flex	5885	read_manifest	19	tmp___3 != -1
+mossbad_includes.flex	5914	stc	6	tmp___55
+mossbad_includes.flex	5914	stc	11	tmp___56
+mossbad_includes.flex	5914	stc	18	! ((unsigned int )((void const   *)(st1 + 1)) - (unsigned int )((void const   *)st1) == 1U)
+mossbad_includes.flex	5914	stc	23	__s1_len >= 4U
+mossbad_includes.flex	5914	stc	27	! ((unsigned int )((void const   *)(st2 + 1)) - (unsigned int )((void const   *)st2) == 1U)
+mossbad_includes.flex	5914	stc	32	__s2_len >= 4U
+mossbad_includes.flex	5914	stc	39	tmp___57
+mossbad_includes.flex	5914	stc	43	__s1_len < __s2_len
+mossbad_includes.flex	5914	stc	53	tmp___54
+mossbad_includes.flex	5914	stc	57	(unsigned int )((void const   *)(st1 + 1)) - (unsigned int )((void const   *)st1) == 1U
+mossbad_includes.flex	5914	stc	62	__s1_len < 4U
+mossbad_includes.flex	5914	stc	67	tmp___45
+mossbad_includes.flex	5914	stc	71	(unsigned int )((void const   *)(st2 + 1)) - (unsigned int )((void const   *)st2) == 1U
+mossbad_includes.flex	5914	stc	76	__s1_len > 0U
+mossbad_includes.flex	5914	stc	80	__result___37 == 0
+mossbad_includes.flex	5914	stc	85	__s1_len > 1U
+mossbad_includes.flex	5914	stc	89	__result___37 == 0
+mossbad_includes.flex	5914	stc	94	__s1_len > 2U
+mossbad_includes.flex	5914	stc	98	__result___37 == 0
+mossbad_includes.flex	5914	stc	108	__s1_len > 0U
+mossbad_includes.flex	5914	stc	112	__result___38 == 0
+mossbad_includes.flex	5914	stc	117	__s1_len > 1U
+mossbad_includes.flex	5914	stc	121	__result___38 == 0
+mossbad_includes.flex	5914	stc	126	__s1_len > 2U
+mossbad_includes.flex	5914	stc	130	__result___38 == 0
+mossbad_includes.flex	5914	stc	139	tmp___53
+mossbad_includes.flex	5914	stc	143	(unsigned int )((void const   *)(st2 + 1)) - (unsigned int )((void const   *)st2) == 1U
+mossbad_includes.flex	5914	stc	148	__s2_len < 4U
+mossbad_includes.flex	5914	stc	153	tmp___52
+mossbad_includes.flex	5914	stc	157	(unsigned int )((void const   *)(st1 + 1)) - (unsigned int )((void const   *)st1) == 1U
+mossbad_includes.flex	5914	stc	162	__s2_len > 0U
+mossbad_includes.flex	5914	stc	166	__result___45 == 0
+mossbad_includes.flex	5914	stc	171	__s2_len > 1U
+mossbad_includes.flex	5914	stc	175	__result___45 == 0
+mossbad_includes.flex	5914	stc	180	__s2_len > 2U
+mossbad_includes.flex	5914	stc	184	__result___45 == 0
+mossbad_includes.flex	5914	stc	194	__s2_len > 0U
+mossbad_includes.flex	5914	stc	198	__result___46 == 0
+mossbad_includes.flex	5914	stc	203	__s2_len > 1U
+mossbad_includes.flex	5914	stc	207	__result___46 == 0
+mossbad_includes.flex	5914	stc	212	__s2_len > 2U
+mossbad_includes.flex	5914	stc	216	__result___46 == 0
+mossbad_includes.flex	5919	count_array_size	4	(unsigned int )(*(s + i)) != (unsigned int )((void *)0)
+mossbad_includes.flex	5925	files_init	4	i < arrsize
+mossbad_includes.flex	5961	region_main	13	! config.cap
+mossbad_includes.flex	5968	region_main	18	! config.user_max
+mossbad_includes.flex	5970	region_main	25	i < filesindex
+mossbad_includes.flex	5973	region_main	34	(unsigned int )config.dbfile != (unsigned int )((void *)0)
+mossbad_includes.flex	5984	region_main	47	i < filesindex
+mossbad_includes.flex	6004	region_main	69	res == -1
+mossbad_includes.flex	6008	region_main	75	tmp___56
+mossbad_includes.flex	6008	region_main	80	tmp___57
+mossbad_includes.flex	6008	region_main	87	! ((unsigned int )((void const   *)(filein + 1)) - (unsigned int )((void const   *)(filein)) == 1U)
+mossbad_includes.flex	6008	region_main	92	__s1_len >= 4U
+mossbad_includes.flex	6008	region_main	96	! ((unsigned int )((void const   *)("end" + 1)) - (unsigned int )((void const   *)"end") == 1U)
+mossbad_includes.flex	6008	region_main	101	__s2_len >= 4U
+mossbad_includes.flex	6008	region_main	108	tmp___58
+mossbad_includes.flex	6008	region_main	112	__s1_len < __s2_len
+mossbad_includes.flex	6008	region_main	122	tmp___55
+mossbad_includes.flex	6008	region_main	126	(unsigned int )((void const   *)(filein + 1)) - (unsigned int )((void const   *)(filein)) == 1U
+mossbad_includes.flex	6008	region_main	131	__s1_len < 4U
+mossbad_includes.flex	6008	region_main	136	tmp___46
+mossbad_includes.flex	6008	region_main	140	(unsigned int )((void const   *)("end" + 1)) - (unsigned int )((void const   *)"end") == 1U
+mossbad_includes.flex	6008	region_main	145	__s1_len > 0U
+mossbad_includes.flex	6008	region_main	149	__result___37 == 0
+mossbad_includes.flex	6008	region_main	154	__s1_len > 1U
+mossbad_includes.flex	6008	region_main	158	__result___37 == 0
+mossbad_includes.flex	6008	region_main	163	__s1_len > 2U
+mossbad_includes.flex	6008	region_main	167	__result___37 == 0
+mossbad_includes.flex	6008	region_main	177	__s1_len > 0U
+mossbad_includes.flex	6008	region_main	181	__result___38 == 0
+mossbad_includes.flex	6008	region_main	186	__s1_len > 1U
+mossbad_includes.flex	6008	region_main	190	__result___38 == 0
+mossbad_includes.flex	6008	region_main	195	__s1_len > 2U
+mossbad_includes.flex	6008	region_main	199	__result___38 == 0
+mossbad_includes.flex	6008	region_main	208	tmp___54
+mossbad_includes.flex	6008	region_main	212	(unsigned int )((void const   *)("end" + 1)) - (unsigned int )((void const   *)"end") == 1U
+mossbad_includes.flex	6008	region_main	217	__s2_len < 4U
+mossbad_includes.flex	6008	region_main	222	tmp___53
+mossbad_includes.flex	6008	region_main	226	(unsigned int )((void const   *)(filein + 1)) - (unsigned int )((void const   *)(filein)) == 1U
+mossbad_includes.flex	6008	region_main	231	__s2_len > 0U
+mossbad_includes.flex	6008	region_main	235	__result___45 == 0
+mossbad_includes.flex	6008	region_main	240	__s2_len > 1U
+mossbad_includes.flex	6008	region_main	244	__result___45 == 0
+mossbad_includes.flex	6008	region_main	249	__s2_len > 2U
+mossbad_includes.flex	6008	region_main	253	__result___45 == 0
+mossbad_includes.flex	6008	region_main	263	__s2_len > 0U
+mossbad_includes.flex	6008	region_main	267	__result___46 == 0
+mossbad_includes.flex	6008	region_main	272	__s2_len > 1U
+mossbad_includes.flex	6008	region_main	276	__result___46 == 0
+mossbad_includes.flex	6008	region_main	281	__s2_len > 2U
+mossbad_includes.flex	6008	region_main	285	__result___46 == 0
+mossbad_includes.flex	6008	region_main	294	tmp___30 == 0
