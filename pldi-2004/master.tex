@@ -486,6 +486,27 @@ which are highly predictive of failure.  \comment{Is it worth noting
 which do share a single cause but which are not always maximal.  (That
 is, one cause may be split across several clusters.)
 
+In contrast with Podgurski's statistical approach, widespread
+industrial practice uses stack traces to cluster failure reports into
+equivalence classes.  Two crash reports showing the same stack trace,
+or perhaps only the same top-of-stack function, are presumed to be two
+reports of the same failure.  This works to the extent that a single
+cause corresponds to a single point of failure, but our experience
+with \moss suggests that this assumption may not often hold.  We find
+that only bugs \#2 and \#5 have truly unique ``signature'' stacks: a
+crash location which is present if and only if the corresponding bug
+was actually triggered.  These bugs are also our most deterministic.
+Bugs \#4 and \#6 have nearly unique stack signatures, modulo small
+changes to frames several levels removed from the point of failure.
+The remaining bugs are much less consistent: each stack signature is
+observed after a variety of different bugs, and each triggered bug
+causes failure in a variety of different stack states.  Stack-based
+clustering provides little insight for temporally extended bugs that
+do not crash until well after the bad behavior.  A special case of
+this is a program which produces incorrect output but exits normally
+without crashing and therefore without any crash stack on which to
+cluster.
+
 Studies that attempt real-world deployment of monitored software must
 address a host of practical engineering concerns, from distribution to
 installation to user support to data collection and warehousing.
