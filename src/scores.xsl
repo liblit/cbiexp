@@ -20,15 +20,35 @@
   <xsl:template match="/">
     <html>
       <head>
-	<title>Predictor Scores</title>
-	<link rel="stylesheet" href="view.css" type="text/css"/>
+	<!-- page metainformation -->
+	<title>
+	  <xsl:apply-templates select="." mode="title"/>
+	</title>
+	<link rel="stylesheet" type="text/css">
+	  <xsl:attribute name="href">
+	    <xsl:apply-templates select="." mode="css"/>
+	  </xsl:attribute>
+	</link>
       </head>
-
       <body>
+	<xsl:apply-templates select="." mode="page-header"/>
 	<xsl:apply-templates/>
       </body>
     </html>
   </xsl:template>
+
+  <!-- default page title -->
+  <xsl:template match="/" mode="title">
+    Predictor Scores
+  </xsl:template>
+
+  <!-- default page CSS stylesheet -->
+  <xsl:template match="/" mode="css">
+    scores.css
+  </xsl:template>
+
+  <!-- default page header -->
+  <xsl:template match="/" mode="page-header"/>
 
 
   <!-- table of predictors -->
@@ -36,8 +56,7 @@
     <table class="predictors">
       <thead>
 	<tr>
-	  <xsl:apply-templates mode="dynamic-headings" select="."/>
-	  <xsl:apply-templates mode="static-headings" select="."/>
+	  <xsl:apply-templates select="." mode="scores-table-headings"/>
 	</tr>
       </thead>
       <tbody>
@@ -46,12 +65,18 @@
     </table>
   </xsl:template>
 
+
   <!-- default headings for the big predictor table -->
-  <xsl:template mode="dynamic-headings" match="scores">
+  <xsl:template match="scores" mode="scores-table-headings">
+    <xsl:apply-templates select="." mode="dynamic-headings"/>
+    <xsl:apply-templates select="." mode="static-headings"/>
+  </xsl:template>
+
+  <xsl:template match="scores" mode="dynamic-headings">
     <th>Score</th>
   </xsl:template>
 
-  <xsl:template mode="static-headings" match="scores">
+  <xsl:template match="scores" mode="static-headings">
     <th>Predicate</th>
     <th>Function</th>
     <th>File:Line</th>
@@ -64,21 +89,26 @@
       <xsl:variable name="index" select="number(@index)"/>
       <xsl:attribute name="title">rank: <xsl:number/>, pred: <xsl:value-of select="@index"/></xsl:attribute>
       <xsl:copy-of select="document('predictor-info.xml')/predictor-info/info[$index]/@class"/>
-      <xsl:apply-templates mode="dynamic-cells" select="."/>
-      <xsl:apply-templates mode="static-cells" select="."/>
+      <xsl:apply-templates select="." mode="predictor-row-cells"/>
     </tr>
   </xsl:template>
 
 
-  <!-- default row cells for the big predictor table -->
+  <!-- default cells for each predictor row in the big predictor table -->
+  <xsl:template match="predictor" mode="predictor-row-cells">
+    <xsl:apply-templates select="." mode="dynamic-cells"/>
+    <xsl:apply-templates select="." mode="static-cells"/>
+  </xsl:template>
+
 
   <!-- simple score value in a single table cell -->
-  <xsl:template mode="dynamic-cells" match="predictor">
+  <xsl:template match="predictor" mode="dynamic-cells">
     <td><xsl:value-of select="@score"/></td>
   </xsl:template>
 
+
   <!-- several cells depending only on static predicate information -->
-  <xsl:template mode="static-cells" match="predictor">
+  <xsl:template match="predictor" mode="static-cells">
     <xsl:variable name="index" select="number(@index)"/>
     <xsl:variable name="info" select="document('predictor-info.xml')/predictor-info/info[$index]"/>
     <xsl:if test="not($info)">
@@ -88,18 +118,14 @@
 	<xsl:text>.</xsl:text>
       </xsl:message>
     </xsl:if>
-    <xsl:apply-templates mode="static-cells" select="$info"/>
+    <xsl:apply-templates select="$info" mode="static-cells"/>
   </xsl:template>
 
   <!-- operands, function name, and link to source -->
-  <xsl:template mode="static-cells" match="info">
-    <td>
-      <xsl:apply-templates mode="operands" select="."/>
-    </td>
+  <xsl:template match="info" mode="static-cells">
+    <td><xsl:apply-templates select="." mode="operands"/></td>
     <td><xsl:value-of select="@function"/>()</td>
-    <td>
-      <xsl:apply-templates select="." mode="source-link"/>
-    </td>
+    <td><xsl:apply-templates select="." mode="source-link"/></td>
   </xsl:template>
 
   <!-- link to a single line of source code -->

@@ -1,13 +1,8 @@
-<!ELEMENT view (predictor)+>
-<!ATTLIST view
+<!ATTLIST scores
   scheme NMTOKEN #REQUIRED
   sort NMTOKEN #REQUIRED
   projection NMTOKEN #REQUIRED>
 
-<!ENTITY % predictor.content "EMPTY">
 <!ENTITY % predictor.extra-attrs "">
-
-<!ELEMENT predictor %predictor.content;>
-<!ATTLIST predictor
-  index NMTOKEN #REQUIRED
-  %predictor.extra-attrs;>
+<!ENTITY % scores.dtd SYSTEM "scores.dtd">
+%scores.dtd;

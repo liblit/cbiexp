@@ -8,7 +8,7 @@
 
 
   <!-- add column headers for our own additional information -->
-  <xsl:template name="extra-moss-headings">
+  <xsl:template match="scores" mode="histogram-headings">
     <th>#1</th>
     <th>#2</th>
     <th>#3</th>
@@ -23,14 +23,14 @@
 
 
   <!-- add table cells with our own additional information -->
-  <xsl:template mode="extra-moss-cells" match="predictor">
+  <xsl:template match="predictor" mode="histogram-row-cells">
     <xsl:variable name="index" select="number(@index)"/>
     <xsl:apply-templates mode="histogram" select="document('histograms.xml')/histograms/predictor[$index]"/>
   </xsl:template>
 
-  <xsl:template mode="histogram" match="bug">
+  <xsl:template match="bug" mode="histogram">
     <td class="count">
-      <xsl:value-of select="@count"/>
+      <xsl:number select="@count"/>
     </td>
   </xsl:template>
 

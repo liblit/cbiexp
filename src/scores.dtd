@@ -1,7 +1,10 @@
 <!ELEMENT scores (predictor*)>
 
-<!ELEMENT predictor (empty*)>
+<!ENTITY % predictor.content "EMPTY">
+<!ENTITY % predictor.extra-attrs "scores CDATA #REQUIRED">
+
+<!ELEMENT predictor %predictor.content;>
 <!ATTLIST predictor
   index NMTOKEN #REQUIRED
-  scores CDATA #REQUIRED
+  %predictor.extra-attrs;
 >

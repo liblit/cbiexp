@@ -15,8 +15,8 @@ ViewPrinter::ViewPrinter(const char *stylesheet, const char dtd[], const string 
 
   (*this) << "<?xml version=\"1.0\"?>"
 	  << "<?xml-stylesheet type=\"text/xsl\" href=\"" << stylesheet << "\"?>"
-	  << "<!DOCTYPE view SYSTEM \"" << dtd << ".dtd\">"
-	  << "<view scheme=\"" << scheme
+	  << "<!DOCTYPE scores SYSTEM \"" << dtd << ".dtd\">"
+	  << "<scores scheme=\"" << scheme
 	  << "\" sort=\"" << sort
 	  << "\" projection=\"" << projection
 	  << "\">";
@@ -25,5 +25,5 @@ ViewPrinter::ViewPrinter(const char *stylesheet, const char dtd[], const string 
 
 ViewPrinter::~ViewPrinter()
 {
-  (*this) << "</view>\n";
+  (*this) << "</scores>\n";
 }

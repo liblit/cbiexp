@@ -8,16 +8,16 @@
   >
 
   <xsl:import href="projected-view.xsl"/>
-  <xsl:import href="moss-view-exports.xsl"/>
+  <xsl:import href="histograms.xsl"/>
 
-  <xsl:template mode="static-headings" match="view">
+  <xsl:template match="scores" mode="scores-table-headings">
     <xsl:apply-imports/>
-    <xsl:call-template name="extra-moss-headings"/>
+    <xsl:apply-templates mode="histogram-headings" select="."/>
   </xsl:template>
 
-  <xsl:template mode="static-cells" match="predictor">
+  <xsl:template match="predictor" mode="predictor-row-cells">
     <xsl:apply-imports/>
-    <xsl:apply-templates mode="extra-moss-cells" select="."/>
+    <xsl:apply-templates mode="histogram-row-cells" select="."/>
   </xsl:template>
 
 </xsl:stylesheet>

@@ -1,6 +1,7 @@
 name := moss
 schemes := all branches returns scalar-pairs
-experiment := /moa/sc5/cbi/best-known-datasets/mossexp
+report-series := inverse-100
+training-runs := 1000
 
 view_flags := --stylesheet=moss-view.xsl
 projected_view_flags := --stylesheet=projected-moss-view.xsl
@@ -10,7 +11,7 @@ web_extras :=					\
 	corrected-moss-view.xsl			\
 	histograms.dtd				\
 	histograms.xml				\
-	moss-view-exports.xsl			\
+	histograms.xsl				\
 	moss-view.xsl				\
 	projected-moss-view.xsl
 

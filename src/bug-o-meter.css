@@ -1,27 +1,27 @@
-table.scores {
+table.meter {
   border-collapse: collapse;
   height: 12px;
   border: 2px solid silver
 }
 
-table.scores tr td {
+table.meter tr td {
   border: none;
   padding-left: 0px;
   padding-right: 0px
 }
 
-table.scores tr td.f1 {
+table.meter tr td.f1 {
   background-color: black
 }
 
-table.scores tr td.f2 {
+table.meter tr td.f2 {
   background-color: red
 }
 
-table.scores tr td.f3 {
+table.meter tr td.f3 {
   background-color: pink
 }
 
-table.scores tr td.f4 {
+table.meter tr td.f4 {
   background-color: white
 }

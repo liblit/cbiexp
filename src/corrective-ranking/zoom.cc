@@ -61,10 +61,12 @@ buildZooms(const Predicates &candidates, const char projection[])
 
       view << "<?xml version=\"1.0\"?>"
 	   << "<?xml-stylesheet type=\"text/xsl\" href=\"" << Stylesheet::filename << "\"?>"
-	   << "<!DOCTYPE view SYSTEM \"corrected-view.dtd\">"
-	   << "<view scheme=\"all\" sort=\"zoom\" projection=\"" << projection << "\">";
+	   << "<!DOCTYPE scores SYSTEM \"corrected-view.dtd\">"
+	   << "<scores scheme=\"all\" sort=\"zoom\" projection=\""
+	   << projection
+	   << "\">";
       copy(losers.begin(), losers.end(), ostream_iterator<Predicate>(view));
-      view << "</view>\n";
+      view << "</scores>\n";
 
       allFailures = originalAllFailures;
     }

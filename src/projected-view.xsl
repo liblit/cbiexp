@@ -10,7 +10,7 @@
 
 
   <!-- add our own related links -->
-  <xsl:template mode="go-to-links" match="view">
+  <xsl:template name="go-to-links" match="scores">
     <xsl:apply-imports/>
     <xsl:if test="@scheme = 'all' and (@sort = 'hl' or @sort = 'hs')">
       [<a href="top-rho_{@sort}_{@projection}.xml">correlation matrix for top predictors</a>]
@@ -18,7 +18,7 @@
   </xsl:template>
 
   <!-- extra column headers for our own additional information -->
-  <xsl:template mode="dynamic-headings" match="view">
+  <xsl:template mode="dynamic-headings" match="scores">
     <th>Initial Popularity</th>
     <th>Effective Popularity</th>
     <xsl:apply-imports/>

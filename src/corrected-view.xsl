@@ -9,21 +9,22 @@
   xmlns="http://www.w3.org/1999/xhtml"
   >
 
-  <xsl:import href="view.xsl"/>
-
-  <xsl:output
-    method="xml"
-    doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"
-    doctype-public="-//W3C//DTD XHTML 1.1//EN"
-  />
+  <xsl:import href="bug-o-meter.xsl"/>
+  <xsl:import href="scores.xsl"/>
 
 
   <!-- should we offer zoom pages? -->
   <xsl:param name="link-to-zoom" select="true()"/>
 
 
-  <!-- extra column headers for our own additional information -->
-  <xsl:template mode="dynamic-headings" match="view">
+  <!-- customized page CSS stylesheet -->
+  <xsl:template match="/" mode="css">
+    view.css
+  </xsl:template>
+
+
+  <!-- customized dynamic data column headers for the big table -->
+  <xsl:template match="scores" mode="dynamic-headings">
     <th>Initial Score</th>
     <th>Initial Thermometer</th>
     <th>Effective Score</th>
@@ -34,28 +35,18 @@
   </xsl:template>
 
 
-  <!-- extra columns with popularity information -->
-  <xsl:template mode="dynamic-cells" match="predictor">
+  <!-- customized dynamic data cells for each predictor row -->
+  <xsl:template match="predictor" mode="dynamic-cells">
     <td><xsl:value-of select="@initial"/></td>
-    <xsl:apply-imports/>
+    <xsl:variable name="index" select="number(@index)"/>
+    <xsl:apply-templates select="document('predictor-info.xml')/predictor-info/info[$index]/bug-o-meter"/>
     <td><xsl:value-of select="@effective"/></td>
     <xsl:apply-templates select="bug-o-meter"/>
     <xsl:if test="$link-to-zoom">
       <td class="link">
-	<xsl:call-template name="zoom-link">
-	  <xsl:with-param name="projection" select="@projection"/>
-	  <xsl:with-param name="index" select="@index"/>
-	</xsl:call-template>
+	<a href="zoom-{/scores/@projection}-{@index}.xml">&link;</a>
       </td>
     </xsl:if>
-  </xsl:template>
-
-
-  <!-- hyperlink for a single predicate's zoom page -->
-  <xsl:template name="zoom-link">
-    <xsl:param name="projection"/>
-    <xsl:param name="index"/>
-    <a href="zoom-{/view/@projection}-{@index}.xml">&link;</a>
   </xsl:template>
 
 

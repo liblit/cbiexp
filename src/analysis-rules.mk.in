@@ -5,11 +5,12 @@ experiment ?= ..
 datadir ?= $(experiment)/data
 corrdir := $(root)/correlations
 tooldir := $(root)/src
+srcdir ?= $(experiment)/src
 training-runs ?= 0
 
 sitesdir ?= $(experiment)/share
 sitesglob := $(experiment)/share/*.sites
-sites := $(wildcard $(sitesglob))
+sites ?= $(wildcard $(sitesglob))
 sites := $(if $(sites), $(sites), $(error no sites files in $(sitesglob)))
 xmlify-add-suffix := .html
 
@@ -31,6 +32,7 @@ views := $(foreach scheme, $(schemes), $(foreach sort, $(sorts), $(foreach proje
 #topRho := $(foreach sort, hl hs, $(foreach proj, circular linear, top-rho_$(sort)_$(proj).xml))
 
 find-zooms := find . -maxdepth 1 -name 'zoom-corrected-*.xml'
+find-xmls  := find . -name '*.xml'
 
 links :=					\
 	bug-o-meter.css				\
@@ -52,6 +54,7 @@ links :=					\
 	projections.xml				\
 	rho.dtd					\
 	rho.xsl					\
+	scores.css				\
 	scores.dtd				\
 	scores.xsl				\
 	sorts.dtd				\
@@ -95,7 +98,7 @@ $(publish)/%: %
 	cp $< $@
 
 stamp-src: $(tooldir)/htmlify-sources
-	$< $(experiment)/src
+	$< $(srcdir)
 	touch $@
 clean:: ; rm -rf stamp-src src
 
@@ -176,7 +179,7 @@ compute-obs-tru: $(tooldir)/compute_obs_tru.o sites.o units.o
 clean:: ; rm -f compute-obs-tru
 
 $(filter %_none.xml, $(views)): gen-views preds.txt
-	$(build) operands.xsl view.dtd view.xsl
+	$(build) operands.xsl view.css view.dtd view.xsl scores.css scores.dtd scores.xsl
 	./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) $(view_flags)
 	xmllint --valid --noout $(filter %_none.xml, $(views))
 clean:: ; rm -f $(filter %_none.xml, $(views))
@@ -356,6 +359,22 @@ calc_truthprobs: $(tooldir)/calc_truthprobs.o units.o sites.o
 #truthprobs: calc_truthprobs parmstats.txt preds.txt
 truthprobs: calc_truthprobs
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
+
+validate: force
+	$(find-xmls) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
+.PHONY: validate
+
+xmls := $(wildcard *.xml)
+htmls := $(filter-out $(addsuffix .html, predictor-info projections sorts summary), $(xmls:.xml=.html))
+
+convert: $(htmls)
+
+$(htmls): %.html: %.xml $(links)
+	xsltproc -o $@ $< 2>$*.errs
+	if test -s $*.errs; then cat $*.errs; false; fi
+	rm $*.errs
+	xmllint --valid --noout --catalogs $@
+
 
 ########################################################################
 

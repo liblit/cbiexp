@@ -14,7 +14,7 @@ my $sourcedir = shift;
 
 
 sub wanted () {
-    return unless /\.([chly]|flex)$/;
+    return unless /\.([chl]|flex)$/;
     my $outfile = $_;
     die unless $outfile =~ s:^$sourcedir/:src/:;
     mkpath dirname $outfile;
@@ -22,5 +22,7 @@ sub wanted () {
     system(@command) == 0 or exit($? >> 8 || $? & 127 || 1);
 }
 
+
+-d $sourcedir or die "cannot convert $sourcedir: $!\n";
 
 find { wanted => \&wanted, no_chdir => 1 }, $sourcedir;

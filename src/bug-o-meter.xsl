@@ -9,7 +9,7 @@
 
   <xsl:template match="bug-o-meter">
     <td>
-      <table class="scores" width="{@log10-true * 60 + 1}px" title="Ctxt: {round(@context * 100)}%, LB: {round(@lower-bound * 100)}%, Incr: {round(@increase * 100)}%, Fail: {round(@fail * 100)}%&#10;tru in {@true-success} S and {@true-failure} F&#10;obs in {@seen-success} S and {@seen-failure} F">
+      <table class="meter" width="{@log10-true * 60 + 1}px" title="Ctxt: {round(@context * 100)}%, LB: {round(@lower-bound * 100)}%, Incr: {round(@increase * 100)}%, Fail: {round(@fail * 100)}%&#10;tru in {@true-success} S and {@true-failure} F&#10;obs in {@seen-success} S and {@seen-failure} F">
 	<tr>
 	  <td class="f1" style="width: {@context * 100}%"/>
 	  <td class="f2" style="width: {@lower-bound * 100}%"/>

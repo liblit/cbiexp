@@ -1,41 +1,8 @@
 @import "bug-o-meter.css";
-@import "link-cell.css";
-@import "logo.css";
+@import "scores.css";
+
 
 table.views th {
-  text-align: right
-}
-
-
-/**********************************************************************/
-
-
-table.predictors {
-  clear: right;
-  border: 1px solid black;
-  border-collapse: collapse;
-  margin-top: 2ex
-}
-
-thead {
-  border: 1px solid;
-  background: #dfd
-}
-
-
-table.predictors th, table.predictors td {
-  border: 1px dotted;
-  padding: 0.25em
-}
-
-
-/**********************************************************************/
-
-
-tr.rare { 
-  background: #ddf
-}
-
-td.count {
-  text-align: right
+  text-align: right;
+  vertical-align: baseline
 }
