@@ -110,6 +110,14 @@ Predicate::recall() const
   assert(possible > 0);
   assert(captured <= possible);
 
+  // !!!: deviation from formal definitions:
+  //   special handling to avoid division by zero
+  if (possible == 1)
+    {
+      assert(captured == 1);
+      return 1;
+    }
+
   const double result = log(double(captured)) / log(double(possible));
 
   assert(result >= 0);
