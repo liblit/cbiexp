@@ -332,6 +332,7 @@ int main(int argc, char** argv)
 	      "sed 's/[a-zA-Z_][a-zA-Z_0-9]*\\$//g' | "
 	      "sed 's/\\([0-9][0-9]*\\)LL/\\1/g' | "
 	      "sed 's/\\([0-9][0-9]*\\)ULL/\\1/g' | "
+	      "sed 's/\"/\\\\\"/g' | "
 	      "%s/%s -ss %s.cc -us %s.cc",
 	      sites_txt_file, bindir, MAP_SITES, sites_src_file, units_src_file);
 	shell("%s -I%s -c %s.cc", compiler, incdir, sites_src_file);

@@ -25,13 +25,13 @@ char* get_scheme_and_signature(char* x)
 
     u = strchr(x, '\"');
     assert(u);
-    t = strchr(u + 1, '\"');
+    t = strchr(u + 1, '\\');
     assert(t);
     *t = '\0';
-    s = strchr(t + 1, '\"');
+    s = strchr(t + 2, '\"');
     assert(s);
     s++;
-    t = strchr(s, '\"');
+    t = strchr(s, '\\');
     assert(t);
     *t = '\0';
 
