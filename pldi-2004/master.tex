@@ -407,7 +407,18 @@ only the final state of the program at the point of failure.
 \section{Related Work}
 \label{sec:related-work}
 
-In this section we briefly survey related work.
+In this section we briefly survey related work. There is currently a great
+deal of interest in applying static analysis to software quality.  Some,
+but certainly not all, of the bugs we found in our studies could also have
+been detected by known static analyses.  While we firmly believe in
+the use of static analysis to find and prevent bugs, our dynamic approach has
+advantages. A dynamic analysis can observe actual run-time values, which is often
+better than either making a very conservative static assumption about runtime
+values to be sound, or allowing some even very simple bugs to escape undetected.
+Another advantage of dynamic analysis, especially one that uses actual user
+executions for its data, is that it is possible to assign an accurate importance to each
+bug.
+  
 The Daikon project \cite{ernst2001} monitors instrumented applications
 to discover likely program invariants.  It collects extensive trace
 information at run time and uses this offline to accept or reject any
