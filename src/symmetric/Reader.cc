@@ -21,8 +21,8 @@ Reader::tallyPair(const SiteCoords &site, int id, unsigned a, unsigned b)
 {
   assert(a || b);
 
-  const Coords aCoords(site, +id);
-  const Coords bCoords(site, -id);
+  const PredCoords aCoords(site, 2 * id);
+  const PredCoords bCoords(site, 2 * id + 1);
 
   Predicate *&aCounts = candidates[aCoords];
   Predicate *&bCounts = candidates[bCoords];
@@ -51,7 +51,7 @@ Reader::branchesSite(const SiteCoords &site, unsigned a, unsigned b)
 {
   assert(a || b);
 
-  tallyPair(site, 1, a, b);
+  tallyPair(site, 0, a, b);
 }
 
 
@@ -60,9 +60,9 @@ Reader::tripleSite(const SiteCoords &site, unsigned a, unsigned b, unsigned c)
 {
   assert(a || b || c);
 
-  tallyPair(site, 1, a, b || c);
-  tallyPair(site, 2, b, a || c);
-  tallyPair(site, 3, c, a || b);
+  tallyPair(site, 0, a, b || c);
+  tallyPair(site, 1, b, a || c);
+  tallyPair(site, 2, c, a || b);
 }
 
 
@@ -71,10 +71,10 @@ Reader::gObjectUnrefSite(const SiteCoords &site, unsigned a, unsigned b, unsigne
 {
   assert(a || b || c || d);
 
-  tallyPair(site, 1, a, b || c || d);
-  tallyPair(site, 2, b, a || c || d);
-  tallyPair(site, 3, c, a || b || d);
-  tallyPair(site, 4, d, a || b || c);
+  tallyPair(site, 0, a, b || c || d);
+  tallyPair(site, 1, b, a || c || d);
+  tallyPair(site, 2, c, a || b || d);
+  tallyPair(site, 3, d, a || b || c);
 }
 
 
@@ -83,9 +83,9 @@ Reader::returnsSite(const SiteCoords &site, unsigned a, unsigned b, unsigned c)
 {
   assert(a || b || c);
 
-  tallyPair(site, 1, a, b || c);
-  tallyPair(site, 2, b, a || c);
-  tallyPair(site, 3, c, a || b);
+  tallyPair(site, 0, a, b || c);
+  tallyPair(site, 1, b, a || c);
+  tallyPair(site, 2, c, a || b);
 }
 
 
@@ -94,7 +94,7 @@ Reader::scalarPairsSite(const SiteCoords &site, unsigned a, unsigned b, unsigned
 {
   assert(a || b || c);
 
-  tallyPair(site, 1, a, b || c);
-  tallyPair(site, 2, b, a || c);
-  tallyPair(site, 3, c, a || b);
+  tallyPair(site, 0, a, b || c);
+  tallyPair(site, 1, b, a || c);
+  tallyPair(site, 2, c, a || b);
 }

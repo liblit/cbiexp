@@ -20,9 +20,30 @@ trueInNoFailures(const Candidates::value_type &chaff)
 void
 Candidates::filter()
 {
-  __gnu_cxx::hash_map<Coords, Predicate *> replacement;
+  __gnu_cxx::hash_map<PredCoords, Predicate *> replacement;
   remove_copy_if(begin(), end(), inserter(replacement, replacement.begin()), trueInNoFailures);
   swap(replacement);
+}
+
+
+////////////////////////////////////////////////////////////////////////
+
+
+static bool
+better(Candidates::value_type &challenger, double challengerScore, double winnerScore)
+{
+  if (challengerScore > winnerScore)
+    return true;
+
+  if (challengerScore < winnerScore)
+    return false;
+
+  // !!!: deviation from formal definitions:
+  //   prefer non-scalar-pairs predictors
+  if (units[challenger.first.unitIndex].scheme_code != 's')
+    return true;
+
+  return false;
 }
 
 
@@ -43,7 +64,7 @@ Candidates::best()
   while (++challenger != end())
     {
       const double challengerScore = challenger->second->score();
-      if (challengerScore > winnerScore)
+      if (better(*challenger, challengerScore, winnerScore))
 	{
 	  winner = challenger;
 	  winnerScore = challengerScore;
@@ -59,17 +80,17 @@ Candidates::best()
 
 ostream &operator<<(ostream &out, const Candidates::value_type &winner)
 {
-  const Coords &coords = winner.first;
+  const PredCoords &coords = winner.first;
   const unit_t &unit = units[coords.unitIndex];
   const Predicate &pred = *winner.second;
 
-  out << "<predicate unit=\"" << unit.signature
+  out << "<predictor unit=\"" << unit.signature
       << "\" scheme=\"" << scheme_name(unit.scheme_code)
-      << "\" site=\"" << coords.siteOffset
-      << "\" test=\"" << coords.testId
+      << "\" site=\"" << coords.siteOffset + 1
+      << "\" predicate=\"" << coords.predicate + 1
       << "\" score=\"" << pred.score() << "\">";
   pred.print(out);
-  out << "</predicate>";
+  out << "</predictor>";
 
   return out;
 }
@@ -77,6 +98,6 @@ ostream &operator<<(ostream &out, const Candidates::value_type &winner)
 
 ostream &operator<<(ostream &out, const Candidates &candidates)
 {
-  copy(candidates.begin(), candidates.end(), ostream_iterator<Candidates::value_type>(out, "\n"));
+  copy(candidates.begin(), candidates.end(), ostream_iterator<Candidates::value_type>(out, ""));
   return out;
 }

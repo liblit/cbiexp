@@ -93,7 +93,6 @@ main(int argc, char *argv[])
 
   // create XML output file and write initial header
   ViewPrinter view(Stylesheet::filename, "symmetric", "symmetric.xml");
-  view << '\n';
 
   // Progress::Bounded progress("ranking predicates", candidates.size());
 

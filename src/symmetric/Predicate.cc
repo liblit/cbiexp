@@ -76,7 +76,7 @@ Predicate::lowerBound() const
 double
 Predicate::recall() const
 {
-  // !!!: deviations from formal definitions:
+  // !!!: deviation from formal definitions:
   //   increment denominator to avoid NAN when allFailures.size() == 1
   //   increment numerator to counterbalance incremented denominator
 

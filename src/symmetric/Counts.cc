@@ -46,5 +46,5 @@ Counts::print(ostream &out, const char tag[]) const
 {
   out << '<' << tag
       << " successes=\"" << trueInSuccesses
-      << "\" failures=\"" << trueInFailures.size() << "/>";
+      << "\" failures=\"" << trueInFailures.size() << "\"/>";
 }

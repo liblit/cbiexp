@@ -8,8 +8,6 @@ libsymmetric_a_SOURCES =			\
 	Boths.h					\
 	Candidates.cc				\
 	Candidates.h				\
-	Coords.cc				\
-	Coords.h				\
 	Counts.cc				\
 	Counts.h				\
 	Predicate.cc				\
