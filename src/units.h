@@ -9,7 +9,8 @@ struct unit_t {
 
 extern const struct unit_t units[];
 
-extern const int NumUnits;
+extern const int num_units;
+
 extern const int NumBPreds;
 extern const int NumRPreds;
 extern const int NumSPreds;
