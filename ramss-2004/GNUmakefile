@@ -20,7 +20,7 @@ master.dvi: %.dvi: $(texs) $(epss)
 	latex $*
 
 $(epss): %.eps: %.png
-	convert $< $@
+	convert $< eps2:$@
 
 clean:
 	rm -f *.aux *.bbl *.blg *.dvi *.eps *.log *.out *.pdf *.ps *.tpt
