@@ -49,7 +49,7 @@ widely used service for detecting plagiarism in software
 and repaired bugs in \moss that we reintroduced.  The other three were
 variations on three of the original bugs, to see if our algorithm could
 discriminate between pairs of bugs with very similar behavior but
-distinct causes.  The nature of the eight crasing bugs varies: four
+distinct causes.  The nature of the eight crashing bugs varies: four
 buffer overruns, a null file pointer dereference in certain cases, a
 missing end-of-list check in the traversal of a hash table bucket, a missing
 out-of-memory check, and a violation of a subtle invariant that must be maintained between two
@@ -295,7 +295,7 @@ a couple of minutes and with no explicit specification beyond
 
 \autoref{tab:views-rhythmbox} shows our results for \rhythmbox 0.6.5,
 an interactive, graphical, open source music player.  \rhythmbox is a
-complex, multithreaded, event-driven system, written using a library
+complex, multi-threaded, event-driven system, written using a library
 providing object-oriented primitives in C.  Event-driven systems use
 event queues; each event performs some computation and possibly adds
 more events to some queues.  We know of no static analysis today that
@@ -325,7 +325,7 @@ understand these bugs without the information provided by our tool.
   fact we weren't.  So I think it should go.  Secondly, saying that
   the bugs were violations of subtle invariants may connote that those
   found in the other experiments weren't violations of subtle
-  invarianta, which I think is not true.
+  invariants, which I think is not true.
 
   How about saying that the bugs in \rhythmbox{} are related to
   violations of complex heap invariants (as Alex noted long back) and
@@ -333,3 +333,5 @@ understand these bugs without the information provided by our tool.
   structures (as Alex mentions at the end of the Background section
   (sec 2)) and then round off the para by saying that we leave this
   for future work?}
+
+%% LocalWords:  exps mossdilute ccrypt bc exif buf mnote rhythmbox
