@@ -11,8 +11,10 @@
 #include "Dilute.h"
 #include "MappedArray.h"
 #include "Matrix.h"
+#include "NumRuns.h"
 #include "PredStats.h"
 #include "Rho.h"
+#include "RunsDirectory.h"
 #include "Score/Fail.h"
 #include "Score/HarmonicMeanLog.h"
 #include "Score/HarmonicMeanSqrt.h"
@@ -130,6 +132,8 @@ buildViews(const Rho &rho, const Schemes::value_type &scheme)
 static void processCommandLine(int argc, char *argv[])
 {
   static const argp_child children[] = {
+    { &NumRuns::argp, 0, 0, 0 },
+    { &RunsDirectory::argp, 0, 0, 0 },
     { &Stylesheet::argp, 0, 0, 0 },
     { &Verbose::argp, 0, 0, 0 },
     { 0, 0, 0, 0 }

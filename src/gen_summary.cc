@@ -4,6 +4,7 @@
 #include "Confidence.h"
 #include "NumRuns.h"
 #include "PredStats.h"
+#include "RunsDirectory.h"
 #include "SourceDirectory.h"
 #include "classify_runs.h"
 #include "fopen.h"
@@ -29,6 +30,7 @@ processCommandLine(int argc, char *argv[])
   static const argp_child children[] = {
     { &Confidence::argp, 0, 0, 0 },
     { &NumRuns::argp, 0, 0, 0 },
+    { &RunsDirectory::argp, 0, 0, 0 },
     { &SourceDirectory::argp, 0, 0, 0 },
     { 0, 0, 0, 0 }
   };
