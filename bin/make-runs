@@ -6,30 +6,8 @@ use strict;
 use FindBin;
 use lib $FindBin::Bin;
 
-use Cwd;
-use File::Path;
-use File::stat;
-use FileHandle;
 use Getopt::Long qw(:config bundling auto_abbrev);
-
-my $RunsPerSubdirectory = 10000;
-
-
-########################################################################
-#
-#  sanity check
-#
-
-my $cwd = getcwd;
-my $run_once = 'bin/run-once';
-my $label_once = 'bin/label-once';
-
-unless (-x $run_once && -x $label_once) {
-    warn "Error: current directory is not set up for scripted CBI runs.\n\n";
-    warn "  $run_once script is missing or not executable\n" unless -x $run_once;
-    warn "  $label_once script is missing or not executable\n" unless -x $label_once;
-    exit 2;
-}
+use MakeRuns;
 
 
 ########################################################################
@@ -60,21 +38,10 @@ my $understood = GetOptions('jobs=i' => \$jobs,
 			    'help|?' => \&help);
 
 die $usage unless $understood && @ARGV == 1;
-
-
-unless ($jobs) {
-    $jobs = 0;
-    my $cpuinfo = new FileHandle '/proc/cpuinfo';
-    while (<$cpuinfo>) {
-	++$jobs if /^processor\t/;
-    }
-    --$jobs;
-}
-
-$jobs = 1 if $jobs < 1;
-
-
 my ($num_runs) = @ARGV;
+
+$jobs = MakeRuns->cpu_count - 1 unless $jobs;
+$jobs = 1 if $jobs < 1;
 
 
 ########################################################################
@@ -94,116 +61,15 @@ if (-x $prep) {
 
 ########################################################################
 #
-#  timestamp checking
-#
-
-
-{
-    my $label_once_mtime = (stat "$cwd/$label_once")->mtime;
-
-    sub need_label ($$) {
-	my $label = stat shift;
-	return 1 unless $label;
-	return 1 if $label_once_mtime > $label->mtime;
-
-	my $stamp = stat shift;
-	return 1 unless $stamp;
-
-	return $stamp->mtime > $label->mtime;
-    }
-}
-
-
-########################################################################
-#
 #  perform all runs
 #
 
+my $runner = new MakeRuns(jobs => $jobs, datadir => $datadir);
+$runner->run_tasks($start .. $num_runs - 1);
 
-$| = 1;
+exit 1 if $runner->{error};
 
-my $error = 0;
-my $updated = 0;
-my $children = 0;
-
-
-sub reap () {
-    wait;
-    $error = 1 if $?;
-    --$children;
-}
-
-
-foreach my $run_id ($start .. $num_runs - 1) {
-    if (-e 'orderly-shutdown') {
-	$error = 1;
-	last;
-    }
-
-    # is any work needed for this run?
-    my $subdir = int($run_id / $RunsPerSubdirectory);
-    my $rundir = "$datadir/$subdir/$run_id";
-    my $stamp_file = "$rundir/stamp";
-    my $label_file = "$rundir/label";
-    next unless need_label $label_file, $stamp_file;
-
-    # wait for an available slot
-    reap while $children >= $jobs;
-    last if $error;
-
-    # use the available slot
-    my $pid = fork;
-    die "cannot fork: $!\n" unless defined $pid;
-
-    if ($pid == 0) {
-	$0 = "run $run_id";
-
-	if (-e 'stamp') {
-	    # already ran; just needs relabeling
-	    chdir $rundir;
-	} else {
-	    # prepare a fresh run directory
-	    print "run $run_id: start\n";
-	    rmtree $rundir;
-	    mkpath $rundir;
-	    chdir $rundir;
-
-	    # run the application
-	    system "$cwd/$run_once", $run_id;
-	    exit 1 if $?;
-
-	    # record that the run completed
-	    new FileHandle 'stamp', 'w'
-		or die "cannot update stamp: $!\n";
-	    print "run $run_id: done\n";
-	}
-
-	# label the outcome
-	print "run $run_id: label\n";
-	open STDOUT, '>', 'label' or die "cannot write label: $!\n";
-	system "$cwd/$label_once", $run_id;
-	if ($?) {
-	    unlink 'label';
-	    exit 1;
-	} else {
-	    exit 0;
-	}
-
-    } else {
-	# update slot count
-	++$children;
-
-	# remember that some work was done
-	$updated = 1;
-    }
-}
-
-
-# finish up any remaining jobs
-reap while $children;
-exit 1 if $error;
-
-if ($updated) {
+if ($runner->{updated}) {
     my $filename = "$datadir/stamp-labels";
     my $stamp = new FileHandle $filename, 'w' or die "cannot write $filename: $!\n";
     $stamp->print("$num_runs\n");
