@@ -1,10 +1,15 @@
 \documentclass{acm_proc_article-sp}
 %% \documentclass{sig-alternate}
 
+%% standard texmf packages
 \usepackage{color}
 \usepackage{hyperref}
 \usepackage{nicefrac}
 \usepackage{xspace}
+
+%% unique to this paper
+\usepackage{Autoref}
+\renewcommand{\sectionautorefname}[0]{Section}
 
 \newcommand{\moss}{\textsc{Moss}\xspace}
 
@@ -180,14 +185,14 @@ supports a family of sampling rates selectable on a per-site basis.
 
 The sampling instrumentor uses several program analyses to boost the
 performance of instrumented code.  However, the post-run data analysis
-described in \autoref{sec:algorithm} is largely ignorant of program
+described in \Autoref{sec:algorithm} is largely ignorant of program
 structure.  Exploiting properties visible in the source code can allow
 further filtering of suspect predicates.  We expect that in any given
 failed execution, there are two points of greatest interest to an
 engineer: the place where things first started to go wrong, and the
 place where an immediate failure became truly inevitable.  Thus,
 predicates with high crash scores \placeholder{Is ``crash score'' the
-  right term here?  Check against \autoref{sec:algorithm}.} are most
+  right term here?  Check against \Autoref{sec:algorithm}.} are most
 interesting when they appear close to program entry or close to the
 location of an actual crash.
 

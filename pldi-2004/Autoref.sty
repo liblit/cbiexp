@@ -1,0 +1,14 @@
+%% \usepackage{hyperref}
+
+\newcommand{\Autoref}[1]{\begingroup%
+  \renewcommand{\footnoteautorefname}[0]{Footnote}%
+  \renewcommand{\itemautorefname}[0]{Item}%
+  \renewcommand{\chapterautorefname}[0]{Chapter}%
+  \renewcommand{\sectionautorefname}[0]{Section}%
+  \renewcommand{\subsectionautorefname}[0]{Subsection}%
+  \renewcommand{\subsubsectionautorefname}[0]{Subsubsection}%
+  \renewcommand{\paragraphautorefname}[0]{Paragraph}%
+  \renewcommand{\subparagraphautorefname}[0]{Subparagraph}%
+  \renewcommand{\FancyVerbLineautorefname}[0]{Line}%
+  \autoref{#1}%
+  \endgroup}
