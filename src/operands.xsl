@@ -36,7 +36,7 @@
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'returns' and @predicate = 1]">
-    <xsl:value-of select="operand[1]/@source"/> &#8805; 0
+    <xsl:value-of select="operand[1]/@source"/> &gt;= 0
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'returns' and @predicate = 2]">
@@ -44,7 +44,7 @@
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'returns' and @predicate = 3]">
-    <xsl:value-of select="operand[1]/@source"/> &#8800; 0
+    <xsl:value-of select="operand[1]/@source"/> != 0
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'returns' and @predicate = 4]">
@@ -52,7 +52,7 @@
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'returns' and @predicate = 5]">
-    <xsl:value-of select="operand[1]/@source"/> &#8804; 0
+    <xsl:value-of select="operand[1]/@source"/> &lt;= 0
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'scalar-pairs' and @predicate = 0]">
@@ -60,7 +60,7 @@
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'scalar-pairs' and @predicate = 1]">
-    <xsl:value-of select="operand[1]/@source"/> &#8805; <xsl:value-of select="operand[2]/@source"/>
+    <xsl:value-of select="operand[1]/@source"/> &gt;= <xsl:value-of select="operand[2]/@source"/>
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'scalar-pairs' and @predicate = 2]">
@@ -68,7 +68,7 @@
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'scalar-pairs' and @predicate = 3]">
-    <xsl:value-of select="operand[1]/@source"/> &#8800; <xsl:value-of select="operand[2]/@source"/>
+    <xsl:value-of select="operand[1]/@source"/> != <xsl:value-of select="operand[2]/@source"/>
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'scalar-pairs' and @predicate = 4]">
@@ -76,7 +76,7 @@
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'scalar-pairs' and @predicate = 5]">
-    <xsl:value-of select="operand[1]/@source"/> &#8804; <xsl:value-of select="operand[2]/@source"/>
+    <xsl:value-of select="operand[1]/@source"/> &lt;= <xsl:value-of select="operand[2]/@source"/>
   </xsl:template>
 
   <xsl:template mode="operands" match="*">
