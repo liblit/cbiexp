@@ -10,6 +10,7 @@ histograms.xml: %.xml: % run-bug.txt tru.txt
 	./$< >$@
 	$(MAKE) $*.dtd
 	xmllint --valid --noout $@
+clean:: ; rm -f histograms.xml
 
 run-bug.txt: %.txt: $(datadir)/stamp-labels %
 	$(time) ./$* `cat $<` >$@
