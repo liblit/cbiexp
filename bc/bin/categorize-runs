@@ -1,0 +1,78 @@
+#!/usr/bin/perl -w
+
+########################################################################
+#
+#  Categorize runs according to apparent outcome
+#
+#  Output consists of one line per run, two columns per line:
+#
+#  First column is run ID number.  These are not guaranteed to be in
+#  sorted order.  If strict ordering is required, pipe the output
+#  through "sort -n".
+#
+#  Second column is one of the following outcome categories:
+#
+#    in-progress: run has not yet completed
+#    unusable:    run completed but feedback report broken in some way
+#    success:     run completed successfully
+#    crash:       run completed by crashing
+#    error:       run completed but reported an non-zero exit status
+#
+#  In general, ignore runs labeled "in-progress" or "unusable".  Runs
+#  labeled "success", "crash", and "error" are suitable for subsequent
+#  anlysis.  I leave open the question of whether "error" runs should
+#  be treated as good or bad.
+#
+#  This script can be handy in larger pipelines.  Here are a few
+#  examples:
+#
+#      # list runs with data to examine
+#      % categorize-runs | awk '$2 ~ /successful|crash|error/'
+#
+#      # list just the run IDs of crashed runs
+#      % categorize-runs | awk '$2 = "crash" { print $1 }'
+#
+#      # how many runs to we have in each category?
+#      % categorize-runs | cut -f2 | sort | uniq -c
+#
+
+
+use strict;
+
+use DirHandle;
+use FileHandle;
+use FindBin;
+
+
+########################################################################
+
+
+my $datadir = "$FindBin::Bin/../data";
+my $handle = new DirHandle "$FindBin::Bin/../data";
+die "cannot read data directory: $!\n" unless defined $handle;
+
+while (defined(my $id = $handle->read)) {
+    next if $id eq '.';
+    next if $id eq '..';
+
+    print "$id\t";
+    my $rundir = "$datadir/$id";
+
+    if (! -e "$rundir/stamp") {
+	print 'in-progress';
+    } elsif (-e "$rundir/bad") {
+	print 'unusable';
+    } else {
+	my $outcome = (new FileHandle "$rundir/outcome")->getline;
+	if ($outcome == 0) {
+	    print 'success';
+	} elsif ($outcome < 256) {
+	    print 'crash';
+	} else {
+	    print 'error';
+	}
+	die unless -e "$rundir/reports";
+    }
+
+    print "\n";
+}

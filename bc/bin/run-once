@@ -1,0 +1,85 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use File::Temp qw(tempfile);
+use File::Find;
+use FileHandle;
+use FindBin;
+
+my $fuzz = "$FindBin::Bin/fuzz";
+my $bc = "$FindBin::Bin/../src/bc/bc";
+
+@ARGV == 1 or die "Usage: $0 <run-id>\n";
+my $runId = shift;
+
+
+########################################################################
+#
+#  record some small fact in an external file
+#
+
+sub note ($@) {
+    my ($filename, @message) = @_;
+    my $handle = new FileHandle $filename, 'w' or warn "cannot write to $filename: $!";
+    $handle->print("@message\n");
+}
+
+
+########################################################################
+#
+#  prepare for sampler data collection
+#
+
+$ENV{SAMPLER_DEBUGGER} = '/usr/share/sampler/print-debug-info';
+$ENV{SAMPLER_FILE} = 'reports';
+$ENV{SAMPLER_REAL_EXECUTABLE} = $bc;
+$ENV{SAMPLER_SPARSITY} = 1;
+
+delete $ENV{SAMPLER_REPORT_FD};
+
+
+########################################################################
+#
+#  run bc on random input noise
+#
+
+my ($inFd, $inName) = tempfile(UNLINK => 1);
+(system { $fuzz } $fuzz, $runId, 9, $inName) == 0
+    or die "cannot create random input file: $!";
+
+open my $oldin, '<&', \*STDIN or die "cannot save standard input: $!";
+open my $oldout, '>&', \*STDOUT or die "cannot save standard output: $!";
+open my $olderr, '>&', \*STDERR or die "cannot save standard error: $!";
+
+open STDIN, '<&=', $inFd or die "cannot redirect standard input: $!";
+open STDOUT, '>', '/dev/null' or die "cannot redirect standard output: $!";
+open STDERR, '>', '/dev/null' or die "cannot redirect standard error: $!";
+
+system { $bc } $bc;
+
+open STDIN, '<&', $oldin or die "cannot restore standard input: $!";
+open STDOUT, '>&', $oldout or die "cannot restore standard output: $!";
+open STDERR, '>&', $olderr or die "cannot restore standard error: $!";
+
+note 'outcome', $?;
+
+
+########################################################################
+#
+#  sanity check sampler output
+#
+
+my $handle = new FileHandle $ENV{SAMPLER_FILE}, 'r';
+
+if ($handle) {
+    my $last;
+    $last = $_ while <$handle>;
+    if (! defined $last) {
+	note 'bad', 'reports file empty';
+    } elsif ($last ne "</report>\n") {
+	note 'bad', 'reports file ends abruptly';
+    }
+} else {
+    note 'bad', 'reports file missing';
+}
