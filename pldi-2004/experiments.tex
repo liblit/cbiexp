@@ -17,31 +17,24 @@ We performed 31,996 random runs of \moss.  Of these, 123 runs were
 discarded because they produced no report (see
 \Autoref{sec:experiments:setup}), giving us 31,873 runs to work with.
 
-For this experiment we used three different instrumentation strategies, which our
-instrumentor automatically combined in a single executable:
-\begin{itemize}
-\item {\em branches}: For each if statement {\tt if (P) \ldots} we sample whether {\tt P} is true or false.
-Two predicates are tracked for each {\tt if} ($\tt P$ and $\tt \neg P$).  There were 2,085 such conditional branches
-in \moss, yielding 4,170 predicates.
+For this experiment we enabled all three instrumentation strategies
+described in \Autoref{sec:background}:
 
-\item {\em returns}: For each procedure we sample whether its return value $\tt r$ is positive, negative, or zero.
-These three counters give rise to six predicates in the analysis: $\tt r = 0$, $\tt \neq 0$, $\tt r < 0$, $\tt r \leq 0$, $\tt r > 0$, and $\tt r \geq 0$.
-There were 494 return sites in \moss, yielding 2,964 predicates.
+\begin{description}
+\item[branches:] 2,085 instrumentation sites.  Each site has two
+  counters and yields two predicates, for 4,170 branch predicates over
+  all.
+  
+\item[returns:] 494 instrumentation sites.  Each site has three
+  counters and yields six predicates, for 2,964 return predicates over
+  all.
+  
+\item[scalar-pairs:] 32,644 instrumentation sites.  Each site has
+  three counters and yields six predicates, for 195,864 scalar-pair
+  predicates over all.
+\end{description}
 
-\item {\em scalar-pairs}: At each assignment {\tt x = \ldots} and every other variable with the same type as {\tt x} that is in scope,
-we sample whether $\tt x < y$, $\tt x = y$, or $\tt x > y$.  These
-three counters also give rise to six predicates that are examined in
-the analysis: $\tt x = y$, $\tt x \neq y$, $\tt x < y$, $\tt x \leq
-y$, $\tt x > y$, and $\tt x \geq y$.  This instrumentation strategy 
-also includes assignments to struct fields of the form {\tt foo.x =
-\ldots}.  Furthermore, in addition to comparing the left-hand side of
-an assignment with same-typed variables, the left-hand side is also compared against
-same-typed manifest constants that appear in the program.  There are
-32,644 such combinations of assignments and variables or constants
-to compare in \moss, yielding 195,864 predicates in the analysis.
-\end{itemize}
-
-Thus, the input to our analysis is 31,873, each of which records the
+Thus, the input to our analysis is 31,873 feedback reports, each of which records the
 status of over 200,000 predicates.\footnote{The reader may wonder
 whether it is practical to actually generate a report on 200,000
 predicates on a client machine and then upload it to a central server
@@ -62,9 +55,9 @@ $\increase(\ldots)$ score are
 \begin{itemize}
 \item 51 branch predicates;
 
-\item 16 returns predicates;
+\item 16 return predicates;
 
-\item 8,672 scalar-pairs predicates.
+\item 8,672 scalar-pair predicates.
 \end{itemize}
 About 99\% of all predicates in the the branch and returns
 instrumentation strategies are eliminated by step (1) of our
