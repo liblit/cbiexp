@@ -1,5 +1,6 @@
 #include <argp.h>
 #include <cassert>
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <ext/hash_map>
