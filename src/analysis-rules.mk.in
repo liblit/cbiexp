@@ -49,6 +49,7 @@ links :=					\
 	logreg.xsl				\
 	operand.dtd				\
 	operands.xsl				\
+	pred-scores.css				\
 	pred-scores.dtd				\
 	pred-scores.xsl				\
 	predictor-info.dtd			\

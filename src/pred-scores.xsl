@@ -11,6 +11,12 @@
   <xsl:import href="bug-o-meter.xsl"/>
 
 
+  <!-- customized page CSS stylesheet -->
+  <xsl:template match="/" mode="css">
+    pred-scores.css
+  </xsl:template>
+
+
   <!-- extra column headings -->
   <xsl:template match="scores" mode="dynamic-headings">
     <xsl:apply-imports/>
