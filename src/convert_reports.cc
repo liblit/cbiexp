@@ -10,7 +10,7 @@ int get_indx(char* s)
 	if (strcmp(s, units[i].s) == 0)
 	    return i;
 
-    fprintf("cannot find index of compilation unit \"%s\"\n", s);
+    fprintf(stderr, "cannot find index of compilation unit \"%s\"\n", s);
     exit(1);
 }
 
