@@ -1,0 +1,106 @@
+\newcommand{\moss}{\smallcap Moss}
+
+This section discusses background for the experimental results
+reported in Section~\ref{sec-experiment}.  While all software
+experiments are difficult to do well, we have learned the hard way
+that there are some particular problems that must be addressed to do
+our experiment well.  Thus, this section discusses the set-up for our
+experiment in some detail, and especially sources of bias in the
+experiment and how we have sought to compensated for potential bias.
+
+The basic framework of our experiment is a straightforward five step
+process: select an existing software application, modify the source
+code to inject bugs into the program, instrument the modified program,
+gather results from a large number of runs performed with
+automatically generated data, and then apply our algorithm to the
+results.  We discuss what we did for each of these steps.
+
+We chose \moss\ \cite{SWA03} as our benchmark program.  \moss\ is a
+software plagiarism detection service that has been in use since the
+late '90's and has several thousand users worldwide.\footnote{That is,
+\moss\ detects copying in large sets of programs.  The typical \moss\
+user is a professor teaching assistant in a programming course.}  As
+such, \moss\ has many of the characteristics of real software: it has
+users who depend on it, it is constantly undergoing revision as its
+purpose and the environment in which it runs evolves, and it is
+complex enough to be composed of several interacting subsystems.  The
+last point, in particular, means that it is reasonable that \moss\
+could have multiple bugs.  From our point of view, \moss\ has the
+additional advantage that it was written and is maintained by one of
+the authors.
+
+The next step, injecting bugs into the software, is problematic, as
+the choice of bugs to include or exclude can dramatically affect the
+results.  In our case, we sought to use ``real'' bugs as much as
+possible, while also seeking to have a number of different bugs and
+some variety among the bugs we included.  Nearly all of the bugs were
+taken directly from the bug logs for \moss.  In some cases the code
+had evolved since the original bug had been fixed, in which case we
+had to judge how to modify the bug to inject it into the code.  We
+feel the modifications, where needed at all, were straightforward.  We
+also included two bugs from the bug logs of other programs; that is,
+we took a known bug from another system and simply added it to \moss\
+in the place where \moss\ performed the analogous operation (see
+below).
+
+We briefly describe the nine bugs we added to \moss:
+\begin{enumerate}
+\item To correctly report the location of duplicate code \moss\ must
+keep track of the range of line numbers involved in each match.  We
+introduced a bug that causes the number of lines in C-style multi-line
+comments to be counted incorrectly.  The bug only occurs under a
+special set of circumstances: the option to match comments must be on
+(normally \moss\ ignores comments completely, and that is a separate
+code path with no bug), the programs involved must have C multi-line
+comments, and in addition the position of these comments must
+ultimately affect the position of reported matches.  Note that this
+bug is not only non-deterministic, it does not cause the program to
+crash; it just generates incorrect output.
+
+\item \moss\ has the option to dump its internal data structures in a
+binary file format that can be reloaded quickly; these external files
+are called databases.  We modified the code to remove the check for a
+null {\tt FILE} pointer in the case that the database cannot be opened
+for writing.  This bug is analagous to one reported in {\tt ccrypt}
+\cite{ccrypt-reference}.  This is a deterministic bug, and in fact the
+program crashes almost immediately after failing to open the file.
+
+\item Loading a \moss\ database is fairly complex; a number of data
+structures must be kept in synch.  We removed an array bounds update
+in the database loading routine, so that even though a database was
+loaded, the pointer to the end of one array {\tt A} was not moved to reflect
+that new data had been added to the end of {\tt A}. The program behaves normally
+unless a second database is loaded, which at least partially overwrites the
+portion of the first database in {\tt A}.  This bug has unpredictable effects.
+Depending on what files are compared and the contents of the databases loaded,
+the result might be that the program terminates with correct output, that it
+terminates with incorrect output, or that it crashes.  This was a particularly
+difficult bug to find originally.
+
+\item We removed a size check that prevented users from supplying command-line arguments
+that could cause the program to overrun the bounds of an array.  When this bug is triggered
+the program may terminate normally, terminate with incorrect results, or crash.
+
+
+\item \moss\ handles Lisp and Scheme programs differently from all other languages;
+at one time all languages where handled in the same manner, but the others have been
+gradually ported to an improved algorithm.  The Lisp and Scheme processing involves
+a standard hash table; we removed one of the end-of-bucket checks, which causes a
+crash when the program scans to the end of a bucket and tries to dereference a NULL
+pointer.  This bug only occurs for Lisp and Scheme programs, and does reliably crash
+the program when it is touched.
+
+\item 
+
+\item
+
+\item 
+
+\item This bug is similar to bug \#4, but involves a different command-line argument and a different array. 
+
+\end{enumerate}
+
+
+
+
+
