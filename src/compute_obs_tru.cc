@@ -101,7 +101,7 @@ int cur_run;
 
 void process_s_site(int u, int c, int x, int y, int z)
 {
-    if (x || y) {
+    if (x || y || z) {
 	inc_obs(cur_run, u, c, 0);
 	inc_obs(cur_run, u, c, 1);
 	inc_obs(cur_run, u, c, 2);
