@@ -15,6 +15,7 @@ extern const int num_units;
 extern const int NumBPreds;
 extern const int NumRPreds;
 extern const int NumSPreds;
+extern const int NumGPreds;
 
 
 #endif // !INCLUDE_UNITS_H

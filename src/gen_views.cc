@@ -109,7 +109,7 @@ int main(int argc, char** argv)
                 if (feof(fp2))
                     break;
                 fputs("<tr>\n", fp);
-                print_pred_full(fp, ps, s, f, site, p);
+                print_pred_full(fp, ps, s, f, os, of, site, p);
                 fputs("</tr>\n", fp);
             }
 

@@ -10,9 +10,10 @@ FILE* ufp = NULL;
 
 char get_scheme_code(char* scheme_str)
 {
-    if (!strcmp(scheme_str, "scalar-pairs")) return 'S';
-    if (!strcmp(scheme_str, "branches"    )) return 'B';
-    if (!strcmp(scheme_str, "returns"     )) return 'R';
+    if (!strcmp(scheme_str, "scalar-pairs"  )) return 'S';
+    if (!strcmp(scheme_str, "branches"      )) return 'B';
+    if (!strcmp(scheme_str, "returns"       )) return 'R';
+    if (!strcmp(scheme_str, "g-object-unref")) return 'G';
     assert(0);
 }
 
@@ -61,6 +62,12 @@ void print_r_site(char* s)
     fprintf(sfp, "\'R\', { \"%s\" } ", s);
 }
 
+void print_g_site(char* s)
+{
+    char* x = strchr(s, '\n'); assert(x); *x = '\0';
+    fprintf(sfp, "\'G\', { \"%s\" } ", s);
+}
+
 void print_site(char scheme_code, char* s)
 {
     char *x, *y, *z;
@@ -90,6 +97,7 @@ void print_site(char scheme_code, char* s)
     case 'S': print_s_site(z); break;
     case 'B': print_b_site(z); break;
     case 'R': print_r_site(z); break;
+    case 'G': print_g_site(z); break;
     default: assert(0);
     }
 
@@ -130,7 +138,7 @@ int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
 
-    int num_sites = 0, num_units = 0, num_b_preds = 0, num_r_preds = 0, num_s_preds = 0;
+    int num_sites = 0, num_units = 0, num_b_preds = 0, num_r_preds = 0, num_s_preds = 0, num_g_preds = 0;
 
     sfp = fopen(sites_src_file, "w"); assert(sfp);
     ufp = fopen(units_src_file, "w"); assert(ufp);
@@ -167,6 +175,7 @@ int main(int argc, char** argv)
         case 'S': num_s_preds += 6 * count; break;
         case 'R': num_r_preds += 6 * count; break;
         case 'B': num_b_preds += 2 * count; break;
+        case 'G': num_g_preds += 4 * count; break;
         default: assert(0);
         }
     }
@@ -179,6 +188,7 @@ int main(int argc, char** argv)
     fprintf(ufp, "const int NumBPreds = %d;\n", num_b_preds);
     fprintf(ufp, "const int NumRPreds = %d;\n", num_r_preds);
     fprintf(ufp, "const int NumSPreds = %d;\n", num_s_preds);
+    fprintf(ufp, "const int NumGPreds = %d;\n", num_g_preds);
 
     fclose(sfp);
     fclose(ufp);

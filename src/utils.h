@@ -22,6 +22,7 @@ void print_pred_name(FILE* fp, int site, int p);
 void process_report(FILE* fp,
                     void (*process_s_site)(int u, int c, int x, int y, int z),
                     void (*process_r_site)(int u, int c, int x, int y, int z),
-                    void (*process_b_site)(int u, int c, int x, int y));
+                    void (*process_b_site)(int u, int c, int x, int y),
+                    void (*process_g_site)(int u, int c, int x, int y, int z, int w));
 
 #endif

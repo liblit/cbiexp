@@ -86,6 +86,10 @@ void print_site_info(int u, int c)
 	for (p = 0; p < 2; p++)
 	    print_pred_info(u, c, p);
 	break;
+    case 'G':
+	for (p = 0; p < 4; p++)
+	    print_pred_info(u, c, p);
+	break;
     default:
 	assert(0);
     }
@@ -126,6 +130,21 @@ void process_b_site(int u, int c, int x, int y)
 		if (y > 0) inc_tru(cur_run, u, c, 1);
 	}
 }
+
+void process_g_site(int u, int c, int x, int y, int z, int w)
+{
+	if (x + y + z + w > 0) {
+		inc_obs(cur_run, u, c, 0);
+		inc_obs(cur_run, u, c, 1);
+		inc_obs(cur_run, u, c, 2);
+		inc_obs(cur_run, u, c, 3);
+		if (x > 0) inc_tru(cur_run, u, c, 0);
+		if (y > 0) inc_tru(cur_run, u, c, 1);
+		if (z > 0) inc_tru(cur_run, u, c, 2);
+		if (w > 0) inc_tru(cur_run, u, c, 3);
+	}
+}
+
 
 void process_cmdline(int argc, char** argv)
 {
@@ -227,7 +246,7 @@ int main(int argc, char** argv)
         FILE* fp = fopen(s, "r");
         assert(fp);
 
-        process_report(fp, process_s_site, process_s_site, process_b_site);
+        process_report(fp, process_s_site, process_s_site, process_b_site, process_g_site);
 
         fclose(fp);
     }

@@ -47,6 +47,7 @@ char* result_summary_htm_file = NULL;
 int num_s_preds = 0;
 int num_r_preds = 0;
 int num_b_preds = 0;
+int num_g_preds = 0;
 
 FILE* preds_txt_fp = NULL;
 
@@ -73,10 +74,10 @@ void print_result_summary()
     fprintf(fp, "Generated on %s<p>\n", ctime(&t));
     fprintf(fp, "# runs: %d [successful: %d failing: %d discarded: %d]\n<p>\n",
 	num_runs, num_sruns, num_fruns, num_runs - (num_sruns + num_fruns));
-    fprintf(fp, "# predicates instrumented: %d [branch: %d return: %d scalar: %d]\n<p>\n",
-        NumBPreds + NumRPreds + NumSPreds, NumBPreds, NumRPreds, NumSPreds);
-    fprintf(fp, "# predicates retained:     %d [branch: %d return: %d scalar: %d]\n<p>\n",
-	num_b_preds + num_r_preds + num_s_preds, num_b_preds, num_r_preds, num_s_preds);
+    fprintf(fp, "# predicates instrumented: %d [branch: %d return: %d scalar: %d g-object-unref: %d]\n<p>\n",
+        NumBPreds + NumRPreds + NumSPreds + NumGPreds, NumBPreds, NumRPreds, NumSPreds, NumGPreds);
+    fprintf(fp, "# predicates retained:     %d [branch: %d return: %d scalar: %d g-object-unred: %d]\n<p>\n",
+	num_b_preds + num_r_preds + num_s_preds + num_g_preds, num_b_preds, num_r_preds, num_s_preds, num_g_preds);
     fprintf(fp, "Confidence: %d%%\n<p>\n", confidence);
 
     fclose(fp);
@@ -126,6 +127,13 @@ void print_retained_preds()
 	        for (p = 0; p < 2; p++)
 	            if (site_info[u][c].retain[p]) {
 	                num_b_preds++;
+	                print_pred(fp, u, c, p, site);
+                    }
+	        break;
+            case 'G':
+	        for (p = 0; p < 4; p++)
+	            if (site_info[u][c].retain[p]) {
+	                num_g_preds++;
 	                print_pred(fp, u, c, p, site);
                     }
 	        break;
@@ -189,6 +197,17 @@ void process_b_site(int u, int c, int x, int y)
 	}
 }
 
+void process_g_site(int u, int c, int x, int y, int z, int w)
+{
+	if (x + y + z + w > 0) {
+		obs(cur_run, u, c);
+		if (x > 0) inc(cur_run, u, c, 0);
+		if (y > 0) inc(cur_run, u, c, 1);
+		if (z > 0) inc(cur_run, u, c, 2);
+		if (w > 0) inc(cur_run, u, c, 3);
+	}
+}
+
 inline void cull(int u, int c, int p)
 {
     int s = site_info[u][c].S[p];
@@ -218,6 +237,10 @@ void cull_preds()
                 break;
             case 'B':
                 for (p = 0; p < 2; p++)
+                    cull(u, c, p);
+                break;
+            case 'G':
+                for (p = 0; p < 4; p++)
                     cull(u, c, p);
                 break;
             default:
@@ -331,6 +354,7 @@ void cull_preds_aggressively1()
                 break;
             }
             case 'B':
+            case 'G':
                 break;
             default:
                 assert(0);
@@ -496,7 +520,7 @@ int main(int argc, char** argv)
         FILE* fp = fopen(s, "r");
         assert(fp);
 
-        process_report(fp, process_s_site, process_s_site, process_b_site);
+        process_report(fp, process_s_site, process_s_site, process_b_site, process_g_site);
 
         fclose(fp);
     }

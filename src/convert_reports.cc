@@ -13,9 +13,10 @@ char* compact_report_path_fmt = NULL;
 
 char get_scheme_code(char* scheme_str)
 {
-    if (!strcmp(scheme_str, "scalar-pairs")) return 'S';
-    if (!strcmp(scheme_str, "branches"    )) return 'B';
-    if (!strcmp(scheme_str, "returns"     )) return 'R';
+    if (!strcmp(scheme_str, "scalar-pairs"))   return 'S';
+    if (!strcmp(scheme_str, "branches"    ))   return 'B';
+    if (!strcmp(scheme_str, "returns"     ))   return 'R';
+    if (!strcmp(scheme_str, "g-object-unref")) return 'G';
     assert(0);
 }
 

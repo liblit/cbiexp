@@ -35,10 +35,6 @@ bool retain_pred(int s, int f, int os, int of, int confidence)
     return retain_pred(s, f, (compute_pred_stat(s, f, os, of, confidence)).lb);
 }
 
-const char* s_op[6] = { "<", ">=", "==", "!=", ">", "<=" };
-const char* r_op[6] = { "<", ">=", "==", "!=", ">", "<=" };
-const char* b_op[2] = { "is FALSE", "is TRUE" };
-
 void print_pred_full(FILE* fp, pred_stat ps, int s, int f, int os, int of, int site, int p)
 {
     print_pred_stat(fp, ps, s, f, os, of);
@@ -65,6 +61,11 @@ void print_pred_stat(FILE* fp, pred_stat ps, int s, int f, int os, int of)
         (int) floor(log10(s + f) * 60), f1, f2, ps.in * 100, ps.fs * 100, s, f, os, of, f1, f2, f3, f4);
 }
 
+const char* s_op[6] = { "<", ">=", "==", "!=", ">", "<=" };
+const char* r_op[6] = { "<", ">=", "==", "!=", ">", "<=" };
+const char* b_op[2] = { "is FALSE", "is TRUE" };
+const char* g_op[4] = { "= 0", "= 1", "> 1", "invalid" };
+
 void print_pred_name(FILE* fp, int site, int p)
 {
     fputs("<td>", fp);
@@ -82,6 +83,10 @@ void print_pred_name(FILE* fp, int site, int p)
         fprintf(fp, "%s %s",
             sites[site].args[0], b_op[p]);
         break;
+    case 'G':
+        fprintf(fp, "old_refcount(%s) %s",
+            sites[site].args[0], g_op[p]);
+        break;
     default:
         assert(0);
     }
@@ -95,9 +100,10 @@ void print_pred_name(FILE* fp, int site, int p)
 void process_report(FILE* fp,
                     void (*process_s_site)(int u, int c, int x, int y, int z),
                     void (*process_r_site)(int u, int c, int x, int y, int z),
-                    void (*process_b_site)(int u, int c, int x, int y))
+                    void (*process_b_site)(int u, int c, int x, int y),
+                    void (*process_g_site)(int u, int c, int x, int y, int z, int w))
 {
-    int u, c, x, y, z;
+    int u, c, x, y, z, w;
 
     while (1) {
         fscanf(fp, "%d\n", &u);
@@ -120,6 +126,12 @@ void process_report(FILE* fp,
             for (c = 0; c < units[u].num_sites; c++) {
                 fscanf(fp, "%d %d %d\n", &x, &y, &z);
                 process_r_site(u, c, x, y, z);
+            }
+            break;
+        case 'G':
+            for (c = 0; c < units[u].num_sites; c++) {
+                fscanf(fp, "%d %d %d %d\n", &x, &y, &z, &w);
+                process_g_site(u, c, x, y, z, w);
             }
             break;
         default:

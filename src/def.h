@@ -1,11 +1,11 @@
 #ifndef DEF_H
 #define DEF_H
 
-#define NUM_SCHEMES 4
+#define NUM_SCHEMES 5
 #define NUM_SORTBYS 4
 
-static const char* const scheme_codes[NUM_SCHEMES] = { "B", "R", "S", "preds" };
-static const char* const scheme_names[NUM_SCHEMES] = { "branch", "return", "scalar", "all" };
+static const char* const scheme_codes[NUM_SCHEMES] = { "B", "R", "S", "G", "preds" };
+static const char* const scheme_names[NUM_SCHEMES] = { "branch", "return", "scalar", "g-object-unref", "all" };
 static const char* const sortby_codes[NUM_SORTBYS] = { "lb", "is", "fs", "nf" };
 static const char* const sortby_names[NUM_SORTBYS] = { "lower bound of confidence interval",
 						       "increase score",
