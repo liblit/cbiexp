@@ -9,6 +9,8 @@
 %% standard texmf packages
 %%
 
+\usepackage{amsmath}
+\usepackage{ifthen}
 \usepackage{nicefrac}
 \usepackage{fancyvrb}
 \usepackage{xspace}
@@ -24,6 +26,8 @@
   feature selection, statistical debugging},
 pdfpagemode=UseOutlines]{hyperref}
 
+\ifthenelse{\isundefined{\pdfoutput}}{}{\usepackage{thumbpdf}}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -31,8 +35,6 @@ pdfpagemode=UseOutlines]{hyperref}
 %%
 
 \usepackage{Autoref}
-
-\usepackage{amsmath}
 
 %% assorted handy macros
 \newcommand{\moss}{\textsc{Moss}\xspace}
