@@ -87,23 +87,29 @@
   <!-- table of links to per-scheme pages -->
   <xsl:template match="schemes">
     <table class="scheme-links">
-      <tr class="headers">
-	<th>Scheme</th>
-	<th colspan="4">Predicates<br/>Retained</th>
-	<xsl:for-each select="document('sorts.xml')/sorts/sort">
-	  <th><xsl:apply-templates/></th>
-	</xsl:for-each>
-      </tr>
-
-      <!-- one row per scheme -->
-      <xsl:apply-templates/>
+      <thead>
+	<tr class="headers">
+	  <th>Scheme</th>
+	  <th colspan="4">Predicates<br/>Retained</th>
+	  <xsl:for-each select="document('sorts.xml')/sorts/sort">
+	    <th><xsl:apply-templates/></th>
+	  </xsl:for-each>
+	</tr>
+      </thead>
 
       <!-- summary row -->
-      <xsl:call-template name="scheme-links-row">
-	<xsl:with-param name="name" select="'all'"/>
-	<xsl:with-param name="retain" select="sum(*/@retain)"/>
-	<xsl:with-param name="total" select="sum(*/@total)"/>
-      </xsl:call-template>
+      <tfoot>
+	<xsl:call-template name="scheme-links-row">
+	  <xsl:with-param name="name" select="'all'"/>
+	  <xsl:with-param name="retain" select="sum(*/@retain)"/>
+	  <xsl:with-param name="total" select="sum(*/@total)"/>
+	</xsl:call-template>
+      </tfoot>
+
+      <!-- one row per scheme -->
+      <tbody>
+	<xsl:apply-templates/>
+      </tbody>
 
     </table>
   </xsl:template>
@@ -125,7 +131,7 @@
     <xsl:param name="retain"/> <!-- number of predicates retained -->
     <xsl:param name="total"/> <!-- number of predicates before filtering -->
     <xsl:if test="$total > 0">
-      <tr class="{$name}">
+      <tr>
 	<td class="label"><xsl:value-of select="$name"/></td>
 	<td class="retain count"><xsl:number value="$retain" grouping-size="3" grouping-separator=","/></td>
 	<td class="solidus">&#160;of&#160;</td>

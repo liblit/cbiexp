@@ -15,8 +15,7 @@ table.predictors {
   margin-top: 2ex
 }
 
-
-tr.headers {
+thead {
   border: 1px solid;
   background: #dfd
 }

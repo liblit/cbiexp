@@ -50,22 +50,17 @@ table.outcomes td {
  *
  */
 
-table.scheme-links {
+table.scheme-links, thead, tfoot {
   border: 1px solid black
 }
 
-tr.headers {
-  border: 1px solid;
+thead {
   background: #dfd
 }
 
 td.solidus,
 td.link {
   text-align: center
-}
-
-tr.all {
-  border-top: 1px solid
 }
 
 table.scheme-links th {

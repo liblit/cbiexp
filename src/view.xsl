@@ -146,10 +146,14 @@
   <!-- the bug predictor table -->
   <xsl:template match="view">
     <table class="predictors">
-      <tr class="headers">
-	<xsl:apply-templates mode="headings" select="."/>
-      </tr>
-      <xsl:apply-templates/>
+      <thead>
+	<tr>
+	  <xsl:apply-templates mode="headings" select="."/>
+	</tr>
+      </thead>
+      <tbody>
+	<xsl:apply-templates/>
+      </tbody>
     </table>
   </xsl:template>
 
