@@ -4,5 +4,5 @@
 
 std::string CompactReport::format(unsigned runId)
 {
-  return RunsDirectory::format(runId, "reports.new");
+  return RunsDirectory::format(runId, "reports.sparse");
 }

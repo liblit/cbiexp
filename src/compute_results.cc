@@ -136,41 +136,38 @@ int cur_run;
 
 void process_s_site(int u, int c, int x, int y, int z)
 {
-    if (x || y || z) {
-	obs(cur_run, u, c);
-	if (x)
-	    inc(cur_run, u, c, 0);
-	if (y || z)
-	    inc(cur_run, u, c, 1);
-	if (y)
-	    inc(cur_run, u, c, 2);
-	if (x || z)
-	    inc(cur_run, u, c, 3);
-	if (z)
-	    inc(cur_run, u, c, 4);
-	if (x || y)
-	    inc(cur_run, u, c, 5);
-    }
+    assert(x || y || z);
+    obs(cur_run, u, c);
+    if (x)
+	inc(cur_run, u, c, 0);
+    if (y || z)
+	inc(cur_run, u, c, 1);
+    if (y)
+	inc(cur_run, u, c, 2);
+    if (x || z)
+	inc(cur_run, u, c, 3);
+    if (z)
+	inc(cur_run, u, c, 4);
+    if (x || y)
+	inc(cur_run, u, c, 5);
 }
 
 void process_b_site(int u, int c, int x, int y)
 {
-    if (x || y) {
-	obs(cur_run, u, c);
-	if (x) inc(cur_run, u, c, 0);
-	if (y) inc(cur_run, u, c, 1);
-    }
+    assert(x || y);
+    obs(cur_run, u, c);
+    if (x) inc(cur_run, u, c, 0);
+    if (y) inc(cur_run, u, c, 1);
 }
 
 void process_g_site(int u, int c, int x, int y, int z, int w)
 {
-    if (x || y || z || w) {
-	obs(cur_run, u, c);
-	if (x) inc(cur_run, u, c, 0);
-	if (y) inc(cur_run, u, c, 1);
-	if (z) inc(cur_run, u, c, 2);
-	if (w) inc(cur_run, u, c, 3);
-    }
+    assert(x || y || z || w);
+    obs(cur_run, u, c);
+    if (x) inc(cur_run, u, c, 0);
+    if (y) inc(cur_run, u, c, 1);
+    if (z) inc(cur_run, u, c, 2);
+    if (w) inc(cur_run, u, c, 3);
 }
 
 inline void cull(int u, int c, int p)

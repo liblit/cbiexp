@@ -55,7 +55,7 @@ $(sparse): $(corrdir)/mhn2sparsemat.pl f.runs s.runs obs.txt tru.txt
 	$(time) ./$< . .
 clean:: ; rm -f $(sparse)
 
-obs.txt tru.txt: $(tooldir)/compute_obs_tru.o $(datadir)/0/reports.new preds.txt s.runs f.runs sites.o units.o
+obs.txt tru.txt: $(tooldir)/compute_obs_tru.o $(datadir)/0/reports.sparse preds.txt s.runs f.runs sites.o units.o
 	$(time) $(tooldir)/analyze_runs --do=compute-obs-tru --runs-directory=$(datadir)
 clean:: ; rm -f obs.txt tru.txt compute-obs-tru
 
@@ -69,7 +69,7 @@ summary.xml: $(tooldir)/gen_summary.o preds.txt s.runs f.runs sites.o units.o
 	[ -r $@ ]
 clean:: ; rm -f summary.xml summary.css summary.dtd summary.xsl gen-summary
 
-preds.txt: $(tooldir)/compute_results.o sites.o units.o s.runs f.runs $(datadir)/0/reports.new
+preds.txt: $(tooldir)/compute_results.o sites.o units.o s.runs f.runs $(datadir)/0/reports.sparse
 	$(time) $(tooldir)/analyze_runs --do=compute-results --runs-directory=$(datadir)
 clean:: ; rm -f preds.txt compute-results
 

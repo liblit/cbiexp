@@ -68,44 +68,38 @@ void process_report(FILE* fp,
     bool problem = false;
 
     while (1) {
-        fscanf(fp, "%d\n", &u);
+        fscanf(fp, "%d\t%d\t", &u, &c);
         if (feof(fp))
             break;
-	if (u < num_units)
+	if (u >= num_units) {
+	    fprintf(stderr, "unit %d exceeds unit count (%d)\n", u, num_units);
+	    problem = true;
+	} else if (c >= units[u].num_sites) {
+	    fprintf(stderr, "site %d exceeds unit's site count (%d)\n", c, units[u].num_sites);
+	    problem = true;
+	} else
 	    switch (units[u].scheme_code) {
 	    case 'S':
-		for (c = 0; c < units[u].num_sites; c++) {
-		    fscanf(fp, "%d %d %d\n", &x, &y, &z);
-		    process_s_site(u, c, x, y, z);
-		}
+		fscanf(fp, "%d\t%d\t%d\n", &x, &y, &z);
+		process_s_site(u, c, x, y, z);
 		break;
 	    case 'B':
-		for (c = 0; c < units[u].num_sites; c++) {
-		    fscanf(fp, "%d %d\n", &x, &y);
-		    process_b_site(u, c, x, y);
-		}
+		fscanf(fp, "%d\t%d\n", &x, &y);
+		process_b_site(u, c, x, y);
 		break;
 	    case 'R':
-		for (c = 0; c < units[u].num_sites; c++) {
-		    fscanf(fp, "%d %d %d\n", &x, &y, &z);
-		    process_r_site(u, c, x, y, z);
-		}
+		fscanf(fp, "%d\t%d\t%d\n", &x, &y, &z);
+		process_r_site(u, c, x, y, z);
 		break;
 	    case 'G':
-		for (c = 0; c < units[u].num_sites; c++) {
-		    fscanf(fp, "%d %d %d %d\n", &x, &y, &z, &w);
-		    process_g_site(u, c, x, y, z, w);
-		}
+		fscanf(fp, "%d\t%d\t%d\t%d\n", &x, &y, &z, &w);
+		process_g_site(u, c, x, y, z, w);
 		break;
 	    default:
 		fprintf(stderr, "unit %d has unknown scheme code '%c'\n",
 			u, units[u].scheme_code);
 		problem = true;
 	    }
-	else {
-	    fprintf(stderr, "unit %d exceeds unit count (%d)\n", u, num_units);
-	    problem = true;
-	}
     }
 
     if (problem)

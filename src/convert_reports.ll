@@ -16,6 +16,8 @@ static int get_unit_indx(char scheme_code, const string &signature);
 
 string signature;
 string scheme;
+
+unsigned unitIndex;
 unsigned sitesActual;
 unsigned sitesExpected;
 
@@ -80,10 +82,9 @@ uint 0|[1-9][0-9]*
 	exit(1);
     }
 
-    const int indx = get_unit_indx(schemeCode, signature);
-    assert(units[indx].scheme_code == schemeCode);
-    fprintf(ofp, "%d\n", indx);
-    sitesExpected = units[indx].num_sites;
+    unitIndex = get_unit_indx(schemeCode, signature);
+    assert(units[unitIndex].scheme_code == schemeCode);
+    sitesExpected = units[unitIndex].num_sites;
     sitesActual = 0;
 }
 
@@ -104,19 +105,31 @@ uint 0|[1-9][0-9]*
     BEGIN(INITIAL);
 }
 
-<SITES_2>{uint}\t{uint}\n {
+<SITES_2>0\t0\n {
     ++sitesActual;
-    fputs(yytext, ofp);
+}
+
+<SITES_2>{uint}\t{uint}\n {
+    fprintf(ofp, "%u\t%u\t%s", unitIndex, sitesActual, yytext);
+    ++sitesActual;
+}
+
+<SITES_3>0\t0\t0\n {
+    ++sitesActual;
 }
 
 <SITES_3>{uint}\t{uint}\t{uint}\n {
+    fprintf(ofp, "%u\t%u\t%s", unitIndex, sitesActual, yytext);
     ++sitesActual;
-    fputs(yytext, ofp);
+}
+
+<SITES_4>0\t0\t0\t0\n {
+    ++sitesActual;
 }
 
 <SITES_4>{uint}\t{uint}\t{uint}\t{uint}\n {
+    fprintf(ofp, "%u\t%u\t%s", unitIndex, sitesActual, yytext);
     ++sitesActual;
-    fputs(yytext, ofp);
 }
 
 
