@@ -9,7 +9,7 @@ sitesglob := $(experiment)/share/*.sites
 sites := $(wildcard $(sitesglob))
 sites := $(if $(sites), $(sites), $(error no sites files in $(sitesglob)))
 
-sparsity := 1
+sparsity ?= 1
 
 time := /usr/bin/time
 
