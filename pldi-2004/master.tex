@@ -116,12 +116,12 @@ pdfpagemode=UseOutlines]{hyperref}
 \maketitle
 
 \begin{abstract}
-  We present a statistical debugging algorithm that can operate on very
+  We present a statistical debugging algorithm that operates on very
   sparsely sampled data drawn from large numbers of user runs.  By
-  identifying those program behaviors which significantly increase the
+  identifying program behaviors that significantly increase the
   likelihood of failure, our technique helps guide software engineers
   to the most significant flaws in an application.  The approach has
-  connections to statistical hypothesis testing, and is validated
+  connections to statistical hypothesis testing and is validated
   using several case studies.
 \end{abstract}
 
@@ -174,9 +174,9 @@ which was based on a statistical technique known as {\em logistic
 regression} \cite{PLDI`03*141,Zheng:2003:SDSP}.  As we worked to apply
 these methods to large programs under realistic conditions, we
 discovered a number of scalability problems, the most serious of which
-was that the performance of the techniques declined significantly as
+was that the performance of the techniques declined significantly 
 when the applications being analyzed had multiple bugs (see
-Section~\ref{sec-comparison}).  As mentioned above, real applications
+Section~\ref{sec:comparison}).  As mentioned above, real applications
 have many bugs.
 
 The first contribution of this paper is a new algorithm for isolating
@@ -199,13 +199,13 @@ Increase: 0.92
 Failure: 1.00   
 \end{verbatim}
 This line says that when a particular call site of the function {\tt g\_source\_remove} returns a 
-positive value\footnote{A common C programming idiom is for functions to signal error conditions by returning non-zero values.}, the probability that the program will fail 
+positive value\footnote{A common C programming idiom is for functions to signal error conditions by returning non-zero values.}, the probability that the program fails 
 increases 92\% to 100\%; i.e., when this predicate on this line is true the program always crashes eventually, but in executions where this predicate is not
 observed to be true the failure rate is 8\%.  It turns out that the crash happens long after the call to {\tt g\_source\_remove} completes,
 but that the actual cause of the bug is closely connected to what goes wrong inside of this function call.  Thus,
 our approach can help engineers isolate bugs by showing the conditions and early events that trigger the bug, rather than just the
 program state at the point of failure.  Furthermore, our algorithm also allows accurate calculations of what fraction of all failures occur when this predicate
-true; in the example above, the predicate was true in 184 of 1873 Rhtyhmbox executions that crashed in our dataset, which means that
+true; in the example above, the predicate was true in 184 of 1873 Rhythmbox executions that crashed in our dataset, which means that
 it is involved in 9.8\% of all the failures observed.  This information allows engineers to assign accurate priorities to bug fixes.
 
 
@@ -216,14 +216,13 @@ program with a single bug; in both cases the new algorithm
 performs at least as well as the old one at identifying the conditions under which the bug occurs.  
 
 The third study involves an application with multiple known bugs (see
-\Autoref{sec:moss}).  The fact that we know the bugs makes this a controlled study, 
+\Autoref{sec:experiments:results}).  Knowing the bugs makes this a controlled study, 
 in the sense that we are able to determine whether the algorithm fails to recognize any of the
 bugs.  The results show that the algorithm correctly
 isolates strong predictors for each of the bugs that occurred in our
 experiment, even though the algorithm has no knowledge of how many
 bugs are in the program or which bug caused any individual failure.
-In fact, in addition to the 9 known bugs that were in the application,
-our algorithm isolated an additional bug that was previously unknown.
+In addition, our algorithm isolated an additional bug in this application that was previously unknown.
 
 We also use this third case study to investigate a speculative
 application of our techniques.  Our algorithm relies only on the
@@ -231,7 +230,7 @@ ability to label the outcome of a program as ``correct'' or
 ``incorrect''.  Furthermore, because our techniques are statistical,
 the labeling of correct/incorrect results need not be perfect; our
 algorithm can tolerate noise in the labeling.  These features open up
-the possibility of having a single approach that can detect the entire
+the possibility of having a single approach that can detect a wide
 range of program errors from low-level, crashing bugs to high-level
 logic bugs that do not crash the program but simply cause it to
 produce incorrect output, provided only that there is some way to
@@ -243,7 +242,7 @@ such as low-level assert statements and higher-level input validation
 checks between untrusting components, can also be used to label
 results as correct or incorrect.  Finally (and this is the speculative
 part) users could also provide feedback on whether the output of a
-program execution looks correct or not, allowing the automatic
+program execution appears correct or not, allowing the automatic
 isolation of bugs that are not otherwise observed by a crash or
 internal consistency check.  The third study includes some subtle,
 non-crashing bugs that our system is able to isolate correctly.
@@ -263,7 +262,7 @@ main development branch within a few days.
 The paper is organized as follows.  After providing some background
 (\Autoref{sec:background}), we discuss our algorithm
 (\Autoref{sec:algorithm}) and its advantages over our previous approach
-based on logistic regress (Section~\cite{sec-comparison}).  The case studies
+based on logistic regression (Section~\cite{sec:comparison}).  The case studies
 are presented in Sections~\ref{sec:revisited}-\ref{sec:rb}.  We conclude with a
 discussion of related work (\Autoref{sec:related-work}) and future
 work (\Autoref{sec:conclusions}). 
@@ -271,9 +270,8 @@ work (\Autoref{sec:conclusions}).
 \section{Background}
 \label{sec:background}
 
-This section summarizes our previous work in isolating single bugs
-\cite{PLDI`03*141,Zheng:2003:SDSP}, which is the starting point for
-this work.  The ideal program monitoring system would gather complete
+This section summarizes ideas and terminology needed to to present our
+algorithm.  The ideal program monitoring system would gather complete
 execution traces and provide them to an engineer (or, more likely, a
 tool) to mine for the causes of bugs.  However, complete tracing of
 program behavior is simply impractical; no end user would accept the
@@ -293,7 +291,7 @@ a coin flip decides whether the instrumentation is executed or not.
 Coin flipping is simulated in a statistically fair
 manner equivalent to a Bernoulli process: each potential sample is
 taken or skipped randomly and independently as the program runs.
-We have found that a sampling rate of \nicefrac{1}{100} keeps the performance overhead
+We have found that a sampling rate of \nicefrac{1}{100} normally keeps the performance overhead
 of instrumentation low, often unmeasurable.
 
 Orthogonal to the sampling transformation is the decision about what
@@ -321,7 +319,7 @@ such as loop tests and short-circuiting logical operators,
   sign of a return value is often used to encode an operation's success or failure.
   At each scalar-returning function call site, count how
   often the returned value is negative, zero, or positive.  For
-  pointer-returning calls, this reduces to counting
+  pointer-returning calls, this scheme reduces to counting
   \texttt{NULL} versus non-\texttt{NULL}.  
 %The observation is made
 %  just after the function returns but before the result is used by the
@@ -389,14 +387,18 @@ only the final state of the program at the point of failure.
 \label{sec:algorithm}
 \input{alg}
 
-\section{Experiment Design}
-\label{sec:experiments:setup}
-\input{setup}
+\section{Experiments Revisited}
+\label{sec:revisited}
+\input{revisited}
 
-\section{Experimental Results}
+
+\section{A Controlled Experiment}
 \label{sec:experiments:results}
 \input{experiments}
 
+
+\section{Rhythmbox}
+\label{sec:rb}
 
 \section{Related Work}
 \label{sec:related-work}

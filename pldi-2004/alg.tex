@@ -169,9 +169,9 @@ stack trace). \Autoref{sec:experiments:results} gives several examples
 of this phenomenon while hunting for real bugs.
 
 Because some $\increase()$ scores may be based on few observations of a predicate, it is important
-to attach condfidence intervals to the scores.  Since $\increase()$ is a statistic, computing
+to attach confidence intervals to the scores.  Since $\increase()$ is a statistic, computing
 its confidence interval is a well-understood problem; in our experiments we retain a predicate $P$
-only if $\increase(P) > 0$ with 97.5\% confidence.
+only if $\increase(P) > 0$ with 95\% confidence.
 
 There are several ways to sort the surviving predicates, and each is useful.
 Most often we sort by the lower bound of the confidence interval of the predicates' $\increase()$ scores.
@@ -180,14 +180,14 @@ confidence first; these are the conditions in the program that contribute the mo
 Predicates with high $\increase()$ scores but wide confidence intervals are listed
 later.  
 There are at least two other sort orders we have found useful.  Examining 
-predicates with the highest $\crash$ scores shows the prorgram points and conditions under which failure
+predicates with the highest $\crash$ scores shows the program points and conditions under which failure
 becomes inevitable, or nearly inevitable.  Sorting by $F(P)$ (the number of failed runs in which the predicate
 is true) gives a sense of how important the bug represented by the predicate is relative to the bugs represented
 by other predicates. 
 
 Thus, while the first step of our algorithm is off-line, the sorting step is on-line, allowing the user to change
 the sort order as desired.  This division works well; the first step of the algorithm eliminates so many predicates
-(usually well in excess of 98\%) that the second step can easily be performed at interactive speeds.
+(well in excess of 99\%) that the second step can easily be performed at interactive speeds.
 
 \subsection{Statistical Interpretation}
 
@@ -239,7 +239,7 @@ from the program analysis point of view, but can also be seen as a
 version of a likelihood ratio test.
 
 \subsection{Comparison with Logistic Regression}
-\label{sec-comparison}
+\label{sec:comparison}
 
 In earlier work \cite{PLDI`03*141,Zheng:2003:SDSP}
 we made use of $\ell_1$-regularized logistic regression and similar
@@ -258,7 +258,7 @@ selecting only the most important predicates.  The output is a set of
 coefficients for predicates that gives the best overall prediction: i.e., if
 certain predicates are true the program is likely to fail.
 
-Reasoning from first principles, there are two potential problems with
+There are two potential problems with
 this approach in our setting.  First, it is not clear what the weights
 on the predicates mean, or that there is always an assignment of
 weights that optimally captures the behavior of a program with
@@ -268,12 +268,12 @@ first issue, one might guess that the difficulty, if it exists, shows
 up as the number and complexity of the program's bugs
 increases.  This will tend to increase the number of predicates that
 are at least somewhat predictive of failure and, more significantly,
-dramatically increase the number of sets of predicates that could
+dramatically increase the number of combinations of predicates that could
 explain all failures, thereby making it more difficult for logistic
 regression to pick a good set of predicates and coefficients from a very large
 space.  
 
-In fact, we observe that logistic regression performs worse
+In fact, we observe that logistic regression performs significantly worse
 in more complex situations. For example, if a predicate is a
 common precondition for two different bugs, its coefficient
 can be greater than the coefficients of the actual causes of the bugs.
@@ -283,7 +283,7 @@ training process will give higher weights to sites shared by the
 program paths of all bugs.\footnote{Often times, these sites may also be
 shared by the paths of successful runs.  But their overall positive
 effect can be offset by giving large negative weights to predicates
-that are only present in successful runs (e.g.,\ sites in unreached
+that are only present in successful runs (e.g., sites in unreached
 portions of the code due to an early crash of the program).}
 
 Another problem is caused by the wide coverage of our instrumentation
@@ -300,17 +300,17 @@ for something else.
 In either case, the ranking of some useful predicates can be quite low.
 
 We cannot conclude from our experience that logistic regression cannot
-be made to scale to the analysis of complex software failures, but we
+be made to scale to the analysis of multiple, complex software failures, but we
 note that our hypothesis about scaling behavior is at least
 consistent with earlier, positive results.  Our own previous study
 focused on programs with a single bug; thus all predicates with any
 predictive power were predicting the same failure mode, making it
 easier for logistic regression to select predicates and weights to
-represent all failures.  In the previous work on failure clustering
+represent all failures.  In others' work on failure clustering
 \cite{ICSE`03*465}, the number of features (predicates) is equal to
 the number of procedures in the program.  Using fewer features 
 improves the performance of logistic regression, as it has fewer choices to
-make; in this case the number of features is at least two orders of
+make from a coarser set of features; in this case the number of features is at least two orders of
 magnitude less than in our applications.
 
 For the reasons discussed above, regularized logistic regression has

@@ -1,6 +1,86 @@
-This section describes the results of applying the algorithm discussed
-in \Autoref{sec:algorithm} to the experiment described in
-\Autoref{sec:experiments:setup}.  We briefly summarize the results.
+
+In this section we present the results of a controlled experiment in
+which we injected bugs into \moss\ \cite{Schleimer:2003:WLA}, a widely
+used plagiarism detection service.  A primary goal of this experiment
+was to see whether our algorithm was effective at finding most or all
+bugs in an application; thus it was necessary to know the set of bugs
+we were looking for.  Both \moss\ source code and bug logs were
+available to us, and so we could easily reproduce historical bugs.
+
+We briefly describe the nine bugs we added to \moss.  As discussed in
+\Autoref{sec:introduction}, these bugs vary from low-level crashing
+bugs to high-level logic bugs that simply produce incorrect output.
+Except where noted, these are all bugs that originally occurred in
+\moss.
+\begin{enumerate}
+\item We reintroduced a bug that causes the number of
+lines in C-style multi-line comments to be counted incorrectly.  This bug causes incorrect output
+in certain circumstances: an option to
+match comments must be on (normally \moss\ ignores comments)
+and there must be matching multi-line comments that affect the output.
+
+\item We removed a check for a
+null {\tt FILE} pointer.  This is not originally a \moss\ bug; it is exactly analogous to the {\tt ccrypt} bug (see \Autoref{sec:revisited}).
+
+\item We removed an array bounds update
+in the routine for loading preprocessed data from disk. The
+program behaves normally unless the function is called a second time,
+in which case previously loaded data may be partially overwritten.
+This bug has unpredictable effects and
+was particularly difficult to find originally.
+
+\item We removed a size check that prevents users from supplying command-line arguments
+that could cause the program to overrun the bounds of an array.
+
+\item For historical reasons, \moss\ handles Lisp programs differently
+from all other languages.  We removed a end-of-list check in the Lisp-specific
+code.
+
+\item For efficiency \moss\ preallocates a large area of memory for its primary data structure.
+When this area of memory is filled, the program should fail
+gracefully.  We removed an out-of-memory check. 
+
+\item \moss\ has a routine that scans an array for multiple copies of a data value.
+We removed the limit check that prevents the code from searching past the end of the array.  
+This bug did not occur in \moss; it is intended to be a more frequently occurring version of bug \#8.
+
+\item  A buffer overrun, this bug was never known to have caused a failure in \moss. It
+was discovered originally by a code review.
+
+\item This bug is a variant of bug \#4, but involves a different command-line argument and
+a different array.
+\end{enumerate}
+
+In summary, six of the nine bugs were originally bugs in \moss, two are variants on \moss bugs, and one
+is a port of the {\tt ccrypt} bug.  The bugs
+range from typical C coding errors (e.g., \texttt{NULL} pointer dereferences
+and array overruns) to high-level violations of a system's internal
+invariants (e.g., bugs \#1 and \#3).
+
+To measure the accuracy of our techniques we logged 
+when each bug was triggered.  Of course, this logging 
+code was excluded from the sampling instrumentation.
+To determine whether a run produced correct output we compared it against a run
+of the reference version of \moss.  As discussed in Section~\ref{sec:introduction},
+in practice the labeling of runs as successful or failed is done by either detecting
+crashes, internal assertion failures, or (speculatively) by direct user feedback that the output
+of the program appears incorrect.  Our use of a reference version in this experiment made
+it possible for us to label large numbers of runs automatically.
+
+Table~\ref{tab:exps} shows that \moss\ has over 200,000 instrumented predicates,
+and {\tt Rhythmbox} has over 800,000.
+The reader may wonder whether it is practical to actually generate a report on
+800,000 predicates on a client machine and then upload it to a central
+server for analysis.  The answer is definitely yes.  First, recall
+that the predicates are synthesized from about half as many counters.
+The counters are mostly zeroes and so compress extremely well,
+resulting in uploaded files in the range of 10-50Kbytes.
+
+As can be seen in Table~\ref{tab:exps}, the {\tt branches} and {\tt returns} schemes
+resulted in short reports.  We again used correlations between predicates to help us navigate
+the {\tt scalar-pairs} report.
+
+We briefly summarize the results.
 The algorithm identified a highly-ranked cause that would be useful to a programmer
 for seven of the nine bugs.  For the two other bugs,
 one (bug \#7) occurred in our experiment but never caused
@@ -11,84 +91,35 @@ is to get an accurate picture of the most important bugs. It is consistent with
 this goal that if a bug never causes a problem, it is not only not worth fixing,
 it is not even worth reporting.
 
-A surprise in the experiment was that we found a bug \#10; the results
-showed us a previously undiscovered bug in \moss.
-
-We performed 31,996 random runs of \moss.  Of these, 123 runs were
-discarded because they produced no report (see
-\Autoref{sec:experiments:setup}), giving us 31,873 runs to work with.
-
-For this experiment we enabled all three instrumentation strategies
-described in \Autoref{sec:background}:
-
-\begin{description}
-\item[branches:] 2085 instrumentation sites.  Each site has two
-  counters and yields two predicates, for 4170 branch predicates.
-
-\item[returns:] 494 instrumentation sites.  Each site has three
-  counters and yields six predicates, for 2964 return predicates.
-
-\item[scalar-pairs:] 32,644 instrumentation sites.  Each site has
-  three counters and yields six predicates, for 195,864 scalar-pair
-  predicates.
-\end{description}
-
-Thus, the input to our analysis is 31,873 feedback reports, each of
-which records the status of over 200,000 predicates.  The reader may
-wonder whether it is practical to actually generate a report on
-200,000 predicates on a client machine and then upload it to a central
-server for analysis.  The answer is definitely yes.  First, recall
-that the predicates are synthesized from about half as many counters.
-The counters are mostly zeroes and so compress extremely well,
-resulting in uploaded files in the range of 10-50K.
-
-The sampling rate for all runs in this experiment was \nicefrac{1}{1};
-i.e., we sampled every predicate every time it was reached.  An
-offline downsampling program lets us generate sparser samples from this
-full data; thus, we were able to use the same set of runs to test the
-effect of different sampling rates on the results.
-
-The time to run our algorithm on all the runs is about seven minutes on
-a fast machine.
-At \nicefrac{1}{100} sampling, step (1) of our algorithm eliminates about 99\% of
-all branch and return predicates, and about 96\% of the scalar-pair
-predicates.  We retain only
-\begin{itemize}
-\item 51 branch predicates;
-
-\item 16 return predicates;
-
-\item 8242 scalar-pair predicates.
-\end{itemize}
-
-Clearly the scalar-pairs list is still too long after step (1) to
-process by hand, even if we only look at the highly-ranked predicates.
-We often noticed that in the scalar-pairs report many closely related
-predicates are reported for the same line number.  For our experiment,
-we simply reported only one predicate per line, and then browsed the
-entire list of other predicates on that line if it appeared
-interesting.\footnote{There are principled ways to choose the
-representative predicate for a line, but we didn't need anything
-better than an arbitrary choice for this experiment.}  Retaining one
-predicate per line gives us a much shorter list of 186 lines to
-examine (i.e., only 186 distinct lines in the program had predicates
-with positive $\increase(\ldots)$ scores).
-
-\subsection{The Bugs}
-
-We examined the reports generated with \nicefrac{1}{100} downsampled data.
-The branches report has 4 predicates with a 1.0 crash rating:
+% CHECK
+In more detail, we examined the reports generated with \nicefrac{1}{100} downsampled data.
+The branches report has 4 predicates with a 1.0 fail rating:
 %%
-\begin{small}
+\begin{verbatim}
+Predicate      Context    Increase   Failure
+strcmp(s,"lisp") == 0  
+               0.11       0.89       1.00
+*pstart + numpassages > pmax - 1 
+	       0.10       0.85       0.95
+strmp(argv[i],"-p") == 0
+               0.11       0.83       0.93
+strmp(argv[i],"-s") == 0
+               0.11       0.43       0.53
+config.dbfile != NULL
+               0.03       0.47       0.50
+\end{verbatim}
+
+
 \begin{verbatim}
 0.94 Inc, 1.00 Cr, 0.06 Co, process_file_pass2 line 5523
 0.80 Inc, 1.00 Cr, 0.20 Co, handle_options line 5742
 0.80 Inc, 1.00 Cr, 0.20 Co, string2lang line 4366
+
 0.78 Inc, 1.00 Cr, 0.22 Co, handle_options line 5789
 \end{verbatim}
 \end{small}
 
-Each line of a report lists the increase, crash, and context scores of
+Each line of a report lists the increase, fail, and context scores of
 a predicate, as well as the function name and line number where it
 occurs.  We have dropped some fields of the report (such as the text
 of the predicate itself and the number of failing and successful runs
@@ -188,56 +219,6 @@ In summary, our algorithm did a good job of producing concise reports that not
 only identified the bugs, but also gave useful information about the root causes and
 how to reproduce the bugs.  In addition, the algorithm identified a previously unknown
 bug.
-
-\subsection{Analysis of Predicate Elimination}
-
-To more clearly understand how well the algorithm works,
-we consider what sorts of predicates are eliminated and why.
-\Autoref{tab:predelim} classifies the most common kinds of predicates
-$P$ for which $\increase(P) \leq 0$.  Recall that we have
-approximately 200,000 predicates for \moss.  The categories are:
-
-\begin{itemize}
-\item  A \termdef{dead} predicate is one that is not observed in any run and hence
-deemed unreachable.  Nearly half the instrumented predicates are dead.
-
-\item An \termdef{invariant} is a predicate that is observed in some run and, moreover,
-is either true every time it is observed or false every time it is observed,
-and is therefore presumed to be a program invariant.  More than a quarter of
-the instrumented predicates are invariants.
-
-\item An \termdef{aftermath} is a predicate that is not observed in any successful run but
-is observed in some failing run, and is therefore deemed to be a secondary consequence
-of a bug.  A relatively small number of predicates are aftermaths, but clearly
-the impact on our reports would be large if this class of predicates were not eliminated.
-
-\item A significant number of additional predicates are eliminated that do not fit
-neatly into one of the other categories.
-
-\end{itemize}
-
-\begin{table}
-\centering
-\caption{Classification of eliminated predicates.}
-\vspace{\baselineskip}
-\begin{tabular}{|l|r|r|r|r|}
-\hline
-\multicolumn{1}{|c|}{\textbf{predicate}} &  \multicolumn{4}{c|}{\textbf{sampling rate}} \\
-\cline{2-5}
-\multicolumn{1}{|c|}{\textbf{category}}  &  \textbf{\nicefrac{1}{1}} & \textbf{\nicefrac{1}{10}} & \textbf{\nicefrac{1}{100}} & \textbf{\nicefrac{1}{1000}} \\
-\hline
-\hline
-dead      &  92810 & 92810 & 92834 & 95210 \\
-\hline
-invariant &  56418 & 56614 & 57082 & 57034 \\
-\hline
-aftermath &  5666  & 5954  & 6534  & 7032 \\
-\hline
-other     &  38762 & 36768 & 36504 & 33023 \\
-\hline
-\end{tabular}
-\label{tab:predelim}
-\end{table}
 
 \subsection{Effect of Sampling on Predicate Selection}
 
