@@ -249,7 +249,7 @@ Then
   \iff \hat \pi_f(P) > \hat \pi_s(P)
 \end{gather*}
 
-\subsection{Balancing Specificity \& Sensitivity}
+\subsection{Balancing Specificity and Sensitivity}
 \label{sec:ranking}
 
 \input{moss-view/stats-breakout}
@@ -393,7 +393,6 @@ redundant predicates:
 
 We can now state an easy but important property of this algorithm.  
 \begin{lemma}
-\rm
 Let $P_1,\ldots,P_n$ be a set of instrumented predicates and let ${\cal B}_1,\ldots,{\cal B}_m$ be a set of bugs.  Let
 \[ {\cal Z} = \bigcup_{1 \leq i \leq n} \{ R | \report{P_i} = 1 \} \]
 Then if for all $1 \leq j \leq m$ we have ${\cal B}_j \cap {\cal Z} \neq \emptyset$, then 
