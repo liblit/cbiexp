@@ -1,6 +1,6 @@
 BINDIR = /moa/sc1/cbi/bin
 EXTRACT = $(BINDIR)/extract-section
-BAD = mossbad mossfix
+BAD = mossbad
 MOSS = moss $(BAD)
 
 CC = gcc
@@ -34,13 +34,7 @@ moss.o: moss.c
 mossbad: mossbad.o lib/regions-norc.o reporting.o
 	$(SCC) $(SFLAGS) $(CFLAGS) $^ -o $@
 
-mossfix: mossfix.o lib/regions-norc.o reporting.o
-	$(SCC) $(SFLAGS) $(CFLAGS) $^ -o $@
-
 mossbad.o: %.o: mossbad.c reporting.h
-	$(SCC) $(SFLAGS) $(CFLAGS) $(CPPFLAGS) --exclude-file=$< -c $<
-
-mossfix.o: %.o: mossfix.c reporting.h
 	$(SCC) $(SFLAGS) $(CFLAGS) $(CPPFLAGS) --exclude-file=$< -c $<
 
 lib/regions-norc.o:
@@ -48,11 +42,11 @@ lib/regions-norc.o:
 
 reporting.o: reporting.c reporting.h
 
-moss.c mossbad.c mossfix.c: %.c: %_includes.flex 
+moss.c mossbad.c: %.c: %_includes.flex 
 #	flex -8 -i -omoss.c moss_includes.flex
 	flex -8 -f -o$@ $<
 
-moss_includes.flex mossbad_includes.flex mossfix_includes.flex: %_includes.flex: %.flex
+moss_includes.flex mossbad_includes.flex: %_includes.flex: %.flex
 	cd languages; ./build
 	scripts/myinclude <$< >$@
 

@@ -1,0 +1,6 @@
+There are now two versions of buggy moss.
+
+mossbad_all_bugs.flex   has all of the seeded bugs
+mossfix.flex            fixes all but bugs 4,7,8, and 9
+
+copy the file you want to experiment with to mossbad.flex and follow the directions in README.runs.
