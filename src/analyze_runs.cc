@@ -323,8 +323,8 @@ int main(int argc, char** argv)
 	REQUIRE("-do-convert-reports", "-f" , fruns_txt_file);
 	REQUIRE("-do-convert-reports", "-us", units_src_file);
 	puts("Converting reports ...");
-	shell("%s %s/convert_reports.o %s/classify_runs.o %s.o -o %s",
-	      linker, objdir, objdir, units_src_file, CONVERT_REPORTS);
+	shell("%s %s/convert_reports.o %s/classify_runs.o %s.o -o %s %s",
+	      linker, objdir, objdir, units_src_file, CONVERT_REPORTS, lexlib);
 	shell("%s -s %s -f %s -vr %s -cr %s",
 	      CONVERT_REPORTS, sruns_txt_file, fruns_txt_file, verbose_report_path_fmt, compact_report_path_fmt);
     }

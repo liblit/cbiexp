@@ -1,17 +1,82 @@
+%{ // -*- c++ -*-
+#include <cassert>
+#include <cstdio>
+#include <cstring>
+#include "units.h"
+
+
+static FILE *ofp = NULL;
+
+static char get_scheme_code(char* scheme_str);
+static int get_unit_indx(char scheme_code, const char* signature);
+ 
+%}
+
+
+%option nounput
+
+%x COUNTS
+
+
+%%
+
+
+	{
+	    /* Explicit reset in case previous file ended abruptly. */
+	    BEGIN(INITIAL);
+	}
+
+
+<INITIAL><samples\ unit=\"[0-9a-f]{32}\"\ scheme=\"[-a-z]+\">\n {
+    /* Initially look for a starting <samples> tag. */
+    BEGIN(COUNTS);
+
+    const char *signature = strchr(yytext, '\"');
+    signature++;
+    char *t = strchr(signature, '\"');
+    *t = '\0';
+    t++;
+    char *scheme_str = strchr(t, '\"');
+    scheme_str++;
+    t = strchr(scheme_str, '\"');
+    *t = '\0';
+
+    const int indx = get_unit_indx(get_scheme_code(scheme_str), signature);
+    fprintf(ofp, "%d\n", indx);
+}
+
+<INITIAL>[^<]+|< {
+    /* Silently discard any other junk. */
+}
+
+
+<COUNTS><\/samples> {
+    /* Counts end at the closing </samples> tag. */
+    /* Sanity check that we got as many sites as we expected. */
+    BEGIN(INITIAL);
+}
+
+<COUNTS>[^<]+|< {
+    /* Copy counts to ouput unchanged. */
+    fputs(yytext, ofp);
+}
+
+
+%%
+
+
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
-#include <cassert>
 #include <cstdlib>
 #include "classify_runs.h"
-#include "units.h"
 
 char* sruns_txt_file = NULL;
 char* fruns_txt_file = NULL;
 char* verbose_report_path_fmt = NULL;
 char* compact_report_path_fmt = NULL;
 
-char get_scheme_code(char* scheme_str)
+static char get_scheme_code(char* scheme_str)
 {
     if (!strcmp(scheme_str, "scalar-pairs"))   return 'S';
     if (!strcmp(scheme_str, "branches"    ))   return 'B';
@@ -20,7 +85,7 @@ char get_scheme_code(char* scheme_str)
     assert(0);
 }
 
-int get_unit_indx(char scheme_code, const char* signature)
+static int get_unit_indx(char scheme_code, const char* signature)
 {
     for (int i = 0; i < num_units; i++)
         if (scheme_code == units[i].scheme_code && strcmp(signature, units[i].signature) == 0)
@@ -72,9 +137,6 @@ void process_cmdline(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-    char s[3000], *signature, *scheme_str, *t;
-    char p[3000];
-
     process_cmdline(argc, argv);
 
     classify_runs(sruns_txt_file, fruns_txt_file);
@@ -90,45 +152,18 @@ int main(int argc, char** argv)
 	assert(ifp);
 
 	sprintf(ofile, compact_report_path_fmt, i);
-	FILE* ofp = fopen(ofile, "w");
+	ofp = fopen(ofile, "w");
 	assert(ofp);
 
-	printf("r %d\n", i);
+	printf("r %d...", i);
+	fflush(stdout);
 
-	fgets(s, 3000, ifp);
-	assert(strncmp(s, "<rep", 4) == 0);
+	yyrestart(ifp);
+	yylex();
 
-	while (1) {
-	    fgets(s, 3000, ifp);
-	    if (feof(ifp))
-		break;
-	    if (strncmp(s, "<sam", 4) != 0)
-		break;
-	    signature = strchr(s, '\"');
-	    signature++;
-	    t = strchr(signature, '\"');
-	    *t = '\0';
-	    t++;
-	    scheme_str = strchr(t, '\"');
-	    scheme_str++;
-	    t = strchr(scheme_str, '\"');
-	    *t = '\0';
-
-            int indx = get_unit_indx(get_scheme_code(scheme_str), signature);
-	    fprintf(ofp, "%d\n", indx);
-
-	    int count = 0;
-	    while (1) {
-		fgets(p, 3000, ifp);
-		if (strncmp(p, "</sam", 5) == 0)
-		    break;
-		fputs(p, ofp);
-		count++;
-	    }
-	    assert(count == units[indx].num_sites);
-	}
 	fclose(ifp);
 	fclose(ofp);
+	puts("done");
     }
     return 0;
 }

@@ -5,5 +5,7 @@
 extern const char compiler[];
 extern const char linker[];
 
+extern const char lexlib[];
+
 
 #endif // !INCLUDE_COMPILER_H

@@ -4,6 +4,7 @@ Makefile.in
 TAGS
 analyze_runs
 compiler.cc
+convert_reports.cc
 format
 gen_views
 map_sites

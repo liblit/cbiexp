@@ -1,4 +1,5 @@
 AM_CPPFLAGS = -W -Wall -Werror
+AM_LFLAGS = -CFar -s
 
 noinst_PROGRAMS =				\
 	analyze_runs				\
@@ -7,6 +8,9 @@ noinst_PROGRAMS =				\
 
 noinst_SCRIPTS =				\
 	map_sites.sed
+
+noinst_LIBRARIES = libanalyze.a liblate.a
+
 
 analyze_runs_SOURCES =				\
 	analyze_runs.cc				\
@@ -22,8 +26,6 @@ process_run_labels_SOURCES = process_run_labels.cc
 
 ########################################################################
 
-
-noinst_LIBRARIES = libanalyze.a
 
 libanalyze_a_SOURCES =				\
 	classify_runs.cc			\
@@ -42,24 +44,17 @@ libanalyze_a_SOURCES =				\
 #  objects and linking them with these previously-compiled objects to
 #  produce complete programs.
 #
+#  The actual library archive is not used.  This is simply a hack to
+#  trick automake into adding the appropriate build rules for the
+#  constituent object files.
+#
 
-noinst_HEADERS =				\
-	      preds.h				\
-	      sites.h				\
-	      units.h
-
-late_programs =					\
-	compute_obs_tru				\
-	compute_results				\
-	convert_reports				\
-	gen_views				\
-	gen_preds_file
-
-late_objects = $(late_programs:=.o)
-late_sources = $(late_programs:=.cc)
-TAGS_FILES = $(late_sources)
-EXTRA_DIST = $(late_sources)
-
-all-local: $(late_objects)
-
-$(late_objects): %.o: %.cc
+liblate_a_SOURCES =				\
+	compute_obs_tru.cc			\
+	compute_results.cc			\
+	convert_reports.ll			\
+	gen_preds_file.cc			\
+	gen_views.cc				\
+	preds.h					\
+	sites.h					\
+	units.h
