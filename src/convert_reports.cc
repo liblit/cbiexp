@@ -1,18 +1,30 @@
+#include <algorithm>
 #include <cstdio>
 #include <cstring>
 #include <cassert>
 #include <cstdlib>
+#include <iostream>
+#include <string>
 #include "classify_runs.h"
 #include "units.h"
 
-int get_indx(char* s)
-{
-    for (int i = 0; i < NumUnits; i++)
-	if (strcmp(s, units[i].s) == 0)
-	    return i;
+using namespace std;
 
-    fprintf(stderr, "cannot find index of compilation unit \"%s\"\n", s);
-    exit(1);
+inline bool
+operator < (const Unit &unit, const char *signature)
+{
+    return strcmp(unit.s, signature) < 0;
+}
+
+int get_indx(const char *signature)
+{
+    const Unit *candidate = lower_bound(units, units + NumUnits, signature);
+    if (!strcmp(signature, candidate->s))
+	return candidate - units;
+    else {
+	cerr << "cannot find index of compilation unit \"" << signature << '"' << endl;
+	exit(1);
+    }
 }
 
 char* sruns_file = NULL;

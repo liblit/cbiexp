@@ -1,7 +1,50 @@
-#include <cstdio>
-#include <cstring>
 #include <cassert>
+#include <cstdio>
 #include <cstdlib>
+#include <cstring>
+#include <fstream>
+#include <iterator>
+#include <map>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class Unit {
+public:
+    const char scheme;
+    const string signature;
+
+    Unit(char, const string &);
+};
+
+
+Unit::Unit(char scheme, const string &signature)
+    : scheme(scheme),
+      signature(signature)
+{
+}
+
+
+bool operator < (const Unit &a, const Unit &b)
+{
+    return a.scheme < b.scheme
+	|| a.scheme == b.scheme && a.signature < b.signature;
+}
+
+
+typedef map<Unit, vector<string> > UnitMap;
+
+
+ostream & operator << (ostream &sink, const UnitMap::value_type &mapping)
+{
+    const Unit &unit = mapping.first;
+    const vector<string> &sites = mapping.second;
+
+    return sink << "{ \"" << unit.scheme << unit.signature << "\", "
+		<< sites.size() << " }";
+}
+
 
 inline char scheme_code(char* s)
 {
@@ -108,13 +151,8 @@ int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
 
-    FILE* cfp = fopen(compact_sites_file, "w"); assert(cfp);
-    FILE* ufp = fopen(units_src_file, "w"); assert(ufp);
-    int num_units = 0, num_b_preds = 0, num_r_preds = 0, num_s_preds = 0;
-
-    fputs("#include <units.h>\n\n"
-	  "const struct Unit units[] = {\n",
-	  ufp);
+    int num_b_preds = 0, num_r_preds = 0, num_s_preds = 0;
+    UnitMap units;
 
     while (1) {
 	char s[3000];
@@ -122,34 +160,42 @@ int main(int argc, char** argv)
 	if (feof(stdin))
 	    break;
 	assert(!strncmp(s, "<sites", 6));
+
 	char* t = get_scheme_and_unit(s);
-	int count = 0;
+	const Unit unit(t[0], &t[1]);
+	vector<string> &sites = units[unit];
+
 	while (1) {
 	    char p[3000];
 	    fgets(p, 3000, stdin);
 	    if (!strncmp(p, "</sites", 7))
 		break;
-	    fputs(print_site(t[0], p), cfp);
-	    count++;
+	    sites.push_back(print_site(t[0], p));
 	}
-	fprintf(ufp, "\t{ \"%s\", %d },\n", t, count);
-	num_units++;
 	switch (t[0]) {
-	case 'S': num_s_preds += 6 * count; break;
-	case 'R': num_r_preds += 6 * count; break;
-	case 'B': num_b_preds += 2 * count; break;
+	case 'S': num_s_preds += 6 * sites.size(); break;
+	case 'R': num_r_preds += 6 * sites.size(); break;
+	case 'B': num_b_preds += 2 * sites.size(); break;
 	default: assert(0);
 	}
     }
 
-    fputs("};\n\n", ufp);
-    fprintf(ufp, "const int NumUnits  = %d;\n", num_units);
-    fprintf(ufp, "const int NumBPreds = %d;\n", num_b_preds);
-    fprintf(ufp, "const int NumRPreds = %d;\n", num_r_preds);
-    fprintf(ufp, "const int NumSPreds = %d;\n", num_s_preds);
+    ofstream sites_sink(compact_sites_file); assert(sites_sink);
+    ofstream units_sink(units_src_file); assert(units_sink);
 
-    fclose(cfp);
-    fclose(ufp);
+    units_sink << "#include <units.h>\n\n"
+	       << "const struct Unit units[] = {\n";
+    
+    for (UnitMap::const_iterator unit = units.begin(); unit != units.end(); ++unit) {
+	units_sink << '\t' << *unit << ",\n";
+	copy(unit->second.begin(), unit->second.end(), ostream_iterator<string>(sites_sink));
+    }
+
+    units_sink << "};\n\n"
+	       << "const int NumUnits  = " << units.size() << ";\n"
+	       << "const int NumBPreds = " << num_b_preds << ";\n"
+	       << "const int NumRPreds = " << num_r_preds << ";\n"
+	       << "const int NumSPreds = " << num_s_preds << ";\n";
 
     return 0;
 }
