@@ -56,9 +56,6 @@ FILE* preds_txt_fp = NULL;
  * Procedures for printing (1) result summary and (2) retained predicates
  ***************************************************************************/
 
-const char* scalar_op[6] = { "<", ">=", "==", "!=", ">", "<=" };
-const char* branch_op[2] = { "is FALSE", "is TRUE" };
-
 void print_result_summary()
 {
     time_t t;
@@ -108,21 +105,6 @@ inline void print_site_info(FILE* fp, int i)
     fprintf(fp, "</td><td>%s</td><td>%s:%d\n", sites[i].fun, sites[i].file, sites[i].line);
 }
 
-inline void print_b_pred_name(FILE* fp, int i, const char* op)
-{
-    fprintf(fp, "%s %s", sites[i].args[0], op);
-}
-
-inline void print_s_pred_name(FILE* fp, int i, const char* op)
-{
-    fprintf(fp, "%s %s %s", sites[i].args[0], op, sites[i].args[1]);
-}
-
-inline void print_r_pred_name(FILE* fp, int i, const char* op)
-{
-    fprintf(fp, "%s %s 0", sites[i].args[0], op);
-}
-
 void print_retained_preds()
 {
     int u, c, p, i = 0;
@@ -138,7 +120,7 @@ void print_retained_preds()
 	            if (site_info[u][c].retain[p]) {
 		        num_s_preds++;
 		        print_pred_info(fp, u, c, p);
-		        print_s_pred_name(fp, i, scalar_op[p]);
+		        print_s_pred(fp, p, i);
                         print_site_info(fp, i);
 	            }
 	        break;
@@ -147,7 +129,7 @@ void print_retained_preds()
 	            if (site_info[u][c].retain[p]) {
 		        num_r_preds++;
 	                print_pred_info(fp, u, c, p);
-		        print_r_pred_name(fp, i, scalar_op[p]);
+		        print_r_pred(fp, p, i);
                         print_site_info(fp, i);
                     }
 	        break;
@@ -156,7 +138,7 @@ void print_retained_preds()
 	            if (site_info[u][c].retain[p]) {
 	                num_b_preds++;
 	                print_pred_info(fp, u, c, p);
-	                print_b_pred_name(fp, i, branch_op[p]);
+	                print_b_pred(fp, p, i);
                         print_site_info(fp, i);
                     }
 	        break;

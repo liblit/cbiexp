@@ -2,6 +2,8 @@
 #include <cmath>
 #include <cassert>
 #include "units.h"
+#include "sites.h"
+#include "utils.h"
 
 const float conf_map[10] = {
     1.645,  // 90%
@@ -35,6 +37,45 @@ bool retain_pred(int s, int f, float lb)
 bool retain_pred(int s, int f, int os, int of, int conf)
 {
     return retain_pred(s, f, compute_lb(s, f, os, of, conf));
+}
+
+const char* s_op[6] = { "<", ">=", "==", "!=", ">", "<=" };
+const char* r_op[6] = { "<", ">=", "==", "!=", ">", "<=" };
+const char* b_op[2] = { "is FALSE", "is TRUE" };
+
+void print_pred(FILE* fp, int u, int p, int s)
+{
+    switch (units[u].s[0]) {
+    case 'S':
+        print_s_pred(fp, p, s);
+        break;
+    case 'R':
+        print_r_pred(fp, p, s);
+        break;
+    case 'B':
+        print_b_pred(fp, p, s);
+        break;
+    default:
+        assert(0);
+    }
+}
+
+void print_s_pred(FILE* fp, int p, int s)
+{
+    fprintf(fp, "%s %s %s",
+                sites[s].args[0], s_op[p], sites[s].args[1]);
+}
+
+void print_r_pred(FILE* fp, int p, int s)
+{
+    fprintf(fp, "%s %s 0",
+                sites[s].args[0], r_op[p]);
+}
+
+void print_b_pred(FILE* fp, int p, int s)
+{
+    fprintf(fp, "%s %s",
+                sites[s].args[0], b_op[p]);
 }
 
 void process_report(FILE* fp,
