@@ -45,7 +45,11 @@ bool read_pred_full(FILE* fp, pred_info &pi)
 			   &pi.ps.lb, &pi.ps.in, &pi.ps.fs, &pi.ps.co,
 			   &pi.s, &pi.f, &pi.os, &pi.of);
 
-    return got == 13;
+    if (got == 13) {
+	assert(scheme_code == sites[pi.site].scheme_code);
+	return true;
+    } else
+	return false;
 }
 
 void print_pred_full(FILE* fp, pred_info pi)
@@ -153,3 +157,7 @@ void process_report(FILE* fp,
     }
 }
 
+
+// Local variables:
+// c-file-style: "cc-mode"
+// End:
