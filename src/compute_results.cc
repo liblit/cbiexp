@@ -47,8 +47,6 @@ char* trace_txt_file = NULL;
 char* preds_txt_file = NULL;
 char* result_summary_htm_file = NULL;
 
-float conf;
-
 int num_s_preds = 0;
 int num_r_preds = 0;
 int num_b_preds = 0;
@@ -99,11 +97,11 @@ inline void print_pred_info(FILE* fp, int u, int c, int p)
 
     float fs = ((float)  f) / ( s +  f);
     float co = ((float) of) / (os + of);
-    float in = fs - co;
-    float lb = in - conf * sqrt(((fs * (1 - fs)) / (f + s)) + ((co * (1 - co))/(of + os)));
 
     fprintf(fp, "%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
-	units[u].s[0], u, c, p, lb, in, fs, co, s, f, os, of);
+	units[u].s[0], u, c, p,
+        compute_lb(s, f, os, of, confidence),
+        fs - co, fs, co, s, f, os, of);
 }
 
 inline void print_site_info(FILE* fp, int i)
