@@ -379,18 +379,6 @@ cases and may not suggest other, more fundamental, causes of the bug.
 \issue[Alice]{Why use the word "disproportionately"?  The harmonic
   mean just rewards high scores in both dimensions, and has the
   averaging affect of trading off one with the other, no?}
-\issue{Modified by Mike: "selectivity" -> "sensitivity"}
-\issue[Mike]{Tables 1(a) and (b) illustrate the difficulty of defining
-``importance.''  It is helpful to consider this problem in the 
-language of information retrieval. ..." 
-[I personally don't think that the terminology of "recall" and 
-"precision" are very helpful in our context; I think that "sensitivity"
-and "specificity" are better.  In particular, it's clear to me
-what it means for a predicate to have high sensitivity, and it's
-not clear to me what it means for a predicate to have high recall.
-Moreover, the latter terms are used in a much wider set of fields
-than "recall" and "precision", which are mainly used in IR.  In
-sum, I would suggest changing the paragraph to the following:}
 Tables~\ref{tab:sorts-failure} and \ref{tab:sorts-increase} illustrate the difficulty of defining
 ``importance.''  We are looking for predicates with high \emph{sensitivity}
 (meaning predicates that account for many failed runs) but also high \emph{specificity} (meaning predicates that do not mispredict failure in many successful
