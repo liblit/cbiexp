@@ -38,7 +38,7 @@ char* del_cfg(char* s)
     x = strchr(x, '\t'); x++;
     char* y;
     y = strchr(x , '\t'); y++;
-    while (*x++ = *y++)
+    while ((*x++ = *y++))
 	;
     return s;
 }
