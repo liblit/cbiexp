@@ -1,7 +1,6 @@
 %% -*- TeX-master: t -*-
 
-%% \documentclass{acm_proc_article-sp}
-\documentclass{sig-alternate}
+\documentclass[10pt]{acmconfbig}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10,6 +9,7 @@
 %%
 
 \usepackage{amsmath}
+\usepackage{graphicx}
 \usepackage{ifthen}
 \usepackage{nicefrac}
 \usepackage{fancyvrb}
@@ -65,7 +65,6 @@ pdfpagemode=UseOutlines]{hyperref}
     presented here does not necessarily reflect the position or the
     policy of the Government and no official endorsement should be
     inferred.}}
-\numberofauthors{3}
 
 \makeatletter
 \newcommand*{\eecsMark}[0]{\@fnsymbol{2}}
@@ -77,28 +76,25 @@ pdfpagemode=UseOutlines]{hyperref}
 \newcommand*{\both}[0]{\textsuperscript{\eecsMark, \statMark}}
 \newcommand*{\stan}[0]{\textsuperscript{\stanMark}}
 
-\newcommand{\moreauthors}[0]{\end{tabular}\\\vspace{-.5\baselineskip}\begin{tabular}{c}}
+\newcommand{\moreauthors}[0]{\end{tabular}\\\begin{tabular}[t]{c}}
 
 \author{
-  \alignauthor Ben Liblit \eecs \\
-  \alignauthor Mayur Naik \stan \\
-  \alignauthor Alice X.\ Zheng \eecs \\
+  Ben Liblit \eecs
+  \and Mayur Naik \stan
+  \and Alice X.\ Zheng \eecs
+  \and Alex Aiken \stan
+  \and Michael I.\ Jordan \both
   \moreauthors
-  \global\multiply\auwidth by 3
-  \global\divide\auwidth by 2
-  \alignauthor Alex Aiken \stan \\
-  \alignauthor Michael I.\ Jordan \both
-  \moreauthors
-  \alignauthor
-  \affaddr{\eecs Department of Electrical \\ Engineering and Computer Science} \\
-  \affaddr{\stat Department of Statistics} \\
-  \affaddr{University of California, Berkeley} \\
-  \affaddr{Berkeley, CA 94720-1776}
-  \alignauthor
-  \affaddr{\stan Computer Science Department} \\
-  \affaddr{353 Serra Mall} \\
-  \affaddr{Stanford University} \\
-  \affaddr{Stanford CA 94305-9025}
+  \eecs Department of Electrical \\
+  Engineering and Computer Science \\
+  \stat Department of Statistics \\
+  University of California, Berkeley \\
+  Berkeley, CA 94720-1776
+  \and
+  \stan Computer Science Department \\
+  353 Serra Mall \\
+  Stanford University \\
+  Stanford CA 94305-9025
 }
 
 \bibliographystyle{abbrv}
@@ -111,10 +107,9 @@ pdfpagemode=UseOutlines]{hyperref}
 
 \begin{document}
 
-\conferenceinfo{PLDI'04,}{June 9--11, 2004, Washington, DC, USA.}
-\CopyrightYear{2004}
-%% \crdata{}
 \maketitle
+
+\copyrightspace
 
 \begin{abstract}
   We present a statistical debugging algorithm that operates on very
