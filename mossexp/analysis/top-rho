@@ -1,0 +1,53 @@
+#!/usr/bin/python -O
+
+import colorsys
+import mmap
+import struct
+import xml.parsers.expat
+
+predCount = 2940
+format = 'd'
+corrSize = struct.calcsize(format)
+
+rhoFile = file('rho.bin')
+rhoFd = rhoFile.fileno()
+rhoMap = mmap.mmap(rhoFd, predCount * predCount * corrSize, access = mmap.ACCESS_READ)
+
+def rho(a, b):
+    linear = predCount * a + b
+    byte = linear * corrSize
+    bytes = rhoMap[byte : byte + corrSize]
+    return struct.unpack(format, bytes)[0]
+
+def generate(sort, proj):
+    ranked = []
+
+    def startElement(name, attrs):
+	if name != 'predictor':
+	    return
+	ranked.append(int(attrs['index']))
+
+    parser = xml.parsers.expat.ParserCreate()
+    parser.StartElementHandler = startElement
+
+    input = file('all_%s_%s.xml' % (sort, proj))
+    parser.ParseFile(input)
+
+    output = file('top-rho_%s_%s.xml' % (sort, proj), 'w')
+    print >>output, '<?xml version="1.0"?><?xml-stylesheet type="text/xsl" href="rho.xsl" xmlns="http://www.w3.org/1999/xhtml"?><!DOCTYPE table SYSTEM "rho.dtd"><table xmlns="http://www.w3.org/1999/xhtml">'
+    for a in range(11):
+	print >>output, '<tr>'
+        for b in range(11):
+	    correlation = rho(ranked[a] - 1, ranked[b] - 1)
+	    hue = (1. - abs(correlation)) * 2 / 3
+	    rgb = [ int(channel * 255) for channel in colorsys.hsv_to_rgb(hue, 0.26, 1) ]
+	    style = 'background: rgb(%d, %d, %d)' % (rgb[0], rgb[1], rgb[2])
+	    if a == b:
+		style = style + '; border: 1px solid black'
+	    print >>output, '<td title="ranks: (%d, %d)" style="%s">%+.3f</td>' % (a + 1, b + 1, style, correlation)
+	print >>output, '</tr>'
+    print >>output, '</table>'
+
+for sort in ['hs', 'hl']:
+    for proj in ['circular', 'linear']:
+	generate(sort, proj)
