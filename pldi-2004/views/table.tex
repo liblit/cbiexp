@@ -1,0 +1,33 @@
+%% -*- TeX-master: "../master.tex" -*-
+
+\begin{table*}
+  \caption{Other applications' failure predictors using nonuniform sampling}
+  \centering
+
+  \newcommand{\view}[2]{%
+    \subtable[Predictors for #1]{%
+      \tiny
+      \begin{tabular}{lllll}
+        \toprule
+        \multicolumn{2}{c}{Initial} &
+        \multicolumn{2}{c}{Effective} \\
+        \cmidrule(lr){1-2}
+        \cmidrule(lr){3-4}
+        Score &
+        Bug-O-Meter &
+        Score &
+        Bug-O-Meter &
+        Predicate \\
+        \midrule
+        \input{views/#2/rows}
+        \bottomrule
+      \end{tabular}}
+
+  }
+
+  \view{\texttt{ccrypt}}{ccrypt}
+  \view{\texttt{bc}}{bc}
+  \view{\texttt{exif}}{exif}
+  \view{Rhythmbox}{rhythmbox}
+  
+\end{table*}

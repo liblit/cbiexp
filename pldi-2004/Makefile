@@ -8,11 +8,10 @@ texs :=						\
 	icse03.bib				\
 	master.tex				\
 	misc.bib				\
-	moss-view/bug-o-meter.sty		\
 	moss-view/rows.tex			\
 	moss-view/stats-breakout.tex		\
 	moss-view/stats-by-failure.tex		\
-	moss-view/stats-by-harmonic-dilute.tex	\
+	moss-view/stats-by-harmonic.tex		\
 	moss-view/stats-by-increase.tex		\
 	moss-view/table.tex			\
 	paste02.bib				\
@@ -22,7 +21,13 @@ texs :=						\
 	refs.bib				\
 	revisited.tex				\
 	setup.tex				\
-	table.tex
+	table.tex				\
+	views/table.tex				\
+	views/bc/rows.tex			\
+	views/bug-o-meter.sty			\
+	views/ccrypt/rows.tex			\
+	views/exif/rows.tex			\
+	views/rhythmbox/rows.tex
 
 epss := predkept3a.eps predkept3b.eps
 pdfs := $(epss:.eps=.pdf)
@@ -47,6 +52,9 @@ $(pdfs): %.pdf: %.eps
 	epstopdf --outfile=$@ $<
 
 moss-view/rows.tex moss-view/stats-by-%.tex: force
+	$(MAKE) -C $(@D) $(@F)
+
+views/%/rows.tex: force
 	$(MAKE) -C $(@D) $(@F)
 
 force:
