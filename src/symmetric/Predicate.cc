@@ -32,12 +32,20 @@ Predicate::reclassifyFailures(const RunSet &explained)
 double
 Predicate::badness() const
 {
-  const unsigned ft = trueInFailures.count();
-  const unsigned fb = both.trueInFailures.count();
-  const unsigned st = trueInSuccesses;
-  const unsigned sb = both.trueInSuccesses;
+  // Conversion to int here is intentional and significant.  Some
+  // subexpressions within the return expression have negative values.
+  // If calculated using unsigned, those negative values instead
+  // become large positive values, and the entire result is mangled.
 
-  return double(fb - 2 * ft) / (fb + sb - 2 * (ft + st));
+  const int ft = trueInFailures.count();
+  const int fb = both.trueInFailures.count();
+  const int st = trueInSuccesses;
+  const int sb = both.trueInSuccesses;
+
+  const double result = double(fb - 2 * ft) / (fb + sb - 2 * (ft + st));
+  assert(result >= 0);
+  assert(result <= 1);
+  return result;
 }
 
 
@@ -51,14 +59,22 @@ Predicate::context() const
   const unsigned si = inverse.trueInSuccesses;
   const unsigned sb = both.trueInSuccesses;
 
-  return double(ft + fi - fb) / (ft + fi + st + si - fb - sb);
+  const double result = double(ft + fi - fb) / (ft + fi + st + si - fb - sb);
+  assert(result >= 0);
+  assert(result <= 1);
+  return result;
 }
 
 
 double
 Predicate::increase() const
 {
-  return badness() - context();
+  const double result = badness() - context();
+  assert(result <= 1);
+
+  // !!!: deviation from formal definitions:
+  //   clamping increase to be at least zero
+  return result < 0 ? 0 : result;
 }
 
 
@@ -88,11 +104,14 @@ Predicate::lowerBound() const
 double
 Predicate::recall() const
 {
-  // !!!: deviation from formal definitions:
-  //   increment denominator to avoid NAN when allFailures.count() == 1
-  //   increment numerator to counterbalance incremented denominator
+  const size_t captured = trueInFailures.count();
+  const size_t possible = allFailures.count();
+  assert(captured > 0);
+  assert(possible > 0);
+  assert(captured <= possible);
 
-  const double result = log(1. + trueInFailures.count()) / log(1. + allFailures.count());
+  const double result = log(double(captured)) / log(double(possible));
+
   assert(result >= 0);
   assert(result <= 1);
   return result;
