@@ -2,14 +2,13 @@
 #include <boost/config.hpp>
 #include <boost/property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/johnson_all_pairs_shortest.hpp>
-#include <cmath>
-#include <cstdlib>
+#include <stdlib.h>
 #include <cassert>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <ext/hash_map>
+#include <queue>
 #include <vector>
 #include "fopen.h"
 #include "TsReportReader.h"
@@ -37,15 +36,23 @@ typedef adjacency_list<setS, vecS, directedS, Vprops, Eprops> Graph;
 typedef graph_traits<Graph>::vertex_descriptor VertexD;
 typedef graph_traits<Graph>::edge_descriptor EdgeD;
 
-class ts_hash_t : public hash_map<SiteCoords, timestamp>
+class ts_hash_t : public hash_map<SiteCoords, unsigned>
+{
+};
+
+class site_hash_t : public hash_map<SiteCoords, timestamp>
 {
 };
 
 static Graph G;
-static ts_hash_t siteIndex;
+static site_hash_t siteIndex;
+static std::queue<pair<unsigned, SiteCoords> > parentQueue;
 static unsigned sitei = 0;
 static unsigned nruns_used = 0;
-static weight_t maxweight = (std::numeric_limits<weight_t>::max)();
+const SiteCoords firstSite(2, 169);    // returns site from newregion() on line 5918
+const SiteCoords secondSite(0, 32093); // scalar-pairs site: config.mem_database = newregion(); 
+const SiteCoords siteA(0, 32027); // s-p: 5900 files_init i pindex (component 934)
+const SiteCoords siteB(0, 26821);  // s-p: 5674 init_options c->errorfile (FILE *)0
 
 /****************************************************************
  * Run-specific storage
@@ -87,9 +94,16 @@ Reader::siteTs(const SiteCoords &coords, timestamp ts)
     exit(1);
   }
 
+  if (coords == firstSite)
+    assert (ts == 1);
+  if (coords == secondSite)
+    assert (ts == 2);
+  if (coords == firstSite || coords == secondSite)
+    assert (ts != 0);
+
   // see if this is a new site,
   // if so, assign it a site index and insert it into the graph
-  ts_hash_t::const_iterator found2 = siteIndex.find(coords);
+  site_hash_t::const_iterator found2 = siteIndex.find(coords);
   if (found2 == siteIndex.end()) {
       siteIndex[coords] = sitei;
       add_vertex(Vprops(sitei++, coords), G);
@@ -107,8 +121,16 @@ void inc_ordering(const SiteCoords *const siteArr, unsigned n)
     for (unsigned i = 1; i < n; i++) {
 	const SiteCoords &s1 = siteArr[i-1];
 	const SiteCoords &s2 = siteArr[i];
-	const ts_hash_t::iterator found1 = siteIndex.find(s1);
-	const ts_hash_t::iterator found2 = siteIndex.find(s2);
+	const site_hash_t::iterator found1 = siteIndex.find(s1);
+	const site_hash_t::iterator found2 = siteIndex.find(s2);
+	if(s2 == firstSite)
+          assert(0);
+	if (siteB == s2 && !(siteA == s1)) {
+          pair<unsigned, SiteCoords> pp;
+          pp.first = curr_run.runId;
+          pp.second = s1;
+          parentQueue.push(pp);
+        }
 	assert(found1 != siteIndex.end());
 	assert(found2 != siteIndex.end());
 	VertexD u = vertex(found1->second, G);
@@ -136,8 +158,8 @@ static int ts_compare(const void *t1, const void *t2)
     exit(1);
   }
   else {
-    const unsigned t1 = found1->second;
-    const unsigned t2 = found2->second;
+    const timestamp t1 = found1->second;
+    const timestamp t2 = found2->second;
     if (t1 < t2)
       return -1;
     if (t1 == t2)
@@ -170,107 +192,15 @@ void process_ts()
   delete[] siteArr;
 }
 
-/****************************************************************************
- * Final processing and printing
- ***************************************************************************/
-
 inline ostream &
-operator<< (ostream &out, const ts_hash_t &th)
+operator<< (ostream &out, const ts_hash_t &ts)
 {
-    for (ts_hash_t::const_iterator c = th.begin(); c != th.end(); c++) {
-	const SiteCoords tc = c->first;
-	const unsigned ts = c->second;
-	out << tc << '\t' << ts << '\n';
-    }
-    return out;
+  for (ts_hash_t::const_iterator c = ts.begin(); c != ts.end(); ++c) 
+  {
+    out << c->first << '\t' << c->second << endl;
+  }
+  return out;
 }
-
-void transform_weights()
-{
-    unsigned N = (1 << 15);
-    property_map<Graph, edge_weight_t>::type w = get(edge_weight, G);
-    graph_traits<Graph>::edge_iterator e, e_end;
-    for (boost::tie(e, e_end) = edges(G); e != e_end; ++e) {
-	assert (w[*e] > 0.0);
-	w[*e] = 1 - (weight_t) w[*e]/N;
-	assert (w[*e] >= 0.0);
-    }
-}
-
-inline bool
-reach(weight_t ** D, unsigned i, unsigned j)
-{
-    return (abs(D[i][j])< maxweight);
-}
-
-void print_apsp(weight_t ** D, unsigned n)
-{
-    string tsFile = "ts_sites." + TimestampReport::when + ".txt";
-    ofstream indexOs(tsFile.c_str(), ios_base::trunc);
-    indexOs << siteIndex;
-    indexOs.close();
-
-    string siteFile = "site_orders." + TimestampReport::when + ".txt";
-    ofstream os(siteFile.c_str(), ios_base::trunc);
-
-    property_map<Graph, vertex_name_t>::type vname = get(vertex_name,G);
-    for (unsigned i = 0; i < n; i++) {
-	for (unsigned j = i+1; j < n; j++) {
-	    if (reach(D, i, j) && !reach(D, j, i))
-		os << vname[i] << '\t' << vname[j] << '\t' 
-		   << scientific << setprecision(12) << D[i][j] << '\n';
-	    else if (reach(D, j, i) && ! reach(D,i,j))
-		os << vname[j] << '\t' << vname[i] << '\t' 
-		   << scientific << setprecision(12) << D[j][i] << '\n';
-	}
-    }
-
-    os.close();
-}
-
-void calc_apsp()
-{
-    cout << "The graph contains " << num_vertices(G) << " vertices and "
-	 << num_edges(G) << " edges.\n";
-
-    cout << "Transforming weights\n";
-    transform_weights();
-
-    cout << "Computing all-pairs shortest paths.\n";
-    const unsigned V = num_vertices(G);
-    vector<weight_t> d(V, maxweight);
-    weight_t **D = new weight_t* [V];
-    for (unsigned i = 0; i < V; i++)
-      D[i] = new weight_t[V];
-
-    bool result = johnson_all_pairs_shortest_paths(G, D, distance_map(&d[0]));
-    if (!result) {
-      cerr << "There exists a negative weight cycle in the graph.\n";
-      exit(1);
-    }
-    else {
-      print_apsp(D, V);
-    }
-
-    for (unsigned i = 0; i < V; i++)
-      delete[] D[i];
-    delete[] D;
-}
-
-
-// unsigned
-// num_collisions(const ts_hash_t &table)
-// {
-//   unsigned b = table.bucket_count();
-//   unsigned c = 0;
-//   for (unsigned i = 0; i < b; i++) {
-//       unsigned elems = table.elems_in_bucket(i);
-//       if (i > 1)
-// 	  c += elems - 1;
-//   }
-//   return c;
-// }
-
 
 /****************************************************************************
  * Processing command line options
@@ -317,12 +247,17 @@ int main(int argc, char** argv)
       process_ts();       // sort sites by their timestamps
     }
 
-    calc_apsp();
-
     // There are 18366 sites with "first" timestamps
     // There are 19587 edges in the resulting site graph
     // cout << "There are " << curr_run.ts.size() << "sites with timestamps.\n";
 
+    cout << "Parents of site B (" << siteB << ")\n";
+    while (!parentQueue.empty()) {
+       unsigned r = parentQueue.front().first;
+       SiteCoords &coords = parentQueue.front().second;
+       cout << "Run " << r << " Site " << coords << endl;
+       parentQueue.pop(); 
+    }
     return 0;
 }
 

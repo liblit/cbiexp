@@ -18,6 +18,7 @@ struct SiteCoords
 
 bool operator<(const SiteCoords &, const SiteCoords &);
 bool operator==(const SiteCoords &, const SiteCoords &);
+bool operator!=(const SiteCoords &, const SiteCoords &);
 
 std::istream &operator>>(std::istream &, SiteCoords &);
 std::ostream &operator<<(std::ostream &, const SiteCoords &);
@@ -69,6 +70,12 @@ operator==(const SiteCoords &a, const SiteCoords &b)
     && a.siteOffset == b.siteOffset;
 }
 
+inline bool
+operator!=(const SiteCoords &a, const SiteCoords &b)
+{
+  return a.unitIndex != b.unitIndex
+    || a.siteOffset != b.siteOffset;
+}
 
 inline std::istream &
 operator>>(std::istream &in, SiteCoords &coords)

@@ -121,6 +121,7 @@ libanalyze_a_SOURCES =				\
 #
 
 liblate_a_SOURCES =				\
+	build_tsgraph.cc			\
 	calc_truthprobs.cc			\
 	chi2test.cc				\
 	collect_parmstats.cc			\
@@ -130,6 +131,7 @@ liblate_a_SOURCES =				\
 	convert_reports.ll			\
 	est_hyperparms.cc			\
 	extract_timestamps.ll			\
+	find_tsSCC.cc				\
 	gather_prior_dist.cc			\
 	gen_preds_file.cc			\
 	gen_summary.cc				\
@@ -139,6 +141,7 @@ liblate_a_SOURCES =				\
 	partial_order.cc			\
 	preds.h					\
 	project.cc				\
+	sanity_check.cc				\
 	sites.h					\
 	train_utillog.cc			\
 	units.h					\
