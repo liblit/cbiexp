@@ -1,7 +1,13 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
-$DPATH = "/moa/sc1/cbi/sources"           # source code data is here
-$MPATH = "/moa/sc1/cbi/bin"               # moss binaries are here
+use File::Copy;
+use FileHandle;
+
+# allow complete group access
+umask 002;
+
+$DPATH = "/moa/sc1/cbi/sources";           # source code data is here
+$MPATH = "/moa/sc1/cbi/bin";               # moss binaries are here
 $watchdog = "$MPATH/watchdog.pl";
 $numruns = $ARGV[0];
 $ENV{'SAMPLER_DEBUGGER'} = "/usr/share/sampler/print-debug-info";  # collect stack traces
@@ -50,11 +56,72 @@ $dir = 0;
 @java_files = `find $DPATH -name "*.java"`;
 @lisp_files = `find $DPATH -name "*.lisp"`;
 
+
+sub check_system ($) {
+    if ((system $_[0]) == -1) {
+	die "system error: $!";
+    }
+}
+
+
 #
 # copy the executables to the current directory
 #
-system("cp $MPATH/mossbad .");
-system("cp $MPATH/mossbad2 .");
+
+sub snapshot_moss_bad ($) {
+    my $executable = shift;
+    copy "$MPATH/$executable", '.' or die "copy error";
+    check_system "/usr/lib/sampler/tools/extract-section .debug_sampler_cfg $executable | gzip >$executable.cfg";
+    check_system "/usr/lib/sampler/tools/extract-section .debug_site_info $executable | gzip >$executable.sites";
+}
+
+snapshot_moss_bad 'mossbad';
+snapshot_moss_bad 'mossbad2';
+
+
+sub diff ($$) {
+    check_system "diff -q @_ >/dev/null";
+    if ($? == 2) {
+	die "diff error while comparing @_";
+    }
+    return $?;
+}
+
+
+sub run_moss ($$$) {
+    my ($environment, $executable, $basename) = @_;
+
+    # assemble the shell command
+    my $command = "$watchdog 600 $basename $MPATH/$executable $full_option_list -a manifest >$basename.stdout 2>$basename.stderr";
+    $command = "$environment $command" if $environment;
+
+    # record it for posterity
+    my $commandHandle = new FileHandle "$basename.command";
+    $commandHandle->print("$command\n");
+
+    # run the command
+    check_system $command;
+}
+
+
+sub run_moss_good () {
+    run_moss '', 'moss', 'good';
+}
+
+
+sub run_moss_bad ($) {
+    my $basename = shift;
+
+    # run buggy moss and record various outputs
+    run_moss "SAMPLER_FILE=$basename.reports", "moss$basename", $basename;
+
+    # compare with reference
+    my $outputDiff = diff "$basename.stdout", 'good.stdout';
+    my $exitDiff = diff "$basename.exit", 'good.exit';
+    my $failHandle = new FileHandle "$basename.fail";
+    $failHandle->print($outputDiff || $exitDiff);
+}
+
 
 while ($numruns-- > 0) {
     print "$numruns runs to go.\n";
@@ -145,7 +212,7 @@ while ($numruns-- > 0) {
 #
     if ($full_option_list =~ /dbfile/) {
 	if (rand(100) < $unwritable) {
-	    system("touch dbfile; chmod a-wrx dbfile");
+	    check_system "touch dbfile; chmod a-wrx dbfile";
 	}
     }
 
@@ -163,7 +230,7 @@ while ($numruns-- > 0) {
 	    print M "$file $i $lang $file\n";
 	}
 	close(M);
-	system("$watchdog 1000 $MPATH/moss $full_option_list -s db1 -a db1.manifest > output.db1 2> errors.db1");
+	check_system "$watchdog 1000 $MPATH/moss $full_option_list -s db1 -a db1.manifest > output.db1 2> errors.db1";
     }
     
 #
@@ -178,23 +245,12 @@ while ($numruns-- > 0) {
 	    print M "$file $i $lang $file\n";
 	}
 	close(M);
-	system("$watchdog 1000 $MPATH/moss $full_option_list -s db2 -a db2.manifest > output.db2 2> errors.db2");
+	check_system "$watchdog 1000 $MPATH/moss $full_option_list -s db2 -a db2.manifest > output.db2 2> errors.db2";
     }
 
-    $command_bad = "$MPATH/mossbad $full_option_list -a manifest > output_bad 2> errors_bad";
-    $command_bad2 = "$MPATH/mossbad2 $full_option_list -a manifest > output_bad2 2> errors_bad2";
-    $command_good = "$MPATH/moss $full_option_list -a manifest > output 2> errors";
-    open(C,">command");
-    print C "$command_bad\n";
-    print C "$command_bad2\n";
-    print C "$command_good\n";
-    close(C);
-    system("SAMPLER_FILE=data $watchdog 600 $command_bad");
-    $exitcode = $?;	
-    system("SAMPLER_FILE=data2 $watchdog 600 $command_bad2");
-    system("echo $exitcode > exit");
-    system("$watchdog 1000 $command_good");
-    $df = (`diff -q output output_bad` eq "") ? "GOOD": "BAD";
-    system("echo $df > good_or_bad");
+    run_moss_good;
+    run_moss_bad 'bad';
+    run_moss_bad 'bad2';
+
     chdir("..");
 }
