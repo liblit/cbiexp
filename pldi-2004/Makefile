@@ -4,7 +4,7 @@ pdfs := $(epss:.eps=.pdf)
 
 all: master.pdf master.ps
 
-master.pdf: %.pdf: $(texs) $(pdfs)
+master.pdf: %.pdf: %.dvi $(texs) $(pdfs)
 	pdflatex $*
 	thumbpdf $*
 	pdflatex $*
