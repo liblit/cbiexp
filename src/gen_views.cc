@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <libgen.h>
+#include <string>
 #include <sys/stat.h>
 #include "def.h"
 #include "shell.h"
@@ -13,6 +14,7 @@
 
 char* result_summary_file = NULL;
 char* prefix = NULL;
+std::string program_src_dir;
 
 void process_cmdline(int argc, char** argv)
 {
@@ -27,19 +29,24 @@ void process_cmdline(int argc, char** argv)
 	    prefix = argv[i];
 	    continue;
 	}
+	if (!strcmp(argv[i], "-d")) {
+	    i++;
+	    program_src_dir = argv[i];
+	    continue;
+	}
 	if (!strcmp(argv[i], "-verbose")) {
 	    verbose = true;
 	    continue;
 	}
 	if (!strcmp(argv[i], "-h")) {
-	    puts("Usage: gen-views -r <result_summary_file> -p <prefix> [-verbose]");
+	    puts("Usage: gen-views -r <result_summary_file> -p <prefix> -d <srcdir> [-verbose]");
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
 	exit(1);
     }
 
-    if (!result_summary_file || !prefix) {
+    if (!result_summary_file || !prefix || program_src_dir.empty()) {
 	puts("Incorrect usage; try -h");
 	exit(1);
     }
@@ -98,7 +105,7 @@ int main(int argc, char** argv)
 		    const bool got = read_pred_full(fp2, pi);
 		    if (!got)
 			break;
-		    print_pred_full(fp, pi);
+		    print_pred_full(fp, program_src_dir, pi);
 		}
 
 		fclose(fp2);

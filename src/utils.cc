@@ -2,9 +2,13 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <string>
 #include "sites.h"
 #include "units.h"
 #include "utils.h"
+
+using std::string;
+
 
 const float conf_map[10] = {
     1.645,  // 90%
@@ -53,11 +57,11 @@ bool read_pred_full(FILE* fp, pred_info &pi)
 	return false;
 }
 
-void print_pred_full(FILE* fp, pred_info pi)
+void print_pred_full(FILE* fp, const string &srcdir, pred_info pi)
 {
     fputs("<predictor>", fp);
     print_pred_stat(fp, pi);
-    print_pred_name(fp, pi.site, pi.p);
+    print_pred_name(fp, srcdir, pi.site, pi.p);
     fputs("</predictor>", fp);
 }
 
@@ -77,7 +81,7 @@ const char* r_op[6] = { "&lt;", "&gt;=", "==", "!=", "&gt;", "&lt;=" };
 const char* b_op[2] = { "is FALSE", "is TRUE" };
 const char* g_op[4] = { "= 0", "= 1", "&gt; 1", "invalid" };
 
-void print_pred_name(FILE* fp, int site, int p)
+void print_pred_name(FILE* fp, const string &srcdir, int site, int p)
 {
     fputs("<source predicate=\"", fp);
 
@@ -102,8 +106,18 @@ void print_pred_name(FILE* fp, int site, int p)
         assert(0);
     }
 
+    string collect;
+    const char *filename = sites[site].file;
+
+    if (filename[0] != '/' && !srcdir.empty() && srcdir != ".") {
+	collect = srcdir;
+	collect += '/';
+	collect += filename;
+	filename = collect.c_str();
+    }
+
     fprintf(fp, "\" function=\"%s\" file=\"%s\" line=\"%d\"/>",
-	    sites[site].fun, sites[site].file, sites[site].line);
+	    sites[site].fun, filename, sites[site].line);
 }
 
 void process_report(FILE* fp,

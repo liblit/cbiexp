@@ -35,7 +35,6 @@ struct site_info_t {
 vector<vector<site_info_t> > site_info;
 
 char* experiment_name = NULL;
-char* program_src_dir = NULL;
 int   confidence = -1;
 
 char* sruns_txt_file = NULL;
@@ -445,11 +444,6 @@ void process_cmdline(int argc, char** argv)
 	    experiment_name = argv[i];
 	    continue;
 	}
-	if (!strcmp(argv[i], "-d")) {
-	    i++;
-	    program_src_dir = argv[i];
-	    continue;
-	}
 	if (!strcmp(argv[i], "-c")) {
 	    i++;
 	    confidence = atoi(argv[i]);
@@ -489,7 +483,6 @@ void process_cmdline(int argc, char** argv)
 	if (!strcmp(argv[i], "-h")) {
 	    puts("Usage: compute-results <options>\n"
                  "    -e       <experiment-name>\n"
-                 "    -d       <program-src-dir>\n"
                  "    -c       <confidence>\n"
                  "    -prefix  <views-prefix>\n"
                  "(r) -s       <sruns-txt-file>\n"
@@ -504,7 +497,6 @@ void process_cmdline(int argc, char** argv)
     }
 
     if (!experiment_name ||
-        !program_src_dir ||
         confidence == -1 ||
         !sruns_txt_file ||
         !fruns_txt_file ||

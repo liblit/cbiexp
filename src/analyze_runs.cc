@@ -272,8 +272,10 @@ void gen_views(char* preds_file, int prefix)
     shell("awk '{ if ($1~/S/) print $0 }' < %s > S.txt", preds_file);
     shell("awk '{ if ($1~/G/) print $0 }' < %s > G.txt", preds_file);
 
-    shell("%s -r %s -p %d %s", GEN_VIEWS, result_summary_xml_file,
-	  prefix, verbose ? "-verbose" : "");
+    shell("%s -r %s -p %d -d %s %s", GEN_VIEWS,
+	  result_summary_xml_file, prefix,
+	  verbose ? "-verbose" : "",
+	  program_src_dir);
 }
 
 void REQUIRE(char* main_opt, char* sub_opt, bool s)
@@ -384,8 +386,8 @@ int main(int argc, char** argv)
 	add_links(incdir, "summary", dirname(result_summary_xml_file));
 	shell("%s %s/compute_results.o %s.o %s.o -L%s -lanalyze -o %s",
 	      linker, objdir, sites_src_file, units_src_file, objdir, COMPUTE_RESULTS);
-	shell("%s -e %s -d %s -c %s -s %s -f %s -cr %s -p %s -r %s -prefix 0",
-	      COMPUTE_RESULTS, experiment_name, program_src_dir, confidence,
+	shell("%s -e %s -c %s -s %s -f %s -cr %s -p %s -r %s -prefix 0",
+	      COMPUTE_RESULTS, experiment_name, confidence,
               sruns_txt_file, fruns_txt_file, compact_report_path_fmt,
 	      preds_txt_file, result_summary_xml_file);
 /*
