@@ -87,15 +87,15 @@ void mexFunction (int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     dataX++;
 
     fscanf(irfd, "%d", datair);
-    if (feof(jcfd))
-      mexErrMsgTxt("Expecting more jc");
+    if (feof(irfd))
+      mexErrMsgTxt("Expecting more ir");
     datair++;
   }
 
-  for (i = 0; i <= M; i++) {
+  for (i = 0; i <= N; i++) {
     fscanf (jcfd, "%d", datajc);
-    if (feof(irfd)) 
-      mexErrMsgTxt("Expecting more ir");
+    if (feof(jcfd)) 
+      mexErrMsgTxt("Expecting more jc");
     datajc++;
   }
 

@@ -65,7 +65,7 @@ sub read_counts {
   my ($fn) = (@_);
   my (@farr, @sarr);
   my $k = 0;
-  open (IN, "$fn") || die "Open: $!";
+  open (IN, "$fn") || die "Open $fn: $!";
   while (<IN>) {
     chomp; s/^F: //; s/\s+$//;
     $farr[$k] = $_; 
