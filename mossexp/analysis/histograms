@@ -17,15 +17,11 @@ my $bug_count = 10;
 my %run_to_bugs;
 
 {
-    my $run_bug_file = new FileHandle 'run-bug.txt' or die;
+    my $run_bug_file = new FileHandle 'run-bugs.txt' or die;
     while (<$run_bug_file>) {
 	chomp;
-	my ($run, $bug) = split;
-	$run_to_bugs{$run}{$bug} = 1;
-    }
-
-    while (my ($run, $bugs) = each %run_to_bugs) {
-	$run_to_bugs{$run} = [keys %$bugs];
+	my ($run, @bugs) = split;
+	$run_to_bugs{$run} = \@bugs;
     }
 }
 

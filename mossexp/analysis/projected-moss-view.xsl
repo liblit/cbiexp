@@ -4,30 +4,20 @@
 <xsl:stylesheet
   version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns="http://www.w3.org/1999/xhtml">
+  xmlns="http://www.w3.org/1999/xhtml"
+  >
 
-  <xsl:import href="moss-view.xsl"/>
+  <xsl:import href="projected-view.xsl"/>
+  <xsl:import href="moss-view-exports.xsl"/>
 
-  <!-- add our own related links -->
-  <xsl:template mode="go-to-links" match="view">
+  <xsl:template mode="static-headings" match="view">
     <xsl:apply-imports/>
-    <xsl:if test="@scheme = 'all'">
-      [<a href="top-rho_{@sort}_{@projection}.xml">correlation matrix for top predictors</a>]
-    </xsl:if>
+    <xsl:call-template name="extra-moss-headings"/>
   </xsl:template>
 
-  <!-- add column headers for our own additional information -->
-  <xsl:template mode="headings" match="view">
-    <th>Initial Popularity</th>
-    <th>Effective Popularity</th>
+  <xsl:template mode="static-cells" match="predictor">
     <xsl:apply-imports/>
-  </xsl:template>
-
-  <!-- add table cells with our own additional information -->
-  <xsl:template mode="cells" match="predictor">
-    <td><xsl:value-of select="@initial"/></td>
-    <td><xsl:value-of select="@effective"/></td>
-    <xsl:apply-imports/>
+    <xsl:apply-templates mode="extra-moss-cells" select="."/>
   </xsl:template>
 
 </xsl:stylesheet>

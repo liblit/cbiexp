@@ -36,21 +36,23 @@ int main(int argc, char *argv[])
       const site_t &site = sites[stats.siteIndex];
       const string &scheme = scheme_name(unit.scheme_code);
 
-      xml << "<predictor scheme=\"" << scheme
+      xml << "<info scheme=\"" << scheme
 	  << "\" file=\"" << site.file
 	  << "\" line=\"" << site.line
 	  << "\" function=\"" << site.fun
 	  << "\" predicate=\"" << stats.predicate
-	  << "\" lower-bound=\"" << stats.ps.lb
-	  << "\" increase=\"" << stats.ps.in
-	  << "\" fail=\"" << stats.ps.fs
-	  << "\" context=\"" << stats.ps.co
-	  << "\" true-success=\"" << stats.s
+	  << "\">"
+
+	  << "<bug-o-meter true-success=\"" << stats.s
 	  << "\" true-failure=\"" << stats.f
 	  << "\" seen-success=\"" << stats.os
 	  << "\" seen-failure=\"" << stats.of
+	  << "\" fail=\"" << stats.ps.fs
+	  << "\" context=\"" << stats.ps.co
+	  << "\" increase=\"" << stats.ps.in
+	  << "\" lower-bound=\"" << stats.ps.lb
 	  << "\" log10-true=\"" << log10(double(stats.s + stats.f))
-	  << "\">";
+	  << "\"/>";
 
       switch (units[stats.unitIndex].scheme_code)
 	{
@@ -65,7 +67,7 @@ int main(int argc, char *argv[])
 	  break;
 	}
 
-      xml << "</predictor>";
+      xml << "</info>";
     }
 
   xml << "</predictor-info>\n";

@@ -5,9 +5,10 @@
   version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns="http://www.w3.org/1999/xhtml"
->
+  >
 
   <xsl:import href="logo.xsl"/>
+  <xsl:import href="bug-o-meter.xsl"/>
 
   <xsl:output
     method="xml"
@@ -154,7 +155,8 @@
     <table class="predictors">
       <thead>
 	<tr>
-	  <xsl:apply-templates mode="headings" select="."/>
+	  <xsl:apply-templates mode="dynamic-headings" select="."/>
+	  <xsl:apply-templates mode="static-headings" select="."/>
 	</tr>
       </thead>
       <tbody>
@@ -163,50 +165,47 @@
     </table>
   </xsl:template>
 
+
   <!-- headings for the big predictor table -->
-  <!-- factored out to make it easier to reuse in other stylesheets -->
-  <xsl:template mode="headings" match="view">
+  <xsl:template mode="dynamic-headings" match="view">
     <th>Bug-O-Meter&#8482;</th>
+  </xsl:template>
+
+  <xsl:template mode="static-headings" match="view">
     <th>Predicate</th>
     <th>Function</th>
     <th>File:Line</th>
   </xsl:template>
 
 
-  <!-- a single retained predictor -->
+  <!-- row for a single retained predictor -->
   <xsl:template match="predictor">
     <tr>
       <xsl:attribute name="title">rank: <xsl:number/>, pred: <xsl:value-of select="@index"/></xsl:attribute>
-      <xsl:apply-templates mode="cells" select="."/>
+      <xsl:apply-templates mode="dynamic-cells" select="."/>
+      <xsl:apply-templates mode="static-cells" select="."/>
     </tr>
   </xsl:template>
 
-  <!-- cells for a single row in the big predictor table -->
-  <!-- factored out to make it easier to reuse in other stylesheets -->
-  <xsl:template mode="cells" match="predictor">
+
+  <!-- multicolored bug thermometer -->
+  <xsl:template mode="dynamic-cells" match="predictor">
     <xsl:variable name="index" select="number(@index)"/>
-    <xsl:apply-templates mode="predictor-info" select="document('predictor-info.xml')/predictor-info/predictor[$index]"/>
+    <xsl:apply-templates select="document('predictor-info.xml')/predictor-info/info[$index]/bug-o-meter"/>
   </xsl:template>
 
 
-  <!-- basic information for a single predictor -->
-  <xsl:template mode="predictor-info" match="predictor">
-    <td>
-      <table class="scores" width="{@log10-true * 60 + 1}px" title="Ctxt: {round(@context * 100)}%, LB: {round(@lower-bound * 100)}%, Incr: {round(@increase * 100)}%, Fail: {round(@fail * 100)}%&#10;tru in {@true-success} S and {@true-failure} F&#10;obs in {@seen-success} S and {@seen-failure} F">
-	<tr>
-	  <td class="f1" style="width: {@context * 100}%"/>
-	  <td class="f2" style="width: {@lower-bound * 100}%"/>
-	  <td class="f3" style="width: {(@fail - (@context + @lower-bound)) * 100}%"/>
-	  <td class="f4" style="width: {(1 - @fail) * 100}%"/>
-	</tr>
-      </table>
-    </td>
+  <!-- several cells depending only on static predicate information -->
+  <xsl:template mode="static-cells" match="predictor">
+    <xsl:variable name="index" select="number(@index)"/>
+    <xsl:apply-templates mode="static-cells" select="document('predictor-info.xml')/predictor-info/info[$index]"/>
+  </xsl:template>
+
+  <xsl:template mode="static-cells" match="info">
     <td>
       <xsl:apply-templates mode="operands" select="."/>
     </td>
-    <td>
-      <xsl:value-of select="@function"/>()
-    </td>
+    <td><xsl:value-of select="@function"/>()</td>
     <td>
       <xsl:variable name="source-dir" select="document('summary.xml')/experiment/@source-dir"/>
       <xsl:variable name="prefix">
@@ -225,88 +224,80 @@
   </xsl:template>
 
 
-  <!-- static information for a single branch site -->
-  <xsl:template mode="operands" match="predictor[@scheme = 'branches' and @predicate = 0]">
+  <!-- static information for a single predicate -->
+  <xsl:template mode="operands" match="info[@scheme = 'branches' and @predicate = 0]">
     <xsl:value-of select="operand[1]/@source"/> is FALSE
   </xsl:template>
 
-  <xsl:template mode="operands" match="predictor[@scheme = 'branches' and @predicate = 1]">
+  <xsl:template mode="operands" match="info[@scheme = 'branches' and @predicate = 1]">
     <xsl:value-of select="operand[1]/@source"/> is TRUE
   </xsl:template>
 
-
-  <!-- static information for a single g-object-unref site -->
-  <xsl:template mode="operands" match="predictor[@scheme = 'g-object-unref' and @predicate = 0]">
+  <xsl:template mode="operands" match="info[@scheme = 'g-object-unref' and @predicate = 0]">
     old_refcount(<xsl:value-of select="operand[1]/@source"/>) == 0
   </xsl:template>
 
-  <xsl:template mode="operands" match="predictor[@scheme = 'g-object-unref' and @predicate = 1]">
+  <xsl:template mode="operands" match="info[@scheme = 'g-object-unref' and @predicate = 1]">
     old_refcount(<xsl:value-of select="operand[1]/@source"/>) == 1
   </xsl:template>
 
-  <xsl:template mode="operands" match="predictor[@scheme = 'g-object-unref' and @predicate = 2]">
+  <xsl:template mode="operands" match="info[@scheme = 'g-object-unref' and @predicate = 2]">
     old_refcount(<xsl:value-of select="operand[1]/@source"/>) &gt; 1
   </xsl:template>
 
-  <xsl:template mode="operands" match="predictor[@scheme = 'g-object-unref' and @predicate = 3]">
+  <xsl:template mode="operands" match="info[@scheme = 'g-object-unref' and @predicate = 3]">
     old_refcount(<xsl:value-of select="operand[1]/@source"/>) is invalid
   </xsl:template>
 
-
-  <!-- static information for a single returns site -->
-  <xsl:template mode="operands" match="predictor[@scheme = 'returns' and @predicate = 0]">
+  <xsl:template mode="operands" match="info[@scheme = 'returns' and @predicate = 0]">
     <xsl:value-of select="operand[1]/@source"/> &lt; 0
   </xsl:template>
 
-  <xsl:template mode="operands" match="predictor[@scheme = 'returns' and @predicate = 1]">
+  <xsl:template mode="operands" match="info[@scheme = 'returns' and @predicate = 1]">
     <xsl:value-of select="operand[1]/@source"/> &gt;= 0
   </xsl:template>
 
-  <xsl:template mode="operands" match="predictor[@scheme = 'returns' and @predicate = 2]">
+  <xsl:template mode="operands" match="info[@scheme = 'returns' and @predicate = 2]">
     <xsl:value-of select="operand[1]/@source"/> == 0
   </xsl:template>
 
-  <xsl:template mode="operands" match="predictor[@scheme = 'returns' and @predicate = 3]">
+  <xsl:template mode="operands" match="info[@scheme = 'returns' and @predicate = 3]">
     <xsl:value-of select="operand[1]/@source"/> != 0
   </xsl:template>
 
-  <xsl:template mode="operands" match="predictor[@scheme = 'returns' and @predicate = 4]">
+  <xsl:template mode="operands" match="info[@scheme = 'returns' and @predicate = 4]">
     <xsl:value-of select="operand[1]/@source"/> &gt; 0
   </xsl:template>
 
-  <xsl:template mode="operands" match="predictor[@scheme = 'returns' and @predicate = 5]">
+  <xsl:template mode="operands" match="info[@scheme = 'returns' and @predicate = 5]">
     <xsl:value-of select="operand[1]/@source"/> &lt;= 0
   </xsl:template>
 
-
-  <!-- static information for a single scalar-pairs site -->
-  <xsl:template mode="operands" match="predictor[@scheme = 'scalar-pairs' and @predicate = 0]">
+  <xsl:template mode="operands" match="info[@scheme = 'scalar-pairs' and @predicate = 0]">
     <xsl:value-of select="operand[1]/@source"/> &lt; <xsl:value-of select="operand[2]/@source"/>
   </xsl:template>
 
-  <xsl:template mode="operands" match="predictor[@scheme = 'scalar-pairs' and @predicate = 1]">
+  <xsl:template mode="operands" match="info[@scheme = 'scalar-pairs' and @predicate = 1]">
     <xsl:value-of select="operand[1]/@source"/> &gt;= <xsl:value-of select="operand[2]/@source"/>
   </xsl:template>
 
-  <xsl:template mode="operands" match="predictor[@scheme = 'scalar-pairs' and @predicate = 2]">
+  <xsl:template mode="operands" match="info[@scheme = 'scalar-pairs' and @predicate = 2]">
     <xsl:value-of select="operand[1]/@source"/> == <xsl:value-of select="operand[2]/@source"/>
   </xsl:template>
 
-  <xsl:template mode="operands" match="predictor[@scheme = 'scalar-pairs' and @predicate = 3]">
+  <xsl:template mode="operands" match="info[@scheme = 'scalar-pairs' and @predicate = 3]">
     <xsl:value-of select="operand[1]/@source"/> != <xsl:value-of select="operand[2]/@source"/>
   </xsl:template>
 
-  <xsl:template mode="operands" match="predictor[@scheme = 'scalar-pairs' and @predicate = 4]">
+  <xsl:template mode="operands" match="info[@scheme = 'scalar-pairs' and @predicate = 4]">
     <xsl:value-of select="operand[1]/@source"/> &gt; <xsl:value-of select="operand[2]/@source"/>
   </xsl:template>
 
-  <xsl:template mode="operands" match="predictor[@scheme = 'scalar-pairs' and @predicate = 5]">
+  <xsl:template mode="operands" match="info[@scheme = 'scalar-pairs' and @predicate = 5]">
     <xsl:value-of select="operand[1]/@source"/> &lt;= <xsl:value-of select="operand[2]/@source"/>
   </xsl:template>
 
-
-  <!-- fallback: complain about invalid scheme or predicate -->
-  <xsl:template mode="operands" match="predictor">
+  <xsl:template mode="operands" match="info">
     <xsl:message terminate="yes">
       Cannot format source for scheme <xsl:value-of select="@scheme"/>, predicate <xsl:value-of select="@predicate"/>.
     </xsl:message>

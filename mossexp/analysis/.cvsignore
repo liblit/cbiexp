@@ -23,13 +23,14 @@ predictor-info.xml
 preds.txt
 project
 rho.bin
-run-bug.txt
+run-bugs.txt
 s.runs
 sites.cc
 sobs.
 sobs.ir
 sobs.jc
 sobs.meta
+stamp-convert-reports
 str.
 str.ir
 str.jc

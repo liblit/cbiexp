@@ -1,0 +1,44 @@
+#!/usr/bin/perl -w
+
+########################################################################
+#
+#  Which bugs are triggered in each failing run?
+#
+#  Output is a sequence of tab-delimited lines of the following form:
+#
+#      <run-id> <bug-number> <bug-number> ...
+#
+#  Thus each line summarizes exactly one run.  Run lines are in
+#  numeric order and bugs are in numeric order on each line.
+#
+
+use strict;
+
+use FileHandle;
+use FindBin;
+
+
+########################################################################
+
+
+my $datadir = "$FindBin::Bin/../data";
+my $failures = new FileHandle 'f.runs' or die;
+
+local ($,, $\) = ("\t", "\n");
+
+while (my $runId = <$failures>) {
+    chomp $runId;
+    my $filename = "$datadir/$runId/bad/stderr";
+    my $stderr = new FileHandle $filename;
+    if ($stderr) {
+	my %bugs;
+	while (<$stderr>) {
+	    next unless /^Error (\d)+:/;
+	    $bugs{$1} = 1;
+	}
+	my @bugs = sort keys %bugs;
+	print $runId, @bugs if @bugs;
+    } else {
+	warn "cannot read $filename: $!\n";
+    }
+}

@@ -7,7 +7,7 @@
   xmlns="http://www.w3.org/1999/xhtml"
   >
 
-  <xsl:import href="view.xsl"/>
+  <xsl:import href="corrected-view.xsl"/>
   <xsl:import href="moss-view-exports.xsl"/>
 
   <xsl:template mode="static-headings" match="view">

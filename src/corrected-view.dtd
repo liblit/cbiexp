@@ -1,0 +1,7 @@
+<!ENTITY % predictor.content "(bug-o-meter)">
+
+<!ENTITY % projected-view SYSTEM "projected-view.dtd">
+%projected-view;
+
+<!ENTITY % bug-o-meter SYSTEM "bug-o-meter.dtd">
+%bug-o-meter;

@@ -5,6 +5,7 @@ TAGS
 analyze_runs
 compiler.cc
 convert_reports.cc
+correct
 format
 gen_views
 map_sites

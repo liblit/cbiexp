@@ -1,4 +1,5 @@
 @import "logo.css";
+@import "bug-o-meter.css";
 
 table.views th {
   text-align: right
@@ -24,38 +25,6 @@ thead {
 table.predictors th, table.predictors td {
   border: 1px dotted;
   padding: 0.25em
-}
-
-
-/**********************************************************************/
-
-
-table.scores {
-  border-collapse: collapse;
-  height: 12px;
-  border: 2px solid silver
-}
-
-table.scores td {
-  border: none;
-  padding-left: 0px;
-  padding-right: 0px
-}
-
-td.f1 {
-  background-color: black
-}
-
-td.f2 {
-  background-color: red
-}
-
-td.f3 {
-  background-color: pink
-}
-
-td.f4 {
-  background-color: white
 }
 
 

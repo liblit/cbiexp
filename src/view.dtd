@@ -4,8 +4,10 @@
   sort NMTOKEN #REQUIRED
   projection NMTOKEN #REQUIRED>
 
-<!ELEMENT predictor EMPTY>
+<!ENTITY % predictor.content "EMPTY">
 <!ENTITY % predictor.extra-attrs "">
+
+<!ELEMENT predictor %predictor.content;>
 <!ATTLIST predictor
   index NMTOKEN #REQUIRED
   %predictor.extra-attrs;>

@@ -1,0 +1,17 @@
+<!-- stats for building a Bug-O-Meter in predicate views -->
+<!ELEMENT bug-o-meter EMPTY>
+
+<!-- fundamental counts -->
+<!ATTLIST bug-o-meter
+  true-success NMTOKEN #REQUIRED
+  true-failure NMTOKEN #REQUIRED
+  seen-success NMTOKEN #REQUIRED
+  seen-failure NMTOKEN #REQUIRED>
+
+<!-- derived quantities -->
+<!ATTLIST bug-o-meter
+  fail NMTOKEN #REQUIRED
+  context NMTOKEN #REQUIRED
+  increase NMTOKEN #REQUIRED
+  lower-bound NMTOKEN #REQUIRED
+  log10-true NMTOKEN #REQUIRED>

@@ -17,6 +17,11 @@ views := $(foreach scheme, $(schemes), $(foreach sort, $(sorts), $(foreach proje
 
 topRho := $(foreach sort, hl hs, $(foreach proj, circular linear, top-rho_$(sort)_$(proj).xml))
 links :=					\
+	bug-o-meter.css				\
+	bug-o-meter.dtd				\
+	bug-o-meter.xsl				\
+	corrected-view.dtd			\
+	corrected-view.xsl			\
 	logo.css				\
 	logo.xsl				\
 	predictor-info.dtd			\
@@ -34,7 +39,7 @@ links :=					\
 	view.css				\
 	view.dtd				\
 	view.xsl
-web := $(views) $(links) $(topRho) all_hl_corrective.xml predictor-info.xml summary.xml $(web_extras)
+web := $(views) $(links) $(topRho) all_hl_corrected.xml predictor-info.xml summary.xml $(web_extras)
 publish := $(HOME)/www/project/$(name)-new
 
 all: $(web)
@@ -55,7 +60,7 @@ clean:: ; rm -f $(links)
 
 predictor-info.xml: xmlify-results preds.txt
 	./$<
-	$(MAKE) $(@:.xml=.dtd)
+	$(MAKE) $(@:.xml=.dtd) bug-o-meter.dtd
 	xmllint --valid --noout $@
 clean:: ; rm -f predictor-info.xml
 
@@ -65,7 +70,7 @@ clean:: ; rm -f xmlify-results
 
 $(filter-out %_none.xml, $(views)): project preds.txt rho.bin
 	$(time) ./$< $(projected_view_flags)
-	$(MAKE) projected-view.dtd
+	$(MAKE) projected-view.dtd view.dtd
 	xmllint --valid --noout $(filter-out %_none.xml, $(views))
 clean:: ; rm -f $(filter-out %_none.xml, $(views))
 
@@ -79,10 +84,13 @@ $(topRho): top-rho_%: $(tooldir)/top-rho all_% rho.bin
 	xmllint --valid --noout $(topRho)
 clean:: ; rm -f $(topRho)
 
-rho.bin: calculate.m $(sparse)
+rho.bin: $(corrdir)/readsp.mexglx calculate.m $(sparse)
 	echo "fwrite(fopen('$@','w'), rho, 'double');" | $(time) matlab -nodisplay -nojvm -r calculate
 	test -s $@
 clean:: ; rm -rf rho.bin mats
+
+$(corrdir)/readsp.mexglx: force
+	$(MAKE) -C $(@D) $(@F)
 
 calculate.m: $(corrdir)/genMscript.pl $(sparsebase:=.meta)
 	$(time) ./$< .
@@ -92,10 +100,11 @@ $(sparse): $(corrdir)/mhn2sparsemat.pl f.runs s.runs obs.txt tru.txt
 	$(time) ./$< . .
 clean:: ; rm -f $(sparse)
 
-all_hl_corrective.xml: $(tooldir)/correct f.runs obs.txt tru.txt
-	$(time) ./$< $(projected_view_flags)
+all_hl_corrected.xml: $(tooldir)/correct f.runs obs.txt tru.txt
+	$(time) ./$< $(corrected_view_flags)
+	$(MAKE) bug-o-meter.dtd corrected-view.dtd projected-view.dtd view.dtd
 	xmllint --valid --noout $@
-clean:: ; rm -f all_hl_corrective.xml
+clean:: ; rm -f all_hl_corrected.xml
 
 obs.txt tru.txt: $(tooldir)/compute_obs_tru.o stamp-convert-reports preds.txt s.runs f.runs sites.o units.o
 	$(time) $(tooldir)/analyze_runs --do=compute-obs-tru --runs-directory=$(datadir)

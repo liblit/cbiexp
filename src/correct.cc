@@ -21,7 +21,7 @@
 using namespace std;
 
 
-const char *Stylesheet::filename = "projected-view.xsl";
+const char *Stylesheet::filename = "corrected-view.xsl";
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -377,7 +377,7 @@ static void
 buildView(Predicates &candidates)
 {
   // create XML output file and write initial header
-  ViewPrinter view(Stylesheet::filename, "projected-view", "all", "hl", "corrective");
+  ViewPrinter view(Stylesheet::filename, "corrected-view", "all", "hl", "corrected");
 
   Progress::Bounded progress("ranking predicates", candidates.count);
 
@@ -390,7 +390,20 @@ buildView(Predicates &candidates)
       view << "<predictor index=\"" << winner->index + 1
 	   << "\" initial=\"" << winner->initial
 	   << "\" effective=\"" << winner->effective
-	   << "\"/>";
+	   << "\">"
+
+	   << "<bug-o-meter true-success=\"" << winner->tru.successes.count
+	   << "\" true-failure=\"" << winner->tru.failures.count
+	   << "\" seen-success=\"" << winner->obs.successes.count
+	   << "\" seen-failure=\"" << winner->obs.failures.count
+	   << "\" fail=\"" << winner->badness()
+	   << "\" context=\"" << winner->context()
+	   << "\" increase=\"" << winner->increase()
+	   << "\" lower-bound=\"" << winner->lowerBound()
+	   << "\" log10-true=\"" << log10(double(winner->tru.count()))
+	   << "\"/>"
+
+	   << "</predictor>";
 
       allFailures.dilute(winner->tru.failures);
 
