@@ -76,25 +76,26 @@ pdfpagemode=UseOutlines]{hyperref}
 \newcommand*{\both}[0]{\textsuperscript{\eecsMark, \statMark}}
 \newcommand*{\stan}[0]{\textsuperscript{\stanMark}}
 
-\newcommand{\moreauthors}[0]{\end{tabular}\\\begin{tabular}[t]{c}}
-
-\author{
+\author{%
   Ben Liblit \eecs
   \and Mayur Naik \stan
   \and Alice X.\ Zheng \eecs
   \and Alex Aiken \stan
   \and Michael I.\ Jordan \both
-  \moreauthors
-  \eecs Department of Electrical \\
-  Engineering and Computer Science \\
-  \stat Department of Statistics \\
-  University of California, Berkeley \\
-  Berkeley, CA 94720-1776
-  \and
-  \stan Computer Science Department \\
-  353 Serra Mall \\
-  Stanford University \\
-  Stanford CA 94305-9025
+  %%
+  \affiliation{
+  \begin{tabular}[t]{c}
+    \eecs Department of Electrical \\
+    Engineering and Computer Science \\
+    \stat Department of Statistics \\
+    University of California, Berkeley \\
+    Berkeley, CA 94720-1776
+    \and
+    \stan Computer Science Department \\
+    353 Serra Mall \\
+    Stanford University \\
+    Stanford CA 94305-9025
+  \end{tabular}}
 }
 
 \bibliographystyle{abbrv}
