@@ -2,7 +2,7 @@
 #include <cassert>
 #include "classify_runs.h"
 
-void scaffold(char* report_path_fmt, void (*process_site)(FILE*, int, int, int))
+void scaffold(const char report_path_fmt[], void (*process_site)(FILE*, int, int, int))
 {
     int r, u, c;
 

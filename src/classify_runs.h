@@ -4,6 +4,6 @@
 extern int num_runs, num_sruns, num_fruns;
 extern bool *is_srun, *is_frun;
 
-extern void classify_runs(char*, char*);
+extern void classify_runs(const char [], const char []);
 
 #endif

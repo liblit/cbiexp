@@ -4,7 +4,7 @@
 #include <cstdio>
 
 
-void scaffold(char*, void (*process_site)(FILE*, int, int, int));
+void scaffold(const char [], void (*process_site)(FILE*, int, int, int));
 
 
 #endif
