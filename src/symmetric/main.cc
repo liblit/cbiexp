@@ -61,7 +61,6 @@ main(int argc, char *argv[])
   Candidates candidates;
 
   {
-    Progress::Bounded progress("counting failed runs", NumRuns::count());
     ifstream runs(ClassifyRuns::failuresFilename);
     unsigned runId;
 
