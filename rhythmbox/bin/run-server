@@ -41,14 +41,16 @@ END {
     # blow away various GNOME support daemons
     if (defined $tmpdir && -d $ENV{TMPDIR}) {
 	my @chaff = map { chomp; $_ } qx'find $TMPDIR | xargs /usr/sbin/lsof -t';
-	print "killing GNOME support daemons: @chaff\n";
-	if (@chaff) {
-	    if ($chaff[0] == 0) {
-		print "sanity check: list looks suspect, not killing\n";
-	    } else {
-		kill SIGTERM, @chaff;
-		sleep 2;
-		kill SIGKILL, @chaff;
+	unless ($?) {
+	    print "killing GNOME support daemons: @chaff\n";
+	    if (@chaff) {
+		if ($chaff[0] == 0) {
+		    print "sanity check: list looks suspect, not killing\n";
+		} else {
+		    kill SIGTERM, @chaff;
+		    sleep 2;
+		    kill SIGKILL, @chaff;
+		}
 	    }
 	}
 	rmtree $tmpdir, 0, 1;
