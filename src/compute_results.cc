@@ -250,7 +250,6 @@ void discard_run(int r)
         num_fruns--;
         return;
     }
-    assert(0);
 }
 
 inline bool XOR(bool a, bool b) { return (!a && b) || (a && !b); }
