@@ -14,8 +14,7 @@ RunSet::dilute(const RunSet &winner)
       CountingIterator<unsigned> result(intersectionSize);
       set_intersection(begin(), end(), winner.begin(), winner.end(), result);
 
-      const double probability = double(intersectionSize) / size();
-      count -= size() * probability;
+      count -= double(intersectionSize);
       if (count < 0)
 	count = 0;
     }
