@@ -68,7 +68,7 @@ if ($handle) {
     $last = $_ while <$handle>;
     if (! defined $last) {
 	Utils::note '../bad', 'reports file empty';
-    } elsif ($last ne "</reports>\n") {
+    } elsif ($last ne "</report>\n") {
 	Utils::note '../bad', 'reports file ends abruptly';
     }
 } else {
