@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cerrno>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -291,6 +292,32 @@ void FORBID(char* main_opt, char* sub_opt, char* s)
     }
 }
 
+static void add_links(const char srcdir[], const char basename[], const char destdir[])
+{
+    static const char * const suffixes[] = {"css", "dtd", "xsl"};
+    for (unsigned i = 0; i < sizeof(suffixes) / sizeof(*suffixes); ++i) {
+
+	char oldpath[PATH_MAX];
+	{
+	    const int needed = snprintf(oldpath, sizeof(oldpath), "%s/%s.%s", srcdir, basename, suffixes[i]);
+	    assert(needed <= int(sizeof(oldpath)));
+	}
+
+	char newpath[PATH_MAX];
+	{
+	    const int needed = snprintf(newpath, sizeof(newpath), "%s/%s.%s", destdir, basename, suffixes[i]);
+	    assert(needed <= int(sizeof(newpath)));
+	}
+
+	unlink(newpath);
+
+	if (symlink(oldpath, newpath) != 0) {
+	    fprintf(stderr, "symlink from %s to %s failed: %s\n", oldpath, newpath, strerror(errno));
+	    exit(1);
+	}
+    }
+}
+
 int main(int argc, char** argv)
 {
     const char * const bindir = dirname(argv[0]);
@@ -351,8 +378,7 @@ int main(int argc, char** argv)
 	puts("Computing results ...");
 	preds_txt_file = DEFAULT_PREDS_TXT_FILE;
 	result_summary_xml_file = DEFAULT_RESULT_SUMMARY_XML_FILE;
-	shell("ln -s %s/summary.css %s/summary.dtd %s/summary.xsl %s",
-	      incdir, incdir, incdir, dirname(result_summary_xml_file));
+	add_links(incdir, "summary", dirname(result_summary_xml_file));
 	shell("%s %s/compute_results.o %s.o %s.o -L%s -lanalyze -o %s",
 	      linker, objdir, sites_src_file, units_src_file, objdir, COMPUTE_RESULTS);
 	shell("%s -e %s -d %s -c %s -s %s -f %s -cr %s -p %s -r %s -prefix 0",
@@ -393,8 +419,7 @@ int main(int argc, char** argv)
 	REQUIRE("-do-print-results-1", "-p", preds_txt_file);
         REQUIRE("-do-print-results-1", "-ss", sites_src_file);
         REQUIRE("-do-print-results-1", "-us", units_src_file);
-	shell("ln -s %s/view.css %s/view.dtd %s/view.xsl %s",
-	      incdir, incdir, incdir, dirname(result_summary_xml_file));
+	add_links(incdir, "view", dirname(result_summary_xml_file));
 	shell("%s %s/gen_views.o %s.o %s.o -L%s -lanalyze -o %s",
 	      linker, objdir, sites_src_file, units_src_file, objdir, GEN_VIEWS);
 	puts("Pretty-printing results-1 ...");
