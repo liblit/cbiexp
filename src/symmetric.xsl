@@ -93,7 +93,7 @@
     <xsl:param name="predicate"/>
     <xsl:value-of select="operand[1]/@source"/>
     <xsl:variable name="operator" select="document('schemes.xml')/schemes/scheme[@id = current()/../@scheme]/predicate[number($predicate)]/@text"/>
-    <xsl:text> </xsl:text>
+    <xsl:text>() </xsl:text>
     <xsl:value-of select="$operator"/>
     <xsl:text> 0</xsl:text>
   </xsl:template>
