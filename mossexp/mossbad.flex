@@ -2321,6 +2321,8 @@ int which_duplicate_in_file(int i, passage *p) {
 int nth_duplicate_in_file(int i, int n) {
     assert(first_tile_in_file(i));
 
+    check_bug_7(i, n, pindex);
+
     if ( /* (i+n < pindex) && */ (passages[i].tile == passages[i+n].tile) && (passages[i].fileid == passages[i+n].fileid))
 	return i+n;
     else
