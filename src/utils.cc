@@ -40,7 +40,7 @@ pred_info read_pred_full(FILE* fp)
     char scheme_code;
     pred_info pi;
 
-    fscanf(fp, "%1s %d %d %d %d %f %f %f %f %d %d %d %d",
+    fscanf(fp, "%c %d %d %d %d %f %f %f %f %d %d %d %d",
         &scheme_code,
         &pi.u, &pi.c, &pi.p, &pi.site,
         &pi.ps.lb, &pi.ps.in, &pi.ps.fs, &pi.ps.co,
