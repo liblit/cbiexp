@@ -2,7 +2,6 @@
 #include <assert.h>
 #include <string.h>
 #include "units.h"
-#include "sites.h"
 
 bool is_srun[NUM_RUNS + 1];
 bool is_frun[NUM_RUNS + 1];
@@ -33,12 +32,18 @@ inline void obs(int r, int u, int c)
         data[u][c].of++; 
 }
 
-inline void print_pred(FILE* fp, int u, int c, int p, const char* pred_kind, const char* site_name)
+FILE* sites_fp;
+
+inline void print_pred(FILE* fp, int u, int c, int p, const char* pred_kind)
 {
     int s  = data[u][c].S[p];
     int f  = data[u][c].F[p];
     int os = data[u][c].os;
     int of = data[u][c].of;
+    char site_name[3000];
+
+    fscanf(sites_fp, "%[^\n]s", site_name);
+    fgetc (sites_fp);
 
     float crash   = ((float)  f) / ( s +  f);
     float context = ((float) of) / (os + of);
@@ -207,38 +212,35 @@ main(int argc, char** argv)
     FILE* out_r = fopen("R.html", "w");
     FILE* out_b = fopen("B.html", "w");
     assert(out_s && out_r && out_b);
-
-    int s = 0;
+    sites_fp = fopen("sites.txt", "r");
+    assert(sites_fp);
 
     for (j = 0; j < NUM_UNITS; j++) {
         switch (units[j].s[0]) {
         case 'S':
             for (k = 0; k < units[j].c; k++) {
-                print_pred(out_s, j, k, 0, "LT" , sites[s]);
-                print_pred(out_s, j, k, 1, "NLT", sites[s]);
-                print_pred(out_s, j, k, 2, "EQ" , sites[s]);
-                print_pred(out_s, j, k, 3, "NEQ", sites[s]);
-                print_pred(out_s, j, k, 4, "GT" , sites[s]);
-                print_pred(out_s, j, k, 5, "NGT", sites[s]);
-                s++;
+                print_pred(out_s, j, k, 0, "LT" );
+                print_pred(out_s, j, k, 1, "NLT");
+                print_pred(out_s, j, k, 2, "EQ" );
+                print_pred(out_s, j, k, 3, "NEQ");
+                print_pred(out_s, j, k, 4, "GT" );
+                print_pred(out_s, j, k, 5, "NGT");
             }
             break;
         case 'R':
             for (k = 0; k < units[j].c; k++) {
-                print_pred(out_r, j, k, 0, "LT" , sites[s]);
-                print_pred(out_r, j, k, 1, "NLT", sites[s]);
-                print_pred(out_r, j, k, 2, "EQ" , sites[s]);
-                print_pred(out_r, j, k, 3, "NEQ", sites[s]);
-                print_pred(out_r, j, k, 4, "GT" , sites[s]);
-                print_pred(out_r, j, k, 5, "NGT", sites[s]);
-                s++;
+                print_pred(out_r, j, k, 0, "LT" );
+                print_pred(out_r, j, k, 1, "NLT");
+                print_pred(out_r, j, k, 2, "EQ" );
+                print_pred(out_r, j, k, 3, "NEQ");
+                print_pred(out_r, j, k, 4, "GT" );
+                print_pred(out_r, j, k, 5, "NGT");
             }
             break;
         case 'B':
             for (k = 0; k < units[j].c; k++) {
-                print_pred(out_b, j, k, 0, "F", sites[s]);
-                print_pred(out_b, j, k, 1, "T", sites[s]);
-                s++;
+                print_pred(out_b, j, k, 0, "F");
+                print_pred(out_b, j, k, 1, "T");
             }
             break;
         default:
@@ -249,7 +251,7 @@ main(int argc, char** argv)
     fclose(out_s);
     fclose(out_r);
     fclose(out_b);
-
+    fclose(sites_fp);
     return 0;
 }
 
