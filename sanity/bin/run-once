@@ -1,0 +1,32 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use FileHandle;
+
+
+########################################################################
+#
+#  record some small fact in an external file
+#
+
+sub note ($@) {
+    my ($filename, @message) = @_;
+    my $handle = new FileHandle $filename, 'w' or warn "cannot write to $filename: $!";
+    $handle->print("@message\n");
+}
+
+
+########################################################################
+
+
+my @command = ('../../../build/sanity');
+die "cannot find instrumented binary: $!" unless -x $command[0];
+
+push @command, $ARGV[0] if $ARGV[0] % 10 != 0;
+
+$ENV{SAMPLER_FILE} = 'reports';
+system { $command[0] } @command;
+note 'outcome', $?;
+
+exit 0;

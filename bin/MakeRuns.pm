@@ -66,6 +66,9 @@ sub run_task ($$$) {
     } else {
 	return 0;
     }
+
+    # record that some work was done
+    $self->{updated} = 1;
 }
 
 

@@ -7,6 +7,7 @@
   xmlns="http://www.w3.org/1999/xhtml"
   >
 
+  <xsl:import href="bug-o-meter.xsl"/>
   <xsl:import href="scores.xsl"/>
 
   <xsl:output
@@ -19,11 +20,28 @@
   <xsl:key name="sites" match="sites" use="concat(@unit, ':', @scheme)"/>
 
 
+  <xsl:template match="/" mode="css">
+    symmetric.css
+  </xsl:template>
+
+
+  <xsl:template match="scores" mode="dynamic-headings">
+    <xsl:apply-imports/>
+    <th>Thermometer</th>
+  </xsl:template>
+
+
   <xsl:template match="predictor">
     <tr>
       <xsl:attribute name="title">rank: <xsl:number/></xsl:attribute>
       <xsl:apply-templates select="." mode="predictor-row-cells"/>
     </tr>
+  </xsl:template>
+
+
+  <xsl:template match="predictor" mode="dynamic-cells">
+    <xsl:apply-imports/>
+    <xsl:apply-templates select="bug-o-meter"/>
   </xsl:template>
 
 

@@ -1,4 +1,4 @@
-<!ENTITY % predictor.content "(self, inverse, both)">
+<!ENTITY % predictor.content "(self, inverse, both, bug-o-meter)">
 <!ENTITY % predictor.coordinates "
   unit NMTOKEN #REQUIRED
   scheme NMTOKEN #REQUIRED
@@ -18,6 +18,9 @@
 <!ATTLIST self %counts;>
 <!ATTLIST inverse %counts;>
 <!ATTLIST both %counts;>
+
+<!ENTITY % bug-o-meter.dtd SYSTEM "bug-o-meter.dtd">
+%bug-o-meter.dtd;
 
 <!ENTITY % scores.dtd SYSTEM "scores.dtd">
 %scores.dtd;

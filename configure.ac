@@ -126,6 +126,7 @@ exif/config.site
 mossexp/Makefile
 rhythmbox/Makefile
 rhythmbox/config.site
+sanity/Makefile
 src/Makefile
 src/corrective-ranking/Makefile
 src/symmetric/Makefile

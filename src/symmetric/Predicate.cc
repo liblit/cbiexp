@@ -100,4 +100,22 @@ Predicate::print(ostream &out) const
   Counts::print(out, "self");
   inverse.Counts::print(out, "inverse");
   both.Counts::print(out, "both");
+
+  const unsigned ft = trueInFailures.size();
+  const unsigned fi = inverse.trueInFailures.size();
+  const unsigned fb = both.trueInFailures.size();
+  const unsigned st = trueInSuccesses;
+  const unsigned si = inverse.trueInSuccesses;
+  const unsigned sb = both.trueInSuccesses;
+
+  out << "<bug-o-meter true-success=\"" << st
+      << "\" true-failure=\"" << ft
+      << "\" seen-success=\"" << (st + si - sb)
+      << "\" seen-failure=\"" << (ft + fi - fb)
+      << "\" fail=\"" << badness()
+      << "\" context=\"" << context()
+      << "\" increase=\"" << increase()
+      << "\" lower-bound=\"" << lowerBound()
+      << "\" log10-true=\"" << log10(double(st + ft))
+      << "\"/>";
 }
