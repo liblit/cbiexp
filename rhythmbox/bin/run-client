@@ -65,6 +65,4 @@ if (! -e $ENV{SAMPLER_FILE}) {
     Utils::note '../bad', 'reports file missing';
 } elsif (-z $ENV{SAMPLER_FILE}) {
     Utils::note '../bad', 'reports file empty';
-} else {
-    system 'gzip', '-9', $ENV{SAMPLER_FILE};
 }

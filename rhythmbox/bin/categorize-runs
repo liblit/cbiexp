@@ -71,7 +71,7 @@ while (defined(my $id = $handle->read)) {
 	} else {
 	    print 'error';
 	}
-	die unless -e "$rundir/client/reports.gz";
+	die unless -e "$rundir/client/reports";
     }
 
     print "\n";
