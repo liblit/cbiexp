@@ -254,10 +254,17 @@ while ($numruns-- > 0) {
     run_moss_bad 'bad2';
 
     # overall sanity checks
+    my @abnormality;
     my $goodExit = (new FileHandle 'good/exit')->getline;
-    my $abnormality = ($goodExit !~ /^normal\t/) ? 'good run crashed or hung' : '';
-    $abnormality ||= (diff 'bad/exit', 'bad2/exit') ? 'bad and bad2 runs exited differently' : '';
-    (new FileHandle 'disregard', 'w')->print("$abnormality\n") if $abnormality;
+    push @abnormality, 'good run crashed' if $goodExit =~ /^signal\t/;
+    push @abnormality, 'good run timed out' if $goodExit eq 'timeout';
+    push @abnormality, 'bad and bad2 runs exited differently' if diff 'bad/exit', 'bad2/exit';
+    push @abnormality, 'bad run produced no reports' if -z 'bad/reports';
+    push @abnormality, 'bad2 run produced no reports' if -z 'bad2/reports';
+    if (@abnormality) {
+	my $disregard = new FileHandle 'disregard', 'w';
+	$disregard->print("$_\n") foreach @abnormality;
+    }
 
     chdir("..");
 }
