@@ -363,7 +363,7 @@ truthprobs: calc_truthprobs
 symmetric.xml: symmetric
 	./$< --runs-directory=$(datadir) --begin-runs=$(training-runs)
 
-symmetric: units.o $(tooldir)/symmetric/libsymmetric.a
+symmetric: units.o $(tooldir)/symmetric/libsymmetric.a s.runs f.runs
 	$(LINK.cc) $< -L$(tooldir)/symmetric -L$(tooldir) -lsymmetric -lanalyze -o $@
 
 
