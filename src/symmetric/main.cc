@@ -1,6 +1,7 @@
 #include <cassert>
 
 #include "../ClassifyRuns.h"
+#include "../CompactReport.h"
 #include "../NumRuns.h"
 #include "../Progress/Bounded.h"
 #include "../RunsDirectory.h"
@@ -30,6 +31,7 @@ static void
 processCommandLine(int argc, char *argv[])
 {
   static const argp_child children[] = {
+    { &CompactReport::argp, 0, 0, 0 },
     { &NumRuns::argp, 0, 0, 0 },
     { &RunsDirectory::argp, 0, 0, 0 },
     { 0, 0, 0, 0 }
@@ -65,7 +67,8 @@ main(int argc, char *argv[])
     unsigned runId;
 
     while (runs >> runId && runId < NumRuns::end)
-      ++RunSet::universeSize;
+      if (runId >= NumRuns::begin)
+	++RunSet::universeSize;
 
     allFailures.resize(RunSet::universeSize, true);
   }
@@ -77,12 +80,12 @@ main(int argc, char *argv[])
     unsigned failureId = 0;
 
     while (runs >> runId && runId < NumRuns::end)
-      {
-	progress.stepTo(runId);
-	if (runId >= NumRuns::begin)
+      if (runId >= NumRuns::begin)
+	{
+	  progress.stepTo(runId - NumRuns::begin);
 	  FailureReader(candidates, boths, failureId).read(runId);
-	++failureId;
-      }
+	  ++failureId;
+	}
   }
 
   {
@@ -90,11 +93,11 @@ main(int argc, char *argv[])
     ifstream runs(ClassifyRuns::successesFilename);
     unsigned runId;
     while (runs >> runId && runId < NumRuns::end)
-      {
-	progress.stepTo(runId);
-	if (runId >= NumRuns::begin)
+      if (runId >= NumRuns::begin)
+	{
+	  progress.stepTo(runId - NumRuns::begin);
 	  SuccessReader(candidates).read(runId);
-      }
+	}
   }
 
   // create XML output file and write initial header
