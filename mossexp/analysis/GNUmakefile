@@ -73,7 +73,7 @@ preds.txt: $(tooldir)/compute_results.o sites.o units.o s.runs f.runs $(datadir)
 	$(time) $(tooldir)/analyze_runs --do=compute-results --runs-directory=$(datadir)
 clean:: ; rm -f preds.txt compute-results
 
-$(datadir)/0/reports.new: $(tooldir/convert_reports.o $(datadir)/stamp-labels s.runs f.runs units.o
+$(datadir)/0/reports.sparse: $(tooldir)/convert_reports.o $(datadir)/stamp-labels s.runs f.runs units.o
 	$(time) $(tooldir)/analyze_runs --do=convert-reports --runs-directory=$(datadir)
 clean:: ; rm -f convert-reports
 
