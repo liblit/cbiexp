@@ -6,7 +6,7 @@
 int num_runs = 0, num_sruns, num_fruns;
 bool *is_srun, *is_frun;
 
-void classify_runs(char* sruns_file, char* fruns_file)
+void classify_runs(const char sruns_file[], const char fruns_file[])
 {
     int i;
 
