@@ -7,8 +7,7 @@ datadir ?= $(experiment)/data
 corrdir := $(root)/correlations
 tooldir := $(root)/src
 srcdir ?= $(experiment)/src
-training-runs ?= 1000
-report-series ?= inverse-100
+training-runs ?= 0
 
 sitesdir ?= $(experiment)/share
 sitesglob := $(experiment)/share/*.sites
