@@ -3,16 +3,18 @@ MOSS = moss $(BAD)
 
 CC = gcc
 CPPFLAGS = -DDEBUG=0 -DNDEBUG -Ddeletes=""
-CFLAGS = -O3 -Wall
+CFLAGS = -g -Wall
 
 SCC = sampler-cc
+SCC = /moa/sc1/cbi/sampler/instrumentor/driver/sampler-cc-here
 SCHEMES = branches returns scalar-pairs
 SFLAGS = $(SCHEMES:%=--sampler-scheme=%)
 SFLAGS += --no-sample
 SFLAGS += --assign-across-pointer --assign-into-field --assign-into-index
 SFLAGS += --compare-constants
 SFLAGS += --rename-locals
-#SFLAGS += -save-temps
+SFLAGS += --timestamp-first --timestamp-last
+SFLAGS += -save-temps
 #SFLAGS += -v -Q
 
 -include site.mk

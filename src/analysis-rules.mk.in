@@ -51,6 +51,8 @@ links :=					\
 	projections.xml				\
 	rho.dtd					\
 	rho.xsl					\
+	scores.dtd				\
+	scores.xsl				\
 	sorts.dtd				\
 	sorts.xml				\
 	summary.css				\

@@ -1,6 +1,7 @@
 *_??_*.xml
 adaptive-sampled
 bgs-in-run.txt
+bug-o-meter.dtd
 calculate.m
 compute-obs-tru
 compute-results
@@ -21,6 +22,9 @@ histograms.xml
 log
 mats
 obs.txt
+operand.dtd
+operands.xsl
+predictor-info.dtd
 predictor-info.xml
 preds.txt
 project
@@ -28,6 +32,9 @@ rare-sites.txt
 rho.bin
 run-bugs.txt
 s.runs
+scores.dtd
+scores.xml
+scores.xsl
 sites.cc
 sobs.
 sobs.ir
@@ -39,6 +46,7 @@ str.
 str.ir
 str.jc
 str.meta
+summary.dtd
 summary.xml
 tru.txt
 units.cc

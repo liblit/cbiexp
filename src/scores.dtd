@@ -1,0 +1,7 @@
+<!ELEMENT scores (predictor*)>
+
+<!ELEMENT predictor (empty*)>
+<!ATTLIST predictor
+  index NMTOKEN #REQUIRED
+  scores CDATA #REQUIRED
+>
