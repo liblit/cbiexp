@@ -121,10 +121,14 @@ libanalyze_a_SOURCES =				\
 #  constituent object files.
 #
 
+if HAVE_GSL_CDF
+chi2test = chi2test.cc
+endif
+
 liblate_a_SOURCES =				\
+	$(chi2test)				\
 	build_tsgraph.cc			\
 	calc_truthprobs.cc			\
-	chi2test.cc				\
 	collect_parmstats.cc			\
 	compute_obs_tru.cc			\
 	compute_results.cc			\

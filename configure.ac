@@ -47,6 +47,13 @@ fi
 
 AM_PATH_GSL
 
+old_CFLAGS="$CFLAGS"
+CFLAGS="$CFLAGS $GSL_CFLAGS"
+AC_CHECK_HEADER(gsl/gsl_cdf.h, HAVE_GSL_CDF=1, HAVE_GSL_CDF=)
+CFLAGS="$old_CFLAGS"
+AM_CONDITIONAL(HAVE_GSL_CDF, test "$HAVE_GSL_CDF" = 1)
+AC_SUBST(HAVE_GSL_CDF)
+
 
 AC_ARG_WITH(boost,
   AC_HELP_STRING([--with-boost=PREFIX],
@@ -72,15 +79,22 @@ AC_ARG_WITH(sampler-build,
   AC_HELP_STRING([--with-sampler-build=DIR],
                  [use sampler tools from build tree DIR]))
 
-if test -z "$with_sampler_build"; then
-  AC_PATH_PROG(sampler_cc, sampler-cc)
-  sampler_tooldir="`cd \`dirname $sampler_cc\`/../lib/sampler/tools; pwd`"
-else
+AC_ARG_WITH(sampler-prefix,
+  AC_HELP_STRING([--with-sampler-prefix=DIR],
+                 [use sampler tools installed under DIR]))
+
+if test -n "$with_sampler_build"; then
   AC_PATH_PROG(sampler_cc, sampler-cc-here, , $with_sampler_build/instrumentor/driver)
   sampler_tooldir="$with_sampler_build/tools"
+elif test -n "$with_sampler_prefix"; then
+  AC_PATH_PROG(sampler_cc, sampler-cc, , $with_sampler_prefix/bin)
+  sampler_tooldir="$with_sampler_prefix/lib/sampler/tools"
+else
+  AC_PATH_PROG(sampler_cc, sampler-cc)
+  sampler_tooldir="`cd \`dirname $sampler_cc\`/../lib/sampler/tools; pwd`"
 fi
 
-if test -z "$sampler_cc"; then
+if ! test -x "$sampler_cc"; then
   AC_MSG_ERROR(cannot find sampler-cc; please use "--with-sampler-build=DIR")
 fi
 

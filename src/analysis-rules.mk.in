@@ -18,6 +18,7 @@ CXX := @CXX@
 CPPFLAGS := @CPPFLAGS@ -I$(tooldir)
 CXXFLAGS := @CXXFLAGS@ -W -Wall -Werror
 LEXLIB := @LEXLIB@
+HAVE_GSL_CDF := @HAVE_GSL_CDF@
 build = $(MAKE) update-tools=
 
 sparsebase := fobs sobs ftr str
@@ -341,11 +342,13 @@ clean:: ; rm -f est_hyperparms
 hyperparms.txt: est_hyperparms parmstats.txt
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) 
 
+ifdef $(HAVE_GSL_CDF)
 chi2test: $(tooldir)/chi2test.o units.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -lm -o $@
 
 chi2stats.txt: chi2test parmstats.txt fpriors.dat fpriors-full.dat spriors.dat spriors-full.dat
 	$(time) $<
+endif
 
 calc_truthprobs: $(tooldir)/calc_truthprobs.o units.o sites.o 
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lm -o $@
