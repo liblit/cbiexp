@@ -35,6 +35,7 @@
 
 	<!-- miscellaneous information about the experiment -->
 	<p>Generated on <xsl:value-of select="@date"/></p>
+	<p>Sampling rate: <sup>1</sup>/<sub><xsl:value-of select="@sparsity"/></sub></p>
 
 	<xsl:apply-templates/>
       </body>

@@ -2,6 +2,7 @@
 <!ELEMENT experiment (runs, analysis, schemes)>
 <!ATTLIST experiment
   date CDATA #REQUIRED
+  sparsity CDATA #REQUIRED
   source-dir CDATA #IMPLIED>
 
 <!-- outcome summary for the runs in an experiment -->
