@@ -22,16 +22,16 @@ struct site_details_t {
 
 vector<vector<site_details_t> > site_details;
 
-char* sruns_file = NULL;
-char* fruns_file = NULL;
-char* preds_file = NULL;
+char* sruns_txt_file = NULL;
+char* fruns_txt_file = NULL;
+char* preds_txt_file = NULL;
 char* compact_report_path_fmt = NULL;
-char* obs_file = NULL;
-char* tru_file = NULL;
+char* obs_txt_file = NULL;
+char* tru_txt_file = NULL;
 
-FILE* preds_fp = NULL;
-FILE* obs_fp = NULL;
-FILE* tru_fp = NULL;
+FILE* pfp = NULL;
+FILE* ofp = NULL;
+FILE* tfp = NULL;
 
 inline void inc_obs(int r, int u, int c, int p)
 {
@@ -48,29 +48,28 @@ void print_pred_details(int u, int c, int p)
     int r;
 
     if (site_details[u][c].obs[p]) {
-	fputs("F: ", obs_fp);
+	fputs("F: ", ofp);
 	for (r = 0; r < num_runs; r++)
 	    if (is_frun[r] && (*(site_details[u][c].obs[p]))[r] == true)
-		fprintf(obs_fp, "%d ", r);
-	fputs("\nS: ", obs_fp);
+		fprintf(ofp, "%d ", r);
+	fputs("\nS: ", ofp);
 	for (r = 0; r < num_runs; r++)
 	    if (is_srun[r] && (*(site_details[u][c].obs[p]))[r] == true)
-		fprintf(obs_fp, "%d ", r);
-	fputc('\n', obs_fp);
+		fprintf(ofp, "%d ", r);
+	fputc('\n', ofp);
     }
 
     if (site_details[u][c].tru[p]) {
-	fputs("F: ", tru_fp);
+	fputs("F: ", tfp);
 	for (r = 0; r < num_runs; r++)
 	    if (is_frun[r] && (*(site_details[u][c].tru[p]))[r] == true)
-		fprintf(tru_fp, "%d ", r);
-	fputs("\nS: ", tru_fp);
+		fprintf(tfp, "%d ", r);
+	fputs("\nS: ", tfp);
 	for (r = 0; r < num_runs; r++)
 	    if (is_srun[r] && (*(site_details[u][c].tru[p]))[r] == true)
-		fprintf(tru_fp, "%d ", r);
-	fputc('\n', tru_fp);
+		fprintf(tfp, "%d ", r);
+	fputc('\n', tfp);
     }
-
 }
 
 void print_site_details(int u, int c)
@@ -140,17 +139,17 @@ void process_cmdline(int argc, char** argv)
     for (int i = 1; i < argc; i++) {
 	if (!strcmp(argv[i], "-s")) {
 	    i++;
-	    sruns_file = argv[i];
+	    sruns_txt_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-f")) {
 	    i++;
-	    fruns_file = argv[i];
+	    fruns_txt_file = argv[i];
 	    continue;
 	}
-	if (!strcmp(argv[i], "-pa")) {
+	if (!strcmp(argv[i], "-p")) {
 	    i++;
-	    preds_file = argv[i];
+	    preds_txt_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-cr")) {
@@ -158,24 +157,35 @@ void process_cmdline(int argc, char** argv)
 	    compact_report_path_fmt = argv[i];
 	    continue;
 	}
-	if (!strcmp(argv[i], "-tru")) {
+	if (!strcmp(argv[i], "-ot")) {
 	    i++;
-	    tru_file = argv[i];
+	    obs_txt_file = argv[i];
 	    continue;
 	}
-	if (!strcmp(argv[i], "-obs")) {
+	if (!strcmp(argv[i], "-tt")) {
 	    i++;
-	    obs_file = argv[i];
+	    tru_txt_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-h")) {
-	    puts("Usage: compute-obs-tru -s <sruns-file> -f <fruns-file> -pa <preds-abbr-file> -cr <compact-report-path-fmt> -obs <obs-file> -tru <tru-file>");
+	    puts("Usage: compute-obs-tru <options>\n"
+                 "(r) -s  <sruns-txt-file>\n"
+                 "(r) -f  <fruns-txt-file>\n"
+                 "(r) -p  <preds-txt-file>\n"
+                 "(r) -cr <compact-report-path-fmt>\n"
+                 "(w) -ot <obs-txt-file>\n"
+                 "(w) -tt <tru-txt-file>\n");
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
 	exit(1);
     }
-    if (!sruns_file || !fruns_file || !preds_file || !compact_report_path_fmt || !obs_file || !tru_file) {
+    if (!sruns_txt_file || 
+        !fruns_txt_file ||
+        !preds_txt_file ||
+        !compact_report_path_fmt ||
+        !obs_txt_file || 
+        !tru_txt_file) {
 	puts("Incorrect usage; try -h");
 	exit(1);
     }
@@ -187,24 +197,24 @@ int main(int argc, char** argv)
 
     process_cmdline(argc, argv);
 
-    classify_runs(sruns_file, fruns_file);
+    classify_runs(sruns_txt_file, fruns_txt_file);
 
-    obs_fp = fopen(obs_file, "w");
-    assert(obs_fp);
-    tru_fp = fopen(tru_file, "w");
-    assert(tru_fp);
+    ofp = fopen(obs_txt_file, "w");
+    assert(ofp);
+    tfp = fopen(tru_txt_file, "w");
+    assert(tfp);
 
     site_details.resize(NumUnits);
     for (u = 0; u < NumUnits; u++)
 	site_details[u].resize(units[u].c);
 
-    preds_fp = fopen(preds_file, "r");
-    assert(preds_fp);
+    pfp = fopen(preds_txt_file, "r");
+    assert(pfp);
     while (1) {
-	fscanf(preds_fp, "%d %d %d", &u, &c, &p);
-	if (feof(preds_fp))
+	fscanf(pfp, "%d %d %d", &u, &c, &p);
+	if (feof(pfp))
 	    break;
-	assert(u >= 0 && u < NumUnits );
+	assert(u >= 0 && u < NumUnits);
 	assert(c >= 0 && c < units[u].c);
 	assert(p >= 0 && p < 6);
 	site_details[u][c].obs[p] = new bit_vector(num_runs);
@@ -212,7 +222,7 @@ int main(int argc, char** argv)
 	site_details[u][c].tru[p] = new bit_vector(num_runs);
 	assert(site_details[u][c].tru[p]);
     }
-    fclose(preds_fp);
+    fclose(pfp);
 
     scaffold(compact_report_path_fmt, process_site);
 
@@ -220,8 +230,8 @@ int main(int argc, char** argv)
 	for (c = 0; c < units[u].c; c++)
 	    print_site_details(u, c);
 
-    fclose(obs_fp);
-    fclose(tru_fp);
+    fclose(ofp);
+    fclose(tfp);
     return 0;
 }
 
