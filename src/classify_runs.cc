@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "def.h"
 
-int num_runs, num_sruns, num_fruns;
+int num_runs = 0, num_sruns, num_fruns;
 bool *is_srun, *is_frun;
 
 void classify_runs()

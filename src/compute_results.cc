@@ -15,12 +15,14 @@
 struct site_summary_t {
     int S[6], F[6];
     int os, of;
+    bool is_pivot[6];
     site_summary_t() 
     { 
         os = of = 0;
         for (int i = 0; i < 6; i++) {
             S[i] = 0;
             F[i] = 0;
+            is_pivot[i] = false;
         }
     }
 };
@@ -45,6 +47,8 @@ float conf;
 
 char* program_name = NULL;
 char* program_src_dir = NULL;
+
+int num_pivots = 0;
 
 int num_s_preds = 0;
 int num_r_preds = 0;
@@ -156,7 +160,6 @@ bool print_site_summary(int u, int c, char* site_name)
                 print_scalar_pred(preds_txt_fp, n.pred, scalar_op[p / 2], p % 2 ? true : false);
                 print_scalar_pred(preds_hdr_fp, n.pred, scalar_op[p / 2], p % 2 ? true : false);
                 restore_site_name(&n);
-
             }
         break;
     case 'R':
@@ -191,7 +194,7 @@ bool print_site_summary(int u, int c, char* site_name)
 
 void process_site(FILE* fp, int r, int u, int c)
 {
-    int x, y, z, w;
+    int x, y, z;
 
     switch (units[u].s[0]) {
     case 'S':
@@ -201,14 +204,14 @@ void process_site(FILE* fp, int r, int u, int c)
             obs(r, u, c);
             if (x > 0)
                 inc(r, u, c, 0);
-            if (y > 0)
-                inc(r, u, c, 2);
-            if (z > 0)
-                inc(r, u, c, 4);
             if (y + z > 0)
                 inc(r, u, c, 1);
+            if (y > 0)
+                inc(r, u, c, 2);
             if (x + z > 0)
                 inc(r, u, c, 3);
+            if (z > 0)
+                inc(r, u, c, 4);
             if (x + y > 0)
                 inc(r, u, c, 5);
         }
@@ -220,6 +223,54 @@ void process_site(FILE* fp, int r, int u, int c)
             if (x > 0) inc(r, u, c, 0);
             if (y > 0) inc(r, u, c, 1);
         }
+        break;
+    default:
+        assert(0);
+    }
+}
+
+void discard_run(int r)
+{
+    if (is_srun[r]) {
+        is_srun[r] = false;
+        num_sruns--;
+        return;
+    }
+    if (is_frun[r]) {
+        is_frun[r] = false;
+        num_fruns--;
+        return;
+    }
+    assert(0);
+}
+
+void process_run(FILE* fp, int r, int u, int c)
+{
+    int x, y, z;
+
+    switch (units[u].s[0]) {
+    case 'S':
+    case 'R':
+        fscanf(fp, "%d %d %d\n", &x, &y, &z); 
+        if (site_summary[u][c].is_pivot[0] && x == 0)
+            discard_run(r);
+        if (site_summary[u][c].is_pivot[1] && y + z == 0)
+            discard_run(r);
+        if (site_summary[u][c].is_pivot[2] && y == 0)
+            discard_run(r);
+        if (site_summary[u][c].is_pivot[3] && x + z == 0)
+            discard_run(r);
+        if (site_summary[u][c].is_pivot[4] && z == 0)
+            discard_run(r);
+        if (site_summary[u][c].is_pivot[5] && x + y == 0)
+            discard_run(r);
+        break;
+    case 'B':
+        fscanf(fp, "%d %d\n", &x, &y); 
+        if (site_summary[u][c].is_pivot[0] && x == 0)
+            discard_run(r);
+        if (site_summary[u][c].is_pivot[1] && y == 0)
+            discard_run(r);
         break;
     default:
         assert(0);
@@ -283,7 +334,7 @@ void process_cmdline(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-    int  u, c, p;
+    int u, c, p;
 
     process_cmdline(argc, argv);
 
@@ -303,6 +354,21 @@ int main(int argc, char** argv)
         site_summary[u] = new (site_summary_t) [units[u].c];
         assert(site_summary[u]);
     }
+
+    while (1) {
+        fscanf(stdin, "%d %d %d", &u, &c, &p);
+        if (feof(stdin))
+            break;
+        assert(u >= 0 && u < NUM_UNITS );
+        assert(c >= 0 && c < units[u].c);
+        assert(p >= 0 && p < 6);
+        site_summary[u][c].is_pivot[p] = true;
+        num_pivots++;
+    }
+
+    printf("%d pivots\n", num_pivots);
+
+    if (num_pivots) scaffold(process_run);
 
     scaffold(process_site);
 

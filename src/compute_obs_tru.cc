@@ -11,6 +11,7 @@
 #include "def.h"
 #include UNITS_HDR_FILE
 #include "classify_runs.h"
+#include "scaffold.h"
 
 using namespace std;
 
@@ -87,9 +88,52 @@ void print_site_details(int u, int c)
     }
 }
 
+void process_site(FILE* fp, int r, int u, int c)
+{
+   int x, y, z;
+
+    switch (units[u].s[0]) {
+    case 'S':
+    case 'R':
+        fscanf(fp, "%d %d %d\n", &x, &y, &z);
+        if (x + y + z > 0) {
+            inc_obs(r, u, c, 0);
+            inc_obs(r, u, c, 1);
+            inc_obs(r, u, c, 2);
+            inc_obs(r, u, c, 3);
+            inc_obs(r, u, c, 4);
+            inc_obs(r, u, c, 5);
+            if (x > 0)
+                inc_tru(r, u, c, 0);
+            if (y + z > 0)
+                inc_tru(r, u, c, 1);
+            if (y > 0) 
+                inc_tru(r, u, c, 2);
+            if (x + z > 0)
+                inc_tru(r, u, c, 3);
+            if (z > 0)
+                inc_tru(r, u, c, 4);
+            if (x + y > 0)
+                inc_tru(r, u, c, 5);
+        }
+        break;
+    case 'B':
+        fscanf(fp, "%d %d\n", &x, &y);
+        if (x + y > 0) {
+            inc_obs(r, u, c, 0);
+            inc_obs(r, u, c, 1);
+            if (x > 0) inc_tru(r, u, c, 0);
+            if (y > 0) inc_tru(r, u, c, 1);
+        }
+        break;
+    default:
+        assert(0);
+    }
+}
+
 int main()
 {
-    int i, j, k, x, y, z, w, u, c, p;
+    int u, c, p;
 
     classify_runs();
 
@@ -114,66 +158,7 @@ int main()
         assert(site_details[u][c].tru[p]);
     }
 
-    for (i = 0; i < num_runs; i++) {
-        if (!is_srun[i] && !is_frun[i])
-            continue;
-        printf("r %d\n", i);
-        char file[1000];
-        sprintf(file, O_REPORT_PATH_FMT, i);
-        FILE* fp = fopen(file, "r");
-        assert(fp);
-
-        while (1) {
-            fscanf(fp, "%d\n", &j);
-            if (feof(fp))
-                break;
-            switch (units[j].s[0]) {
-            case 'S':
-            case 'R':
-                for (k = 0; k < units[j].c; k++) {
-                    fscanf(fp, "%d %d %d\n", &x, &y, &z);
-                    if (x + y + z > 0) {
-                        inc_obs(i, j, k, 0);
-                        inc_obs(i, j, k, 1);
-                        inc_obs(i, j, k, 2);
-                        inc_obs(i, j, k, 3);
-                        inc_obs(i, j, k, 4);
-                        inc_obs(i, j, k, 5);
-                    }
-                    if (x > 0) {
-                        inc_tru(i, j, k, 0);
-                        inc_tru(i, j, k, 3);
-                        inc_tru(i, j, k, 5);
-                    }
-                    if (y > 0) {
-                        inc_tru(i, j, k, 2);
-                        inc_tru(i, j, k, 1);
-                        inc_tru(i, j, k, 5);
-                    }
-                    if (z > 0) {
-                        inc_tru(i, j, k, 4);
-                        inc_tru(i, j, k, 1);
-                        inc_tru(i, j, k, 3);
-                    }
-                }
-                break;
-            case 'B':
-                for (k = 0; k < units[j].c; k++) {
-                    fscanf(fp, "%d %d\n", &x, &y);
-                    if (x + y > 0) {
-                        inc_obs(i, j, k, 0);
-                        inc_obs(i, j, k, 1);
-                    }
-                    if (x > 0) inc_tru(i, j, k, 0);
-                    if (y > 0) inc_tru(i, j, k, 1);
-                }
-                break;
-            default:
-                assert(0);
-            }
-        }
-        fclose(fp);
-    }
+    scaffold(process_site);
 
     for (u = 0; u < NUM_UNITS; u++) 
         for (c = 0; c < units[u].c; c++) 

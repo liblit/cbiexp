@@ -11,8 +11,8 @@
 #define PREDS_TXT_FILE "preds.txt"
 #define PREDS_HDR_FILE "preds.h"
 #define RESULT_SUMMARY_FILE "summary.html"
-#define OBS_FILE "obs.txt"
-#define TRU_FILE "tru.txt"
+#define OBS_FILE "/moa/sc1/tmp_obs.txt"
+#define TRU_FILE "/moa/sc1/tmp_tru.txt"
 #define ALL_CLUSTER_FILE "summary.txt"
 #define PER_CLUSTER_FILE "cluster%d.txt"
 
