@@ -271,47 +271,56 @@ which are highly predictive of failure.  \placeholder{Is it worth
 groups of runs which do share a single cause but which are not always
 maximal.  (That is, one cause may be split across several clusters.)
 
-\placeholder{Should also discuss recent developments by anybody from
-  the RAMSS workshop.  The following appear worth following up on:
+Studies that attempt real-world deployment of monitored software must
+address a host of practical engineering concerns, from distribution to
+installation to user support to data collection and warehousing.
+Elbaum and Hardojo \cite{Elbaum:2003:DISATA} have reported on a
+limited deployment of instrumented Pine binaries.  Their experiences
+have helped to guide our own design of a wide public deployment of
+applications with sampled instrumentation, presently underway
+\cite{Liblit:2003:CBIP}.
+
+\placeholder{More recent work of interest:
 
   \begin{itemize}
-  \item Sebastian Elbaum and Madeline Hardojo, ``Deploying
-    Instrumented Software to Assist the Testing Activity''.  Discusses
-    experiences with a deployment of instrumented Pine binaries.
+  \item S. Elbaum, S.  Kanduri and A. Andrews, ``Anomalies as
+    Precursors of Field Failures, International Symposium of Software
+    Reliability Engineering'', IEEE, November 2003.
+    
+  \item S. Elbaum and M. Hardojo, ``An Empirical Study on Profiling
+    Strategies for Released Software and Their Application to QA
+    Activities'', Technical Report TR03-09-01, University of Nebraska
+    - Lincoln, September 2003.
+  \end{itemize}
+  
+  Cannot find either online, but have written to Elbaum asking him for
+  copies.}
 
-    More recent work of interest:
+For some highly available systems, even a single failure must be
+avoided.  Once the behaviors that predict imminent failure are known,
+automatic corrective measures may be able to prevent the failure from
+occurring at all.  The Software Dependability Framework (SDF)
+\cite{Gross:2003:PSMUST} uses the multivariate state estimation
+technique to model and thereby predict impending system failures.
+Instrumentation is assumed to be complete and is typically
+domain-specific, whereas our sampled predicates cast a wider, less
+specialized net.  \placeholder{We understand through informal
+  communication that the SDF is able to anticipate when a player is
+  about to lose an instrumented game of Tetris, and can intervene by
+  removing rows to allow the game to continue.  But maybe I shouldn't
+  say that, as it kind of makes their system sound like a joke.}
 
-    \begin{itemize}
-    \item S. Elbaum, S.  Kanduri and A. Andrews, ``Anomalies as
-      Precursors of Field Failures, International Symposium of
-      Software Reliability Engineering'', IEEE, November 2003.
-
-    \item S. Elbaum and M. Hardojo, ``An Empirical Study on
-      Profiling Strategies for Released Software and Their
-      Application to QA Activities'', Technical Report TR03-09-01,
-      University of Nebraska - Lincoln, September 2003.
-    \end{itemize}
-
-    Cannot find either online, but have written to Elbaum asking him
-    for copies.
-
-  \item Kenny C. Gross, Scott McMaster, Adam Porter, ``Proactive
-    System Maintenance Using Software Telemetry''.  Discusses
-    technique for predicting imminent program failure and
-    intervening with corrective measures.
-
-    Cannot find any more recent work in this area.  What happened to
-    these people?  Porter has plenty of other recent work, but
-    apparently nothing related.  Gross and McMaster have zero
-    publication information on their home pages, while Umranov and
-    Votta seem to have vanished entirely.  Have written to Gross and
-    Porter asking if they have anything more recent I should look at.
-    \end{itemize}}
+\placeholder{Cannot find any more recent work by these people in this
+  area.  Where did they all go?  Porter has plenty of other recent
+  work, but apparently nothing related.  Gross and McMaster have zero
+  publication information on their home pages, while Umranov and Votta
+  seem to have vanished entirely.  Have written to Gross and Porter
+  asking if they have anything more recent I should look at.}
 
 \section{Conclusions}
 \label{sec:conclusions}
 
-\bibliography{cacm1990,icse02,icse03,misc,paste02,pods,refs}
+\bibliography{cacm1990,icse02,icse03,misc,paste02,pods,ramss,refs}
 \placeholder{Page budget for references: 1.}
 
 
