@@ -1,7 +1,7 @@
 ranking := all_hl_corrected-exact-complete.xml
 postprocess := ../views/postprocess
 dependencies := ../views/bug-o-meter.xsl ../../src/operands.xsl predictor-info.xml $(postprocess)
-xsltproc := xsltproc --path '../views ../../src'
+xsltproc := xsltproc --path '. ../views ../../src'
 
 all: rows.tex stats-by-failure.tex stats-by-increase.tex stats-by-harmonic.tex
 

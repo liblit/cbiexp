@@ -1,43 +1,21 @@
 %% -*- TeX-master: "../master.tex" -*-
 
-\begin{table*}
-  \caption{Other applications' failure predictors using nonuniform sampling}
-  \label{tab:views}
-  \centering
+\newcommand{\view}[2]{%
+  \begin{table}
+    \caption{Predictors for #1}
+    \label{tab:views-#2}
+    \centering
+    \tiny
+    \begin{tabular}{lll}
+      \toprule
+      Initial & Effective & Predicate \\
+      \midrule
+      \input{views/#2/rows}
+      \bottomrule
+    \end{tabular}
+  \end{table}}
 
-  \newcommand{\view}[2]{%
-    \subtable[Predictors for #1]{%
-      \tiny
-      \label{tab:views-#2}
-      \begin{tabular}{lllll}
-        \toprule
-        \multicolumn{2}{c}{Initial} &
-        \multicolumn{2}{c}{Effective} \\
-        \cmidrule(lr){1-2}
-        \cmidrule(lr){3-4}
-        Score &
-        Thermometer &
-        Score &
-        Thermometer &
-        Predicate \\
-        \midrule
-        \input{views/#2/rows}
-        \bottomrule
-      \end{tabular}}
-
-  }
-
-  \hspace*{-.5in} \ \begin{minipage}{3.5in}
-  \view{\ccrypt}{ccrypt}
-  \end{minipage} \
-  \begin{minipage}{3.25in} \
-  \view{\bc}{bc}
-  \end{minipage} \\
-  \hspace*{-.5in} \ \begin{minipage}{3.5in}
-  \view{\exif}{exif}
-  \end{minipage} \ 
-  \begin{minipage}{3.25in}
-  \view{\rhythmbox}{rhythmbox}
-  \end{minipage}
-  
-\end{table*}
+\view{\ccrypt}{ccrypt}
+\view{\bc}{bc}
+\view{\exif}{exif}
+\view{\rhythmbox}{rhythmbox}

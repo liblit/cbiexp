@@ -9,9 +9,6 @@
   <xsl:import href="bug-o-meter.xsl"/>
   <xsl:import href="operands.xsl"/>
 
-  <!-- floating point format string for predictor scores -->
-  <xsl:param name="score-format" select="'0.000'"/>
-
   <xsl:output
     method="text"
     encoding="ascii"/>
@@ -22,14 +19,8 @@
     <xsl:variable name="index" select="number(@index)"/>
     <xsl:variable name="info" select="document('predictor-info.xml')/predictor-info/info[$index]"/>
 
-    <!-- initial score and bug-o-meter -->
-    <xsl:value-of select="format-number(@initial, $score-format)"/>
-    <xsl:text> &amp; </xsl:text>
+    <!-- initial and effective bug-o-meters -->
     <xsl:apply-templates select="$info/bug-o-meter"/>
-
-    <!-- effective score and bug-o-meter -->
-    <xsl:text> &amp; </xsl:text>
-    <xsl:value-of select="format-number(@effective, $score-format)"/>
     <xsl:text> &amp; </xsl:text>
     <xsl:apply-templates select="bug-o-meter"/>
 
@@ -42,8 +33,18 @@
     <xsl:value-of select="normalize-space($operands)"/>
     <xsl:text>|</xsl:text>
 
+    <xsl:call-template name="extra-columns">
+      <xsl:with-param name="index" select="$index"/>
+    </xsl:call-template>
+
     <xsl:text> \\
 </xsl:text>
+  </xsl:template>
+
+
+  <!-- no extra columns unless overridden elsewhere -->
+  <xsl:template name="extra-columns">
+    <xsl:param name="index"/>
   </xsl:template>
 
 
