@@ -106,11 +106,12 @@ might be able to figure out the bug from this predicate alone.
 The next three predicates are obvious ``hits''. The second predicate
 tests whether comment matching should be turned on, and if it is turned on the program is
 guaranteed to fail. This is a much more obvious cause for bug \#1, and the predicate points directly
-to the fact that something is wrong in the comment matching code.
-\footnote{Recall that bug \#1 is non-deterministic; why then is the crash score 1.0?
+to the fact that something is wrong in the comment matching
+code.\footnote{Recall that bug \#1 is non-deterministic; why then is
+  the crash score 1.0?
 The discrepancy is the result of sampling error.  In the full data set
 (with \nicefrac{1}{1} sampling) the crash measure for this predicate is indeed
-only .88.}
+only 0.88.}
 The
 next predicate marks the test in the code that decides whether \moss\ is analyzing Lisp
 programs; the crash score of 1.0 tells us that whenever a Lisp program is
