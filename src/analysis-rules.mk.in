@@ -11,6 +11,7 @@ sitesdir ?= $(experiment)/share
 sitesglob := $(experiment)/share/*.sites
 sites := $(wildcard $(sitesglob))
 sites := $(if $(sites), $(sites), $(error no sites files in $(sitesglob)))
+xmlify-add-suffix := .html
 
 time := /usr/bin/time
 CXX := @CXX@
@@ -64,6 +65,7 @@ web :=						\
 	$(topRho)				\
 	$(web_extras)				\
 	predictor-info.xml			\
+	stamp-src				\
 	summary.xml
 
 publish ?= $(HOME)/www/$(name)-new
@@ -75,9 +77,18 @@ publish: $(web:%=$(publish)/%)
 	cp zoom-corrected-*.xml $(publish)
 .PHONY: publish
 
+$(publish)/stamp-src: stamp-src
+	rm -rf $(publish)/src
+	cp -a src $< $(publish)
+
 $(publish)/%: %
 	[ -d $(@D) ] || mkdir $(@D)
 	cp $< $@
+
+stamp-src: $(tooldir)/htmlify-sources
+	./$< $(experiment)/src
+	touch $@
+clean:: ; rm -rf stamp-src src
 
 links: $(links)
 $(links):
@@ -85,7 +96,7 @@ $(links):
 clean:: ; rm -f $(links)
 
 predictor-info.xml: xmlify-results preds.txt
-	./$< $(xmlify_results_flags)
+	./$< $(source-strip-prefixes:%=--strip-prefix=%) $(xmlify_results_flags)
 	$(build) $(@:.xml=.dtd) bug-o-meter.dtd
 	xmllint --valid --noout $@
 clean:: ; rm -f predictor-info.xml
@@ -162,7 +173,7 @@ gen-views: $(tooldir)/gen_views.o sites.o
 clean:: ; rm -f gen-views
 
 summary.xml: gen-summary preds.txt s.runs f.runs
-	$(time) ./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) --source-directory=../src >$@
+	$(time) ./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) --source-directory=src >$@
 	$(build) link-cell.css logo.css summary.css summary.dtd summary.xsl
 	xmllint --valid --noout $@
 clean:: ; rm -f summary.xml

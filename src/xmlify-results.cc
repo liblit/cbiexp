@@ -2,6 +2,7 @@
 #include <cmath>
 #include <ext/hash_set>
 #include <fstream>
+#include <list>
 #include <sysexits.h>
 #include "PredStats.h"
 #include "SiteCoords.h"
@@ -12,7 +13,9 @@
 
 using namespace std;
 
+
 static __gnu_cxx::hash_set<SiteCoords> rareSites;
+static list<string> prefixes;
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -36,6 +39,10 @@ parseFlag(int key, char *arg, argp_state *state)
 	return 0;
       }
 
+    case 'p':
+      prefixes.push_back(arg);
+      return 0;
+
     default:
       return ARGP_ERR_UNKNOWN;
     }
@@ -47,6 +54,7 @@ processCommandLine(int argc, char *argv[])
 {
   static const argp_option options[] = {
     { "rare-sites", 'r', "FILE", 0, "mark sites listed in FILE as rare", 0 },
+    { "strip-prefix", 'p', "TEXT", 0, "remove TEXT from the start of file names; may be given multiple times", 0 },
     { 0, 0, 0, 0, 0, 0 }
   };
 
@@ -83,8 +91,16 @@ int main(int argc, char *argv[])
       const site_t &site = sites[stats.siteIndex];
       const string &scheme = scheme_name(unit.scheme_code);
 
+      string filename(site.file);
+      for (list<string>::const_iterator prefix = prefixes.begin(); prefix != prefixes.end(); ++prefix)
+	if (filename.compare(0, prefix->size(), *prefix) == 0)
+	  {
+	    filename.erase(0, prefix->size());
+	    break;
+	  }
+
       xml << "<info scheme=\"" << scheme
-	  << "\" file=\"" << site.file
+	  << "\" file=\"" << filename
 	  << "\" line=\"" << site.line
 	  << "\" function=\"" << site.fun
 	  << "\" predicate=\"" << stats.predicate;

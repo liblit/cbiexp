@@ -33,6 +33,7 @@ sobs.
 sobs.ir
 sobs.jc
 sobs.meta
+src
 stamp-convert-reports
 str.
 str.ir
@@ -42,3 +43,4 @@ summary.xml
 tru.txt
 units.cc
 xmlify-results
+zoom-corrected-*-*-*.xml

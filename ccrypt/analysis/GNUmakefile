@@ -1,5 +1,6 @@
 name := ccrypt
-schemes := all returns
-#experiment := /moa/sc5/cbi/incoming-datasets/$(name)-32K
+experiment := /moa/sc5/cbi/best-known-datasets/$(name)
+schemes := all branches returns scalar-pairs
+source-strip-prefixes := /data/alicez/cbiexp/ccrypt/src/src/
 
 include ../../src/analysis-rules.mk

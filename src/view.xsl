@@ -219,7 +219,7 @@
 	  </xsl:otherwise>
 	</xsl:choose>
       </xsl:variable>
-      <a href="{$prefix}{@file}#{@line}">
+      <a href="{$prefix}{@file}.html#line{@line}">
 	<xsl:value-of select="@file"/>:<xsl:value-of select="@line"/>
       </a>
     </td>

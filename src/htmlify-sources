@@ -1,0 +1,26 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use File::Basename;
+use File::Find;
+use File::Path;
+
+
+my $sourcedir = shift;
+
+
+########################################################################
+
+
+sub wanted () {
+    return unless /\.([chly]|flex)$/;
+    my $outfile = $_;
+    die unless $outfile =~ s:^$sourcedir/:src/:;
+    mkpath dirname $outfile;
+    my @command = ('source-highlight', "--input=$_", "--output=$outfile.html", '--out-format=xhtml', '--doc', '--line-number-ref');
+    system(@command) == 0 or exit($? >> 8 || $? & 127 || 1);
+}
+
+
+find { wanted => \&wanted, no_chdir => 1 }, $sourcedir;
