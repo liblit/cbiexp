@@ -1,48 +1,20 @@
 #include <cassert>
 #include <iostream>
-#include "Candidates.h"
-#include "Predicate.h"
-#include "Boths.h"
+#include "../PredCoords.h"
 #include "Reader.h"
 
 using namespace std;
 
 
-Reader::Reader(Boths &boths, Candidates &candidates, Run *failure)
-  : boths(boths),
-    candidates(candidates),
-    failure(failure)
-{
-}
-
-
 void
-Reader::tallyPair(const SiteCoords &site, int id, unsigned a, unsigned b)
+Reader::tallyPair(const SiteCoords &site, int id, unsigned a, unsigned b) const
 {
   assert(a || b);
 
   const PredCoords aCoords(site, 2 * id);
   const PredCoords bCoords(site, 2 * id + 1);
 
-  Predicate *&aCounts = candidates[aCoords];
-  Predicate *&bCounts = candidates[bCoords];
-
-  assert(!aCounts == !bCounts);
-  if (!aCounts)
-    {
-      Both * const both = new Both();
-      boths.push_back(both);
-      aCounts = &both->first;
-      bCounts = &both->second;
-    }
-
-  if (a) aCounts->trueInRun(failure);
-  if (b) bCounts->trueInRun(failure);
-  if (a && b)
-    {
-      assert(&aCounts->both == &bCounts->both);
-      aCounts->both.trueInRun(failure);
-    }
+  tallyPair(aCoords, a, bCoords, b);
 }
 
 
@@ -56,7 +28,7 @@ Reader::branchesSite(const SiteCoords &site, unsigned a, unsigned b)
 
 
 void
-Reader::tripleSite(const SiteCoords &site, unsigned a, unsigned b, unsigned c)
+Reader::tripleSite(const SiteCoords &site, unsigned a, unsigned b, unsigned c) const
 {
   assert(a || b || c);
 

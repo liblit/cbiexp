@@ -3,28 +3,23 @@
 
 #include "../ReportReader.h"
 
-class Candidates;
-class Predicate;
-class Run;
+class PredCoords;
 
 
 class Reader : public ReportReader
 {
 public:
-  Reader(Boths &, Candidates &, Run *failure);
-
   void branchesSite(    const SiteCoords &, unsigned, unsigned);
   void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned);
   void returnsSite(     const SiteCoords &, unsigned, unsigned, unsigned);
   void scalarPairsSite( const SiteCoords &, unsigned, unsigned, unsigned);
 
 private:
-  Boths &boths;
-  Candidates &candidates;
-  Run * const failure;
+  void tripleSite(const SiteCoords &, unsigned, unsigned, unsigned) const;
+  void tallyPair(const SiteCoords &, int id, unsigned, unsigned) const;
 
-  void tripleSite(const SiteCoords &, unsigned, unsigned, unsigned);
-  void tallyPair(const SiteCoords &, int id, unsigned, unsigned);
+  virtual void tallyPair(const PredCoords &, unsigned,
+			 const PredCoords &, unsigned) const = 0;
 };
 
 

@@ -10,12 +10,14 @@ class Both;
 class Predicate : public Counts
 {
 public:
-  Predicate(Both &, const Predicate &);
+  Predicate(Both &, Predicate &);
 
+  void reclassify(unsigned);
   double score() const;
   void print(std::ostream &) const;
 
   Both &both;
+  Predicate &inverse;
 
 private:
   double badness() const;
@@ -24,8 +26,6 @@ private:
   double lowerBound() const;
   double recall() const;
   double harmonic() const;
-
-  const Predicate &inverse;
 };
 
 

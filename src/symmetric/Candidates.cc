@@ -13,7 +13,7 @@ using namespace std;
 static bool
 trueInNoFailures(const Candidates::value_type &chaff)
 {
-  return chaff.second->trueInFailures.empty();
+  return chaff.second->trueInFailures.none();
 }
 
 

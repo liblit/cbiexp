@@ -10,12 +10,15 @@ libsymmetric_a_SOURCES =			\
 	Candidates.h				\
 	Counts.cc				\
 	Counts.h				\
+	FailureReader.cc			\
+	FailureReader.h				\
 	Predicate.cc				\
 	Predicate.h				\
 	Reader.cc				\
 	Reader.h				\
-	Run.h					\
 	RunSet.h				\
+	SuccessReader.cc			\
+	SuccessReader.h				\
 	allFailures.cc				\
 	main.cc
 

@@ -1,26 +1,38 @@
 #ifndef INCLUDE_symmetric_RunSet_h
 #define INCLUDE_symmetric_RunSet_h
 
-#include <ext/hash_set>
-
-class Run;
+#include <boost/dynamic_bitset.hpp>
 
 
-namespace __gnu_cxx
+class RunSet : private boost::dynamic_bitset<>
 {
-  template <> struct hash<const Run *>
-  {
-    size_t operator()(const Run *addr) const
-    {
-      return reinterpret_cast<size_t>(addr);
-    }
-  };
-}
+public:
+  RunSet();
 
-
-class RunSet : public __gnu_cxx::hash_set<const Run *>
-{
+  using boost::dynamic_bitset<>::any;
+  using boost::dynamic_bitset<>::count;
+  using boost::dynamic_bitset<>::find_first;
+  using boost::dynamic_bitset<>::find_next;
+  using boost::dynamic_bitset<>::none;
+  using boost::dynamic_bitset<>::npos;
+  using boost::dynamic_bitset<>::reset;
+  using boost::dynamic_bitset<>::resize;
+  using boost::dynamic_bitset<>::set;
+  using boost::dynamic_bitset<>::test;
 };
+
+
+////////////////////////////////////////////////////////////////////////
+
+
+#include "../NumRuns.h"
+
+
+inline
+RunSet::RunSet()
+  : boost::dynamic_bitset<>(NumRuns::end, false)
+{
+}
 
 
 #endif // !INCLUDE_symmetric_RunSet_h

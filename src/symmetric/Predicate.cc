@@ -9,7 +9,7 @@
 using namespace std;
 
 
-Predicate::Predicate(Both &both, const Predicate &inverse)
+Predicate::Predicate(Both &both, Predicate &inverse)
   : both(both),
     inverse(inverse)
 {
@@ -21,11 +21,19 @@ Predicate::Predicate(Both &both, const Predicate &inverse)
 ////////////////////////////////////////////////////////////////////////
 
 
+void
+Predicate::reclassify(unsigned runId)
+{
+  if (Counts::reclassify(runId))
+    both.reclassify(runId);
+}
+
+
 double
 Predicate::badness() const
 {
-  const unsigned ft = trueInFailures.size();
-  const unsigned fb = both.trueInFailures.size();
+  const unsigned ft = trueInFailures.count();
+  const unsigned fb = both.trueInFailures.count();
   const unsigned st = trueInSuccesses;
   const unsigned sb = both.trueInSuccesses;
 
@@ -36,9 +44,9 @@ Predicate::badness() const
 double
 Predicate::context() const
 {
-  const unsigned ft = trueInFailures.size();
-  const unsigned fi = inverse.trueInFailures.size();
-  const unsigned fb = both.trueInFailures.size();
+  const unsigned ft = trueInFailures.count();
+  const unsigned fi = inverse.trueInFailures.count();
+  const unsigned fb = both.trueInFailures.count();
   const unsigned st = trueInSuccesses;
   const unsigned si = inverse.trueInSuccesses;
   const unsigned sb = both.trueInSuccesses;
@@ -57,9 +65,9 @@ Predicate::increase() const
 double
 Predicate::lowerBound() const
 {
-  const unsigned ft = trueInFailures.size();
-  const unsigned fi = inverse.trueInFailures.size();
-  const unsigned fb = both.trueInFailures.size();
+  const unsigned ft = trueInFailures.count();
+  const unsigned fi = inverse.trueInFailures.count();
+  const unsigned fb = both.trueInFailures.count();
   const unsigned st = trueInSuccesses;
   const unsigned si = inverse.trueInSuccesses;
   const unsigned sb = both.trueInSuccesses;
@@ -77,10 +85,10 @@ double
 Predicate::recall() const
 {
   // !!!: deviation from formal definitions:
-  //   increment denominator to avoid NAN when allFailures.size() == 1
+  //   increment denominator to avoid NAN when allFailures.count() == 1
   //   increment numerator to counterbalance incremented denominator
 
-  return log(1. + trueInFailures.size()) / log(1. + allFailures.size());
+  return log(1. + trueInFailures.count()) / log(1. + allFailures.count());
 }
 
 
@@ -101,9 +109,9 @@ Predicate::print(ostream &out) const
   inverse.Counts::print(out, "inverse");
   both.Counts::print(out, "both");
 
-  const unsigned ft = trueInFailures.size();
-  const unsigned fi = inverse.trueInFailures.size();
-  const unsigned fb = both.trueInFailures.size();
+  const unsigned ft = trueInFailures.count();
+  const unsigned fi = inverse.trueInFailures.count();
+  const unsigned fb = both.trueInFailures.count();
   const unsigned st = trueInSuccesses;
   const unsigned si = inverse.trueInSuccesses;
   const unsigned sb = both.trueInSuccesses;

@@ -1,17 +1,17 @@
 #include <cassert>
 
+#include "../ClassifyRuns.h"
 #include "../NumRuns.h"
 #include "../Progress/Bounded.h"
 #include "../RunsDirectory.h"
 #include "../Stylesheet.h"
 #include "../ViewPrinter.h"
-#include "../classify_runs.h"
 
 #include "Candidates.h"
 #include "Predicate.h"
 #include "Boths.h"
-#include "Reader.h"
-#include "Run.h"
+#include "SuccessReader.h"
+#include "FailureReader.h"
 #include "allFailures.h"
 
 using namespace std;
@@ -57,37 +57,34 @@ main(int argc, char *argv[])
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
 
-  classify_runs();
-
   Boths boths;
   Candidates candidates;
+  allFailures.resize(NumRuns::end, false);
 
   {
-    Progress::Bounded progress("reading reports", NumRuns::count());
-
-    for (unsigned runId = NumRuns::begin; runId < NumRuns::end; runId++)
+    Progress::Bounded progress("reading failure reports", NumRuns::count());
+    ifstream runs(ClassifyRuns::failuresFilename);
+    unsigned runId;
+    while (runs >> runId && runId < NumRuns::end)
       {
-	progress.step();
+	progress.stepTo(runId);
+	if (runId >= NumRuns::begin)
+	  {
+	    allFailures.set(runId);
+	    FailureReader(candidates, boths, runId).read(runId);
+	  }
+      }
+  }
 
-	Run *failure;
-
-	if (__builtin_expect(is_srun[runId], 1))
-	  failure = 0;
-	else if (__builtin_expect(is_frun[runId], 1))
-	  failure = new Run();
-	else
-	  continue;
-
-	Reader(boths, candidates, failure).read(runId);
-
-	if (failure)
-	  if (failure->empty())
-	    cerr << "\nwarning: inexplicable failure " << runId << " has no true predicates\n";
-	  else
-	    {
-	      const bool novel = allFailures.insert(failure).second;
-	      assert(novel);
-	    }
+  {
+    Progress::Bounded progress("reading success reports", NumRuns::count());
+    ifstream runs(ClassifyRuns::successesFilename);
+    unsigned runId;
+    while (runs >> runId && runId < NumRuns::end)
+      {
+	progress.stepTo(runId);
+	if (runId >= NumRuns::begin)
+	  SuccessReader(candidates).read(runId);
       }
   }
 
@@ -100,11 +97,11 @@ main(int argc, char *argv[])
   // stop when we run out of predicates
   while (true)
     {
-      cerr << candidates.size() << " candidates left to explain " << allFailures.size() << " failures\n";
+      cerr << candidates.size() << " candidates left to explain " << allFailures.count() << " failures\n";
       candidates.filter();
       cerr << candidates.size() << " candidates left that could explain at least one failure\n";
       if (candidates.empty()) break;
-      assert(!allFailures.empty());
+      assert(allFailures.any());
 
       {
 	static bool dumped = false;
@@ -121,29 +118,25 @@ main(int argc, char *argv[])
 
       const Predicate &winnerCounts = *winner->second;
       const RunSet &explainedFailures = winnerCounts.trueInFailures;
-      cerr << "next selected predictor was true in " << explainedFailures.size() << " failures and has score " << winner->second->score() << '\n';
+      cerr << "next selected predictor was true in " << explainedFailures.count() << " failures and has score " << winner->second->score() << '\n';
 
-      while (!explainedFailures.empty())
+      for (unsigned explained = explainedFailures.find_first();
+	   explained != RunSet::npos;
+	   explained = explainedFailures.find_next(explained))
 	{
-	  const Run &explained = **explainedFailures.begin();
+	  for (Candidates::iterator affected = candidates.begin(); affected != candidates.end(); ++affected)
+	    affected->second->reclassify(explained);
 
-	  for (Run::const_iterator counts = explained.begin(); counts != explained.end(); ++counts)
-	    {
-	      assert(*counts);
-	      Counts &affected = **counts;
-	      affected.reclassify(explained);
-	    }
-
-	  assert(allFailures.find(&explained) != allFailures.end());
-	  allFailures.erase(&explained);
-	  delete &explained;
+	  assert(allFailures.test(explained));
+	  allFailures.reset(explained);
+	  cerr << "  failure " << explained << " has been explained\n";
 	}
 
       candidates.erase(winner);
       // progress.step();
     }
 
-  cerr << "ranking complete with " << allFailures.size() << " unexplained failures\n";
+  cerr << "ranking complete with " << allFailures.count() << " unexplained failures\n";
 
   return 0;
 }

@@ -2,31 +2,20 @@
 #include <cmath>
 #include <iostream>
 #include "Counts.h"
-#include "Run.h"
 
 using namespace std;
 
 
-void
-Counts::trueInRun(Run *failure)
+bool
+Counts::reclassify(unsigned runId)
 {
-  if (__builtin_expect(!failure, 1))
+  const bool removed = trueInFailures.test(runId);
+  trueInFailures.reset(runId);
+
+  if (removed)
     ++trueInSuccesses;
-  else
-    {
-      failure->push_back(this);
-      const bool novel = trueInFailures.insert(failure).second;
-      assert(novel);
-    }
-}
 
-
-void
-Counts::reclassify(const Run &failure)
-{
-  const RunSet::size_type removed = trueInFailures.erase(&failure);
-  assert(removed == 1);
-  ++trueInSuccesses;
+  return removed;
 }
 
 
@@ -46,5 +35,5 @@ Counts::print(ostream &out, const char tag[]) const
 {
   out << '<' << tag
       << " successes=\"" << trueInSuccesses
-      << "\" failures=\"" << trueInFailures.size() << "\"/>";
+      << "\" failures=\"" << trueInFailures.count() << "\"/>";
 }
