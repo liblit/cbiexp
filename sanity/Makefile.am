@@ -7,6 +7,7 @@ share/sanity.sites: build/sanity
 	mv $@. $@
 
 build/sanity: src/sanity.c
+	test -d $(@D) || mkdir $(@D)
 	$(sampler_cc) --no-sample --sampler-scheme=branches -o $@ $<
 
 force:
