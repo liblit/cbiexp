@@ -13,6 +13,7 @@ FailureReader::FailureReader(Candidates &candidates, Boths &boths, unsigned fail
     boths(boths),
     failureId(failureId)
 {
+  assert(failureId < RunSet::universeSize);
 }
 
 
