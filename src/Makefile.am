@@ -1,7 +1,6 @@
 SUBDIRS = Score
 
 AM_CPPFLAGS = -W -Wall -Werror -Wformat
-CXXFLAGS = -g
 
 EXTRA_DIST =					\
 	summary.css				\
