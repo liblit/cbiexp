@@ -109,13 +109,13 @@ causes of other independent bugs do not affect $\crash(P)$.
 Also note that runs in which $P$ is not observed at all (either because
 the line of code on which $P$ is checked is not reached, or the line is reached
 but $P$ is not sampled) have no effect on $\crash(P)$.
-Finally, the definition of $\crash(P)$
+The definition of $\crash(P)$
 generalizes the idea of deterministic and non-deterministic bugs.  A
-bug is deterministic for $P$ if $\crash(P) = 1.0$ or, equivalently,
+bug is deterministic for $P$ if $\crash(P) = 1.0$, or equivalently,
 $P$ is never observed to be true in a successful run ($S(P) =
 0$) and $P$ is observed to be true in at least one failing run ($F(P) > 0$).
-If $\crash(P) < 1.0$ then the bug is non-deterministic, with
-lower scores showing weaker correlation between the predicate and
+If $\crash(P) < 1.0$ then the bug is non-deterministic with respect to $P$.
+Lower scores show weaker correlation between the predicate and
 program failure.
 
 Now $\crash(P)$ is a useful measure, but it is not good
