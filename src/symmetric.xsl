@@ -111,7 +111,7 @@
 
   <xsl:template match="site" mode="static-cells">
     <xsl:param name="test"/>
-    <td><xsl:value-of select="@function"/></td>
+    <td><xsl:value-of select="@function"/>()</td>
     <!-- <xsl:variable name="source-dir" select="document('summary.xml')/experiment/@source-dir"/> -->
     <xsl:variable name="source-dir"/>
     <xsl:variable name="prefix">
