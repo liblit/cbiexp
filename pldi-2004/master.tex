@@ -472,8 +472,8 @@ equivalence classes.  Two crash reports showing the same stack trace,
 or perhaps only the same top-of-stack function, are presumed to be two
 reports of the same failure.  This works to the extent that a single
 cause corresponds to a single point of failure, but our experience
-with \moss, \rhythmbox, and \exif suggests that this assumption may not often hold.  In \moss\ find
-that only bugs 2 and 5 have truly unique ``signature'' stacks: a
+with \moss, \rhythmbox, and \exif suggests that this assumption may not often hold.  In \moss,
+we find that only bugs 2 and 5 have truly unique ``signature'' stacks: a
 crash location which is present if and only if the corresponding bug
 was actually triggered.  These bugs are also our most deterministic.
 Bugs 4 and 6 also have nearly unique stack signatures.
