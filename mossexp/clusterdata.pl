@@ -80,10 +80,8 @@ snapshot_moss_bad 'mossbad2';
 
 
 sub diff ($$) {
-    check_system "diff -q @_ >/dev/null";
-    if ($? == 2) {
-	die "diff error while comparing @_";
-    }
+    check_system "cmp -s @_";
+    die "cmp error" if $? > 1;
     return $?;
 }
 
