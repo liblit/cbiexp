@@ -10,17 +10,18 @@
 #include "scaffold.h"
 #include "units.h"
 #include "sites.h"
+#include "utils.h"
 
 using namespace std;
 
 enum { LT, GEQ, EQ, NEQ, GT, LEQ };
 
-struct site_summary_t {
+struct site_info_t {
     int S[6], F[6];
     int os, of;
     bool retain[6];
     int lb[6]; 
-    site_summary_t()
+    site_info_t()
     {
 	os = of = 0;
 	for (int i = 0; i < 6; i++) {
@@ -32,7 +33,7 @@ struct site_summary_t {
     }
 };
 
-vector<vector<site_summary_t> > site_summary;
+vector<vector<site_info_t> > site_info;
 
 const float conf_map[10] = {
     1.645,  // 90%
@@ -104,10 +105,10 @@ void print_result_summary()
 
 inline void print_pred_info(FILE* fp, int u, int c, int p)
 {
-    int s  = site_summary[u][c].S[p];
-    int f  = site_summary[u][c].F[p];
-    int os = site_summary[u][c].os;
-    int of = site_summary[u][c].of;
+    int s  = site_info[u][c].S[p];
+    int f  = site_info[u][c].F[p];
+    int os = site_info[u][c].os;
+    int of = site_info[u][c].of;
 
     float fs = ((float)  f) / ( s +  f);
     float co = ((float) of) / (os + of);
@@ -150,7 +151,7 @@ void print_retained_preds()
             switch (units[u].s[0]) {
             case 'S':
 	        for (p = 0; p < 6; p++)
-	            if (site_summary[u][c].retain[p]) {
+	            if (site_info[u][c].retain[p]) {
 		        num_s_preds++;
 		        print_pred_info(fp, u, c, p);
 		        print_s_pred_name(fp, i, scalar_op[p]);
@@ -159,7 +160,7 @@ void print_retained_preds()
 	        break;
             case 'R':
 	        for (p = 0; p < 6; p++)
-	            if (site_summary[u][c].retain[p]) {
+	            if (site_info[u][c].retain[p]) {
 		        num_r_preds++;
 	                print_pred_info(fp, u, c, p);
 		        print_r_pred_name(fp, i, scalar_op[p]);
@@ -168,7 +169,7 @@ void print_retained_preds()
 	        break;
             case 'B':
 	        for (p = 0; p < 2; p++)
-	            if (site_summary[u][c].retain[p]) {
+	            if (site_info[u][c].retain[p]) {
 	                num_b_preds++;
 	                print_pred_info(fp, u, c, p);
 	                print_b_pred_name(fp, i, branch_op[p]);
@@ -192,17 +193,17 @@ void print_retained_preds()
 inline void inc(int r, int u, int c, int p)
 {                                  
     if (is_srun[r])                
-	site_summary[u][c].S[p]++; 
+	site_info[u][c].S[p]++; 
     else if (is_frun[r])           
-	site_summary[u][c].F[p]++; 
+	site_info[u][c].F[p]++; 
 }
 
 inline void obs(int r, int u, int c) 
 {                               
     if (is_srun[r])               
-	site_summary[u][c].os++; 
+	site_info[u][c].os++; 
     else if (is_frun[r])        
-	site_summary[u][c].of++; 
+	site_info[u][c].of++; 
 }
 
 void process_site(FILE* fp, int r, int u, int c)
@@ -244,19 +245,13 @@ void process_site(FILE* fp, int r, int u, int c)
 
 inline void cull(int u, int c, int p)
 {
-    int s  = site_summary[u][c].S[p];
-    int f  = site_summary[u][c].F[p];
-    int os = site_summary[u][c].os;
-    int of = site_summary[u][c].of;
-
-    float fs = ((float)  f) / ( s +  f);
-    float co = ((float) of) / (os + of);
-    float in = fs - co;
-    float lb = in - conf * sqrt(((fs * (1 - fs)) / (f + s)) + ((co * (1 - co))/(of + os)));
+    int s = site_info[u][c].S[p];
+    int f = site_info[u][c].F[p];
+    float lb = compute_lb(s, f, site_info[u][c].os, site_info[u][c].of, conf);
 
     if (lb > 0 && s + f >= 10) {
-        site_summary[u][c].retain[p] = true;
-        site_summary[u][c].lb[p] = (int) rint(lb * 100);  // cache lb for aggressive culling
+        site_info[u][c].retain[p] = true;
+        site_info[u][c].lb[p] = (int) rint(lb * 100);
     }
 }
 
@@ -288,7 +283,7 @@ void cull_preds()
 
 inline bool have_equal_increase(int u1, int c1, int p1, int u2, int c2, int p2)
 {
-    return site_summary[u1][c1].lb[p1] == site_summary[u2][c2].lb[p2];
+    return site_info[u1][c1].lb[p1] == site_info[u2][c2].lb[p2];
 }
 
 void cull_preds_aggressively1()
@@ -301,7 +296,7 @@ void cull_preds_aggressively1()
             case 'S':
             case 'R':
             {
-                site_summary_t& s = site_summary[u][c];
+                site_info_t& s = site_info[u][c];
 
                 if (s.retain[LEQ] &&
                     s.retain[LT ] &&
@@ -400,7 +395,7 @@ void cull_preds_aggressively1()
 
 inline bool is_eligible(int u, int c, int p, int s)
 {
-    return site_summary[u][c].retain[p] && 
+    return site_info[u][c].retain[p] && 
            (isdigit(sites[s + c].args[1][0]) || sites[s + c].args[1][0] != '-'); 
 }
 
@@ -413,7 +408,7 @@ void checkG(int u, int c, int p, int s)
             atoi(sites[s + c].args[1]) < atoi(sites[s + d].args[1]) &&
             ((is_eligible(u, d, GT , s) && have_equal_increase(u, c, p, u, d, GT )) ||
              (is_eligible(u, d, GEQ, s) && have_equal_increase(u, c, p, u, d, GEQ)))) {
-            site_summary[u][c].retain[p] = false;
+            site_info[u][c].retain[p] = false;
             break;
         }
     }
@@ -428,7 +423,7 @@ void checkL(int u, int c, int p, int s)
             atoi(sites[s + c].args[1]) > atoi(sites[s + d].args[1]) &&
             ((is_eligible(u, d, LT , s) && have_equal_increase(u, c, p, u, d, LT )) ||
              (is_eligible(u, d, LEQ, s) && have_equal_increase(u, c, p, u, d, LEQ)))) {
-            site_summary[u][c].retain[p] = false;
+            site_info[u][c].retain[p] = false;
             break;
         }
     }
@@ -543,8 +538,8 @@ int main(int argc, char** argv)
 
     conf = conf_map[confidence - 90];
 
-    site_summary.resize(num_units);
-    for (int u = 0; u < num_units; u++) site_summary[u].resize(units[u].c);
+    site_info.resize(num_units);
+    for (int u = 0; u < num_units; u++) site_info[u].resize(units[u].c);
 
     scaffold(compact_report_path_fmt, process_site);
 
