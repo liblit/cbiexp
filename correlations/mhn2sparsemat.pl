@@ -42,14 +42,18 @@ sub output_sparse {
     my $rs = $rlist->[$p];
     $row++;
     next if !defined $rs;
+    ## [[ need to change the input format to something like
+    ## F: [run1] [val1] [run2] [val2] ...
+    ## S: [run1] [val1] [run2] [val2] ...
     my (@runs) = split / /, $rs;
     for my $r (@runs) {
       my $ind = $hash->{$r} || die "No run defined for $r";
+      ## [[ need actual fractional count as opposed to 1 -- Alice]]
       print DATA "1\n";
-      print JC $ind-1, "\n";
+      print IR $ind-1, "\n";
     }
     $ctr += scalar(@runs);
-    print IR "$ctr\n";
+    print JC "$ctr\n";
   }
   print META "nruns = ", scalar(keys %{$hash}), "\nnpreds = $npreds\nnzmax = $ctr\n";
   close (JC);

@@ -1,6 +1,34 @@
 #include "mex.h"
 #include <math.h>
 
+/*
+ * This function reads fills a sparse matrix directly from data, jc, and ir
+ * files.  The input format is 
+ * SP = readsp(FILEROOT, NZMAX, M, N)
+ * The output SP will be a sparse matrix with M rows and N columns and
+ * nzmax non-zero elements
+ * FILEROOT is the name of the file holding the data vector in ascii text
+ * format, one element per line;
+ * FILEROOTir should be the file holding the ir vector
+ * FILEROOTjc should be the file holding the jc vector
+ * The calling program can use FILEEROOTmeta to figure out nzmax, M, and N,
+ * if the file exists.
+ */
+
+/*
+ * Note about the Matlab sparse matrix format:
+ * A Matlab sparse matrix of contains three vectors: data, ir, and jc.
+ *   data - an array of length nzmax containing all the non-zero data
+ *          elements of the matrix, stacked column-wise, i.e., the
+ *          non-zero elements of column 1 come before those of column 2
+ *	    before those of column 3, etc.
+ *   ir - an integer array of length nzmax, where
+ *        ir[i] is the row index of data[i]
+ *   jc - an integer array of length ncols+1, where
+ *        jc[j] is the index into data and ir of the first non-zero element
+ *        in column j
+ */
+
 void mexFunction (int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
   int M, N, nzmax, buflen, i;
@@ -33,16 +61,11 @@ void mexFunction (int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   printf ("Maximum number of non-zero elements is %d ", nzmax);
   printf ("M is %d and N is %d\n", M, N);
 
-  plhs[0] = mxCreateSparse(N, M, nzmax, 0);
+  plhs[0] = mxCreateSparse(M, N, nzmax, 0);
   dataX = mxGetPr(plhs[0]);
   datair = mxGetIr(plhs[0]);
   datajc = mxGetJc(plhs[0]);
 
-  /* note, the input format has row and column reversed,
-   * so the output matrix will be a transpose of 
-   * the input matrix
-   */
-  
   sprintf(buf, "%s", fnroot);
   printf ("Reading sparse matrix from %s\n", buf);
   datafd = fopen(buf, "r");
@@ -63,14 +86,14 @@ void mexFunction (int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       mexErrMsgTxt("Expecting more data");
     dataX++;
 
-    fscanf(jcfd, "%d", datair);
+    fscanf(irfd, "%d", datair);
     if (feof(jcfd))
       mexErrMsgTxt("Expecting more jc");
     datair++;
   }
 
   for (i = 0; i <= M; i++) {
-    fscanf (irfd, "%d", datajc);
+    fscanf (jcfd, "%d", datajc);
     if (feof(irfd)) 
       mexErrMsgTxt("Expecting more ir");
     datajc++;

@@ -53,6 +53,8 @@ sub output_calcAdj {
   my $name = $pref . "tr";
   my ($M, $N, $nzmax) = &read_meta("$in/$name.meta");
   print $fd "%%%%%% Calculate adjacency matrix for $pref files.\n";
+  print $fd "%%%%%%\n";
+  print $fd "%%%%%% M is the number of runs and N is the number of predicates.\n";
   print $fd "M = $M;\nN = $N;\nnzmax = $nzmax;\n";
   print $fd "A$pref = readsp('$in/$name.', nzmax, M, N);\n";
   print $fd "W$pref = A$pref' * A$pref;\n";
@@ -77,10 +79,10 @@ sub read_meta {
   while (<IN>) {
     chomp;
     if (/^nruns = ([0-9]+)/) {
-      $N = $1;
+      $M = $1;
     }
     elsif (/^npreds = ([0-9]+)/) {
-      $M = $1;
+      $N = $1;
     }
     elsif (/^nzmax = ([0-9]+)/) {
       $nzmax = $1;
