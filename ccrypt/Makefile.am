@@ -10,7 +10,7 @@ share/ccrypt.sites: $(ccrypt)
 	$(sampler_tooldir)/extract-section .debug_site_info $< >$@.
 	mv $@. $@
 
-build/src/ccrypt: build/Makefile force
+$(ccrypt): build/Makefile force
 	$(MAKE) -C $(<D)
 
 $(cyphertext): %.cpt: % $(ccrypt)
