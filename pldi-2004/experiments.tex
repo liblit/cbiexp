@@ -205,6 +205,8 @@ The three predicates are predictors of three separate, and previously unknown, c
 than 20 minutes of work to find and verify the cause of each of the bugs using these predicates
 and the additional highly correlated predicates on their affinity lists.
 
+\issue[Mayur]{I am not sure whether the EXIF example is at the right place.}
+
 We will next elucidate how one of the predicates reported in \autoref{tab:views-exif},
 \exifpred, enabled us to effectively isolate the cause of one of the bugs.
 The bug has the following unique stack trace:
@@ -300,3 +302,21 @@ several hours to isolate each of the two bugs, in part because \rhythmbox
 is complex and we were unfamiliar with it and in part because the bugs
 were violations of subtle invariants.  We could not have even begun to
 understand these bugs without the information provided by our tool.
+
+\issue[Mayur]{Saying that we were unfamiliar with rhythmbox probably
+  connotes that we were familiar with bc, ccrypt, and exif, when in
+  fact we weren't.  So I think it should go.  Secondly, saying that
+  the bugs were violations of subtle invariants may connote that those
+  found in the other experiments weren't violations of subtle
+  invarianta, which I think is not true.
+
+  How about saying that the bugs in \rhythmbox{} are related to
+  violations of complex heap invariants (as Alex noted long back) and
+  then mention that we currently do not track predicates on heap
+  structures (as Alex mentions at the end of the Background section
+  (sec 2)) and then round off the para by saying that we leave this
+  for future work?  Of course, we will retain the positive sentence
+  that is currently the last sentence of this para:
+
+  "We could not have even begun to understand these bugs without the
+  information provided by our tool"}

@@ -308,6 +308,12 @@ it scales much more gracefully in all the dimensions discussed above
 and for each selected predicate $P$ it naturally produces information
 that shows both how important (in number of explained program
 failures) and how accurate a predictor $P$ is.
+%%
+\issue[Mayur]{Change "We present a new algorithm ... based on
+  different techniques and offering significant improvements over
+  previous work" to "We present a new algorithm ... based on
+  techniques that are different from and offer significant
+  improvements over previous work"?}
 
 \item We validate the algorithm by a variety of experiments: We show
 improved results for the experiments in \cite{PLDI`03*141}; in a
@@ -382,7 +388,25 @@ Random sampling is added to a program via a source-to-source transformation.
 Our sampling transformation is general: any collection of
 statements within (or added to) a program may be designated as
 ``instrumentation'' and thereby sampled instead of run
-unconditionally.  That is, each time instrumentation code is reached,
+unconditionally.
+%%
+\issue[Mayur]{"Our sampling transformation is general: any collection
+  of stmts within (or added to) a program may be designated as
+  "instrumentation" and thereby sampled instead of run conditionally"
+
+  I didn't get the "within (or added to)" part.  I thought
+  instrumented code always refers to code that is added, and not code
+  that is within?
+
+  Ben later clarified this but we need to put it into the paper:
+
+  We can treat existing code as instrumentation to be sampled even if
+  we didn't add it ourself.  assert() statements are a clear candidate
+  for this sort of thing.  Our PLDI 2003 paper did this with the
+  assert-like statements added by CCured.  From our perspective, that
+  code is "within" the program, not "added to" it.}
+%%
+That is, each time instrumentation code is reached,
 a coin flip decides whether the instrumentation is executed or not.
 Coin flipping is simulated in a statistically fair
 manner equivalent to a Bernoulli process: each potential sample is
@@ -418,6 +442,15 @@ indicating whether the true or false branches were ever taken.
 %  values are a common source of bugs.  Each call site induces one
 %  instrumentation site with three counters: number of negative
 %  returns, number of zero returns, and number of positive returns.
+%%
+  \issue[Mayur]{ returns: ... We track three predicates: ...
+
+    $\leftarrow$
+
+    returns: ... We track six predicate: ...
+    
+    We should make the explanation of the returns scheme very similar
+    to that of the scalar-pairs scheme.}
 
 \item[scalar-pairs:] Many bugs
   concern boundary issues in the relationship between a 
@@ -432,10 +465,19 @@ Each compared-to $\mathtt{y}_i$
   \issue[Alice]{Changed to "we identify" to match the next sentence.}
 \end{description}
 
-These are natural properties to check and provide good
-coverage of a program's scalar values and control flow.  This set 
-is by no means complete, however; in particular, it would be useful
-to have predicates on heap structures as well.
+\issue[Mayur]{General comment on all three scheme descriptions:
+
+  We should mention somewhere that the predicates within a site are
+  *not* sampled independently, that is, if we decide to sample a site,
+  then we record the value of each predicate at that site.  In a
+  related comment, maybe we should also mention the constraint on each
+  scheme that for every predicate P that it produces, there must be a
+  predicate !P.
+
+  These are natural properties to check and provide good coverage of a
+  program's scalar values and control flow.  This set is by no means
+  complete, however; in particular, it would be useful to have
+  predicates on heap structures as well.}
 
 \section{Cause Isolation Algorithm}
 \label{sec:algorithm}
@@ -549,6 +591,10 @@ technique to model and thereby predict impending system failures.
 Instrumentation is assumed to be complete and is typically
 domain-specific.
 
+\issue[Mayur]{Add references to Ernst and Orso.  [I think we already
+  have enough references to these folks and the related work section
+  is already quite long.  Let us give this the least priority.]}
+
 \subsection{Comparison with Logistic Regression}
 \label{sec:comparison}
 
@@ -629,6 +675,19 @@ in complex software systems.  Our experimental results show that we can
 detect a wide variety of both anticipated and unanticipated causes of failure
 in realistic systems and do so with a relatively modest number of program
 executions.
+
+\issue[Mayur]{Add one or two lines about future work to the end of the
+  conclusions section:
+
+  (1) tracking predicates about the heap structure (remember
+  rhythmbox)
+  
+  (2) creating counterexamples (traces) from predicates by using
+  static analysis (will ward off any criticism that predicates aren't
+  always sufficient)}
+
+\issue[Alex]{For (2) I don't think we have anything intelligent to say
+  about how to do that, so I'd rather not mention it.}
 
 {\small
 \bibliography{cacm1990,gcbib,icse02,icse03,misc,nips16,paste02,pldi03,pods,ramss,refs}
