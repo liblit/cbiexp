@@ -28,7 +28,7 @@ process_run_labels_SOURCES = process_run_labels.cc
 process_run_labels_LDADD = libanalyze.a
 
 decimate_sparse_SOURCES = decimate-sparse.ll
-decimate_sprase_INCLUDES = $(CSL_CFLAGS)
+decimate_sparse_INCLUDES = $(GSL_CFLAGS)
 decimate_sparse_LDADD = libanalyze.a $(GSL_LIBS)
 
 
