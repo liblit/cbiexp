@@ -324,8 +324,8 @@ void print_result_summary()
     fprintf(result_summary_fp, "<html><body>\n<table>\n<tr>\n"
                                "<td align=middle><font size=\"+2\">Cooperative Bug Isolation Report</font></td>\n"
                                "<td rowSpan=2 align=right>"
-                               "<a href=\"http://www.cs.berkeley.edu/~liblit/sampler/\"><img src=\"http://www.cs.berkeley.edu/~liblit/sampler/logo.png\" style=\"border-style: none\"></a></td>\n</tr>\n"
-                               "</table>\n<br>\n");
+                               "<a href=\"%s\"><img src=\"http://www.cs.berkeley.edu/~liblit/sampler/logo.png\" style=\"border-style: none\"></a></td>\n</tr>\n"
+                               "</table>\n<br>\n", CBI_WEBPAGE);
     fprintf(result_summary_fp, "Experiment name: %s\n<p>\n", program_name);
     fprintf(result_summary_fp, "Generated on %s<p>\n", ctime(&t));
     fprintf(result_summary_fp, "# runs: %d [successful: %d failing: %d discarded: %d]\n<p>\n", num_runs, num_sruns, num_fruns, num_runs - (num_sruns + num_fruns));

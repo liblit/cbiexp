@@ -12,8 +12,8 @@ bin/map_sites: src/map_sites.cc src/def.h
 bin/format: src/format.cc
 	$(CC) $(CFLAGS) src/format.cc -o $@
 
-bin/gen_views: src/gen_views.cc 
-	$(CC) $(CFLAGS) src/gen_views.cc -o $@
+bin/gen_views: src/gen_views.cc src/def.h
+	$(CC) $(CFLAGS) src/gen_views.cc -Isrc -o $@
 
 bin/print_1_cluster: src/print_1_cluster.cc src/def.h 
 	$(CC) $(CFLAGS) src/print_1_cluster.cc -Isrc -o $@

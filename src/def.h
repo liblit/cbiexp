@@ -15,6 +15,7 @@
 #define I_REPORT_PATH_FMT "data/%d/reports"
 #define O_REPORT_PATH_FMT "data/%d/reports.new"
 #define LABEL_PATH_FMT "data/%d/label"
+#define CBI_WEBPAGE "http://www.cs.berkeley.edu/~liblit/sampler/"
 
 #define ALL_CLUSTER_FILE "summary.txt"
 #define PER_CLUSTER_FILE "cluster%d.txt"
