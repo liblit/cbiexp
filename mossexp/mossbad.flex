@@ -10,6 +10,7 @@
 /*  C, C++, Perl keywords and other fixed tokens */
 
 #include "lib/regions.h"
+#include "reporting.h"
 #define ralloc rstralloc
 
 typedef enum {
@@ -721,8 +722,7 @@ void startfun();
 <CCOMMENT>.				;
 <CCOMMENT>"*/"				BEGIN(nextstate);
 
-<C_MATCHCOMMENT>\n			{ fprintf(stderr,"Error 1: newline in C comment and matching on.\n Output may be erroneous\n"); }
-<C_MATCHCOMMENT>[ \t\r]*		{ }
+<C_MATCHCOMMENT>[ \t\r\n]*		{ check_bug_1(yytext, yyleng); }
 <C_MATCHCOMMENT>.			{ CODE_AND_RETURN((int) *yytext); } 
 <C_MATCHCOMMENT>"*/"			{ BEGIN(nextstate); }
 
@@ -1627,17 +1627,10 @@ void code_dynamic(char *str)
   key = hash(str);
   /* condition should be p && in the guard */
   for (p=bucket[key]; ; ) {
-    if (p) {
-      if (!STREQ(str,p->name)) {
-	p = p->next;
-	continue;
-      } else { 
-	break; 
-      }
-    } else { 
-      fprintf(stderr, "Error 5: missing null pointer check.\n"); 
-      p = p->next;
-    }
+    check_bug_5(p);
+    if (STREQ(str,p->name))
+      break;
+    p = p->next;
   }
   if (!p) {
 	p = (ident *) ralloc(config.mem_tokenization, sizeof(ident));
@@ -1784,9 +1777,7 @@ int write_database(char *name, fileinfo *files, int fsize, passage *passages, in
   FILE *f = fopen(name,"w");
   int i;
 
-  if (f == NULL) {
-    fprintf(stderr,"Error 2: Failed to check return value of fopen in write_database and fopen failed.\n");
-  }
+  check_bug_2(f);
 
   write_int_to_file(f,fsize);
   for(i = 0; i < fsize; i++) {
@@ -1867,11 +1858,8 @@ int read_database(char *name, fileinfo *files, int *fstart, int fmax, passage *p
 
   *fstart += numfiles;
   /* *pstart += numpassages;   causes an error if more than one database is loaded */  
-  *pstart = numpassages;   
-  numdatabases++;
-  if (numdatabases > 1) {
-    fprintf(stderr, "Error 3: may fail because more than one database is loaded.\n");
-  }
+  *pstart = numpassages;
+  check_bug_3();
 		
   if (DEBUG) fprintf(stderr,"Read %d files and %d passages from %s\n",numfiles,numpassages,name);
   return(0);
@@ -2224,9 +2212,8 @@ void init_passage_array() {
 void store_passage(passage *p) {
     if (DEBUG) dump_passage("storing passage ",p);	
     *ps++ = *p;
-    if (++pindex >= PASSAGE_ARRAY_SIZE) {
-	fprintf(stderr,"Error 6 happened. Program may die or have incorrect results.\n");
-    }
+    ++pindex;
+    check_bug_6a(pindex, PASSAGE_ARRAY_SIZE);
 }
 
 void dump_passage_array() {
@@ -2321,14 +2308,10 @@ int which_duplicate_in_file(int i, passage *p) {
 
     assert(first_tile_in_file(i));
     assert((p->fileid == fileid) && (p->tile == tile));
-    if (j >= pindex) { 
-      fprintf(stderr,"Error 8: Missing array bounds check in which_duplicate_in_file happened.\n");
-    }
-    for (; /* (j < pindex) && */ (passages[j].tile == tile) && (passages[j].fileid == fileid) && (passages[j].first_token != p->first_token); j++) {
-      if (j >= pindex) { 
-	fprintf(stderr,"Error 8: Missing array bounds check in which_duplicate_in_file happened.\n");
-      }
-    }
+    check_bug_8(j, pindex);
+    for (; /* (j < pindex) && */ (passages[j].tile == tile) && (passages[j].fileid == fileid) && (passages[j].first_token != p->first_token); j++)
+      check_bug_8(j, pindex);
+
     if ((j < pindex) && (passages[j].tile == tile) && (passages[j].fileid == fileid))
 	return j-i;
     else
@@ -2338,9 +2321,7 @@ int which_duplicate_in_file(int i, passage *p) {
 int nth_duplicate_in_file(int i, int n) {
     assert(first_tile_in_file(i));
 
-    if (i + n >= pindex) {
-      fprintf(stderr,"Error 7: Missing array bounds check in nth_duplicate_in_file happened.\n");
-    } 
+    check_bug_7(i, n, pindex);
 
     if ( /* (i+n < pindex) && */ (passages[i].tile == passages[i+n].tile) && (passages[i].fileid == passages[i+n].fileid))
 	return i+n;
@@ -3086,9 +3067,7 @@ void handle_options(int argc, char *argv[])
             continue; 
         }
 	if (STREQ(argv[i],"-p")) {
-	  if (i != 0) {
-	    fprintf(stderr,"Error 6: -p with small memory.\n");
-	  }
+	  check_bug_6b(i);
 	  config.passage_power = atoi(argv[++i]); /* optarg should be >= 0 */
 	  if (config.passage_power <= 0)
 	    {
@@ -3134,17 +3113,12 @@ void handle_options(int argc, char *argv[])
 	if (STREQ(argv[i],"-t")) {
             config.tile_size = atoi(argv[++i]);
             config.token_window_size =  config.tile_size+1;
-	    if (config.token_window_size >= TOKEN_WINDOW_SIZE_MAX) {
-	      fprintf(stderr, "Error 4: could fail with buffer overrun.\n");
-	    }	
+	    check_bug_4(config.token_window_size, TOKEN_WINDOW_SIZE_MAX);
             continue; 
         }
 	if (STREQ(argv[i],"-w")) {
            config.winnowing_window_size=  atoi(argv[++i]); 
-           if (config.winnowing_window_size> WINNOWING_WINDOW_SIZE_MAX)
-	       {
-		 fprintf(stderr,"Error 9: Winnowing window size is too large, could cause buffer overrun.\n");
-	       }
+	   check_bug_9(config.winnowing_window_size, WINNOWING_WINDOW_SIZE_MAX);
            continue; 
         }
 	fprintf(stderr,"Unrecognized option: %s\n",argv[i]);
