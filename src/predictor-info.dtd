@@ -2,7 +2,7 @@
 <!ELEMENT predictor-info (info*)>
 
 
-<!--------------------------------------------------------------------->
+<!--*****************************************************************-->
 
 
 <!-- "info" gives detailed information about a single candidate failure predictor.  This includes most of the static site information originally found on a single line of some ".sites" file.  This also includes some statistical information derived from the statistical debugging analysis.  Thus, this element contains both static and dynamic data. -->
@@ -34,7 +34,7 @@
 <!ATTLIST info cfg-node NMTOKEN #REQUIRED>
 
 
-<!--------------------------------------------------------------------->
+<!--*****************************************************************-->
 
 
 <!-- various dynamic statistics computed during filtering stage -->
