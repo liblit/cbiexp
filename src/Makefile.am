@@ -53,6 +53,8 @@ libanalyze_a_SOURCES =				\
 	MapSites.h				\
 	NumRuns.cc				\
 	NumRuns.h				\
+	PredCoords.cc				\
+	PredCoords.h				\
 	PredStats.cc				\
 	PredStats.h				\
 	Progress/Bounded.cc			\
@@ -69,6 +71,8 @@ libanalyze_a_SOURCES =				\
 	Rho.h					\
 	RunsDirectory.cc			\
 	RunsDirectory.h				\
+	SiteCoords.cc				\
+	SiteCoords.h				\
 	SourceDirectory.cc			\
 	SourceDirectory.h			\
 	Stylesheet.cc				\
@@ -112,6 +116,7 @@ liblate_a_SOURCES =				\
 	gen_preds_file.cc			\
 	gen_summary.cc				\
 	gen_views.cc				\
+	logreg.cc				\
 	max-observed.cc				\
 	preds.h					\
 	project.cc				\

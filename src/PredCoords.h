@@ -15,6 +15,12 @@ struct PredCoords : public SiteCoords
 };
 
 
+bool operator<(const PredCoords &, const PredCoords &);
+
+std::istream &operator>>(std::istream &, PredCoords &);
+std::ostream &operator<<(std::ostream &, const PredCoords &);
+
+
 namespace __gnu_cxx
 {
   template <> struct hash<PredCoords>

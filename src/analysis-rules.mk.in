@@ -38,6 +38,10 @@ links :=					\
 	link-cell.css				\
 	logo.css				\
 	logo.xsl				\
+	logreg.dtd				\
+	logreg.xsl				\
+	operand.dtd				\
+	operands.xsl				\
 	predictor-info.dtd			\
 	projected-view.dtd			\
 	projected-view.xsl			\
@@ -97,7 +101,7 @@ clean:: ; rm -f $(links)
 
 predictor-info.xml: xmlify-results preds.txt
 	./$< $(source-strip-prefixes:%=--strip-prefix=%) $(xmlify_results_flags)
-	$(build) $(@:.xml=.dtd) bug-o-meter.dtd
+	$(build) $(@:.xml=.dtd) bug-o-meter.dtd operand.dtd predictor-info.dtd
 	xmllint --valid --noout $@
 clean:: ; rm -f predictor-info.xml
 
@@ -163,7 +167,7 @@ compute-obs-tru: $(tooldir)/compute_obs_tru.o sites.o units.o
 clean:: ; rm -f compute-obs-tru
 
 $(filter %_none.xml, $(views)): gen-views preds.txt
-	$(build) view.dtd
+	$(build) operands.xsl view.dtd view.xsl
 	./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) $(view_flags)
 	xmllint --valid --noout $(filter %_none.xml, $(views))
 clean:: ; rm -f $(filter %_none.xml, $(views))
@@ -202,6 +206,16 @@ clean:: ; rm -f convert-reports
 s.runs f.runs: $(tooldir)/process_run_labels $(datadir)/stamp-labels
 	$(time) $< --runs-directory=$(datadir)
 clean:: ; rm -f s.runs f.runs
+
+logreg.xml: %.xml: %.txt %
+	./$* <$< >$@
+	$(build) logreg.dtd logreg.xsl operand.dtd operands.xsl view.css
+	xmllint --valid --noout $@
+clean:: ; rm -f logreg.xml
+
+logreg: %: $(tooldir)/%.o sites.o units.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
+clean:: ; rm -f logreg
 
 prior-dist: fpriors.dat spriors.dat
 fpriors.dat spriors.dat: $(tooldir)/gather_prior_dist s.runs f.runs preds.txt

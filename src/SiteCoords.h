@@ -16,6 +16,7 @@ struct SiteCoords
 };
 
 
+bool operator<(const SiteCoords &, const SiteCoords &);
 bool operator==(const SiteCoords &, const SiteCoords &);
 
 std::istream &operator>>(std::istream &, SiteCoords &);
