@@ -106,75 +106,44 @@ void print_pred_name(FILE* fp, int site, int p)
 	    sites[site].fun, sites[site].file, sites[site].line);
 }
 
-
-static void process_sites(FILE *fp, int u, void (*handler)(int, int, int, int))
-{
-    for (int c = 0; c < units[u].num_sites; ++c) {
-	int x, y;
-	if (fscanf(fp, "%d\t%d\n", &x, &y) == 2)
-	    handler(u, c, x, y);
-	else {
-	    fprintf(stderr, "corrupted counts for unit %d, site %d\n", u, c);
-	    exit(1);
-	}
-    }
-}
-
-
-static void process_sites(FILE *fp, int u, void (*handler)(int, int, int, int, int))
-{
-    for (int c = 0; c < units[u].num_sites; ++c) {
-	int x, y, z;
-	if (fscanf(fp, "%d\t%d\t%d\n", &x, &y, &z) == 3)
-	    handler(u, c, x, y, z);
-	else {
-	    fprintf(stderr, "corrupted counts for unit %d, site %d\n", u, c);
-	    exit(1);
-	}
-    }
-}
-
-
-static void process_sites(FILE *fp, int u, void (*handler)(int, int, int, int, int, int))
-{
-    for (int c = 0; c < units[u].num_sites; ++c) {
-	int x, y, z, w;
-	if (fscanf(fp, "%d\t%d\t%d\t%d\n", &x, &y, &z, &w) == 4)
-	    handler(u, c, x, y, z, w);
-	else {
-	    fprintf(stderr, "corrupted counts for unit %d, site %d\n", u, c);
-	    exit(1);
-	}
-    }
-}
-
-
 void process_report(FILE* fp,
                     void (*process_s_site)(int u, int c, int x, int y, int z),
                     void (*process_r_site)(int u, int c, int x, int y, int z),
                     void (*process_b_site)(int u, int c, int x, int y),
                     void (*process_g_site)(int u, int c, int x, int y, int z, int w))
 {
+    int u, c, x, y, z, w;
     bool problem = false;
 
     while (1) {
-	int u;
         fscanf(fp, "%d\n", &u);
         if (feof(fp))
             break;
 	if (u < num_units)
 	    switch (units[u].scheme_code) {
 	    case 'S':
-		process_sites(fp, u, process_s_site);
+		for (c = 0; c < units[u].num_sites; c++) {
+		    fscanf(fp, "%d %d %d\n", &x, &y, &z);
+		    process_s_site(u, c, x, y, z);
+		}
 		break;
 	    case 'B':
-		process_sites(fp, u, process_b_site);
+		for (c = 0; c < units[u].num_sites; c++) {
+		    fscanf(fp, "%d %d\n", &x, &y);
+		    process_b_site(u, c, x, y);
+		}
 		break;
 	    case 'R':
-		process_sites(fp, u, process_r_site);
+		for (c = 0; c < units[u].num_sites; c++) {
+		    fscanf(fp, "%d %d %d\n", &x, &y, &z);
+		    process_r_site(u, c, x, y, z);
+		}
 		break;
 	    case 'G':
-		process_sites(fp, u, process_g_site);
+		for (c = 0; c < units[u].num_sites; c++) {
+		    fscanf(fp, "%d %d %d %d\n", &x, &y, &z, &w);
+		    process_g_site(u, c, x, y, z, w);
+		}
 		break;
 	    default:
 		fprintf(stderr, "unit %d has unknown scheme code '%c'\n",

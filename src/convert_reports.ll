@@ -3,14 +3,22 @@
 #include <cerrno>
 #include <cstdio>
 #include <cstring>
+#include <iostream>
+#include <string>
 #include "units.h"
+
+using namespace std;
 
 
 static FILE *ofp = NULL;
 
-static char get_scheme_code(char* scheme_str);
-static int get_unit_indx(char scheme_code, const char* signature);
- 
+static int get_unit_indx(char scheme_code, const string &signature);
+
+string signature;
+string scheme;
+unsigned sitesActual;
+unsigned sitesExpected;
+
 %}
 
 
@@ -21,7 +29,12 @@ static int get_unit_indx(char scheme_code, const char* signature);
 %option nounput
 %option read
 
-%x COUNTS
+%x SITES_2
+%x SITES_3
+%x SITES_4
+
+
+uint 0|[1-9][0-9]*
 
 
 %%
@@ -35,20 +48,43 @@ static int get_unit_indx(char scheme_code, const char* signature);
 
 <INITIAL><samples\ unit=\"[0-9a-f]{32}\"\ scheme=\"[-a-z]+\">\n {
     /* Initially look for a starting <samples> tag. */
-    BEGIN(COUNTS);
 
-    const char *signature = strchr(yytext, '\"');
-    signature++;
-    char *t = strchr(signature, '\"');
-    *t = '\0';
-    t++;
-    char *scheme_str = strchr(t, '\"');
-    scheme_str++;
-    t = strchr(scheme_str, '\"');
-    *t = '\0';
+    {
+	const char * const signaturePtr = strchr(yytext, '\"') + 1;
+	char *t = strchr(signaturePtr, '\"');
+	*t = '\0';
+	signature = signaturePtr;
 
-    const int indx = get_unit_indx(get_scheme_code(scheme_str), signature);
+	t++;
+	const char * const schemePtr = strchr(t, '\"') + 1;
+	t = strchr(schemePtr, '\"');
+	*t = '\0';
+	scheme = schemePtr;
+    }
+
+    char schemeCode;
+    if (scheme == "scalar-pairs") {
+	schemeCode = 'S';
+	BEGIN(SITES_3);
+    } else if (scheme == "branches") {
+	schemeCode = 'B';
+	BEGIN(SITES_2);
+    } else if (scheme == "returns") {
+	schemeCode = 'R';
+	BEGIN(SITES_3);
+    } else if (scheme == "g-object-unref") {
+	schemeCode = 'G';
+	BEGIN(SITES_4);
+    } else {
+	cerr << "unknown scheme \"" << scheme << "\"\n";
+	exit(1);
+    }
+
+    const int indx = get_unit_indx(schemeCode, signature);
+    assert(units[indx].scheme_code == schemeCode);
     fprintf(ofp, "%d\n", indx);
+    sitesExpected = units[indx].num_sites;
+    sitesActual = 0;
 }
 
 <INITIAL>[^<]+|< {
@@ -56,15 +92,40 @@ static int get_unit_indx(char scheme_code, const char* signature);
 }
 
 
-<COUNTS><\/samples> {
+<SITES_2,SITES_3,SITES_4><\/samples>\n {
     /* Counts end at the closing </samples> tag. */
     /* Sanity check that we got as many sites as we expected. */
+    if (sitesActual != sitesExpected) {
+	cerr << "site count mismatch: got " << sitesActual << ", expected " << sitesExpected << '\n'
+	     << "\tunit: " << signature << '\n'
+	     << "\tscheme: " << scheme << '\n';
+	exit(1);
+    }
     BEGIN(INITIAL);
 }
 
-<COUNTS>[^<]+|< {
-    /* Copy counts to ouput unchanged. */
+<SITES_2>{uint}\t{uint}\n {
+    ++sitesActual;
     fputs(yytext, ofp);
+}
+
+<SITES_3>{uint}\t{uint}\t{uint}\n {
+    ++sitesActual;
+    fputs(yytext, ofp);
+}
+
+<SITES_4>{uint}\t{uint}\t{uint}\t{uint}\n {
+    ++sitesActual;
+    fputs(yytext, ofp);
+}
+
+
+<SITES_2,SITES_3,SITES_4>.*\n|. {
+    cerr << "malformed input near \"" << yytext << "\"\n"
+	 << "\tunit: " << signature << '\n'
+	 << "\tscheme: " << scheme << '\n'
+	 << "\tsite: " << sitesActual << '\n';
+    exit(1);
 }
 
 
@@ -82,22 +143,15 @@ char* fruns_txt_file = NULL;
 char* verbose_report_path_fmt = NULL;
 char* compact_report_path_fmt = NULL;
 
-static char get_scheme_code(char* scheme_str)
-{
-    if (!strcmp(scheme_str, "scalar-pairs"))   return 'S';
-    if (!strcmp(scheme_str, "branches"    ))   return 'B';
-    if (!strcmp(scheme_str, "returns"     ))   return 'R';
-    if (!strcmp(scheme_str, "g-object-unref")) return 'G';
-    assert(0);
-}
-
-static int get_unit_indx(char scheme_code, const char* signature)
+static int get_unit_indx(char scheme_code, const string &signature)
 {
     for (int i = 0; i < num_units; i++)
-        if (scheme_code == units[i].scheme_code && strcmp(signature, units[i].signature) == 0)
-            return i;
+	if (scheme_code == units[i].scheme_code && signature == units[i].signature)
+	    return i;
 
-    fprintf(stderr, "no static site information for dynamic report:\n\tsignature: %s\n\tscheme: %c\n", signature, scheme_code);
+    cerr << "site count mismatch: got " << sitesActual << ", expected " << sitesExpected << '\n'
+	 << "\tunit: " << signature << '\n'
+	 << "\tscheme: " << scheme_code << '\n';
     exit(1);
 }
 
@@ -126,11 +180,11 @@ void process_cmdline(int argc, char** argv)
 	}
 	if (!strcmp(argv[i], "-h")) {
 	    puts("Usage: convert-reports <options>\n"
-                 "(r) -s  <sruns-file>\n"
-                 "(r) -f  <fruns-file>\n"
-                 "(r) -vr <verbose-report-path-fmt>\n"
-                 "(w) -cr <compact-report-path-fmt>\n"
-            );
+		 "(r) -s  <sruns-file>\n"
+		 "(r) -f  <fruns-file>\n"
+		 "(r) -vr <verbose-report-path-fmt>\n"
+		 "(w) -cr <compact-report-path-fmt>\n"
+	    );
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
