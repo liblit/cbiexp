@@ -2,6 +2,7 @@
 #define INCLUDE_SiteCoords_h
 
 #include <cstddef>
+#include <iosfwd>
 
 
 struct SiteCoords
@@ -17,6 +18,9 @@ struct SiteCoords
 
 bool operator==(const SiteCoords &, const SiteCoords &);
 
+std::istream &operator>>(std::istream &, SiteCoords &);
+std::ostream &operator<<(std::ostream &, const SiteCoords &);
+
 
 namespace __gnu_cxx
 {
@@ -31,6 +35,9 @@ namespace __gnu_cxx
 
 
 ////////////////////////////////////////////////////////////////////////
+
+
+#include <iostream>
 
 
 inline
@@ -54,10 +61,25 @@ SiteCoords::hash() const
 }
 
 
-inline bool operator==(const SiteCoords &a, const SiteCoords &b)
+inline bool
+operator==(const SiteCoords &a, const SiteCoords &b)
 {
   return a.unitIndex == b.unitIndex
     && a.siteOffset == b.siteOffset;
+}
+
+
+inline std::istream &
+operator>>(std::istream &in, SiteCoords &coords)
+{
+  return in >> coords.unitIndex >> coords.siteOffset;
+}
+
+
+inline std::ostream &
+operator<<(std::ostream &out, const SiteCoords &coords)
+{
+  return out << coords.unitIndex << '\t' << coords.siteOffset;
 }
 
 
