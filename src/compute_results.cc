@@ -170,7 +170,7 @@ void print_scalar_pred(FILE* fp, char* pred, char op, bool is_neg)
     if (is_neg) fputc(')', fp);
 }
 
-bool print_site_summary(int u, int c, char* site_name)
+void print_site_summary(int u, int c, char* site_name)
 {
     pred_name n;
     int p, count = 0;
