@@ -11,7 +11,7 @@ use strict;
 
 
 my $timeout = shift;
-my $basename = shift;
+my $variant = shift;
 
 
 ########################################################################
@@ -31,10 +31,10 @@ while ($ready = $select->can_read($timeout)
 }
 
 my $elapsed = time - $start;
-my $timeHandle = new FileHandle "$basename.time", 'w';
+my $timeHandle = new FileHandle "$variant/time", 'w';
 $timeHandle->print("$elapsed\n");
 
-my $exitHandle = new FileHandle "$elapsed.exit", 'w';
+my $exitHandle = new FileHandle "$variant/exit", 'w';
 if ($ready) {
     $handle->close;
     my $signal = $? & 127;

@@ -89,14 +89,17 @@ sub diff ($$) {
 
 
 sub run_moss ($$$) {
-    my ($environment, $executable, $basename) = @_;
+    my ($environment, $executable, $variant) = @_;
 
     # assemble the shell command
-    my $command = "$watchdog 600 $basename $MPATH/$executable $full_option_list -a manifest >$basename.stdout 2>$basename.stderr";
+    my $command = "$watchdog 600 $variant $MPATH/$executable $full_option_list -a manifest >$variant/stdout 2>$variant/stderr";
     $command = "$environment $command" if $environment;
 
+    # build data files directory
+    mkdir $variant or die "mkdir $variant failed: $!";
+
     # record it for posterity
-    my $commandHandle = new FileHandle "$basename.command", 'w';
+    my $commandHandle = new FileHandle "$variant/command", 'w';
     $commandHandle->print("$command\n");
 
     # run the command
@@ -110,16 +113,16 @@ sub run_moss_good () {
 
 
 sub run_moss_bad ($) {
-    my $basename = shift;
+    my $variant = shift;
 
     # run buggy moss and record various outputs
-    run_moss "SAMPLER_FILE=$basename.reports", "moss$basename", $basename;
+    run_moss "SAMPLER_FILE=$variant/reports", "moss$variant", $variant;
 
     # compare with reference
-    my $outputDiff = diff "$basename.stdout", 'good.stdout';
-    my $exitDiff = diff "$basename.exit", 'good.exit';
-    my $failHandle = new FileHandle "$basename.fail", 'w';
-    $failHandle->print($outputDiff || $exitDiff);
+    my $outputDiff = diff "$variant/stdout", 'good/stdout';
+    my $exitDiff = diff "$variant/exit", 'good/exit';
+    my $failHandle = new FileHandle "$variant/fail", 'w';
+    $failHandle->print($outputDiff || $exitDiff, "\n");
 }
 
 
