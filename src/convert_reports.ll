@@ -13,7 +13,12 @@ static int get_unit_indx(char scheme_code, const char* signature);
 %}
 
 
+%option 8bit
+%option align
+%option fast
+%option nodefault
 %option nounput
+%option read
 
 %x COUNTS
 

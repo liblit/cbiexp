@@ -1,5 +1,4 @@
 AM_CPPFLAGS = -W -Wall -Werror
-AM_LFLAGS = -CFar -s
 
 noinst_PROGRAMS =				\
 	analyze_runs				\
