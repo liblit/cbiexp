@@ -39,13 +39,13 @@ const char* s_op[6] = { "<", ">=", "==", "!=", ">", "<=" };
 const char* r_op[6] = { "<", ">=", "==", "!=", ">", "<=" };
 const char* b_op[2] = { "is FALSE", "is TRUE" };
 
-void print_pred_full(FILE* fp, pred_stat ps, int s, int f, int site, int p)
+void print_pred_full(FILE* fp, pred_stat ps, int s, int f, int os, int of, int site, int p)
 {
-    print_pred_stat(fp, ps, s, f);
+    print_pred_stat(fp, ps, s, f, os, of);
     print_pred_name(fp, site, p);
 }
 
-void print_pred_stat(FILE* fp, pred_stat ps, int s, int f)
+void print_pred_stat(FILE* fp, pred_stat ps, int s, int f, int os, int of)
 {
     float f1 = ps.co * 100;
     float f2 = ps.lb * 100;
@@ -53,7 +53,7 @@ void print_pred_stat(FILE* fp, pred_stat ps, int s, int f)
     float f4 = (1.0 - ps.fs) * 100;
     fprintf(fp, "<td>"
                 "<table class=\"scores\" style=\"width: %dpx\" "
-                "title=\"Context: %.0f%% Lower Bound: %.0f%%, Increase: %.0f%%, Fail: %.0f%%, true in %d S and %d F runs\">"
+                "title=\"Ctxt: %.0f%% LB: %.0f%%, Incr: %.0f%%, Fail: %.0f%%; tru in %d S and %d F; obs in %d S and %d F\">"
                 "<tr>"
                 "<td class=\"f1\" style=\"width: %.2f%%\"/>"
                 "<td class=\"f2\" style=\"width: %.2f%%\"/>"
@@ -62,7 +62,7 @@ void print_pred_stat(FILE* fp, pred_stat ps, int s, int f)
                 "</tr>"
                 "</table>"
                 "</td>",
-        (int) floor(log10(s + f) * 60), f1, f2, ps.in * 100, ps.fs * 100, s, f, f1, f2, f3, f4);
+        (int) floor(log10(s + f) * 60), f1, f2, ps.in * 100, ps.fs * 100, s, f, os, of, f1, f2, f3, f4);
 }
 
 void print_pred_name(FILE* fp, int site, int p)
