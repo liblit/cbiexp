@@ -3067,7 +3067,6 @@ void handle_options(int argc, char *argv[])
             continue; 
         }
 	if (STREQ(argv[i],"-p")) {
-	  check_bug_6b(i);
 	  config.passage_power = atoi(argv[++i]); /* optarg should be >= 0 */
 	  if (config.passage_power <= 0)
 	    {
