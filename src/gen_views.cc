@@ -11,8 +11,8 @@
 #include "Score/HarmonicMeanLog.h"
 #include "Score/HarmonicMeanSqrt.h"
 #include "Score/Increase.h"
-#include "Score/IncreaseFails.h"
 #include "Score/LowerBound.h"
+#include "Score/LowerTimesFails.h"
 #include "Score/TrueInFails.h"
 #include "Stylesheet.h"
 #include "ViewPrinter.h"
@@ -54,7 +54,7 @@ gen_views(const string &scheme, Stats &stats)
     gen_view<Increase>(scheme, stats);
     gen_view<Fail>(scheme, stats);
     gen_view<TrueInFails>(scheme, stats);
-    gen_view<IncreaseFails>(scheme, stats);
+    gen_view<LowerTimesFails>(scheme, stats);
     gen_view<HarmonicMeanLog>(scheme, stats);
     gen_view<HarmonicMeanSqrt>(scheme, stats);
 }
