@@ -2,7 +2,7 @@
 #include <cassert>
 #include <cmath>
 
-int main(int argc, char** argv)
+int main(int, char**)
 {
     char str[8000];
     char sc;
