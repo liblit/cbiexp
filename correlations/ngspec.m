@@ -9,4 +9,4 @@ disp('Doing eigendecomposition');
 disp('Normalizing');
 Y = V./repmat(sqrt(sum(V.^2,2)),1,K);
 disp('Running kmeans');
-[groups, centers] = kmeans_fast(Y,K);
+[groups, centers] = kmeans_fast(Y,K, inf);

@@ -13,21 +13,21 @@ die $usage if !defined $datadir || !defined $outdir;
 print "Reading info...\n";
 my ($farr, $fhash) = read_info("$datadir/f.runs");
 my ($sarr, $shash) = read_info("$datadir/s.runs");
-my ($parr, $phash) = read_info("$datadir/preds.txt");
-my $npreds = scalar(keys %{$phash});
 
 print "Reading counts...\n";
-my ($ftr, $str) = read_counts("$datadir/tru.txt");
-my ($fobs, $sobs) = read_counts("$datadir/obs.txt");
-
-print "Outputting sparse matrix ftr\n";
-output_sparse("$outdir/ftr", $ftr, $farr, $fhash);
+my ($fobs, $sobs, $npreds) = read_counts("$datadir/obs.txt");
 print "Outputting sparse matrix fobs\n";
 output_sparse("$outdir/fobs", $fobs, $farr, $fhash);
-print "Outputting sparse matrix str\n";
-output_sparse("$outdir/str", $str, $sarr, $shash);
 print "Outputting sparse matrix sobs\n";
 output_sparse("$outdir/sobs", $sobs, $sarr, $shash);
+$fobs = undef;
+$sobs = undef;
+
+my ($ftr, $str, undef) = read_counts("$datadir/tru.txt");
+print "Outputting sparse matrix ftr\n";
+output_sparse("$outdir/ftr", $ftr, $farr, $fhash);
+print "Outputting sparse matrix str\n";
+output_sparse("$outdir/str", $str, $sarr, $shash);
 
 sub output_sparse {
   my ($fn, $rlist, $arr, $hash) = (@_);
@@ -60,24 +60,19 @@ sub output_sparse {
 sub read_counts {
   my ($fn) = (@_);
   my (@farr, @sarr);
+  my $k = 0;
   open (IN, "$fn") || die "Open: $!";
   while (<IN>) {
-    chomp;
-    my $key = $_;
-    my $k = $phash->{$key};
-    die "No index for $key" if !defined $k;
-    die "Duplicate pred $key" if defined $farr[$k-1];
-    die "Duplicate pred $key" if defined $sarr[$k-1];
-    $_ = <IN>;
     chomp; s/^F: //; s/\s+$//;
-    $farr[$k-1] = $_; 
+    $farr[$k] = $_; 
     $_ = <IN>;
     chomp; s/^S: //; s/\s+$//;
-    $sarr[$k-1] = $_;
+    $sarr[$k] = $_;
+    $k++;
   }
   close (IN);
 
-  return (\@farr, \@sarr);
+  return (\@farr, \@sarr, $k);
 }
 
 sub read_info {
@@ -89,7 +84,7 @@ sub read_info {
   while (<INFO>) {
     chomp;
     ## kluge for to get rid of leading zero's in the runlist of ccrypt and bc
-    s/^0*//; 
+    ##s/^0*//; 
     push @info, $_;
     $info{$_} = $k++;
   }

@@ -1,4 +1,4 @@
-function [groups, centers] = kmeans_fast (data, K),
+function [groups, centers] = kmeans_fast (data, K, t),
   % function [groups, centers] = kmeans (data, K),
   %   data(i,j) = feature j of data point i,
   %   K = number of groups
@@ -11,9 +11,11 @@ ind = randperm (M);
 centers = data(ind(1:K),:);
 newcenters = zeros (K,N);
 numchanged = N;
-while numchanged > 0,
+iter = 1;
+while numchanged > 0 & iter < t,
+  if mod(iter, 100) == 0, disp(iter); end;
   [newgroups, newcenters, numchanged] = kmeans_innerloop(data',groups',centers');
   groups = newgroups';
   centers = newcenters';
+  iter = iter + 1;
 end;
-

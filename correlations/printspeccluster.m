@@ -3,7 +3,7 @@ function printspeccluster(cormat, groups, K, outdir, fndiff, plistfn, porderfn),
 %% group membership is held in groups
 %% number of clusters is K
 
-fn = sprintf('%s/predlist-speccluster%s.txt', outdir, fndiff);
+fn = sprintf('%s/cluster-predlist-%s.txt', outdir, fndiff);
 fd = fopen(fn, 'w');
 
 preds = load(plistfn);
@@ -22,18 +22,27 @@ for k = 1:K,
     continue;
   end;
 
-  %% rank them by increase score
-  grank = predrank(groupk);
-  [val, inds] = sort(grank);
-
-  p1 = groupk(inds(1));
-  num1 = preds(groupk(inds(1)));
-  fprintf (fd, '%d: ', num1);
-  for i = inds(2:end)',
-    p2 = groupk(i);
-    num2 = preds(p2);
-    fprintf(fd, '%d %.6g ', num2, cormat(p1,p2));
+  %% figure out the cluster centroid and output the correlation with respect
+  %% to it
+  centerk = mean(cormat(groupk,:),1);
+  for i = 1:length(groupk),
+    fprintf(fd, '%d %.6g ', groupk(i)-1, centerk(groupk(i)));
   end;
   fprintf (fd, '\n');
+
+  %% rank them by increase score
+
+  %% grank = predrank(groupk);
+  %% [val, inds] = sort(grank);
+
+  %% p1 = groupk(inds(1));
+  %% num1 = preds(groupk(inds(1)));
+  %% fprintf (fd, '%d: ', num1);
+  %% for i = inds(2:end)',
+    %% p2 = groupk(i);
+    %% num2 = preds(p2);
+    %% fprintf(fd, '%d %.6g ', num2, cormat(p1,p2));
+  %% end;
+  %% fprintf (fd, '\n');
 end;
 fclose (fd);

@@ -1,23 +1,7 @@
 # convert the data in /moa/sc3/mhn/for_alice/ to sparse matrix format like
 # that output by db2sparsemat.c in ../graphalgs
 
-./mhn2sparsemat.pl /moa/sc3/mhn/rb/base rb/base
-
-## do a bunch of things in ../graphalgs to calculate the correlation matrix
-## and run spectral clustering
-
-./resolve-clusters_html.pl < ../graphalgs/rhythmbox/data1/predlist-speccluster1-0.25.txt > html/specclusters.html
-
-./resolve-clusters_html.pl < ../graphalgs/rhythmbox/data1/predlist-corcluster-0.3.txt > html/corclusters0.3.html
-
-
-./mhn2sparsemat.pl /moa/sc3/mhn/rb/base rb/base
-./mhn2sparsemat.pl /moa/sc3/mhn/moss/data10 moss/data10
-./mhn2sparsemat.pl /moa/sc3/mhn/moss/data11 moss/data11
-./mhn2sparsemat.pl /moa/sc3/mhn/rb/fix1 rb/fix1
-./mhn2sparsemat.pl /moa/sc3/mhn/rb/fix2 rb/fix2
-./mhn2sparsemat.pl /moa/sc3/mhn/ccrypt ccrypt
-./mhn2sparsemat.pl /moa/sc3/mhn/bc bc
+./mhn2sparsemat.pl moss/data10 moss/data10
 
 
 ## to be run in matlab
@@ -25,7 +9,7 @@
 ./resolve-clusters_html.pl rb/base < rb/base/predlist-speccluster1-0.25.txt
 
 ./genMscript.pl moss/data10 
-./resolve-clusters_html.pl moss/data10 < moss/data10/predlist-speccluster1-0.25.txt
+./resolveClusters.pl moss/data10 moss/data10/cluster-summary-1-0.25.txt moss/data10/cluster-predlist-1-0.25.txt
 
 ./genMscript.pl moss/data11
 ./resolve-clusters_html.pl moss/data11 < moss/data11/predlist-speccluster1-0.25.txt
