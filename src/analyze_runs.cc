@@ -323,8 +323,8 @@ int main(int argc, char** argv)
 	REQUIRE("-do-convert-reports", "-f" , fruns_txt_file);
 	REQUIRE("-do-convert-reports", "-us", units_src_file);
 	puts("Converting reports ...");
-	shell("%s %s/convert_reports.o %s/classify_runs.o %s.o -o %s %s",
-	      linker, objdir, objdir, units_src_file, CONVERT_REPORTS, lexlib);
+	shell("%s %s/convert_reports.o %s.o -L%s -lanalyze -o %s %s",
+	      linker, objdir, units_src_file, objdir, CONVERT_REPORTS, lexlib);
 	shell("%s -s %s -f %s -vr %s -cr %s",
 	      CONVERT_REPORTS, sruns_txt_file, fruns_txt_file, verbose_report_path_fmt, compact_report_path_fmt);
     }
@@ -340,8 +340,8 @@ int main(int argc, char** argv)
 	puts("Computing results ...");
 	preds_txt_file = DEFAULT_PREDS_TXT_FILE;
 	result_summary_htm_file = DEFAULT_RESULT_SUMMARY_HTM_FILE;
-	shell("%s %s/compute_results.o %s/classify_runs.o %s/utils.o %s.o %s.o -o %s",
-	      linker, objdir, objdir, objdir, sites_src_file, units_src_file, COMPUTE_RESULTS);
+	shell("%s %s/compute_results.o %s.o %s.o -L%s -lanalyze -o %s",
+	      linker, objdir, sites_src_file, units_src_file, objdir, COMPUTE_RESULTS);
 	shell("%s -e %s -d %s -c %s -s %s -f %s -cr %s -p %s -r %s",
 	      COMPUTE_RESULTS, experiment_name, program_src_dir, confidence,
               sruns_txt_file, fruns_txt_file, compact_report_path_fmt,
@@ -368,8 +368,8 @@ int main(int argc, char** argv)
 	puts("Computing obs and tru ...");
 	obs_txt_file = DEFAULT_OBS_TXT_FILE;
 	tru_txt_file = DEFAULT_TRU_TXT_FILE;
-	shell("%s %s/compute_obs_tru.o %s/classify_runs.o %s/utils.o %s.o %s.o -o %s",
-	      linker, objdir, objdir, objdir, sites_src_file, units_src_file, COMPUTE_OBS_TRU);
+	shell("%s %s/compute_obs_tru.o %s.o %s.o -L%s -lanalyze -o %s",
+	      linker, objdir, sites_src_file, units_src_file, objdir, COMPUTE_OBS_TRU);
 	shell("%s -s %s -f %s -p %s -cr %s -o %s -t %s",
 	      COMPUTE_OBS_TRU, sruns_txt_file, fruns_txt_file, preds_txt_file,
               compact_report_path_fmt, obs_txt_file, tru_txt_file);
@@ -380,8 +380,8 @@ int main(int argc, char** argv)
 	REQUIRE("-do-print-results-1", "-p", preds_txt_file);
         REQUIRE("-do-print-results-1", "-ss", sites_src_file);
         REQUIRE("-do-print-results-1", "-us", units_src_file);
-	shell("%s %s/gen_views.o %s/utils.o %s.o %s.o -L%s -lanalyze -o %s",
-	      linker, objdir, objdir, sites_src_file, units_src_file, objdir, GEN_VIEWS);
+	shell("%s %s/gen_views.o %s.o %s.o -L%s -lanalyze -o %s",
+	      linker, objdir, sites_src_file, units_src_file, objdir, GEN_VIEWS);
 	puts("Pretty-printing results-1 ...");
 	gen_views(preds_txt_file, 0);
     }
