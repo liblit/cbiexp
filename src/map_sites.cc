@@ -35,7 +35,8 @@ char get_scheme_code(char* scheme_str)
     if (!strcmp(scheme_str, "branches"      )) return 'B';
     if (!strcmp(scheme_str, "returns"       )) return 'R';
     if (!strcmp(scheme_str, "g-object-unref")) return 'G';
-    assert(0);
+    fprintf(stderr, "no scheme code for unknown scheme \"%s\"\n", scheme_str);
+    exit(1);
 }
 
 char* get_scheme_code_and_signature(char* x)
