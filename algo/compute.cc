@@ -4,11 +4,11 @@
 #include "preds.h"
 
 /*
- if (i < NUM_SUCCESS_RUNS)
-     map[i] is the i_th good run specified in file SUCCESS_FILE 
- else
-     map[i] is the (NUM_SUCCESS_RUNS - i)_th bad run specified in file FAILURE_FILE
-*/
+ * if (i < NUM_SUCCESS_RUNS)
+ *    map[i] is the i_th good run specified in file SUCCESS_FILE 
+ * else
+ *    map[i] is the (NUM_SUCCESS_RUNS - i)_th bad run specified in file FAILURE_FILE
+ */
 int map[NUM_RUNS];
 
 enum pred_kind {
