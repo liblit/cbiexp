@@ -252,7 +252,7 @@ predicates retained at each step.  This process is repeated 10 times
 for each sampling rate, with 10 different random permutation sequences
 of our data. We plot the mean and the confidence interval (one
 standard deviation above and below the mean) in
-Fig.~\ref{fig-predkept}(a).  When all $31873$ trial
+\Autoref{fig:predkept-a}.  When all $31873$ trial
 runs are used, we retain $8129$ predicates when the data is not
 sampled (i.e. sampling rate is $\nicefrac{1}{1}$), $8807$ at sampling
 rate $\nicefrac{1}{10}$, $8309$ at $\nicefrac{1}{100}$, and $8936$ at
@@ -261,14 +261,15 @@ $\nicefrac{1}{1000}$.
 \begin{figure*}
   %%
   \subfigure[branches, returns, and scalar pairs]
-  {\includegraphics[width=\columnwidth]{predkept3a}}
+  {\includegraphics[width=\columnwidth]{predkept3a}
+    \label{fig:predkept-a}}
   \hspace{\columnsep}
   \subfigure[branches and returns only]
-  {\includegraphics[width=\columnwidth]{predkept3b}}
+  {\includegraphics[width=\columnwidth]{predkept3b}
+    \label{fig:predkept-b}}
   %%
   \caption{The effect of sampling and data size on the number of
   predicates selected.}
-  \label{fig-predkept}
 \end{figure*}
 
 As is apparent from the graph, there is much larger variation in the
@@ -302,7 +303,7 @@ are eliminated when using fewer trials, and a lot more predicates are
 retained using more trials.
 
 Most of the volatility in the results come from the scalar-pairs
-predicates.  Figure~\ref{fig-predkept}(b) shows the same graph for
+predicates.  \Autoref{fig:predkept-b} shows the same graph for
 only the branch and return predicates.  Here, across all datasizes,
 the number of selected predicates remains roughly constant at each
 sampling rate.  The unsampled data is still able to select the fewest
