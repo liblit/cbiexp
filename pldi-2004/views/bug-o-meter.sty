@@ -9,12 +9,14 @@
 
 \newlength{\meterwidth}
 
-\newcommand{\segment}[2]{\colorbox{#1}{\rule{0pt}{1.5ex}\hspace*{#2\meterwidth}}}
+\newcommand{\segment}[2]{%
+  \setlength{\fboxsep}{0pt}%
+  \colorbox{#1}{\rule{0pt}{1.5ex}\hspace*{#2}}}
 
 \newcommand{\bugometer}[5]{%
   \setlength{\fboxsep}{0pt}%
   \setlength{\meterwidth}{#1\segunit}%
-  \fbox{\segment{black}{#2}%
-    \segment{red}{#3}%
-    \segment{pink}{#4}%
-    \segment{white}{#5}}}
+  \fbox{\segment{black}{#2\meterwidth}%
+    \segment{red}{#3\meterwidth}%
+    \segment{pink}{#4\meterwidth}%
+    \segment{white}{#5\meterwidth}}}

@@ -253,22 +253,26 @@ Then
 \subsection{Balancing Specificity \& Sensitivity}
 \label{sec:ranking}
 
+\newlength{\textsegwidth}
+\setlength{\textsegwidth}{2ex}
+\newcommand{\textseg}[1]{\parbox{\textsegwidth}{\segment{#1}{\textsegwidth}}}
+
 We now turn to the question of ranking the predicates.
-\autoref{tab:sorts} shows the top
-predicates under different ranking schemes (explained below) for one of our
-experiments.  We use
-a simple {\em thermometer} to visualize the information for each
-predicate.  The length of the thermometer shows the number of runs in
-which the predicate was observed, plotted on a log scale (so small increases
-in thermometer size indicate many more runs).  The thermometer has
-a sequence of bands:
-the black band on the left shows the context score;
-the next lighter band shows the increase score, the next, even  lighter band (which is either not
-visible or very small in all thermometers) shows the confidence
-interval, and the white space at the right end of the thermometer
-shows the successful runs in which the predicate was
-observed to be true.  The tables show the thermometer as well as the
-numbers for each of the quantities that make up the thermometer. 
+\autoref{tab:sorts} shows the top predicates under different ranking
+schemes (explained below) for one of our experiments.  We use a simple
+\termdef{bug thermometer} to visualize the information for each
+predicate.  The length of the thermometer is logarithmic in the number
+of runs in which the predicate was observed, so small increases in
+thermometer size indicate many more runs.  Each thermometer has a
+sequence of bands.  The black band on the left shows the context
+score.  The dark gray band (\textseg{red}) shows the lower bound of
+the increase score with 95\% confidence.  The light gray band
+(\textseg{pink}) shows the size of that confidence interval.  It is
+either not visible or very small in most thermometers, indicating a
+tight interval.  The white space at the right end of the thermometer
+shows the successful runs in which the predicate was observed to be
+true.  The tables show the thermometer as well as the numbers for each
+of the quantities that make up the thermometer.
 
 The most important bug is the one that causes the greatest number
 of failed runs.  This observation suggests:
