@@ -119,6 +119,9 @@ if (-x $prep) {
 #  perform all runs
 #
 
+
+$| = 1;
+
 my $error = 0;
 my $updated = 0;
 my $children = 0;
