@@ -111,7 +111,7 @@
 
 \newif\if@needsizeix\@needsizeixfalse % whether to override article.cls
                                       % with 9pt sizing. By default this
-				      % style makes 10pt text.
+                                      % style makes 10pt text.
 
 %
 % Declare and process the options
