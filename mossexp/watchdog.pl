@@ -14,6 +14,12 @@ my $timeout = shift;
 my $variant = shift;
 
 
+sub variant_outfile ($) {
+    my $filename = ($variant eq '-') ? '/dev/null' : "$variant/$_[0]";
+    return new FileHandle $filename, 'w';
+}
+
+
 ########################################################################
 
 
@@ -31,10 +37,10 @@ while ($ready = $select->can_read($timeout)
 }
 
 my $elapsed = time - $start;
-my $timeHandle = new FileHandle "$variant/time", 'w';
+my $timeHandle = variant_outfile 'time';
 $timeHandle->print("$elapsed\n");
 
-my $exitHandle = new FileHandle "$variant/exit", 'w';
+my $exitHandle = variant_outfile 'exit';
 if ($ready) {
     $handle->close;
     my $signal = $? & 127;

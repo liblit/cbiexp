@@ -205,7 +205,7 @@ if ($full_option_list =~ /db1/) {
 	print M "$file $i $lang $file\n";
     }
     close(M);
-    check_system "$watchdog 1000 $MPATH/moss $full_option_list -s db1 -a db1.manifest > output.db1 2> errors.db1";
+    check_system "$watchdog 1000 - $MPATH/moss $full_option_list -s db1 -a db1.manifest > output.db1 2> errors.db1";
 }
 
 #
@@ -220,7 +220,7 @@ if ($full_option_list =~ /db2/) {
 	print M "$file $i $lang $file\n";
     }
     close(M);
-    check_system "$watchdog 1000 $MPATH/moss $full_option_list -s db2 -a db2.manifest > output.db2 2> errors.db2";
+    check_system "$watchdog 1000 - $MPATH/moss $full_option_list -s db2 -a db2.manifest > output.db2 2> errors.db2";
 }
 
 # various runs
