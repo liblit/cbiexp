@@ -15,7 +15,7 @@ results.  We discuss each step; the reader who is not interested in
 these details may wish to proceed to Section~\ref{sec-experiments} and
 use this section only for reference.
 
-We chose \moss\ \cite{SWA03} as our benchmark program.  \moss\ is a
+We chose \moss\ \cite{Schleimer:2003:WLA} as our benchmark program.  \moss\ is a
 software plagiarism detection service\footnote{That is,
 \moss\ detects copying in large sets of programs.  The typical \moss
 user is a professor teaching assistant in a programming course.}  late
@@ -66,7 +66,7 @@ binary file format that can be reloaded quickly; these external files
 are called databases.  We modified the code to remove the check for a
 null {\tt FILE} pointer in the case that the database cannot be opened
 for writing.  This bug is analagous to one reported in {\tt ccrypt}
-\cite{ccrypt-reference}.  This is a deterministic bug, and in fact the
+\cite{Selinger:2003:cqual}.  This is a deterministic bug, and in fact the
 program crashes almost immediately after failing to open the file.
 
 \item Loading a \moss\ database is fairly complex, as a number of data
