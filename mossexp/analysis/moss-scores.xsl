@@ -15,9 +15,21 @@
     <xsl:apply-templates mode="histogram-headings" select="."/>
   </xsl:template>
 
-  <xsl:template match="predictor" mode="predictor-row-cells">
+  <xsl:template mode="dynamic-headings" match="scores">
+    <xsl:apply-imports/>
+    <th>Stat 1</th>
+    <th>Stat 2</th>
+  </xsl:template>
+
+  <xsl:template mode="static-cells" match="predictor">
     <xsl:apply-imports/>
     <xsl:apply-templates mode="histogram-row-cells" select="."/>
+  </xsl:template>
+
+  <xsl:template mode="dynamic-cells" match="predictor">
+    <xsl:apply-imports/>
+    <td><xsl:value-of select="@stat1"/></td>
+    <td><xsl:value-of select="@stat2"/></td>
   </xsl:template>
 
 </xsl:stylesheet>

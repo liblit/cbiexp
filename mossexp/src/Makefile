@@ -5,7 +5,6 @@ CC = gcc
 CPPFLAGS = -DDEBUG=0 -DNDEBUG -Ddeletes=""
 CFLAGS = -g -Wall
 
-SCC = sampler-cc
 SCC = /moa/sc1/cbi/sampler/instrumentor/driver/sampler-cc-here
 SCHEMES = branches returns scalar-pairs
 SFLAGS = $(SCHEMES:%=--sampler-scheme=%)

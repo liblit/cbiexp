@@ -1,5 +1,6 @@
 name := moss
 schemes := all branches returns scalar-pairs
+experiment := /moa/sc5/cbi/alicez/cbiexp/mossexp
 report-series := inverse-100
 training-runs := 1000
 
