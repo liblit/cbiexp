@@ -12,37 +12,21 @@ typedef std::vector<size_t> Permutation;
 typedef std::vector<pred_info> PredStats;
 
 
-std::ostream & operator << (std::ostream &, const pred_info &);
-
-template <class Stats>
-void generateView(std::ostream &,
-		  const std::string &scheme, const char *sort,
-		  const Stats &, const Permutation &);
-
-
-////////////////////////////////////////////////////////////////////////
-
-
-#include <iostream>
-#include <string>
-
-
-template <class Iterator>
-void generateView(std::ostream &out,
-		  const std::string &scheme, const char *sort,
-		  const Iterator &stats, const Permutation &order)
+class PredicatePrinter
 {
-  out << "<?xml version=\"1.0\"?>"
-      << "<?xml-stylesheet type=\"text/xsl\" href=\"view.xsl\"?>"
-      << "<!DOCTYPE view SYSTEM \"view.dtd\">"
-      << "<view scheme=\"" << scheme
-      << "\" sort=\"" << sort << "\">";
+public:
+  PredicatePrinter(std::ostream &, const pred_info &);
+  ~PredicatePrinter();
 
-  for (Permutation::const_iterator index = order.begin(); index != order.end(); ++index)
-    out << *(stats + *index);
+private:
+  // unimplemented and forbidden
+  PredicatePrinter(const PredicatePrinter &);
 
-  out << "</view>\n";
-}
+  std::ostream &out;
+};
+
+
+std::ostream & operator << (std::ostream &, const pred_info &);
 
 
 #endif // !INCLUDE_generate_view_h

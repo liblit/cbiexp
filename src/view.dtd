@@ -3,7 +3,8 @@
   scheme NMTOKEN #REQUIRED
   sort NMTOKEN #REQUIRED>
 
-<!ELEMENT predictor (true, seen, scores, source)>
+<!ENTITY % predictor "(true, seen, scores, source)">
+<!ELEMENT predictor %predictor;>
 
 <!ELEMENT true EMPTY>
 <!ELEMENT seen EMPTY>

@@ -7,6 +7,8 @@
 #include <vector>
 
 #include "Matrix.h"
+#include "Score/HarmonicMean.h"
+#include "classify_runs.h"
 #include "generate-view.h"
 #include "utils.h"
 
@@ -21,8 +23,7 @@ typedef Matrix<double> Rho;
 //  A predicate with its current (discounted) popularity
 //
 //  To change the core ranking function on which the projection
-//  algorithm operates, change the initialization of member field
-//  Candidate::popularity in the Candidate::Candidate() constructor.
+//  algorithm operates, change Candidate::Score.
 //
 
 
@@ -32,15 +33,25 @@ typedef double score;
 struct Candidate : public pred_info
 {
   Candidate(const pred_info &);
+  double firstImpression() const;
   double popularity;
+
+  typedef Score::HarmonicMean Score;
 };
 
 
 inline
 Candidate::Candidate(const pred_info &stats)
   : pred_info(stats),
-    popularity(stats.ps.lb)
+    popularity(firstImpression())
 {
+}
+
+
+inline double
+Candidate::firstImpression() const
+{
+  return Score()(*this);
 }
 
 
@@ -56,6 +67,10 @@ static vector<Candidate> predStats;
 // may be changed using line flags
 const char *predStatsName = "preds.txt";
 const char *rhoName = "rho.txt";
+
+static const char *successList = "s.runs";
+static const char *failureList = "f.runs";
+
 bool verbose = false;
 
 
@@ -84,6 +99,22 @@ static const argp_option options[] = {
     "verbosely trace selection process",
     0
   },
+  {
+    "success-list",
+    's',
+    "s.runs",
+    0,
+    "file listing successful runs",
+    0
+  },
+  {
+    "failure-list",
+    'f',
+    "f.runs",
+    0,
+    "file listing failed runs",
+    0
+  },
   { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -101,6 +132,12 @@ parseFlag(int key, char *arg, argp_state *)
       return 0;
     case 'v':
       verbose = true;
+      return 0;
+    case 's':
+      successList = arg;
+      return 0;
+    case 'f':
+      failureList = arg;
       return 0;
     default:
       return ARGP_ERR_UNKNOWN;
@@ -171,35 +208,48 @@ lessPopularThan(predIndex a, predIndex b)
 int
 main(int argc, char *argv[])
 {
+  // command line processing and other simple initialization
   ios::sync_with_stdio(false);
   argp_parse(&argp, argc, argv, 0, 0, 0);
+  classify_runs(successList, failureList);
 
+  // load up the standard stats: Increase, Fail, Context, etc.
   readPredStats(predStatsName);
   const predIndex size = predStats.size();
 
+  // load up the pairwise predicate correlation matrix
   cerr << "preallocating " << size << "² correlation matrix\n";
   Rho rho(size);
   readCorrelations(rhoName, rho);
 
+  // build an efficiently prunable list of not-yet-picked predicates
   cerr << "ranking " << size << " predicates\n";
   typedef list<predIndex> Candidates;
   Candidates candidates;
   for (predIndex index = 0; index < size; ++index)
     candidates.push_back(index);
 
-  Permutation winners;
-  winners.reserve(size);
+  // emit XML header; will emit predicates as we go along
+  cout << "<?xml version=\"1.0\"?>"
+       << "<?xml-stylesheet type=\"text/xsl\" href=\"projected-view.xsl\"?>"
+       << "<!DOCTYPE projected-view SYSTEM \"projected-view.dtd\">"
+       << "<projected-view sort=\"" << Candidate::Score::code << "\">";
 
   while (!candidates.empty())
     {
       const Candidates::iterator element = max_element(candidates.begin(), candidates.end(), lessPopularThan);
       const predIndex winner = *element;
       candidates.erase(element);
-      winners.push_back(winner);
+      const Candidate &stats = predStats[winner];
+
+      PredicatePrinter printer(cout, stats);
+      cout << "<popularity initial=\"" << stats.firstImpression()
+	   << "\" effective=\"" << stats.popularity
+	   << "\"/>";
 
       if (verbose)
 	cerr << "winner " << winner << ":\n"
-	     << "\tpopularity:\t" << predStats[winner].popularity << '\n';
+	     << "\tpopularity:\t" << stats.popularity << '\n';
 
       for (Candidates::const_iterator loser = candidates.begin();
 	   loser != candidates.end(); ++loser)
@@ -221,7 +271,7 @@ main(int argc, char *argv[])
 	}
     }
 
-  generateView(cout, "all", "projected", predStats.begin(), winners);
+  cout << "</projected-view>\n";
 
   return 0;
 }

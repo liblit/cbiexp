@@ -4,6 +4,11 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "Score/Fail.h"
+#include "Score/HarmonicMean.h"
+#include "Score/Increase.h"
+#include "Score/LowerBound.h"
+#include "Score/TrueInFails.h"
 #include "generate-view.h"
 #include "sorts.h"
 #include "sites.h"
@@ -60,17 +65,31 @@ gen_permutation(const string &scheme, const Stats &stats)
     sort(permutation.begin(), permutation.end(), sorter);
 
     // generate XML
-    generateView(xml, scheme, Get::code, stats.begin(), permutation);
+    xml << "<?xml version=\"1.0\"?>"
+	<< "<?xml-stylesheet type=\"text/xsl\" href=\"view.xsl\"?>"
+	<< "<!DOCTYPE view SYSTEM \"view.dtd\">"
+	<< "<view scheme=\"" << scheme
+	<< "\" sort=\"" << Get::code << "\">";
+
+    for (Permutation::const_iterator index = permutation.begin();
+	 index != permutation.end(); ++index)
+	xml << stats[*index];
+
+    xml << "</view>\n";
 }
 
 
 static void
 gen_permutations(const string &scheme, const Stats &stats)
 {
-    gen_permutation<Sort::Descending, Get::LowerBound>(scheme, stats);
-    gen_permutation<Sort::Descending, Get::IncreaseScore>(scheme, stats);
-    gen_permutation<Sort::Descending, Get::FailScore>(scheme, stats);
-    gen_permutation<Sort::Descending, Get::TrueInFails>(scheme, stats);
+    using namespace Sort;
+    using namespace Score;
+
+    gen_permutation<Descending, LowerBound>(scheme, stats);
+    gen_permutation<Descending, Increase>(scheme, stats);
+    gen_permutation<Descending, Fail>(scheme, stats);
+    gen_permutation<Descending, TrueInFails>(scheme, stats);
+    // gen_permutation<Descending, HarmonicMean>(scheme, stats);
 }
 
 

@@ -128,31 +128,45 @@
   <xsl:template match="view">
     <table class="predictors">
       <tr>
-	<th/>
-	<th>predicate</th>
-	<th>function</th>
-	<th>file:line</th>
+	<xsl:call-template name="view-headings"/>
       </tr>
       <xsl:apply-templates/>
     </table>
   </xsl:template>
 
 
+  <!-- headings for the big predictor table -->
+  <!-- factored out to make it easier to reuse in other stylesheets -->
+  <xsl:template name="view-headings">
+    <th/>
+    <th>predicate</th>
+    <th>function</th>
+    <th>file:line</th>
+  </xsl:template>
+
+
   <!-- a single retained predictor -->
   <xsl:template match="predictor">
     <tr>
-      <td>
-	<table class="scores" width="{scores/@log10-seen * 60 + 1}px" title="Ctxt: {round(scores/@context * 100)}%, LB: {round(scores/@lower-bound * 100)}%, Incr: {round(scores/@increase * 100)}%, Fail: {round(scores/@badness * 100)}%&#10;tru in {true/@success} S and {true/@failure} F&#10;obs in {seen/@success} S and {seen/@failure} F">
-	  <tr>
-	    <td class="f1" style="width: {scores/@context * 100}%"/>
-	    <td class="f2" style="width: {scores/@lower-bound * 100}%"/>
-	    <td class="f3" style="width: {(scores/@badness - (scores/@context + scores/@lower-bound)) * 100}%"/>
-	    <td class="f4" style="width: {(1 - scores/@badness) * 100}%"/>
-	  </tr>
-	</table>
-      </td>
-      <xsl:apply-templates select="source"/>
+      <xsl:call-template name="predictor-cells"/>
     </tr>
+  </xsl:template>
+
+
+  <!-- the cells within a single retained predictor's row -->
+  <!-- factored out to make it easier to reuse in other stylesheets -->
+  <xsl:template name="predictor-cells">
+    <td>
+      <table class="scores" width="{scores/@log10-seen * 60 + 1}px" title="Ctxt: {round(scores/@context * 100)}%, LB: {round(scores/@lower-bound * 100)}%, Incr: {round(scores/@increase * 100)}%, Fail: {round(scores/@badness * 100)}%&#10;tru in {true/@success} S and {true/@failure} F&#10;obs in {seen/@success} S and {seen/@failure} F">
+	<tr>
+	  <td class="f1" style="width: {scores/@context * 100}%"/>
+	  <td class="f2" style="width: {scores/@lower-bound * 100}%"/>
+	  <td class="f3" style="width: {(scores/@badness - (scores/@context + scores/@lower-bound)) * 100}%"/>
+	  <td class="f4" style="width: {(1 - scores/@badness) * 100}%"/>
+	</tr>
+      </table>
+    </td>
+    <xsl:apply-templates select="source"/>
   </xsl:template>
 
 

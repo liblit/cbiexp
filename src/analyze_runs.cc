@@ -450,8 +450,9 @@ int main(int argc, char** argv)
         REQUIRE("-do-print-results-1", "-us", units_src_file);
 	puts("Pretty-printing results-1 ...");
 	add_links(incdir, "view", dirname(result_summary_xml_file));
-	shell("%s %s/gen_views.o %s.o %s.o -L%s -lanalyze -o %s",
-	      linker, objdir, sites_src_file, units_src_file, objdir, GEN_VIEWS);
+	shell("%s %s/gen_views.o %s.o %s.o -L%s -lanalyze -L%s/Score -lScore -o %s",
+	      linker, objdir, sites_src_file, units_src_file,
+	      objdir, objdir, GEN_VIEWS);
 	shell(GEN_VIEWS " -p %s", preds_txt_file);
     }
 

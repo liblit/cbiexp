@@ -6,4 +6,5 @@
   <sort code="is">Increase Score</sort>
   <sort code="fs">Fail Score</sort>
   <sort code="nf">True in # Failed Runs</sort>
+  <sort code="hm">Harmonic Mean</sort>
 </sorts>

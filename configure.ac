@@ -60,6 +60,7 @@ Makefile
 correlations/Makefile
 rhythmbox/config.site
 src/Makefile
+src/Score/Makefile
 src/compiler.cc
 ])
 

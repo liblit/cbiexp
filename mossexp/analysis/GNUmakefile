@@ -18,13 +18,26 @@ schemes += returns
 schemes += scalar-pairs
 views := $(foreach scheme, $(schemes), $(foreach sort, $(sorts), $(scheme)_$(sort).xml))
 
-all: summary.xml $(views) projected.xml
+web := logo.css logo.xsl sorts.dtd sorts.xml summary.css summary.dtd summary.xml summary.xsl $(views) projected.xml projected-view.dtd projected-view.xsl view.css view.dtd view.xsl
+
+all: $(web)
+	xmllint --valid --noout *.xml
+.PHONY: all
+
+copy: $(web:%=$(HOME)/www/project/moss/harmonic/%)
+.PHONY: copy
+
+$(HOME)/www/project/moss/harmonic/%: %
+	cp $< $@
+
+projected-view.dtd projected-view.xsl:
+	ln -s $(tooldir)/$@ .
 
 projected.xml: project preds.txt rho.txt
 	$(time) ./$< >$@
 clean:: ; rm -f projected.xml
 
-project: $(tooldir)/project.o sites.o units.o $(tooldir)/libanalyze.a
+project: $(tooldir)/project.o sites.o units.o $(tooldir)/libanalyze.a $(tooldir)/Score/libScore.a
 	$(time) $(LINK.cc) $^ -o $@
 clean:: ; rm -f project
 

@@ -5,8 +5,8 @@
 using namespace std;
 
 
-ostream &
-operator << (ostream &out, const pred_info &stats)
+PredicatePrinter::PredicatePrinter(ostream &out, const pred_info &stats)
+  : out(out)
 {
   out << "<predictor>"
 
@@ -60,9 +60,19 @@ operator << (ostream &out, const pred_info &stats)
   out << "\" function=\"" << info.fun
       << "\" file=\"" << info.file
       << "\" line=\"" << info.line
-      << "\"/>"
+      << "\"/>";
+}
 
-      << "</predictor>";
 
+PredicatePrinter::~PredicatePrinter()
+{
+  out << "</predictor>";
+}
+
+
+ostream &
+operator << (ostream &out, const pred_info &stats)
+{
+  PredicatePrinter(out, stats);
   return out;
 }

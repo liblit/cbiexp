@@ -1,3 +1,5 @@
+SUBDIRS = Score
+
 AM_CPPFLAGS = -W -Wall -Werror -Wformat
 
 EXTRA_DIST =					\
@@ -38,7 +40,6 @@ libanalyze_a_SOURCES =				\
 	generate-view.h				\
 	shell.cc				\
 	shell.h					\
-	sorts.cc				\
 	sorts.h					\
 	utils.cc				\
 	utils.h

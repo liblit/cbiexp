@@ -12,56 +12,6 @@ typedef std::vector<pred_info> Stats;
 ////////////////////////////////////////////////////////////////////////
 
 
-namespace Get
-{
-  struct LowerBound
-  {
-    double operator () (const pred_info &pred) const
-    {
-      return pred.ps.lb;
-    }
-
-    static const char code[];
-  };
-
-
-  struct IncreaseScore
-  {
-    double operator () (const pred_info &pred) const
-    {
-      return pred.ps.in;
-    }
-
-    static const char code[];
-  };
-
-
-  struct FailScore
-  {
-    double operator () (const pred_info &pred) const
-    {
-      return pred.ps.fs;
-    }
-
-    static const char code[];
-  };
-
-
-  struct TrueInFails
-  {
-    double operator () (const pred_info &pred) const
-    {
-      return pred.f;
-    }
-
-    static const char code[];
-  };
-}
-
-
-////////////////////////////////////////////////////////////////////////
-
-
 namespace Sort
 {
   template <class Get>
