@@ -22,6 +22,8 @@
 \newcommand{\nautilus}{\texttt{nautilus}\xspace}
 \newcommand{\rhythmbox}{\texttt{rhythmbox}\xspace}
 
+\newcommand{\header}[1]{\multicolumn{1}{c}{#1}}
+
 \pagestyle{empty}
 
 \begin{document}
@@ -127,7 +129,7 @@ applications we instrument.
 \begin{table*}
   \centering
   \begin{tabular}{lrcccc}
-    Application & Lines of Code & Shared Libraries & Plugins    & Threads \\\hline
+    \header{Application} & \header{Lines of Code} & \header{Shared Libraries} & \header{Plugins} & \header{Threads} \\\hline
     \evolution  & 460,912       & \checkmark       & \checkmark & \checkmark \\
     \gaim       & 160,435       &                  & \checkmark & \\
     \gimp       & 650,660       & \checkmark       & \checkmark & \\
@@ -229,7 +231,7 @@ testing one predicate and recording its result.\footnote{The countdown
 is chosen randomly from a geometric distribution with a mean that is
 the desired sampling rate.  This is equivalent to, but much more
 efficient than, flipping a coin at each instrumentation site to decide
-whether to take a sample.}  Thus, in a multi-threaded system, the
+whether to take a sample.}  Thus, in a multithreaded system, the
 global variable holding the next-sample countdown could be a source of
 high contention among threads.
 
@@ -248,7 +250,7 @@ by the GNU linker to replace \texttt{pthread\_create()} with our own
 special version.  
 
 The second class of data that must be handled specially in
-multi-threaded applications is the predicate counters.  Recall that
+multithreaded applications is the predicate counters.  Recall that
 the predicate counters keep track of how often a particular predicate
 at a particular line of code is observed to be true or false.
 Because, for efficiency, we use low sampling rates (say on average
@@ -344,7 +346,7 @@ far we have not needed any of these facilities.
 \begin{table}
   \centering
   \begin{tabular}{lrr}
-    Application & Min & Max  \\ \hline
+    \header{Application} & \header{Min} & \header{Max} \\ \hline
     \evolution & 830 & 39863  \\
     \gaim & 1786 & 18772  \\
     \gimp & 15617 & 26304  \\
@@ -420,14 +422,14 @@ for large user communities of complex applications.
 
 \begin{table}
   \centering
-  \begin{tabular}{lrrrrr}
-    Application & Count & Good & Error & Crash & Crash Rate \\ \hline
-    \rhythmbox & 726 & 598 & 36 & 92 & 0.13 \\
-    \gnumeric & 247 & 228 & 2 & 17 & 0.07 \\
-    \gaim & 464 & 386 & 62 & 16 & 0.03 \\
-    \evolution & 702 & 647 & 39 & 16 & 0.02 \\
-    \nautilus & 468 & 426 & 36 & 6 & 0.01 \\
-    \gimp & 77 & 77 & 0 & 0 & 0.00
+  \begin{tabular}{lrrrr@{ (}r@{\%)}}
+    \header{Application} & \header{Count} & \header{Good} & \header{Error} & \multicolumn{2}{c}{Crash} \\ \hline
+    \rhythmbox & 726 & 598 & 36 & 92 & 13 \\
+    \gnumeric & 247 & 228 & 2 & 17 & 7 \\
+    \gaim & 464 & 386 & 62 & 16 & 3 \\
+    \evolution & 702 & 647 & 39 & 16 & 2 \\
+    \nautilus & 468 & 426 & 36 & 6 & 1 \\
+    \gimp & 77 & 77 & 0 & 0 & 0
   \end{tabular}
   \caption{Number of runs received.}
   \label{reports-per-app}
