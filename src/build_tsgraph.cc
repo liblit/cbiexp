@@ -8,7 +8,6 @@
 #include <iomanip>
 #include <iostream>
 #include <ext/hash_map>
-#include <queue>
 #include <vector>
 #include "fopen.h"
 #include "TsReportReader.h"
@@ -36,30 +35,23 @@ typedef adjacency_list<setS, vecS, directedS, Vprops, Eprops> Graph;
 typedef graph_traits<Graph>::vertex_descriptor VertexD;
 typedef graph_traits<Graph>::edge_descriptor EdgeD;
 
-class ts_hash_t : public hash_map<SiteCoords, unsigned>
+class site_hash_t : public hash_map<SiteCoords, unsigned>
 {
 };
 
-class site_hash_t : public hash_map<SiteCoords, timestamp>
-{
-};
 
 static Graph G;
 static site_hash_t siteIndex;
-static std::queue<pair<unsigned, SiteCoords> > parentQueue;
 static unsigned sitei = 0;
 static unsigned nruns_used = 0;
-const SiteCoords firstSite(2, 169);    // returns site from newregion() on line 5918
-const SiteCoords secondSite(0, 32093); // scalar-pairs site: config.mem_database = newregion(); 
-const SiteCoords siteA(0, 32027); // s-p: 5900 files_init i pindex (component 934)
-const SiteCoords siteB(0, 26821);  // s-p: 5674 init_options c->errorfile (FILE *)0
+static weight_t maxweight = (std::numeric_limits<weight_t>::max)();
 
 /****************************************************************
  * Run-specific storage
  ***************************************************************/
 
 struct run_info_t {
-    ts_hash_t ts;
+    site_hash_t ts;
     int runId;
     run_info_t() {
 	ts.clear();
@@ -86,20 +78,13 @@ Reader::Reader(unsigned r)
 inline void
 Reader::siteTs(const SiteCoords &coords, timestamp ts)
 {
-  const ts_hash_t::iterator found = curr_run.ts.find(coords);
+  const site_hash_t::iterator found = curr_run.ts.find(coords);
   if (found == curr_run.ts.end()) {
     curr_run.ts[coords] = ts;
   } else {
     cerr << "Duplicate timestamps for site " << coords << "\n";
     exit(1);
   }
-
-  if (coords == firstSite)
-    assert (ts == 1);
-  if (coords == secondSite)
-    assert (ts == 2);
-  if (coords == firstSite || coords == secondSite)
-    assert (ts != 0);
 
   // see if this is a new site,
   // if so, assign it a site index and insert it into the graph
@@ -123,14 +108,6 @@ void inc_ordering(const SiteCoords *const siteArr, unsigned n)
 	const SiteCoords &s2 = siteArr[i];
 	const site_hash_t::iterator found1 = siteIndex.find(s1);
 	const site_hash_t::iterator found2 = siteIndex.find(s2);
-	if(s2 == firstSite)
-          assert(0);
-	if (siteB == s2 && !(siteA == s1)) {
-          pair<unsigned, SiteCoords> pp;
-          pp.first = curr_run.runId;
-          pp.second = s1;
-          parentQueue.push(pp);
-        }
 	assert(found1 != siteIndex.end());
 	assert(found2 != siteIndex.end());
 	VertexD u = vertex(found1->second, G);
@@ -151,8 +128,8 @@ static int ts_compare(const void *t1, const void *t2)
 {
   const SiteCoords *s1 = (const SiteCoords *) t1;
   const SiteCoords *s2 = (const SiteCoords *) t2;
-  const ts_hash_t::iterator found1 = curr_run.ts.find(*s1);
-  const ts_hash_t::iterator found2 = curr_run.ts.find(*s2);
+  const site_hash_t::iterator found1 = curr_run.ts.find(*s1);
+  const site_hash_t::iterator found2 = curr_run.ts.find(*s2);
   if (found1 == curr_run.ts.end() || found2 == curr_run.ts.end()) {
     cerr << "Cannot find sites " << *s1 << " or " << *s2 << '\n';
     exit(1);
@@ -177,7 +154,7 @@ void process_ts()
 
   // copy all the keys of the hashtable into the array
   unsigned i = 0;
-  for (ts_hash_t::const_iterator c = curr_run.ts.begin(); c != curr_run.ts.end(); c++) {
+  for (site_hash_t::const_iterator c = curr_run.ts.begin(); c != curr_run.ts.end(); c++) {
     const SiteCoords &site = c->first;
     siteArr[i].unitIndex = site.unitIndex;
     siteArr[i].siteOffset = site.siteOffset;
@@ -193,22 +170,23 @@ void process_ts()
 }
 
 /****************************************************************************
- * Printing Routines
+ * Final processing and printing
  ***************************************************************************/
 
 inline ostream &
-operator<< (ostream &out, const site_hash_t &sh)
+operator<< (ostream &out, const site_hash_t &th)
 {
-  for (site_hash_t::const_iterator c = sh.begin(); c != sh.end(); ++c) 
-  {
-    out << c->first << '\t' << c->second << endl;
-  }
-  return out;
+    for (site_hash_t::const_iterator c = th.begin(); c != th.end(); c++) {
+	const SiteCoords tc = c->first;
+	const unsigned ts = c->second;
+	out << tc << '\t' << ts << '\n';
+    }
+    return out;
 }
 
 void output_graph()
 {
-    cout << "The graph contains " << num_vertices(G) << " vertices and "
+    cout << "\nOriginal graph contains " << num_vertices(G) << " vertices and "
 	 << num_edges(G) << " edges.\n";
 
     string tsFile = "ts_nodes." + TimestampReport::when + ".txt";
@@ -235,6 +213,21 @@ void output_graph()
 
     os.close();
 }
+
+
+// unsigned
+// num_collisions(const site_hash_t &table)
+// {
+//   unsigned b = table.bucket_count();
+//   unsigned c = 0;
+//   for (unsigned i = 0; i < b; i++) {
+//       unsigned elems = table.elems_in_bucket(i);
+//       if (i > 1)
+// 	  c += elems - 1;
+//   }
+//   return c;
+// }
+
 
 /****************************************************************************
  * Processing command line options
@@ -271,34 +264,22 @@ int main(int argc, char** argv)
 
     string pstr = "Examining " + TimestampReport::when + " timestamps";
     Progress::Bounded progress(pstr.c_str(), NumRuns::count());
-    unsigned nmax = 1;
     for (unsigned r = NumRuns::begin; r < NumRuns::end; r++) {
       progress.step();
       if (!is_srun[r] && !is_frun[r])
         continue;
-
-      if (nruns_used == nmax)
-        break;
 
       nruns_used++;
       Reader(r).read(r);
       process_ts();       // sort sites by their timestamps
     }
 
+    output_graph();
+
     // There are 18366 sites with "first" timestamps
     // There are 19587 edges in the resulting site graph
     // cout << "There are " << curr_run.ts.size() << "sites with timestamps.\n";
 
-    output_graph();
-
-    cout << "Parents of site B (" << siteB << ")\n";
-    while (!parentQueue.empty()) {
-       unsigned r = parentQueue.front().first;
-       SiteCoords &coords = parentQueue.front().second;
-       cout << "Run " << r << " Site " << coords << endl;
-       parentQueue.pop(); 
-    }
-   
     return 0;
 }
 

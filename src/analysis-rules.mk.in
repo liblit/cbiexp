@@ -281,6 +281,7 @@ build_tsgraph: $(tooldir)/build_tsgraph.o units.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
 	$(time) $@ --runs-directory=$(datadir) --timestamp-when=first
 	$(time) $@ --runs-directory=$(datadir) --timestamp-when=last
+clean:: ; rm -f build_tsgraph
 
 find_tsSCC: $(tooldir)/find_tsSCC.o units.o sites.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
