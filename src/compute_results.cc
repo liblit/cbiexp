@@ -61,17 +61,8 @@ static void print_scheme_summary(FILE *fp,
 				 const char name[], char code,
 				 int total, int retain)
 {
-    fprintf(fp,
-	    "\t<scheme>\n"
-	    "\t\t<name>%s</name>\n"
-	    "\t\t<code>%c</code>\n"
-	    "\t\t<total>%d</total>\n"
-	    "\t\t<retain>%d</retain>\n"
-	    "\t</scheme>\n",
-	    name,
-	    code,
-	    total,
-	    retain);
+    fprintf(fp, "<scheme name=\"%s\" code=\"%c\" total=\"%d\" retain=\"%d\"/>",
+	    name, code, total, retain);
 }
 
 void print_result_summary()
@@ -83,33 +74,23 @@ void print_result_summary()
     assert(fp);
 
     fprintf(fp,
-	    "<?xml version=\"1.0\"?>\n"
-	    "<?xml-stylesheet type=\"text/xsl\" href=\"summary.xsl\"?>\n"
-	    "<!DOCTYPE experiment SYSTEM \"summary.dtd\">\n"
-	    "<experiment>\n"
-	    "\t<name>%s</name>\n"
-	    "\t<date>%s</date>\n"
-	    "\t<runs>\n"
-	    "\t\t<success>%d</success>\n"
-	    "\t\t<failure>%d</failure>\n"
-	    "\t\t<ignore>%d</ignore>\n"
-	    "\t</runs>\n"
-	    "\t<confidence>%d</confidence>\n"
-	    "\t<prefix>%s</prefix>\n",
-	    experiment_name,
-	    ctime(&t),
-	    num_sruns,
-	    num_fruns,
-	    num_runs - (num_sruns + num_fruns),
-	    confidence,
-	    prefix);
+	    "<?xml version=\"1.0\"?>"
+	    "<?xml-stylesheet type=\"text/xsl\" href=\"summary.xsl\"?>"
+	    "<!DOCTYPE experiment SYSTEM \"summary.dtd\">"
+	    "<experiment title=\"%s\" date=\"%s\">"
+	    "<runs success=\"%d\" failure=\"%d\" ignore=\"%d\"/>"
+	    "<analysis confidence=\"%d\" prefix=\"%s\"/>"
+	    "<schemes>",
+	    experiment_name, ctime(&t),
+	    num_sruns, num_fruns, num_runs - (num_sruns + num_fruns),
+	    confidence, prefix);
 
     print_scheme_summary(fp, "branches", 'B', NumBPreds, num_b_preds);
     print_scheme_summary(fp, "returns", 'R', NumRPreds, num_r_preds);
     print_scheme_summary(fp, "scalar-pairs", 'S', NumSPreds, num_s_preds);
     print_scheme_summary(fp, "g-object-unref", 'G', NumGPreds, num_g_preds);
 
-    fputs("</experiment>\n", fp);
+    fputs("</schemes></experiment>\n", fp);
 
     fclose(fp);
 }

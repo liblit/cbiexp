@@ -1,24 +1,25 @@
 <!-- results from a single experiment -->
-<!ELEMENT experiment (name, date, runs, confidence, prefix, scheme*)>
-
-<!-- human-readable name of an experiment or scheme -->
-<!ELEMENT name (#PCDATA)>
-
-<!-- date this report was produced -->
-<!ELEMENT date (#PCDATA)>
+<!ELEMENT experiment (runs, analysis, schemes)>
+<!ATTLIST experiment title CDATA #REQUIRED>
+<!ATTLIST experiment date CDATA #REQUIRED>
 
 <!-- outcome summary for the runs in an experiment -->
-<!ELEMENT runs (success, failure, ignore)>
-<!ELEMENT success (#PCDATA)>
-<!ELEMENT failure (#PCDATA)>
-<!ELEMENT ignore (#PCDATA)>
+<!ELEMENT runs EMPTY>
+<!ATTLIST runs success NMTOKEN #REQUIRED>
+<!ATTLIST runs failure NMTOKEN #REQUIRED>
+<!ATTLIST runs ignore NMTOKEN #REQUIRED>
 
 <!-- data analysis parameters -->
-<!ELEMENT confidence (#PCDATA)>
-<!ELEMENT prefix (#PCDATA)>
+<!ELEMENT analysis EMPTY>
+<!ATTLIST analysis confidence NMTOKEN #REQUIRED>
+<!ATTLIST analysis prefix NMTOKEN #REQUIRED>
+
+<!-- list of instrumentation schemes -->
+<!ELEMENT schemes (scheme+)>
 
 <!-- names and predicate counts for one scheme -->
-<!ELEMENT scheme (name, code, total, retain)>
-<!ELEMENT code (#PCDATA)>
-<!ELEMENT total (#PCDATA)>
-<!ELEMENT retain (#PCDATA)>
+<!ELEMENT scheme EMPTY>
+<!ATTLIST scheme name CDATA #REQUIRED>
+<!ATTLIST scheme code NMTOKEN #REQUIRED>
+<!ATTLIST scheme total NMTOKEN #REQUIRED>
+<!ATTLIST scheme retain NMTOKEN #REQUIRED>
