@@ -58,11 +58,19 @@ Utils::note 'outcome', $?;
 
 ########################################################################
 #
-#  pack up sampler output for later analysis
+#  sanity check sampler output
 #
 
-if (! -e $ENV{SAMPLER_FILE}) {
+my $handle = new FileHandle $ENV{SAMPLER_FILE}, 'r';
+
+if ($handle) {
+    my $last;
+    $last = $_ while <$handle>;
+    if (! defined $last) {
+	Utils::note '../bad', 'reports file empty';
+    } elsif ($last ne "</reports>\n") {
+	Utils::note '../bad', 'reports file ends abruptly';
+    }
+} else {
     Utils::note '../bad', 'reports file missing';
-} elsif (-z $ENV{SAMPLER_FILE}) {
-    Utils::note '../bad', 'reports file empty';
 }
