@@ -120,8 +120,7 @@ program failure.
 
 Now $\crash(P)$ is a useful measure, but it is not good
 enough for the first step of our algorithm. To see this, consider again the
-code fragment given above (in its original form, not with the
-modification to make the bug non-deterministic).  At line {\tt (b)} we
+code fragment given above in its original, deterministic form.  At line {\tt (b)} we
 have $\crash(\mbox{\tt f == NULL}) = 1.0$, so this predicate is a good
 candidate for the cause of the bug.
 But on line {\tt (c)} we have the unpleasant fact that $\crash(\mbox{\tt x == 0}) = 1.0$ as well.
