@@ -1,0 +1,26 @@
+%% -*- TeX-master: "../master.tex" -*-
+
+\begin{table*}
+  \caption{Moss failure predictors using nonuniform sampling}
+  \centering
+  \tiny
+  \begin{tabular}{lllllrrrrrrrr}
+    \toprule
+    \multicolumn{2}{c}{Initial} &
+    \multicolumn{2}{c}{Effective} &
+    &
+    \multicolumn{8}{c}{Number of Runs Also Exhibiting Bug \#$n$} \\
+    \cmidrule(lr){1-2}
+    \cmidrule(lr){3-4}
+    \cmidrule(lr){6-13}
+    Score &
+    Bug-O-Meter &
+    Score &
+    Bug-O-Meter &
+    Predicate &
+    \#1 & \#2 & \#3 & \#4 & \#5 & \#6 & \#7 & \#9 \\
+    \midrule
+    \input{moss-view/rows}
+    \bottomrule
+  \end{tabular}
+\end{table*}

@@ -1,0 +1,19 @@
+\usepackage{color}
+
+\definecolor{pink}{rgb}{1,0.7529,0.7961}
+
+\newlength{\segunit}
+\setlength{\segunit}{4ex}
+
+\newlength{\meterwidth}
+
+\newcommand{\segment}[2]{\colorbox{#1}{\rule{0pt}{\segheight}\hspace*{#2\meterwidth}}}
+\renewcommand{\segment}[2]{\colorbox{#1}{\rule{0pt}{1.5ex}\hspace*{#2\meterwidth}}}
+
+\newcommand{\bugometer}[5]{%
+  \setlength{\fboxsep}{0pt}%
+  \setlength{\meterwidth}{#1\segunit}%
+  \fbox{\segment{black}{#2}%
+    \segment{red}{#3}%
+    \segment{pink}{#4}%
+    \segment{white}{#5}}}

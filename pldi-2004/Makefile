@@ -1,5 +1,26 @@
-texs := $(wildcard *.tex *.sty *.bib)
-epss := $(wildcard *.eps)
+texs :=						\
+	alg.tex					\
+	Autoref.sty				\
+	bibnames.sty				\
+	cacm1990.bib				\
+	experiments.tex				\
+	icse02.bib				\
+	icse03.bib				\
+	master.tex				\
+	misc.bib				\
+	moss-view/bug-o-meter.sty		\
+	moss-view/rows.tex			\
+	moss-view/table.tex			\
+	paste02.bib				\
+	pldi03.bib				\
+	pods.bib				\
+	ramss.bib				\
+	refs.bib				\
+	revisited.tex				\
+	setup.tex				\
+	table.tex
+
+epss := predkept3a.eps predkept3b.eps
 pdfs := $(epss:.eps=.pdf)
 
 all: master.pdf master.ps
@@ -20,3 +41,8 @@ master.dvi: %.dvi: $(texs) $(epss)
 
 $(pdfs): %.pdf: %.eps
 	epstopdf --outfile=$@ $<
+
+moss-view/rows.tex: force
+	$(MAKE) -C $(@D) $(@F)
+
+force:
