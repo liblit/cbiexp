@@ -3,14 +3,12 @@
 use FileHandle;
 use FindBin;
 
-die "Do not run this program directly; use $FindBin::Bin instead\n" if @ARGV;
-
 # allow complete group access
 umask 002;
 
 $DPATH = "/moa/sc1/cbi/sources";           # source code data is here
-$MPATH = '../bin';			   # moss binaries are here
-$watchdog = "$MPATH/watchdog.pl";
+$MPATH = "$FindBin::Bin/../src";           # moss binaries are here
+$watchdog = "$FindBin::Bin/watchdog.pl";
 $ENV{'SAMPLER_DEBUGGER'} = "/usr/share/sampler/print-debug-info";  # collect stack traces
 #
 # This array contains a parameterized list of options.  Each option is
@@ -56,6 +54,7 @@ $unwritable = 50;
 # Lists of c, cc, java, and lisp files for use in the trials.
 # We choose elements from these lists randomly.
 #
+die "No sources in $DPATH" unless -d $DPATH;
 @c_files = `find $DPATH -name "*.c"`;
 @java_files = `find $DPATH -name "*.java"`;
 @lisp_files = `find $DPATH -name "*.lisp"`;
@@ -123,7 +122,7 @@ sub run_moss_good () {
 
 sub run_moss_bad () {
     # run buggy moss and record various outputs
-    run_moss "SAMPLER_FILE=bad/reports", "mossbad", 'bad';
+    run_moss "SAMPLER_FILE=reports", "mossbad", 'bad';
 
     # compare with reference
     my $outputDiff = diff "bad/stdout", 'good/stdout';
@@ -258,19 +257,8 @@ $mem = &choose_memory_size();  # set the memory size for all of the runs of moss
 run_moss_good;
 run_moss_bad;
 
-# overall sanity checks
-my @abnormality;
-my $goodExit = (new FileHandle 'good/exit')->getline;
-push @abnormality, 'good run crashed' if $goodExit =~ /^signal\t/;
-push @abnormality, 'good run timed out' if $goodExit eq 'timeout';
-push @abnormality, 'bad run produced no reports' if -z 'bad/reports';
-if (@abnormality) {
-    my $disregard = new FileHandle 'disregard', 'w';
-    $disregard->print("$_\n") foreach @abnormality;
-}
-
 # save some space
 sub gzip ($) { check_system "gzip $_[0]" if -e $_[0]; }
-gzip 'bad/reports';
+#gzip 'reports';
 gzip 'bad/stdout';
 gzip 'good/stdout';

@@ -9,7 +9,6 @@ use FindBin;
 use POSIX qw(SIGKILL SIGTERM);
 
 use lib "$FindBin::Bin";
-use SiteConfig;
 use TimedCommand;
 use Utils;
 
@@ -25,9 +24,8 @@ Utils::redirect;
 #  test runs will not interfere with each other.
 #
 
-my $cwd = `pwd`;
-chomp $cwd;
-my $run_id = basename $cwd;
+die unless @ARGV == 1;
+my $run_id = shift;
 
 my $tmpdir = tempdir(CLEANUP => 0);
 $ENV{TMPDIR} = $tmpdir;
@@ -66,7 +64,6 @@ END {
 
 sub result (@) {
     Utils::note 'outcome', @_;
-    Utils::note '../bad', 'no client outcome' unless -e 'client/outcome';
     exit 0;
 }
 
@@ -89,7 +86,8 @@ result 'premature', $detail if $outcome eq 'exit';
 #   politely ask Rhythmbox to quit
 #
 
-my $quitter = new TimedCommand $SiteConfig::rhythmbox, '--quit';
+my $rhythmbox = "$FindBin::Bin/rhythmbox";
+my $quitter = new TimedCommand $rhythmbox, '--quit';
 $quitter->wait(5);
 $quitter->kill(SIGKILL);
 

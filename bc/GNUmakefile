@@ -1,6 +1,7 @@
 CFLAGS := -O9 -W -Wall -Werror
 
 prepare: bin/fuzz src/bc/bc share/bc.sites
+.PHONY: prepare
 
 share/bc.sites: src/bc/bc
 	/usr/lib/sampler/tools/extract-section .debug_site_info $< >$@.
@@ -17,5 +18,7 @@ force:
 .PHONY: force
 
 clean:
-	rm -f bin/fuzz
+	rm -f bin/fuzz share/*.sites
 	$(MAKE) -C src $@
+
+.PHONY: clean

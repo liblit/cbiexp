@@ -1,0 +1,108 @@
+#!/usr/bin/perl -w
+
+
+use strict;
+
+use Cwd;
+use File::Temp qw(tempfile);
+use FileHandle;
+use Getopt::Long qw(:config bundling auto_abbrev);
+
+
+########################################################################
+#
+#  sanity check
+#
+
+my $cwd = getcwd;
+my $run_once = 'bin/run-once';
+my $label_once = 'bin/label-once';
+
+unless (-x $run_once && -x $label_once) {
+    warn "Error: current directory is not set up for scripted CBI runs.\n\n";
+    warn "  $run_once script is missing or not executable\n" unless -x $run_once;
+    warn "  $label_once script is missing or not executable\n" unless -x $label_once;
+    exit 2;
+}
+
+
+########################################################################
+#
+#  process command line
+#
+
+my $jobs;
+my $verbose;
+
+my $understood = GetOptions('jobs=i' => \$jobs,
+			    'verbose' => \$verbose);
+
+die "Usage: $0 [--jobs=<count>] [--verbose] <first-run-number> <last-run-number>\n",
+    unless $understood && @ARGV == 2;
+
+
+unless ($jobs) {
+    $jobs = 0;
+    my $cpuinfo = new FileHandle '/proc/cpuinfo';
+    while (<$cpuinfo>) {
+	++$jobs if /^processor\t/;
+    }
+    --$jobs;
+}
+
+$jobs = 1 if $jobs < 1;
+
+
+my ($first, $last) = @ARGV;
+
+
+########################################################################
+#
+#  build temporary makefile
+#
+
+local ($,, $\) = ("\n", "\n");
+
+my ($handle, $filename) = tempfile(UNLINK => 1);
+
+print $handle "all: $_/label" foreach $first .. $last;
+
+print $handle ("%/label: %/stamp",
+	       "\tcd \$* && $cwd/$label_once \$* >\$(\@F).",
+	       "\tmv \$@. \$@",
+	       '',
+	       "%/stamp:",
+	       "\ttest ! -e ../orderly-shutdown",
+	       "\techo run \$*: start",
+	       "\tif [ -d \$* ]; then rm -r \$*; fi",
+	       "\tmkdir \$*",
+	       "\tcd \$* && $cwd/$run_once \$*",
+	       "\techo run \$*: done",
+	       "\ttouch \$@",
+	       '',
+	       '.PRECIOUS: %/stamp');
+close $handle;
+
+
+########################################################################
+#
+#  start the build
+#
+
+# scrub environment in case we are inside a larger makefile
+delete @ENV{'MAKEFILES', 'MAKFLAGS'};
+
+# prepare data storage area
+my $datadir = 'data';
+mkdir $datadir;
+
+# perform any other setup work needed before the runs begin
+my $prep = "bin/prepare-runs";
+if (-x $prep) {
+    (system { $prep } $prep) == 0 or die "cannot run $prep: $!\n";
+}
+
+# do not use exec here; it interferes with tempfile cleanup
+my @silent = $verbose ? () : ('-s');
+system 'nice', 'make', @silent, '-C', $datadir, '-j', $jobs, '-f', $filename;
+exit($? >> 8 || $? & 127);

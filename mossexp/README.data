@@ -9,32 +9,32 @@ share/*.cfg
 share/*.sites
     extracted site info for use with "resolve-samples"
 
-*/{good,bad,bad2}
+*/{good,bad}
     one subdirectory per variant moss executable
 
-*/{good,bad,bad2}/command
+*/{good,bad}/command
     command line used for run
 
-*/{good,bad,bad2}/stdout
+*/{good,bad}/stdout
     logged standard output from run
 
-*/{good,bad,bad2}/stderr
+*/{good,bad}/stderr
     logged standard error from run
     includes "Error <n>" messages
 
-*/{good,bad,bad2}/time
+*/{good,bad}/time
     wall clock execution time in seconds
 
-*/{good,bad,bad2}/exit
+*/{good,bad}/exit
     exactly one of the following:
         normal    <exit status>
         signal    <signal number>
         timeout
 
-*/{bad,bad2}/reports.gz
+*/reports
     feedback report suitable for use with "resolve-samples"
 
-*/{bad,bad2}/fail
+*/bad/fail
     zero if "stdout" and "fail" match corresponding good files
     arbitrary non-zero value if either of these are different
 

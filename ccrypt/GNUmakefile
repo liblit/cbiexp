@@ -6,6 +6,7 @@ cleartext := $(shell find $(inputs) -type f -maxdepth 1 ! -name '*.cpt' ! -name 
 cyphertext := $(cleartext:=.cpt)
 
 prepare: $(sites) $(program) $(cleartext) $(cyphertext)
+.PHONY: prepare
 
 $(sites): $(program)
 	/usr/lib/sampler/tools/extract-section .debug_site_info $< >$@.
@@ -25,5 +26,7 @@ force:
 .PHONY: force
 
 clean:
-	rm -f $(inputs)/*.cpt
+	rm -f $(inputs)/*.cpt share/*.sites
 	$(MAKE) -C src $@
+
+.PHONY: clean

@@ -16,6 +16,11 @@ my $ccrypt = "$FindBin::Bin/../src/src/ccrypt";
 my $runId = shift;
 
 
+open STDIN, '<', '/dev/null' or die "cannot redirect standard input: $!\n";
+open STDOUT, '>', 'stdout' or die "cannot redirect standard output: $!\n";
+open STDERR, '>', 'stderr' or die "cannot redirect standard error: $!\n";
+
+
 ########################################################################
 #
 #  record some small fact in an external file
@@ -145,23 +150,3 @@ $process->expect(undef,
 		 ' (y or n)? ', \&pick_yes_or_no);
 
 note 'outcome', $process->exitstatus();
-
-
-########################################################################
-#
-#  sanity check sampler output
-#
-
-my $handle = new FileHandle $ENV{SAMPLER_FILE}, 'r';
-
-if ($handle) {
-    my $last;
-    $last = $_ while <$handle>;
-    if (! defined $last) {
-	note 'bad', 'reports file empty';
-    } elsif ($last ne "</report>\n") {
-	note 'bad', 'reports file ends abruptly';
-    }
-} else {
-    note 'bad', 'reports file missing';
-}

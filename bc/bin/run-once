@@ -45,7 +45,7 @@ delete $ENV{SAMPLER_REPORT_FD};
 #
 
 my ($inFd, $inName) = tempfile(UNLINK => 1);
-(system { $fuzz } $fuzz, $runId, 9, $inName) == 0
+(system { $fuzz } $fuzz, $runId, 1, $inName) == 0
     or die "cannot create random input file: $!";
 
 open my $oldin, '<&', \*STDIN or die "cannot save standard input: $!";
@@ -63,23 +63,3 @@ open STDOUT, '>&', $oldout or die "cannot restore standard output: $!";
 open STDERR, '>&', $olderr or die "cannot restore standard error: $!";
 
 note 'outcome', $?;
-
-
-########################################################################
-#
-#  sanity check sampler output
-#
-
-my $handle = new FileHandle $ENV{SAMPLER_FILE}, 'r';
-
-if ($handle) {
-    my $last;
-    $last = $_ while <$handle>;
-    if (! defined $last) {
-	note 'bad', 'reports file empty';
-    } elsif ($last ne "</report>\n") {
-	note 'bad', 'reports file ends abruptly';
-    }
-} else {
-    note 'bad', 'reports file missing';
-}

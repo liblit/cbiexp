@@ -35,10 +35,12 @@ find \&wanted, @SiteConfig::musicdirs;
 #  prepare for sampler data collection
 #
 
+my $rhythmbox = "$FindBin::Bin/rhythmbox";
+
 $ENV{GNOME_DISABLE_CRASH_DIALOG} = 1;
 $ENV{SAMPLER_DEBUGGER} = '/usr/share/sampler/print-debug-info';
-$ENV{SAMPLER_FILE} = 'client/reports';
-$ENV{SAMPLER_REAL_EXECUTABLE} = $SiteConfig::rhythmbox;
+$ENV{SAMPLER_FILE} = 'reports';
+$ENV{SAMPLER_REAL_EXECUTABLE} = $rhythmbox;
 $ENV{SAMPLER_SPARSITY} = 1;
 
 delete $ENV{SAMPLER_REPORT_FD};
@@ -52,25 +54,5 @@ delete $ENV{SAMPLER_REPORT_FD};
 my $song = $music[int rand @music];
 Utils::note 'initial-song', $song;
 
-system { $SiteConfig::rhythmbox } $SiteConfig::rhythmbox, '--debug', $song;
+system { $rhythmbox } $rhythmbox, $song;
 Utils::note 'outcome', $?;
-
-
-########################################################################
-#
-#  sanity check sampler output
-#
-
-my $handle = new FileHandle $ENV{SAMPLER_FILE}, 'r';
-
-if ($handle) {
-    my $last;
-    $last = $_ while <$handle>;
-    if (! defined $last) {
-	Utils::note '../bad', 'reports file empty';
-    } elsif ($last ne "</report>\n") {
-	Utils::note '../bad', 'reports file ends abruptly';
-    }
-} else {
-    Utils::note '../bad', 'reports file missing';
-}
