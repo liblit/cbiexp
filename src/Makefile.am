@@ -51,6 +51,8 @@ libanalyze_a_SOURCES =				\
 	IndexedPredInfo.h			\
 	MapSites.cc				\
 	MapSites.h				\
+	Nonconst_PredStats.cc			\
+	Nonconst_PredStats.h			\
 	NumRuns.cc				\
 	NumRuns.h				\
 	PredCoords.cc				\
@@ -71,12 +73,18 @@ libanalyze_a_SOURCES =				\
 	Rho.h					\
 	RunsDirectory.cc			\
 	RunsDirectory.h				\
+	RunsSplit.cc				\
+	RunsSplit.h				\
 	SiteCoords.cc				\
 	SiteCoords.h				\
 	SourceDirectory.cc			\
 	SourceDirectory.h			\
 	Stylesheet.cc				\
 	Stylesheet.h				\
+	TimestampReport.cc			\
+	TimestampReport.h			\
+	UtilLogReg.cc				\
+	UtilLogReg.h				\
 	Verbose.cc				\
 	Verbose.h				\
 	ViewPrinter.cc				\
@@ -88,16 +96,10 @@ libanalyze_a_SOURCES =				\
 	shell.cc				\
 	shell.h					\
 	sorts.h					\
-	utils.cc				\
-	utils.h					\
 	split_runs.cc				\
 	split_runs.h				\
-	RunsSplit.cc				\
-	RunsSplit.h				\
-	Nonconst_PredStats.cc			\
-	Nonconst_PredStats.h			\
-	UtilLogReg.cc				\
-	UtilLogReg.h
+	utils.cc				\
+	utils.h
 
 
 ########################################################################
@@ -119,8 +121,8 @@ liblate_a_SOURCES =				\
 	compute_obs_tru.cc			\
 	compute_results.cc			\
 	compute_nonconst_preds.cc		\
-	train_utillog.cc			\
 	convert_reports.ll			\
+	extract_timestamps.ll			\
 	gather_prior_dist.cc			\
 	gen_preds_file.cc			\
 	gen_summary.cc				\
@@ -130,6 +132,7 @@ liblate_a_SOURCES =				\
 	preds.h					\
 	project.cc				\
 	sites.h					\
+	train_utillog.cc			\
 	units.h					\
 	xmlify-results.cc			\
 	clip_params.cc

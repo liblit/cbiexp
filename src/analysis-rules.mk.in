@@ -209,6 +209,15 @@ convert-reports: $(tooldir)/convert_reports.o units.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze $(LEXLIB) -o $@
 clean:: ; rm -f convert-reports
 
+extract-timestamps: $(tooldir)/extract_timestamps.o units.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze $(LEXLIB) -o $@
+clean:: ; rm -f extract-timestamps
+
+stamp-extract-timestamps:
+	$(build) extract-timestamps
+	./extract-timestamps --runs-directory=$(datadir)
+	touch $(datadir)/$@
+
 s.runs f.runs: $(tooldir)/process_run_labels $(datadir)/stamp-labels
 	$(time) $< --runs-directory=$(datadir)
 clean:: ; rm -f s.runs f.runs
