@@ -22,3 +22,10 @@ Print a list of run numbers along with a one-word outcome label.  This
 script is intended to be used in pipelines to help identify good runs,
 bad runs, broken runs, etc.  See comments at the top of the script for
 more details.
+
+
+* resolve-samples
+
+An updated script for collating raw feedback report with static site
+information.  Use this instead of the one in "/usr/lib/sampler/tools",
+which is too old for our current data format.
