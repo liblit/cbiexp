@@ -1,3 +1,5 @@
+#!/bin/sh -e
+
 /moa/sc3/mhn/bin/analyze-runs -do-process-labels -n 31998 -l /moa/sc3/cbiexp/rhythmbox/data/%d/label
 /moa/sc3/mhn/bin/analyze-runs -do-map-sites -vs /moa/sc3/cbiexp/rhythmbox/share/rhythmbox.sites
 /moa/sc3/mhn/bin/analyze-runs -do-convert-reports -s ./s.runs -f ./f.runs -vr /moa/sc3/cbiexp/rhythmbox/data/%d/reports -cr /moa/sc3/cbiexp/rhythmbox/data/%d/reports.new -u ./units.h
