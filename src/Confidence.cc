@@ -1,9 +1,32 @@
+#include <iostream>
 #include "Confidence.h"
 
 using namespace std;
 
 
 unsigned Confidence::level = 95;
+
+
+double
+Confidence::critical(unsigned level)
+{
+  switch (level)
+    {
+    case 90:
+      return 1.645;
+    case 95:
+      return 1.96;
+    case 96:
+      return 2.05;
+    case 98:
+      return 2.33;
+    case 99:
+      return 2.58;
+    default:
+      std::cerr << "confidence table is incomplete for level " << level << "%\n";
+      exit(1);
+    }
+}
 
 
 static const argp_option options[] = {

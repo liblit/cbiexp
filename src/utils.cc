@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
+#include "Confidence.h"
 #include "sites.h"
 #include "units.h"
 #include "utils.h"
@@ -11,26 +12,13 @@
 using std::string;
 
 
-const float conf_map[10] = {
-    1.645,  // 90%
-    0,
-    0,
-    0,
-    0,
-    1.96,   // 95%, default
-    2.05,   // 96%
-    0,
-    2.33,   // 98%
-    2.58    // 99%
-};
-
 pred_stat compute_pred_stat(int s, int f, int os, int of, int confidence)
 {
     pred_stat p;
     p.fs = ((float)  f) / ( s +  f);
     p.co = ((float) of) / (os + of);
     p.in = p.fs - p.co;
-    p.lb = p.in - conf_map[confidence - 90] * sqrt(((p.fs * (1 - p.fs)) / (f + s)) + ((p.co * (1 - p.co))/(of + os)));
+    p.lb = p.in - Confidence::critical(confidence) * sqrt(((p.fs * (1 - p.fs)) / (f + s)) + ((p.co * (1 - p.co))/(of + os)));
     return p;
 }
 

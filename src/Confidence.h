@@ -10,6 +10,7 @@ namespace Confidence
   extern const argp argp;
 
   extern unsigned level;
+  double critical(unsigned = level);
 }
 
 

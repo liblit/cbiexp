@@ -37,31 +37,8 @@ Predicate::increase() const
 double
 Predicate::lowerBound() const
 {
-  double quantile = 0;
-  switch (Confidence::level)
-    {
-    case 90:
-      quantile = 1.645;
-      break;
-    case 95:
-      quantile = 1.96;
-      break;
-    case 96:
-      quantile = 2.05;
-      break;
-    case 98:
-      quantile = 2.33;
-      break;
-    case 99:
-      quantile = 2.58;
-      break;
-    default:
-      cerr << "confidence table is incomplete for level " << Confidence::level << "%\n";
-      exit(1);
-    }
-
   const double standardError = sqrt(tru.errorPart() + obs.errorPart());
-  return increase() - quantile * standardError;
+  return increase() - Confidence::critical() * standardError;
 }
 
 
