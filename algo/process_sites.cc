@@ -8,13 +8,23 @@ main(int argc, char** argv)
     char p[1000];
 
     assert(argc == 2);
-    FILE* fp = fopen(argv[1], "r");
-    assert(fp);
+    FILE* ifp = fopen(argv[1], "r");
+    assert(ifp);
+
+    FILE* ofpu = fopen("units.h", "w");
+    assert(ofpu);
+    fprintf(ofpu, "#ifndef UNITS_H\n#define UNITS_H\n\n");
+    fprintf(ofpu, "char* units[] = {\n");
+
+    FILE* ofps = fopen("sites.h", "w");
+    assert(ofps);
+    fprintf(ofps, "#ifndef SITES_H\n#define SITES_H\n\n");
+    fprintf(ofps, "char* sites[] = {\n");
 
     while (1) {
-        fscanf(fp, "%[^\n]s", s);
-        fgetc(fp);  // eat '\n'
-        if (feof(fp))
+        fscanf(ifp, "%[^\n]s", s);
+        fgetc(ifp);  // eat '\n'
+        if (feof(ifp))
             break;
         assert(strncmp(s, "<sites", 6) == 0);
         unit = strchr(s, '\"'); 
@@ -28,23 +38,28 @@ main(int argc, char** argv)
         *t = '\0';
 
         if (strcmp(scheme, "scalar-pairs") == 0)
-            printf("@S");
+            fprintf(ofpu, "\t\"S");
         else if (strcmp(scheme, "branches") == 0)
-            printf("@B");
+            fprintf(ofpu, "\t\"B");
         else if (strcmp(scheme, "returns") == 0)
-            printf("@R");
+            fprintf(ofpu, "\t\"R");
         else
             assert(0);
-        printf("%s\n", unit);
+        fprintf(ofpu, "%s\",\n", unit);
 
         while (1) {
-            fscanf(fp, "%[^\n]s", p);
-            fgetc(fp);  // eat '\n'
+            fscanf(ifp, "%[^\n]s", p);
+            fgetc(ifp);  // eat '\n'
             if (strncmp(p, "</sites", 7) == 0)
                 break;
-            printf("%s\n", p);
+            fprintf(ofps, "\t\"%s\",\n", p);
         }
     }
+
+    fprintf(ofpu, "};\n\n#endif");
+    fclose(ofpu);
+    fprintf(ofps, "};\n\n#endif");
+    fclose(ofps);
 
     return 0;
 }
