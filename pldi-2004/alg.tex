@@ -134,9 +134,9 @@ in the set of runs where the value of $P$ is observed at all, the program fails.
 \[ \context(P) = \frac{F(P \lor \lnot P)}{S(P \lor \lnot P) + F(P \lor \lnot P)} \]
 
 The interesting quantity, then, is
-\begin{equation}
+\begin{equation*}
  \increase(P) = \crash(P) - \context(P) \label{eqn:1}
-\end{equation}
+\end{equation*}
 
 which can be read as: How much does $P$ being true increase the probability of failure
 over simply reaching the line where $P$ is sampled?  For example, for the predicate {\tt x == 0} on line {\tt (c)},
@@ -212,10 +212,10 @@ the null hypothesis $\H_0:
 \pi_f \leq \pi_s$, vs.\ the alternate hypothesis $\H_1: \pi_f > \pi_s$.  Since
 $\pi_f$ and $\pi_s$ are not known, we have to estimate them from our
 data.
-\begin{eqnarray}
-  \hat \pi_f(P) &=& \frac{F(P)}{F(P \lor \lnot P)} \\
-  \hat \pi_s(P) &=& \frac{S(P)}{S(P \lor \lnot P)}
-\end{eqnarray}
+\begin{align*}
+  \hat \pi_f(P) &= \frac{F(P)}{F(P \lor \lnot P)} &
+  \hat \pi_s(P) &= \frac{S(P)}{S(P \lor \lnot P)}
+\end{align*}
 Although these proportion estimates of $\pi_f$ and $\pi_s$ approach the
 true heads probabilities as we increase the number of trial runs, they
 still differ from the true values.  With a certain probability, using these
