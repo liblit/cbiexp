@@ -84,7 +84,7 @@ void print_result_summary()
     fclose(fp);
 }
 
-inline void print_pred_info(FILE* fp, int u, int c, int p)
+inline void print_pred_info(FILE* fp, int u, int c, int p, int site)
 {
     int s  = site_info[u][c].S[p];
     int f  = site_info[u][c].F[p];
@@ -94,8 +94,8 @@ inline void print_pred_info(FILE* fp, int u, int c, int p)
     float fs = ((float)  f) / ( s +  f);
     float co = ((float) of) / (os + of);
 
-    fprintf(fp, "%c %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
-	units[u].s[0], u, c, p,
+    fprintf(fp, "%c %d %d %d %d %.2f %.2f %.2f %.2f %d %d %d %d ",
+	units[u].s[0], u, c, p, site,
         compute_lb(s, f, os, of, confidence),
         fs - co, fs, co, s, f, os, of);
 }
@@ -119,7 +119,7 @@ void print_retained_preds()
 	        for (p = 0; p < 6; p++)
 	            if (site_info[u][c].retain[p]) {
 		        num_s_preds++;
-		        print_pred_info(fp, u, c, p);
+		        print_pred_info(fp, u, c, p, i);
 		        print_s_pred(fp, p, i);
                         print_site_info(fp, i);
 	            }
@@ -128,7 +128,7 @@ void print_retained_preds()
 	        for (p = 0; p < 6; p++)
 	            if (site_info[u][c].retain[p]) {
 		        num_r_preds++;
-	                print_pred_info(fp, u, c, p);
+	                print_pred_info(fp, u, c, p, i);
 		        print_r_pred(fp, p, i);
                         print_site_info(fp, i);
                     }
@@ -137,7 +137,7 @@ void print_retained_preds()
 	        for (p = 0; p < 2; p++)
 	            if (site_info[u][c].retain[p]) {
 	                num_b_preds++;
-	                print_pred_info(fp, u, c, p);
+	                print_pred_info(fp, u, c, p, i);
 	                print_b_pred(fp, p, i);
                         print_site_info(fp, i);
                     }

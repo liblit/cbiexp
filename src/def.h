@@ -11,7 +11,7 @@ static const char* const sortby_names[NUM_SORTBYS] = { "lower bound of confidenc
 						       "increase score",
 						       "fail score",
 						       "true in # F runs" };
-static const int sortby_indices[NUM_SORTBYS] = { 5, 6, 7, 10 };
+static const int sortby_indices[NUM_SORTBYS] = { 6, 7, 8, 11 };
 
 
 // Local variables:

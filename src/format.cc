@@ -6,7 +6,7 @@ int main(int, char**)
 {
     char str[8000];
     char sc;
-    int u, c, p;
+    int u, c, p, site;
     float lb, in, fs, co;
     int s, f, os, of;
     char pred[8000];
@@ -15,7 +15,9 @@ int main(int, char**)
 	fgets(str, 8000, stdin);
 	if (feof(stdin))
 	    break;
-	sscanf(str, "%c %d %d %d %f %f %f %f %d %d %d %d %[^\n]s", &sc, &u, &c, &p, &lb, &in, &fs, &co, &s, &f, &os, &of, pred);
+	sscanf(str, "%c %d %d %d %d %f %f %f %f %d %d %d %d %[^\n]s",
+            &sc, &u, &c, &p, &site,
+            &lb, &in, &fs, &co, &s, &f, &os, &of, pred);
 	float f1 = co * 100;
 	float f2 = lb * 100;
 	float f3 = (fs - (co + lb)) * 100;
