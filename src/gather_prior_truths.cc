@@ -152,7 +152,7 @@ void Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, 
   assert (x || y || z || w);
   notice(coords, 0, x+y+z+w, x);
   notice(coords, 1, x+y+z+w, y);
-  notice(coords, 1, x+y+z+w, z);
+  notice(coords, 2, x+y+z+w, z);
   notice(coords, 3, x+y+z+w, w);
 }
 

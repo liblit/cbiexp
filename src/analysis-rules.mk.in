@@ -306,7 +306,7 @@ partial_order: $(tooldir)/partial_order.o units.o
 	$(time) $@ --runs-directory=$(datadir) --timestamp-when=first
 	$(time) $@ --runs-directory=$(datadir) --timestamp-when=last
 
-collect_parmstats: $(tooldir)/collect_parmstats.o units.o
+collect_parmstats: $(tooldir)/collect_parmstats.o units.o sites.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
 clean:: ; rm -f colect_parmstats
 

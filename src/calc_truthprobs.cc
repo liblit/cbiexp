@@ -22,6 +22,8 @@
 using namespace std;
 using __gnu_cxx::hash_map;
 
+static unsigned ntestruns = 100;
+static double score1 = 0.0, score2 = 0.0, score_n1 = 0.0, score_n2 = 0.0;
 static ofstream logfp("truthprobs.txt", ios_base::trunc);
 
 /****************************************************************
@@ -31,40 +33,61 @@ static ofstream logfp("truthprobs.txt", ios_base::trunc);
 struct PredInfo
 {
     unsigned tru, obs;
+    double rho;
     double alpha; // truth rate = tru/obs
-    double rho, lambda, beta;
-    double truthprob, tp2; // truthprob is P(X > 0|r,y), tp2 is P(X>0|n,r,y)
+    double beta[3];
+    double lambda, gamma;
+    double tp, tp_n; // tp is P(X > 0|r,y), tp_n is P(X>0|n,r,y)
+    double tp2, tp_n2; // truth probabilities from model 2
     unsigned dst, dso, realt, realo;
     PredInfo() {
 	tru = obs = 0;
-	alpha = rho = lambda = beta = 0.0;
-	truthprob = tp2 = 0.0;
+	rho = alpha = beta[0] = beta[1] = beta[2] = lambda = gamma = 0.0;
+	tp = tp_n = 0.0;
+	tp2 = tp_n2 = 0.0;
 	dst = dso = realt = realo = 0;
     }
-    void reinit() {
-        truthprob = tp2 = 0.0;
+    void reinit_probs() {
+        tp = tp_n = 0.0;
+	tp2 = tp_n2 = 0.0;
 	dst = dso = realt = realo = 0;
     }
     void update_stats(unsigned _tru, unsigned _obs) {
 	tru += _tru;
 	obs += _obs;
     }
-    void set_parms(double r, double l, double b) {
-	rho = r;
-	lambda = l;
-	beta = b;
-    }
+    void set_parms(FILE *fp);
     void calc_prob(unsigned t, unsigned o);
-    void calc_prob2(unsigned t, unsigned o, unsigned n);
-    void calc_zero_probs() {
-      calc_prob(0,0);
-    }
+    void calc_prob_n(unsigned t, unsigned o, unsigned n);
+    void calc_prob2(unsigned t, unsigned o);
+    void calc_prob_n2(unsigned t, unsigned o, unsigned n);
+    void calc_zero_prob() {  calc_prob(0,0);    }
+    void calc_zero_prob2() {  calc_prob2(0,0);    }
     void compare_prob (unsigned t, unsigned o) {
         realt = t;
         realo = o;
-        calc_prob2(dst, dso, realo);
+        calc_prob_n(dst, dso, realo);
+	calc_prob_n2(dst, dso, realo);
+        double answer = (realt > 0) ? 1.0 : 0.0;
+        score1 += abs(answer - tp);
+        score2 += abs(answer - tp2);
+        score_n1 += abs(answer - tp_n);
+        score_n2 += abs(answer - tp_n2);
     }
 };
+
+void
+PredInfo::set_parms (FILE * fp)
+{
+  unsigned S, N, Y, Z;
+  double a, b;
+  unsigned Asize, Asumtrue, Asumobs, Bsize, Csize;
+  int ctr = fscanf(fp, "%u %u %u %u %lg %lg %lg %u %u %u %u %u %lg %lg %lg %lg %lg %lg\n", 
+		   &S, &N, &Y, &Z, &a, &b, &rho, 
+		   &Asize, &Asumtrue, &Asumobs, &Bsize, &Csize,
+		   &alpha, beta, beta+1, beta+2, &lambda, &gamma);
+  assert(ctr == 18);
+}
 
 void 
 PredInfo::calc_prob(unsigned t, unsigned o) 
@@ -72,26 +95,61 @@ PredInfo::calc_prob(unsigned t, unsigned o)
     dst = t;
     dso = o;
     if (t > 0)
-	truthprob = 1.0;
+	tp = 1.0;
     else {
 	if (o == 0) {
-	    double numerator = beta * exp(-lambda*rho-lambda*alpha*(1.0-rho)) + (1.0-beta);
-	    double denom = beta*exp(-lambda*rho) + (1.0-beta);
-	    truthprob = 1.0- numerator/denom;
+	    double numerator = gamma * exp(-lambda*rho-lambda*alpha*(1.0-rho)) + (1.0-gamma);
+	    double denom = gamma*exp(-lambda*rho) + (1.0-gamma);
+	    tp = 1.0- numerator/denom;
 	}
 	else {
-            truthprob = 1.0 - exp(-lambda*alpha*(1.0-rho));
+            tp = 1.0 - exp(-lambda*alpha*(1.0-rho));
 	}
     }
 }
 
 void
-PredInfo::calc_prob2(unsigned t, unsigned o, unsigned n)
+PredInfo::calc_prob_n(unsigned t, unsigned o, unsigned n)
 {
   if (t > 0)
-    tp2 = 1.0;
+    tp_n = 1.0;
   else 
-    tp2 = 1.0 - exp((double) (n-o) * log(1.0-alpha));
+    tp_n = 1.0 - exp((double) (n-o) * log(1.0-alpha));
+}
+
+void
+PredInfo::calc_prob2(unsigned t, unsigned o)
+{
+    if (t > 0)
+	tp2 = 1.0;
+    else {
+	double numer, denom;
+	if (o > 0) { // t = 0, m > 0
+	    numer = beta[0]*exp((double)o*log(1.0-alpha) - lambda*alpha*(1.0-rho)) + beta[1];
+	    denom = beta[0]*exp((double)o*log(1.0-alpha)) + beta[1];
+	}
+	else { // t = 0, m = 0
+	    numer = (beta[0]*exp(-lambda*alpha*(1.0-rho)) + beta[1] + beta[2]*exp(-lambda*(1.0-rho))) * gamma * exp(-lambda*rho) + 1.0 - gamma;
+	    denom = gamma*exp(-lambda*rho) + 1.0 - gamma;
+	}
+	tp2 = 1.0 - numer / denom;
+    }
+}
+
+void
+PredInfo::calc_prob_n2(unsigned t, unsigned o, unsigned n)
+{
+    if (t > 0)
+	tp_n2 = 1.0;
+    else { // t = 0, n > 0
+	double numerator = beta[0]*exp((double)n*log(1.0-alpha)) + beta[1]; 
+	if (o > 0) { // t = 0, m > 0, n > 0
+	    double denominator = beta[0]*exp((double)o*log(1.0-alpha)) + beta[1];
+	    tp_n2 = 1.0 - numerator/denominator;
+	}
+	else // t = 0, m = 0, n > 0
+	    tp_n2 = 1.0 - numerator;
+    }
 }
 
 class PredInfoPair;
@@ -102,30 +160,15 @@ class PredInfoPair
 public:
     PredInfo f;
     PredInfo s;
-    void update_stats(piptr pp, unsigned tru, unsigned obs) {
-	(this->*pp).update_stats(tru, obs);
-    }
-    void set_parms(piptr pp, double rho, double lambda, double beta) {
-	(this->*pp).set_parms(rho, lambda, beta);
-    }
-    void calc_prob(piptr pp, unsigned tru, unsigned obs) {
-	(this->*pp).calc_prob(tru, obs);
-    }
-    void compare_prob(piptr pp, unsigned tru, unsigned obs) {
-	(this->*pp).compare_prob(tru, obs);
-    }
-    void reinit(piptr pp) {
-        (this->*pp).reinit();
-    }
 };
 
 class pred_hash_t : public hash_map<PredCoords, PredInfoPair>
 {
 public:
-   void reinit(piptr pp) {
+   void reinit_probs(piptr pp) {
      for (pred_hash_t::iterator c = begin(); c != end(); ++c) {
        PredInfoPair &PP = c->second;
-       PP.reinit(pp);
+       (PP.*pp).reinit_probs();
      }
    }
 };
@@ -136,11 +179,13 @@ static piptr pptr = 0;
 inline ostream &
 operator<< (ostream &out, const PredInfo &pi)
 {
-    out << pi.tru << '\t' << pi.obs << '\t' << pi.alpha << '\t'
-	<< pi.rho << '\t' << pi.lambda << '\t' << pi.beta << '\t'
-	<< pi.truthprob << '\t' << pi.tp2 << '\t' 
-        << pi.dst << '\t' << pi.dso << '\t'
-	<< pi.realt << '\t' << pi.realo;
+    out << pi.tru << ' ' << pi.obs << ' ' << pi.rho << ' ' 
+	<< pi.alpha << ' ' << pi.beta[0] << ' ' << pi.beta[1] << ' ' << pi.beta[2] << ' ' 
+	<< pi.lambda << ' ' << pi.gamma << ' '
+	<< pi.tp << ' ' << pi.tp_n << ' ' 
+	<< pi.tp2 << ' ' << pi.tp_n2 << ' '
+        << pi.dst << ' ' << pi.dso << ' '
+	<< pi.realt << ' ' << pi.realo;
     return out;
 }
 
@@ -164,7 +209,7 @@ operator<< (ostream &out, const pred_hash_t &hash)
 /****************************************************************
  * Information about each run
  ***************************************************************/
-enum { CALC_ALPHA, READ_DS, READ_FULL };
+enum { READ_DS, READ_FULL };
 
 class Reader : public ReportReader
 {
@@ -188,21 +233,19 @@ Reader::Reader(int _mode)
 }
 
 inline void
-Reader::update(const SiteCoords &coords, unsigned p, unsigned tru, unsigned obs) const
+Reader::update(const SiteCoords &coords, unsigned p, unsigned obs, unsigned tru) const
 {
     PredCoords pc(coords, p);
     const pred_hash_t::iterator found = predHash.find(pc);
     if (found != predHash.end()) {
 	PredInfoPair &pp = found->second;
 	switch (mode) {
-	case CALC_ALPHA:
-	    pp.update_stats(pptr, tru, obs);
-	    break;
 	case READ_DS:
-	    pp.calc_prob(pptr, tru, obs);
+	    (pp.*pptr).calc_prob(tru, obs);
+	    (pp.*pptr).calc_prob2(tru, obs);
 	    break;
 	case READ_FULL:
-	    pp.compare_prob(pptr, tru, obs);
+	    (pp.*pptr).compare_prob(tru, obs);
 	    break;
 	default:
 	    assert(0);
@@ -213,12 +256,12 @@ Reader::update(const SiteCoords &coords, unsigned p, unsigned tru, unsigned obs)
 void Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
 {
     assert(x || y || z);
-    update(coords, 0, x, x+y+z);
-    update(coords, 1, y+z, x+y+z);
-    update(coords, 2, y, x+y+z);
-    update(coords, 3, x+z, x+y+z);
-    update(coords, 4, z, x+y+z);
-    update(coords, 5, x+y, x+y+z);
+    update(coords, 0, x+y+z, x);
+    update(coords, 1, x+y+z, y+z);
+    update(coords, 2, x+y+z, y);
+    update(coords, 3, x+y+z, x+z);
+    update(coords, 4, x+y+z, z);
+    update(coords, 5, x+y+z, x+y);
 }
 
 inline void
@@ -238,65 +281,23 @@ inline void
 Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y)
 {
     assert(x||y);
-    update(coords, 0, x, x+y);
-    update(coords, 1, y, x+y);
+    update(coords, 0, x+y, x);
+    update(coords, 1, x+y, y);
 }
 
 inline void
 Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z, unsigned w)
 {
     assert(x || y || z || w);
-    update(coords, 0, x, x+y+z+w);
-    update(coords, 1, y, x+y+z+w);
-    update(coords, 2, z, x+y+z+w);
-    update(coords, 3, w, x+y+z+w);
+    update(coords, 0, x+y+z+w, x);
+    update(coords, 1, x+y+z+w, y);
+    update(coords, 2, x+y+z+w, z);
+    update(coords, 3, x+y+z+w, w);
 }
 
 /****************************************************************************
  * Utilities
  ***************************************************************************/
-
-// Read the list of selected predicates
-void read_preds()
-{
-  FILE * const pfp = fopenRead(PredStats::filename);
-  pred_info pi;
-  PredInfoPair pp;
-  while (read_pred_full(pfp, pi)) {
-      predHash[pi] = pp;
-  }
-
-  fclose(pfp);
-}
-
-void 
-set_parms (SiteCoords &sc, piptr pp, double rho, double lambda, double beta)
-{
-    unsigned p = 0;
-    switch (units[sc.unitIndex].scheme_code) {
-    case 'S':
-    case 'R':
-	p = 6;
-	break;
-    case 'B':
-	p = 2;
-	break;
-    case 'G':
-	p = 4;
-	break;
-    default:
-	assert(0);
-    }
-
-    for (unsigned i = 0; i < p; i++) {
-	PredCoords pc(sc, i);
-	pred_hash_t::iterator found = predHash.find(pc);
-	if (found != predHash.end()) {
-	    PredInfoPair &info = found->second;
-	    info.set_parms(pp, rho, lambda, beta);
-	}
-    }
-}
 
 void
 read_parms()
@@ -307,50 +308,36 @@ read_parms()
     exit(1);
   }
 
-  SiteCoords coords;
-  unsigned S, N, Z;
-  double a, b;
-  double rho, lambda, beta;
+  PredCoords coords;
+  PredInfoPair pp;
   int ctr;
   
   while (true) {
-    ctr = fscanf(fp, "%u\t%u\n", &coords.unitIndex, &coords.siteOffset);
-    if (feof(fp))
-      break;
-    assert(ctr == 2);
+      ctr = fscanf(fp, "%u\t%u\t%u\n", 
+		   &coords.unitIndex, &coords.siteOffset, &coords.predicate);
+      if (feof(fp))
+	  break;
+      assert(ctr == 3);
 
-    ctr = fscanf(fp, "%u\t%u\t%u\t%lg\t%lg\t%lg\t%lg\t%lg\n", &S, &N, &Z, &a, &b, &rho, &lambda, &beta);
-    assert(ctr == 8);
+      pp.f.set_parms(fp);
+      pp.s.set_parms(fp);
 
-    set_parms(coords, &PredInfoPair::f, rho, lambda, beta);
-
-    ctr = fscanf(fp, "%u\t%u\t%u\t%lg\t%lg\t%lg\t%lg\t%lg\n", 
-           &S, &N, &Z, &a, &b, &rho, &lambda, &beta);
-    assert(ctr == 8);
-
-    set_parms(coords, &PredInfoPair::s, rho, lambda, beta);
+      predHash[coords] = pp;
   }
 
   fclose(fp);
 }
 
-void calc_alpha () 
-{
-  for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
-    PredInfoPair &pp = c->second;
-    if (pp.f.tru > 0)
-      pp.f.alpha = (double) pp.f.tru / pp.f.obs;
-    if (pp.s.tru > 0)
-      pp.s.alpha = (double) pp.s.tru / pp.s.obs;
-  }
-}
-
-void calc_zero_probs(piptr pp) // calculate truthprobs of predicates we didn't see in this previous run
+void calc_zero_prob(piptr pp) // calculate truthprobs of predicates we didn't see in this previous run
 {
   for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
     PredInfoPair &PP = c->second;
     if ((PP.*pp).dso == 0) // it is zero if the predicate hasn't been observed in the previous run
-      (PP.*pp).calc_zero_probs();
+    {
+	(PP.*pp).calc_zero_prob();
+	(PP.*pp).calc_zero_prob2();
+    }
+    
   }
 }
 
@@ -402,29 +389,28 @@ int main(int argc, char** argv)
 
     classify_runs();
 
-    read_preds();
     read_parms();
 
-    Progress::Bounded prog("Reading runs to calculate alpha", NumRuns::count());
-    for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
-	prog.step();
-	if (is_srun[r])
-	    pptr = &PredInfoPair::s;
-	else if (is_frun[r])
-	    pptr = &PredInfoPair::f;
-	else
-	    continue;
+//     Progress::Bounded prog("Reading runs to calculate alpha", NumRuns::count());
+//     for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+// 	prog.step();
+// 	if (is_srun[r])
+// 	    pptr = &PredInfoPair::s;
+// 	else if (is_frun[r])
+// 	    pptr = &PredInfoPair::f;
+// 	else
+// 	    continue;
 
-	Reader(CALC_ALPHA).read(r);
-    }
+// 	Reader(CALC_ALPHA).read(r);
+//     }
 
-    calc_alpha ();
+//    calc_alpha ();
 
     string report_suffix = CompactReport::suffix;
     unsigned ctr = 0;
-    Progress::Bounded prog2("Calculating truth probabilities", 1000);
+    Progress::Bounded prog2("Calculating truth probabilities", ntestruns);
     for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
-	if (ctr == 1000)
+	if (ctr == ntestruns)
 	    break;
 
 	if (is_srun[r])
@@ -436,11 +422,11 @@ int main(int argc, char** argv)
 
 	prog2.step();
 	ctr++;
-        predHash.reinit(pptr);
+        predHash.reinit_probs(pptr);
 
 	CompactReport::suffix = report_suffix;
 	Reader(READ_DS).read(r);
-	calc_zero_probs(pptr);
+	calc_zero_prob(pptr);
 
 	CompactReport::suffix = "";
 	Reader(READ_FULL).read(r);
@@ -449,6 +435,8 @@ int main(int argc, char** argv)
     }
 
 
+    logfp << "Model 1 score: " << score1 << " Given n: " << score_n1 <<endl;
+    logfp << "Model 2 score: " << score2 << " Given n: " << score_n2 << endl;
     logfp.close();
     return 0;
 }

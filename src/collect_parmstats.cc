@@ -3,9 +3,12 @@
 #include <fstream>
 #include <iostream>
 #include <ext/hash_map>
+#include <queue>
 #include "fopen.h"
 #include "CompactReport.h"
 #include "NumRuns.h"
+#include "PredCoords.h"
+#include "PredStats.h"
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
 #include "RunsDirectory.h"
@@ -13,81 +16,107 @@
 #include "classify_runs.h"
 #include "sites.h"
 #include "units.h"
+#include "utils.h"
 
 using namespace std;
 using __gnu_cxx::hash_map;
 
 string sampleRateFile;
 
+typedef queue<PredCoords> Preds;
+Preds retainedPreds;
+
 /****************************************************************
  * Information about non-constant predicates
  ***************************************************************/
 
-class site_info_t {
+typedef hash_map<unsigned, unsigned> DiscreteDist;
+
+class pred_info_t {
 private:
-  unsigned S, N, Z;
-  double a;
-  double b;
-  double rho;
+    unsigned S, N, Y, Z;
+    double a;
+    double b;
+    double rho;
+    unsigned Asize, Asumtrue, Asumobs;
+    unsigned Bsize, Csize;
+    DiscreteDist Bset; // a histogram of m values in set B
+    DiscreteDist Cset; // a histogram of m values in set C
 public:
-  site_info_t () {
-    S = N = Z = 0;
-    a = (numeric_limits<double>::max)();
-    b = 0.0;
-    rho = 1.0;
-  }
-  void update(unsigned val);
-  void setrho(double r) { rho = r; }
-  void setmin(unsigned nruns);
-  void print(ostream &out) const;
+    pred_info_t () {
+	S = N = Y = Z = 0;
+	a = (numeric_limits<double>::max)();
+	b = 0.0;
+	rho = 1.0;
+	Asize = Asumtrue = Asumobs = Bsize = Csize = 0;
+    }
+    void update(const unsigned m, const unsigned y);
+    void setrho(const double r) { rho = r; }
+    void setmin(const unsigned nruns);
+    void print(ostream &out) const;
 };
 
-void site_info_t::update (unsigned val)
+void pred_info_t::update (const unsigned m, const unsigned y)
 {
   N += 1;
-  S += val;
-  a = (a < val) ? a : (double) val;
-  b = (b > val) ? b : (double) val;
+  S += m; // S = total observed
+  Y += y; // Y = total true
+  a = (a < m) ? a : (double) m;
+  b = (b > m) ? b : (double) m;
+  if (m > y) {
+      if (y > 0) { // set A
+	  Asumtrue += y;
+	  Asumobs += m;
+	  ++Asize;
+      } else { // m > y and y == 0 -> set B
+	  if (Bset.find(m) == Bset.end())
+	    Bset[m] = 1;
+          else 
+	    Bset[m] += 1;
+	  ++Bsize;
+      }
+  } else { // m == y > 0 -> set C
+      if (Cset.find(m) == Cset.end())
+        Cset[m] = 1;
+      else 
+	Cset[m] += 1;
+      ++Csize;
+  }
 }
 
 inline void
-site_info_t::setmin (unsigned nruns)
+pred_info_t::setmin (const unsigned nruns)
 {
   Z = nruns - N;
   if (Z > 0)
     a = 0.0;
 }
 
-void
-site_info_t::print (ostream &out) const
-{
-  out << S << '\t' << N << '\t' << Z << '\t'
-      << a << '\t' << b << '\t' 
-      << rho;
-}
-
-class SitePair;
-typedef site_info_t (SitePair::* SiteInfo);
-class SitePair
+class PredPair;
+typedef pred_info_t (PredPair::* PredInfoPtr);
+class PredPair
 {
 public:
-  site_info_t f;
-  site_info_t s;
+    pred_info_t f;
+    pred_info_t s;
 
-  void update(SiteInfo, unsigned);
+    void init() {}
+    void update(PredInfoPtr, unsigned, unsigned);
 };
 
 inline void
-SitePair::update(SiteInfo si, unsigned val)
+PredPair::update(PredInfoPtr pipt, unsigned nobs, unsigned ntrue)
 {
-  (this->*si).update(val);
+    (this->*pipt).update(nobs, ntrue);
 }
 
-class site_hash_t : public hash_map<SiteCoords, SitePair> 
+class pred_hash_t : public hash_map<PredCoords, PredPair> 
 {
 };
+static pred_hash_t predHash;
 
-static site_hash_t siteHash;
+typedef hash_map<SiteCoords, double> site_hash_t;
+static site_hash_t sampleRates;
 
 // This function reads down sampling rates off of file, if the info
 // is available.  The non-uniform down-sampling rates file may not
@@ -115,25 +144,35 @@ read_rates()
     const unit_t unit = units[coords.unitIndex];
     assert(coords.siteOffset < unit.num_sites);
 
-    site_hash_t::iterator found = siteHash.find(coords);
-    if (found == siteHash.end()) {
-      cerr << "Site " << coords << " doesn't exist in siteHash.\n";
-      exit(1);
-    }
-    SitePair &sp = found->second;
-    sp.f.setrho(rho);
-    sp.s.setrho(rho);
+    sampleRates[coords] = rho;
   }
-
+  
   fclose(rates);
+}
+
+/* for each interesting predicate, set rho according to sampleRates hash */
+void set_rates ()
+{
+    for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
+	const PredCoords &pc = c->first;
+	PredPair &pp = c->second;
+	const site_hash_t::iterator found = sampleRates.find(pc);
+	if (found == sampleRates.end()) {
+	    cerr << "Cannot find sample rate for predicate " << pc << endl;
+	    exit(1);
+	}
+	const double rho = found->second;
+	pp.f.setrho(rho);
+	pp.s.setrho(rho);
+    }
 }
 
 void set_min()
 {
-  for (site_hash_t::iterator c = siteHash.begin(); c != siteHash.end(); ++c) {
-    SitePair &sp = c->second;
-    sp.f.setmin(num_fruns);
-    sp.s.setmin(num_sruns);
+  for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
+    PredPair &pp = c->second;
+    pp.f.setmin(num_fruns);
+    pp.s.setmin(num_sruns);
   }
 }
 
@@ -144,42 +183,44 @@ void set_min()
 class Reader : public ReportReader
 {
 public:
-  Reader(SiteInfo);
+  Reader(PredInfoPtr);
   void branchesSite(const SiteCoords &, unsigned, unsigned);
   void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned);
   void returnsSite(const SiteCoords &, unsigned, unsigned, unsigned);
   void scalarPairsSite(const SiteCoords &, unsigned, unsigned, unsigned);
 
 private:
-  void tripleSite(const SiteCoords &, unsigned, unsigned, unsigned) const;
-  void obs(const SiteCoords &, unsigned) const;
-  const SiteInfo si;
+    void tripleSite(const SiteCoords &, unsigned, unsigned, unsigned) const;
+    void update(const SiteCoords &, unsigned, unsigned, unsigned) const;
+    const PredInfoPtr pipt;
 };
 
 inline
-Reader::Reader(SiteInfo _si)
-    : si(_si)
+Reader::Reader(PredInfoPtr _pipt)
+    : pipt(_pipt)
 {
 }
 
 inline void
-Reader::obs(const SiteCoords &coords, unsigned val) const
+Reader::update(const SiteCoords &coords, unsigned p, unsigned nobs, unsigned ntrue) const
 {
-  const site_hash_t::iterator found = siteHash.find(coords);
-  if (found != siteHash.end()) {
-    SitePair &sp = found->second;
-    sp.update(si,val);
-  } else {
-    SitePair sp;
-    sp.update(si, val);
-    siteHash[coords] = sp;
-  }
+    const PredCoords pc(coords, p);
+    pred_hash_t::iterator found = predHash.find(pc);
+    if (found != predHash.end()) {
+	PredPair &pp = found->second;
+	pp.update(pipt, nobs, ntrue);
+    }
 }
 
 void Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
 {
     assert(x || y || z);
-    obs(coords, x+y+z);
+    update(coords, 0, x+y+z, x);
+    update(coords, 1, x+y+z, y+z);
+    update(coords, 2, x+y+z, y);
+    update(coords, 3, x+y+z, x+z);
+    update(coords, 4, x+y+z, z);
+    update(coords, 5, x+y+z, x+y);
 }
 
 inline void
@@ -199,14 +240,18 @@ inline void
 Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y)
 {
     assert(x||y);
-    obs(coords, x+y);
+    update(coords, 0, x+y, x);
+    update(coords, 1, x+y, y);
 }
 
 inline void
 Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z, unsigned w)
 {
     assert(x || y || z || w);
-    obs(coords, x+y+z+w);
+    update(coords, 0, x+y+z+w, x);
+    update(coords, 1, x+y+z+w, y);
+    update(coords, 2, x+y+z+w, z);
+    update(coords, 3, x+y+z+w, w);
 }
 
 
@@ -215,34 +260,56 @@ Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsig
  ***************************************************************************/
 
 inline ostream &
-operator<< (ostream &out, const site_info_t &si)
+operator<< (ostream &out, const DiscreteDist &dist)
 {
-  si.print(out);
+  for (DiscreteDist::const_iterator c = dist.begin(); c != dist.end(); ++c)
+  {
+    out << c->first << ' ' << c->second << ' ';
+  }
+  return out;
+}
+
+void
+pred_info_t::print (ostream &out)  const
+{
+    out << S << ' ' << N << ' ' << Y << ' ' << Z << ' '
+	<< a << ' ' << b << ' ' << rho << ' '
+	<< Asize << ' ' << Asumtrue << ' ' << Asumobs << ' '
+	<< Bsize << ' ' << Csize << endl;
+    out << Bset << endl;
+    out << Cset << endl;
+}
+
+inline ostream &
+operator<< (ostream &out, const pred_info_t &pi)
+{
+  pi.print(out);
   return out;
 }
 
 inline ostream &
-operator<< (ostream &out, const SitePair &sp)
+operator<< (ostream &out, const PredPair &pp)
 {
-  out << sp.f << '\n' << sp.s;
-  return out;
-}
-
-inline ostream &
-operator<< (ostream &out, const site_hash_t &sh)
-{
-    for (site_hash_t::const_iterator c = sh.begin(); c != sh.end(); c++) {
-	const SiteCoords sc = c->first;
-	const SitePair sp = c->second;
-	out << sc << '\n' << sp.f << '\n' << sp.s << '\n';
-    }
+    out << pp.f << pp.s;
     return out;
 }
 
 void print_results()
 {
     ofstream parmsfp ("parmstats.txt", ios_base::trunc);
-    parmsfp << siteHash;
+    while (!retainedPreds.empty()) {
+	PredCoords &coords = retainedPreds.front();
+	pred_hash_t::iterator found = predHash.find(coords);
+	if (found == predHash.end()) {
+	    cerr << "Cannot find stats for predicate " << coords << endl;
+	    exit(1);
+	}
+
+	PredPair &pp = found->second;
+	parmsfp << coords << '\n' << pp;
+
+	retainedPreds.pop();
+    }
     parmsfp.close();
 }
 
@@ -303,21 +370,30 @@ int main(int argc, char** argv)
 
     classify_runs();
 
-    Progress::Bounded prog("Reading runs and collecting sufficient stats", NumRuns::count());
-    for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
-      prog.step();
-      SiteInfo si = 0;
-      if (is_srun[r])
-	si = &SitePair::s;
-      else if (is_frun[r])
-        si = &SitePair::f;
-      else
-	continue;
-  
-      Reader(si).read(r);
+    FILE * const pfp = fopenRead(PredStats::filename);
+    pred_info pi;
+    while (read_pred_full(pfp, pi)) {
+	PredPair &pp = predHash[pi];
+	pp.init();
+	retainedPreds.push(pi);
     }
 
     read_rates();
+    set_rates();
+
+    Progress::Bounded prog("Reading runs and collecting sufficient stats", NumRuns::count());
+    for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+      prog.step();
+      PredInfoPtr pipt = 0;
+      if (is_srun[r])
+	pipt = &PredPair::s;
+      else if (is_frun[r])
+        pipt = &PredPair::f;
+      else
+	continue;
+  
+      Reader(pipt).read(r);
+    }
 
     set_min();
 
