@@ -1,4 +1,8 @@
 <?xml version="1.0"?>
+<!DOCTYPE stylesheet [
+  <!ENTITY link "&#9760;">
+]>
+
 <xsl:stylesheet
   version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -36,11 +40,7 @@
 	<p>Experiment name: <xsl:value-of select="@title"/></p>
 	<p>Generated on <xsl:value-of select="@date"/></p>
 
-	<xsl:apply-templates select="runs"/>
-	<xsl:apply-templates select="schemes" mode="instrumented"/>
-	<xsl:apply-templates select="schemes" mode="retained"/>
-	<xsl:apply-templates select="analysis"/>
-	<xsl:apply-templates select="schemes"/>
+	<xsl:apply-templates/>
       </body>
     </html>
   </xsl:template>
@@ -48,41 +48,37 @@
 
   <!-- outcome summary -->
   <xsl:template match="runs">
-    <p># runs: <xsl:value-of select="sum(@*)"/>
-    [successful: <xsl:value-of select="@success"/>
-    failing: <xsl:value-of select="@failure"/>
-    discarded: <xsl:value-of select="@ignore"/>]
-    </p>
+    <xsl:variable name="total" select="sum(@*)"/>
+    <p class="outcomes"><xsl:value-of select="$total"/> runs:</p>
+    <table class="outcomes">
+      <xsl:call-template name="run-label">
+	<xsl:with-param name="title" select="'Successes'"/>
+	<xsl:with-param name="count" select="@success"/>
+	<xsl:with-param name="total" select="$total"/>
+      </xsl:call-template>
+      <xsl:call-template name="run-label">
+	<xsl:with-param name="title" select="'Failures'"/>
+	<xsl:with-param name="count" select="@failure"/>
+	<xsl:with-param name="total" select="$total"/>
+      </xsl:call-template>
+      <xsl:call-template name="run-label">
+	<xsl:with-param name="title" select="'Discards'"/>
+	<xsl:with-param name="count" select="@ignore"/>
+	<xsl:with-param name="total" select="$total"/>
+      </xsl:call-template>
+    </table>
   </xsl:template>
 
-
-  <!-- predicate counts before filtering -->
-  <xsl:template match="schemes" mode="instrumented">
-    <p># predicates instrumented:
-      <xsl:value-of	select="sum(scheme/@total)"/>
-      [<xsl:for-each select="scheme">
-	<xsl:value-of select="@name"/>:
-	<xsl:value-of select="@total"/>
-	<xsl:if test="position() != last()">
-	  <xsl:text> </xsl:text>
-	</xsl:if>
-      </xsl:for-each>]
-    </p>
-  </xsl:template>
-
-
-  <!-- predicate counts after filtering -->
-  <xsl:template match="schemes" mode="retained">
-    <p># predicates retained:
-      <xsl:value-of	select="sum(scheme/@retain)"/>
-      [<xsl:for-each select="scheme">
-	<xsl:value-of select="@name"/>:
-	<xsl:value-of select="@retain"/>
-	<xsl:if test="position() != last()">
-	  <xsl:text> </xsl:text>
-	</xsl:if>
-      </xsl:for-each>]
-    </p>
+  <!-- an individual outcome type -->
+  <xsl:template name="run-label">
+    <xsl:param name="title"/>
+    <xsl:param name="count"/>
+    <xsl:param name="total"/>
+    <tr>
+      <td class="label"><strong><xsl:value-of select="$title"/>:</strong>&#160;</td>
+      <td class="count"><xsl:value-of select="$count"/></td>
+      <td class="percent">&#160;(<xsl:value-of select="round($count div $total * 100)"/>%)</td>
+    </tr>
   </xsl:template>
 
 
@@ -92,41 +88,41 @@
   </xsl:template>
 
 
-  <!-- how many schemes retained at least one predicate? -->
-  <xsl:variable name="interesting" select="count(/experiment/schemes/scheme[@retain &gt; 0])"/>
-
-
   <!-- table of links to per-scheme pages -->
   <xsl:template match="schemes">
-    <!-- omit entire table if nothing at all was retained -->
-    <xsl:if test="$interesting &gt; 0">
-      <table>
-	<tr>
-	  <th>Sorted by:</th>
-	  <th>lower bound of confidence interval</th>
-	  <th>increase score</th>
-	  <th>fail score</th>
-	  <th>true in # F runs</th>
-	</tr>
+    <table class="scheme-links">
+      <tr class="headers">
+	<th>Scheme</th>
+	<th colspan="4">Predicates Retained</th>
+	<th>Lower Bound of Confidence Interval</th>
+	<th>Increase Score</th>
+	<th>Fail Score</th>
+	<th>True in # Failed Runs</th>
+      </tr>
 
-	<!-- one row per scheme with retained predicates -->
-	<xsl:for-each select="scheme[@retain &gt; 0]">
-	  <xsl:call-template name="scheme-links-row">
-	    <xsl:with-param name="name" select="@name"/>
-	    <xsl:with-param name="code" select="@code"/>
-	  </xsl:call-template>
-	</xsl:for-each>
+      <!-- one row per scheme -->
+      <xsl:apply-templates/>
 
-	<!-- final row with links for all schemes -->
-	<!-- if there was more than one scheme above -->
-	<xsl:if test="$interesting &gt; 1">
-	  <xsl:call-template name="scheme-links-row">
-	    <xsl:with-param name="name" select="'all'"/>
-	    <xsl:with-param name="code" select="'preds'"/>
-	  </xsl:call-template>
-	</xsl:if>
-      </table>
-    </xsl:if>
+      <!-- summary row -->
+      <xsl:call-template name="scheme-links-row">
+	<xsl:with-param name="name" select="'all'"/>
+	<xsl:with-param name="code" select="'preds'"/>
+	<xsl:with-param name="retain" select="sum(*/@retain)"/>
+	<xsl:with-param name="total" select="sum(*/@total)"/>
+      </xsl:call-template>
+
+    </table>
+  </xsl:template>
+
+
+  <!-- table row for a single instrumentation scheme -->
+  <xsl:template match="scheme">
+    <xsl:call-template name="scheme-links-row">
+      <xsl:with-param name="name" select="@name"/>
+      <xsl:with-param name="code" select="@code"/>
+      <xsl:with-param name="retain" select="@retain"/>
+      <xsl:with-param name="total" select="@total"/>
+    </xsl:call-template>
   </xsl:template>
 
 
@@ -134,13 +130,31 @@
   <xsl:template name="scheme-links-row">
     <xsl:param name="name"/> <!-- human-readable scheme name -->
     <xsl:param name="code"/> <!-- sort scheme code for file names -->
-    <tr>
-      <td class="scheme"><xsl:value-of select="$name"/></td>
-      <td><a href="{$code}_lb.{$prefix}.xml">X</a></td>
-      <td><a href="{$code}_is.{$prefix}.xml">X</a></td>
-      <td><a href="{$code}_fs.{$prefix}.xml">X</a></td>
-      <td><a href="{$code}_nf.{$prefix}.xml">X</a></td>
-    </tr>
+    <xsl:param name="retain"/> <!-- number of predicates retained -->
+    <xsl:param name="total"/> <!-- number of predicates before filtering -->
+    <xsl:if test="$total > 0">
+      <tr class="{$name}">
+	<td class="label"><xsl:value-of select="$name"/></td>
+	<td class="retain count"><xsl:value-of select="$retain"/></td>
+	<td class="solidus">&#160;of&#160;</td>
+	<td class="total count"><xsl:value-of select="$total"/></td>
+	<td class="percent">&#160;(<xsl:value-of select="round($retain div $total * 100)"/>%)</td>
+	<xsl:choose>
+	  <xsl:when test="$retain = 0">
+	    <td class="link"/>
+	    <td class="link"/>
+	    <td class="link"/>
+	    <td class="link"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <td class="link"><a href="{$code}_lb.{$prefix}.xml">&link;</a></td>
+	    <td class="link"><a href="{$code}_is.{$prefix}.xml">&link;</a></td>
+	    <td class="link"><a href="{$code}_fs.{$prefix}.xml">&link;</a></td>
+	    <td class="link"><a href="{$code}_nf.{$prefix}.xml">&link;</a></td>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </tr>
+    </xsl:if>
   </xsl:template>
 
 

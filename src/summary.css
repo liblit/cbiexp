@@ -1,21 +1,101 @@
 @import "logo.css";
 
-table, th, td {
-  border-width: 1px
-}
+
+/***********************************************************************
+ *
+ *  shared rules
+ *
+ */
 
 table {
-  border-style: outset
+  border-collapse: collapse
 }
 
-th, td {
-  border-style: inset
-}
-
-td.scheme {
+td.label {
   text-align: left
 }
 
-td {
+td.count,
+td.percent {
+  text-align: right;
+}
+
+
+/***********************************************************************
+ *
+ *  outcome summary
+ *
+ */
+
+p.outcomes {
+  margin-bottom: 0px
+}
+
+table.outcomes {
+  margin-left: 2em
+}
+
+table.outcomes td {
+  border: none;
+  padding: 0px;
+}
+
+
+/***********************************************************************
+ *
+ *  schemes table
+ *
+ */
+
+table.scheme-links {
+  border: 1px solid
+}
+
+tr.headers {
+  border: 1px solid;
+  background: #dfd
+}
+
+td.solidus,
+td.link {
   text-align: center
+}
+
+tr.all {
+  border-top: 1px solid
+}
+
+th {
+  vertical-align: middle
+}
+
+table.scheme-links th,
+table.scheme-links td {
+  border: 1px dotted;
+  padding: 0.25em
+}
+
+table.scheme-links td.retain,
+table.scheme-links td.solidus,
+table.scheme-links td.total {
+  border-right: none;
+  padding-right: 0px
+}
+
+table.scheme-links td.solidus,
+table.scheme-links td.total,
+table.scheme-links td.percent {
+  border-left: none;
+  padding-left: 0px
+}
+
+td.link a {
+  display: block;
+  text-decoration: none;
+  width: 100%;
+  height: 100%
+}
+
+td.link a:hover {
+  background: #fdd
 }
