@@ -1,0 +1,50 @@
+Producing a new set of runs from scratch
+----------------------------------------
+
+1. Optionally build the moss binaries:
+
+	% make
+
+2. Prepare the data directory:
+
+	% ./prepare-data-dir <data-dir>
+
+   For example:
+
+	% ./prepare-data-dir /moa/sc1/cbi/data9
+
+   If you skipped running "make" in step 1, it will be run for you now
+   to build the various moss binaries.  These binaries and all
+   supporting scripts are copied into the data directory.
+
+3. Start the runs:
+
+	% <data-dir>/bin/make-runs <first-run-num> <last-run-num>
+
+   For example:
+
+	% /moa/sc1/cbi/data9/bin/make-runs 0 9999
+
+   The optional "--jobs=<n>" flag specifies how many runs to work on
+   simultaneously.  This defaults to the number of host CPUs.
+
+
+Adding to an existing set of runs
+---------------------------------
+
+Use the "bin/make-runs" script within the run data directory.  Give
+the first and last number, and any runs in that interval that do not
+already exist will be created.  For example:
+
+	% /moa/sc1/cbi/data9/bin/make-runs 10000 19999
+
+
+Changing how each triple of runs is created
+-------------------------------------------
+
+The "clusterdata.pl" script creates one {good, bad, bad2} triple of
+runs.  It is run with no command line arguments.  The current working
+directory is already set to some empty numbered subdirectory of the
+run data directory.  The script should do whatever is needed for a
+single triple of runs and exit with status zero (or nonzero) to
+indicate success (or failure).

@@ -3070,6 +3070,11 @@ void handle_options(int argc, char *argv[])
 	if (STREQ(argv[i],"-n")) {
             config.user_max = 1;
             config.max_matches = atoi(argv[++i]); /* optarg should be >= 0 */
+            if (config.max_matches <= 1)
+	        {
+	           fprintf(config.errfile,"Error: max matches %d is out of range.  Setting maximum match size to default %d\n", config.max_matches, MAX_MATCHES);
+	           config.max_matches = MAX_MATCHES;
+	        }
             continue; 
         }
         if (STREQ(argv[i],"-o")) {
