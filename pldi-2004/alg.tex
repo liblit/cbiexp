@@ -27,12 +27,14 @@ the more confident we are that is involved in a bug.
 
 Consider the following code fragment, which we use to motivate and illustrate
 our technique:
+\begin{quote}
 \begin{verbatim}
 if (f == NULL) {  (a)
         x = 0;    (b)
         *f;       (c)
 }
 \end{verbatim}
+\end{quote}
 Consider the predicate {\tt f == NULL} at line {\tt (a)}.  Clearly
 this predicate is highly correlated with failure; in fact, whenever it
 is true this program will inevitably crash.  An important observation,
@@ -54,10 +56,12 @@ system decisions about how data is laid out in memory.  Such bugs are
 even for the best predictor $P$, it is possible that $P$ is true and
 the program terminates normally.  In the example above, if we replace line
 {\tt (c)} by
+\begin{quote}
 \begin{verbatim}
 if (random) f = ... some valid pointer ...;
 *f;
 \end{verbatim}
+\end{quote}
 then the bug becomes non-deterministic.
 
 To summarize, we can neither assume that when predicate is true that
