@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include <assert.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cassert>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #define PROCESS_RUN_LABELS "/moa/sc3/mhn/bin/process-run-labels"
 #define MAP_SITES          "/moa/sc3/mhn/bin/map-sites"
