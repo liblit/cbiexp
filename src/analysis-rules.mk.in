@@ -306,12 +306,24 @@ partial_order: $(tooldir)/partial_order.o units.o
 	$(time) $@ --runs-directory=$(datadir) --timestamp-when=first
 	$(time) $@ --runs-directory=$(datadir) --timestamp-when=last
 
+get_ts_ordering: $(tooldir)/get_ts_ordering.o units.o sites.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
+
+W.dat: get_ts_ordering $(datadir)/stamp-extract-timestamps
+	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --timestamp-when=first
+
+get_tp_weights: $(tooldir)/get_tp_weights.o units.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
+
+X.dat: get_tp_weights hyperparms.txt
+	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
+
 collect_parmstats: $(tooldir)/collect_parmstats.o units.o sites.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
 clean:: ; rm -f colect_parmstats
 
 parmstats.txt: collect_parmstats $(stamp-decimate) s.runs f.runs
-	$(time) $< --runs-directory=$(datadir) --report-suffix=$(report-series) --sample-rates=$(stamp-decimate)
+	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) --sample-rates=$(stamp-decimate)
 clean:: ; rm -f parmstats.txt
 
 est_hyperparms: $(tooldir)/est_hyperparms.o units.o
@@ -319,7 +331,7 @@ est_hyperparms: $(tooldir)/est_hyperparms.o units.o
 clean:: ; rm -f est_hyperparms
 
 hyperparms.txt: est_hyperparms parmstats.txt
-	$(time) $< --runs-directory=$(datadir) 
+	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) 
 
 chi2test: $(tooldir)/chi2test.o units.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -lm -o $@
@@ -332,7 +344,7 @@ calc_truthprobs: $(tooldir)/calc_truthprobs.o units.o sites.o
 
 #truthprobs: calc_truthprobs parmstats.txt preds.txt
 truthprobs: calc_truthprobs
-	$(time) $< --runs-directory=$(datadir) --report-suffix=$(report-series)
+	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
 
 ########################################################################
 

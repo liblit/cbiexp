@@ -136,6 +136,8 @@ liblate_a_SOURCES =				\
 	gen_preds_file.cc			\
 	gen_summary.cc				\
 	gen_views.cc				\
+	get_tp_weights.cc			\
+	get_ts_ordering.cc			\
 	logreg.cc				\
 	max-observed.cc				\
 	partial_order.cc			\

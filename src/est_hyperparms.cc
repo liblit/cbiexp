@@ -59,13 +59,15 @@ struct pred_info_t {
     void read_stats(FILE * fp);
     void init_parms() {
 	alpha = (double) Y/S;
-	gamma = 0.5; // (double) N/(N+Z);
 	lambda = (double) S/N/rho;
-	//beta[0] = (double) Asize/(Asize + Bsize + Csize);
-	//beta[1] = (double) Bsize/(Asize + Bsize + Csize);
-	//beta[2] = (double) Csize/(Asize + Bsize + Csize);
-	t[0] = t[1] = t[2] = 1.0;
-	beta[0] = beta[1] = beta[2] = 1.0/3.0;
+	gamma = 0.5; // (double) N/(N+Z);
+	beta[0] = (double) Asize/(Asize + Bsize + Csize);
+	beta[1] = (double) Bsize/(Asize + Bsize + Csize);
+	beta[2] = (double) Csize/(Asize + Bsize + Csize);
+	for (unsigned i = 0; i < 3; ++i) 
+	  t[i] = log(beta[i]);
+	//t[0] = t[1] = t[2] = 1.0;
+	//beta[0] = beta[1] = beta[2] = 1.0/3.0;
 	//beta = gsl_rng_uniform(generator);
 	//lambda = gsl_rng_uniform(generator)*(b-a) + a;
     }
@@ -522,7 +524,7 @@ pred_info_t::est_Xparms()
 inline void
 pred_info_t::map_estimate() {
     checkstatus(est_Nparms(), "Map estimates of N prior parms did not converge");
-    checkstatus(est_Xparms(), "Map estimates of X prior parms did not converge");
+    //checkstatus(est_Xparms(), "Map estimates of X prior parms did not converge");
 }
 
 void estimate_parms()
