@@ -38,7 +38,7 @@ void process_cmdline(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-    int i, j, m, n;
+    int i, j, m;
     FILE* fp;
 
     process_cmdline(argc, argv);
