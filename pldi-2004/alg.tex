@@ -1,5 +1,8 @@
-\placeholder{ We need to make sure we mention somewhere that (1) predicates are conceptually sampled after the line
-is executed and (2) we transform our counters into real predicates before running this algorithm.}
+\placeholder{We need to make sure we mention somewhere that we
+transform our counters into real predicates before running this
+algorithm.  We have made the point that this is possible in
+\Autoref{sec:background}, but I [Ben] feel that stating we do this is
+properly part of the algorithm discussion.}
 
 This section presents the algorithm that we have developed for
 isolating bugs in programs where multiple bugs are present
@@ -38,7 +41,8 @@ if (f == NULL) {  (b)
 }
 \end{verbatim}
 \end{quote}
-Consider the predicate {\tt f == NULL} at line {\tt (b)}.  Clearly
+Consider the predicate {\tt f == NULL} at line {\tt (b)}, which would
+be captured by our branches instrumentation scheme.  Clearly
 this predicate is highly correlated with failure; in fact, whenever it
 is true this program inevitably crashes.  An important observation,
 however, is that even a ``smoking gun'' such as {\tt f == NULL} at
@@ -102,8 +106,9 @@ modification to make the bug non-deterministic).  At line {\tt (b)} we
 have $\crash(\mbox{\tt f == NULL}) = 1.0$, so this predicate is a good
 candidate for the cause of the bug.  
 But on line {\tt (c)} we have the surprising fact that $\crash(\mbox{\tt x == 0}) = 1.0$ as well.
-To understand why, observe that the predicate $\crash(\mbox{\tt x == 0})$ is always
-true when we reach the point immediately after line {\tt (c)} and, in addition, 
+To understand why, observe that the scalar-pairs instrumentation
+predicate \texttt{x == 0} is always true at line {\tt (c)} and, in
+addition,
 only failing runs reach this line.
 Thus $\#S(\mbox{\tt x == 0}) = 0$, and, so long as there is at least one run that
 reaches line {\tt (c)} at all, the crash value of {\tt x == 0} at line {\tt (c)} is 1.0.
