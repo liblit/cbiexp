@@ -203,42 +203,31 @@ program trials on the number of predicates that are retained by step
 (1) of the algorithm.
 We start with $3000$ randomly
 selected trial runs, and add $3000$ random trials at a time, until we
-incorporate all $31,875$ runs of our data.  We record the number of
+incorporate all $31,871$ runs of our data.  We record the number of
 predicates retained at each step.  This process is repeated ten times
 for each sampling rate, with ten different random permutation sequences
 of our data. We plot the mean and the confidence interval (one
 standard deviation above and below the mean) in
-\Autoref{fig:predkept}.  Using all $31,875$ trial runs, we retain $1178$ 
+\Autoref{fig:predkept}.  Using all $31,871$ trial runs, we retain $10280$ 
 predicates when the data is not sampled (i.e.,\ sampling rate is 
-$\nicefrac{1}{1}$), $917$ at sampling
-rate $\nicefrac{1}{10}$, $851$ at $\nicefrac{1}{100}$, and $548$ at
+$\nicefrac{1}{1}$), $10025$ at sampling
+rate $\nicefrac{1}{10}$, $6839$ at $\nicefrac{1}{100}$, and $5653$ at
 $\nicefrac{1}{1000}$.
 
 \begin{figure}
 \centering
 \includegraphics[width=\columnwidth]{predkept3a}
-(a) Branches, returns, and scalar-pairs. \\
-\includegraphics[width=\columnwidth]{predkept3b}
-(b) Branches and returns only.
+%%(a) Branches, returns, and scalar-pairs. \\
+%%\includegraphics[width=\columnwidth]{predkept3b}
+%%(b) Branches and returns only.
 \caption{The effect of sampling and data size on the number of
   predicates selected.}
 \label{fig:predkept}
 \end{figure}
 
-Two trends are apparent from \Autoref{fig:predkept}.  As one would expect,
-the number of retained predicates decreases as the sampling rate decreases,
-and increases as more trial runs are included.  If we had an unlimited number
-of trial runs, the number of retained predicates at all sampling rates should
-approach the result with no sampling.  
-
-Note also that increasing 
-the number of trial runs always seems to increase the number of retained 
-scalar-pairs predicates, whereas the branch and returns predicates run into 
-a plateau at lower sampling rates.  Though there may not be much significance 
-in this discovery, we conjecture that it is due to the fact that scalar
-pairs predicates are much more often observed than the other two kinds of
-predicates.  Therefore determining the importance of scalar pairs predicates
-takes much fewer sampled trial runs.
+Two trends are apparent from \Autoref{fig:predkept}.  First, as one would
+expect, the number of retained predicates increase as more trial runs are
+included.  Second, sampling reduces the overall number of retained predicates.
 
 %% As is apparent from the graph, there is much larger variation in the
 %% number of selected predicates when we use fewer trial runs.
