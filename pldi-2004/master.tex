@@ -497,7 +497,7 @@ analysis.
   
 The Daikon project \cite{ernst2001} monitors instrumented applications
 to discover likely program invariants.  It collects extensive trace
-information at run time and uses this offline to accept or reject any
+information at run time and mines traces offline to accept or reject any
 of a wide variety of guessed candidate predicates.  The DIDUCE project
 \cite{ICSE02*291} tests a more restricted set of predicates within the
 client program, and attempts to relate state changes in candidate
@@ -505,7 +505,7 @@ predicates to manifestation of bugs.  Both projects assume complete
 monitoring, such as within a controlled test environment.  Our goal is
 to use lightweight partial monitoring, suitable for either for testing
 or deployment to end users.  We never have complete information, and
-therefore must use a more statistical approach.
+therefore we must use a more statistical approach.
 
 \termdef{Software tomography} as realized through the GAMMA system
 \cite{PASTE'02*2,Orso:2003:LFDIART} shares our goal of low-overhead
@@ -535,7 +535,7 @@ visualization techniques to the task of classifying software failure
 reports.  The intent is to bucket each report into an equivalence
 group believed to share the same underlying cause.  Features are
 derived offline from fine-grained execution traces without sampling;
-this reduces the noise level of the data but greatly restricts the
+this approach reduces the noise level of the data but greatly restricts the
 instrumentation schemes that are practical to deploy outside of a
 controlled testing environment.  As in our own earlier work, Podgurski
 uses logistic regression to select features which are highly
@@ -548,7 +548,7 @@ In contrast, current
 industrial practice uses stack traces to cluster failure reports into
 equivalence classes.  Two crash reports showing the same stack trace,
 or perhaps only the same top-of-stack function, are presumed to be two
-reports of the same failure.  This works to the extent that a single
+reports of the same failure.  This heuristic works to the extent that a single
 cause corresponds to a single point of failure, but our experience
 with \moss, \rhythmbox, and \exif suggests that this assumption may not often hold.  In \moss,
 we find that only bugs \#2 and \#5 have truly unique ``signature'' stacks: a
@@ -568,7 +568,7 @@ Elbaum and Hardojo \cite{Elbaum:2003:DISATA} have reported on a
 limited deployment of instrumented Pine binaries.  Their experiences
 have helped to guide our own design of a wide public deployment of
 applications with sampled instrumentation, presently underway
-\cite{Liblit:2003:CBIP}.
+\cite{Liblit:2004:PDCBI}.
 
 For some highly available systems, even a single failure must be
 avoided.  Once the behaviors that predict imminent failure are known,
