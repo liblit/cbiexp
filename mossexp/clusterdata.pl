@@ -121,16 +121,14 @@ sub run_moss_good () {
 }
 
 
-sub run_moss_bad ($) {
-    my $variant = shift;
-
+sub run_moss_bad () {
     # run buggy moss and record various outputs
-    run_moss "SAMPLER_FILE=$variant/reports", "moss$variant", $variant;
+    run_moss "SAMPLER_FILE=bad/reports", "mossbad", 'bad';
 
     # compare with reference
-    my $outputDiff = diff "$variant/stdout", 'good/stdout';
-    my $exitDiff = diff "$variant/exit", 'good/exit';
-    my $failHandle = new FileHandle "$variant/fail", 'w';
+    my $outputDiff = diff "bad/stdout", 'good/stdout';
+    my $exitDiff = diff "bad/exit", 'good/exit';
+    my $failHandle = new FileHandle "bad/fail", 'w';
     $failHandle->print($outputDiff || $exitDiff, "\n");
 }
 
@@ -258,22 +256,21 @@ if ($full_option_list =~ /db2/) {
 # various runs
 $mem = &choose_memory_size();  # set the memory size for all of the runs of moss
 run_moss_good;
-run_moss_bad 'bad';
-run_moss_bad 'bad2';
+run_moss_bad;
 
 # overall sanity checks
 my @abnormality;
 my $goodExit = (new FileHandle 'good/exit')->getline;
 push @abnormality, 'good run crashed' if $goodExit =~ /^signal\t/;
 push @abnormality, 'good run timed out' if $goodExit eq 'timeout';
-push @abnormality, 'bad and bad2 runs exited differently' if diff 'bad/exit', 'bad2/exit';
 push @abnormality, 'bad run produced no reports' if -z 'bad/reports';
-push @abnormality, 'bad2 run produced no reports' if -z 'bad2/reports';
 if (@abnormality) {
     my $disregard = new FileHandle 'disregard', 'w';
     $disregard->print("$_\n") foreach @abnormality;
 }
 
 # save some space
-check_system 'gzip bad/reports' if -e 'bad/reports';
-check_system 'gzip bad2/reports' if -e 'bad2/reports';
+sub gzip ($) { check_system "gzip $_[0]" if -e $_[0]; }
+gzip 'bad/reports';
+gzip 'bad/stdout';
+gzip 'good/stdout';
