@@ -2,7 +2,6 @@
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>
-#include "def.h"
 #include "units.h"
 
 bool is_srun[NUM_RUNS];
@@ -18,8 +17,8 @@ int get_indx(char* s)
 
 main(int argc, char** argv)
 {
-    char s[1000], *unit, *scheme, *t, u[100];
-    char p[1000];
+    char s[3000], *unit, *scheme, *t, u[100];
+    char p[3000];
     FILE *sfp = NULL, *ffp = NULL;
     int i;
                                                                                                                                                                                                      
@@ -134,23 +133,21 @@ main(int argc, char** argv)
 
         char ifile[1000], ofile[1000];
 
-        printf("r %d\n", i);
+        // printf("r %d\n", i);
 
-        sprintf(ifile, "/moa/sc4/cbi/data11/%d/bad/reports", i);
+        sprintf(ifile, I_REPORT_FILE, i);
         FILE* ifp = fopen(ifile, "r");
         assert(ifp);
 
-        sprintf(ofile, "/moa/sc4/mhn/moss/data11/%d.txt", i);
+        sprintf(ofile, O_REPORT_FILE, i);
         FILE* ofp = fopen(ofile, "w");
         assert(ofp);
 
-        fscanf(ifp, "%[^\n]s", s);
-        fgetc(ifp);
+        fgets(s, 3000, ifp);
         assert(strncmp(s, "<rep", 4) == 0);
 
         while (1) {
-            fscanf(ifp, "%[^\n]s", s);
-            fgetc(ifp);  // eat '\n'
+            fgets(s, 3000, ifp);
             if (feof(ifp))
                 break;
             if (strncmp(s, "<sam", 4) != 0)
@@ -171,6 +168,8 @@ main(int argc, char** argv)
                 sprintf(u, "B%s", unit);
             else if (strcmp(scheme, "returns") == 0)
                 sprintf(u, "R%s", unit);
+            else if (strcmp(scheme, "g-object-unref") == 0)
+                sprintf(u, "U%s", unit);
             else
                 assert(0);
 
@@ -179,11 +178,10 @@ main(int argc, char** argv)
 
             int count = 0;
             while (1) {
-                fscanf(ifp, "%[^\n]s", p);
-                fgetc(ifp);  // eat '\n'
+                fgets(p, 3000, ifp);
                 if (strncmp(p, "</sam", 5) == 0)
                     break;
-                fprintf(ofp, "%s\n", p);
+                fprintf(ofp, "%s", p);
                 count++;
             }
             assert(count == units[indx].c);

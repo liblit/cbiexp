@@ -1,36 +1,28 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-
-#define SITES_FILE "/moa/sc4/cbi/data11/share/mossbad.sites"
-
-//#define SITES_FILE "/moa/sc3/cbi/rhythmbox-get-uri-fix/share/rhythmbox.sites"
-//#define SITES_FILE "/moa/sc4/cbi/data11/share/mossbad.sites"
-//#define SITES_FILE "/moa/sc2/cbi/rhythmbox/share/rhythmbox.sites"
-//#define SITES_FILE "/moa/sc2/cbi/data10/share/mossbad.sites"
+#include "def.h"
 
 main()
 {
-    FILE* ifp = fopen(SITES_FILE, "r");
-    assert(ifp);
+    FILE* sites_ifp = fopen(I_SITES_FILE, "r"); assert(sites_ifp);
+    FILE* sites_ofp = fopen(O_SITES_FILE, "w"); assert(sites_ofp);
+    FILE* units_ofp = fopen(O_UNITS_FILE, "w"); assert(units_ofp);
+    int num_units = 0, num_sites = 0;
 
-    FILE* ofpu = fopen("units.h", "w");
-    assert(ofpu);
-    fprintf(ofpu, "#ifndef UNITS_H\n#define UNITS_H\n\n");
-    fprintf(ofpu, "#include \"def.h\"\n\n");
-    fprintf(ofpu, "unit_t units[] = {\n");
-
-    FILE* ofps = fopen("sites.txt", "w");
-    assert(ofps);
+    fprintf(units_ofp, "#ifndef UNITS_H\n#define UNITS_H\n\n");
+    fprintf(units_ofp, "#include \"def.h\"\n\n");
+    fprintf(units_ofp, "unit_t units[] = {\n");
 
     while (1) {
-        char s[1000], *unit, *scheme, *t;
+        char s[3000], *unit, *scheme, *t;
 
-        fscanf(ifp, "%[^\n]s", s);
-        fgetc(ifp);  // eat '\n'
-        if (feof(ifp))
+        fgets(s, 3000, sites_ifp);
+        if (feof(sites_ifp))
             break;
+
         assert(strncmp(s, "<sites", 6) == 0);
+
         unit = strchr(s, '\"'); 
         unit++;
         t = strchr(unit, '\"');
@@ -43,30 +35,38 @@ main()
 
         int count = 0;
         while (1) {
-            char p[1000];
-            fscanf(ifp, "%[^\n]s", p);
-            fgetc(ifp);  // eat '\n'
+            char p[3000];
+            fgets(p, 3000, sites_ifp);
             if (strncmp(p, "</sites", 7) == 0)
                 break;
-            fprintf(ofps, "%s\n", p);
+            fprintf(sites_ofp, "%s", p);
             count++;
         }
 
-        fprintf(ofpu, "\t{ \"");
-        if (strcmp(scheme, "scalar-pairs") == 0)
-            fprintf(ofpu, "S");
+        fprintf(units_ofp, "\t{ \"");
+        if      (strcmp(scheme, "scalar-pairs") == 0)
+            fprintf(units_ofp, "S");
         else if (strcmp(scheme, "branches") == 0)
-            fprintf(ofpu, "B");
+            fprintf(units_ofp, "B");
         else if (strcmp(scheme, "returns") == 0)
-            fprintf(ofpu, "R");
+            fprintf(units_ofp, "R");
+        else if (strcmp(scheme, "g-object-unref") == 0)
+            fprintf(units_ofp, "U");
         else
             assert(0);
-        fprintf(ofpu, "%s\", %d },\n", unit, count);
+        fprintf(units_ofp, "%s\", %d },\n", unit, count);
+
+        num_units++;
+        num_sites += count;
     }
 
-    fprintf(ofpu, "};\n\n#endif\n");
-    fclose(ofpu);
-    fclose(ofps);
+    fprintf(units_ofp, "};\n\n");
+    fprintf(units_ofp, "#define NUM_UNITS %d\n", num_units);
+    fprintf(units_ofp, "#define NUM_SITES %d\n", num_sites);
+    fprintf(units_ofp, "\n#endif\n");
+
+    fclose(units_ofp);
+    fclose(sites_ofp);
 
     return 0;
 }

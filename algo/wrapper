@@ -1,0 +1,14 @@
+rm -f ./process_sites ./process_runs ./compute ./compute_alt
+g++ -O3 process_sites.cc -o process_sites
+echo "Processing sites ..."
+./process_sites
+g++ -O3 process_runs.cc -o process_runs
+echo "Processing runs ..."
+./process_runs -s s.runs -f f.runs
+g++ -O3 compute.cc -o compute
+echo "Computing interesting predicates ..."
+./compute -s s.runs -f f.runs > preds.txt
+echo "Computing stats of each interesting predicate ..."
+g++ -O3 compute_alt.cc -o compute_alt
+./compute_alt -s s.runs -f f.runs -p preds.txt
+

@@ -38,10 +38,7 @@ site_t* data[NUM_UNITS];
         data[u][c].of++;          \
 }
 
-FILE* sites_fp = NULL;
-bool use_confidence = false;
-
-inline void print_pred(FILE* fp, int u, int c, int p, const char* pred_kind, char* site_name)
+void print_pred(FILE* fp, int u, int c, int p, const char* pred_kind, char* site_name)
 {
     int s  = data[u][c].S[p];
     int f  = data[u][c].F[p];
@@ -52,20 +49,20 @@ inline void print_pred(FILE* fp, int u, int c, int p, const char* pred_kind, cha
     float co = ((float) of) / (os + of);
     float in = cr - co;
 
-    if (!use_confidence ||
-        in - 1.96 * sqrt(((cr * (1 - cr)) / (f + s)) + ((co * (1 - co))/(of + os))) > 0 && s + f >= 10) {
+    if (in - 1.96 * sqrt(((cr * (1 - cr)) / (f + s)) + ((co * (1 - co))/(of + os))) > 0 && s + f >= 10) {
         fprintf(fp, "%.2f In, %.2f Cr, %.2f Co, %d S, %d F, %d OS, %d OF, ",
             in, cr, co, s, f, os, of);
         fprintf(fp, "<a href=\"r/%d_%d_%d.html\">", u, c, p);
         fprintf(fp, "%s %s", pred_kind, site_name);
         fprintf(fp, "</a><br>\n");
+        printf("%d %d %d\n", u, c, p);
     }
 }
 
 
 main(int argc, char** argv)
 {
-    int i, j, k, x, y, z;
+    int i, j, k, x, y, z, w;
     FILE *sfp = NULL, *ffp = NULL;
 
     /************************************************************************
@@ -107,34 +104,15 @@ main(int argc, char** argv)
             }
             continue;
         }
-        if (strcmp(argv[i], "-i") == 0) {
-            if (sites_fp) {
-                printf("-i specified multiple times\n");
-                return 1;
-            }
-            i++;
-            if (!argv[i]) {
-                printf("argument to -i missing\n");
-                return 1;
-            }
-            sites_fp = fopen(argv[i], "r");
-            if (!sites_fp) {
-                printf("Cannot open file %s for reading\n", argv[i]);
-                return 1;
-            }
-            continue;
-        }
-        if (strcmp(argv[i], "-c") == 0) {
-            use_confidence = true;
-            continue;
-        }
         if (strcmp(argv[i], "-h") == 0) {
-            printf("Usage: compute -s runs_file -f runs_file -i sites_file [-c]\n");
+            printf("Usage: compute -s runs_file -f runs_file\n");
             return 0;
         }
         printf("Illegal option: %s\n", argv[i]);
         return 1;
     }
+
+    FILE* sites_fp = fopen(O_SITES_FILE, "r");
 
     if (!sfp || !ffp || !sites_fp) {
         printf("Incorrect usage; try -h\n");
@@ -188,7 +166,7 @@ main(int argc, char** argv)
         else if (is_frun[i])
             nf++;
     }
-    printf("#S runs: %d #F runs: %d\n", ns, nf);
+    // printf("#S runs: %d #F runs: %d\n", ns, nf);
 
     /************************************************************************
      ** compute for each predicate, number of successful and failing runs in
@@ -205,10 +183,10 @@ main(int argc, char** argv)
         if (!is_srun[i] && !is_frun[i])
             continue;
 
-        printf("r %d\n", i);
+        // printf("r %d\n", i);
 
         char file[100];
-        sprintf(file, "/moa/sc4/mhn/moss/data11/%d.txt", i);
+        sprintf(file, O_REPORT_FILE, i);
         FILE* fp = fopen(file, "r");
         assert(fp);
 
@@ -216,7 +194,9 @@ main(int argc, char** argv)
             fscanf(fp, "%d", &j);
             if (feof(fp))
                 break;
-            if (units[j].s[0] == 'S' || units[j].s[0] == 'R') {
+            switch (units[j].s[0]) {
+            case 'S':
+            case 'R':
                 for (k = 0; k < units[j].c; k++) {
                     fscanf(fp, "%d %d %d", &x, &y, &z); 
                     if (x + y + z > 0) {
@@ -238,7 +218,8 @@ main(int argc, char** argv)
                         }
                     }
                 }
-            }  else {
+                break;
+            case 'B':
                 for (k = 0; k < units[j].c; k++) {
                     fscanf(fp, "%d %d", &x, &y); 
                     if (x + y > 0) {
@@ -247,15 +228,36 @@ main(int argc, char** argv)
                         if (y > 0) inc(i, j, k, 1);
                     }
                 }
-            } 
+                break;
+            case 'U':
+                for (k = 0; k < units[j].c; k++) {
+                    fscanf(fp, "%d %d %d %d", &x, &y, &z, &w);
+                    if (x + y + z + w > 0) {
+                        obs(i, j, k);
+                        if (x > 0)
+                            inc(i, j, k, 0);
+                        if (y > 0)
+                            inc(i, j, k, 1);
+                        if (z > 0)
+                            inc(i, j, k, 2);
+                        if (w > 0)
+                            inc(i, j, k, 3);
+                    }
+                }
+                break;
+            default:
+                assert(0);
+            }
         }
         fclose(fp);
     }
 
-    FILE* out_s = fopen("S.html", "w");
-    FILE* out_r = fopen("R.html", "w");
-    FILE* out_b = fopen("B.html", "w");
-    assert(out_s && out_r && out_b);
+    FILE* out_s = fopen(O_S_HTML_FILE, "w");
+    FILE* out_r = fopen(O_R_HTML_FILE, "w");
+    FILE* out_b = fopen(O_B_HTML_FILE, "w");
+    FILE* out_u = fopen(O_U_HTML_FILE, "w");
+
+    assert(out_s && out_r && out_b && out_u);
     char site_name[10000];
 
     for (j = 0; j < NUM_UNITS; j++) {
@@ -292,6 +294,16 @@ main(int argc, char** argv)
                 print_pred(out_b, j, k, 1, "T", site_name);
             }
             break;
+        case 'U':
+            for (k = 0; k < units[j].c; k++) {
+                fscanf(sites_fp, "%[^\n]s", site_name);
+                fgetc (sites_fp);
+                print_pred(out_u, j, k, 0, "(= 0)", site_name);
+                print_pred(out_u, j, k, 1, "(= 1)", site_name);
+                print_pred(out_u, j, k, 2, "(> 1)", site_name);
+                print_pred(out_u, j, k, 3, "(inv)", site_name);
+            }
+            break;
         default:
             assert(0);
         }
@@ -300,6 +312,7 @@ main(int argc, char** argv)
     fclose(out_s);
     fclose(out_r);
     fclose(out_b);
+    fclose(out_u);
     fclose(sites_fp);
     return 0;
 }
