@@ -1,0 +1,16 @@
+f.runs
+s.runs
+*.txt
+*.html
+
+sites.cc
+sites.o
+units.cc
+units.o
+
+compute-results
+convert-reports
+gen-views
+
+stamp-dynamic
+stamp-static

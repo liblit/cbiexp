@@ -1,0 +1,10 @@
+#!/bin/sh -ex
+
+cd "`dirname $0`"
+root=$PWD/../..
+experiment=$PWD/..
+analysis=$PWD
+
+$root/bin/analyze-runs \
+    -do-map-sites \
+    "$@"

@@ -1,0 +1,22 @@
+#!/bin/sh -e
+
+cd "`dirname $0`"
+root=$PWD/../..
+experiment=$PWD/..
+analysis=$PWD
+data=$experiment/data
+
+count=`cat $data/stamp-labels`
+#count=10
+
+$root/bin/analyze-runs \
+    -do-process-labels \
+    -do-convert-reports \
+    -do-compute-results \
+    -do-print-results-1 \
+    -n $count \
+    -l $data/%d/label \
+    -vr $data/%d/reports \
+    -cr $data/%d/reports.new \
+    -ss sites \
+    -us units
