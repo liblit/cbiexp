@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <cassert>
+#include <cerrno>
 #include <cstring>
 #include <cstdlib>
 #include "def.h"
@@ -20,7 +21,10 @@ main(int argc, char** argv)
         char s[100];
         sprintf(s, LABEL_PATH_FMT, i);
         FILE* fp = fopen(s, "r");
-        assert(fp);
+	if (!fp) {
+	    fprintf(stderr, "cannot read %s: %s\n", s, strerror(errno));
+	    return 1;
+	}
         fscanf(fp, "%s", s);
         if (!strcmp(s, "success")) {
             fprintf(sfp, "%d\n", i);
