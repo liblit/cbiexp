@@ -408,7 +408,7 @@ applied to the main branch of the \rhythmbox\ source tree.  We briefly
 describe the two bugs and the lessons we have learned from working on
 a large application with unknown bugs.
 
-The first bug, discssed briefly in Section~\ref{sec:introduction}, is
+The first bug, discssed briefly in \Autoref{sec:introduction}, is
 predicted to occur when a particular call to {\tt g\_source\_remove}
 returns a positive value.  This function is part of the GTK, a graphical
 object toolbox for C.
@@ -442,7 +442,7 @@ resulting in a crash.
 
 These bugs were the most complex that we dealt with in 
 our experiments (although one or two of the \moss\ bugs are close).  The
-call stack at the point of crash for both bugs is unhelpful (see Section~\ref{sec:conclusions}).  We feel confident in saying that without the use of
+call stack at the point of crash for both bugs is unhelpful (see \Autoref{sec:conclusions}).  We feel confident in saying that without the use of
 our tool we could not have isolated these bugs, and we believe
  the fact that these crashing bugs have gone undiscovered in \rhythmbox\ is
 good evidence that they are not easy to find without tool support.
