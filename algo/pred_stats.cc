@@ -44,9 +44,9 @@ main(int argc, char** argv)
     pred_kind = argv[2];
 
     switch (argv[2][0]) {
-    case 'T':
-         p = 0; break;
     case 'F':
+         p = 0; break;
+    case 'T':
          p = 1; break;
     case 'L':
          p = 0; break;
@@ -67,7 +67,7 @@ main(int argc, char** argv)
 
     site_name = argv[3];
 
-    printf("Searching failed runs in which predicate \"%d %s\" is observed to be true.\n", p, site_name);
+    printf("Searching failed runs in which predicate \"%s %s\" is observed to be true.\n", pred_kind, site_name);
     printf("Will stop after finding at most %d failed runs.\n", num_runs_needed);
 
 
