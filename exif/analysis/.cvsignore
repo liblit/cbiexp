@@ -1,3 +1,6 @@
+*.html
+*_??_*.xml
+*_lbnf_*.xml
 adaptive-sampled
 bgs-in-run.txt
 bug-o-meter.css
@@ -9,12 +12,13 @@ compute-results
 convert-reports
 corrected-view.dtd
 corrected-view.xsl
+debug.xml
+f.runs
 find-rare-sites
 fobs.
 fobs.ir
 fobs.jc
 fobs.meta
-f.runs
 ftr.
 ftr.ir
 ftr.jc
@@ -22,8 +26,6 @@ ftr.meta
 gen-summary
 gen-views
 histograms.xml
-*.html
-*_lbnf_*.xml
 link-cell.css
 log
 logo.css
@@ -47,6 +49,7 @@ rho.bin
 rho.dtd
 rho.xsl
 run-bugs.txt
+s.runs
 schemes.dtd
 schemes.xml
 scores.css
@@ -60,7 +63,6 @@ sobs.meta
 sorts.dtd
 sorts.xml
 src
-s.runs
 stamp-convert-reports
 static-site-info.dtd
 static-site-info.xml
@@ -82,6 +84,5 @@ units.cc
 view.css
 view.dtd
 view.xsl
-*_??_*.xml
 xmlify-results
 zoom-corrected-*-*-*.xml

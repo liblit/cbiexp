@@ -16,6 +16,7 @@ compute_pred_scores
 convert-reports
 corrected-view.dtd
 corrected-view.xsl
+debug.xml
 est_hyperparms
 est_hyperparms.log
 extract-timestamps
