@@ -1,8 +1,8 @@
 #ifndef DEF_H
 #define DEF_H
 
-#define SRUNS_TXT_FILE "s.txt"
-#define FRUNS_TXT_FILE "f.txt"
+#define SRUNS_TXT_FILE "s.runs"
+#define FRUNS_TXT_FILE "f.runs"
 #define SITES_TXT_FILE "sites.txt"
 #define UNITS_HDR_FILE "units.h"
 #define PREDS_TXT_FILE "preds.txt"

@@ -1,35 +1,30 @@
-main()
+#include <stdio.h>
+#include <assert.h>
+#include "def.h"
+
+main(int argc, char** argv)
 {
-    fprintf(result_summary_fp, "<table border=1>\n<tr>\n"
-                               "<td></td>\n"
-                               "<td align=middle>lower bound of<br>confidence interval</td>\n"
-                               "<td align=middle>increase<br>score</td>\n"
-                               "<td align=middle>fail<br>score</td>\n"
-                               "<td align=middle>true in<br># F runs</td>\n"
-                               "</tr>\n<tr>\n"
-                               "<td>branch</td>\n"
-                               "<td align=middle><a href=\"B_lb.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"B_is.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"B_fs.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"B_nf.html\">X</a></td>\n"
-                               "</tr>\n<tr>\n"
-                               "<td>return</td>\n"
-                               "<td align=middle><a href=\"R_lb.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"R_is.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"R_fs.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"R_nf.html\">X</a></td>\n"
-                               "</tr>\n<tr>\n"
-                               "<td>scalar</td>\n"
-                               "<td align=middle><a href=\"S_lb.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"S_is.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"S_fs.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"S_nf.html\">X</a></td>\n"
-                               "</tr>\n<tr>\n"
-                               "<td>all</td>\n"
-                               "<td align=middle><a href=\"all_lb.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"all_is.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"all_fs.html\">X</a></td>\n"
-                               "<td align=middle><a href=\"all_nf.html\">X</a></td>\n"
-                               "</tr>\n</table>\n</body></html>\n");
+    int i, j;
+
+    const char* prefix = (argv[1]) ? argv[1] : "";
+
+    FILE* fp = fopen(RESULT_SUMMARY_FILE, "a");
+    assert(fp);
+
+    fprintf(fp, "<table border=1>\n");
+
+    fprintf(fp, "<tr>\n<td>Sort by:</td>\n");
+    for (i = 0; i < NUM_SORTBYS; i++)
+        fprintf(fp, "<td align=middle>%s</td>\n", sortby_names[i]);
+    fprintf(fp, "</tr>\n");
+
+    for (i = 0; i < NUM_SCHEMES; i++) {
+        fprintf(fp, "<tr>\n<td align=middle>%s</td>\n", scheme_names[i]);
+        for (j = 0; j < NUM_SORTBYS; j++)
+            fprintf(fp, "<td align=middle><a href=\"%s%s_%s.html\">X</a></td>\n", prefix, scheme_codes[i], sortby_codes[j]);
+        fprintf(fp, "</tr>\n");
+    }
+    fprintf(fp, "</table>\n</body></html>\n");
+    return 0;
 }
 
