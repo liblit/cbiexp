@@ -38,7 +38,7 @@ my $dry_run;
 
 my $understood = GetOptions('jobs=i' => \$jobs,
 			    'verbose' => \$verbose,
-			    'datadir' => \$datadir,
+			    'datadir=s' => \$datadir,
 			    'dry-run' => \$dry_run);
 
 die "Usage: $0 [--jobs=<count>] [--verbose] [--datadir=<dir>] <num-runs>\n",
