@@ -196,7 +196,7 @@ us to a race condition.  The second predicate was not useful directly,
 but we were able to isolate the bug using the predicates in its
 affinity list.  This second bug revealed what turned out to be a very
 common incorrect pattern of accessing the underlying object library
-(see the discussion in Section~\ref{sec:introduction}).  These bugs
+(recall Section~\ref{sec:introduction}).  These bugs
 were confirmed and patches applied within a few days, in part because
 we could quantify the bugs as important crashing bugs.  It required
 several hours to isolate each of the two bugs, in part because \rhythmbox

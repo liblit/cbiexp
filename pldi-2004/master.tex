@@ -523,41 +523,42 @@ domain-specific.
 
 
 
-As discussed briefly in Section~\ref{sec:introduction}, in earlier work 
-we made use of $\ell_1$-regularized logistic regression and similar
-methods to select and rank the predicates in the order of their
+As discussed in Section~\ref{sec:introduction}, in earlier work 
+we used $\ell_1$-regularized logistic regression
+to rank the predicates by their
 failure-prediction strength \cite{PLDI`03*141,Zheng:2003:SDSP}.  Independently others have used
 logistic regression with good results to cluster program failures (without
 identifying causes) related to the same bug \cite{ICSE`03*465}.  However, we have come
 to believe that logistic regression has scalability problems in our application.
 
-Logistic regression and its variants use a linearly weighted
-combination of the predicates to classify a trial run as successful or
+Logistic regression uses linearly weighted
+combinations of predicates to classify a trial run as successful or
 failed.  Regularized logistic regression incorporates a penalty
-that forces the regression to set most coefficients to zero, thereby
+forcing most coefficients to be set to zero, thereby
 selecting only the most important predicates.  The output is a set of
-coefficients for predicates that gives the best overall prediction: i.e., if
-certain predicates are true the program is likely to fail.
+coefficients for predicates giving the best overall prediction.
 
-Table~\ref{tab:logregression} gives the top ten predicates and their importance
-(coefficients) as determined by logistic regression for our \moss experiment.
-The striking property of the selected predicates is that they are all either sub-bug
-or super-bug predictors.  The predicates beginning {\tt p + \ldots} are all sub-bug
-predictors of bug \#1 (see Table~\ref{tab:mossdilute}).  The predicates 
-{\tt i > \ldots} are super-bug predictors; {\tt i} is the length
-of the command line and the predicates say program crashes are more
-likely for long command lines (recall Section~\ref{sec:introduction}).
+A weakness of logistic regression for our application is that it seeks
+to cover the set of failing runs without regard to the orthogonality
+of the selected predicates (i.e., whether they represent distinct
+bugs).  This problem can be seen in Table~\ref{tab:logregression},
+which gives the top ten predicates selected by by logistic regression
+for \moss.  The striking fact is that all selected predicates are
+either sub-bug or super-bug predictors.  The predicates beginning {\tt
+p + \ldots} are all sub-bug predictors of bug \#1 (see
+Table~\ref{tab:mossdilute}).  The predicates {\tt i > \ldots} are
+super-bug predictors: {\tt i} is the length of the command line and
+the predicates say program crashes are more likely for long command
+lines (recall Section~\ref{sec:introduction}).
 
 The prevalence of super-bug predictors on the list shows the
-difficulty of making use of the penalty term to control the number
-of predicates chosen.
-Limiting the number of predicates
-that can be selected via a penalty has the effect of encouraging
-logistic regression to choose super-bug predictors, as these cover
-more failing runs at the expense of poorer predictive power compared to
-predictors of individual bugs.  Relaxing the penalty allows logistic
-regression to add more predicates to improve its prediction, but the
-sub-bug predictors apparently are favored.
+difficulty of making use of the penalty term.  Limiting the number of
+predicates that can be selected via a penalty has the effect of
+encouraging logistic regression to choose super-bug predictors, as
+these cover more failing runs at the expense of poorer predictive
+power compared to predictors of individual bugs.  Relaxing the penalty
+allows logistic regression to add more predicates to improve its
+prediction, but the sub-bug predictors apparently are favored.
 
 \section{Conclusions}
 \label{sec:conclusions}
@@ -568,8 +569,9 @@ detect a wide variety of both anticipated and unanticipated causes of failure
 in realistic systems and do so with a relatively modest number of program
 executions.
 
+{\small
 \bibliography{cacm1990,icse02,icse03,misc,paste02,pldi03,pods,ramss,refs}
-
+}
 \end{document}
 
 %% LocalWords:  DIDUCE Burnell Horvitz Podgurski Elbaum Hardojo SDF
