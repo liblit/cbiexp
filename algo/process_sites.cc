@@ -4,9 +4,6 @@
 
 main(int argc, char** argv)
 {
-    char s[1000], *unit, *scheme, *t;
-    char p[1000];
-
     assert(argc == 2);
     FILE* ifp = fopen(argv[1], "r");
     assert(ifp);
@@ -14,7 +11,8 @@ main(int argc, char** argv)
     FILE* ofpu = fopen("units.h", "w");
     assert(ofpu);
     fprintf(ofpu, "#ifndef UNITS_H\n#define UNITS_H\n\n");
-    fprintf(ofpu, "char* units[] = {\n");
+    fprintf(ofpu, "#include \"def.h\"\n\n");
+    fprintf(ofpu, "unit_t units[] = {\n");
 
     FILE* ofps = fopen("sites.h", "w");
     assert(ofps);
@@ -22,6 +20,8 @@ main(int argc, char** argv)
     fprintf(ofps, "char* sites[] = {\n");
 
     while (1) {
+        char s[1000], *unit, *scheme, *t;
+
         fscanf(ifp, "%[^\n]s", s);
         fgetc(ifp);  // eat '\n'
         if (feof(ifp))
@@ -37,28 +37,32 @@ main(int argc, char** argv)
         t = strchr(scheme, '\"');
         *t = '\0';
 
-        if (strcmp(scheme, "scalar-pairs") == 0)
-            fprintf(ofpu, "\t\"S");
-        else if (strcmp(scheme, "branches") == 0)
-            fprintf(ofpu, "\t\"B");
-        else if (strcmp(scheme, "returns") == 0)
-            fprintf(ofpu, "\t\"R");
-        else
-            assert(0);
-        fprintf(ofpu, "%s\",\n", unit);
-
+        int count = 0;
         while (1) {
+            char p[1000];
             fscanf(ifp, "%[^\n]s", p);
             fgetc(ifp);  // eat '\n'
             if (strncmp(p, "</sites", 7) == 0)
                 break;
             fprintf(ofps, "\t\"%s\",\n", p);
+            count++;
         }
+
+        fprintf(ofpu, "\t{ \"");
+        if (strcmp(scheme, "scalar-pairs") == 0)
+            fprintf(ofpu, "S");
+        else if (strcmp(scheme, "branches") == 0)
+            fprintf(ofpu, "B");
+        else if (strcmp(scheme, "returns") == 0)
+            fprintf(ofpu, "R");
+        else
+            assert(0);
+        fprintf(ofpu, "%s\", %d },\n", unit, count);
     }
 
-    fprintf(ofpu, "};\n\n#endif");
+    fprintf(ofpu, "};\n\n#endif\n");
     fclose(ofpu);
-    fprintf(ofps, "};\n\n#endif");
+    fprintf(ofps, "};\n\n#endif\n");
     fclose(ofps);
 
     return 0;
