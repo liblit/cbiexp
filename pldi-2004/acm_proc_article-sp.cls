@@ -1,6 +1,6 @@
-% ACM_PROC_ARTICLE-SP.CLS - VERSION 2.6SP
+% ACM_PROC_ARTICLE-SP.CLS - VERSION 2.7SP
 % COMPATIBLE WITH THE "ACM_PROC_ARTICLE.CLS" V2.5
-% Gerald Murray October 2nd., 2002
+% Gerald Murray October 15th., 2004
 %
 % ---- Start of 'updates'  ----
 %
@@ -27,9 +27,9 @@
 %
 % ---- End of 'updates' ----
 %
-\def\fileversion{V2.6SP}          % for ACM's tracking purposes
-\def\filedate{October 2, 2002}    % Gerry Murray's tracking data
-\def\docdate {Wednesday 2nd. October 2002} % Gerry Murray (with deltas to doc}
+\def\fileversion{V2.7SP}          % for ACM's tracking purposes
+\def\filedate{October 15, 2004}    % Gerry Murray's tracking data
+\def\docdate {Friday 15th. October 2004} % Gerry Murray (with deltas to doc}
 \usepackage{epsfig}
 \usepackage{amssymb}
 \usepackage{amsmath}
@@ -39,7 +39,7 @@
 % G.K.M. Tobin August-October 1999
 %    adapted from ARTICLE document style by Ken Traub, Olin Shivers
 %    also using elements of esub2acm.cls
-% LATEST REVISION V2.6SP - OCTOBER 2002
+% LATEST REVISION V2.7SP - OCTOBER 2004
 % ARTICLE DOCUMENT STYLE -- Released 16 March 1988
 %    for LaTeX version 2.09
 % Copyright (C) 1988 by Leslie Lamport
@@ -92,7 +92,7 @@
 %%% You may turn this hackery off via the -e option:
 %%%     dvips -e 0 foo.dvi >foo.ps
 %%%
-\typeout{Document Class 'acm_proc_article-sp' <2nd. October '02>.  Modified by G.K.M. Tobin}
+\typeout{Document Class 'acm_proc_article-sp' <15th. October '04>.  Modified by G.K.M. Tobin}
 \typeout{Based in part upon document Style `acmconf' <22 May 89>. Hacked 4/91 by}
 \typeout{shivers@cs.cmu.edu, 4/93 by theobald@cs.mcgill.ca}
 \typeout{Excerpts were taken from (Journal Style) 'esub2acm.cls'.}
@@ -566,7 +566,7 @@
 
 \if@ll
   \NeedsTeXFormat{LaTeX2e}
-  \ProvidesClass{acm_proc_article-sp} [2002/2/10 - V2.6SP - based on esub2acm.sty <23 April 96>]
+  \ProvidesClass{acm_proc_article-sp} [2004/15/10 - V2.7SP - based on esub2acm.sty <23 April 96>]
   \RequirePackage{latexsym}% QUERY: are these two really needed?
   \let\dooptions\ProcessOptions
 \else
@@ -1263,7 +1263,7 @@
 \def\thebibliography#1{%
 \ifnum\addauflag=0\addauthorsection\global\addauflag=1\fi
     \section{%
-       {REFERENCES}
+       {References} % was uppercased but this affects pdf bookmarks (SP/GM Oct. 2004)
         \@mkboth{{\refname}}{{\refname}}%
     }%
     \list{[\arabic{enumi}]}{%
@@ -1387,5 +1387,5 @@
 
 \toappear{\the\boilerplate\par
 {\confname{\the\conf}} \the\confinfo\par \the\copyrightetc}
-% End of ACM_PROC_ARTICLE-SP.CLS -- V2.6SP - 10/02/2002 --
-% Gerry Murray -- October 2nd. 2002
+% End of ACM_PROC_ARTICLE-SP.CLS -- V2.7SP - 10/15/2004 --
+% Gerry Murray -- October 15th. 2004
