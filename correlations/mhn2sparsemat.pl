@@ -37,7 +37,7 @@ sub output_sparse {
   open (META, "> $fn.meta") || die "Open: $!";
   my $row = 0;
   my $ctr = 0;
-  print IR "$ctr\n";
+  print JC "$ctr\n";
   for my $p (0..scalar(@{$rlist})-1) {
     my $rs = $rlist->[$p];
     $row++;
