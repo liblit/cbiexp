@@ -1,6 +1,5 @@
 name := moss
 schemes := all branches returns scalar-pairs
-datadir := /moa/sc2/cbi/best-known-datasets/mossexp/data
 
 view_flags := --stylesheet=moss-view.xsl
 projected_view_flags := --stylesheet=projected-moss-view.xsl
