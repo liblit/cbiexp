@@ -532,7 +532,7 @@ void process_trace_file()
 
 int main(int argc, char** argv)
 {
-    int u, c, p;
+    int u, c;
 
     process_cmdline(argc, argv);
 
