@@ -33,9 +33,9 @@ void process_cmdline(int argc, char** argv)
 	    continue;
 	}
 	if (!strcmp(argv[i], "-h")) {
-	    printf("Usage: process-run-labels -n <num-runs> -l <label-path-fmt> -s <sruns-file> -f <fruns-file>\n"
-		   "Reads  label file of each run\n"
-		   "writes <sruns-file> and <fruns-file>\n");
+	    puts("Usage: process-run-labels -n <num-runs> -l <label-path-fmt> -s <sruns-file> -f <fruns-file>\n"
+		 "Reads  label file of each run\n"
+		 "writes <sruns-file> and <fruns-file>");
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
@@ -43,7 +43,7 @@ void process_cmdline(int argc, char** argv)
     }
 
     if (!label_path_fmt || !sruns_file || !fruns_file) {
-	printf("Incorrect usage; try -h\n");
+	puts("Incorrect usage; try -h");
 	exit(1);
     }
 }

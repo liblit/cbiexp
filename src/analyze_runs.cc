@@ -202,35 +202,35 @@ void process_cmdline(int argc, char** argv)
 	    continue;
 	}
 	if (!strcmp(argv[i], "-h")) {
-	    printf("Usage: analyze-runs <options>\n"
-		   "-do-process-labels\n"
-		   "-do-map-sites\n"
-		   "-do-convert-reports\n"
-		   "-do-compute-results\n"
-		   "-do-compute-obs-tru\n"
-		   "-do-print-results-1\n"
-		   "-do-print-results-n\n"
-		   "-n   <num-runs>\n"
-		   "-l   <label-path-fmt>\n"
-		   "-s   <sruns-file>\n"
-		   "-f   <fruns-file>\n"
-		   "-vs  <verbose-sites-file>\n"
-		   "-cs  <compact-sites-file>\n"
-		   "-u   <units-hdr-file>\n"
-		   "-vr  <verbose-report-path-fmt>\n"
-		   "-cr  <compact-report-path-fmt>\n"
-		   "-e   <experiment-name>\n"
-		   "-d   <program-src-dir>\n"
-		   "-c   <confidence>\n"
-		   "-t   <trace-file>\n"
-		   "-pf  <preds-txt-full-file>\n"
-		   "-pa  <preds-txt-abbr-file>\n"
-		   "-ph  <preds-hdr-file>\n"
-		   "-r   <result-summary-file>\n"
-		   "-obs <obs-file>\n"
-		   "-tru <tru-file>\n"
-		   "-ka  <all-cluster-file>\n"
-		   "-kp  <per-cluster-file>\n");
+	    puts("Usage: analyze-runs <options>\n"
+		 "-do-process-labels\n"
+		 "-do-map-sites\n"
+		 "-do-convert-reports\n"
+		 "-do-compute-results\n"
+		 "-do-compute-obs-tru\n"
+		 "-do-print-results-1\n"
+		 "-do-print-results-n\n"
+		 "-n   <num-runs>\n"
+		 "-l   <label-path-fmt>\n"
+		 "-s   <sruns-file>\n"
+		 "-f   <fruns-file>\n"
+		 "-vs  <verbose-sites-file>\n"
+		 "-cs  <compact-sites-file>\n"
+		 "-u   <units-hdr-file>\n"
+		 "-vr  <verbose-report-path-fmt>\n"
+		 "-cr  <compact-report-path-fmt>\n"
+		 "-e   <experiment-name>\n"
+		 "-d   <program-src-dir>\n"
+		 "-c   <confidence>\n"
+		 "-t   <trace-file>\n"
+		 "-pf  <preds-txt-full-file>\n"
+		 "-pa  <preds-txt-abbr-file>\n"
+		 "-ph  <preds-hdr-file>\n"
+		 "-r   <result-summary-file>\n"
+		 "-obs <obs-file>\n"
+		 "-tru <tru-file>\n"
+		 "-ka  <all-cluster-file>\n"
+		 "-kp  <per-cluster-file>");
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
@@ -256,14 +256,14 @@ int main(int argc, char** argv)
 
     if (do_process_labels) {
 	if (sruns_file || fruns_file) {
-	    printf("When you specify -do-process-labels, you must not specify -s or -f\n");
+	    puts("When you specify -do-process-labels, you must not specify -s or -f");
 	    exit(1);
 	}
 	if (num_runs == -1 || !label_path_fmt) {
-	    printf("When you specify -do-process-labels, you must also specify -n and -l\n");
+	    puts("When you specify -do-process-labels, you must also specify -n and -l");
 	    exit(1);
 	}
-	printf("Processing run labels ...\n");
+	puts("Processing run labels ...");
 	sruns_file = DEFAULT_SRUNS_FILE;
 	fruns_file = DEFAULT_FRUNS_FILE;
 	shell("%s/%s -n %d -l %s -s %s -f %s",
@@ -272,14 +272,14 @@ int main(int argc, char** argv)
 
     if (do_map_sites) {
 	if (compact_sites_file || units_hdr_file)  {
-	    printf("When you specify -do-map-sites, you must not specify -cs or -u\n");
+	    puts("When you specify -do-map-sites, you must not specify -cs or -u");
 	    exit(1);
 	}
 	if (!verbose_sites_file) {
-	    printf("When you specify -do-map-sites, you must also specify -vs\n");
+	    puts("When you specify -do-map-sites, you must also specify -vs");
 	    exit(1);
 	}
-	printf("Mapping sites ...\n");
+	puts("Mapping sites ...");
 	compact_sites_file = DEFAULT_COMPACT_SITES_FILE;
 	units_hdr_file = DEFAULT_UNITS_HDR_FILE;
 	shell("cat %s | "
@@ -292,10 +292,10 @@ int main(int argc, char** argv)
 
     if (do_convert_reports) {
 	if (!sruns_file || !fruns_file || !verbose_report_path_fmt || !compact_report_path_fmt || !units_hdr_file) {
-	    printf("When you specify -do-convert-reports, you must also specify -s, -f, -vr, -cr, and -u\n");
+	    puts("When you specify -do-convert-reports, you must also specify -s, -f, -vr, -cr, and -u");
 	    exit(1);
 	}
-	printf("Converting reports ...\n");
+	puts("Converting reports ...");
 	shell("g++ -O3 %s/convert_reports.cc %s/classify_runs.cc -I%s -include %s -o %s",
 	      srcdir, srcdir, srcdir, units_hdr_file, CONVERT_REPORTS);
 	shell("%s -s %s -f %s -vr %s -cr %s",
@@ -304,14 +304,14 @@ int main(int argc, char** argv)
 
     if (do_compute_results) {
 	if (preds_full_file || preds_abbr_file || preds_hdr_file || result_summary_file) {
-	    printf("When you specify -do-compute-results, you must not specify -pf, -pa, -ph, or -r\n");
+	    puts("When you specify -do-compute-results, you must not specify -pf, -pa, -ph, or -r");
 	    exit(1);
 	}
 	if (!sruns_file || !fruns_file || !compact_sites_file || !compact_report_path_fmt || !units_hdr_file) {
-	    printf("When you specify -do-compute-results, you must also specify -s, -f, -cs, -cr, and -u\n");
+	    puts("When you specify -do-compute-results, you must also specify -s, -f, -cs, -cr, and -u");
 	    exit(1);
 	}
-	printf("Computing results ...\n");
+	puts("Computing results ...");
 	preds_full_file = DEFAULT_PREDS_FULL_FILE;
 	preds_abbr_file = DEFAULT_PREDS_ABBR_FILE;
 	preds_hdr_file  = DEFAULT_PREDS_HDR_FILE;
@@ -329,14 +329,14 @@ int main(int argc, char** argv)
 
     if (do_compute_obs_tru) {
 	if (obs_file || tru_file) {
-	    printf("When you specify -do-compute-obs-tru, you must not specify -obs or -tru\n");
+	    puts("When you specify -do-compute-obs-tru, you must not specify -obs or -tru");
 	    exit(1);
 	}
 	if (!sruns_file || !fruns_file || !preds_abbr_file || !compact_report_path_fmt || !units_hdr_file) {
-	    printf("When you specify -do-compute-obs-tru, you must also specify -s, -f, -pa, -cr, and -u\n");
+	    puts("When you specify -do-compute-obs-tru, you must also specify -s, -f, -pa, -cr, and -u");
 	    exit(1);
 	}
-	printf("Computing obs and tru ...\n");
+	puts("Computing obs and tru ...");
 	obs_file = DEFAULT_OBS_FILE;
 	tru_file = DEFAULT_TRU_FILE;
 	shell("g++ -O3 %s/compute_obs_tru.cc %s/classify_runs.cc %s/scaffold.cc -I%s -include %s -o %s",
@@ -348,19 +348,19 @@ int main(int argc, char** argv)
 
     if (do_print_results_1) {
 	if (!result_summary_file || !preds_full_file) {
-	    printf("When you specify -do-print-results-1, you must also specify -r and -pf\n");
+	    puts("When you specify -do-print-results-1, you must also specify -r and -pf");
 	    exit(1);
 	}
-	printf("Pretty-printing results-1 ...\n");
+	puts("Pretty-printing results-1 ...");
 	gen_views(bindir, preds_full_file, 0);
     }
 
     if (do_print_results_n) {
 	if (!result_summary_file || !preds_hdr_file || !all_cluster_file || !per_cluster_file) {
-	    printf("When you specify -do-print-results-n, you must also specify -r, -ph, -ka, and -kp\n");
+	    puts("When you specify -do-print-results-n, you must also specify -r, -ph, -ka, and -kp");
 	    exit(1);
 	}
-	printf("Pretty-printing results-n ...\n");
+	puts("Pretty-printing results-n ...");
 	shell("g++ -O3 %s/gen_preds_file.cc -include %s -o %s", srcdir, preds_hdr_file, GEN_PREDS_FILE);
 	FILE* all_fp = fopen(all_cluster_file, "r");
 	assert(all_fp);

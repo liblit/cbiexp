@@ -155,19 +155,19 @@ void print_branch_pred(FILE* fp, char* pred, char* op)
 
 void print_return_pred(FILE* fp, char* pred, char* op, bool is_neg)
 {
-    if (is_neg) fprintf(fp, "!(");
+    if (is_neg) fputs("!(", fp);
     fprintf(fp, "%s %s", pred, op);
-    if (is_neg) fprintf(fp,  ")");
+    if (is_neg) fputc(')',  fp);
 }
 
 void print_scalar_pred(FILE* fp, char* pred, char op, bool is_neg)
 {
-    if (is_neg) fprintf(fp, "!(");
+    if (is_neg) fputs("!(", fp);
     char* s = strchr(pred, '$');
     *s = op;
-    fprintf(fp, "%s", pred);
+    fputs(pred, fp);
     *s = '$';
-    if (is_neg) fprintf(fp,  ")");
+    if (is_neg) fputc(')', fp);
 }
 
 bool print_site_summary(int u, int c, char* site_name)
@@ -408,12 +408,12 @@ void print_result_summary()
     time_t t;
     time(&t);
 
-    fprintf(result_summary_fp,
-	"<table>\n<tr>\n"
-	"<td align=middle><font size=\"+2\">Cooperative Bug Isolation Report</font></td>\n"
-	"<td rowSpan=2 align=right>"
-	"<a href=\"%s\"><img src=\"http://www.cs.berkeley.edu/~liblit/sampler/logo.png\" style=\"border-style: none\"></a></td>\n</tr>\n"
-	"</table>\n<br>\n", CBI_WEBPAGE);
+    fputs("<table>\n<tr>\n"
+	  "<td align=middle><font size=\"+2\">Cooperative Bug Isolation Report</font></td>\n"
+	  "<td rowSpan=2 align=right>"
+	  "<a href=\"" CBI_WEBPAGE "\"><img src=\"http://www.cs.berkeley.edu/~liblit/sampler/logo.png\" style=\"border-style: none\"></a></td>\n</tr>\n"
+	  "</table>\n<br>\n",
+	  result_summary_fp);
     fprintf(result_summary_fp, "Experiment name: %s\n<p>\n", experiment_name);
     fprintf(result_summary_fp, "Generated on %s<p>\n", ctime(&t));
     fprintf(result_summary_fp, "# runs: %d [successful: %d failing: %d discarded: %d]\n<p>\n",
@@ -490,7 +490,7 @@ void process_cmdline(int argc, char** argv)
 	    continue;
 	}
 	if (!strcmp(argv[i], "-h")) {
-	    printf("Usage: compute-results -e <experiment-name> -d <program-src-dir> -s <sruns-file> -f <fruns-file> -c <confidence> -cs <compact-sites-file> -cr <compact-report-path-fmt> -t <trace-file> -pf <preds-full-file> -pa <preds-abbr-file> -ph <preds-hdr-file> -r <result-summary-file>\n");
+	    puts("Usage: compute-results -e <experiment-name> -d <program-src-dir> -s <sruns-file> -f <fruns-file> -c <confidence> -cs <compact-sites-file> -cr <compact-report-path-fmt> -t <trace-file> -pf <preds-full-file> -pa <preds-abbr-file> -ph <preds-hdr-file> -r <result-summary-file>");
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
@@ -500,7 +500,7 @@ void process_cmdline(int argc, char** argv)
     if (!experiment_name || !program_src_dir || !sruns_file || !fruns_file || confidence == -1 ||
 	!compact_sites_file || !compact_report_path_fmt ||
 	!preds_full_file || !preds_abbr_file || !preds_hdr_file || !result_summary_file) {
-	printf("Incorrect usage; try -h\n");
+	puts("Incorrect usage; try -h");
 	exit(1);
     }
 }
@@ -551,8 +551,8 @@ int main(int argc, char** argv)
     result_summary_fp = fopen(result_summary_file, "w");
     assert(result_summary_fp);
 
-    fprintf(preds_hdr_fp, "#ifndef PREDS_H\n#define PREDS_H\n\n");
-    fprintf(preds_hdr_fp, "const char* preds[] = {\n");
+    fputs("#ifndef PREDS_H\n#define PREDS_H\n\n", preds_hdr_fp);
+    fputs("const char* preds[] = {\n", preds_hdr_fp);
 
     for (u = 0; u < NUM_UNITS; u++) {
 	site_summary[u] = new (site_summary_t) [units[u].c];
@@ -576,7 +576,7 @@ int main(int argc, char** argv)
     for (u = 0; u < NUM_UNITS; u++)
 	delete [] (site_summary[u]);
 
-    fprintf(preds_hdr_fp, "};\n\n#endif\n");
+    fputs("};\n\n#endif\n", preds_hdr_fp);
 
     fclose(sites_fp);
     fclose(preds_full_fp);

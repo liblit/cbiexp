@@ -89,9 +89,9 @@ void process_cmdline(int argc, char** argv)
 	    continue;
 	}
 	if (!strcmp(argv[i], "-h")) {
-	    printf("Usage: map-sites -cs <compact-sites-file> -u <units-hdr-file> < <verbose-sites-file>\n"
-		   "Reads  <verbose-sites-file>\n"
-		   "Writes <compact-sites-file> and <units-hdr-file>\n");
+	    puts("Usage: map-sites -cs <compact-sites-file> -u <units-hdr-file> < <verbose-sites-file>\n"
+		 "Reads  <verbose-sites-file>\n"
+		 "Writes <compact-sites-file> and <units-hdr-file>");
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
@@ -99,7 +99,7 @@ void process_cmdline(int argc, char** argv)
     }
 
     if (!compact_sites_file || !units_hdr_file) {
-	printf("Incorrect usage; try -h\n");
+	puts("Incorrect usage; try -h");
 	exit(1);
     }
 }
@@ -112,8 +112,9 @@ int main(int argc, char** argv)
     FILE* ufp = fopen(units_hdr_file, "w"); assert(ufp);
     int num_units = 0, num_b_preds = 0, num_r_preds = 0, num_s_preds = 0;
 
-    fprintf(ufp, "#ifndef UNITS_H\n#define UNITS_H\n\n");
-    fprintf(ufp, "const struct { char* s; int c; } units[] = {\n");
+    fputs("#ifndef UNITS_H\n#define UNITS_H\n\n"
+	  "const struct { char* s; int c; } units[] = {\n",
+	  ufp);
 
     while (1) {
 	char s[3000];
@@ -128,7 +129,7 @@ int main(int argc, char** argv)
 	    fgets(p, 3000, stdin);
 	    if (!strncmp(p, "</sites", 7))
 		break;
-	    fprintf(cfp, "%s", print_site(t[0], p));
+	    fputs(print_site(t[0], p), cfp);
 	    count++;
 	}
 	fprintf(ufp, "\t{ \"%s\", %d },\n", t, count);
@@ -141,12 +142,12 @@ int main(int argc, char** argv)
 	}
     }
 
-    fprintf(ufp, "};\n\n");
+    fputs("};\n\n", ufp);
     fprintf(ufp, "#define NUM_UNITS   %d\n", num_units);
     fprintf(ufp, "#define NUM_B_PREDS %d\n", num_b_preds);
     fprintf(ufp, "#define NUM_R_PREDS %d\n", num_r_preds);
     fprintf(ufp, "#define NUM_S_PREDS %d\n", num_s_preds);
-    fprintf(ufp, "\n#endif\n");
+    fputs("\n#endif\n", ufp);
 
     fclose(cfp);
     fclose(ufp);

@@ -47,27 +47,27 @@ void print_pred_details(int u, int c, int p)
     int r;
 
     if (site_details[u][c].obs[p]) {
-	fprintf(obs_fp, "F: ");
+	fputs("F: ", obs_fp);
 	for (r = 0; r < num_runs; r++)
 	    if (is_frun[r] && (*(site_details[u][c].obs[p]))[r] == true)
 		fprintf(obs_fp, "%d ", r);
-	fprintf(obs_fp, "\nS: ");
+	fputs("\nS: ", obs_fp);
 	for (r = 0; r < num_runs; r++)
 	    if (is_srun[r] && (*(site_details[u][c].obs[p]))[r] == true)
 		fprintf(obs_fp, "%d ", r);
-	fprintf(obs_fp, "\n");
+	fputc('\n', obs_fp);
     }
 
     if (site_details[u][c].tru[p]) {
-	fprintf(tru_fp, "F: ");
+	fputs("F: ", tru_fp);
 	for (r = 0; r < num_runs; r++)
 	    if (is_frun[r] && (*(site_details[u][c].tru[p]))[r] == true)
 		fprintf(tru_fp, "%d ", r);
-	fprintf(tru_fp, "\nS: ");
+	fputs("\nS: ", tru_fp);
 	for (r = 0; r < num_runs; r++)
 	    if (is_srun[r] && (*(site_details[u][c].tru[p]))[r] == true)
 		fprintf(tru_fp, "%d ", r);
-	fprintf(tru_fp, "\n");
+	fputc('\n', tru_fp);
     }
 
 }
@@ -168,14 +168,14 @@ void process_cmdline(int argc, char** argv)
 	    continue;
 	}
 	if (!strcmp(argv[i], "-h")) {
-	    printf("Usage: compute-obs-tru -s <sruns-file> -f <fruns-file> -pa <preds-abbr-file> -cr <compact-report-path-fmt> -obs <obs-file> -tru <tru-file>\n");
+	    puts("Usage: compute-obs-tru -s <sruns-file> -f <fruns-file> -pa <preds-abbr-file> -cr <compact-report-path-fmt> -obs <obs-file> -tru <tru-file>");
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
 	exit(1);
     }
     if (!sruns_file || !fruns_file || !preds_file || !compact_report_path_fmt || !obs_file || !tru_file) {
-	printf("Incorrect usage; try -h\n");
+	puts("Incorrect usage; try -h");
 	exit(1);
     }
 }

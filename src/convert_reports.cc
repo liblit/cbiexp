@@ -43,9 +43,9 @@ void process_cmdline(int argc, char** argv)
 	    continue;
 	}
 	if (!strcmp(argv[i], "-h")) {
-	    printf("Usage: convert-reports -s <sruns-file> -f <fruns-file> -vr <verbose-report-path-fmt> -cr <compact-report-path-fmt>\n"
-		   "Reads  verbose reports\n"
-		   "Writes compact reports\n");
+	    puts("Usage: convert-reports -s <sruns-file> -f <fruns-file> -vr <verbose-report-path-fmt> -cr <compact-report-path-fmt>\n"
+		 "Reads  verbose reports\n"
+		 "Writes compact reports");
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
@@ -53,7 +53,7 @@ void process_cmdline(int argc, char** argv)
     }
 
     if (!sruns_file || !fruns_file || !verbose_report_path_fmt || !compact_report_path_fmt) {
-	printf("Incorrect usage; try -h\n");
+	puts("Incorrect usage; try -h");
 	exit(1);
     }
 }
@@ -119,7 +119,7 @@ int main(int argc, char** argv)
 		fgets(p, 3000, ifp);
 		if (strncmp(p, "</sam", 5) == 0)
 		    break;
-		fprintf(ofp, "%s", p);
+		fputs(p, ofp);
 		count++;
 	    }
 	    assert(count == units[indx].c);

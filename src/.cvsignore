@@ -3,6 +3,7 @@ Makefile
 Makefile.in
 TAGS
 analyze_runs
+compiler.cc
 format
 gen_views
 map_sites
