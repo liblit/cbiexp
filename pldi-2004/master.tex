@@ -59,7 +59,7 @@ pdfpagemode=UseOutlines
 \newcommand{\ccrypt}{\textsc{ccrypt}\xspace}
 \newcommand{\exifpred}{{\tt o + s > buf\_size is TRUE}}
 \newcommand{\termdef}[1]{\textit{#1}}
-\newcommand{\prob}{\ensuremath{\textit{Prob}}}
+\newcommand{\prob}{\ensuremath{\textit{Pr}}}
 \newcommand{\fail}{\ensuremath{\textit{Crash}}}
 \newcommand{\crash}{\ensuremath{\textit{Failure}}}
 \newcommand{\context}{\ensuremath{\textit{Context}}}
@@ -188,8 +188,13 @@ the number of times $P$ is observed to be true, but the analysis of
 the feedback reports only uses whether $P$ is observed to be true at
 least once.}
 
-A {\em bug} is a set of failing runs (feedback reports) ${\cal B}$
-that share a cause of failure.  The union of all bugs is exactly the
+%% [[modified by Alice]]
+The usual definition of a bug refers to a programmatic element that 
+unintentionally causes incorrect behavior.  We're going to abuse notation a
+bit and overload its definition.  In this paper, a {\em bug} also refers to
+a set of failing runs (feedback reports) ${\cal B}$
+that share a cause of failure.  The meaning becomes clear in context.  The 
+union of all bugs is exactly the
 set of failing runs, but note that ${\cal B}_i \cap {\cal B}_j \neq
 \emptyset$ in general; more than one bug can occur in some runs.
 
@@ -234,11 +239,13 @@ likely unusual code paths are to be exercised.  Thus, predicates
 implying a long command line may rank near the top, even though such
 predicates are useless for isolating the cause of individual bugs.
 
+%% [[modified by Alice]]
 \item Finally, different bugs occur at rates that differ by orders of
-magnitude.  Because logistic regression is a global optimization,
-predictors for less common bugs have very little influence over the
-global optimum and tend to be ranked low or not included in ${\cal S}$
-at all.
+magnitude.  In reality, we do not know which crash is caused by which bug, 
+hence we are forced to lump all the bugs together and try to learn a binary
+classifier.  Thus, predictors for less common bugs have relatively little
+influence over the global optimum and tend to be ranked low or not included 
+in ${\cal S}$ at all.
 
 \end{itemize}
 
@@ -384,7 +391,7 @@ indicating whether the true or false branches were ever taken.
 \item[scalar-pairs:] Many bugs
   concern boundary issues in the relationship between a 
   variable and another variable or constant.  At
-  each scalar assignment \texttt{x = \dots}, identify each
+  each scalar assignment \texttt{x = \dots}, we identify each
   same-typed in-scope variable $\mathtt{y}_i$ and each
   constant expression $\mathtt{c}_j$.  For each   $\mathtt{y}_i$ and each $\mathtt{c}_j$,  
   we track six relationships to the new value of \texttt{x}: $<, \leq, >, \geq, =, \neq$.
@@ -568,9 +575,12 @@ difficulty of making use of the penalty term.  Limiting the number of
 predicates that can be selected via a penalty has the effect of
 encouraging logistic regression to choose super-bug predictors, as
 these cover more failing runs at the expense of poorer predictive
-power compared to predictors of individual bugs.  Relaxing the penalty
-allows logistic regression to add more predicates to improve its
-prediction, but the sub-bug predictors apparently are favored.
+power compared to predictors of individual bugs.  On the other hand,
+some of the predicates are apparently excellent predictors for certain
+sub-bugs, and are therefore chosen over others.
+%%Relaxing the penalty
+%%allows logistic regression to add more predicates to improve its
+%%prediction, but the sub-bug predictors apparently are favored.
 
 \section{Conclusions}
 \label{sec:conclusions}

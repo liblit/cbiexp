@@ -1,0 +1,107 @@
+Overall comments
+1. font too small?
+2. too much notation in introduction?
+
+I. Introduction
+- second column of first page: definition of R(P)
+  + comment about notation: the f(x) usually denotes some kind of function,
+    do we want to treat R (a run) as a function?  I'd much prefer the subscript
+    or superscript notation, which usually refers to an element of a vector.
+    How about R_P instead of R(P)?  [I didn't make this change in the text]
+
+- next paragraph: "A bug is a set of failing funs..."
+  + the definition of "bug" overloads the usual definition of "something that
+    causes incorrect behavior."  I understand that this makes the super-bug and
+    sub-bug terminology easier to justify (weren't we going to use some other
+    names for these?).  But if we're going to veer from the usual definition,
+    then at least we should make this clear.  [text modified]
+
+- second page, first column, first bullet
+  + logistic regression is not a global optimization technique.
+    The fact that predictors for less common bugs are ranked lower by logistic
+    regression is a consequence of doing binary classification when we really 
+    should be doing multi-class classification.  But we can't do multi-class
+    classification since we don't know the underlying bug labels. [text 
+    modified]
+
+II. Background
+- second page, second column, second to last paragraph: "We have found that a
+  sampmling rate of 1/100 normally keeps the performance overhead of 
+  instrumentation low, often unmeasurable."
+  + is this true?  I thought Ben's thesis would claim otherwise.
+
+- third page, first column: scalar-pairs: "... At each scalar assignment...,
+  identify..."
+  + changed to "we identify" to match the next sentence
+
+III. Cause Isolation Algorithm
+3.1 Increase Scores
+- third page, second column, definition of Failure(P)
+  + notation comment: 
+    Prob (P => Crash) should really be something like
+    Pr (Crash = 1 | P = 1)
+    [text modified]
+
+- immediately following: definition of S(P) and F(P)
+  + same comment as R(P).  S(P) and F(P) are not really functions, and it
+    would be more natural to use the subscript notation.  [didn't modify
+    text]
+
+- fourth page, first column: the part that sets up for the introduction of 
+  the context score
+  + the Failure score is not a perfect definition of importance.  The context
+    score is designed to address one specific problem (that of the innocent
+    by-stander), but there are many others.  We should make this clear in the
+    text.  [didn't modify text]
+
+- immediately following: definition of Context(P)
+  - The notation 'P v not P' confuses P with R(P).  We've defined P to be
+    the name of a predicate, and R(P) to be its actual value in run R.  Here,
+    we should at least say 'R(P) v not R(P)', but I think it's even clearer
+    to say 'P is observed'.  Also the '=>' implication notation belongs more
+    in logic than in statistics.  I've changed this to the conditional
+    probability notation.
+
+- Table 1, caption
+  + the name 'Moss' should be typeset in special font.  [I can't find the place
+    where this table is inserted, so I can't make the change myself.]
+
+3.3 Ranking predicates: precision vs. recall
+- I thought we were going to use the sensitivity vs. specificity terminology
+  instead of precision vs. recall?
+
+- right above the harmonic mean formula:
+  "precision and recall, which disproportionately rewards high scores..."
+  + why use the word "disproportionately"?  The harmonic mean just rewards 
+    high scores in both dimensions, and has the averaging affect of trading
+    off one with the other, no?
+
+IV. Experiments
+- last paragraph before section 4.1: description of non-uniform sampling
+  "we choose a sampling rate for P to achieve ..."
+  + this sentence is confusing. [text modified, please check for accuracy]
+
+4.1 A validation experiment
+- first paragraph: "The nature of the bugs varies: ... 
+  comprise the eight crashing bugs."
+  + sentence seems a bit awkward.  I've moved the phrase "comprise the eight
+    crashing bugs" up into the first phrase.  See if you like it better.
+
+- second paragraph: "While the failure can be detected... "
+  + this sentence is also awkward.  I've rearranged things a little bit.
+
+- page 7, second column: "and each bug B the number of runs where bug B occurs"
+  + confusion of notation: we had defined B to be the set of runs causes by
+    a specific bug, but now we're using B to denote the name of the bug, AND
+    the associated set of runs.  One way to fix this would be to let $B$ denote
+    the bug, and {\cal B} the set of runs causes by B.  Then the above sentence
+    could be "and each bug $B$ the size of $|{\cal B}|$."  [haven't modified 
+    text]
+
+V. Previous and Related work
+5.1 Comparison with logistic regression
+- last paragraph
+  + I changed the justification for why sub-bug predictors are selected.
+    We don't relax the regularization penalty during log reg training, but 
+    I think sub-bug predictors are selected because they are really good
+    predictors for certain subsets of failed runs. [text modified]

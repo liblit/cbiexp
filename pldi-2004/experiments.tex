@@ -27,9 +27,11 @@ algorithm.
 
 To address this problem, we set the sampling rates of predicates to be
 inversely proportional to their frequency of execution.  Based on a
-training set of 1,000 executions, we choose a sampling rate for $P$ to
-achieve an expected 100 observations of $P$ during program execution,
-but never less than $\nicefrac{1}{100}$.  Thus, rarely executed code has a
+%% [[ modified by Alice, check for accuracy ]]
+training set of 1,000 executions, we set a sampling rate for each $P$ so 
+as to obtain an expected 100 samples of each predicate in subsequent program 
+executions; the sampling rate is clamped to a minimum of $\nicefrac{1}{100}$.  
+Thus, rarely executed code has a
 much higher sampling rate than very frequently executed code; a
 similar strategy has been pursued for similar reasons in \cite{chil04}.  We
 have validated this approach by comparing the results for each
@@ -51,17 +53,19 @@ widely used service for detecting plagiarism in software
 and repaired bugs in \moss that we reintroduced; the other three were
 variations on three of the original bugs, to see if our algorithm could
 discriminate between pairs of bugs with very similar behavior but
-distinct causes.  The nature of the bugs varies: four
+%% [[ modified by Alice]
+distinct causes.  The nature of the eight crasing bugs varies: four
 buffer overruns, a null file pointer dereference in certain cases, a
 missing end-of-list check in the traversal of a hash table bucket, a missing
 out-of-memory check, and a violation of a subtle invariant that must be maintained between two
-parts of a complex data structure comprise the eight crashing bugs.  
+parts of a complex data structure.  
 
-The last bug, incorrect handling of comments in certain cases, only
-causes incorrect output, not a crash.  While the failure can be
-detected for the other bugs by noting program crashes (in most
-cases---some of the bugs are non-deterministic and do not always
-cause crashes), this last bug cannot be detected in such an easy fashion.
+%% [[modified by Alice]]
+The last bug -- incorrect handling of comments in certain cases -- only
+causes incorrect output, not a crash.  For most of the other bugs, failure can 
+be detected by noting program crashes.  (Some of the bugs are non-deterministic 
+and do not always cause crashes.)  The last bug, however, cannot be detected 
+in such an easy fashion.
 For our experiment we also ran a correct version of \moss\ and
 compared the output of the two versions, labeling any run where the
 output was different as a failure.  The purpose of using this oracle
