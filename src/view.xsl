@@ -175,7 +175,9 @@
       <xsl:value-of select="@function"/>
     </td>
     <td>
-      <xsl:value-of select="@file"/>:<xsl:value-of select="@line"/>
+      <a href="{@file}#{@line}">
+	<xsl:value-of select="@file"/>:<xsl:value-of select="@line"/>
+      </a>
     </td>
   </xsl:template>
 
