@@ -414,15 +414,18 @@ a large application with unknown bugs.
 
 The first bug, discssed briefly in Section~\ref{sec:introduction}, is
 predicted to occur when a particular call to {\tt g\_source\_remove}
-returns a positive value.  This function is part of the GTK, an 
-object system for C.  Objects in the the GTK can be referred to both
+returns a positive value.  This function is part of the GTK, a graphical
+object toolbox for C.
+%%an object system for C.  
+%%(?? "an object system for C" doesn't make sense.  -- Alice)
+Objects in GTK can be referred to both
 via pointers and via object IDs; {\tt g\_source\_remove}
 takes an object ID as its argument.
 
 In this case the problem is that the object ID passed as an argument
 is stale---the object it belongs to was destroyed much earlier in the
 prorgram, but the object ID was retained in the owning object's fields.
-Much later clean-up code dutifully calls {\tt g\_source\_remove} on the
+A section of clean-up code much later in the program dutifully calls {\tt g\_source\_remove} on the
 stale ID; if the ID has been reallocated, the unfortunate object that
 has that ID is then destroyed, wreaking havoc in the rest of the execution.
 
@@ -457,14 +460,14 @@ to understand these two bugs.
 The lesson is that while our algorithm is theoretically sound and (in
 our opinion) performs well in practice, it is only as good as the
 predicates chosen for instrumentation.  Our current instrumentation
-strategies focus on low-level properties of C code, while \rhythmbox\
+strategies focus on low-level properties of the C code, while \rhythmbox\
 is really written in a higher-level language, namely at the level of
-the GTK's API.  We have already identified a new instrumentation strategy
+the GTK API.  We have already identified a new instrumentation strategy
 that makes use of the semantics of the GTK and would have led us
 much more quickly to the second bug; such a strategy, while GTK-specific,
-would still be widely applicable, as the GTK is widely used.  We expect
+would still be widely applicable, as GTK is widely used.  We expect
 that such system- or API-specific instrumentation strategies would be
-needed in many cases to obtain the maximum benefit from our techniques.
+needed in many cases to obtain maximum benefit from our techniques.
 
 
 \section{Related Work}

@@ -127,7 +127,10 @@ true does not increase the probability of failure at all; this coincides with
 the intuition that this predicate is irrelevant to the bug.
 
 This leads us to the following definition:
-\[ \context(P) \equiv \prob((P \lor \lnot P) \Rightarrow \fail)  = \prob(\fail |  P \mbox{ observed}) \]
+\begin{gather*}
+\context(P) \equiv \prob((P \lor \lnot P) \Rightarrow \fail)  \\
+= \prob(\fail |  P \mbox{ observed}) 
+\end{gather*}
 Now, $P \lor \lnot P$ is not the set of all runs, because we are not working in a two-valued logic.
 In any given run, neither $P$ nor $\lnot P$ may be observed (because the site where this predicate is
 sampled is not reached), or one may be observed, or both may be observed (because the statement is executed
