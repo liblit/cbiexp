@@ -34,7 +34,7 @@ links :=					\
 	view.css				\
 	view.dtd				\
 	view.xsl
-web := $(views) $(links) $(topRho) predictor-info.xml summary.xml $(web_extras)
+web := $(views) $(links) $(topRho) all_hl_corrective.xml predictor-info.xml summary.xml $(web_extras)
 publish := $(HOME)/www/project/$(name)-new
 
 all: $(web)
@@ -57,9 +57,11 @@ predictor-info.xml: xmlify-results preds.txt
 	./$<
 	$(MAKE) $(@:.xml=.dtd)
 	xmllint --valid --noout $@
+clean:: ; rm -f predictor-info.xml
 
 xmlify-results: %: $(tooldir)/%.o sites.o units.o $(tooldir)/libanalyze.a
 	$(LINK.cc) $^ -o $@
+clean:: ; rm -f xmlify-results
 
 $(filter-out %_none.xml, $(views)): project preds.txt rho.bin
 	$(time) ./$< $(projected_view_flags)
@@ -71,12 +73,15 @@ project: $(tooldir)/project.o sites.o units.o $(tooldir)/libanalyze.a $(tooldir)
 	$(LINK.cc) $^ -o $@
 clean:: ; rm -f project
 
-$(topRho): top-rho_%: top-rho all_% rho.bin
+$(topRho): top-rho_%: $(tooldir)/top-rho all_% rho.bin
 	./$<
+	$(MAKE) rho.dtd
 	xmllint --valid --noout $(topRho)
+clean:: ; rm -f $(topRho)
 
 rho.bin: calculate.m $(sparse)
-	echo "fwrite(fopen('rho.bin','w'), rho, 'double');" | $(time) matlab -nodisplay -nojvm -r calculate
+	echo "fwrite(fopen('$@','w'), rho, 'double');" | $(time) matlab -nodisplay -nojvm -r calculate
+	test -s $@
 clean:: ; rm -rf rho.bin mats
 
 calculate.m: $(corrdir)/genMscript.pl $(sparsebase:=.meta)
@@ -86,6 +91,11 @@ clean:: ; rm -f calculate.m
 $(sparse): $(corrdir)/mhn2sparsemat.pl f.runs s.runs obs.txt tru.txt
 	$(time) ./$< . .
 clean:: ; rm -f $(sparse)
+
+all_hl_corrective.xml: $(tooldir)/correct f.runs obs.txt tru.txt
+	$(time) ./$< $(projected_view_flags)
+	xmllint --valid --noout $@
+clean:: ; rm -f all_hl_corrective.xml
 
 obs.txt tru.txt: $(tooldir)/compute_obs_tru.o stamp-convert-reports preds.txt s.runs f.runs sites.o units.o
 	$(time) $(tooldir)/analyze_runs --do=compute-obs-tru --runs-directory=$(datadir)
