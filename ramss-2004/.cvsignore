@@ -2,8 +2,10 @@
 *.bbl
 *.blg
 *.dvi
+*.eps
 *.log
 *.out
 *.pdf
 *.ps
+*.tpt
 auto

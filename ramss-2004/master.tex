@@ -2,9 +2,11 @@
 
 \usepackage{amsfonts}
 \usepackage{amsmath}
+\usepackage{graphicx}
 \usepackage{ieee}
 \usepackage{mailto}
 \usepackage{nicefrac}
+\usepackage{subfigure}
 \usepackage{url}
 \usepackage{xspace}
 
@@ -282,30 +284,51 @@ application, packages it for transit, and sends it to the report
 collection server along with other information such as program
 outcome.  In this way we avoid adding GUI infrastructure and
 encrypted networking support to the applications themselves.
-Also, the script can be in a different language (e.g., Python)
-which has excellent networking and desktop interaction support.
+Also, the script can be in a different language, Python,
+which has excellent library support for both networking and desktop
+interaction.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{first-time}
+  \caption{First-time opt-in dialog}
+  \label{first-time}
+\end{figure}
 
 When the wrapper script starts up, it checks whether the user has run
 an instrumented version of this application before.  If not, it
-presents the first-time opt-in dialog.  The dialog briefly describes the
-goals of the project and the consequences of participating or not, and
-lets the user decide what to do.  There is also a hyperlink button to
-our web site for more information.  This dialog is presented in the
-background, however, and the real application launched without waiting
-for a reply.  On this first run, the application 
-reports no data.  
-Once the user has selected yes or no, that preference is
-remembered and the first-time opt-in dialog is not shown on subsequent
-runs (though it is possible to change the preference later; see below).
+presents the first-time opt-in dialog shown in
+\autoref{first-time}. The dialog briefly describes the goals of the
+project and the consequences of participating or not, and lets the
+user decide what to do.  The logo icon and highlighting of the yes/no
+explanatory text change to reflect user's current choice.  A hyperlink
+button links to the project web site for more information.  This
+dialog is initially presented in the background, and the real
+application launched without waiting for a reply.  On this first run,
+the application reports no data. Once the user has selected yes or no,
+that preference is remembered and the first-time opt-in dialog is not
+shown on subsequent runs, though it is possible to change the
+preference later using a distinct sampler control panel.
 
-Also in the background, the wrapper presents a small status icon in
-the GNOME desktop panel notification area.  This icon provides a
-visual reminder that an instrumented application is currently running.
-It provides a simple popup menu with a toggle to globally disable or
-enable sampling.  A second menu item launches the sampler control
-panel.  The status icon changes depending on whether sampling is
-enabled or disabled globally, and remains present as long as at least
-one instrumented application is running.  
+Also in the background, the wrapper posts a small status icon in
+the desktop status bar notification area.  This icon provides a
+visual reminder that an instrumented application is currently
+running. It provides a simple popup menu with a toggle to globally
+disable or enable sampling.  The status icon changes depending on
+whether sampling is enabled or disabled globally, and remains present
+as long as at least one instrumented application is running.  A second
+menu item launches the sampler control panel which allows for
+more detailed customization of data collection preferences.
+
+The opt-in dialog, status icon, and control panel work together to
+keep the user fully informed and fully in control.  Additional
+configuration management hooks let system administrators change both
+defaults as well as mandatory, locked-down settings.  These settings
+include the sampling density, the address of the report collection
+server, and whether reporting is enabled for all or selected
+applications.  Tracking of user behavior is a delicate matter, so it
+is important that users and their system administrators be able to
+adapt the system to local needs and concerns.
 
 Because the wrapper script launches the instrumented binary as a
 subprocess, it can also check that subprocess's exit status (either a
@@ -322,15 +345,17 @@ over even a slow modem connection in seconds.
 Before submitting a report, the wrapper checks once more whether
 sampling is enabled both globally and for this application.  If the
 user changed his mind after program launch, this gives a second chance
-for stopping an unwanted feedback report from going out.
+to quash an unwanted feedback report before it reaches the collection
+server.
 
-Because we transmit reports using HTTP requests, every submission
-can also have a response from the server.
+We transmit reports using HTTP POST requests across an encrypted SSL
+connection.  Each HTTP request can also have a response from the server.
 Ordinarily the collection server does not give any response beyond a
 success code.  However, if the server does give a response, the
 wrapper script receives it and presents it to the user as an HTML
 page.  This feature might be used, for example, if a critical security
 issue were found requiring immediate upgrades.  
+
 The HTTP reply can also include a few special reply headers which
 update the local sampling configuration on the client.  We have the
 ability to promote a different destination URL for future reports,
@@ -404,7 +429,7 @@ with $\nicefrac{1}{100}$ sampling we need between ten and twenty thousand
 runs with our current methods to achieve accurate analysis of
 the results, which is more than ten times the number of reports we have
 received to date for any of these applications.\footnote{We began
-collecting data from the public distribution in October, 2003.}  Our
+collecting data from the public in October, 2003.}  Our
 situation here reflects an inherent aspect of CBI and similar
 approaches, which is that these methods work well only beyond a
 certain minimum scale.
