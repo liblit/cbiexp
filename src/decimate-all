@@ -37,7 +37,7 @@ sub progress ($) {
     if (-t && $ENV{TERM}) {
 	my $runId = shift;
 	my $step = $runId + 1;
-	my $percent = 100 * $step / $numRuns;
+	my $percent = int(100 * $step / $numRuns);
 
 	print "\rdecimating runs: $step/$numRuns $percent%";
     }
