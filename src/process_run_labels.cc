@@ -4,10 +4,10 @@
 #include <cstring>
 #include <cstdlib>
 
-char* sruns_file = NULL;
-char* fruns_file = NULL;
-char* label_path_fmt = NULL;
 int num_runs = 0;
+char* label_path_fmt = NULL;
+char* sruns_txt_file = NULL;
+char* fruns_txt_file = NULL;
 
 void process_cmdline(int argc, char** argv)
 {
@@ -24,25 +24,28 @@ void process_cmdline(int argc, char** argv)
 	}
 	if (!strcmp(argv[i], "-s")) {
 	    i++;
-	    sruns_file = argv[i];
+	    sruns_txt_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-f")) {
 	    i++;
-	    fruns_file = argv[i];
+	    fruns_txt_file = argv[i];
 	    continue;
 	}
 	if (!strcmp(argv[i], "-h")) {
-	    puts("Usage: process-run-labels -n <num-runs> -l <label-path-fmt> -s <sruns-file> -f <fruns-file>\n"
-		 "Reads  label file of each run\n"
-		 "writes <sruns-file> and <fruns-file>");
+	    puts("Usage: process-run-labels <options>\n"
+                 "    -n <num-runs>\n"
+                 "(r) -l <label-path-fmt>\n"
+                 "(w) -s <sruns-txt-file>\n"
+                 "(w) -f <fruns-txt-file>\n"
+            );
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
 	exit(1);
     }
 
-    if (!label_path_fmt || !sruns_file || !fruns_file) {
+    if (!label_path_fmt || !sruns_txt_file || !fruns_txt_file) {
 	puts("Incorrect usage; try -h");
 	exit(1);
     }
@@ -50,11 +53,12 @@ void process_cmdline(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-
     process_cmdline(argc, argv);
 
-    FILE* sfp = fopen(sruns_file, "w"); assert(sfp);
-    FILE* ffp = fopen(fruns_file, "w"); assert(ffp);
+    FILE* sfp = fopen(sruns_txt_file, "w");
+    assert(sfp);
+    FILE* ffp = fopen(fruns_txt_file, "w"); 
+    assert(ffp);
 
     for (int i = 0; i < num_runs; i++) {
 	char filename[100];
@@ -68,11 +72,15 @@ int main(int argc, char** argv)
 	fscanf(fp, "%s", s);
 	fclose(fp);
 
-	if (!strcmp(s, "success"))
+	if (!strcmp(s, "success")) {
 	    fprintf(sfp, "%d\n", i);
-	else if (!strcmp(s, "failure"))
+            continue;
+        }
+	if (!strcmp(s, "failure")) {
 	    fprintf(ffp, "%d\n", i);
-	else if (strcmp(s, "ignore")) {
+            continue;
+        }
+	if (strcmp(s, "ignore")) {
 	    fprintf(stderr, "malformed label in %s: %s\n", filename, s);
 	    return 1;
 	}
