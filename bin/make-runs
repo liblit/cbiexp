@@ -1,9 +1,11 @@
 #!/usr/bin/perl -w
+#-*- cperl -*-
 
 
 use strict;
 
 use Cwd;
+use FindBin;
 use File::Temp qw(tempfile);
 use FileHandle;
 use Getopt::Long qw(:config bundling auto_abbrev);
@@ -71,23 +73,11 @@ local ($,, $\) = ("\n", "\n");
 
 my ($handle, $filename) = tempfile(UNLINK => 1);
 
-print $handle "all: $_/label" foreach 0 .. ($num_runs - 1);
+print $handle "stamp-labels: $_/label" foreach 0 .. ($num_runs - 1);
+print $handle ("label_once = $cwd/$label_once",
+	       "run_once = $cwd/$run_once",
+	       "include $FindBin::Bin/make-runs.mk");
 
-print $handle ("%/label: %/stamp $cwd/$label_once",
-	       "\techo run \$*: label",
-	       "\tcd \$* && $cwd/$label_once \$* >\$(\@F).",
-	       "\tmv \$@. \$@",
-	       '',
-	       "%/stamp:",
-	       "\ttest ! -e ../orderly-shutdown",
-	       "\techo run \$*: start",
-	       "\tif [ -d \$* ]; then rm -r \$*; fi",
-	       "\tmkdir \$*",
-	       "\tcd \$* && $cwd/$run_once \$*",
-	       "\techo run \$*: done",
-	       "\ttouch \$@",
-	       '',
-	       '.PRECIOUS: %/stamp');
 close $handle;
 
 
