@@ -22,11 +22,11 @@ For this experiment we enabled all three instrumentation strategies
 described in \Autoref{sec:background}:
 
 \begin{description}
-\item[branches:] 2,085 instrumentation sites.  Each site has two
-  counters and yields two predicates, for 4,170 branch predicates.
+\item[branches:] 2085 instrumentation sites.  Each site has two
+  counters and yields two predicates, for 4170 branch predicates.
 
 \item[returns:] 494 instrumentation sites.  Each site has three
-  counters and yields six predicates, for 2,964 return predicates.
+  counters and yields six predicates, for 2964 return predicates.
 
 \item[scalar-pairs:] 32,644 instrumentation sites.  Each site has
   three counters and yields six predicates, for 195,864 scalar-pair
@@ -58,7 +58,7 @@ predicates.  We retain only
 
 \item 16 return predicates;
 
-\item 8,672 scalar-pair predicates.
+\item 8672 scalar-pair predicates.
 \end{itemize}
 
 Clearly the scalar-pairs list is still too long after step (1) to
@@ -244,12 +244,12 @@ We now examine the effect of of the sampling rate and the number of
 program trials on step (1) of the algorithm: predicate selection.
 We start with $3000$ randomly
 selected trial runs, and add $3000$ random trials at a time, until we
-incorporate all $31873$ runs of our data.  We record the number of
+incorporate all $31,873$ runs of our data.  We record the number of
 predicates retained at each step.  This process is repeated ten times
 for each sampling rate, with ten different random permutation sequences
 of our data. We plot the mean and the confidence interval (one
 standard deviation above and below the mean) in
-\Autoref{fig:predkept-a}.  When all $31873$ trial
+\Autoref{fig:predkept-a}.  When all $31,873$ trial
 runs are used, we retain $8129$ predicates when the data is not
 sampled (i.e. sampling rate is $\nicefrac{1}{1}$), $8807$ at sampling
 rate $\nicefrac{1}{10}$, $8309$ at $\nicefrac{1}{100}$, and $8936$ at
