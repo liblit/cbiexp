@@ -161,16 +161,18 @@ Instead, we use a combination of sparse random sampling and
 client-side summarization.  The former controls performance overhead
 while the later limits storage and transmission requirements.
 However, each also adds noise and uncertainty to the resulting data.
-We highlight a few key properties here.  First, the sampling
-transformation is quite general: any collection of statements within
-(or added to) a program may be designated as ``instrumentation'' and
-thereby sampled instead of run unconditionally.  Second, samples are
-taken in a statistically fair manner equivalent to a Bernoulli
-process: each potential sample is taken or skipped randomly and
-independently as the program runs.  Lastly, the technique is highly
-effective at controlling performance provided that sampling is sparse:
-average rates on the order of one sample per hundred opportunities
-keep overhead low, often unmeasurable.
+The particulars of the sampling transformation have been reported
+elsewhere \cite{PLDI`03*141}.  We highlight a few key properties here.
+First, the sampling transformation is quite general: any collection of
+statements within (or added to) a program may be designated as
+``instrumentation'' and thereby sampled instead of run
+unconditionally.  Second, samples are taken in a statistically fair
+manner equivalent to a Bernoulli process: each potential sample is
+taken or skipped randomly and independently as the program runs.
+Lastly, the technique is highly effective at controlling performance
+provided that sampling is sparse: average rates on the order of one
+sample per hundred opportunities keep overhead low, often
+unmeasurable.
 
 The difficulty in using sparse sampling is that the resultant data is
 both noisy and incomplete.  When \nicefrac{99}{100} of all monitored
@@ -181,14 +183,13 @@ been true but never recorded.  However, because sampling is fair,
 large numbers of runs do converge on a truthful representation of
 overall program behavior.
 
-The particulars of the sampling transformation have been reported
-elsewhere \cite{PLDI`03*141}.  Orthogonal to that is the decision
-about what instrumentation to introduce in the first place.  This
-decision determines what behaviors one can possibly observe once
-sampling is applied.  A instrumentation useful scheme should be fairly
-general but selected to capture behaviors which are likely to be of
-interest when hunting for bugs.  At present our system offers the
-following instrumentation schemes:
+Orthogonal to the sampling transformation is the decision about what
+instrumentation to introduce in the first place and how to concisely
+summarize the resultant data.  This determines what behaviors one can
+possibly observe once sampling is applied.  A useful instrumentation
+scheme should be fairly general but selected to capture behaviors
+which are likely to be of interest when hunting for bugs.  At present
+our system offers the following instrumentation schemes:
   
 \begin{description}
 \item[branches:] Control flow is interesting.  At each conditional,
