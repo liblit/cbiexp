@@ -1,7 +1,7 @@
 -*- outline -*-
 
 Most of the scripts in the "bin" directory are not intended for direct
-use by humans.  The two exceptions are:
+use by humans.  The exceptions are:
 
 
 * make-runs
