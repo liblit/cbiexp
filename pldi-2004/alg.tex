@@ -386,34 +386,21 @@ runs).  In information retrieval, the corresponding terms are recall and
 precision.  A standard way to combine sensitivity and specificity is to compute
 their harmonic mean; this measure disproportionately rewards high scores in
 both dimensions.  In our case, $\increase(P)$ measures specificity.  For
-sensitivity, we have found it useful to consider a transformation $\phi()$ 
-of the raw counts, and to form the ratio $\phi(F(P)) / \phi(\numfail)$, 
-where $\numfail$ is the total number of failed runs.  Thus our overall
-metric is the following:
-%% It is helpful to consider this problem in the language of information
-%% retrieval. We are looking for predicates with
-%% high {\em recall} (meaning predicates that account for many failed runs) but also high {\em precision}
-%% (meaning predicates that do not mispredict failure in many successful runs).  In statistics,
-%% the corresponding terms are {\em sensitivity} and {\em specificity}.  In both fields,
-%% the standard metric is the harmonic mean of precision and recall, which disproportionately
-%% rewards high scores in both dimensions.
+sensitivity, we have found it useful to consider a transformation $\phi$ 
+of the raw counts, and to form the normalized ratio $\phi(F(P)) / \phi(\numfail)$, 
+where $\numfail$ is the total number of failed runs.
+In our work thus far $\phi$ has been a logarithmic
+transformation, which moderates the impact of very large numbers of failures.
+Thus our overall metric is the following:
 %%
+\[
+\importance(P) =
+\frac{2}{
+  \frac{1}{\increase(P)}
+  +
+  \frac{1}{log(F(P)) / log(\numfail)}}
+\]
 %%
-%% In our case, $\increase(P)$ measures precision and $F(P)$ measures recall.  Define
-%%
-\[ \importance(P) = \frac{2}{\frac{1}{\increase(P)} + \frac{log(\numfail)}{log(F(P))}} \]
-%%
-%% where $\numfail$ is total number of failing runs (independent of $P$)
-%% and therefore scales recall to between zero and one.
-In particular, in our work thus far $\phi()$ has been a logarithmic
-transformation.
-%%
-\issue[Alex]{It might be a bit unclear since the quantity that is in
-  the interval 0-1 is
-
-  log(F(P))/log(NumF)
-
-  and the formula as written has the reciprocal of that.}
 The results are given in \autoref{tab:sorts-harmonic}.  We observe that
 all of the predicates on this list indeed have both high specificity and
 sensitivity, accurately describing a large number of failures. 
