@@ -2,11 +2,28 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <vector>
+
+typedef std::vector<const char *> Fields;
 
 char* sites_src_file = NULL;
 char* units_src_file = NULL;
 FILE* sfp = NULL;
 FILE* ufp = NULL;
+
+static void get_fields(Fields &fields, char *row)
+{
+    char *tab;
+    while ((tab = strchr(row, '\t'))) {
+	*tab = '\0';
+	fields.push_back(row);
+	row = tab + 1;
+    }
+
+    tab = strchr(row, '\n');
+    *tab = '\0';
+    fields.push_back(row);
+}
 
 char get_scheme_code(char* scheme_str)
 {
@@ -37,69 +54,72 @@ char* get_scheme_code_and_signature(char* x)
     return u;
 }
 
-void print_s_site(char* s)
+bool print_s_site(const Fields &fields)
 {
-    char *x, *y;
+    size_t left, right;
 
-    x = strchr(s , '\t'); assert(x); *x = '\0'; x++;
-    x = strchr(x , '\t'); assert(x); x++;
-    x = strchr(x , '\t'); assert(x); x++;
+    switch (fields.size()) {
+    case 9:
+	left = 4;
+	right = 7;
+	break;
+    case 6:
+	left = 4;
+	right = 5;
+	break;
+    case 5:
+	left = 3;
+	right = 4;
+	break;
+    default:
+	return false;
+    }
 
-    y = strchr(x , '\t'); *y = '\0'; y++;
-
-    fprintf(sfp, "\'S\', { \"%s\", \"%s\" } ", s, x);
+    fprintf(sfp, "\'S\', { \"%s\", \"%s\" } ", fields[left], fields[right]);
+    return true;
 }
 
-void print_b_site(char* s)
+bool print_1_site(const Fields &fields)
 {
-    char* x = strchr(s, '\n'); assert(x); *x = '\0';
-    fprintf(sfp, "\'B\', { \"%s\" } ", s);
-}
+    size_t operand;
 
-void print_r_site(char* s)
-{
-    char* x = strchr(s, '\n'); assert(x); *x = '\0';
-    fprintf(sfp, "\'R\', { \"%s\" } ", s);
-}
+    switch (fields.size()) {
+    case 5:
+	operand = 4;
+    case 4:
+	operand = 3;
+	break;
+    default:
+	return false;
+    }
 
-void print_g_site(char* s)
-{
-    char* x = strchr(s, '\n'); assert(x); *x = '\0';
-    fprintf(sfp, "\'G\', { \"%s\" } ", s);
+    fprintf(sfp, "\'B\', { \"%s\" } ", fields[operand]);
+    return true;
 }
 
 void print_site(char scheme_code, char* s)
 {
-    char *x, *y, *z;
+    Fields fields;
+    get_fields(fields, s);
 
-    // s points to file name
+    assert(fields.size() >= 3);
+    const char * const file = fields[0];
+    const char * const line = fields[1];
+    const char * const func = fields[2];
+    fprintf(sfp, "\t{ \"%s\", %s, \"%s\", ", file, line, func);
 
-    x = strchr(s, '\t'); assert(x); *x = '\0'; x++;
-
-    // x points to line number
-
-    y = strchr(x, '\t'); assert(y); *y = '\0'; y++;
-
-    // y points to func name
-
-    z = strchr(y, '\t'); assert(z); *z = '\0'; z++;
-
-    // z points to CFG node, unless report is fairly old
-
-    fprintf(sfp, "\t{ \"%s\", %s, \"%s\", ", s, x, y);
-
-    // ignore CFG node if present
-    char * const skip = strchr(z, '\t');
-    if (skip) z = skip + 1;
-
-    // z points to scheme-specific predicate name
-
+    bool ok;
     switch (scheme_code) {
-    case 'S': print_s_site(z); break;
-    case 'B': print_b_site(z); break;
-    case 'R': print_r_site(z); break;
-    case 'G': print_g_site(z); break;
+    case 'S': ok = print_s_site(fields); break;
+    case 'B': ok = print_1_site(fields); break;
+    case 'R': ok = print_1_site(fields); break;
+    case 'G': ok = print_1_site(fields); break;
     default: assert(0);
+    }
+
+    if (!ok) {
+	fprintf(stderr, "unexpected field count (%u) for %c site\n", fields.size(), scheme_code);
+	exit(1);
     }
 
     fprintf(sfp, "},\n");
