@@ -49,7 +49,7 @@
   <!-- outcome summary -->
   <xsl:template match="runs">
     <xsl:variable name="total" select="sum(@*)"/>
-    <p class="outcomes"><xsl:value-of select="$total"/> runs:</p>
+    <p class="outcomes"><xsl:number value="$total" grouping-size="3" grouping-separator=","/> runs:</p>
     <table class="outcomes">
       <xsl:call-template name="run-label">
 	<xsl:with-param name="title" select="'Successes'"/>
@@ -76,8 +76,8 @@
     <xsl:param name="total"/>
     <tr>
       <td class="label"><strong><xsl:value-of select="$title"/>:</strong>&#160;</td>
-      <td class="count"><xsl:value-of select="$count"/></td>
-      <td class="percent">&#160;(<xsl:value-of select="round($count div $total * 100)"/>%)</td>
+      <td class="count"><xsl:number value="$count" grouping-size="3" grouping-separator=","/></td>
+      <td class="percent">&#160;(<xsl:number value="round($count div $total * 100)"/>%)</td>
     </tr>
   </xsl:template>
 
@@ -135,10 +135,10 @@
     <xsl:if test="$total > 0">
       <tr class="{$name}">
 	<td class="label"><xsl:value-of select="$name"/></td>
-	<td class="retain count"><xsl:value-of select="$retain"/></td>
+	<td class="retain count"><xsl:number value="$retain" grouping-size="3" grouping-separator=","/></td>
 	<td class="solidus">&#160;of&#160;</td>
-	<td class="total count"><xsl:value-of select="$total"/></td>
-	<td class="percent">&#160;(<xsl:value-of select="round($retain div $total * 100)"/>%)</td>
+	<td class="total count"><xsl:number value="$total" grouping-size="3" grouping-separator=","/></td>
+	<td class="percent">&#160;(<xsl:number value="round($retain div $total * 100)"/>%)</td>
 	<xsl:choose>
 	  <xsl:when test="$retain = 0">
 	    <td class="link"/>
