@@ -1,17 +1,27 @@
 #!/usr/bin/python -O
 
 import colorsys
+import math
 import mmap
+import os
+import stat
 import struct
+import sys
 import xml.parsers.expat
-
-predCount = 2940
-format = 'd'
-corrSize = struct.calcsize(format)
 
 rhoFile = file('rho.bin')
 rhoFd = rhoFile.fileno()
-rhoMap = mmap.mmap(rhoFd, predCount * predCount * corrSize, access = mmap.ACCESS_READ)
+rhoSize = os.fstat(rhoFd)[stat.ST_SIZE]
+rhoMap = mmap.mmap(rhoFd, rhoSize, access = mmap.ACCESS_READ)
+
+format = 'd'
+corrSize = struct.calcsize(format)
+predCount = math.sqrt(rhoSize / corrSize)
+if predCount == int(predCount):
+    predCount = int(predCount)
+else:
+    print >>sys.stderr, 'irregular predicate count:', predCount
+    sys.exit(1)
 
 def rho(a, b):
     linear = predCount * a + b
