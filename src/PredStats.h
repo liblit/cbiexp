@@ -5,6 +5,7 @@
 namespace PredStats
 {
   extern const char filename[];
+  extern unsigned count();
 }
 
 
