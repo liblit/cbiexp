@@ -19,7 +19,7 @@ the same order.
 If that all seems too complicated, this file is also suitable for use
 with the "bin/resolve-samples" script.  For example:
 
-	% zcat data/1/reports.gz |
+	% cat data/1/reports |
 	/usr/lib/sampler/tools/extract-report samples |
 	/usr/lib/sampler/tools/resolve-samples share/bc.sites
 
