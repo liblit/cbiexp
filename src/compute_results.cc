@@ -1,4 +1,4 @@
-// Usage: compute -e <experiment_name> -r <report_path_fmt> -d <src_code_dir> -c <confidence>
+// Usage: compute -p <program_name> -r <report_path_fmt> -d <program_src_dir> -c <confidence>
 // Creates files PRED_TXT_FILE and PRED_HDR_FILE and RESULT_SUMMARY_FILE
 
 #include <stdio.h>
@@ -41,9 +41,9 @@ const float conf_map[10] = {
 int   conf_percent = 95;
 float conf;
 
-char* experiment_name = NULL;
+char* program_name = NULL;
 char* report_path_fmt = NULL;
-char* source_dir = NULL;
+char* program_src_dir = NULL;
 
 int num_s_preds = 0;
 int num_r_preds = 0;
@@ -88,9 +88,9 @@ void extract_pred_name(char* s, pred_name* n)
 void restore_site_name(pred_name* n)
 {
     fprintf(preds_txt_fp, "</td><td>%s</td><td><a href=\"%s/%s#%s\">%s:%s</a>\n",
-        n->func, source_dir, n->file, n->line, n->file, n->line);
+        n->func, program_src_dir, n->file, n->line, n->file, n->line);
     fprintf(preds_hdr_fp, "</td><td>%s</td><td><a href=\\\"%s/%s#%s\\\">%s:%s</a>\",\n",
-        n->func, source_dir, n->file, n->line, n->file, n->line);
+        n->func, program_src_dir, n->file, n->line, n->file, n->line);
 
     *(n->line - 1) = '\t';
     *(n->func - 1) = '\t';
@@ -326,7 +326,7 @@ void print_result_summary()
                                "<td rowSpan=2 align=right>"
                                "<a href=\"http://www.cs.berkeley.edu/~liblit/sampler/\"><img src=\"http://www.cs.berkeley.edu/~liblit/sampler/logo.png\" style=\"border-style: none\"></a></td>\n</tr>\n"
                                "</table>\n<br>\n");
-    fprintf(result_summary_fp, "Experiment name: %s\n<p>\n", experiment_name);
+    fprintf(result_summary_fp, "Experiment name: %s\n<p>\n", program_name);
     fprintf(result_summary_fp, "Generated on %s<p>\n", ctime(&t));
     fprintf(result_summary_fp, "# runs: %d [successful: %d failing: %d discarded: %d]\n<p>\n", num_runs, num_sruns, num_fruns, num_runs - (num_sruns + num_fruns));
     fprintf(result_summary_fp, "# predicates instrumented: %d [branch: %d return: %d scalar: %d]\n<p>\n",
@@ -372,9 +372,9 @@ void print_result_summary()
 void process_cmdline(int argc, char** argv)
 {
     for (int i = 1; i < argc; i++) {
-        if (!strcmp(argv[i], "-e")) {
+        if (!strcmp(argv[i], "-p")) {
             i++;
-            experiment_name = argv[i];
+            program_name = argv[i];
             continue;
         }
         if (!strcmp(argv[i], "-r")) {
@@ -384,7 +384,7 @@ void process_cmdline(int argc, char** argv)
         }
         if (!strcmp(argv[i], "-d")) {
             i++;
-            source_dir = argv[i];
+            program_src_dir = argv[i];
             continue;
         }
         if (!strcmp(argv[i], "-c")) {
@@ -394,14 +394,14 @@ void process_cmdline(int argc, char** argv)
             continue;
         } 
         if (!strcmp(argv[i], "-h")) {
-            printf("Usage: compute -e experiment_name -r report_path_format -d source_dir -c confidence\n");
+            printf("Usage: compute -p program_name -r report_path_format -d program_src_dir -c confidence\n");
             exit(0);
         }
         printf("Illegal option: %s\n", argv[i]);
         exit(1);
     }
 
-    if (!experiment_name || !report_path_fmt || !source_dir) {
+    if (!program_name || !report_path_fmt || !program_src_dir) {
         printf("Incorrect usage; try -h\n");
         exit(1);
     }
