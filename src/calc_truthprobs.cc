@@ -3,7 +3,7 @@
 #include <ext/hash_map>
 #include <fstream>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <string>
 #include "classify_runs.h"
 #include "CompactReport.h"
