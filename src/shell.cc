@@ -6,6 +6,9 @@
 #include "shell.h"
 
 
+bool verbose = false;
+
+
 void shell(const char format[], ...)
 {
   va_list args;
@@ -13,6 +16,10 @@ void shell(const char format[], ...)
 
   char *command;
   vasprintf(&command, format, args);
+
+  if (verbose)
+    fprintf(stderr, "+ %s\n", command);
+
   const int result = system(command);
   free(command);
 

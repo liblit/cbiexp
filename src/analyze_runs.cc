@@ -215,6 +215,16 @@ void process_cmdline(int argc, char** argv)
 	}
 
         /*********************************************
+         * debugging
+         *********************************************/
+
+	if (!strcmp(argv[i], "-verbose")) {
+	    i++;
+	    verbose = true;
+	    continue;
+	}
+
+        /*********************************************
          * help!
          *********************************************/
 
@@ -245,7 +255,8 @@ void process_cmdline(int argc, char** argv)
 		 "-kp  <per-cluster-txt-file>\n"
 		 "-l   <label-path-fmt>\n"
 		 "-vr  <verbose-report-path-fmt>\n"
-		 "-cr  <compact-report-path-fmt>\n");
+		 "-cr  <compact-report-path-fmt>\n"
+		 "-verbose");
 	    exit(0);
 	}
 
@@ -261,7 +272,8 @@ void gen_views(char* preds_file, int prefix)
     shell("awk '{ if ($1~/S/) print $0 }' < %s > S.txt", preds_file);
     shell("awk '{ if ($1~/G/) print $0 }' < %s > G.txt", preds_file);
 
-    shell("%s -r %s -p %d", GEN_VIEWS, result_summary_htm_file, prefix);
+    shell("%s -r %s -p %d %s", GEN_VIEWS, result_summary_htm_file,
+	  prefix, verbose ? "-verbose" : "");
 }
 
 void REQUIRE(char* main_opt, char* sub_opt, bool s)

@@ -25,8 +25,13 @@ void process_cmdline(int argc, char** argv)
 	    prefix = argv[i];
 	    continue;
 	}
+	if (!strcmp(argv[i], "-verbose")) {
+	    i++;
+	    verbose = true;
+	    continue;
+	}
 	if (!strcmp(argv[i], "-h")) {
-	    puts("Usage: gen-views -r <result_summary_file> -p <prefix>");
+	    puts("Usage: gen-views -r <result_summary_file> -p <prefix> [-verbose]");
 	    exit(0);
 	}
 	printf("Illegal option: %s\n", argv[i]);
