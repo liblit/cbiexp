@@ -57,7 +57,8 @@ main(int argc, char** argv)
 
     site_name = argv[2];
 
-    printf("Searching failed runs in which predicate \"%d %s\" is observed to be true\n", p, site_name);
+    printf("Searching failed runs in which predicate \"%d %s\" is observed to be true.\n", p, site_name);
+    printf("Will stop after finding at most 10 failed runs.\n");
 
 
     ffp = fopen("f.runs", "r");
