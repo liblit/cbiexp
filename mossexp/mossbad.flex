@@ -454,9 +454,6 @@ Parameter settings that affect a session are stored in a configuration struct.
 
 *************************************************************************************/
 
-int *nullptr = NULL;
-int numdatabases = 0;
-
 typedef struct configuration {
     int token_window_size;
     int tile_size;    /* always 1 less than token_window_size */
