@@ -1,0 +1,102 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use File::Basename;
+use File::Path;
+use FindBin;
+use POSIX qw(SIGKILL SIGTERM);
+
+use lib "$FindBin::Bin";
+use SiteConfig;
+use TimedCommand;
+use Utils;
+
+Utils::role 'server';
+Utils::redirect;
+
+
+########################################################################
+#
+#  use a non-standard temporary directory
+#
+#  This lets us have multiple CORBA universes, so multiple concurrent
+#  test runs will not interfere with each other.
+#
+
+my $cwd = `pwd`;
+chomp $cwd;
+my $run_id = basename $cwd;
+
+my $tmpdir = "$cwd/tmp";
+mkdir $tmpdir or die "cannot mkdir $tmpdir: $!";
+$ENV{TMPDIR} = $tmpdir;
+$ENV{XAUTHORITY} = "$tmpdir/xauth";
+$ENV{DISPLAY} = ":$run_id";
+
+
+END {
+    # blow away various GNOME support daemons
+    if (defined $tmpdir) {
+	my @chaff = map { chomp; $_ } qx'find $TMPDIR | xargs /usr/sbin/lsof -t';
+	print "killing GNOME support daemons: @chaff\n";
+	if (@chaff) {
+	    kill SIGTERM, @chaff;
+	    sleep 2;
+	    kill SIGKILL, @chaff;
+	}
+	rmtree $tmpdir, 0, 1;
+    }
+}
+
+
+########################################################################
+#
+#  utility routine for reporting server's impression of outcome
+#
+
+sub result (@) {
+    Utils::note 'outcome', @_;
+    exit 0;
+}
+
+
+########################################################################
+#
+#  launch Rhythmbox in a virtual X server
+#
+
+my $server = new TimedCommand 'startx', "$FindBin::Bin/run-client", '--', '/usr/X11R6/bin/Xvfb', $ENV{DISPLAY}, '-nolisten', 'tcp', '-fbdir', $tmpdir;
+
+my $play_time = rand(10) + 3;
+Utils::note 'play-time', $play_time;
+my ($outcome, $detail) = $server->wait($play_time);
+if ($outcome eq 'exit') {
+    result 'premature', $detail;
+}
+
+
+########################################################################
+#
+#   politely ask Rhythmbox to quit
+#
+
+my $quitter = new TimedCommand $SiteConfig::rhythmbox, '--quit';
+$quitter->wait(5);
+$quitter->kill(SIGKILL);
+
+($outcome, $detail) = $server->wait(5);
+if ($outcome eq 'exit') {
+    result 'normal', $detail;
+}
+
+
+########################################################################
+#
+#  ask again, this time not so politely
+#
+
+$server->kill(SIGTERM);
+$server->wait(5);
+$server->kill(SIGKILL);
+result 'killed', 0;
