@@ -27,7 +27,7 @@ algorithm.
 
 To address this problem, we set the sampling rates of predicates to be
 inversely proportional to their frequency of execution.  Based on a
-%% [[ modified by Alice, check for accuracy ]]
+\issue{modified by Alice, check for accuracy}
 training set of 1,000 executions, we set a sampling rate for each $P$ so 
 as to obtain an expected 100 samples of each predicate in subsequent program 
 executions; the sampling rate is clamped to a minimum of $\nicefrac{1}{100}$.  
@@ -53,14 +53,14 @@ widely used service for detecting plagiarism in software
 and repaired bugs in \moss that we reintroduced; the other three were
 variations on three of the original bugs, to see if our algorithm could
 discriminate between pairs of bugs with very similar behavior but
-%% [[ modified by Alice]
+\issue{modified by Alice}
 distinct causes.  The nature of the eight crasing bugs varies: four
 buffer overruns, a null file pointer dereference in certain cases, a
 missing end-of-list check in the traversal of a hash table bucket, a missing
 out-of-memory check, and a violation of a subtle invariant that must be maintained between two
 parts of a complex data structure.  
 
-%% [[modified by Alice]]
+\issue{modified by Alice}
 The last bug -- incorrect handling of comments in certain cases -- only
 causes incorrect output, not a crash.  For most of the other bugs, failure can 
 be detected by noting program crashes.  (Some of the bugs are non-deterministic 

@@ -88,7 +88,7 @@ being true implies failure.  Let $\fail$ be an atomic predicate that is
 true for failing runs and false for successful runs.  Let $\prob(A | B)$ denote
 the conditional probability function of the event $A$ given event $B$ .  
 We want to compute:
-% [[ modified by Alice]]
+\issue{modified by Alice}
 \[ \crash(P) \equiv \prob(\fail = 1 | P = 1) \]
 %= \prob(\fail | P \mbox{ is true}) \]
 for every instrumented predicate $P$ over the set of all runs.  Let $S(P)$ be the number
@@ -143,7 +143,7 @@ the intuition that this predicate is irrelevant to the bug.
 
 This leads us to the following definition:
 \[
-%% [[modified by Alice]]
+\issue{modified by Alice}
 \context(P) \equiv \prob(\fail = 1 | P \mbox{ is observed})  
 \]
 %= \prob(\fail |  P \mbox{ observed}) 

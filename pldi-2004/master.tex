@@ -19,8 +19,9 @@
 \usepackage[TABTOPCAP]{subfigure}
 \usepackage{xspace}
 
-%% \usepackage{mathptmx}
-%% \usepackage{times}
+\usepackage{mathptmx}
+\usepackage{times}
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
 
 \usepackage[
 bookmarks,
@@ -67,6 +68,8 @@ pdfpagemode=UseOutlines
 \newcommand{\importance}{\ensuremath{\textit{Importance}}}
 \newcommand{\numfail}{\ensuremath{\textit{NumF}}}
 \renewcommand{\H}{{\mathcal{H}}}
+
+\newcommand{\issue}[1]{}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -188,7 +191,7 @@ the number of times $P$ is observed to be true, but the analysis of
 the feedback reports only uses whether $P$ is observed to be true at
 least once.}
 
-%% [[modified by Alice]]
+\issue{modified by Alice}
 The usual definition of a bug refers to a programmatic element that 
 unintentionally causes incorrect behavior.  We're going to abuse notation a
 bit and overload its definition.  In this paper, a {\em bug} also refers to
@@ -239,7 +242,7 @@ likely unusual code paths are to be exercised.  Thus, predicates
 implying a long command line may rank near the top, even though such
 predicates are useless for isolating the cause of individual bugs.
 
-%% [[modified by Alice]]
+\issue{modified by Alice}
 \item Finally, different bugs occur at rates that differ by orders of
 magnitude.  In reality, we do not know which crash is caused by which bug, 
 hence we are forced to lump all the bugs together and try to learn a binary
