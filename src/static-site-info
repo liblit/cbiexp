@@ -92,8 +92,8 @@ EOT
 
 print
     '<?xml version="1.0"?>',
-    '<!DOCTYPE site-info SYSTEM "site-info.dtd">',
-    '<site-info>';
+    '<!DOCTYPE static-site-info SYSTEM "static-site-info.dtd">',
+    '<static-site-info>';
 
 my $scheme;
 
@@ -118,4 +118,4 @@ while (<>) {
     }
 }
 
-print "</site-info>\n";
+print "</static-site-info>\n";

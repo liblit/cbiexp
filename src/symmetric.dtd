@@ -1,0 +1,23 @@
+<!ENTITY % predictor.content "(self, inverse, both)">
+<!ENTITY % predictor.coordinates "
+  unit NMTOKEN #REQUIRED
+  scheme NMTOKEN #REQUIRED
+  site NMTOKEN #REQUIRED
+  predicate NMTOKEN #REQUIRED
+">
+
+<!ENTITY % counts "
+  successes NMTOKEN #REQUIRED
+  failures NMTOKEN #REQUIRED
+">
+
+<!ELEMENT self EMPTY>
+<!ELEMENT inverse EMPTY>
+<!ELEMENT both EMPTY>
+
+<!ATTLIST self %counts;>
+<!ATTLIST inverse %counts;>
+<!ATTLIST both %counts;>
+
+<!ENTITY % scores.dtd SYSTEM "scores.dtd">
+%scores.dtd;

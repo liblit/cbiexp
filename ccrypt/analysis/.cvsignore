@@ -49,6 +49,8 @@ rho.dtd
 rho.xsl
 run-bugs.txt
 s.runs
+schemes.dtd
+schemes.xml
 scores.css
 scores.dtd
 scores.xsl
@@ -61,6 +63,8 @@ sorts.dtd
 sorts.xml
 src
 stamp-convert-reports
+static-site-info.dtd
+static-site-info.xml
 str.
 str.ir
 str.jc
@@ -69,6 +73,9 @@ summary.css
 summary.dtd
 summary.xml
 summary.xsl
+symmetric.dtd
+symmetric.xml
+symmetric.xsl
 tru.txt
 units.cc
 view.css

@@ -28,6 +28,8 @@ rare-sites.txt
 rho.bin
 run-bugs.txt
 s.runs
+schemes.dtd
+schemes.xml
 sites.cc
 sobs.
 sobs.ir
@@ -35,11 +37,16 @@ sobs.jc
 sobs.meta
 src
 stamp-convert-reports
+static-site-info.dtd
+static-site-info.xml
 str.
 str.ir
 str.jc
 str.meta
 summary.xml
+symmetric.dtd
+symmetric.xml
+symmetric.xsl
 tru.txt
 units.cc
 xmlify-results

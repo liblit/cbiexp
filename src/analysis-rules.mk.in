@@ -54,14 +54,19 @@ links :=					\
 	projections.xml				\
 	rho.dtd					\
 	rho.xsl					\
+	schemes.dtd				\
+	schemes.xml				\
 	scores.css				\
 	scores.dtd				\
 	scores.xsl				\
 	sorts.dtd				\
 	sorts.xml				\
+	static-site-info.dtd			\
 	summary.css				\
 	summary.dtd				\
 	summary.xsl				\
+	symmetric.dtd				\
+	symmetric.xsl				\
 	view.css				\
 	view.dtd				\
 	view.xsl
@@ -360,11 +365,22 @@ calc_truthprobs: $(tooldir)/calc_truthprobs.o units.o sites.o
 truthprobs: calc_truthprobs
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
 
-symmetric.xml: symmetric
+symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml links
+	xsltproc --output $@ $<
+	xmllint --valid --noout --catalogs $@
+
+symmetric.xml: %.xml: %
+	$(build) $*.dtd scores.dtd
 	./$< --runs-directory=$(datadir) --begin-runs=$(training-runs)
+	xmllint --valid --noout $@
 
 symmetric: units.o $(tooldir)/symmetric/libsymmetric.a s.runs f.runs
 	$(LINK.cc) $< -L$(tooldir)/symmetric -L$(tooldir) -lsymmetric -lanalyze -o $@
+
+static-site-info.xml: %.xml: $(tooldir)/% $(sites)
+	$(build) $*.dtd
+	$^ $(source-strip-prefixes:%=--strip-prefix=%) >$@
+	xmllint --valid --noout $@
 
 
 ########################################################################

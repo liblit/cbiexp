@@ -63,6 +63,8 @@ run-bugs.txt
 s.runs
 sanity_check
 sccgraphs
+schemes.dtd
+schemes.xml
 scores.css
 scores.dtd
 scores.xml
@@ -77,6 +79,8 @@ sorts.xml
 src
 stamp-convert-reports
 stamp-src
+static-site-info.dtd
+static-site-info.xml
 str.
 str.ir
 str.jc
@@ -85,6 +89,9 @@ summary.css
 summary.dtd
 summary.xml
 summary.xsl
+symmetric.dtd
+symmetric.xml
+symmetric.xsl
 temp.xml
 tru.txt
 units.cc

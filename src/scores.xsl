@@ -24,11 +24,10 @@
 	<title>
 	  <xsl:apply-templates select="." mode="title"/>
 	</title>
-	<link rel="stylesheet" type="text/css">
-	  <xsl:attribute name="href">
-	    <xsl:apply-templates select="." mode="css"/>
-	  </xsl:attribute>
-	</link>
+	<xsl:variable name="css">
+	  <xsl:apply-templates select="." mode="css"/>
+	</xsl:variable>
+	<link rel="stylesheet" type="text/css" href="{normalize-space($css)}"/>
       </head>
       <body>
 	<xsl:apply-templates select="." mode="page-header"/>

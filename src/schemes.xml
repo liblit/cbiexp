@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE schemes SYSTEM "schemes.dtd">
+
+<schemes>
+  <scheme id="branches">
+    <predicate text="is FALSE"/>
+    <predicate text="is TRUE"/>
+  </scheme>
+  <scheme id="g-object-unref">
+    <predicate text="== 0"/>
+    <predicate text="!= 0"/>
+    <predicate text="== 1"/>
+    <predicate text="!= 1"/>
+    <predicate text="&gt; 1"/>
+    <predicate text="&lt;= 1"/>
+    <predicate text="is invalid"/>
+    <predicate text="is valid"/>
+  </scheme>
+  <scheme id="returns">
+    <predicate text="&lt;"/>
+    <predicate text="&gt;="/>
+    <predicate text="=="/>
+    <predicate text="!="/>
+    <predicate text="&lt;="/>
+    <predicate text="&gt;"/>
+  </scheme>
+  <scheme id="scalar-pairs">
+    <predicate text="&lt;"/>
+    <predicate text="&gt;="/>
+    <predicate text="=="/>
+    <predicate text="!="/>
+    <predicate text="&lt;="/>
+    <predicate text="&gt;"/>
+  </scheme>
+</schemes>
