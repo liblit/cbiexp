@@ -164,6 +164,21 @@ failing runs, or much more non-deterministic, or both) showing that these
 predicates are strongly affected by 
 higher-ranked predicates.
 
+\issue[Mayur]{This is a good way to explain why we have the initial
+  and effective thermometers in the table, but I don't see much
+  difference b/w them even for the predicate at position six.  I guess
+  the key difference is the number of failing runs, and since the
+  lenght of the thermometer is on a log scale, the difference is not
+  evident.  Alex, is this the only difference?  If yes, we can remind
+  the reader again that it is a log scale (you have already mentioned
+  this in sec 3.3 but we can mention it again).}
+
+\issue[Alex]{Mentioning the log scale again would be fine.  The
+  context score has decreased as has the number of failing runs in
+  number 6.  You could change it to say "somewhat affected"; certainly
+  it is not as dramatically affected as the predicates further down
+  the list.}
+
 \subsection{Additional Experiments}
 
 Our algorithm has a drawback illustrated by the \moss\ experiment: It
