@@ -222,7 +222,7 @@ makes use of the statistic $ Z = \frac{(\hat \pi_f - \hat
 is distributed as a standard Gaussian random
 variable.  Performed independently for each predicate $P$, the test
 decides whether or not $\pi_f(P) \leq \pi_s(P)$ with a guaranteed
-false-positive probability (i.e. choosing $\H_1$ when $\H_0$ is true).
+false-positive probability (i.e.\ choosing $\H_1$ when $\H_0$ is true).
 A necessary (but not sufficient) condition for choosing $\H_1$ is that
 $\hat \pi_f(P) > \hat \pi_s(P)$.  This turns out to be
 equivalent to the condition that $\increase(P) > 0$.  To see this,
@@ -263,7 +263,7 @@ training process will give higher weights to sites shared by the
 program paths of all bugs.\footnote{Often times, these sites may also be
 shared by the paths of successful runs.  But their overall positive
 effect can be offset by giving large negative weights to predicates
-that are only present in successful runs (e.g. sites in unreached
+that are only present in successful runs (e.g.\ sites in unreached
 portions of the code due to an early crash of the program).}
 
 Another problem is caused by correlated predicates.
