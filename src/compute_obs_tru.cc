@@ -135,15 +135,15 @@ void process_b_site(int u, int c, int x, int y)
 
 void process_g_site(int u, int c, int x, int y, int z, int w)
 {
-    if (x + y + z + w > 0) {
+    if (x || y || z || w) {
 	inc_obs(cur_run, u, c, 0);
 	inc_obs(cur_run, u, c, 1);
 	inc_obs(cur_run, u, c, 2);
 	inc_obs(cur_run, u, c, 3);
-	if (x > 0) inc_tru(cur_run, u, c, 0);
-	if (y > 0) inc_tru(cur_run, u, c, 1);
-	if (z > 0) inc_tru(cur_run, u, c, 2);
-	if (w > 0) inc_tru(cur_run, u, c, 3);
+	if (x) inc_tru(cur_run, u, c, 0);
+	if (y) inc_tru(cur_run, u, c, 1);
+	if (z) inc_tru(cur_run, u, c, 2);
+	if (w) inc_tru(cur_run, u, c, 3);
     }
 }
 
