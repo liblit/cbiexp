@@ -14,19 +14,23 @@ table.scores {
   border: 2px solid silver
 }
 
+table.scores td {
+  padding-left: 0px;
+  padding-right: 0px
+}
+
 td.f1 {
-  background-color: black;
+  background-color: black
 }
 
 td.f2 {
-  background-color: red;
+  background-color: red
 }
 
 td.f3 {
-  background-color: pink;
-  border: 0px;
+  background-color: pink
 }
 
 td.f4 {
-  background-color: white;
+  background-color: white
 }
