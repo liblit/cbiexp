@@ -240,54 +240,73 @@ predicates injected by our instrumentor can approximate coverage: over
 many runs, the sum of all predicate counters at a site converges on
 the relative coverage of that site.
 
-\placeholder{In addition to related papers discussed in our own prior
-  work, should also discuss:
+Efforts to directly apply statistical modeling principles to debugging
+have met with mixed results.  Early work in this area by Burnell and
+Horvitz \cite{Burnell:1995:SCM} uses a mix of program slicing and
+Bayesian belief networks to filter and rank the possible causes for a
+given bug.  Empirical evaluation show that the slicing component alone
+finds 65\% of bug causes, while the probabilistic model correctly
+identifies another 10\%.  This additional payoff may seem small,
+especially in light of the effort, measured in multiple man-years,
+required to distill experts' often tacit knowledge into a formal
+belief network.  However, the approach does illustrate one strategy
+for integrating information about program structure into the
+statistical modeling process.
+
+In more recent work, Podgurski et al \cite{ICSE`03*465} apply
+statistical feature selection, clustering, and multivariate
+visualization techniques to the task of classifying software failure
+reports.  The intent is to bucket each report into an equivalence
+group believed to share the same underlying cause.  Features are
+derived offline from fine-grained execution traces without sampling;
+this reduces the noise level of the data but may be impractical to
+deploy outside of a controlled testing environment.  As in our own
+earlier work, Podgurski uses logistic regression to select features
+which are highly predictive of failure.  \placeholder{Is it worth
+  noting that we use different strategies for limiting the size of the
+  set of selected features?  We use regularized logistic regression
+  whereas Podgurski applies standard logistic regression to randomly
+  selected subsets of the complete feature set and keeps the
+  best-performing subset.}  Clustering tends to identify small, tight
+groups of runs which do share a single cause but which are not always
+maximal.  (That is, one cause may be split across several clusters.)
+
+\placeholder{Should also discuss recent developments by anybody from
+  the RAMSS workshop.  The following appear worth following up on:
 
   \begin{itemize}
-  \item Podgurski's ICSE 2003 paper: \cite{ICSE`03*465}
+  \item Sebastian Elbaum and Madeline Hardojo, ``Deploying
+    Instrumented Software to Assist the Testing Activity''.  Discusses
+    experiences with a deployment of instrumented Pine binaries.
 
-  \item That other rather older paper we all read:
-    \cite{Burnell:1995:SCM}
-    
-  \item Recent developments by anybody from the RAMSS workshop.  The
-    following appear worth following up on:
-    
+    More recent work of interest:
+
     \begin{itemize}
-    \item Sebastian Elbaum and Madeline Hardojo, ``Deploying
-      Instrumented Software to Assist the Testing Activity''.
-      Discusses experiences with a deployment of instrumented Pine
-      binaries.
+    \item S. Elbaum, S.  Kanduri and A. Andrews, ``Anomalies as
+      Precursors of Field Failures, International Symposium of
+      Software Reliability Engineering'', IEEE, November 2003.
 
-      More recent work of interest:
-
-      \begin{itemize}
-      \item S. Elbaum, S.  Kanduri and A. Andrews, ``Anomalies as
-        Precursors of Field Failures, International Symposium of
-        Software Reliability Engineering'', IEEE, November 2003.
-      
-      \item S. Elbaum and M. Hardojo, ``An Empirical Study on
-        Profiling Strategies for Released Software and Their
-        Application to QA Activities'', Technical Report TR03-09-01,
-        University of Nebraska - Lincoln, September 2003.
-      \end{itemize}
-      
-      Cannot find either online, but have written to Elbaum asking him
-      for copies.
-      
-    \item Kenny C. Gross, Scott McMaster, Adam Porter, ``Proactive
-      System Maintenance Using Software Telemetry''.  Discusses
-      technique for predicting imminent program failure and
-      intervening with corrective measures.
-      
-      Cannot find any more recent work in this area.  What happened to
-      these people?  Porter has plenty of other recent work, but
-      apparently nothing related.  Gross and McMaster have zero
-      publication information on their home pages, while Umranov and
-      Votta seem to have vanished entirely.  Have written to Gross and
-      Porter asking if they have anything more recent I should look
-      at.
+    \item S. Elbaum and M. Hardojo, ``An Empirical Study on
+      Profiling Strategies for Released Software and Their
+      Application to QA Activities'', Technical Report TR03-09-01,
+      University of Nebraska - Lincoln, September 2003.
     \end{itemize}
-  \end{itemize}}
+
+    Cannot find either online, but have written to Elbaum asking him
+    for copies.
+
+  \item Kenny C. Gross, Scott McMaster, Adam Porter, ``Proactive
+    System Maintenance Using Software Telemetry''.  Discusses
+    technique for predicting imminent program failure and
+    intervening with corrective measures.
+
+    Cannot find any more recent work in this area.  What happened to
+    these people?  Porter has plenty of other recent work, but
+    apparently nothing related.  Gross and McMaster have zero
+    publication information on their home pages, while Umranov and
+    Votta seem to have vanished entirely.  Have written to Gross and
+    Porter asking if they have anything more recent I should look at.
+    \end{itemize}}
 
 \section{Conclusions}
 \label{sec:conclusions}
