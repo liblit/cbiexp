@@ -219,7 +219,6 @@ void process_cmdline(int argc, char** argv)
          *********************************************/
 
 	if (!strcmp(argv[i], "-verbose")) {
-	    i++;
 	    verbose = true;
 	    continue;
 	}
