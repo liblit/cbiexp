@@ -113,6 +113,12 @@ static const argp argp = {
 };
 
 
+////////////////////////////////////////////////////////////////////////
+//
+//  File input
+//
+
+
 static void
 readPredStats(const char *filename)
 {
@@ -143,11 +149,23 @@ readCorrelations(const char *filename, Rho &rho)
 }
 
 
+////////////////////////////////////////////////////////////////////////
+//
+//  Sorting and ranking
+//
+
+
 static bool
 lessPopularThan(predIndex a, predIndex b)
 {
   return predStats[a].popularity < predStats[b].popularity;
 }
+
+
+////////////////////////////////////////////////////////////////////////
+//
+//  The main event
+//
 
 
 int
