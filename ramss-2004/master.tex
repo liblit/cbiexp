@@ -2,6 +2,7 @@
 
 \usepackage{amsfonts}
 \usepackage{amsmath}
+\usepackage{authorship}
 \usepackage{graphicx}
 \usepackage{ieee}
 \usepackage{mailto}
@@ -18,12 +19,12 @@
 
 \ifthenelse{\isundefined{\pdfoutput}}{}{\usepackage{thumbpdf}}
 
-\newcommand{\evolution}{\texttt{evolution}\xspace}
-\newcommand{\gaim}{\texttt{gaim}\xspace}
-\newcommand{\gimp}{\texttt{gimp}\xspace}
-\newcommand{\gnumeric}{\texttt{gnumeric}\xspace}
-\newcommand{\nautilus}{\texttt{nautilus}\xspace}
-\newcommand{\rhythmbox}{\texttt{rhythmbox}\xspace}
+\newcommand{\evolution}{Evolution\xspace}
+\newcommand{\gaim}{Gaim\xspace}
+\newcommand{\gimp}{The GIMP\xspace}
+\newcommand{\gnumeric}{Gnumeric\xspace}
+\newcommand{\nautilus}{Nautilus\xspace}
+\newcommand{\rhythmbox}{Rhythmbox\xspace}
 
 \newcommand{\header}[1]{\multicolumn{1}{c}{\textbf{#1}}}
 
@@ -31,20 +32,15 @@
 
 \begin{document}
 
-\title{Public Deployment of Cooperative Bug Isolation}
-
-\makeatletter
-\newcommand*{\eecsMark}[0]{\@fnsymbol{2}}
-\newcommand*{\statMark}[0]{\@fnsymbol{3}}
-\newcommand*{\stanMark}[0]{\@fnsymbol{4}}
-\makeatother
-\newcommand*{\eecs}[0]{\textsuperscript{\eecsMark}}
-\newcommand*{\stat}[0]{\textsuperscript{\statMark}}
-\newcommand*{\both}[0]{\textsuperscript{\eecsMark, \statMark}}
-\newcommand*{\stan}[0]{\textsuperscript{\stanMark}}
-
-\newcommand{\aumail}[1]{\small{\mailto{#1}}}
-\newcommand{\aupar}[0]{\end{tabular} \\ \begin{tabular}[t]{c}}
+\title{Public Deployment of Cooperative Bug Isolation
+  %%
+  \thanks{This research was supported in part by NASA Grant No.\ 
+    NAG2-1210; NSF Grant Nos.\ EIA-9802069, CCR-0085949, ACI-9619020,
+    and IIS-9988642; DOE Prime Contract No.\ W-7405-ENG-48 through
+    Memorandum Agreement No.\ B504962 with LLNL; and DARPA ARO-MURI
+    ACCLIMATE DAAD-19-02-1-0383.  The information presented here does
+    not necessarily reflect the position or the policy of the
+    Government and no official endorsement should be inferred.}}
 
 \author{%
   Ben Liblit \eecs \\ \aumail{liblit@cs.berkeley.edu} \and
@@ -73,13 +69,14 @@
 \thispagestyle{empty}
 
 \begin{abstract}
-As part of our work on Cooperative Bug Isolation (CBI) we have undertaken to 
-instrument and distribute binaries for a number of large open source projects.
-This
-public deployment is an important  step towards a large experiment involving (we hope) hundreds or thousands of users that will measure the effectiveness of CBI\@.
-This paper describes several of the significant engineering issues that arise in 
-instrumenting the source code of realistic applications.  
-More information on CBI can be found at \cite{Liblit:CBIP}.
+  As part of our work on Cooperative Bug Isolation (CBI) we have
+  undertaken to instrument and distribute binaries for a number of
+  large open source projects.  This public deployment is an important
+  step toward a large experiment involving (we hope) hundreds or
+  thousands of users that will measure the effectiveness of CBI\@.
+  This paper describes several of the significant engineering issues
+  that arise in instrumenting the source code of realistic
+  applications.
 \end{abstract}
 
 \section{Introduction}
@@ -124,7 +121,8 @@ reports from a large user community.
 There are both interesting technical and social problems involved in
 the design of a CBI system.  In this paper, we focus on the solutions
 to technical problems most likely to be useful to the designers of
-similar systems and experiments: dealing with shared libraries,
+similar systems and experiments: dealing with existing native
+compilers, shared libraries,
 plugins, and threads.  We also briefly discuss how users interact with
 our system, as well as give some static and dynamic measures of the
 applications we instrument.
@@ -144,21 +142,99 @@ applications we instrument.
   \label{apps}
 \end{table*}
 
+\section{Native Compiler Integration}
+
+The system as a whole looks and behaves like GCC with a few extra
+command line flags.  No manual annotation of source code is required,
+and all existing configuration scripts and makefiles work
+transparently.  This lets us instrument 1.8 million lines of open
+source code and keep up with new releases with very short turnaround.
+Simply changing an environment variable (\texttt{\$CC}) builds an
+application with our instrumenting compiler instead of the standard
+one.
+
+The meat of instrumentation happens as a source to source
+transformation after the preprocessor and before the real C compiler.
+However, we actually need to tweak all stages of compilation:
+
+\begin{description}
+\item[before preprocessing (\texttt{cpp0}):] Pull in extra headers to
+  declare or define various things used by instrumented code.  For
+  fixed content such as this it is easier to use fixed headers rather
+  than synthesizing the needed constructs programmatically within the
+  instrumentor.
+  
+\item[before compilation (\texttt{cc1}):] Inject sampled
+  instrumentation as a source-to-source transformation.  Emit
+  additional static site information into temporary files on the side.
+  
+\item[after assembly (\texttt{asm}):] Fuse extra static site
+  information from temporary files into the assembled object file.
+  
+\item[before linking (\texttt{ld}):] Pull in extra libraries
+  containing common runtime support code and data used by instrumented
+  programs.
+\end{description}
+
+We use GCC's ``\texttt{-B \textit{<path>}}'' flag to give it a
+different directory in which to find the compiler stages.  Custom
+scripts in that directory named \texttt{cc1} and \texttt{asm} do our
+extra ``before compilation'' and ``after assembly'' work and call the
+corresponding real compiler stages as appropriate.
+
+We also use GCC's ``\texttt{-specs=\textit{<file>}}'' to augment (not
+replace) the standard option specs file with one of our own.  An
+option specs file, or simply ``specfile,'' guides how GCC parses its
+command line arguments.  We can add flags of our own, request
+temporary file names, and so on.  A specfile is essentially a tiny
+domain-specific language for tweaking the command lines used for the
+various compiler stages.  Using this file we are able to take care of
+our ``before preprocessing'' and ``before linking'' needs by modifying
+the \texttt{cpp0} and \texttt{ld} command lines without actually
+replacing those stages with custom scripts of our own.
+
+\subsection{Static Site Information}
+
+While the main ``before compilation'' task is to inject
+instrumentation code, that this phase also produces static reference
+information about each instrumentation site.  This includes each
+site's source file name, line number, host function, control flow
+graph node, and other information specific to the instrumentation
+scheme being used.  This information will be used later, when decoding
+feedback reports, to tie predicate counts back to source level
+features understood by the programmer.  Our experience is that
+maintaining this information external to the corresponding object file
+is brittle, as existing application build scripts often move or rename
+object files during the build process.  Therefore, we fuse the static
+site information into the assembled object file by storing it in
+several custom ELF sections.
+
+When the linker combines several object files, it pads each unknown
+section out to some fixed modulus and then concatenates all same-named
+sections in link order.  We represent our static site information in a
+way that remains valid under null-byte injection and concatenation.
+Thus each instrumented executable, shared library, or plugin is self
+describing, with complete static information for all of its own
+instrumentation sites.  These sections are marked as \texttt{debug}
+sections, which means that they will be stripped out along with other
+debugging information during post-build packaging.  We retain a copy
+locally to assist in report decoding, but end users do not need to
+download and store this extra information on their own machines.
 
 \section{Libraries and Plugins}
 
-Designing a feedback system for CBI is easy for an application that consists of
-a single object file.  We simply write out the predicate counters in the
-order in which they appear in that file, and that list constitutes a complete
-report.
+Post-run reporting would be easy for an application that consisted of
+a single object file.  We would simply write out the predicate
+counters in the order in which they appear in that file, and that list
+would constitute a complete report.
 
 However, as can be seen in \autoref{apps}, most applications involve
 multiple object files in the form of shared libraries, plugins, or
 both.  Note that this table counts only those shared libraries and
 plugins that are part of the source code of the application;
-additionally, there may be (and generally will be) other shared
+additionally, there generally will be other shared
 libraries and plugins that are resident only on the end user's
-machine.  Thus, the running environment will be a mix of code that has
+machine.  Thus, the running environment is a mix of code that has
 been instrumented by CBI and code that we have never seen before.
 Shared libraries are also interesting because they may be used by
 other applications that we have not instrumented.  Thus, not only must
@@ -201,7 +277,7 @@ global variables.
 
 We have also given some attention to the fact that this global
 registry could itself be corrupted by a buggy program.  We maintain a
-global counter of the expected size of the global registry.  When
+global count of the expected size of the global registry.  When
 walking the list in a signal handler, we use the counter to decide
 when to stop even if we have not reached the end of the list data
 structure.  This prevents an infinite loop if a memory error in the
@@ -220,9 +296,9 @@ but the number is only a tiny fraction of all reports.
 \section{Threads}
 
 Our CBI system maintains three kinds of global data that 
-need special attention in multithreaded
+need special attention in multi-threaded
 applications.  In each case thread-safety can hurt performance, 
-so we only take this extra care if in fact the application is multithreaded
+so we only take this extra care if in fact the application is multi-threaded
 (i.e., the compiler's command line contains the GCC \texttt{-pthread} flag).
 
 A key feature of our CBI system is that performance can be improved by
@@ -234,7 +310,7 @@ testing one predicate and recording its result.\footnote{The countdown
 is chosen randomly from a geometric distribution with a mean that is
 the desired sampling rate.  This is equivalent to, but much more
 efficient than, flipping a coin at each instrumentation site to decide
-whether to take a sample.}  Thus, in a multithreaded system, the
+whether to take a sample.}  Thus, in a multi-threaded system, the
 global variable holding the next-sample countdown could be a source of
 high contention among threads.
 
@@ -252,14 +328,15 @@ new thread's global state.  We use the \texttt{--wrap} flag provided
 by the GNU linker to replace \texttt{pthread\_create()} with our own
 special version.  
 
-The second class of data that must be handled specially in
-multithreaded applications is the predicate counters.  Recall that
+The second class of data that requires special handling in
+multi-threaded applications is the predicate counters.  Recall that
 the predicate counters keep track of how often a particular predicate
 at a particular line of code is observed to be true or false.
-Because, for efficiency, we use low sampling rates (say on average
-once in every 100 times the line of code associated with the predicate
-is executed), predicates are tested rarely and any individual counter
-is accessed rarely even by a single thread.  For this reason, we
+For efficiency we use low sampling rates, such as
+once every hundred times (randomized, on average) that the line of
+code associated with the predicate is executed.
+Therefore predicates are tested rarely and any individual counter
+is accessed rarely even by a single thread.  Therefore, we
 maintain only one copy of each predicate counter, shared by all
 threads.  The critical operation on these counters, an increment by
 one, is so basic that every CPU architecture has some way of doing
@@ -268,7 +345,7 @@ this atomically without resorting to explicit locking.
 Finally, the third class of data that must be protected from concurrent access
 is the global registry of compilation units and the report file.
 Because these structures are accessed very rarely, we guarantee single 
-access by guarding each with its own mutex lock.
+access by guarding each with its own mutual exclusion lock.
 
 
 \section{User Interaction}
@@ -302,7 +379,8 @@ presents the first-time opt-in dialog shown in
 project and the consequences of participating or not, and lets the
 user decide what to do.  The logo icon and highlighting of the yes/no
 explanatory text change to reflect user's current choice.  A hyperlink
-button links to the project web site for more information.  This
+button links to the project web site for more information
+\cite{Liblit:CBIP}.  This
 dialog is initially presented in the background, and the real
 application launched without waiting for a reply.  On this first run,
 the application reports no data. Once the user has selected yes or no,
@@ -313,7 +391,7 @@ preference later using a distinct sampler control panel.
 Also in the background, the wrapper posts a small status icon in
 the desktop status bar notification area.  This icon provides a
 visual reminder that an instrumented application is currently
-running. It provides a simple popup menu with a toggle to globally
+running. It provides a simple pop-up menu with a toggle to globally
 disable or enable sampling.  The status icon changes depending on
 whether sampling is enabled or disabled globally, and remains present
 as long as at least one instrumented application is running.  A second
@@ -348,7 +426,7 @@ user changed his mind after program launch, this gives a second chance
 to quash an unwanted feedback report before it reaches the collection
 server.
 
-We transmit reports using HTTP POST requests across an encrypted SSL
+A report is submitted using an HTTP POST request across an encrypted SSL
 connection.  Each HTTP request can also have a response from the server.
 Ordinarily the collection server does not give any response beyond a
 success code.  However, if the server does give a response, the
@@ -365,7 +443,8 @@ useful if performance problems arise.  We can also issue a ``poison
 pill'' which turns off sampling for future runs of the application.
 This is intended as a shutoff should the Cooperative Bug
 Isolation project be discontinued at some future date (a feature we
-learned would be useful from the prior experience of \cite{Elbaum:2003:DISATA}), and it might also
+learned would be useful from the prior experience of Elbaum and
+Hardojo \cite{Elbaum:2003:DISATA}), and it might also
 be used to quash future reports from individual misbehaving users.  So
 far we have not needed any of these facilities.  
 
@@ -418,7 +497,7 @@ the data for each of our instrumented applications.  In this table,
 which is broken out into \emph{good} runs, runs that exited with a
 non-zero \emph{error} status, and runs that ended in a \emph{crash} due to a
 fatal signal.  Note the large variation in crash rates, from 0\%
-(\gimp) to 13\% (\rhythmbox).
+(\gimp) to 14\% (\rhythmbox).
 
 There is both good news and bad news in these figures.  The bad news
 is that we have not yet received enough reports to carry out
@@ -436,7 +515,7 @@ certain minimum scale.
 
 The good news is that these applications do crash,
 indicating to us that there is potential to improve the state
-of the software given enough users participating in CBI.  In addition,
+of the software given enough users participating in CBI\@.  In addition,
 we have enough data to demonstrate that the complete system works, from
 instrumenting code through gathering of reports, and we continue to
 receive new feedback reports daily.  We are only at the beginning of this
@@ -448,14 +527,14 @@ for large user communities of complex applications.
 
 \begin{table}
   \centering
-  \begin{tabular}{lrrrr@{ (}r@{\%)}}
+  \begin{tabular}{lrrrr@{\ (}r@{\%)}}
     \header{Application} & \header{Count} & \header{Good} & \header{Error} & \multicolumn{2}{c}{\textbf{Crash}} \\ \hline
-    \evolution & 702 & 647 & 39 & 16 & 2 \\
-    \gaim & 464 & 386 & 62 & 16 & 3 \\
-    \gimp & 77 & 77 & 0 & 0 & 0 \\
-    \gnumeric & 247 & 228 & 2 & 17 & 7 \\
-    \nautilus & 468 & 426 & 36 & 6 & 1 \\
-    \rhythmbox & 726 & 598 & 36 & 92 & 13
+    \evolution & 916 & 838 & 55 & 23 & 3 \\
+    \gaim & 495 & 417 & 62 & 16 & 4 \\
+    \gimp & 109 & 107 & 2 & 0 & 0 \\
+    \gnumeric & 261 & 242 & 2 & 17 & 7 \\
+    \nautilus & 747 & 642 & 96 & 9 & 1 \\
+    \rhythmbox & 869 & 728 & 39 & 102 & 14
   \end{tabular}
   \caption{Number of runs received.}
   \label{reports-per-app}
@@ -464,3 +543,6 @@ for large user communities of complex applications.
 \bibliography{personal,pldi03,ramss}
 
 \end{document}
+
+%% LocalWords:  CBI plugins lrcccc specfile plugin pthread Elbaum
+%% LocalWords:  Hardojo lrr lrrrr pldi ramss
