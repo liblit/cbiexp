@@ -1,7 +1,7 @@
 %% -*- TeX-master: t -*-
 
 %% \documentclass{acm_proc_article-sp}
-\documentclass{sig-alternate}
+\documentclass[draft]{sig-alternate}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -234,13 +234,13 @@ performance overhead, and client-side summarization of the data, which
 limits the storage and transmission costs.  We briefly discuss
 both aspects.
 
-Random sampling is incorporated in a program via a source-to-source transformation.
+Random sampling is added to a program via a source-to-source transformation.
 Our sampling transformation is general: any collection of
 statements within (or added to) a program may be designated as
 ``instrumentation'' and thereby sampled instead of run
 unconditionally.  That is, each time instrumentation code is reached,
-a coin flip determines whether the instrumentation is executed or not.
-The coin flips are computed in a statistically fair
+a coin flip decides whether the instrumentation is executed or not.
+Coin flipping is simulated in a statistically fair
 manner equivalent to a Bernoulli process: each potential sample is
 taken or skipped randomly and independently as the program runs.
 We have found that a sampling rate of \nicefrac{1}{100} keeps the performance overhead
