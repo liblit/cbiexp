@@ -45,6 +45,7 @@ sub outcome ($$) {
     my $outcome = new FileHandle $filename, 'r';
     return 'ignore' unless $outcome;
     my $status = $outcome->getline;
+    return 'ignore' unless defined $status;
 
     # normal termination with no error code
     return undef if $status == 0;
