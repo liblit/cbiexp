@@ -16,20 +16,20 @@ void classify_runs(char* sruns_file, char* fruns_file)
     assert(ffp);
 
     while (1) {
-        fscanf(sfp, "%d", &i);
-        if (feof(sfp))
-            break;
-        if (i > num_runs)
-            num_runs = i;
+	fscanf(sfp, "%d", &i);
+	if (feof(sfp))
+	    break;
+	if (i > num_runs)
+	    num_runs = i;
     }
     rewind(sfp);
 
     while (1) {
-        fscanf(ffp, "%d", &i);
-        if (feof(ffp))
-            break;
-        if (i > num_runs)
-            num_runs = i;
+	fscanf(ffp, "%d", &i);
+	if (feof(ffp))
+	    break;
+	if (i > num_runs)
+	    num_runs = i;
     }
     rewind(ffp);
 
@@ -43,26 +43,25 @@ void classify_runs(char* sruns_file, char* fruns_file)
     for (i = 0; i < num_runs; i++) is_frun[i] = false;
 
     while (1) {
-        fscanf(sfp, "%d", &i);
-        if (feof(sfp))
-            break;
-        is_srun[i] = 1;
-        num_sruns++;
+	fscanf(sfp, "%d", &i);
+	if (feof(sfp))
+	    break;
+	is_srun[i] = 1;
+	num_sruns++;
     }
 
     while (1) {
-        fscanf(ffp, "%d", &i);
-        if (feof(ffp))
-            break;
-        if (is_srun[i]) {
-            printf("Run %d is both successful and failing\n", i);
-            exit(1);
-        }
-        is_frun[i] = 1;
-        num_fruns++;
+	fscanf(ffp, "%d", &i);
+	if (feof(ffp))
+	    break;
+	if (is_srun[i]) {
+	    printf("Run %d is both successful and failing\n", i);
+	    exit(1);
+	}
+	is_frun[i] = 1;
+	num_fruns++;
     }
 
     fclose(sfp);
     fclose(ffp);
 }
-
