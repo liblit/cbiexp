@@ -1,4 +1,5 @@
-
+\paceholder{ We need to make sure we mention somewhere that (1) predicates are conceptually sampled after the line
+is executed and (2) we transform our counters into real predicates before running this algorithm.}
 This section presents the algorithm that we have developed for
 isolating bugs in programs where multiple bugs are present
 simultaneously.  As discussed in \Autoref{sec:background}, our
@@ -25,7 +26,7 @@ observation is reflected in our algorithm, which consists of two phases:
 the more confident we are that is involved in a bug.
 \end{enumerate}
 
-Consider the following code fragment, which we use to motivate and illustrate
+Consider the following C code fragment, which we use to motivate and illustrate
 our technique:
 \begin{quote}
 \begin{verbatim}
@@ -47,15 +48,16 @@ that bugs are independent, and there is no reason to believe that
 a predicate that is a good predictor for one bug is at all correlated
 with any other bug.
 
-The bug in the code fragment above is \termdef{deterministic} with respect
-to {\tt f == NULL}: once {\tt f == NULL} becomes true, the program is guaranteed to eventually
-fail.  In many cases it is simply impossible to observe the exact
-conditions that cause failure; for example, buffer overrun bugs in a C
-program may or may not cause the program to crash depending on runtime
-system decisions about how data is laid out in memory.  Such bugs are
+The bug in the code fragment above is \termdef{deterministic} with
+respect to {\tt f == NULL}: if {\tt f == NULL} is true at line {\tt
+(b)}, the program is guaranteed to eventually fail.  In many cases it
+is simply impossible to observe the exact conditions that cause
+failure; for example, buffer overrun bugs in a C program may or may
+not cause the program to crash depending on runtime system decisions
+about how data is laid out in memory.  Such bugs are
 \termdef{non-deterministic} with respect to every predicate that we instrument:
 even for the best predictor $P$, it is possible that $P$ is true and
-the program terminates normally.  In the example above, if we replace line
+still the program terminates normally.  In the example above, if we replace line
 {\tt (d)} by
 \begin{quote}
 \begin{verbatim}
@@ -98,18 +100,18 @@ code fragment given above (in its original form, not with the
 modification to make the bug non-deterministic).  At line {\tt (b)} we
 have $\crash(\mbox{\tt f == NULL}) = 1.0$, so this predicate is a good
 candidate for the cause of the bug.  
-But on line {\tt (c)} we have $\crash(\mbox{\tt x == 0}) = 1.0$ as well.
+But on line {\tt (c)} we have the surprising fact that $\crash(\mbox{\tt x == 0}) = 1.0$ as well.
 To understand why, observe that the predicate $\crash(\mbox{\tt x == 0})$ is always
 true when we reach the point immediately after line {\tt (c)} and, in addition, 
 only failing runs reach this line.
 Thus $\#S(\mbox{\tt x == 0}) = 0$, and, so long as there is at least one run that
-reaches line {\tt (c)} at all, the crash value of {\tt x == 0} is 1.0.
+reaches line {\tt (c)} at all, the crash value of {\tt x == 0} at line {\tt (c)} is 1.0.
 
-As the predicate {\tt x == 0} after line {\tt (c)} of the example
-shows, just because a predicate has a high \crash() score does not
+As the predicate {\tt x == 0} at line {\tt (c)} of the example
+shows, just because a predicate has a high $\crash(\ldots)$ score does not
 mean it is the cause of a bug.  In the case of {\tt x == 0}, the
-decision that eventually causes the crash was made earlier, and the
-high \crash() score of {\tt x == 0} merely reflects the fact that this
+decision that eventually causes the crash is made earlier, and the
+high $\crash(\ldots)$ score of {\tt x == 0} merely reflects the fact that this
 predicate is checked on a path where the program is already doomed.
 
 One way to address this difficulty is to score a predicate not by the chance
@@ -123,7 +125,7 @@ the intuition that this predicate is irrelevant to the bug.
 This leads us to the following definition:
 \[ \context(P) = \prob((P \vee \neg P) \Rightarrow \fail) \]
 Now, $P \vee \neg P$ is not the set of all runs, because we are not working in a two-valued logic.
-In any given run, neither of $P$ or $\neg P$ may be observed (because the sampled where this predicate is
+In any given run, neither of $P$ or $\neg P$ may be observed (because the site where this predicate is
 sampled is not reached), or one may be observed, or both may be observed (because the statement is executed
 multiple times and $P$ is sometimes true and sometimes false).  Thus, $\context(P)$ is the probability that
 in the set of runs where the value of $P$ is observed at all, the program fails. We can compute $\context(P)$ as follows:
@@ -161,9 +163,9 @@ stack trace). \Autoref{sec:experiments:results} gives several examples
 of this phenomenon while hunting for real bugs.
 
 The purpose of sorting the surviving predicates in step (2) by
-\crash() is to ensure that the highest confidence predicates (those
+$\crash(\ldots)$ is to ensure that the highest confidence predicates (those
 most likely to actually cause crashes) are listed first in the final
-result.  We need step (2) because while $\increase(P)$ is very good at
+result.  We need step (2) because while $\increase(\ldots)$ is very good at
 eliminating unimportant predicates, it is rather poorer as a measure
 of the most important predicates.  Consider line {\tt (a)} in the
 example above.  If {\tt (a)} has, say, a 90\% probability of assigning
@@ -181,8 +183,7 @@ Most likely the bug is a typographical error: the programmer meant to
 write {\tt f != NULL} as the predicate of the conditional instead of
 {\tt f == NULL}.
 
-
-Finally, it should be clear that the algorithm is very efficient.
+Finally, it should be clear that the algorithm is efficient.
 Step (1) requires only a single pass over the data, and step (2) is
 simply sorting.
 
