@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include <stdlib.h>
 
-#define NUM_RUNS_NEEDED 10
 
 #define NUM_S_SITES 133395
 #define NUM_R_SITES 8429
@@ -10,6 +10,8 @@
 #define NUM_SITES   (NUM_S_SITES + NUM_R_SITES + NUM_B_SITES)  
 #define NUM_PREDS   (NUM_S_SITES * 6) + (NUM_R_SITES * 6) + (NUM_B_SITES * 2)
 #define NUM_RUNS    25197
+
+int num_runs_needed;
 
 bool is_srun[NUM_RUNS + 1];
 bool is_frun[NUM_RUNS + 1];
@@ -29,11 +31,19 @@ main(int argc, char** argv)
      ** process command line options
      ************************************************************************/
 
-    assert(argc == 3);
+    if (argc != 4) {
+        printf("usage: find_runs N pred_kind site_name\n");
+        printf("N = Number of failed runs to find\n");
+        printf("pred_kind = T|F|LT|NLT|EQ|NEQ|GT|NGT\n");
+        printf("site_name = 38-char string beginning with B|R|S\n");
+        return 1;
+    }
 
-    pred_kind = argv[1];
+    num_runs_needed = atoi(argv[1]);
 
-    switch (argv[1][0]) {
+    pred_kind = argv[2];
+
+    switch (argv[2][0]) {
     case 'T':
          p = 0; break;
     case 'F':
@@ -45,7 +55,7 @@ main(int argc, char** argv)
     case 'G':
          p = 4; break;
     case 'N':
-         switch (argv[1][1]) {
+         switch (argv[2][1]) {
          case 'L': p = 1; break;
          case 'E': p = 3; break;
          case 'G': p = 5; break;
@@ -55,10 +65,10 @@ main(int argc, char** argv)
     default: assert(0);
     }
 
-    site_name = argv[2];
+    site_name = argv[3];
 
     printf("Searching failed runs in which predicate \"%d %s\" is observed to be true.\n", p, site_name);
-    printf("Will stop after finding at most 10 failed runs.\n");
+    printf("Will stop after finding at most %d failed runs.\n", num_runs_needed);
 
 
     ffp = fopen("f.runs", "r");
@@ -82,7 +92,7 @@ main(int argc, char** argv)
      ************************************************************************/
 
     for (i = 1; i <= NUM_RUNS; i++) {
-        if (num_runs_found >= NUM_RUNS_NEEDED)
+        if (num_runs_found >= num_runs_needed)
             break;
         if (!is_frun[i])
             continue;
