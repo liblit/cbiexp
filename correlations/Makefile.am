@@ -2,7 +2,7 @@ mexglx = readsp.mexglx
 
 all-local: $(mexglx)
 
-%.mexglx: %.c
+.c.mexglx:
 	mex $<
 
 CLEANFILES = $(mexglx)
