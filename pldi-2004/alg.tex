@@ -37,7 +37,7 @@ if (f == NULL) {  (b)
 \end{verbatim}
 \end{quote}
 Consider the predicate {\tt f == NULL} at line {\tt (b)}, which would
-be captured by our branches instrumentation scheme.  Clearly
+be captured by branches instrumentation.  Clearly
 this predicate is highly correlated with failure; in fact, whenever it
 is true this program inevitably crashes.  An important observation,
 however, is that even a ``smoking gun'' such as {\tt f == NULL} at
@@ -68,7 +68,7 @@ if (random()) f = ... some valid pointer ...;
 \end{quote}
 then the bug becomes non-deterministic.
 
-To summarize, even for predicates that truly are the causes of bugs, we can neither assume that
+To summarize, even for a predicate that is truly the cause of a bug, we can neither assume that
 when the predicate is true that
 the program fails nor that when the predicate is false that
 the program succeeds. But we can express the probability that a predicate
@@ -249,8 +249,8 @@ failure-prediction strength.  This approach proves to be
 overly-flexible in the presence of multiple bugs.
 
 Logistic regression and its variants use a linearly weighted
-combination of the predicates to classify a trial run as crashed or
-successful.  Regularized logistic regression incorporates a penalty
+combination of the predicates to classify a trial run as successful or
+failed.  Regularized logistic regression incorporates a penalty
 that forces the regression to set most coefficients to zero, thereby
 selecting only the most important predicates.  However, when the data
 includes crashes caused by multiple different bugs, arbitrary linear
