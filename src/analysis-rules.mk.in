@@ -97,8 +97,9 @@ stamp-src: $(tooldir)/htmlify-sources
 clean:: ; rm -rf stamp-src src
 
 links: $(links)
-$(links):
-	ln -s $(tooldir)/$@ .
+$(links): %: $(tooldir)/%
+	if [ -L $@ ]; then rm -f $@; fi
+	cp $< $@
 clean:: ; rm -f $(links)
 
 predictor-info.xml: xmlify-results preds.txt
@@ -149,7 +150,9 @@ $(corrected): all_hl_corrected-%.xml: $(tooldir)/corrective-ranking/% f.runs obs
 	$(build) bug-o-meter.dtd corrected-view.dtd link-cell.css logo.css projected-view.dtd view.dtd
 	xmllint --valid --noout $@
 	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
-clean:: ; rm -f all_hl_corrected-exact-complete.xml all_hl_corrected-approximate-complete.xml zoom-corrected-*.xml
+clean::
+	rm -f all_hl_corrected-exact-complete.xml all_hl_corrected-approximate-complete.xml
+	$(find-zooms) -exec rm '{}' ';'
 
 ifndef report-series
 stamp-decimate := $(datadir)/stamp-convert-reports
