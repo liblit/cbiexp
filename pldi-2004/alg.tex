@@ -35,7 +35,7 @@ if (f == NULL) {  (a)
 \end{verbatim}
 Consider the predicate {\tt f == NULL} at line {\tt (a)}.  Clearly
 this predicate is highly correlated with failure; in fact, whenever it
-is true this program will inevitably crash.  An important observaton,
+is true this program will inevitably crash.  An important observation,
 however, is that even a ``smoking gun'' such as {\tt f == NULL} at
 line {\tt (a)} cannot be a perfect predictor of failure when there are
 multiple bugs in the program---since there are other bugs, even when
@@ -49,7 +49,7 @@ to {\tt f == NULL}: once {\tt f == NULL} becomes true, the program is guaranteed
 fail.  In many cases it is simply impossible to observe the exact
 conditions that cause failure; for example, buffer overrun bugs in a C
 program may or may not cause the program to crash depending on runtime
-system decisions about how data is layed out in memory.  Such bugs are
+system decisions about how data is laid out in memory.  Such bugs are
 \termdef{non-deterministic} with respect to every predicate that we instrument:
 even for the best predictor $P$, it is possible that $P$ is true and
 the program terminates normally.  In the example above, if we replace line
@@ -88,7 +88,7 @@ modification to make the bug non-deterministic).  At line {\tt (a)} we
 have $\crash(\mbox{\tt f == NULL}) = 1.0$, so this predicate is a good
 candidate for the cause of the bug.  
 But on line {\tt (b)} we have $\crash(\mbox{\tt x == 0}) = 1.0$ as well!
-To understand why, observe that the predicat $\crash(\mbox{\tt x == 0})$ is always
+To understand why, observe that the predicate $\crash(\mbox{\tt x == 0})$ is always
 true when we reach the point immediately after this line and, in addition, only failing runs reach this line.
 Thus the number of successful runs in the denominator of $\crash()$ is zero,
 and the ration is 1.0. Clearly this predicate has nothing to do with the bug.
@@ -134,8 +134,8 @@ this test.  It is also worth pointing out that this algorithm will
 prefer to localize bugs at the earliest possible point, rather than
 as close to the crash site as possible.  For example, in the code fragment
 given above, the bug is attributed to the success of the conditional branch
-test {\tt f == NULL} on line {\tt (a)} rather than the pointer derefence
-on lince {\tt (c)}.  \Autoref{sec:experiments:results} gives several examples of
+test {\tt f == NULL} on line {\tt (a)} rather than the pointer dereference
+on line {\tt (c)}.  \Autoref{sec:experiments:results} gives several examples of
 this phenomenon while hunting for real bugs.
 
 The purpose of sorting the surviving predicates in step (2) by
@@ -144,3 +144,5 @@ most likely to cause crashes) are listed first in the final result
 list.  It should be clear that the algorithm is very efficient; step (1) is
 linear and step (2) is just ${\cal O}(n\log n)$.
 
+
+% LocalWords:  pre
