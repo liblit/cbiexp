@@ -1,3 +1,5 @@
+First column is (F1[p] + FT[p]).
+
 1928   yylex	178696	5805	yy_current_buffer->yy_buffer_status == 0 is 1
 1928   yylex	168956	44	yy_accept[yy_current_state] is 1
 1928   yylex	168954	39	yy_current_state > 0 is 1

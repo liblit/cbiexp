@@ -1,3 +1,5 @@
+First column is (S1[p] + ST[p]) and second column is (F1[p] + FT[p]).
+
 0   518 string2lang	4376	1124	tmp___265 == 0 is 1
 S0: 8036 S1: 0    SB: 0    ST: 0    F0: 1410 F1: 518  FB: 0    FT: 0   
 0   282 handle_options	5855	3263	config.token_window_size >= 500 is 1

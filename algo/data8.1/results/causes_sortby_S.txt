@@ -1,3 +1,5 @@
+First column is (S1[p] + ST[p]).
+
 0   handle_options	5853	1868	i > nid
 S0: 8036 S1: 0    SB: 0    ST: 0    F0: 1916 F1: 12   FB: 0    FT: 0   
 0   handle_options	5853	1868	i = nid

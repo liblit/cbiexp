@@ -1,3 +1,5 @@
+First column is (S1[p]+ST[p]) / (S1[p]+ST[p]+F1[p]+FT[p])
+
 0.0000 handle_options	5853	1868	i > nid
 0.0000 handle_options	5853	1868	i = nid
 0.0000 handle_options	5853	1872	i > result
