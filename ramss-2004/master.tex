@@ -10,6 +10,13 @@
 
 \newfont{\affaddr}{phvr at 10pt}
 
+\newcommand{\evolution}{\tt evolution}
+\newcommand{\gaim}{\tt gaim}
+\newcommand{\gimp}{\tt gimp}
+\newcommand{\gnumeric}{\tt gnumeric}
+\newcommand{\nautilus}{\tt nautilus}
+\newcommand{\rhythmbox}{\tt rhythmbox}
+
 \begin{document}
 
 \title{Public Deployment of Cooperative Bug Isolation}
@@ -48,7 +55,7 @@ More information on CBI can be found at \cite{Liblit:CBIP}.
 
 \section{Introduction}
 
-Cooperative Bug Isolation (CBI) is based on exploiting the
+Cooperative Bug Isolation (CBI) seeks to leverage the
 huge amount of computation done by the end users of software.  By
 gathering a little bit of information from every execution of a
 program performed by its user community, we should be able to make
@@ -64,14 +71,14 @@ whether the program terminated successfully or not.  Subsequent
 statistical analysis of which predicates are correlated with program
 failure can then indicate to engineers which values and what parts of
 the program are the sources of crashes; in at least some cases even
-the exact line of code that is at fault can be identified \cite{Liblit:2003:SUEBI,Zheng:2003:SDSP,PLDI`03*141}.
+the exact line of code that is at fault can be identified \cite{PLDI`03*141,Liblit:2003:SUEBI,Zheng:2003:SDSP}.
 
-We believe that CBI and other related research efforts to leverage the 
-computation of end users have great potential to make software development
-more responsive and efficient by giving developers accurate data about
-how software is actually used in deployment.  However, testing this idea
-requires significant experimentation with real, and preferably large,
- user communities using real applications.  
+We believe that CBI and related research efforts have great potential
+to make software development more responsive and efficient by giving
+developers accurate data about how software is actually used in
+deployment.  However, testing this idea requires significant
+experimentation with real, and preferably large, user communities
+using real applications.
 
 This paper reports on our experience in preparing for just such an
 experiment.  We have instrumented a number of large open source
@@ -96,13 +103,13 @@ applications we instrument.
 \begin{table*}
   \centering
   \begin{tabular}{lrcccc}
-    Name & Lines of Code & Shared Libraries & Plugins & Threads \\\hline
-    evolution & 460,912 & + & + & + \\
-    gaim & 160,435 & & + & \\
-    gimp & 650,660 & + & + & \\
-    gnumeric & 319,137 & & + & \\
-    nautilus & 124,679 & + & + & + \\
-    rhythmbox & 56,442 & + & &
+    Application & Lines of Code & Shared Libraries & Plugins & Threads \\\hline
+    \evolution & 460,912 & + & + & + \\
+    \gaim & 160,435 & & + & \\
+    \gimp & 650,660 & + & + & \\
+    \gnumeric & 319,137 & & + & \\
+    \nautilus & 124,679 & + & + & + \\
+    \rhythmbox & 56,442 & + & &
   \end{tabular}
   \caption{Instrumented applications.}
   \label{apps}
@@ -130,7 +137,7 @@ instrumented applications cope with uninstrumented code, but
 instrumented code must cope with finding itself in an
 uninstrumented application.
 
-An orthogonal set of problems arise from static linking and dynamic
+An orthogonal set of problems arises from static linking and dynamic
 loading.  Our system does not have control over the linker and
 cannot assume that object files appear in any particular order.
 Plugins may be loaded late and unloaded at any time.  If an
@@ -181,7 +188,7 @@ sanity check feedback reports at the central server and discard any
 that are ill-formed.  In practice we do receive ill-formed reports,
 but the number is only a tiny fraction of all reports.
 
-\subsection{Threads}
+\section{Threads}
 
 Our CBI system maintains three kinds of global data that 
 need special attention in multithreaded
@@ -190,12 +197,17 @@ so we only take this extra care if in fact the application is multithreaded
 (i.e., the compiler's command line contains the GCC \texttt{-pthread} flag).
 
 A key feature of our CBI system is that performance can be improved by
-skipping over some instrumentation and instead executing a ``fast path''
-with no instrumentation at all.  We use a global countdown to determine
-how many instrumentation sites to skip before testing one predicate and
-recording its result.  Thus, in a multi-threaded system, the global variable
-holding the next-sample countdown could be a source of high contention among
-threads.
+sampling the instrumentation code, which is implemented by frequently
+skipping over some instrumentation and instead executing a ``fast
+path'' with no instrumentation at all.  We use a global {\em
+countdown} to determine how many instrumentation sites to skip before
+testing one predicate and recording its result.\footnote{The countdown
+is chosen randomly from a geometric distribution with a mean that is
+the desired sampling rate.  This is equivalent to, but much more
+efficient than, flipping a coin at each instrumentation site to decide
+whether to take a sample.}  Thus, in a multi-threaded system, the
+global variable holding the next-sample countdown could be a source of
+high contention among threads.
 
 The simple solution to this problem is to give each thread its own,
 independent countdown variable.  The behavior of the system with per-thread
@@ -215,7 +227,7 @@ The second class of data that must be handled specially in
 multi-threaded applications is the predicate counters.  Recall that
 the predicate counters keep track of how often a particular predicate
 at a particular line of code is observed to be true or false.
-Because, for efficiency, predicates are tested rarely (say once in
+Because, for efficiency, predicates are tested rarely (say on average once in
 every 100 times the line of code associated with the predicate is
 executed), any individual counter is accessed rarely even by a single
 thread.  For this reason, we maintain only one copy of each predicate
@@ -239,7 +251,7 @@ instrumented binary elsewhere.  The wrapper script has several
 responsibilities:  it performs all user interaction
 that goes beyond what the underlying application would normally do, and
 it collects the raw feedback report from the instrumented
-application, packages it for transit, and sends it up to the report
+application, packages it for transit, and sends it to the report
 collection server along with other information such as program
 outcome.  In this way we avoid adding GUI infrastructure and
 encrypted networking support to the applications themselves.
@@ -273,7 +285,7 @@ subprocess, it can also check that subprocess's exit status (either a
 result code or a fatal signal), which is included in the report
 uploaded to our feedback collection server.
 The wrapper script compresses the raw feedback report for transit
-using gzip-compatible compression.  This is a huge benefit, as reports
+using {\tt gzip}-compatible compression.  This is a huge benefit, as reports
 are mostly zeros and compress very well.  The average compression
 of the reports we have received is 96\%; Table~\ref{report-sizes} shows
 the range of report sizes we have received by application.  
@@ -289,7 +301,7 @@ Because we transmit reports using HTTP requests, every submission
 can also have a response from the server.
 Ordinarily the collection server does not give any response beyond a
 success code.  However, if the server does give a response, the
-wrapper script will receive it and present it to the user as an HTML
+wrapper script receives it and presents it to the user as an HTML
 page.  This feature might be used, for example, if a critical security
 issue were found requiring immediate upgrades.  
 The HTTP reply can also include a few special reply headers which
@@ -307,14 +319,14 @@ far we have not had need to use any of these facilities.
 
 \begin{table}
   \centering
-  \begin{tabular}{llrrrr}
-    app & min & max  \\ \hline
-    evolution & 830 & 39863  \\
-    gaim & 1786 & 18772  \\
-    gimp & 15617 & 26304  \\
-    gnumeric & 6661 & 15876  \\
-    nautilus & 3252 & 10638  \\
-    rhythmbox & 897 & 5823 
+  \begin{tabular}{lrr}
+    Application & Min & Max  \\ \hline
+    \evolution & 830 & 39863  \\
+    \gaim & 1786 & 18772  \\
+    \gimp & 15617 & 26304  \\
+    \gnumeric & 6661 & 15876  \\
+    \nautilus & 3252 & 10638  \\
+    \rhythmbox & 897 & 5823 
   \end{tabular}
   \caption{Feedback report sizes in bytes.}
   \label{report-sizes}
@@ -332,11 +344,11 @@ disk footprint is considerably smaller if one considers the entire
 package that comes with a typical large application, and in fact the
 executable code is often a relatively small percentage of the total
 distribution.  For the applications we have instrumented, downloaded
-packages are between 13\% and 49\% larger and the installed footprint on
-disk grows between 13\% and 71\%.  The actual application code
-considered alone grows between 74\% and 304\%.  Thus far we have
-received no complaints about package sizes, either downloaded or as
-expanded onto disk.
+packages are between 13\% and 49\% larger and the installed footprint
+on disk grows between 13\% and 71\%.  The actual application binaries
+are between 74\% and 304\% larger than in the original distribution.
+Thus far we have received no complaints about package sizes, either
+downloaded or as expanded onto disk.
 
 Another potential issue is application performance, but thus far we
 have received no complaints about the performance of any of our
@@ -360,14 +372,15 @@ There is both good news and bad news in these figures.  The bad news
 is that we have not yet received enough executions to carry out
 statistically significant analysis of the results.  Based on our
 previous experience with studies done ``in the lab'' running
-applications on synthetic data to simulate a large user community, we
-need between 10,000 and 20,000 executions with our current methods to
-achieve accurate analysis of the results, which is more than ten times
-the number of runs we have received to date for any of these
-applications.\footnote{We began collecting data from the public distribution
-in October, 2003.}   Our situation here reflects an inherent aspect of CBI
-and similar approaches, which is that these methods work well only
-beyond a certain minimum scale.
+applications on synthetic data to simulate a large user community,
+with $\nicefrac{1}{100}$ sampling we need between 10,000 and 20,000
+executions with our current methods to achieve accurate analysis of
+the results, which is more than ten times the number of runs we have
+received to date for any of these applications.\footnote{We began
+collecting data from the public distribution in October, 2003.}  Our
+situation here reflects an inherent aspect of CBI and similar
+approaches, which is that these methods work well only beyond a
+certain minimum scale.
 
 The good news is that these applications do crash,
 indicating to us that there is potential to improve the state
@@ -384,13 +397,13 @@ for large user communities of complex applications.
 \begin{table}
   \centering
   \begin{tabular}{lrrrrr}
-    app & count & good & error & crash & crash rate \\ \hline
-    rhythmbox & 726 & 598 & 36 & 92 & 0.13 \\
-    gnumeric & 247 & 228 & 2 & 17 & 0.07 \\
-    gaim & 464 & 386 & 62 & 16 & 0.03 \\
-    evolution & 702 & 647 & 39 & 16 & 0.02 \\
-    nautilus & 468 & 426 & 36 & 6 & 0.01 \\
-    gimp & 77 & 77 & 0 & 0 & 0.00
+    Application & Count & Good & Error & Crash & Crash Rate \\ \hline
+    \rhythmbox & 726 & 598 & 36 & 92 & 0.13 \\
+    \gnumeric & 247 & 228 & 2 & 17 & 0.07 \\
+    \gaim & 464 & 386 & 62 & 16 & 0.03 \\
+    \evolution & 702 & 647 & 39 & 16 & 0.02 \\
+    \nautilus & 468 & 426 & 36 & 6 & 0.01 \\
+    \gimp & 77 & 77 & 0 & 0 & 0.00
   \end{tabular}
   \caption{Number of runs received.}  
   \label{reports-per-app}
