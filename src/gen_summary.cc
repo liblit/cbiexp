@@ -73,7 +73,6 @@ print_summary(ostream &out, Tally &tally)
       << "<!DOCTYPE experiment SYSTEM \"summary.dtd\">"
 
       << "<experiment date=\"" << ctime(&now)
-      << "\" sparsity=\"" << CompactReport::sparsity
       << "\" source-dir=\"" << SourceDirectory::root
       << "\">"
 

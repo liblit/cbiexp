@@ -6,7 +6,8 @@
   file CDATA #REQUIRED
   line NMTOKEN #REQUIRED
   function NMTOKEN #REQUIRED
-  predicate NMTOKEN #REQUIRED>
+  predicate NMTOKEN #REQUIRED
+  class NMTOKEN #IMPLIED>
 
 <!ENTITY % bug-o-meter SYSTEM "bug-o-meter.dtd">
 %bug-o-meter;

@@ -10,7 +10,7 @@ our @ISA = qw(RunsRunner);
 ########################################################################
 
 
-sub new ($@) {
+sub new ($%) {
     my $proto  = shift;
     my $class = ref($proto) || $proto;
     my $self = bless $proto->SUPER::new(@_, description => 'decimating reports'), $class;
@@ -34,6 +34,7 @@ sub run_task ($$$) {
 	$pipe->reader;
 
 	my $output = "$input.$self->{sparsity}";
+	$output .= '-ex' if @{$self->{exempts}};
 	my $filtered = new FileHandle $output, 'w' or die "cannot write $output: $!\n";
 
 	while (<$pipe>) {
@@ -48,7 +49,10 @@ sub run_task ($$$) {
 	$pipe->writer;
 	open STDIN, '<', "$input" or die "cannot read $input: $!\n";
 	open STDOUT, '>&', $pipe or die "cannot redirect stdout into pipe: $!\n";
-	exec $self->{decimator}, $self->{sparsity};
+	my @command = $self->{decimator};
+	push @command, '--sparsity', $self->{sparsity};
+	push @command, '--exempt-sites', $_ foreach @{$self->{exempts}};
+	exec @command;
 	die "cannot spawn $decimator: $!\n";
     }
 

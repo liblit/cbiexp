@@ -6,6 +6,7 @@ compute-obs-tru
 compute-results
 convert-reports
 f.runs
+find-rare-sites
 fobs.
 fobs.ir
 fobs.jc
@@ -23,6 +24,7 @@ obs.txt
 predictor-info.xml
 preds.txt
 project
+rare-sites.txt
 rho.bin
 run-bugs.txt
 s.runs

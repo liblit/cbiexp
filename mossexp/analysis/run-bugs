@@ -21,7 +21,7 @@ use FindBin;
 ########################################################################
 
 
-my $datadir = "$FindBin::Bin/../data";
+my $datadir = shift;
 my $failures = new FileHandle 'f.runs' or die;
 
 local ($,, $\) = ("\t", "\n");

@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Bounded.h"
-#include "enabled.h"
+#include "tty.h"
 
 using namespace std;
 
@@ -15,39 +15,30 @@ Progress::Bounded::Bounded(const char task[], unsigned numSteps)
 
 Progress::Bounded::~Bounded()
 {
-  if (enabled)
-    {
-      if (currentStep < numSteps)
-	stepTo(numSteps);
-      cout << endl;
-    }
+  if (currentStep < numSteps)
+    stepTo(numSteps);
+  tty << endl;
 }
 
 
 void
 Progress::Bounded::step()
 {
-  if (enabled)
-    {
-      ++currentStep;
-      message();
-    }
+  ++currentStep;
+  message();
 }
 
 
 void
 Progress::Bounded::stepTo(unsigned value)
 {
-  if (enabled)
-    {
-      currentStep = value;
-      message();
-    }
+  currentStep = value;
+  message();
 }
 
 
 void
 Progress::Bounded::message() const
 {
-  cout << '\r' << task << ": " << currentStep << '/' << numSteps << ' ' << (100 * currentStep / numSteps) << '%' << flush;
+  tty << '\r' << task << ": " << currentStep << '/' << numSteps << ' ' << (100 * currentStep / numSteps) << '%' << flush;
 }

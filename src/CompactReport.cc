@@ -5,16 +5,16 @@
 using namespace std;
 
 
-unsigned CompactReport::sparsity = 1;
+string CompactReport::suffix;
 
 
 static const argp_option options[] = {
   {
-    "sparsity",
+    "report-suffix",
     's',
-    "NUM",
+    "SUFFIX",
     0,
-    "use reports downsampled at rate 1/NUM (default 1)",
+    "append \".SUFFIX\" to converted report names (default no suffix)",
     0
   },
   { 0, 0, 0, 0, 0, 0 }
@@ -22,18 +22,14 @@ static const argp_option options[] = {
 
 
 static int
-parseFlag(int key, char *arg, argp_state *state)
+parseFlag(int key, char *arg, argp_state *)
 {
   using namespace CompactReport;
 
   switch (key)
     {
     case 's':
-      char *tail;
-      errno = 0;
-      sparsity = strtoul(arg, &tail, 0);
-      if (errno || *tail || sparsity == 0)
-	argp_error(state, "invalid sparsity \"%s\"", arg);
+      CompactReport::suffix = arg;
       return 0;
     default:
       return ARGP_ERR_UNKNOWN;
@@ -47,11 +43,11 @@ const argp CompactReport::argp = {
 
 
 std::string
-CompactReport::format(unsigned runId, unsigned sparsity)
+CompactReport::format(unsigned runId)
 {
   ostringstream collect;
   RunsDirectory::format(collect, runId, "reports.sparse");
-  if (sparsity != 1)
-    collect << '.' << sparsity;
+  if (!suffix.empty())
+    collect << '.' << suffix;
   return collect.str();
 }

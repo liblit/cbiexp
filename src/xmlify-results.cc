@@ -2,14 +2,60 @@
 #include <cmath>
 #include <ext/hash_set>
 #include <fstream>
+#include <sysexits.h>
 #include "PredStats.h"
+#include "SiteCoords.h"
 #include "fopen.h"
 #include "sites.h"
 #include "units.h"
 #include "utils.h"
 
 using namespace std;
-using __gnu_cxx::hash_set;
+
+static __gnu_cxx::hash_set<SiteCoords> rareSites;
+
+
+////////////////////////////////////////////////////////////////////////
+//
+//  command line processing
+//
+
+
+static int
+parseFlag(int key, char *arg, argp_state *state)
+{
+  switch (key)
+    {
+    case 'r':
+      {
+	ifstream file(arg);
+	if (!file)
+	  argp_failure(state, EX_NOINPUT, errno, "cannot read rare site list %s", arg);
+	file.exceptions(ios::badbit);
+	copy(istream_iterator<SiteCoords>(file), istream_iterator<SiteCoords>(), inserter(rareSites, rareSites.end()));
+	return 0;
+      }
+
+    default:
+      return ARGP_ERR_UNKNOWN;
+    }
+}
+
+
+static void
+processCommandLine(int argc, char *argv[])
+{
+  static const argp_option options[] = {
+    { "rare-sites", 'r', "FILE", 0, "mark sites listed in FILE as rare", 0 },
+    { 0, 0, 0, 0, 0, 0 }
+  };
+
+  static const argp argp = {
+    options, parseFlag, 0, 0, 0, 0, 0
+  };
+
+  argp_parse(&argp, argc, argv, 0, 0, 0);
+}
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -20,7 +66,8 @@ using __gnu_cxx::hash_set;
 
 int main(int argc, char *argv[])
 {
-  argp_parse(0, argc, argv, 0, 0, 0);
+  set_terminate(__gnu_cxx::__verbose_terminate_handler);
+  processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
 
   ofstream xml("predictor-info.xml");
@@ -40,8 +87,12 @@ int main(int argc, char *argv[])
 	  << "\" file=\"" << site.file
 	  << "\" line=\"" << site.line
 	  << "\" function=\"" << site.fun
-	  << "\" predicate=\"" << stats.predicate
-	  << "\">"
+	  << "\" predicate=\"" << stats.predicate;
+
+      if (rareSites.find(stats) != rareSites.end())
+	xml << "\" class=\"rare";
+
+      xml << "\">"
 
 	  << "<bug-o-meter true-success=\"" << stats.s
 	  << "\" true-failure=\"" << stats.f

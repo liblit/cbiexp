@@ -32,9 +32,9 @@ map_sites_LDADD = libanalyze.a
 process_run_labels_SOURCES = process_run_labels.cc
 process_run_labels_LDADD = libanalyze.a
 
-decimate_sparse_SOURCES = decimate-sparse.l
+decimate_sparse_SOURCES = decimate-sparse.ll
 decimate_sprase_INCLUDES = $(CSL_CFLAGS)
-decimate_sparse_LDADD = $(GSL_LIBS)
+decimate_sparse_LDADD = libanalyze.a $(GSL_LIBS)
 
 
 ########################################################################
@@ -65,8 +65,8 @@ libanalyze_a_SOURCES =				\
 	Progress/Bounded.h			\
 	Progress/Unbounded.cc			\
 	Progress/Unbounded.h			\
-	Progress/enabled.cc			\
-	Progress/enabled.h			\
+	Progress/tty.cc				\
+	Progress/tty.h				\
 	RawReport.cc				\
 	RawReport.h				\
 	ReportReader.cc				\
@@ -113,6 +113,7 @@ liblate_a_SOURCES =				\
 	compute_obs_tru.cc			\
 	compute_results.cc			\
 	convert_reports.ll			\
+	find-rare-sites.cc			\
 	gather_prior_dist.cc			\
 	gen_preds_file.cc			\
 	gen_summary.cc				\

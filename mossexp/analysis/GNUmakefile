@@ -4,6 +4,7 @@ schemes := all branches returns scalar-pairs
 view_flags := --stylesheet=moss-view.xsl
 projected_view_flags := --stylesheet=projected-moss-view.xsl
 corrected_view_flags := --stylesheet=corrected-moss-view.xsl
+xmlify_results_flags := --rare-sites=rare-sites.txt
 
 web_extras :=					\
 	corrected-moss-view.xsl			\
@@ -22,5 +23,5 @@ histograms.xml: %.xml: % run-bugs.txt tru.txt
 clean:: ; rm -f histograms.xml
 
 run-bugs.txt: %.txt: f.runs %
-	$(time) ./$* >$@
+	$(time) ./$* $(datadir) >$@
 clean:: ; rm -f run-bugs.txt

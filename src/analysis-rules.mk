@@ -9,7 +9,7 @@ sitesglob := $(experiment)/share/*.sites
 sites := $(wildcard $(sitesglob))
 sites := $(if $(sites), $(sites), $(error no sites files in $(sitesglob)))
 
-sparsity ?= 1
+#sparsity := 100
 
 time := /usr/bin/time
 
@@ -56,7 +56,7 @@ web :=							\
 	predictor-info.xml				\
 	summary.xml
 
-publish := $(HOME)/www/$(name)-new
+publish ?= $(HOME)/www/$(name)-new
 
 all: $(web)
 .PHONY: all
@@ -75,7 +75,7 @@ $(links):
 clean:: ; rm -f $(links)
 
 predictor-info.xml: xmlify-results preds.txt
-	./$<
+	./$< $(xmlify_results_flags)
 	$(MAKE) $(@:.xml=.dtd) bug-o-meter.dtd
 	xmllint --valid --noout $@
 clean:: ; rm -f predictor-info.xml
@@ -124,7 +124,7 @@ all_hl_corrected-%.xml: $(tooldir)/corrective-ranking/% f.runs obs.txt tru.txt
 clean:: ; rm -f all_hl_corrected-exact-complete.xml all_hl_corrected-approximate-complete.xml
 
 obs.txt tru.txt: $(tooldir)/compute_obs_tru.o stamp-convert-reports preds.txt s.runs f.runs sites.o units.o
-	$(time) $(tooldir)/analyze_runs --do=compute-obs-tru --runs-directory=$(datadir) --sparsity=$(sparsity)
+	$(time) $(tooldir)/analyze_runs --do=compute-obs-tru --runs-directory=$(datadir) --report-suffix=$(sparsity)
 clean:: ; rm -f obs.txt tru.txt compute-obs-tru
 
 $(filter %_none.xml, $(views)): $(tooldir)/gen_views.o sites.o units.o preds.txt
@@ -133,12 +133,12 @@ $(filter %_none.xml, $(views)): $(tooldir)/gen_views.o sites.o units.o preds.txt
 clean:: ; rm -f $(filter %_none.xml, $(views)) gen-views
 
 summary.xml: $(tooldir)/gen_summary.o preds.txt s.runs f.runs sites.o units.o
-	$(time) $(tooldir)/analyze_runs --do=print-summary --runs-directory=$(datadir) --sparsity=$(sparsity) --source-directory=../src
+	$(time) $(tooldir)/analyze_runs --do=print-summary --runs-directory=$(datadir) --source-directory=../src
 	[ -r $@ ]
 clean:: ; rm -f summary.xml gen-summary
 
 preds.txt: $(tooldir)/compute_results.o sites.o units.o s.runs f.runs stamp-convert-reports
-	$(time) $(tooldir)/analyze_runs --do=compute-results --runs-directory=$(datadir) --sparsity=$(sparsity)
+	$(time) $(tooldir)/analyze_runs --do=compute-results --runs-directory=$(datadir) --report-suffix=$(sparsity)
 clean:: ; rm -f preds.txt compute-results
 
 stamp-convert-reports: $(tooldir)/convert_reports.o $(datadir)/stamp-labels s.runs f.runs units.o
@@ -169,6 +169,12 @@ $(tooldir)/corrective-ranking/%: force
 	$(MAKE) -C $(@D) $(@F)
 
 .PHONY: clean
+
+rare-sites.txt: %.txt: find-% s.runs f.runs
+	$(time) ./$< --runs-directory=$(datadir) --report-suffix=$(sparsity) >$@
+
+find-rare-sites: %: $(tooldir)/%.o units.o $(tooldir)/libanalyze.a
+	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 force:
 .PHONY: force

@@ -181,7 +181,9 @@
   <!-- row for a single retained predictor -->
   <xsl:template match="predictor">
     <tr>
+      <xsl:variable name="index" select="number(@index)"/>
       <xsl:attribute name="title">rank: <xsl:number/>, pred: <xsl:value-of select="@index"/></xsl:attribute>
+      <xsl:copy-of select="document('predictor-info.xml')/predictor-info/info[$index]/@class"/>
       <xsl:apply-templates mode="dynamic-cells" select="."/>
       <xsl:apply-templates mode="static-cells" select="."/>
     </tr>

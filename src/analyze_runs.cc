@@ -190,16 +190,16 @@ int main(int argc, char** argv)
 	add_links(incdir, "summary");
 	shell("%s %s/compute_results.o %s.o %s.o -L%s -lanalyze -o compute-results",
 	      linker, objdir, MapSites::sitesBasename, MapSites::unitsBasename, objdir);
-	shell("./compute-results --number-of-runs=%u --confidence=%u --runs-directory=%s --sparsity=%u",
-	      NumRuns::value(), Confidence::level, RunsDirectory::root, CompactReport::sparsity);
+	shell("./compute-results --number-of-runs=%u --confidence=%u --runs-directory=%s --report-suffix=%s",
+	      NumRuns::value(), Confidence::level, RunsDirectory::root, CompactReport::suffix.c_str());
     }
 
     if (phaseSelected[DoComputeObsTru]) {
 	puts("Computing obs and tru ...");
 	shell("%s %s/compute_obs_tru.o %s.o %s.o -L%s -lanalyze -o compute-obs-tru",
 	      linker, objdir, MapSites::sitesBasename, MapSites::unitsBasename, objdir);
-	shell("./compute-obs-tru --runs-directory=%s --sparsity=%u",
-	      RunsDirectory::root, CompactReport::sparsity);
+	shell("./compute-obs-tru --runs-directory=%s --report-suffix=%s",
+	      RunsDirectory::root, CompactReport::suffix.c_str());
     }
 
     if (phaseSelected[DoPrintSummary]) {
@@ -209,8 +209,8 @@ int main(int argc, char** argv)
 	add_link(incdir, "sorts", "xml");
 	shell("%s %s/gen_summary.o %s.o %s.o -L%s -lanalyze -o gen-summary",
 	      linker, objdir, MapSites::sitesBasename, MapSites::unitsBasename, objdir);
-	shell("./gen-summary --confidence=%u --source-directory=%s --number-of-runs=%d --sparsity=%u >summary.xml",
-	      Confidence::level, SourceDirectory::root, NumRuns::value(), CompactReport::sparsity);
+	shell("./gen-summary --confidence=%u --source-directory=%s --number-of-runs=%d >summary.xml",
+	      Confidence::level, SourceDirectory::root, NumRuns::value());
 	needLogoLinks = true;
     }
 

@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Unbounded.h"
-#include "enabled.h"
+#include "tty.h"
 
 using namespace std;
 
@@ -14,17 +14,13 @@ Progress::Unbounded::Unbounded(const char task[])
 
 Progress::Unbounded::~Unbounded()
 {
-  if (enabled)
-    cout << endl;
+  tty << endl;
 }
 
 
 void
 Progress::Unbounded::step()
 {
-  if (enabled)
-    {
-      ++currentStep;
-      cout << '\r' << task << ": " << currentStep << flush;
-    }
+  ++currentStep;
+  tty << '\r' << task << ": " << currentStep << flush;
 }

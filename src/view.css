@@ -31,6 +31,11 @@ table.predictors th, table.predictors td {
 /**********************************************************************/
 
 
+tr.rare { 
+  background: #ddf
+}
+
+
 td.count {
   text-align: right
 }

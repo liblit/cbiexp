@@ -24,13 +24,15 @@ use Getopt::Long qw(:config bundling auto_abbrev);
 my $datadir = 'data';
 my $jobs;
 my $start = 0;
+my @exempts = ();
 
 my $usage = <<EOT;
 Usage: $0 [OPTION...] <sparsity>
 
-  --datadir=DIR  find run suite in DIR (default "data")
-  --jobs=COUNT   use COUNT simultaneous jobs (default is CPU count - 1)
-  --start=NUM    start with report NUM (default 0)
+  --datadir=DIR        find run suite in DIR (default "data")
+  --exempt-sites=FILE  do not downsample sites listed in FILE
+  --jobs=COUNT         use COUNT simultaneous jobs (default CPUs - 1)
+  --start=NUM          start with report NUM (default 0)
 EOT
 
 sub help () {
@@ -41,6 +43,7 @@ sub help () {
 my $understood = GetOptions('jobs=i' => \$jobs,
 			    'datadir=s' => \$datadir,
 			    'start=i' => \$start,
+			    'exempt-sites|x=s' => \@exempts,
 			    'help|?' => \&help);
 
 die $usage unless $understood && @ARGV == 1;
@@ -70,5 +73,6 @@ chomp $numRuns;
 my $runner = new DecimateAll(jobs => $jobs,
 			     datadir => $datadir,
 			     sparsity => $sparsity,
-			     decimator => $decimator);
+			     decimator => $decimator,
+			     exempts => \@exempts);
 $runner->run_tasks(0 .. $numRuns - 1);
