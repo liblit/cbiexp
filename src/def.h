@@ -13,4 +13,9 @@ static const char* sortby_names[NUM_SORTBYS] = { "lower bound of confidence inte
 						 "true in # F runs" };
 static const int sortby_indices[NUM_SORTBYS] = { 5, 6, 7, 10 };
 
+
+// Local variables:
+// c-file-style: "cc-mode"
+// End:
+
 #endif

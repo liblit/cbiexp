@@ -25,3 +25,8 @@ void scaffold(char* report_path_fmt, void (*process_site)(FILE*, int, int, int))
 	fclose(fp);
     }
 }
+
+
+// Local variables:
+// c-file-style: "cc-mode"
+// End:

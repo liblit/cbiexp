@@ -82,3 +82,8 @@ int main(int argc, char** argv)
     fclose(ffp);
     return 0;
 }
+
+
+// Local variables:
+// c-file-style: "cc-mode"
+// End:

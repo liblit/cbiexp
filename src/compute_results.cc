@@ -585,3 +585,8 @@ int main(int argc, char** argv)
     fclose(result_summary_fp);
     return 0;
 }
+
+
+// Local variables:
+// c-file-style: "cc-mode"
+// End:

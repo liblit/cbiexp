@@ -134,3 +134,8 @@ int main(int argc, char** argv)
 	sprintf(cmd, "gunzip -c /moa/sc2/cbi/rhythmbox/data/%d/client/reports.gz > reports", i);
 	system(cmd);
 */
+
+
+// Local variables:
+// c-file-style: "cc-mode"
+// End:

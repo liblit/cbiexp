@@ -65,3 +65,8 @@ void classify_runs(char* sruns_file, char* fruns_file)
     fclose(sfp);
     fclose(ffp);
 }
+
+
+// Local variables:
+// c-file-style: "cc-mode"
+// End:
