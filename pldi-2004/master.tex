@@ -16,7 +16,7 @@
 \usepackage{subfigure}
 \usepackage{xspace}
 
-\usepackage[bookmarks, pdftitle={Bug Isolation in the Presence of
+\usepackage[bookmarks, pdftitle={Statistical Debugging in the Presence of
   Multiple Errors}, pdfauthor={Ben Liblit, Mayur Naik, Alice X.
   Zheng, Alex Aiken, and Michael I.  Jordan}, pdfsubject={D.2.4
   [Software Engineering]: Software/Program Verification -- statistical
@@ -42,8 +42,8 @@ pdfpagemode=UseOutlines]{hyperref}
 \newcommand{\moss}{\textsc{Moss}\xspace}
 \newcommand{\termdef}[1]{\textit{#1}}
 \newcommand{\prob}{\mbox{\textit{Prob}}}
-\newcommand{\fail}{\mbox{\textit{Fail}}}
-\newcommand{\crash}{\mbox{\textit{Crash}}}
+\newcommand{\fail}{\mbox{\textit{Crash}}}
+\newcommand{\crash}{\mbox{\textit{Fail}}}
 \newcommand{\context}{\mbox{\textit{Context}}}
 \newcommand{\increase}{\mbox{\textit{Increase}}}
 \renewcommand{\H}{{\mathcal{H}}}
@@ -54,7 +54,7 @@ pdfpagemode=UseOutlines]{hyperref}
 %% front matter
 %%
 
-\title{Bug Isolation in the Presence of Multiple Errors
+\title{Statistical Debugging in the Presence of Multiple Errors
   %%
   \thanks{This research was supported in part by NASA Grant No.\
     NAG2-1210; NSF Grant Nos.\ EIA-9802069, CCR-0085949, ACI-9619020,
@@ -64,7 +64,6 @@ pdfpagemode=UseOutlines]{hyperref}
     presented here does not necessarily reflect the position or the
     policy of the Government and no official endorsement should be
     inferred.}}
-
 \numberofauthors{3}
 
 \makeatletter
@@ -117,96 +116,157 @@ pdfpagemode=UseOutlines]{hyperref}
 \maketitle
 
 \begin{abstract}
-  Software errors are a fact of life, with complex programs exhibiting
-  multiple bugs even within a single run.  Debugging can be difficult
-  when neither the causes nor even the number of distinct errors are
-  known.  We present a multiple-bug isolation algorithm that operates
-  on sparsely sampled data drawn from large numbers of user runs.  By
+  We present a statistical debugging algorithm that can operate on very
+  sparsely sampled data drawn from large numbers of user runs.  By
   identifying those program behaviors which significantly increase the
   likelihood of failure, our technique helps guide software engineers
   to the most significant flaws in an application.  The approach has
   connections to statistical hypothesis testing, and is validated
-  using a case study of a complex application.
+  using several case studies.
 \end{abstract}
 
-\category{D.2.4}{Software Engineering}{Software/Program
-  Verification}[statistical methods]
-%%
-\category{D.2.5}{Software Engineering}{Testing and
-  Debugging}[debugging aids, distributed debugging, monitors, tracing]
-%%
-\category{I.5.2}{Pattern Recognition}{Design Methodology}[feature
-  evaluation and selection]
 
-\terms{Experimentation, Reliability}
+%\category{D.2.4}{Software Engineering}{Software/Program
+%  Verification}[statistical methods]
+%%
+%\category{D.2.5}{Software Engineering}{Testing and
+%  Debugging}[debugging aids, distributed debugging, monitors, tracing]
+%%
+%\category{I.5.2}{Pattern Recognition}{Design Methodology}[feature
+%  evaluation and selection]
 
-\keywords{bug isolation, random sampling, invariants, feature
-  selection, statistical debugging}
+%\terms{Experimentation, Reliability}
+
+%\keywords{bug isolation, random sampling, invariants, feature
+%  selection, statistical debugging}
 
 
 \section{Introduction}
 \label{sec:introduction}
 
-Programs are buggy.
-%We all know this, and yet we use them anyway.
-Most software ships with many known and unknown bugs; software
-engineers understand that it is impractical to delay releasing code
-until the last bug has been fixed.
+It is a fact of life that most software ships with many known and
+unknown bugs.  Unfortunately, in most cases it is impractical to delay
+releasing code until the last bug has been fixed.  For example, the
+Mozilla web browser project has a ``topcrash'' software QA team
+specifically dedicated to identifying and tracking the top forty most
+common crash bugs.  This cut-off is not because anyone believes that
+there are only forty bugs; it is an acknowledgment that engineering
+resources are finite and so the most important bugs should be fixed
+first.
 
-Our vision is to use \termdef{statistical debugging} to
-improve software quality.  Specially
-instrumented programs monitor their own behavior and send feedback
-reports to a central collection server.  Monitoring is both sparse and
-random, so complete information is never available about
-any single run.  However, monitoring is also lightweight and therefore
-practical to deploy to user communities numbering in the thousands or
-millions.  Statistical debugging does not seek to understand the
-single cause of a single failure on one machine; rather, it identifies
-broad statistical trends that isolate bug causes across many thousands
-or millions of runs.  Because the process is driven by data from real
-users, it implicitly attends to those program behaviors that cause the
-most problems for the most users, most often.
+Our vision is to use \termdef{statistical debugging} to improve
+software quality after code is deployed.  Specially instrumented
+programs monitor their own behavior and send feedback reports to a
+central collection server.  Monitoring is both sparse and random, so
+complete information is never available about any single run.
+However, monitoring is also lightweight and therefore practical to
+deploy to user communities numbering in the thousands or millions.
+Statistical debugging does not seek to understand the single cause of
+a single failure on one machine; rather, it identifies statistical
+trends that isolate bug causes across many runs.  Because the process
+is driven by data from actual user executions, it reflects the reality
+of how the software is used and implicitly attends to those program
+behaviors that cause the most problems for the most users, most often.
 
-In our previous work we examined the problem of automatically
-isolating the cause of a single bug
-\cite{PLDI`03*141,Zheng:2003:SDSP}.  As discussed above, however, no
-realistic application has only a single bug, or even a handful of
-bugs.  Consider the fact that the Mozilla web browser project has a
-``topcrash'' software QA team specifically dedicated to identifying
-and tracking the top forty most common crash bugs.  This cut-off is
-not because anyone believes that there are only forty bugs; it is an
-acknowledgment that engineering resources are finite so the most
-important bugs should be fixed first.
+In previous work we examined the problem of automatically isolating
+the causes of bugs and proposed two algorithms, the most general of
+which was based on a statistical technique known as {\em logistic
+regression} \cite{PLDI`03*141,Zheng:2003:SDSP}.  As we worked to apply
+these methods to large programs under realistic conditions, we
+discovered a number of scalability problems, the most serious of which
+was that the performance of the techniques declined significantly as
+when the applications being analyzed had multiple bugs (see
+Section~\ref{sec-comparison}).  As mentioned above, real applications
+have many bugs.
 
-This paper is about simultaneously isolating multiple bugs in complex
-applications.  The main contributions are:
+The first contribution of this paper is a new algorithm for isolating
+multiple bugs in complex applications (see \Autoref{sec:algorithm}).  This algorithm 
+is based on an entirely different family of statistical techniques than our previous work and offers
+a number of improvements:
+it is much more efficient, the quality of the
+results is high and unaffected by increasing either the size of the program
+or the number of bugs, and it naturally produces information
+that shows how important (in number of program crashes) each detected
+cause of a bug is.  Furthermore, the method is statistically sound, meaning that
+the results computed accurately summarize the analyzed program 
+executions, and the results can be directly understood in terms of program behavior.
+For example, here is a portion of a report generated for {\tt Rhythmbox},
+a popular Open Source jukebox:
+\begin{verbatim}
+Predicate: g_source_remove() > 0 
+Location: line 77 of disclosure-widget.c
+Increase: 0.92   
+Failure: 1.00   
+\end{verbatim}
+This line says that when a particular call site of the function {\tt g\_source\_remove} returns a 
+positive value\footnote{A common C programming idiom is for functions to signal error conditions by returning non-zero values.}, the probability that the program will fail 
+increases 92\% to 100\%; i.e., when this predicate on this line is true the program always crashes eventually, but in executions where this predicate is not
+observed to be true the failure rate is 8\%.  It turns out that the crash happens long after the call to {\tt g\_source\_remove} completes,
+but that the actual cause of the bug is closely connected to what goes wrong inside of this function call.  Thus,
+our approach can help engineers isolate bugs by showing the conditions and early events that trigger the bug, rather than just the
+program state at the point of failure.  Furthermore, our algorithm also allows accurate calculations of what fraction of all failures occur when this predicate
+true; in the example above, the predicate was true in 184 of 1873 Rhtyhmbox executions that crashed in our dataset, which means that
+it is involved in 9.8\% of all the failures observed.  This information allows engineers to assign accurate priorities to bug fixes.
 
-\begin{itemize}
 
-\item We give a new algorithm for isolating multiple bugs
-(\Autoref{sec:algorithm}).  Our algorithm is very efficient and works well in the
-presence of multiple bugs, sparse sampling, and non-deterministic failure
-modes.
+Our second contribution is a series of case studies evaluating the effectiveness of
+our technique.  The first two studies compare our algorithm to the two techniques
+we previously proposed (see \Autoref{sec:revisited}).  Each of these studies focuses on a
+program with a single bug; in both cases the new algorithm
+performs at least as well as the old one at identifying the conditions under which the bug occurs.  
 
-\item We present a significant experimental study showing the
-effectiveness of our algorithm on a complex application
-(Sections~\ref{sec:experiments:setup}
-and~\ref{sec:experiments:results}).  We seeded a program with nine
-bugs, most
-of which were taken directly from the application's bug log.  Our
-system correctly identified a distinct cause for seven of the bugs; the
-other two bugs never caused the program to fail in our experiment.
-Our algorithm also discovered a new, previously unknown bug in the
-application.
+The third study involves an application with multiple known bugs (see
+\Autoref{sec:moss}).  The fact that we know the bugs makes this a controlled study, 
+in the sense that we are able to determine whether the algorithm fails to recognize any of the
+bugs.  The results show that the algorithm correctly
+isolates strong predictors for each of the bugs that occurred in our
+experiment, even though the algorithm has no knowledge of how many
+bugs are in the program or which bug caused any individual failure.
+In fact, in addition to the 9 known bugs that were in the application,
+our algorithm isolated an additional bug that was previously unknown.
 
-\end{itemize}
+We also use this third case study to investigate a speculative
+application of our techniques.  Our algorithm relies only on the
+ability to label the outcome of a program as ``correct'' or
+``incorrect''.  Furthermore, because our techniques are statistical,
+the labeling of correct/incorrect results need not be perfect; our
+algorithm can tolerate noise in the labeling.  These features open up
+the possibility of having a single approach that can detect the entire
+range of program errors from low-level, crashing bugs to high-level
+logic bugs that do not crash the program but simply cause it to
+produce incorrect output, provided only that there is some way to
+label program outcomes reasonably accurately.  Detecting incorrect
+output can be done in a number of ways.  Certainly program crashes are
+incorrect (e.g., in C programs), as are unhandled top-level exceptions
+(e.g., in Java programs).  Internal program checks for consistency,
+such as low-level assert statements and higher-level input validation
+checks between untrusting components, can also be used to label
+results as correct or incorrect.  Finally (and this is the speculative
+part) users could also provide feedback on whether the output of a
+program execution looks correct or not, allowing the automatic
+isolation of bugs that are not otherwise observed by a crash or
+internal consistency check.  The third study includes some subtle,
+non-crashing bugs that our system is able to isolate correctly.
 
-After providing some background on our previous work in single-bug
-isolation (\Autoref{sec:background}), we discuss the algorithm (\Autoref{sec:algorithm}),
-the design of our experiment (\Autoref{sec:experiments:setup}), and
-the experimental results (\Autoref{sec:experiments:results}).
-The paper winds up with a discussion of related work (\Autoref{sec:related-work})
-and future work and conclusions (\Autoref{sec:conclusions}).
+
+In the fourth study we apply our techniques to the current release
+of Rhythmbox, the Open Source jukebox mentioned above (see
+\Autoref{sec:rb}).  Rhythmbox is the largest and most complex of our
+case studies, and the bugs in Rhythmbox are unknown to us.  Thus far
+we have successfully isolated two serious crashing bugs in Rhythmbox
+using our approach.  At least in part because we were able to
+quantify the importance of these bugs for the Rhythmbox developers, both
+bug reports were given high priority and fixes were applied to the
+main development branch within a few days.
+
+
+The paper is organized as follows.  After providing some background
+(\Autoref{sec:background}), we discuss our algorithm
+(\Autoref{sec:algorithm}) and its advantages over our previous approach
+based on logistic regress (Section~\cite{sec-comparison}).  The case studies
+are presented in Sections~\ref{sec:revisited}-\ref{sec:rb}.  We conclude with a
+discussion of related work (\Autoref{sec:related-work}) and future
+work (\Autoref{sec:conclusions}). 
 
 \section{Background}
 \label{sec:background}
@@ -246,27 +306,30 @@ our system offers the following instrumentation schemes:
 
 \begin{description}
 \sloppy
-\item[branches:] At each conditional,
-  count how often each branch is taken.  The observation is
-  made just after the predicate is evaluated but before the selected
-  branch is taken.  This scheme also applies to implicit conditionals
-  in loops and logical operators (\texttt{\&\&}, \texttt{||},
-  \texttt{?:}).  Each conditional induces one instrumentation site
-  with two counters: number of times branched true and number of times
-  branched false.
+\item[branches:] At each conditional, including implicit conditionals
+such as loop tests and short-circuiting logical operators,
+  count how often each branch is taken.  
+%The observation is
+%  made just after the predicate is evaluated but before the selected
+%  branch is taken.  This scheme also applies to implicit conditionals
+%  in loops and logical operators (\texttt{\&\&}, \texttt{||},
+%  \texttt{?:}).  Each conditional induces one instrumentation site
+%  with two counters: number of times branched true and number of times
+%  branched false.
 
 \item[returns:] In C, the
   sign of a return value is often used to encode an operation's success or failure.
   At each scalar-returning function call site, count how
   often the returned value is negative, zero, or positive.  For
   pointer-returning calls, this reduces to counting
-  \texttt{NULL} versus non-\texttt{NULL}.  The observation is made
-  just after the function returns but before the result is used by the
-  original program.  An instrumentation site is added even if the
-  source program discards the return value, as unchecked return
-  values are a common source of bugs.  Each call site induces one
-  instrumentation site with three counters: number of negative
-  returns, number of zero returns, and number of positive returns.
+  \texttt{NULL} versus non-\texttt{NULL}.  
+%The observation is made
+%  just after the function returns but before the result is used by the
+%  original program.  An instrumentation site is added even if the
+%  source program discards the return value, as unchecked return
+%  values are a common source of bugs.  Each call site induces one
+%  instrumentation site with three counters: number of negative
+%  returns, number of zero returns, and number of positive returns.
 
 \item[scalar-pairs:] Many bugs
   concern boundary issues exposed by the relationship between a pair
@@ -275,16 +338,19 @@ our system offers the following instrumentation schemes:
   \emph{other} same-typed in-scope variable $\mathtt{y}_i$ and each
   constant expression $\mathtt{c}_j$.  Count how often the new value
   for \texttt{x} is less than, equal to, or greater than each
-  $\mathtt{y}_i$ and each $\mathtt{c}_j$.  The observation is made
-  after both sides of the assignment have been evaluated but
-  before the assignment takes place.  This lets us compare
-  \texttt{x} to \texttt{x} as well, effectively comparing the new and
-  old values of the left-hand side.  Each compared-to $\mathtt{y}_i$
+  $\mathtt{y}_i$ and each $\mathtt{c}_j$.  
+%The observation is made
+%  after both sides of the assignment have been evaluated but
+%  before the assignment takes place.  This lets us compare
+%  \texttt{x} to \texttt{x} as well, effectively comparing the new and
+%  old values of the left-hand side.  
+Each compared-to $\mathtt{y}_i$
   or $\mathtt{c}_j$ is treated as a distinct instrumentation site;
-  thus a single assignment may induce a large number of sites.  Each
-  such site maintains three counters: how often the value being
-  assigned is less than, equal to, or greater than the compared-to
-  variable or constant.
+  thus a single assignment may induce a large number of sites.  
+% Each
+%  such site maintains three counters: how often the value being
+%  assigned is less than, equal to, or greater than the compared-to
+%  variable or constant.
 \end{description}
 
 The common theme among these instrumentation schemes is that we

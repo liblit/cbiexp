@@ -1,8 +1,8 @@
-This section presents the algorithm that we have developed for
+This section presents an efficient algorithm for
 isolating bugs in programs where multiple bugs are present
-simultaneously.  As discussed in \Autoref{sec:background}, our
-approach is to count the number of times we observe pre-specified
-predicates at each program point to be true during program
+simultaneously.  As discussed in \Autoref{sec:background}, the
+input to this algorithm is counts of the number of times pre-specified
+predicates at each program point are observed to be true during program
 execution.
 %Because our system has no \textit{a priori} knowledge of
 %what bugs may be in the program, or even any model of what the program
@@ -21,10 +21,10 @@ observation is reflected in our algorithm, which consists of two phases:
 \begin{enumerate}
 \item Eliminate predicates that are not predictive of program failure.
 
-\item Rank the predicates that remain.  The higher a predicate is ranked,
-the more confident we are that it is involved in a bug.
+\item Rank the predicates that remain in importance.  
 \end{enumerate}
 
+We leave ``importance'' undefined for the moment; we will return to it below.
 Consider the following C code fragment, which we use to motivate and illustrate
 our technique:
 \begin{quote}
@@ -39,14 +39,15 @@ if (f == NULL) {  (b)
 Consider the predicate {\tt f == NULL} at line {\tt (b)}, which would
 be captured by branches instrumentation.  Clearly
 this predicate is highly correlated with failure; in fact, whenever it
-is true this program inevitably crashes.  An important observation,
+is true this program inevitably crashes.\footnote{We also note that this bug could 
+be detected by a simple static analysis; this example is meant to be concise rather than 
+a significant application of our techniques.}   An important observation,
 however, is that even a ``smoking gun'' such as {\tt f == NULL} at
 line {\tt (b)} cannot be a perfect predictor of failure when there are
 multiple bugs in the program---since there are other bugs, the program can fail
-even if the predicate is false.  Put another way, we assume
-that bugs are independent, and there is no reason to believe that
-a predicate that is a good predictor for one bug is at all correlated
-with any other bug.
+even if the predicate is false.  There is no reason to believe that
+a predicate that is a good predictor for one bug should be a good predictor 
+for any other bug.
 
 The bug in the code fragment above is \termdef{deterministic} with
 respect to {\tt f == NULL}: if {\tt f == NULL} is true at line {\tt
@@ -59,10 +60,10 @@ about how data is laid out in memory.  Such bugs are
 even for the best predictor $P$, it is possible that $P$ is true and
 still the program terminates normally.  In the example above, if we insert before line
 {\tt (d)} a valid pointer  assignment to {\tt f} controlled by a conditional that is true
-at least some of the time (say via a call to a random number generator):
+at least some of the time (say via a call to read input):
 \begin{quote}
 \begin{verbatim}
-if (random()) f = ... some valid pointer ...;
+if (read()) f = ... some valid pointer ...;
 *f;
 \end{verbatim}
 \end{quote}
@@ -86,7 +87,7 @@ causes of other independent bugs do not affect $\crash(P)$.
 Also note that runs in which $P$ is not observed at all (either because
 the line of code on which $P$ is checked is not reached, or the line is reached
 but $P$ is not sampled) have no effect on $\crash(P)$.
-Finally, note that the definition of $\crash(P)$
+Finally, the definition of $\crash(P)$
 generalizes the idea of deterministic and non-deterministic bugs.  A
 bug is deterministic for $P$ if $\crash(P) = 1.0$ or, equivalently,
 $P$ is never observed to be true in a successful run ($S(P) =
@@ -116,7 +117,7 @@ decision that eventually causes the crash is made earlier, and the
 high $\crash(\ldots)$ score of {\tt x == 0} merely reflects the fact that this
 predicate is checked on a path where the program is already doomed.
 
-One way to address this difficulty is to score a predicate not by the chance
+A way to address this difficulty is to score a predicate not by the chance
 that it implies failure, but by how much difference it makes that the predicate
 is observed to be true versus simply reaching the line where the predicate is checked.
 That is, on line {\tt (c)}, the probability of crashing is already 1.0 regardless
@@ -145,9 +146,9 @@ we have
 and so $\increase(\mbox{\tt x == 0}) = 0$.
 We can now state our algorithm:
 \begin{enumerate}
-\item Discard any predicate $P$ where $\increase(P) \leq 0$.
+\item Retain only predicates $P$ where $\increase(P) > 0$ with high confidence.
 
-\item Sort the remaining predicates lexicographically first by $\crash(P)$ and then by $\context(P)$.
+\item Sort the remaining predicates (see below).
 \end{enumerate}
 
 A few comments on this algorithm are in order.  First, pruning
@@ -167,34 +168,30 @@ the line on which it occurs (which is usually available anyway in the
 stack trace). \Autoref{sec:experiments:results} gives several examples
 of this phenomenon while hunting for real bugs.
 
-The purpose of sorting the surviving predicates in step (2) by
-$\crash(\ldots)$ is to ensure that the highest confidence predicates (those
-most likely to actually cause crashes) are listed first in the final
-result.  We need step (2) because while $\increase(\ldots)$ is very good at
-eliminating unimportant predicates, it is rather poorer as a measure
-of the most important predicates.  Consider line {\tt (a)} in the
-example above.  If {\tt (a)} has, say, a 90\% probability of assigning
-a {\tt NULL} pointer to {\tt f}, then the value of
-$\increase(\mbox{\tt f == NULL})$ will be high at line {\tt (a)}
-and lower, but still positive, at line {\tt (b)}.  While both {\tt
-(a)} and {\tt (b)} contribute to the bug, it is our experience that,
-once irrelevant predicates are discarded, it is most natural to
-associate a bug with the predicate that gives the highest absolute
-chance of failure; these are most likely to be the true causes.  For
-instance, in our example, something is certainly wrong by the time we
-reach line {\tt (b)}, where taking the true branch leads to a certain
-crash, while it is entirely possible that line {\tt (a)} is correct.
-Most likely the bug is a typographical error: the programmer meant to
-write {\tt f != NULL} as the predicate of the conditional instead of
-{\tt f == NULL}.
+Because some $\increase()$ scores may be based on few observations of a predicate, it is important
+to attach condfidence intervals to the scores.  Since $\increase()$ is a statistic, computing
+its confidence interval is a well-understood problem; in our experiments we retain a predicate $P$
+only if $\increase(P) > 0$ with 97.5\% confidence.
 
-Finally, it should be clear that the algorithm is efficient.
-Step (1) requires only a single pass over the data, and step (2) is
-simply sorting.
+There are several ways to sort the surviving predicates, and each is useful.
+Most often we sort by the lower bound of the confidence interval of the predicates' $\increase()$ scores.
+This criteria has the effect of listing the predicates with high $\increase()$ scores and high
+confidence first; these are the conditions in the program that contribute the most to failure.
+Predicates with high $\increase()$ scores but wide confidence intervals are listed
+later.  
+There are at least two other sort orders we have found useful.  Examining 
+predicates with the highest $\crash$ scores shows the prorgram points and conditions under which failure
+becomes inevitable, or nearly inevitable.  Sorting by $F(P)$ (the number of failed runs in which the predicate
+is true) gives a sense of how important the bug represented by the predicate is relative to the bugs represented
+by other predicates. 
+
+Thus, while the first step of our algorithm is off-line, the sorting step is on-line, allowing the user to change
+the sort order as desired.  This division works well; the first step of the algorithm eliminates so many predicates
+(usually well in excess of 98\%) that the second step can easily be performed at interactive speeds.
 
 \subsection{Statistical Interpretation}
 
-The selection criterion of $\increase(P) > 0$ is equivalent to a simplified
+In this section we show that our test $\increase(P) > 0$ is a form of
 statistical hypothesis test.  Consider the two classes of trial runs
 of the program: failed runs $F$ and successful runs $S$.  For each
 class, we can treat the predicate $P$ as a Bernoulli random variable
@@ -205,7 +202,7 @@ true.  If a predicate causes a set of crashes, then $\pi_f$ should be
 much bigger than $\pi_s$.  We can formulate two statistical hypotheses:
 the null hypothesis $\H_0:
 \pi_f \leq \pi_s$, vs.\ the alternate hypothesis $\H_1: \pi_f > \pi_s$.  Since
-$\pi_f$ and $\pi_s$ are not known, we have to estimate them from our
+$\pi_f$ and $\pi_s$ are not known, we must estimate them from our
 data.
 \begin{align*}
   \hat \pi_f(P) &= \frac{F(P)}{F(P \lor \lnot P)} &
@@ -215,7 +212,7 @@ data.
 Although these proportion estimates of $\pi_f$ and $\pi_s$ approach the
 actual heads probabilities as we increase the number of trial runs, they
 still differ due to sampling.  With a certain probability, using these
-estimates instead of the actual values will give us the wrong
+estimates instead of the actual values result in the wrong
 answer.  A \textit{likelihood ratio test} takes this uncertainty into
 account, and makes use of the statistic $ Z = \frac{(\hat \pi_f - \hat
   \pi_s)}{V_{f,s}}$, where $V_{f,s}$ is a sample variance term (see
@@ -241,20 +238,43 @@ Hence the $\increase(P) > 0$ criterion is not only well motivated
 from the program analysis point of view, but can also be seen as a
 version of a likelihood ratio test.
 
-\subsection{Comparison with Previous Approach}
+\subsection{Comparison with Logistic Regression}
+\label{sec-comparison}
+
 In earlier work \cite{PLDI`03*141,Zheng:2003:SDSP}
 we made use of $\ell_1$-regularized logistic regression and similar
 methods to select and rank the predicates in the order of their
-failure-prediction strength.  This approach proves to be
-overly flexible in the presence of multiple bugs.
+failure-prediction strength.  Independently others have used
+logistic regression with good results to cluster program failures (without
+identifying causes) related to the same bug \cite{ICSE`03*465}.  However, we have come
+to believe the logistic regression has limits
+in these sorts of applications. 
 
 Logistic regression and its variants use a linearly weighted
 combination of the predicates to classify a trial run as successful or
 failed.  Regularized logistic regression incorporates a penalty
 that forces the regression to set most coefficients to zero, thereby
-selecting only the most important predicates.  However, when the data
-includes crashes caused by multiple different bugs, arbitrary linear
-combinations are not always desirable.  If a predicate is a
+selecting only the most important predicates.  The output is a set of
+coefficients for predicates that gives the best overall prediction: i.e., if
+certain predicates are true the program is likely to fail.
+
+Reasoning from first principles, there are two potential problems with
+this approach in our setting.  First, it is not clear what the weights
+on the predicates mean, or that there is always an assignment of
+weights that optimally captures the behavior of a program with
+multiple bugs.  Secondly, it is not clear how to choose the penalty
+factor.  We have found the second issue is minor in practice.  For the
+first issue, one might guess that the difficulty, if it exists, shows
+up as the number and complexity of the program's bugs
+increases.  This will tend to increase the number of predicates that
+are at least somewhat predictive of failure and, more significantly,
+dramatically increase the number of sets of predicates that could
+explain all failures, thereby making it more difficult for logistic
+regression to pick a good set of predicates and coefficients from a very large
+space.  
+
+In fact, we observe that logistic regression performs worse
+in more complex situations. For example, if a predicate is a
 common precondition for two different bugs, its coefficient
 can be greater than the coefficients of the actual causes of the bugs.
 In general, when the set of failed runs in
@@ -266,33 +286,39 @@ effect can be offset by giving large negative weights to predicates
 that are only present in successful runs (e.g.,\ sites in unreached
 portions of the code due to an early crash of the program).}
 
-Another problem is caused by correlated predicates.
-Due to the wide coverage of our instrumentation schemes, there can be
-many correlated indicators of the same bug.  For example, in an
-array-overrun bug, the culprit loop index variable gets abnormally
-large, which manifests itself when compared to many other small
-scalars in the program.  Even though technically only one of these
-predicates is what we take to be the ``smoking gun'' for the bug, any
-of them can be used to predict the crash.  Hence our classifier may
-(rightfully) give high weights to any of the correlated features.  In
-the presence of sampling, the predicates with higher coverage have the
-advantage.  Alternatively, the classifier may give smaller
-weights to a large number of these correlated predicates, and reserve
-the larger weights for something else.  This doesn't affect
-classification performance, but causes the ranking of
-some of the good predicates to drop down.
+Another problem is caused by the wide coverage of our instrumentation
+schemes, which tends to result in many correlated indicators of the
+same bug.  For example, in an array-overrun bug, the culprit loop
+index variable gets abnormally large, which manifests itself when
+compared to many other small scalars in the program.  Logistic
+regression may (rightfully) give high weights to any of these
+correlated features and drop others from its model.  In the presence
+of sampling, the predicates with higher coverage have the advantage.
+Alternatively, the classifier may give smaller weights to a large
+number of these correlated predicates, and reserve the larger weights
+for something else. 
+In either case, the ranking of some useful predicates can be quite low.
 
-For all of the above reasons, regularized logistic regression has
-limitations for dealing with multiple bugs.  While logistic
+We cannot conclude from our experience that logistic regression cannot
+be made to scale to the analysis of complex software failures, but we
+note that our hypothesis about scaling behavior is at least
+consistent with earlier, positive results.  Our own previous study
+focused on programs with a single bug; thus all predicates with any
+predictive power were predicting the same failure mode, making it
+easier for logistic regression to select predicates and weights to
+represent all failures.  In the previous work on failure clustering
+\cite{ICSE`03*465}, the number of features (predicates) is equal to
+the number of procedures in the program.  Using fewer features 
+improves the performance of logistic regression, as it has fewer choices to
+make; in this case the number of features is at least two orders of
+magnitude less than in our applications.
+
+For the reasons discussed above, regularized logistic regression has
+limitations for dealing with multiple bugs in our applications.  While logistic
 regression attempts to combine predicates, note that the algorithm we
-propose in this paper assumes that a bug is caused by a single
-predicate---though more sophisticated bugs exist, the vast majority of
-common bugs are simple and ``univariate.''  Looking at it this way,
-the multiple bug problem diminishes, because every crashed run
-ultimately crashes due to only one bug.  Hence each crash can be
-accounted for by one predicate.  The predicates are then ranked by a
-score depending on the number of crashes in which it is observed.  In
-essence, we circumvent the multiple bug problem by letting the
-``smoking guns'' cluster the crashes, not the other way around.
+propose here focuses on how well each predicate $P$ explains the set of failed
+runs in which $P$ is observed.
+In essence, we circumvent the multiple bug problem by letting the
+predicates cluster the failed runs, not the other way around. 
 
 %% LocalWords:  pre bc downsampled
