@@ -25,6 +25,7 @@ sub cleanup_operand ($) {
     s/&/\&amp;/g;
     s/</\&lt;/g;
     s/>/\&gt;/g;
+    s/"/&#34;/g;
 
     return $_;
 }
