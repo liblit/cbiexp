@@ -23,16 +23,16 @@ using namespace std;
 
 const unsigned MAX_ITER = 100;
 const double thresh = 10e-12;
-const double smooth = 10e-12;
+const double smooth = 1.0;
 
-static list<ostringstream> contribRuns;
 typedef list<IndexedPredInfo> Stats;
 static Stats predList;
+static ostringstream * contribRuns;
 
 static double * W_data;
 static double * denom_weights[2];
 static double * run_weights;
-static double sign[] = {1.0, -1.0};
+//static double sign[] = {1.0, -1.0};
 static double mask[2][2] = {{1.0, 0.0}, {0.0, -1.0}};
 
 static ofstream logfp ("pred_scores.log", ios_base::trunc);
@@ -82,10 +82,10 @@ read_preds()
   while (read_pred_full(pfp, pi)) {
     IndexedPredInfo indexed(pi, index++);
     predList.push_back(indexed);
-    contribRuns.push_back("");
   }
   fclose(pfp);
 
+  contribRuns = new ostringstream[predList.size()];
 }
 
 void 
@@ -180,6 +180,16 @@ logvalues (const double * v, const unsigned n) {
   logfp << endl;
 }
 
+void 
+logruns (const unsigned n) {
+  for (unsigned i = 0; i < n; ++i) {
+    if (! contribRuns[i].str().empty()) {
+      logfp << "Pred ind " << i+1 << " Runs: " << endl;
+      logfp << contribRuns[i].str() << endl;
+    }
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////
 //
 //  Computation routines
@@ -222,18 +232,20 @@ void
 iterate_max(double * u, double * v, unsigned npreds)
 {
   double Aij, change;
+  double tempscore[2][npreds];
   unsigned mode;
   unsigned ctr = 0;
 
-  for (unsigned i = 0; i < npreds; ++i) {
-    contribRuns[i].clear();
-  }
-
   Progress::Bounded progress("Giving weight to max pred", MAX_ITER);
-  do {
+  //do {
     progress.step();
     ctr++;
+    memset(tempscore, 0, sizeof(double)*2*npreds);
     memset(u, 0, sizeof(double)*npreds);
+    for (unsigned i = 0; i < npreds; ++i) {
+      contribRuns[i].str("");  // reset the string of attributed runs
+    }
+
     unsigned j = 0;
     for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
       if (!is_srun[r] && !is_frun[r])
@@ -253,9 +265,15 @@ iterate_max(double * u, double * v, unsigned npreds)
       Aij = W_data[j*npreds+argmax];
       //if (denom_weights[mode][argmax] > 0.0)
         //u[argmax] += sign[mode] * Aij / denom_weights[mode][argmax];
-      u[argmax] += sign[mode] * Aij / run_weights[j];
-      contribRuns[argmax] += 
+      tempscore[mode][argmax] += Aij / run_weights[j];
+      if (is_frun[r])
+        contribRuns[argmax] << r << ' ';
       j++;
+    }
+
+    for (unsigned i = 0; i < npreds; ++i) {
+      if (tempscore[F][i] > 0.0)
+        u[i] = (tempscore[F][i] + smooth) / (tempscore[S][i] + smooth);
     }
 
     normalize(u, npreds, MAX);
@@ -264,8 +282,9 @@ iterate_max(double * u, double * v, unsigned npreds)
     //copy over from u to v 
     memcpy(v, u, sizeof(double)*npreds);
     // logvalues (v, npreds);
+    logruns (npreds);
     logfp << "iterate_max: iteration: " << ctr << " change: " << change << endl;
-  } while (change > thresh && ctr <= MAX_ITER);
+  //} while (change > thresh && ctr <= MAX_ITER);
 }
 
 void
@@ -314,7 +333,7 @@ iterate_sum(double * u, double * v, unsigned npreds)
     change = compute_change(u, v, npreds);
     //copy over from u to v 
     memcpy(v, u, sizeof(double)*npreds);
-    logvalues (v, npreds);
+    // logvalues (v, npreds);
     logfp << "iterate_sum: iteration: " << ctr << " change: " << change << endl;
   } while (change > thresh && ctr <= MAX_ITER);
 }
@@ -382,5 +401,6 @@ int main (int argc, char** argv)
   delete[] W_data;
   delete[] denom_weights[F];
   delete[] denom_weights[S];
+  delete[] contribRuns;
   return 0;
 }
