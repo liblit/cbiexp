@@ -61,7 +61,7 @@ void print_pred_stat(FILE* fp, pred_stat ps, int s, int f)
                 "<td class=\"f4\" style=\"width: %.2f%%\"/>"
                 "</tr>"
                 "</table>"
-                "</td>\n",
+                "</td>",
         (int) floor(log10(s + f) * 60), f1, f2, ps.in * 100, ps.fs * 100, s, f, f1, f2, f3, f4);
 }
 
@@ -86,9 +86,9 @@ void print_pred_name(FILE* fp, int site, int p)
         assert(0);
     }
 
-    fputs("</td>\n", fp);
+    fputs("</td>", fp);
 
-    fprintf(fp, "<td>%s</td><td>%s:%d</td>\n",
+    fprintf(fp, "<td>%s</td><td>%s:%d</td>",
         sites[site].fun, sites[site].file, sites[site].line);
 }
 
