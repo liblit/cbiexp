@@ -50,8 +50,8 @@ moss_includes.flex mossbad_includes.flex: %_includes.flex: %.flex
 	cd languages; ./build
 	scripts/myinclude <$< >$@
 
-clean: 
-	rm -f $(MOSS) $(MOSS:=.[ciso]) $(MOSS:=_includes.flex) $(BAD:=.sites) $(BAD:=.cfg) $(BAD:=.inst.i) *~
+clean:
+	rm -f $(MOSS) *.[iso] $(MOSS:=.c) $(MOSS:=_includes.flex) $(BAD:=.sites) $(BAD:=.cfg) $(BAD:=.inst.i) *~
 
 
 ########################################################################
