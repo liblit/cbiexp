@@ -1,5 +1,5 @@
 /* user interface for ccrypt: encrypt and decrypt files and streams */
-/* $Id: main.c,v 1.1 2004/04/27 20:30:06 liblit Exp $ */ 
+/* $Id: main.c,v 1.2 2004/10/03 08:20:13 liblit Exp $ */ 
 
 /* This is written to replace the UNIX crypt utility, which uses a
    weak algorithm and is often omitted from free UNIX distributions.
@@ -36,39 +36,39 @@ cmdline cmd;
 
 void usage(FILE *fout) {
   fprintf(fout, "\
-"NAME" "VERSION". Secure encryption and decryption of files and streams.
-
-Usage: "NAME" [mode] [options] [file...]
-       "NAMEENCRYPT" [options] [file...]
-       "NAMEDECRYPT" [options] [file...]
-       "NAMECAT" [options] file...
-
-Modes:
-    -e, --encrypt          encrypt
-    -d, --decrypt          decrypt
-    -c, --cat              cat; decrypt files to stdout
-    -x, --keychange        change key
-    -u, --unixcrypt        decrypt old unix crypt files
-
-Options:
-    -h, --help             print this help message and exit
-    -V, --version          print version info and exit
-    -L, --license          print license info and exit
-    -v, --verbose          print progress information to stderr
-    -q, --quiet            run quietly; suppress warnings
-    -f, --force            overwrite existing files without asking
-    -m, --mismatch         allow decryption with non-matching key
-    -E, --envvar var       read keyword from environment variable var (unsafe)
-    -K, --key key          give keyword on command line (unsafe)
-    -k, --keyfile file     read keyword(s) as first line(s) from file
-    -S, --suffix .suf      use suffix .suf instead of default "SUF"
-    -P, --prompt prompt    use prompt instead of \"Enter key: \"
-    -t, --timid            prompt twice for destructive encryption keys
-    -r, --recursive        recurse through directories
-    -R, --rec-symlinks     follow symbolic links as subdirectories
-    -l, --symlinks         dereference symbolic links
-    --                     end of options, filenames follow
-");
+"NAME" "VERSION". Secure encryption and decryption of files and streams.\n"
+"\n"
+"Usage: "NAME" [mode] [options] [file...]\n"
+"       "NAMEENCRYPT" [options] [file...]\n"
+"       "NAMEDECRYPT" [options] [file...]\n"
+"       "NAMECAT" [options] file...\n"
+"\n"
+"Modes:\n"
+"    -e, --encrypt          encrypt\n"
+"    -d, --decrypt          decrypt\n"
+"    -c, --cat              cat; decrypt files to stdout\n"
+"    -x, --keychange        change key\n"
+"    -u, --unixcrypt        decrypt old unix crypt files\n"
+"\n"
+"Options:\n"
+"    -h, --help             print this help message and exit\n"
+"    -V, --version          print version info and exit\n"
+"    -L, --license          print license info and exit\n"
+"    -v, --verbose          print progress information to stderr\n"
+"    -q, --quiet            run quietly; suppress warnings\n"
+"    -f, --force            overwrite existing files without asking\n"
+"    -m, --mismatch         allow decryption with non-matching key\n"
+"    -E, --envvar var       read keyword from environment variable var (unsafe)\n"
+"    -K, --key key          give keyword on command line (unsafe)\n"
+"    -k, --keyfile file     read keyword(s) as first line(s) from file\n"
+"    -S, --suffix .suf      use suffix .suf instead of default "SUF"\n"
+"    -P, --prompt prompt    use prompt instead of \"Enter key: \"\n"
+"    -t, --timid            prompt twice for destructive encryption keys\n"
+"    -r, --recursive        recurse through directories\n"
+"    -R, --rec-symlinks     follow symbolic links as subdirectories\n"
+"    -l, --symlinks         dereference symbolic links\n"
+"    --                     end of options, filenames follow\n"
+);
 }
 
 /* print version and copyright information */
