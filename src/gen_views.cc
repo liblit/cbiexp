@@ -19,7 +19,7 @@ main(int argc, char** argv)
     for (int i = 0; i < NUM_SCHEMES; i++) {
         for (int m = 0; m < NUM_SORTBYS; m++) {
             char file[1000];
-            sprintf(file, "%s_%s_%s.html", prefix, scheme_codes[i], sortby_codes[m]);
+            sprintf(file, "%s%s_%s.html", prefix, scheme_codes[i], sortby_codes[m]);
             FILE* fp = fopen(file, "w"); assert(fp);
             fprintf(fp, "<html>\n"
                         "<head><link type=\"text/css\" rel=\"stylesheet\" href=\"style.css\"/></head>\n"
