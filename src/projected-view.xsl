@@ -11,7 +11,7 @@
   <!-- add column headers for our own additional information -->
   <xsl:template mode="headings" match="view">
     <th>Initial Popularity</th>
-    <th>Effective >Popularity</th>
+    <th>Effective Popularity</th>
     <xsl:apply-imports/>
   </xsl:template>
 
