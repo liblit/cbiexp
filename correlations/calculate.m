@@ -45,6 +45,9 @@ disp('Calculating correlation matrices.');
 load rb/fix2/mats/Wf.mat
 load rb/fix2/mats/Wfobs.mat
 load rb/fix2/mats/Wfcross.mat
+load rb/fix2/mats/Ws.mat
+load rb/fix2/mats/Wsobs.mat
+load rb/fix2/mats/Wscross.mat
 calcCorr
 save rb/fix2/mats/Cov.mat Cov
 save rb/fix2/mats/rho.mat rho

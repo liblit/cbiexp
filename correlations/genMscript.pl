@@ -2,7 +2,7 @@
 
 use strict;
 
-my $usage = "./genCalcAdj.pl <datadir>";
+my $usage = "./genMscript.pl <datadir>";
 my $datadir = shift;
 die $usage if !defined $datadir;
 my $matdir = "$datadir/mats";
@@ -40,6 +40,7 @@ sub output_calcCorr {
   print $fd "%% Calculate correlation matrices.\n";
   print $fd "disp('Calculating correlation matrices.');\n";
   print $fd "load $matdir/Wf.mat\nload $matdir/Wfobs.mat\nload $matdir/Wfcross.mat\n";
+  print $fd "load $matdir/Ws.mat\nload $matdir/Wsobs.mat\nload $matdir/Wscross.mat\n";
   print $fd "calcCorr\n";
   print $fd "save $matdir/Cov.mat Cov\nsave $matdir/rho.mat rho\nsave $matdir/condprob.mat PAB\n";
   print $fd "%% save output in text format\n";
