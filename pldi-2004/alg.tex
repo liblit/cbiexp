@@ -67,7 +67,7 @@ if (read()) f = ... some valid pointer ...;
 *f;
 \end{verbatim}
 \end{quote}
-then the bug becomes non-deterministic.
+then the bug becomes non-deterministic with respect to {\tt f == NULL}.
 
 To summarize, even for a predicate that is truly the cause of a bug, we can neither assume that
 when the predicate is true that
@@ -112,10 +112,10 @@ Thus $S(\mbox{\tt x == 0}) = 0$, and, so long as there is at least one run that
 reaches line {\tt (c)} at all, $\crash(\mbox{\tt x == 0})$ at line {\tt (c)} is 1.0.
 
 As the predicate {\tt x == 0} at line {\tt (c)} of the example
-shows, just because a predicate has a high $\crash(\ldots)$ score does not
+shows, just because a predicate has a high $\crash()$ score does not
 mean it is the cause of a bug.  In the case of {\tt x == 0}, the
 decision that eventually causes the crash is made earlier, and the
-high $\crash(\ldots)$ score of {\tt x == 0} merely reflects the fact that this
+high $\crash()$ score of {\tt x == 0} merely reflects the fact that this
 predicate is checked on a path where the program is already doomed.
 
 A way to address this difficulty is to score a predicate not by the chance
@@ -129,7 +129,7 @@ the intuition that this predicate is irrelevant to the bug.
 This leads us to the following definition:
 \[ \context(P) \equiv \prob((P \lor \lnot P) \Rightarrow \fail)  = \prob(\fail |  P \mbox{ observed}) \]
 Now, $P \lor \lnot P$ is not the set of all runs, because we are not working in a two-valued logic.
-In any given run, neither of $P$ or $\lnot P$ may be observed (because the site where this predicate is
+In any given run, neither $P$ nor $\lnot P$ may be observed (because the site where this predicate is
 sampled is not reached), or one may be observed, or both may be observed (because the statement is executed
 multiple times and $P$ is sometimes true and sometimes false).  Thus, $\context(P)$ is the probability that
 in the set of runs where the value of $P$ is observed at all, the program fails. We can compute $\context(P)$ as follows:
