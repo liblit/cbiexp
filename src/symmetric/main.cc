@@ -59,20 +59,30 @@ main(int argc, char *argv[])
 
   Boths boths;
   Candidates candidates;
-  allFailures.resize(NumRuns::end, false);
+
+  {
+    Progress::Bounded progress("counting failed runs", NumRuns::count());
+    ifstream runs(ClassifyRuns::failuresFilename);
+    unsigned runId;
+
+    while (runs >> runId && runId < NumRuns::end)
+      ++RunSet::universeSize;
+
+    allFailures.resize(RunSet::universeSize, true);
+  }
 
   {
     Progress::Bounded progress("reading failure reports", NumRuns::count());
     ifstream runs(ClassifyRuns::failuresFilename);
     unsigned runId;
+    unsigned failureId = 0;
+
     while (runs >> runId && runId < NumRuns::end)
       {
 	progress.stepTo(runId);
 	if (runId >= NumRuns::begin)
-	  {
-	    allFailures.set(runId);
-	    FailureReader(candidates, boths, runId).read(runId);
-	  }
+	  FailureReader(candidates, boths, failureId).read(runId);
+	++failureId;
       }
   }
 

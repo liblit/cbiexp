@@ -10,12 +10,12 @@ class Candidates;
 class FailureReader : public Reader
 {
 public:
-  FailureReader(Candidates &, Boths &, unsigned runId);
+  FailureReader(Candidates &, Boths &, unsigned failureId);
 
 private:
   Candidates &candidates;
   Boths &boths;
-  const unsigned runId;
+  const unsigned failureId;
 
   void tallyPair(const PredCoords &, unsigned,
 		 const PredCoords &, unsigned) const;

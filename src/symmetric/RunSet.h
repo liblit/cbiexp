@@ -7,6 +7,8 @@
 class RunSet : private boost::dynamic_bitset<>
 {
 public:
+  static unsigned universeSize;
+
   RunSet();
 
   using boost::dynamic_bitset<>::any;
@@ -25,12 +27,9 @@ public:
 ////////////////////////////////////////////////////////////////////////
 
 
-#include "../NumRuns.h"
-
-
 inline
 RunSet::RunSet()
-  : boost::dynamic_bitset<>(NumRuns::end, false)
+  : boost::dynamic_bitset<>(universeSize, false)
 {
 }
 

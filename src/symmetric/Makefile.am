@@ -16,6 +16,7 @@ libsymmetric_a_SOURCES =			\
 	Predicate.h				\
 	Reader.cc				\
 	Reader.h				\
+	RunSet.cc				\
 	RunSet.h				\
 	SuccessReader.cc			\
 	SuccessReader.h				\

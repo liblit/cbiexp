@@ -8,10 +8,10 @@
 using namespace std;
 
 
-FailureReader::FailureReader(Candidates &candidates, Boths &boths, unsigned runId)
+FailureReader::FailureReader(Candidates &candidates, Boths &boths, unsigned failureId)
   : candidates(candidates),
     boths(boths),
-    runId(runId)
+    failureId(failureId)
 {
 }
 
@@ -32,11 +32,11 @@ FailureReader::tallyPair(const PredCoords &aCoords, unsigned a,
       bCounts = &both->second;
     }
 
-  if (a) aCounts->trueInFailures.set(runId);
-  if (b) bCounts->trueInFailures.set(runId);
+  if (a) aCounts->trueInFailures.set(failureId);
+  if (b) bCounts->trueInFailures.set(failureId);
   if (a && b)
     {
       assert(&aCounts->both == &bCounts->both);
-      aCounts->both.trueInFailures.set(runId);
+      aCounts->both.trueInFailures.set(failureId);
     }
 }
