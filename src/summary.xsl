@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE stylesheet [
-  <!ENTITY link "&#9760;">
+  <!ENTITY link "&#9679;">
 ]>
 
 <xsl:stylesheet
