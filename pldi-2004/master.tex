@@ -237,8 +237,6 @@ metrics (see \autoref{sec:experiments}) are then available to
 engineers to help speed the process of finding and fixing the most
 serious bugs.
 
-\issue{modified by Mike (``The most general technique...'')}
-
 In previous work, we focused on techniques
 for lightweight instrumentation and sampling of program executions, but
 we also studied two preliminary algorithms for statistical debugging and
@@ -251,8 +249,6 @@ methods to much larger programs under realistic conditions, we
 discovered a number of serious scalability problems:
 
 \begin{itemize}
-
-\issue{Modified by Mike (deleted ``the problem persists...'')}
 
 \item For large applications the set ${\cal P}$ numbers in the hundreds of
 thousands of predicates, many of which are, or are very nearly,
@@ -277,7 +273,6 @@ likely unusual code paths are to be exercised.  Thus, predicates
 implying a long command line may rank near the top, even though such
 predicates are useless for isolating the cause of individual bugs.
 
-\issue{modified by Alice}
 \item Finally, different bugs occur at rates that differ by orders of
 magnitude.  In reality, we do not know which crash is caused by which bug, 
 hence we are forced to lump all the bugs together and try to learn a binary
@@ -310,8 +305,6 @@ This paper makes a number of contributions on these problems:
 
 \begin{itemize}
 
-\issue{Modified by Mike (deleted ``..based on different techniques and offering...'')}
-
 \item We present a new algorithm for isolating multiple bugs in
 complex applications (\autoref{sec:algorithm}) 
 that offers significant improvements over previous work:
@@ -319,12 +312,6 @@ it scales much more gracefully in all the dimensions discussed above
 and for each selected predicate $P$ it naturally produces information
 that shows both how important (in number of explained program
 failures) and how accurate a predictor $P$ is.
-%%
-\issue[Mayur]{Change "We present a new algorithm ... based on
-  different techniques and offering significant improvements over
-  previous work" to "We present a new algorithm ... based on
-  techniques that are different from and offer significant
-  improvements over previous work"?}
 
 \item We validate the algorithm by a variety of experiments: We show
 improved results for the experiments in \cite{PLDI`03*141}; in a
