@@ -5,7 +5,6 @@
 #include <ext/hash_map>
 #include <fstream>
 #include <queue>
-#include <vector>
 #include "CompactReport.h"
 #include "NumRuns.h"
 #include "PredStats.h"
@@ -60,33 +59,13 @@ struct SiteInfo
 // corresponding counter in the empirical measure
 inline void
 SiteInfo::notice(Dist d, unsigned n){
-  (reached.*d)[n] += 1;
+  DiscreteDist &disthash = reached.*d;
+  DiscreteDist::iterator found = disthash.find(n);
+  if (found == disthash.end())
+    disthash[n] = 1;
+  else 
+    disthash[n] += 1;
 }
-
-//void
-//SiteInfo::print(ostream &ffp, ostream &sfp) const
-//{
-  //ffp << reached.first.size() << '\n';
-  //for (DiscreteDist::iterator c = reached.first.begin(); 
-       //c != reached.first.end(); 
-       //c++) 
-  //{
-    //const unsigned n = c->first;
-    //const unsigned val = c->second;
-    //ffp << n << ' ' << val << ' ';
-  //}
-  //ffp << '\n';
-//
-  //sfp << reached.second.size() << '\n';
-  //for (DiscreteDist::iterator c = reached.second.begin();
-       //c != reached.second.end();
-       //c++) 
-  //{
-    //const unsigned n = c->first;
-    //const unsigned val = c->second;
-    //sfp << n << ' ' << val << ' ';
-  //}
-//}
 
 typedef hash_map<SiteCoords, SiteInfo> SiteSeen;
 static SiteSeen siteSeen;
@@ -112,8 +91,8 @@ public:
   void countZeros();
 
 private:
-  SiteInfo *notice(const SiteCoords &, unsigned) const;
-  void tripleSite(const SiteCoords &, unsigned, unsigned, unsigned) const;
+  void notice(const SiteCoords &, unsigned);
+  void tripleSite(const SiteCoords &, unsigned, unsigned, unsigned);
   const Dist d;
 };
 
@@ -121,24 +100,27 @@ inline
 Reader::Reader(Dist _d)
   : d(_d)
 {
+  siteCount.clear();
 }
 
-SiteInfo *
-Reader::notice(const SiteCoords &coords, unsigned n) const
+void
+Reader::notice(const SiteCoords &coords, unsigned n)
 {
-  siteCount[coords] += 1;
+  SiteCounter::iterator f = siteCount.find(coords);
+  if (f == siteCount.end())
+    siteCount[coords] = 1;
+  else
+    siteCount[coords] += 1;
 
   const SiteSeen::iterator found = siteSeen.find(coords);
-  if (found == siteSeen.end())
-    return 0;
-  else {
+  if (found != siteSeen.end())
+  {
     SiteInfo &info = found->second;
     info.notice(d, n);
-    return &info;
   }
 }
 
-void Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
+void Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z)
 {
   assert(x || y || z);
   notice(coords, x+y+z);
@@ -243,7 +225,6 @@ int main (int argc, char** argv)
     else
       continue;
 
-    siteCount.clear();
     Reader r(d);
     r.read(cur_run);
     r.countZeros();
@@ -266,5 +247,7 @@ int main (int argc, char** argv)
     retainedSites.pop();
   }
 
+  ffp.close();
+  sfp.close();
   return 0;
 }

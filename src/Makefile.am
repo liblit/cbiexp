@@ -1,7 +1,7 @@
 SUBDIRS = corrective-ranking Score
 
 AM_CPPFLAGS = -W -Wall -Werror -Wformat 
-AM_CXXFLAGS = -I./boost_1_32_0/include/boost-1_32
+#AM_CXXFLAGS = -I/moa/sc5/cbi/alicez/cbiexp/src/boost_1_32_0/include/boost-1_32
 
 EXTRA_DIST =					\
 	summary.css				\
@@ -78,8 +78,6 @@ libanalyze_a_SOURCES =				\
 	RunsSplit.h				\
 	SiteCoords.cc				\
 	SiteCoords.h				\
-	SitePairs.cc				\
-	SitePairs.h				\
 	SourceDirectory.cc			\
 	SourceDirectory.h			\
 	Stylesheet.cc				\
@@ -123,10 +121,14 @@ libanalyze_a_SOURCES =				\
 #
 
 liblate_a_SOURCES =				\
+	calc_truthprobs.cc			\
+	chi2test.cc				\
+	collect_parmstats.cc			\
 	compute_obs_tru.cc			\
 	compute_results.cc			\
 	compute_nonconst_preds.cc		\
 	convert_reports.ll			\
+	est_hyperparms.cc			\
 	extract_timestamps.ll			\
 	gather_prior_dist.cc			\
 	gen_preds_file.cc			\

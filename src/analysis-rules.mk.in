@@ -237,8 +237,10 @@ gather_prior_dist: %: $(tooldir)/%.o sites.o units.o
 clean:: ; rm -f gather_prior_dist
 
 prior-dist: gather_prior_dist s.runs f.runs preds.txt
+	$(time) ./$< --runs-directory=$(datadir)
+	mv fpriors.dat fpriors-full.dat
+	mv spriors.dat spriors-full.dat
 	$(time) ./$< --runs-directory=$(datadir) --report-suffix=$(report-series)
-clean:: ; rm -f fpriors.dat spriors.dat
 
 compute_nonconst_preds: %: $(tooldir)/%.o sites.o units.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -lm -o $@
@@ -279,7 +281,33 @@ partial_order: $(tooldir)/partial_order.o units.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
 	$(time) $@ --runs-directory=$(datadir) --timestamp-when=first
 	$(time) $@ --runs-directory=$(datadir) --timestamp-when=last
-clean:: ; rm -f partial_order
+
+collect_parmstats: $(tooldir)/collect_parmstats.o units.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
+clean:: ; rm -f colect_parmstats
+
+parmstats.txt: collect_parmstats $(stamp-decimate) s.runs f.runs
+	$(time) $< --runs-directory=$(datadir) --report-suffix=$(report-series) --sample-rates=$(stamp-decimate)
+clean:: ; rm -f parmstats.txt
+
+est_hyperparms: $(tooldir)/est_hyperparms.o units.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -lm -o $@
+clean:: ; rm -f est_hyperparms
+
+hyperparms.txt: est_hyperparms parmstats.txt
+	$(time) $< --runs-directory=$(datadir) 
+
+chi2test: $(tooldir)/chi2test.o units.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -lm -o $@
+
+chi2stats.txt: chi2test parmstats.txt fpriors.dat fpriors-full.dat spriors.dat spriors-full.dat
+	$(time) $<
+
+calc_truthprobs: $(tooldir)/calc_truthprobs.o units.o sites.o 
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lm -o $@
+
+truthprobs: calc_truthprobs parmstats.txt preds.txt
+	$(time) $< --runs-directory=$(datadir) --report-suffix=$(report-series)
 
 ########################################################################
 
