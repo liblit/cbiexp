@@ -1,7 +1,0 @@
-V. Previous and Related work
-5.1 Comparison with logistic regression
-- last paragraph
-  + I changed the justification for why sub-bug predictors are selected.
-    We don't relax the regularization penalty during log reg training, but 
-    I think sub-bug predictors are selected because they are really good
-    predictors for certain subsets of failed runs. [text modified]

@@ -615,6 +615,12 @@ sub-bugs, and are therefore chosen over others.
 %%allows logistic regression to add more predicates to improve its
 %%prediction, but the sub-bug predictors apparently are favored.
 
+\issue[Alice]{I changed the justification for why sub-bug predictors
+  are selected.  We don't relax the regularization penalty during log
+  reg training, but I think sub-bug predictors are selected because
+  they are really good predictors for certain subsets of failed runs.
+  [text modified]}
+
 \section{Conclusions}
 \label{sec:conclusions}
 
