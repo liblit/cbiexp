@@ -1,5 +1,0 @@
-#!/bin/sh -e
-
-make
-../bin/make-runs $1
-../bin/analyze-runs -p "bc1.06" -s "share/bc.sites" -d "src/bc" -n $1
