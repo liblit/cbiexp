@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cstring>
 #include <cstdlib>
+#include "classify_runs.h"
 
 int num_runs = 0, num_sruns, num_fruns;
 bool *is_srun, *is_frun;
