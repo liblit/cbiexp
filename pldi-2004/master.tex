@@ -173,7 +173,7 @@ tested each time the program point is reached).  A feedback report $R$
 consists of one bit indicating whether the {\em run} of the program
 succeeded or failed, as well as a bit vector with one bit for each
 predicate $P$; if $P$ is observed to be true at least once during run
-$R$ then $R(P) = 1$, otherwise $R(P) = 0$.\footnote{In truth, we count
+$R$ then $R(P) = 1$, otherwise $R(P) = 0$.\footnote{In reality, we count
 the number of times $P$ is observed to be true, but the analysis of
 the feedback reports only uses whether $P$ is observed to be true at
 least once.}
@@ -242,14 +242,14 @@ quickly as possible. Among the remaining predicates that can
 predict failure in some way, there are some bug predictors.
 There are also {\em super-bug predictors}, predicates that, as
 described above, predict failures due to a variety of bugs.  And there
-are {\em sub-bug predictors}, predicates the characterize a subset of
+are {\em sub-bug predictors}, predicates that characterize a subset of
 the failures of a specific bug; these are often special cases of more
 general problems.  We give the concepts of super- and sub-bug
 predictors more precise technical treatment in
 Section~\ref{sec:ranking}.
 
 The difficulty in identifying the best bug predictors lies in not being
-fooled by the sub- or super-bug predictors and not being overwhelmed
+misled by the sub- or super-bug predictors and not being overwhelmed
 by the sheer number of predicates to sift through.
 This paper makes a number of contributions on these problems:
 
@@ -290,7 +290,7 @@ crashes.  All that is required is a way to label each run as either
 
 With respect to this last point, perhaps the greatest strength of our
 system is its ability to automatically identify the cause of many
-different kinds of bugs, including new classes bugs that we did not
+different kinds of bugs, including new classes of bugs that we did not
 anticipate in building the tool.  By relying only on the distinction
 between good and bad executions, our analysis does not require a
 specification of the program properties to be analyzed.  Thus,

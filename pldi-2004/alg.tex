@@ -173,7 +173,7 @@ increase scores but very low confidence because of few observations.
 Pruning predicates using $\increase(P) \leq 0$ has many desirable
 properties.  It is easy to prove that large classes of irrelevant
 predicates always have scores $\leq 0$.  For example, any predicate
-that is not reached, that is a program invariant, or that is obviously
+that is unreachable, that is a program invariant, or that is obviously
 control-dependent on a true cause is eliminated by this test.  It is
 also worth pointing out that this test tends to localize bugs at
 a point where the condition that causes the bug becomes true, rather than at
@@ -199,7 +199,7 @@ probability is the probability that the predicate is observed to be
 true.  If a predicate causes a set of crashes, then $\pi_f$ should be
 much bigger than $\pi_s$.  We can formulate two statistical hypotheses:
 the null hypothesis $\H_0:
-\pi_f \leq \pi_s$, vs.\ the alternate hypothesis $\H_1: \pi_f > \pi_s$.  Since
+\pi_f \leq \pi_s$, versus the alternate hypothesis $\H_1: \pi_f > \pi_s$.  Since
 $\pi_f$ and $\pi_s$ are not known, we must estimate them:
 \begin{align*}
   \hat \pi_f(P) &= \frac{F(P)}{F(P \lor \lnot P)} &
@@ -209,11 +209,11 @@ $\pi_f$ and $\pi_s$ are not known, we must estimate them:
 Although these proportion estimates of $\pi_f$ and $\pi_s$ approach the
 actual heads probabilities as we increase the number of trial runs, they
 still differ due to sampling.  With a certain probability, using these
-estimates instead of the actual values result in the wrong
+estimates instead of the actual values results in the wrong
 answer.  A \textit{likelihood ratio test} takes this uncertainty into
 account, and makes use of the statistic $ Z = \frac{(\hat \pi_f - \hat
   \pi_s)}{V_{f,s}}$, where $V_{f,s}$ is a sample variance term (see
-e.g., ~\cite{Lehmann:1986:hyptest}).  When
+e.g., \cite{Lehmann:1986:hyptest}).  When
 the data size is large, $Z$ can be approximated as a standard Gaussian
 random variable.  Performed independently for each predicate $P$, the
 test decides whether or not $\pi_f(P) \leq \pi_s(P)$ with a guaranteed
@@ -228,7 +228,7 @@ Then
   \iff \frac{a}{a+b} > \frac{c}{c+d}
   \iff a (c+d) > (a+b) c \\
   \iff ad > bc \iff \frac{a}{c} > \frac{b}{d}
-  \iff \hat \pi_f > \hat \pi_s
+  \iff \hat \pi_f(P) > \hat \pi_s(P)
 \end{gather*}
 
 \input{moss-view/stats-breakout}

@@ -155,7 +155,7 @@ ranked by how much $P$ causes their ranking score to decrease.
 \subsubsection{\ccrypt}
 
 We analyzed {\tt ccrypt} version 1.2, which has a known bug \cite{Selinger:2003:cqual}.  
-The results are shown in Table~\autoref{tab:views-ccrypt}.
+The results are shown in Table~\ref{tab:views-ccrypt}.
 Our algorithm reports two predictors, which both point directly to the single bug. 
 It is easy to discover that the two predictors are for the same bug; the first predicate
 is listed first in the second predicate's affinity list, indicating the first predicate
@@ -163,7 +163,7 @@ is a sub-bug predictor of the second predicate.
 
 \subsubsection{\bc}
 
-The results for \bc\ are shown in Table~\autoref{tab:views-bc}, which has a known buffer overrun.
+The results for \bc\ are shown in Table~\ref{tab:views-bc}, which has a known buffer overrun.
 The outcome is the same as for \ccrypt: two predicates are retained by elimination, and the second
 predicate lists the first predicate at the top of its affinity list, indicating the first predicate
 is a sub-bug predictor of the second.  Both predicates point to the cause of the overrun.  
@@ -172,14 +172,14 @@ information on the stack at the point of the crash to assist in isolating this b
 
 \subsubsection{\exif}
 
-Table~\autoref{tab:views-exif} shows results for \exif, an open source image processing program.
+Table~\ref{tab:views-exif} shows results for \exif, an open source image processing program.
 The three predicates are predictors of three separate, and previously unknown, crashing bugs.  It took less
 than 20 minutes of work to find and verify the cause of each of the bugs using these predicates
 and the additional highly correlated predicates on their affinity lists.
 
 \subsubsection{\rhythmbox}
 
-Table~\autoref{tab:views-rhythmbox} shows our results for \rhythmbox, an open source jukebox player.
+Table~\ref{tab:views-rhythmbox} shows our results for \rhythmbox, an open source jukebox player.
 \rhythmbox is a complex event-driven system, written using
 a library providing object-oriented primitives in C.  Event-driven
 systems use event queues; each event performs some computation and
