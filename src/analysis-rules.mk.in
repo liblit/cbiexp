@@ -243,9 +243,17 @@ train_utillog: %: $(tooldir)/%.o sites.o units.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -lm -o $@
 clean:: ; rm -f train_utillog
 
-theta.txt: train_utillog train.runs val.runs nonconst_preds.txt
+theta: train_utillog train.runs val.runs nonconst_preds.txt
 	$(time) ./$< --runs-directory=$(datadir) --report-suffix=$(report-series)
 clean:: ; rm -f theta.txt train_lls.txt val_lls.txt confmat.txt
+
+clip_params: %: $(tooldir)/%.o sites.o units.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -lm -o $@
+clean:: ; rm -f clip_params
+
+clipped_ll: clip_params train.runs val.runs nonconst_preds.txt
+	$(time) ./$< --runs-directory=$(datadir) --report-suffix=$(report-series)
+clean:: ;
 
 sites.o units.o: %.o: %.cc
 clean:: ; rm -f sites.o units.o

@@ -36,6 +36,7 @@ read_split_runs(const char message[], const char filename[], vector<bool> &bits,
     bits[i] = true;
     ++count;
   }
+  file.close();
 
   runs.resize(count);
   unsigned c = 0;

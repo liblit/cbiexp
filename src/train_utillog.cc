@@ -52,7 +52,7 @@ struct pred_info_t {
     unsigned val;
     double theta;
     pred_info_t () {
-	mean = var = 0.0;
+	mean = var = std = 0.0;
 	min = max = 0;
 	val = 0;
 	theta = 0.0;
@@ -114,6 +114,8 @@ void init_preds ()
 	pval.second = pi;
 	pred_hash.insert(pval);
     }
+    fclose(pfp);
+
     verify_stats();  // verify that the predicate statistics are valid
     assert(nread == num_preds);
 }
@@ -167,6 +169,7 @@ void Reader::insert_val(const SiteCoords &coords, unsigned offset, unsigned val)
 
 void Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
 {
+    assert(x || y || z);
     if (x > 0)
 	insert_val(coords, 0, x);
     if (y > 0)
@@ -191,6 +194,7 @@ Reader::returnsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z
 inline void
 Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y)
 {
+    assert(x||y);
     if (x > 0)
 	insert_val(coords, 0, x);
     if (y > 0)
@@ -200,6 +204,7 @@ Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y)
 inline void
 Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z, unsigned w)
 {
+    assert(x || y || z || w);
     if (x > 0)
 	insert_val(coords, 0, x);
     if (y > 0)
@@ -219,9 +224,9 @@ get_val(const pred_info_t &pp, const pred_info_t &pi)
  return (double) (pi.val - pp.min)/pp.std;
 }
 
-double calc_mu () 
+double calc_z () 
 {
-    double mu = theta0;
+    double z = theta0;
     for (pred_hash_t::const_iterator c = pred_hash.begin(); c != pred_hash.end(); c++) {
 	const PredCoords &pc = c->first;
 	const pred_hash_t::iterator found = curr_run.preds.find(pc);
@@ -231,24 +236,25 @@ double calc_mu ()
 	    const pred_info_t &pp = c->second;
 	    const pred_info_t &pi = found->second;
 	    double val = get_val(pp, pi);
-	    mu += pp.theta * val;
+	    z += pp.theta * val;
 	}
     }
-    mu = 1/ (1+exp(-mu));
+    return z;
+}
+
+double calc_mu (const double z) {
+    double mu = 1/ (1+exp(-z));
     assert(!isnan(mu));
     return mu;
 }
 
-double calc_ll (const double mu) {
+double calc_ll (const double z) {
     double ll = 0.0;
     if (is_frun[curr_run.runId]) {
-	ll = log(mu);
+	ll = -log1p(exp(-z));
     }
     else if (is_srun[curr_run.runId]) {
-	if (mu > 1e-10)
-	    ll = log(1e-10);  // cut off from -infinity at log(1e-10)
-	else
-	    ll = log1p(-mu);
+	ll = -log1p(exp(z));
     }
     else {
 	cerr << "Current run " << curr_run.runId << " is neither a success nor a failure.\n";
@@ -261,14 +267,18 @@ double calc_ll (const double mu) {
 
 double utillog_update() 
 {
-    double mu = calc_mu();
-    double ll = calc_ll(mu);
+    double z = calc_z();
+    double mu = calc_mu(z);
+    double ll = calc_ll(z);
     double coeff = 0.0;
+    double fp_penalty = 0.0;
     if (is_frun[curr_run.runId]) {
 	coeff = UtilLogReg::tau * UtilLogReg::delta1 * (1-mu);
     }
     else if (is_srun[curr_run.runId]) {
-	coeff = - UtilLogReg::tau * (UtilLogReg::delta2 * mu + UtilLogReg::delta3);
+	if (mu > 0.5)
+	    fp_penalty = UtilLogReg::delta3;
+	coeff = - UtilLogReg::tau * (UtilLogReg::delta2 * mu + fp_penalty);
     }
     else {
 	cerr << "Current run " << curr_run.runId << " is neither a success nor a failure.\n";
@@ -312,8 +322,9 @@ void utillog_validate(vector<double> &lls, confusion_matrix &cm) {
 
 	Reader(r).read(r);
 
-	double mu = calc_mu();
-	double ll = calc_ll(mu);
+        double z = calc_z();
+	double mu = calc_mu(z);
+	double ll = calc_ll(z);
 	lls[i] = ll;
 
 	if (is_frun[curr_run.runId]) {
@@ -370,7 +381,7 @@ operator<< (ostream &out, const confusion_matrix &cm)
 }
 
 inline ostream &
-operator<< (ostream &out, const pred_hash_t ph)
+operator<< (ostream &out, const pred_hash_t &ph)
 {
     out << "-1 -1 -1 " << theta0 << '\n';
     for (pred_hash_t::const_iterator c = ph.begin(); c != ph.end(); c++) {

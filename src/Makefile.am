@@ -131,4 +131,5 @@ liblate_a_SOURCES =				\
 	project.cc				\
 	sites.h					\
 	units.h					\
-	xmlify-results.cc
+	xmlify-results.cc			\
+	clip_params.cc

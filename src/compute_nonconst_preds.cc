@@ -20,7 +20,7 @@ using namespace std;
 /****************************************************************************
  * Definition of necessary constants, functions, structures, and classes
  ***************************************************************************/
-#define MAX_INT 1<<31;
+static unsigned MAX_INT = 1<<31;
 unsigned cur_run;
 static unsigned num_train_runs = 0;
 static unsigned num_val_runs = 0;
@@ -128,7 +128,7 @@ inline void adj_for_zeros(int u, int c, int p) {
     site_info_t &site = site_info[u][c];
     unsigned n = site.ntallied;
     // (num_trainruns - ntallied) is the number of omitted zeros
-    double adj = (double)  (num_train_runs - n)/(num_train_runs);
+    double adj = (double)  n/num_train_runs;
     site.mean[p] = site.mean[p] * adj;
     site.var[p] = site.var[p] * adj;
     site.min[p] = (0 < site.min[p]) ? 0 : site.min[p];
@@ -201,6 +201,7 @@ void print_retained_preds()
     }
   }
 
+  fp.close();
 }
 
 void print_runsplit ()
@@ -217,6 +218,8 @@ void print_runsplit ()
       vfp << i << '\n';
   }
 
+  tfp.close();
+  vfp.close();
 }
 
 /****************************************************************************
