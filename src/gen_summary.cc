@@ -1,8 +1,11 @@
 #include <argp.h>
 #include <iostream>
 #include <map>
+#include "Confidence.h"
+#include "PredStats.h"
+#include "SourceDirectory.h"
 #include "classify_runs.h"
-#include "preds_txt.h"
+#include "fopen.h"
 #include "sites.h"
 #include "units.h"
 #include "utils.h"
@@ -19,73 +22,21 @@ typedef map<char, unsigned> Tally;
 //
 
 
-static const char *experimentName = "dummy";
-static int confidence = -1;
-static const char *sourceDirectory = 0;
-
-
-static const argp_option options[] = {
-  {
-    "experiment",
-    'e',
-    "NAME",
-    0,
-    "human-readable name of experiment",
-    0
-  },
-  {
-    "confidence",
-    'c',
-    "##",
-    0,
-    "experiment used ##% confidence",
-    0
-  },
-  {
-    "source-directory",
-    'd',
-    "SRC-DIR",
-    0,
-    "hyperlink to program sources in SRC-DIR",
-    0
-  },
-  { 0, 0, 0, 0, 0, 0 }
-};
-
-
-static int
-parseFlag(int key, char *arg, argp_state *state)
+static void
+processCommandLine(int argc, char *argv[])
 {
-  switch (key)
-    {
-    case 'e':
-      experimentName = arg;
-      return 0;
-    case 'c':
-      char *tail;
-      confidence = strtol(arg, &tail, 0);
-      if (errno || *tail || confidence <= 0 || confidence > 100)
-	argp_error(state, "invalid confidence level \"%s\"", arg);
-      return 0;
-    case 'd':
-      sourceDirectory = arg;
-      return 0;
-    default:
-      return ARGP_ERR_UNKNOWN;
-    }
-}
+  static const argp_child children[] = {
+    { &Confidence::argp, 0, 0, 0 },
+    { &SourceDirectory::argp, 0, 0, 0 },
+    { 0, 0, 0, 0 }
+  };
 
+  static const argp argp = {
+    0, 0, 0, 0, children, 0, 0
+  };
 
-static const argp_child argpChildren[] = {
-  { &preds_txt_argp, 0, 0, 0 },
-  { &classify_runs_argp, 0, "Outcome summary files:", 0 },
-  { 0, 0, 0, 0 }
-};
-
-
-static const argp argp = {
-  options, parseFlag, 0, 0, argpChildren, 0, 0
-};
+  argp_parse(&argp, argc, argv, 0, 0, 0);
+} 
 
 
 
@@ -115,20 +66,16 @@ print_summary(ostream &out, Tally &tally)
       << "<?xml-stylesheet type=\"text/xsl\" href=\"summary.xsl\"?>"
       << "<!DOCTYPE experiment SYSTEM \"summary.dtd\">"
 
-      << "<experiment title=\"" << experimentName
-      << "\" date=\"" << ctime(&now);
-
-  if (sourceDirectory)
-    out << "\" source-dir=\"" << sourceDirectory;
-
-  out << "\">"
+      << "<experiment date=\"" << ctime(&now)
+      << "\" source-dir=\"" << SourceDirectory::root
+      << "\">"
 
       << "<runs success=\"" << num_sruns
       << "\" failure=\"" << num_fruns
       << "\" ignore=\"" << num_runs - (num_sruns + num_fruns)
       << "\"/>"
 
-      << "<analysis confidence=\"" << confidence << "\"/>"
+      << "<analysis confidence=\"" << Confidence::level << "\"/>"
 
       << "<schemes>";
 
@@ -150,19 +97,13 @@ print_summary(ostream &out, Tally &tally)
 int
 main(int argc, char** argv)
 {
-  argp_parse(&argp, argc, argv, 0, 0, 0);
-  if (confidence <= 0)
-    {
-      cerr << "must specify experiment confidence level\n";
-      argp_help(&argp, stdout, ARGP_HELP_STD_ERR, argv[0]);
-      exit(argp_err_exit_status);
-    }
-
+  processCommandLine(argc, argv);
+  classify_runs();
   ios::sync_with_stdio(false);
 
   Tally tally;
   {
-    FILE *predStats = fopen_read(preds_txt_filename);
+    FILE *predStats = fopenRead(PredStats::filename);
 
     pred_info info;
     while (read_pred_full(predStats, info))

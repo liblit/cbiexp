@@ -1,8 +1,6 @@
 #ifndef INCLUDE_Rho_h
 #define INCLUDE_Rho_h
 
-#include <argp.h>
-#include <memory>
 #include "MappedArray.h"
 #include "Matrix.h"
 
@@ -16,10 +14,7 @@
 class Rho
 {
 public:
-  Rho(size_t size, const char []);
-
-  static const ::argp argp;
-  static const char *filename;
+  Rho(size_t size);
 
   const double * operator [] (size_t) const;
 

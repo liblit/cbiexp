@@ -1,7 +1,6 @@
 <!-- results from a single experiment -->
 <!ELEMENT experiment (runs, analysis, schemes)>
 <!ATTLIST experiment
-  title CDATA #REQUIRED
   date CDATA #REQUIRED
   source-dir CDATA #IMPLIED>
 

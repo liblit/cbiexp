@@ -1,7 +1,14 @@
 #include <cassert>
 #include <cmath>
+#include <ctype.h>
 #include <vector>
+#include "CompactReport.h"
+#include "Confidence.h"
+#include "PredStats.h"
+#include "Progress.h"
+#include "RunsDirectory.h"
 #include "classify_runs.h"
+#include "fopen.h"
 #include "sites.h"
 #include "units.h"
 #include "utils.h"
@@ -28,23 +35,12 @@ struct site_info_t {
     }
 };
 
-vector<vector<site_info_t> > site_info;
+static vector<vector<site_info_t> > site_info;
 
-char* experiment_name = NULL;
-int   confidence = -1;
-
-char* sruns_txt_file = NULL;
-char* fruns_txt_file = NULL;
-char* compact_report_path_fmt = NULL;
-
-char* preds_txt_file = NULL;
-
-int num_s_preds = 0;
-int num_r_preds = 0;
-int num_b_preds = 0;
-int num_g_preds = 0;
-
-FILE* preds_txt_fp = NULL;
+static int num_s_preds = 0;
+static int num_r_preds = 0;
+static int num_b_preds = 0;
+static int num_g_preds = 0;
 
 /****************************************************************************
  * Procedures for printing retained predicates
@@ -57,7 +53,7 @@ inline void print_pred(FILE* fp, int u, int c, int p, int site)
     int os = site_info[u][c].os;
     int of = site_info[u][c].of;
 
-    pred_stat ps = compute_pred_stat(s, f, os, of, confidence);
+    pred_stat ps = compute_pred_stat(s, f, os, of, Confidence::level);
 
     assert(units[u].scheme_code == sites[site].scheme_code);
 
@@ -72,7 +68,7 @@ void print_retained_preds()
 {
     int u, c, p, site = 0;
 
-    FILE* fp = fopen(preds_txt_file, "w");
+    FILE* fp = fopenWrite(PredStats::filename);
     assert(fp);
 
     for (u = 0; u < num_units; u++) {
@@ -181,7 +177,7 @@ inline void cull(int u, int c, int p)
 {
     int s = site_info[u][c].S[p];
     int f = site_info[u][c].F[p];
-    pred_stat ps = compute_pred_stat(s, f, site_info[u][c].os, site_info[u][c].of, confidence);
+    pred_stat ps = compute_pred_stat(s, f, site_info[u][c].os, site_info[u][c].of, Confidence::level);
 
     if (retain_pred(s, f, ps.lb)) {
         site_info[u][c].retain[p] = true;
@@ -392,63 +388,20 @@ void cull_preds_aggressively2()
  * Processing command line options
  ***************************************************************************/
 
+
 void process_cmdline(int argc, char** argv)
 {
-    for (int i = 1; i < argc; i++) {
-	if (!strcmp(argv[i], "-e")) {
-	    i++;
-	    experiment_name = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-c")) {
-	    i++;
-	    confidence = atoi(argv[i]);
-	    assert(confidence >= 90 && confidence < 100);
-	    continue;
-	}
-	if (!strcmp(argv[i], "-s")) {
-	    i++;
-	    sruns_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-f")) {
-	    i++;
-	    fruns_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-cr")) {
-	    i++;
-	    compact_report_path_fmt = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-p")) {
-	    i++;
-	    preds_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-h")) {
-	    puts("Usage: compute-results <options>\n"
-                 "    -e       <experiment-name>\n"
-                 "    -c       <confidence>\n"
-                 "(r) -s       <sruns-txt-file>\n"
-                 "(r) -f       <fruns-txt-file>\n"
-                 "(r) -cr      <compact-report-path-fmt>\n"
-                 "(w) -p       <preds-txt-file>\n");
-	    exit(0);
-	}
-	printf("Illegal option: %s\n", argv[i]);
-	exit(1);
-    }
+    static const argp_child children[] = {
+	{ &Confidence::argp, 0, 0, 0 },
+	{ &RunsDirectory::argp, 0, 0, 0 },
+	{ 0, 0, 0, 0 }
+    };
 
-    if (!experiment_name ||
-        confidence == -1 ||
-        !sruns_txt_file ||
-        !fruns_txt_file ||
-        !compact_report_path_fmt ||
-	!preds_txt_file) {
-	puts("Incorrect usage; try -h");
-	exit(1);
-    }
+    static const argp argp = {
+	0, 0, 0, 0, children, 0, 0
+    };
+
+    argp_parse(&argp, argc, argv, 0, 0, 0);
 }
 
 /****************************************************************************
@@ -459,21 +412,18 @@ int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
 
-    classify_runs(sruns_txt_file, fruns_txt_file);
+    classify_runs();
 
     site_info.resize(num_units);
     for (int u = 0; u < num_units; u++) site_info[u].resize(units[u].num_sites);
 
+    Progress progress("computing results", num_runs);
     for (cur_run = 0; cur_run < num_runs; cur_run++) {
+	progress.step();
         if (!is_srun[cur_run] && !is_frun[cur_run])
             continue;
 
-        printf("r %d\n", cur_run);
-        char s[1000];
-        sprintf(s, compact_report_path_fmt, cur_run);
-
-        FILE* fp = fopen(s, "r");
-        assert(fp);
+        FILE* fp = fopenRead(CompactReport::format(cur_run));
 
         process_report(fp, process_s_site, process_s_site, process_b_site, process_g_site);
 

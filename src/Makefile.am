@@ -1,6 +1,7 @@
 SUBDIRS = Score
 
 AM_CPPFLAGS = -W -Wall -Werror -Wformat
+CXXFLAGS = -g
 
 EXTRA_DIST =					\
 	summary.css				\
@@ -26,8 +27,10 @@ analyze_runs_SOURCES =				\
 analyze_runs_LDADD = libanalyze.a
 
 map_sites_SOURCES = map_sites.cc
+map_sites_LDADD = libanalyze.a
 
 process_run_labels_SOURCES = process_run_labels.cc
+process_run_labels_LDADD = libanalyze.a
 
 
 ########################################################################
@@ -36,21 +39,41 @@ process_run_labels_SOURCES = process_run_labels.cc
 libanalyze_a_SOURCES =				\
 	AutoFD.cc				\
 	AutoFD.h				\
-	Candidate.h				\
 	Candidate.cc				\
+	Candidate.h				\
+	ClassifyRuns.cc				\
+	ClassifyRuns.h				\
+	CompactReport.cc			\
+	CompactReport.h				\
+	Confidence.cc				\
+	Confidence.h				\
 	Dilute.cc				\
 	Dilute.h				\
 	IndexedPredInfo.h			\
+	MapSites.cc				\
+	MapSites.h				\
+	NumRuns.cc				\
+	NumRuns.h				\
+	PredStats.cc				\
+	PredStats.h				\
 	PredicatePrinter.cc			\
 	PredicatePrinter.h			\
+	Progress.cc				\
+	Progress.h				\
+	RawReport.cc				\
+	RawReport.h				\
 	Rho.cc					\
 	Rho.h					\
+	RunsDirectory.cc			\
+	RunsDirectory.h				\
+	SourceDirectory.cc			\
+	SourceDirectory.h			\
 	ViewPrinter.cc				\
 	ViewPrinter.h				\
 	classify_runs.cc			\
 	classify_runs.h				\
-	preds_txt.cc				\
-	preds_txt.h				\
+	fopen.cc				\
+	fopen.h					\
 	shell.cc				\
 	shell.h					\
 	sorts.h					\

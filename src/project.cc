@@ -11,6 +11,7 @@
 #include "Dilute.h"
 #include "MappedArray.h"
 #include "Matrix.h"
+#include "PredStats.h"
 #include "PredicatePrinter.h"
 #include "Rho.h"
 #include "Score/Fail.h"
@@ -21,7 +22,7 @@
 #include "Score/TrueInFails.h"
 #include "ViewPrinter.h"
 #include "classify_runs.h"
-#include "preds_txt.h"
+#include "fopen.h"
 #include "sites.h"
 #include "utils.h"
 
@@ -38,25 +39,6 @@ using namespace std;
 // map key "all" includes all schemes
 typedef list<IndexedPredInfo> PredInfos;
 typedef map<string, PredInfos> Schemes;
-
-
-////////////////////////////////////////////////////////////////////////
-//
-//  Command line processing
-//
-
-
-static const argp_child argpChildren[] = {
-  { &Rho::argp, 0, 0, 0 },
-  { &preds_txt_argp, 0, 0, 0 },
-  { &classify_runs_argp, 0, "Outcome summary files:", 0 },
-  { 0, 0, 0, 0 }
-};
-
-
-static const argp argp = {
-  0, 0, 0, 0, argpChildren, 0, 0
-};
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -140,8 +122,9 @@ int
 main(int argc, char *argv[])
 {
   // command line processing and other initialization
+  argp_parse(0, argc, argv, 0, 0, 0);
   ios::sync_with_stdio(false);
-  argp_parse(&argp, argc, argv, 0, 0, 0);
+  classify_runs();
 
   // predicates grouped by scheme
   // map key "all" includes all schemes
@@ -149,7 +132,7 @@ main(int argc, char *argv[])
   PredInfos &all = schemes["all"];
 
   // load up predicates and note set of active schemes
-  FILE * const statsFile = fopen_read(preds_txt_filename);
+  FILE * const statsFile = fopenRead(PredStats::filename);
   pred_info info;
   unsigned index = 0;
   while (read_pred_full(statsFile, info)) {
@@ -161,7 +144,7 @@ main(int argc, char *argv[])
   }
 
   // load correlation matrix
-  const Rho rho(all.size(), Rho::filename);
+  const Rho rho(all.size());
 
   // generate sorted views for each individual scheme
   for(Schemes::const_iterator scheme = schemes.begin(); scheme != schemes.end(); ++scheme)

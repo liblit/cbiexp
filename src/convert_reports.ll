@@ -132,16 +132,14 @@ uint 0|[1-9][0-9]*
 %%
 
 
-#include <algorithm>
-#include <cstdio>
-#include <cstring>
-#include <cstdlib>
+#include <argp.h>
+#include "CompactReport.h"
+#include "Progress.h"
+#include "RawReport.h"
+#include "RunsDirectory.h"
 #include "classify_runs.h"
-
-char* sruns_txt_file = NULL;
-char* fruns_txt_file = NULL;
-char* verbose_report_path_fmt = NULL;
-char* compact_report_path_fmt = NULL;
+#include "fopen.h"
+#include "utils.h"
 
 static int get_unit_indx(char scheme_code, const string &signature)
 {
@@ -157,71 +155,33 @@ static int get_unit_indx(char scheme_code, const string &signature)
 
 void process_cmdline(int argc, char** argv)
 {
-    for (int i = 1; i < argc; i++) {
-	if (!strcmp(argv[i], "-vr")) {
-	    i++;
-	    verbose_report_path_fmt = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-cr")) {
-	    i++;
-	    compact_report_path_fmt = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-s")) {
-	    i++;
-	    sruns_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-f")) {
-	    i++;
-	    fruns_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-h")) {
-	    puts("Usage: convert-reports <options>\n"
-		 "(r) -s  <sruns-file>\n"
-		 "(r) -f  <fruns-file>\n"
-		 "(r) -vr <verbose-report-path-fmt>\n"
-		 "(w) -cr <compact-report-path-fmt>\n"
-	    );
-	    exit(0);
-	}
-	printf("Illegal option: %s\n", argv[i]);
-	exit(1);
-    }
+    static const argp_child children[] = {
+	{ &RunsDirectory::argp, 0, 0, 0 },
+	{ 0, 0, 0, 0 }
+    };
 
-    if (!sruns_txt_file || !fruns_txt_file || !verbose_report_path_fmt || !compact_report_path_fmt) {
-	puts("Incorrect usage; try -h");
-	exit(1);
-    }
+    static const argp argp = {
+	0, 0, 0, 0, children, 0, 0
+    };
+
+    argp_parse(&argp, argc, argv, 0, 0, 0);
 }
 
 int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
 
-    classify_runs(sruns_txt_file, fruns_txt_file);
+    classify_runs();
+
+    Progress progress("converting reports", num_runs);
 
     for (int i = 0; i < num_runs; i++) {
-	char ifile[1000], ofile[1000];
-
+	progress.step();
 	if (!is_srun[i] && !is_frun[i])
 	    continue;
 
-	sprintf(ifile, verbose_report_path_fmt, i);
-	FILE* ifp = fopen(ifile, "r");
-	if (!ifp) {
-	    fprintf(stderr, "cannot read %s: %s\n", ifile, strerror(errno));
-	    exit(1);
-	}
-
-	sprintf(ofile, compact_report_path_fmt, i);
-	ofp = fopen(ofile, "w");
-	if (!ofp) {
-	    fprintf(stderr, "cannot write %s: %s\n", ofile, strerror(errno));
-	    exit(1);
-	}
+	FILE* ifp = fopenRead(RawReport::format(i));
+	ofp = fopenWrite(CompactReport::format(i));
 
 	printf("r %d\n", i);
 	yyrestart(ifp);

@@ -34,7 +34,6 @@
 	</h1>
 
 	<!-- miscellaneous information about the experiment -->
-	<p>Experiment name: <xsl:value-of select="@title"/></p>
 	<p>Generated on <xsl:value-of select="@date"/></p>
 
 	<xsl:apply-templates/>

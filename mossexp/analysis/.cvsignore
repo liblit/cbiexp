@@ -1,4 +1,5 @@
 *_??_*.xml
+bgs-in-run.txt
 calculate.m
 compute-obs-tru
 compute-results
@@ -19,7 +20,7 @@ mats
 obs.txt
 preds.txt
 project
-rho.txt
+rho.bin
 s.runs
 sites.cc
 sobs.
@@ -30,5 +31,6 @@ str.
 str.ir
 str.jc
 str.meta
+summary.xml
 tru.txt
 units.cc

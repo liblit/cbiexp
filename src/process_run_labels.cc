@@ -1,87 +1,60 @@
-#include <cstdio>
-#include <cassert>
-#include <cerrno>
-#include <cstring>
-#include <cstdlib>
+#include <argp.h>
+#include <iostream>
+#include <string>
+#include "fopen.h"
+#include "ClassifyRuns.h"
+#include "NumRuns.h"
+#include "Progress.h"
+#include "RunsDirectory.h"
 
-int num_runs = 0;
-char* label_path_fmt = NULL;
-char* sruns_txt_file = NULL;
-char* fruns_txt_file = NULL;
+using namespace std;
 
-void process_cmdline(int argc, char** argv)
+
+static void process_cmdline(int argc, char** argv)
 {
-    for (int i = 1; i < argc; i++) {
-	if (!strcmp(argv[i], "-n")) {
-	    i++;
-	    num_runs = atoi(argv[i]);
-	    continue;
-	}
-	if (!strcmp(argv[i], "-l")) {
-	    i++;
-	    label_path_fmt = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-s")) {
-	    i++;
-	    sruns_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-f")) {
-	    i++;
-	    fruns_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-h")) {
-	    puts("Usage: process-run-labels <options>\n"
-                 "    -n <num-runs>\n"
-                 "(r) -l <label-path-fmt>\n"
-                 "(w) -s <sruns-txt-file>\n"
-                 "(w) -f <fruns-txt-file>\n"
-            );
-	    exit(0);
-	}
-	printf("Illegal option: %s\n", argv[i]);
-	exit(1);
-    }
+    static const argp_child children[] = {
+	{ &NumRuns::argp, 0, 0, 0 },
+	{ &RunsDirectory::argp, 0, 0, 0 },
+	{ 0, 0, 0, 0 }
+    };
 
-    if (!label_path_fmt || !sruns_txt_file || !fruns_txt_file) {
-	puts("Incorrect usage; try -h");
-	exit(1);
-    }
+    static const argp argp = {
+	0, 0, 0, 0, children, 0, 0
+    };
+
+    argp_parse(&argp, argc, argv, 0, 0, 0);
 }
 
 int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
+    ios::sync_with_stdio(false);
 
-    FILE* sfp = fopen(sruns_txt_file, "w");
-    assert(sfp);
-    FILE* ffp = fopen(fruns_txt_file, "w"); 
-    assert(ffp);
+    FILE* sfp = fopenWrite(ClassifyRuns::successesFilename);
+    FILE* ffp = fopenWrite(ClassifyRuns::failuresFilename);
 
-    for (int i = 0; i < num_runs; i++) {
-	char filename[100];
+    const unsigned numRuns = NumRuns::value();
+    Progress progress("scanning labels", numRuns);
+
+    for (unsigned i = 0; i < numRuns; i++) {
+	progress.step();
+
 	char s[100];
-	sprintf(filename, label_path_fmt, i);
-	FILE* fp = fopen(filename, "r");
-	if (!fp) {
-	    fprintf(stderr, "cannot read %s: %s\n", filename, strerror(errno));
-	    return 1;
-	}
+	const string filename = RunsDirectory::format(i, "label");
+	FILE* fp = fopenRead(filename);
 	fscanf(fp, "%s", s);
 	fclose(fp);
 
 	if (!strcmp(s, "success")) {
-	    fprintf(sfp, "%d\n", i);
+	    fprintf(sfp, "%u\n", i);
             continue;
         }
 	if (!strcmp(s, "failure")) {
-	    fprintf(ffp, "%d\n", i);
+	    fprintf(ffp, "%u\n", i);
             continue;
         }
 	if (strcmp(s, "ignore")) {
-	    fprintf(stderr, "malformed label in %s: %s\n", filename, s);
+	    cerr << "malformed label in " << filename << ": " << s << '\n';
 	    return 1;
 	}
     }

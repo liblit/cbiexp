@@ -9,12 +9,13 @@ cd $analysis
 
 #time=/usr/bin/time
 
-$time $root/bin/analyze-runs -do-process-labels -n 60 -l $experiment/data/%d/label
-$time $root/bin/analyze-runs -do-map-sites -st $experiment/share/rhythmbox.sites
-$time $root/bin/analyze-runs -do-convert-reports -s ./s.runs -f ./f.runs -vr $experiment/data/%d/reports -cr $experiment/data/%d/reports.new -us ./units
-$time $root/bin/analyze-runs -do-compute-results -c 90 -s ./s.runs -f ./f.runs -cr $experiment/data/%d/reports.new -us ./units -ss ./sites
-$time $root/bin/analyze-runs -do-print-results-1 -r ./summary.html -p ./preds.txt -ss ./sites -us ./units
+$time $root/bin/analyze-runs --do=process-labels --runs-directory=$experiment/data
+$time $root/bin/analyze-runs --do=map-sites --runs-directory=$experiment/data --sites-text=$experiment/share/rhythmbox.sites
+$time $root/bin/analyze-runs --do=convert-reports --runs-directory=$experiment/data
+$time $root/bin/analyze-runs --do=compute-results --runs-directory=$experiment/data
+$time $root/bin/analyze-runs --do=print-results-1
+$time $root/bin/analyze-runs --do=print-summary --source-directory=$experiment/src
 
 # the above was an illustration of how to use analyze-runs to perform specific tasks.
 # usually, you should use it as follows:
-#$root/bin/analyze-runs -do-process-labels -do-map-sites -do-convert-reports -do-compute-results -do-print-results-1 -n 31998 -l $experiment/data/%d/label -st $experiment/share/rhythmbox.sites -vr $experiment/data/%d/reports -cr $experiment/data/%d/reports.new 
+#$root/bin/analyze-runs --do=process-labels,map-sites,convert-reports,compute-results,print-results-1,print-summary --runs-directory=$experiment/data --sites-text=$experiment/share/rhythmbox.sites --source-directory=$experiment/src

@@ -58,18 +58,6 @@ bool read_pred_full(FILE* fp, pred_info &pi)
 	return false;
 }
 
-FILE *fopen_read(const char *filename)
-{
-    FILE * const fp = fopen(filename, "r");
-    if (!fp) {
-	const int code = errno;
-	fprintf(stderr, "cannot read %s: %s\n", filename, strerror(code));
-	exit(code || 1);
-    }
-
-    return fp;
-}
-
 void process_report(FILE* fp,
                     void (*process_s_site)(int u, int c, int x, int y, int z),
                     void (*process_r_site)(int u, int c, int x, int y, int z),

@@ -1,6 +1,8 @@
 #ifndef INCLUDE_MappedArray_h
 #define INCLUDE_MappedArray_h
 
+#include <cstddef>
+
 
 // map a file into memory as though it were an array
 

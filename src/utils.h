@@ -33,6 +33,7 @@ void process_report(FILE* fp,
                     void (*process_g_site)(int u, int c, int x, int y, int z, int w));
 
 FILE *fopen_read(const char *);
+FILE *fopen_read(const std::string &);
 
 const std::string &scheme_name(char code);
 

@@ -1,7 +1,9 @@
+#include <argp.h>
 #include <iterator>
 #include <map>
 #include <list>
 #include <string>
+#include "PredStats.h"
 #include "PredicatePrinter.h"
 #include "Score/Fail.h"
 #include "Score/HarmonicMeanLog.h"
@@ -10,9 +12,10 @@
 #include "Score/LowerBound.h"
 #include "Score/TrueInFails.h"
 #include "ViewPrinter.h"
-#include "preds_txt.h"
-#include "sorts.h"
+#include "classify_runs.h"
+#include "fopen.h"
 #include "sites.h"
+#include "sorts.h"
 #include "utils.h"
 
 using namespace std;
@@ -52,23 +55,6 @@ gen_views(const string &scheme, Stats &stats)
 
 ////////////////////////////////////////////////////////////////////////
 //
-//  Command line processing
-//
-
-
-static const argp_child argpChildren[] = {
-    { &preds_txt_argp, 0, 0, 0 },
-    { &classify_runs_argp, 0, "Outcome summary files:", 0 },
-    { 0, 0, 0, 0 }
-};
-
-static const argp argp = {
-    0, 0, 0, 0, argpChildren, 0, 0
-};
-
-
-////////////////////////////////////////////////////////////////////////
-//
 //  The main event
 //
 
@@ -77,7 +63,8 @@ int
 main(int argc, char** argv)
 {
     // command line processing and other initialization
-    argp_parse(&argp, argc, argv, 0, 0, 0);
+    argp_parse(0, argc, argv, 0, 0, 0);
+    classify_runs();
 
     // group predicates by scheme for easier iteraton later
     // map key "all" includes all schemes
@@ -85,7 +72,7 @@ main(int argc, char** argv)
     StatsMap statsMap;
 
     // load up predicates, grouped by scheme
-    FILE * const statsFile = fopen_read(preds_txt_filename);
+    FILE * const statsFile = fopenRead(PredStats::filename);
     pred_info info;
     while (read_pred_full(statsFile, info)) {
 	static const string all("all");

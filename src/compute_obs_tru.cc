@@ -1,3 +1,4 @@
+#include <argp.h>
 #include <cstdio>
 #include <cassert>
 #include <cstring>
@@ -5,7 +6,12 @@
 #include <cmath>
 #include <ctime>
 #include <vector>
+#include "CompactReport.h"
+#include "PredStats.h"
+#include "Progress.h"
+#include "RunsDirectory.h"
 #include "classify_runs.h"
+#include "fopen.h"
 #include "units.h"
 #include "utils.h"
 
@@ -22,12 +28,8 @@ struct site_info_t {
 
 vector<vector<site_info_t> > site_info;
 
-char* sruns_txt_file = NULL;
-char* fruns_txt_file = NULL;
-char* preds_txt_file = NULL;
-char* compact_report_path_fmt = NULL;
-char* obs_txt_file = NULL;
-char* tru_txt_file = NULL;
+char* obs_txt_file = "obs.txt";
+char* tru_txt_file = "tru.txt";
 
 FILE* pfp = NULL;
 FILE* ofp = NULL;
@@ -146,62 +148,26 @@ void process_g_site(int u, int c, int x, int y, int z, int w)
 }
 
 
-void process_cmdline(int argc, char** argv)
+////////////////////////////////////////////////////////////////////////
+//
+//  Command line processing
+//
+
+
+static void process_cmdline(int argc, char **argv)
 {
-    for (int i = 1; i < argc; i++) {
-	if (!strcmp(argv[i], "-s")) {
-	    i++;
-	    sruns_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-f")) {
-	    i++;
-	    fruns_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-p")) {
-	    i++;
-	    preds_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-cr")) {
-	    i++;
-	    compact_report_path_fmt = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-o")) {
-	    i++;
-	    obs_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-t")) {
-	    i++;
-	    tru_txt_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-h")) {
-	    puts("Usage: compute-obs-tru <options>\n"
-                 "(r) -s  <sruns-txt-file>\n"
-                 "(r) -f  <fruns-txt-file>\n"
-                 "(r) -p  <preds-txt-file>\n"
-                 "(r) -cr <compact-report-path-fmt>\n"
-                 "(w) -o  <obs-txt-file>\n"
-                 "(w) -t  <tru-txt-file>\n");
-	    exit(0);
-	}
-	printf("Illegal option: %s\n", argv[i]);
-	exit(1);
-    }
-    if (!sruns_txt_file || 
-        !fruns_txt_file ||
-        !preds_txt_file ||
-        !compact_report_path_fmt ||
-        !obs_txt_file || 
-        !tru_txt_file) {
-	puts("Incorrect usage; try -h");
-	exit(1);
-    }
-}
+    static const argp_child children[] = {
+	{ &RunsDirectory::argp, 0, 0, 0 },
+	{ 0, 0, 0, 0 }
+    };
+
+    static const argp argp = {
+	0, 0, 0, 0, children, 0, 0
+    };
+
+    argp_parse(&argp, argc, argv, 0, 0, 0);
+};
+
 
 int main(int argc, char** argv)
 {
@@ -209,18 +175,15 @@ int main(int argc, char** argv)
 
     process_cmdline(argc, argv);
 
-    classify_runs(sruns_txt_file, fruns_txt_file);
+    classify_runs();
 
-    ofp = fopen(obs_txt_file, "w");
-    assert(ofp);
-    tfp = fopen(tru_txt_file, "w");
-    assert(tfp);
+    ofp = fopenWrite(obs_txt_file);
+    tfp = fopenWrite(tru_txt_file);
 
     site_info.resize(num_units);
     for (u = 0; u < num_units; u++) site_info[u].resize(units[u].num_sites);
 
-    pfp = fopen(preds_txt_file, "r");
-    assert(pfp);
+    pfp = fopenRead(PredStats::filename);
     while (1) {
 	pred_info pi;
 	const bool got = read_pred_full(pfp, pi);
@@ -233,16 +196,14 @@ int main(int argc, char** argv)
     }
     fclose(pfp);
 
+    Progress progress("computing obs & tru", num_runs);
     for (cur_run = 0; cur_run < num_runs; cur_run++) {
+	progress.step();
         if (!is_srun[cur_run] && !is_frun[cur_run])
             continue;
 
-        printf("r %d\n", cur_run);
-        char s[1000];
-        sprintf(s, compact_report_path_fmt, cur_run);
-
-        FILE* fp = fopen(s, "r");
-        assert(fp);
+	const string filename = CompactReport::format(cur_run);
+        FILE* fp = fopenRead(filename);
 
         process_report(fp, process_s_site, process_s_site, process_b_site, process_g_site);
 

@@ -1,15 +1,19 @@
+#include <argp.h>
 #include <cassert>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <string>
 #include <vector>
+#include "MapSites.h"
+#include "fopen.h"
 
-typedef std::vector<const char *> Fields;
+using namespace std;
 
-char* sites_src_file = NULL;
-char* units_src_file = NULL;
-FILE* sfp = NULL;
-FILE* ufp = NULL;
+typedef vector<const char *> Fields;
+
+static FILE* sfp = NULL;
+static FILE* ufp = NULL;
 
 static void get_fields(Fields &fields, char *row)
 {
@@ -126,35 +130,19 @@ void print_site(char scheme_code, char* s)
     fprintf(sfp, "},\n");
 }
 
-void process_cmdline(int argc, char** argv)
-{
-    for (int i = 1; i < argc; i++) {
-	if (!strcmp(argv[i], "-ss")) {
-	    i++;
-	    sites_src_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-us")) {
-	    i++;
-	    units_src_file = argv[i];
-	    continue;
-	}
-	if (!strcmp(argv[i], "-h")) {
-	    puts("Usage: map-sites <options> < <sites-txt-file>\n"
-                 "(w) -ss <sites-src-file>\n"
-                 "(w) -us <units-src-file>\n"
-            );
-	    exit(0);
-	}
-	printf("Illegal option: %s\n", argv[i]);
-	exit(1);
-    }
 
-    if (!sites_src_file || !units_src_file) {
-	puts("Incorrect usage; try -h");
-	exit(1);
-    }
+////////////////////////////////////////////////////////////////////////
+//
+//  Command line processing
+//
+
+
+static void
+process_cmdline(int argc, char** argv)
+{
+    argp_parse(0, argc, argv, 0, 0, 0);
 }
+
 
 int main(int argc, char** argv)
 {
@@ -162,8 +150,16 @@ int main(int argc, char** argv)
 
     int num_sites = 0, num_units = 0, num_b_preds = 0, num_r_preds = 0, num_s_preds = 0, num_g_preds = 0;
 
-    sfp = fopen(sites_src_file, "w"); assert(sfp);
-    ufp = fopen(units_src_file, "w"); assert(ufp);
+    {
+	string filename(MapSites::sitesBasename);
+	filename += ".cc";
+	sfp = fopenWrite(filename);
+    }
+    {
+	string filename(MapSites::unitsBasename);
+	filename += ".cc";
+	ufp = fopenWrite(filename);
+    }
 
     fputs("#include <sites.h>\n\n"
           "const struct site_t sites[] = {\n",

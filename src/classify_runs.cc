@@ -2,75 +2,22 @@
 #include <cassert>
 #include <cstring>
 #include <cstdlib>
+#include "ClassifyRuns.h"
 #include "classify_runs.h"
+#include "fopen.h"
+
 
 // global information provided by classify_runs()
 int num_runs = 0, num_sruns, num_fruns;
 bool *is_srun, *is_frun;
 
 
-////////////////////////////////////////////////////////////////////////
-//
-// Command line processing
-//
-
-
-static const argp_option options[] = {
-    {
-	"success-list",
-	's',
-	"s.runs",
-	0,
-	"file listing successful runs",
-	0
-    },
-    {
-	"failure-list",
-	'f',
-	"f.runs",
-	0,
-	"file listing failed runs",
-	0
-    },
-    { 0, 0, 0, 0, 0, 0 }
-};
-
-
-static int
-parse_flag(int key, char *arg, argp_state *)
-{
-    static const char *sruns_txt_file = "s.runs";
-    static const char *fruns_txt_file = "f.runs";
-
-    switch (key) {
-    case 's':
-	sruns_txt_file = arg;
-	return 0;
-    case 'f':
-	fruns_txt_file = arg;
-	return 0;
-    case ARGP_KEY_SUCCESS:
-	classify_runs(sruns_txt_file, fruns_txt_file);
-	return 0;
-    default:
-	return ARGP_ERR_UNKNOWN;
-    }
-}
-
-
-const argp classify_runs_argp = {
-    options, parse_flag, 0, 0, 0, 0, 0
-};
-
-
-void classify_runs(const char sruns_file[], const char fruns_file[])
+void classify_runs()
 {
     int i;
 
-    FILE* sfp = fopen(sruns_file, "r");
-    assert(sfp);
-    FILE* ffp = fopen(fruns_file, "r");
-    assert(ffp);
+    FILE* sfp = fopenRead(ClassifyRuns::successesFilename);
+    FILE* ffp = fopenRead(ClassifyRuns::failuresFilename);
 
     while (1) {
 	fscanf(sfp, "%d", &i);
