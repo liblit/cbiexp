@@ -25,8 +25,13 @@ static void get_fields(Fields &fields, char *row)
     }
 
     tab = strchr(row, '\n');
-    *tab = '\0';
-    fields.push_back(row);
+    if (tab) {
+	*tab = '\0';
+	fields.push_back(row);
+    } else {
+	fprintf(stderr, "corrupted sites file: no trailing newline after \"%s\"\n", row);
+	exit(1);
+    }
 }
 
 char get_scheme_code(char* scheme_str)
