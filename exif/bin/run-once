@@ -1,0 +1,64 @@
+#!/usr/bin/perl -w
+
+use strict;
+use File::Copy;
+use File::Path;
+use FileHandle;
+use FindBin;
+
+
+########################################################################
+
+
+sub getlines ($) {
+    my $file = new FileHandle "$FindBin::Bin/../$_[0]";
+    my @lines = map { chomp; $_ } $file->getlines;
+    return @lines;
+}
+
+
+sub pick (@) {
+    return $_[int rand @_];
+}
+
+
+sub note ($@) {
+    my $filename = shift;
+    my $handle = new FileHandle $filename, 'w' or warn "cannot write to $filename: $!";
+    $handle->print(@_, "\n");
+}
+
+
+########################################################################
+
+
+my @images = getlines 'image-list';
+my @thumbnails = getlines 'thumbnail-list';
+my @tasks = ([],
+	     ['-i'],
+	     ['-l'],
+	     ['-|'],
+	     ['-e'],
+	     ['-r'],
+	     ['-n', pick @thumbnails]);
+
+
+my $image = pick @images;
+note 'input-image', $image;
+copy $image, 'input.jpg' or die;
+
+my @argv = ("$FindBin::Bin/../install/bin/exif");
+my $task = pick @tasks;
+push @argv, @$task;
+push @argv, '-m' if int rand 2;
+push @argv, 'input.jpg';
+note 'command-line', "@argv";
+
+open STDOUT, '>', 'stdout' or die;
+open STDERR, '>', 'stderr' or die;
+system @argv;
+
+note 'outcome', $?;
+
+unlink glob '*.jpg';
+unlink glob '*.jpeg';

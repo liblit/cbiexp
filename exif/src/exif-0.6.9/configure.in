@@ -1,0 +1,98 @@
+AC_PREREQ(2.50)
+AC_INIT(exif/main.c)
+AM_CONFIG_HEADER(config.h)
+AM_INIT_AUTOMAKE(exif,0.6.9)
+AM_MAINTAINER_MODE
+
+AM_PROG_LIBTOOL
+AC_PATH_PROG(PKG_CONFIG,pkg-config)
+
+dnl ---------------------------------------------------------------------------
+dnl i18n support
+dnl ---------------------------------------------------------------------------
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[The gettext domain we're
+using])
+ALL_LINGUAS="de es fr"
+AM_GNU_GETTEXT([external])
+
+dnl ---------------------------------------------------------------------------
+dnl libraries needed
+dnl ---------------------------------------------------------------------------
+PKG_CHECK_MODULES(LIBEXIF, libexif >= 0.6.9)
+AC_SUBST(LIBEXIF_LIBS)
+AC_SUBST(LIBEXIF_CFLAGS)
+
+dnl ---------------------------------------------------------------------------
+dnl locale.h: locale.h provides setlocale. It seems that some systems don't
+dnl           have it (at least if configured --without-nls).
+dnl ---------------------------------------------------------------------------
+AC_CHECK_HEADERS(locale.h)
+
+dnl ---------------------------------------------------------------------------
+dnl popt.h: Simplifies handling of command-line options enormously.
+dnl ---------------------------------------------------------------------------
+popt_msg="no (Note that popt is mandatory, so exif won't compile)"
+try_popt=true
+have_popt=false
+AC_ARG_WITH(popt, [  --without-popt            Don't use popt.h],
+	if test "x${withval}" = "xno"; then
+		try_popt=false
+		popt_msg="no (not requested)"
+	fi
+)
+popt_prefix=$ac_default_prefix
+AC_ARG_WITH(popt-prefix, [  --with-popt-prefix=PREFIX  Location of popt], [
+	popt_prefix="$withval"])
+if $try_popt; then
+	CPPFLAGS_save="$CPPFLAGS"
+	CPPFLAGS="-I$popt_prefix/include $CPPFLAGS"
+	AC_CHECK_HEADER(popt.h, [
+			AC_CHECK_LIB(popt, poptResetContext, [
+			have_popt=true
+			popt_msg=yes
+			AC_DEFINE(HAVE_POPT,1,[whether we have popt])
+			POPT_LIBS="-lpopt"
+			POPT_CFLAGS=$CPPFLAGS
+		], [
+			LDFLAGS_save="$LDFLAGS"
+			LDFLAGS="-L$popt_prefix/lib"
+			AC_CHECK_LIB(popt, poptStuffArgs, [
+				have_popt=true
+				popt_msg="yes (in '$popt_prefix')"
+				AC_DEFINE(HAVE_POPT,1,[whether we have popt])
+				POPT_LIBS="-L$popt_prefix/lib -lpopt"
+				POPT_CFLAGS=$CPPFLAGS
+		], [popt_pmsg="no (couldn't link)"])
+		LDFLAGS=$LDFLAGS_save
+		])
+	])
+	CPPFLAGS="$CPPFLAGS_save"
+fi
+AM_CONDITIONAL(HAVE_POPT, $have_popt)
+AC_SUBST(POPT_LIBS)
+AC_SUBST(POPT_CFLAGS)
+
+dnl ---------------------------------------------------------------------------
+dnl Warnings: If we have GCC, be paranoid.
+dnl ---------------------------------------------------------------------------
+if test "x$GCC" = "xyes"; then
+    CFLAGS="$CFLAGS -Wall -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith"
+    AC_SUBST(CFLAGS)
+fi
+
+AC_OUTPUT([ 
+  Makefile
+  exif.spec
+  libjpeg/Makefile
+  exif/Makefile
+  m4/Makefile
+  po/Makefile.in
+])
+
+echo "
+
+Configuration:
+
+	Source code location:      ${srcdir}
+	Compiler:                  ${CC}
+"

@@ -1,0 +1,7 @@
+#!/bin/sh -e
+
+top=`cd \`dirname $0\`/.. && pwd;`
+
+locate \*.jpg \*.jpeg >$top/image-list
+
+find $top/thumbnails/* >$top/thumbnail-list
