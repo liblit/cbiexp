@@ -11,7 +11,7 @@ master.pdf: %.pdf: %.dvi $(texs) $(pngs)
 	pdflatex $*
 
 master.ps: %.ps: %.dvi $(shots:=.eps)
-	dvips -o$@ -Pgeneric -ta4 $*
+	dvips -o$@ -Pgeneric $*
 
 master.dvi: %.dvi: $(texs) $(epss)
 	latex $*

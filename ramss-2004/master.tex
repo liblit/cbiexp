@@ -11,8 +11,6 @@
 \usepackage{url}
 \usepackage{xspace}
 
-\usepackage[a4paper]{geometry}
-
 \usepackage[bookmarks, pdftitle={Public Deployment of Cooperative Bug
   Isolation}, pdfauthor={Ben Liblit, Mayur Naik, Alice X. Zheng, Alex
   Aiken, and Michael I. Jordan}, pdfpagemode=UseOutlines]{hyperref}
@@ -410,6 +408,21 @@ applications.  Tracking of user behavior is a delicate matter, so
 users and their system administrators must be able to adapt the system
 to local needs and concerns.
 
+\begin{table}
+  \centering
+  \begin{tabular}{lrr}
+    \header{Application} & \header{Min} & \header{Max} \\ \hline
+    \evolution & 830 & 39,863  \\
+    \gaim & 1,786 & 18,772  \\
+    \gimp & 15,617 & 26,304  \\
+    \gnumeric & 6,661 & 15,876  \\
+    \nautilus & 3,252 & 10,638  \\
+    \rhythmbox & 897 & 5,823 
+  \end{tabular}
+  \caption{Feedback report sizes in bytes}
+  \label{report-sizes}
+\end{table}
+
 Because the wrapper script launches the instrumented binary as a
 subprocess, it can also check that subprocess's exit status (either a
 result code or a fatal signal), which is included in the report
@@ -449,21 +462,6 @@ future date (a feature we learned would be useful from the prior
 experience of Elbaum and Hardojo \cite{Elbaum:2003:DISATA}), and it
 might also be used to suppress future reports from individual
 misbehaving users.  So far we have not needed any of these facilities.
-
-\begin{table}
-  \centering
-  \begin{tabular}{lrr}
-    \header{Application} & \header{Min} & \header{Max} \\ \hline
-    \evolution & 830 & 39,863  \\
-    \gaim & 1,786 & 18,772  \\
-    \gimp & 15,617 & 26,304  \\
-    \gnumeric & 6,661 & 15,876  \\
-    \nautilus & 3,252 & 10,638  \\
-    \rhythmbox & 897 & 5,823 
-  \end{tabular}
-  \caption{Feedback report sizes in bytes}
-  \label{report-sizes}
-\end{table}
 
 \section{Status of the Public Deployment}
 
