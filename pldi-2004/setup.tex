@@ -3,27 +3,29 @@ reported in Section~\ref{sec-experiment}.  While all software
 experiments are difficult to do well, we have learned the hard way
 that there are some particular problems that must be addressed to do
 our experiment well.  Thus, this section discusses the set-up for our
-experiment in some detail, and especially sources of bias in the
-experiment and how we have sought to compensated for potential bias.
+experiment in some detail, especially how we have compensated for
+potential sources of bias. 
 
 The basic framework of our experiment is a straightforward five step
 process: select an existing software application, modify the source
 code to inject bugs into the program, instrument the modified program,
 gather results from a large number of runs performed with
 automatically generated data, and then apply our algorithm to the
-results.  We discuss what we did for each of these steps.
+results.  We discuss each step; the reader who is not interested in
+these details may wish to proceed to Section~\ref{sec-experiments} and
+use this section only for reference.
 
 We chose \moss\ \cite{SWA03} as our benchmark program.  \moss\ is a
-software plagiarism detection service that has been in use since the
-late '90's and has several thousand users worldwide.\footnote{That is,
+software plagiarism detection service\footnote{That is,
 \moss\ detects copying in large sets of programs.  The typical \moss
-user is a professor teaching assistant in a programming course.}  As
-such, \moss\ has many of the characteristics of real software: it has
-users who depend on it, it is constantly undergoing revision as its
-purpose and the environment in which it runs evolves, and it is
-complex enough to be composed of several interacting subsystems.  The
-last point, in particular, means that it is reasonable that \moss
-could have multiple bugs.  From our point of view, \moss\ has the
+user is a professor teaching assistant in a programming course.}  late
+'90's and has several thousand users worldwide.  As such, \moss\ has
+many of the characteristics of real software: it has users who depend
+on it, it is constantly undergoing revision as its purpose and the
+environment in which it runs evolves, and it is complex enough to be
+composed of several interacting subsystems.  The last point, in
+particular, means that it is reasonable that \moss could have multiple
+bugs simultaneously.  From our point of view, \moss\ has the
 additional advantage that it was written and is maintained by one of
 the authors.
 
@@ -36,15 +38,19 @@ taken directly from the bug logs for \moss.  In some cases the code
 had evolved since the original bug had been fixed, in which case we
 had to judge how to modify the bug to inject it into the code.  We
 feel the modifications, where needed at all, were straightforward.  We
-also included two bugs from the bug logs of other programs; that is,
-we took a known bug from another system and simply added it to \moss
-in the place where \moss\ performed the analogous operation (see
-below).
+also included three bugs that were not \moss bugs.  One of these is a
+known bug from another system where there is an obviously analogous
+place to add that bug to \moss\ (see below). The other two are
+duplicates of two different buffer overrun bugs in \moss.  In each
+case, we restored the original bug, and then added a second, very
+similar buffer overrun in a different place, the purpose being to see
+if our algoritihm could not only detect the overruns, but also
+distinguish between them.
 
 We briefly describe the nine bugs we added to \moss:
 \begin{enumerate}
 \item To correctly report the location of duplicate code \moss\ must
-keep track of the range of line numbers involved in each match.  We
+track the range of line numbers involved in each match.  We
 introduced a bug that causes the number of lines in C-style multi-line
 comments to be counted incorrectly.  The bug only occurs under a
 special set of circumstances: the option to match comments must be on
@@ -63,42 +69,146 @@ for writing.  This bug is analagous to one reported in {\tt ccrypt}
 \cite{ccrypt-reference}.  This is a deterministic bug, and in fact the
 program crashes almost immediately after failing to open the file.
 
-\item Loading a \moss\ database is fairly complex; a number of data
+\item Loading a \moss\ database is fairly complex, as a number of data
 structures must be kept in synch.  We removed an array bounds update
 in the database loading routine, so that even though a database was
-loaded, the pointer to the end of one array {\tt A} was not moved to reflect
-that new data had been added to the end of {\tt A}. The program behaves normally
-unless a second database is loaded, which at least partially overwrites the
-portion of the first database in {\tt A}.  This bug has unpredictable effects.
-Depending on what files are compared and the contents of the databases loaded,
-the result might be that the program terminates with correct output, that it
-terminates with incorrect output, or that it crashes.  This was a particularly
-difficult bug to find originally.
+loaded, the pointer to the end of one array {\tt A} was not moved to
+reflect that new data had been added to the end of {\tt A}. The
+program behaves normally unless a second database is loaded, at which
+point the second database at least partially overwrites that portion
+of the first database stored in {\tt A}.  This bug has unpredictable
+effects.  Depending on what files are compared and the contents of the
+databases loaded, the result might be that the program terminates with
+correct output, that it terminates with incorrect output, or that it
+crashes.  This was a particularly difficult bug to find originally.
 
 \item We removed a size check that prevented users from supplying command-line arguments
-that could cause the program to overrun the bounds of an array.  When this bug is triggered
-the program may terminate normally, terminate with incorrect results, or crash.
+that could cause the program to overrun the bounds of an array.  When
+this bug is triggered the program may terminate with correct output,
+terminate with incorrect results, or crash.
 
 
-\item \moss\ handles Lisp and Scheme programs differently from all other languages;
-at one time all languages where handled in the same manner, but the others have been
-gradually ported to an improved algorithm.  The Lisp and Scheme processing involves
-a standard hash table; we removed one of the end-of-bucket checks, which causes a
-crash when the program scans to the end of a bucket and tries to dereference a NULL
-pointer.  This bug only occurs for Lisp and Scheme programs, and does reliably crash
-the program when it is touched.
+\item \moss\ handles Lisp programs differently from all other languages;
+at one time all languages where handled in the same manner, but the
+others have been gradually ported to an improved algorithm.  The Lisp
+processing involves a standard hash table; we removed one of the
+end-of-bucket checks, which causes a crash when the program scans to
+the end of a hash bucket and tries to dereference a NULL pointer.  This
+bug only occurs for Lisp programs, but does reliably crash the program
+when it is touched.
 
-\item 
+\item For efficiency \moss\ preallocates a large area of memory for its primary data structure.
+When this area of memory is filled, the program should fail
+gracefully.  We removed the out-of-memory check.  The original bug
+was a bit more complex, but cannot be reproduced exactly because this
+portion of the code has been substantially revised.  
 
-\item
+\item \moss\ has a routine that scans an array for multiple copies of the same passage of code within
+a single file; duplicate code within a file is treated differently than duplicate code across files.
+We removed the limit check that prevents the code from searching past the end of the array.  This is another
+buffer overrun of a different kind.  First, whether it will occur is very data dependent and in fact it is
+difficult to construct a test case by hand that triggers the bug.  Second, the routine in question only reads
+past the end of the array (no memory locations are written), so it is quite likely that the program will
+succeed in spite of the error.  This bug is synthetic (it never occurred in \moss) but is derived from bug \#8.
 
-\item 
+\item This is a variant on bug \#7, in another routine that deals with duplicates.
+Again, the bug allows the program to read past the end of an array
+while searching for particular data values.  In contrast to bug \#7,
+bug \#8 occurs under an even rarer set of circumstances.  In
+fact, this bug was never known to have caused a failure in \moss; it
+was discovered by a code review.
 
-\item This bug is similar to bug \#4, but involves a different command-line argument and a different array. 
-
+\item This bug is a variant of bug \#4, but involves a different command-line argument and
+a different array.
 \end{enumerate}
 
+In summary, the nine bugs are all either real bugs in \moss\ or bugs
+closely related to real bugs in \moss\ or other programs.  The bugs
+range from typical C coding errors (e.g., NULL pointer dereferences
+and array overruns) to high-level violations of a system's internal
+invariants (e.g., bugs \#1 and \#4).
+
+To allow us to measure the accuracy of our techniques we also added code to \moss\ to 
+log when each bug was triggered.  For example, for bug \#1 we added:
+\begin{verbatim}
+void check_bug_1(const char *yytext, int yyleng)
+{
+  static int seen;
+
+  if (memchr(yytext, '\n', yyleng))
+    reportOnce(&seen, 1, "... log message ...");
+}
+\end{verbatim}
+The purpose of the static variable {\tt seen} is to ensure that each bug is logged only the first time
+it occurs in a run (some of the bugs can occur multiple times).  
+
+In the next step we ran our source-to-source instrumentor on \moss,
+modified to include the bugs and the logging code.  Recall that our
+system correlates predicates derived from the program source with the
+success or failure of an execution to isolate bugs.  Given the log
+function for bug \#1 above, it is very likely that our system would
+report that whenever the predicate of the conditional {\tt
+memchar(\ldots)} is true, the program is likely to fail.  To prevent
+our logging code from ``giving away'' the causes of the bugs to our
+bug isolation algorithm, the logging functions were isolated in a
+separate file that was not processed by our instrumentor.  We also
+excluded from instrumentation code atuomatically generated by the tool
+{\tt flex}.  While examining predicates on {\tt flex}'s internal state
+would quite possibly yield some useful clues about the sources of
+bugs, it is very unlikely that any programmer working on \moss\ would
+be able to interpret them, and so it is better to exclude them from
+consideration.
+
+After instrumenting \moss\ we ran both the buggy version and the
+original version on random inputs. We recorded whether the buggy
+version succeeded or failed by examining its exit code and, in the
+case that it terminated normally, by checking whether the output of
+both versions matched.  In practice, we envision that users would have
+a way to give simple feedback on program executions in the case that a
+program terminates normally but produces incorrect output.  We have
+modeled that in our experiment by recording one bit (success or
+failure) for each run based on whether its output matches that of the
+unmodified \moss\ on the same inputs.
+
+The randomly generated inputs are produced according to the following
+scheme.  A different probability distribution is associated with each
+command line option.  For the numeric options, the distribution gives
+the probability that the option takes on a small, medium, or large
+value, or is absent altogether.  For options that are essentially
+enumerated types (such as the programming language used) the
+distribution just includes the probability of each element of the
+enumeration as well as the probability that the option is absent.
+Depending on the programming language chosen, programs to submit to
+\moss\ are chosen randomly from a collection of thousands of C, Lisp,
+and Java files.  The number of programs to submit with each run is
+another probability distribution, which guarantees that there are at
+least some runs with a very small number of files and some with a very
+large number of files submitted.  In the process of performing the
+experiment we discovered several ways in which our inputs were not as
+random as they could be---we had accidentally coupled two or more
+choices that could be independent.  We removed all such sources of
+coupling among input parameters that we discovered.  Note that having
+more variation in the inputs helps our techniques, as
+increased variation reduces the chances that a program predicate will
+concidentally appear to be correlated with failure.
+
+The infrastructure for this experiment was sufficiently complex
+that we found it necessary to add separate ``sanity checking'' of the results
+to be sure that we had correctly captured the results of both the buggy and
+reference versions of \moss.  Any execution that did not pass these sanity
+checks is discarded.  \texcomment{INSERT NUMBERS HERE.}
+
+Finally, the analysis of the results of applying our algorithm is the subject of Section~\ref{sec-experimental-results}.
 
 
+
+
+
+
+
+
+
+
+ 
 
 
