@@ -14,7 +14,7 @@ SFLAGS += --assign-across-pointer --assign-into-field --assign-into-index
 SFLAGS += --compare-constants
 SFLAGS += --rename-locals
 SFLAGS += --timestamp-first --timestamp-last
-SFLAGS += -save-temps
+#SFLAGS += -save-temps
 #SFLAGS += -v -Q
 
 -include site.mk
