@@ -360,21 +360,6 @@ calc_truthprobs: $(tooldir)/calc_truthprobs.o units.o sites.o
 truthprobs: calc_truthprobs
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
 
-validate: force
-	$(find-xmls) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
-.PHONY: validate
-
-xmls := $(wildcard *.xml)
-htmls := $(filter-out $(addsuffix .html, predictor-info projections sorts summary), $(xmls:.xml=.html))
-
-convert: $(htmls)
-
-$(htmls): %.html: %.xml $(links)
-	xsltproc -o $@ $< 2>$*.errs
-	if test -s $*.errs; then cat $*.errs; false; fi
-	rm $*.errs
-	xmllint --valid --noout --catalogs $@
-
 
 ########################################################################
 
