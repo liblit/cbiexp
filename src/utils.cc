@@ -114,7 +114,7 @@ static void process_sites(FILE *fp, int u, void (*handler)(int, int, int, int))
 	if (fscanf(fp, "%d\t%d\n", &x, &y) == 2)
 	    handler(u, c, x, y);
 	else {
-	    fprintf(stderr, "corrupted counts for unit %d, site %d", u, c);
+	    fprintf(stderr, "corrupted counts for unit %d, site %d\n", u, c);
 	    exit(1);
 	}
     }
@@ -128,7 +128,7 @@ static void process_sites(FILE *fp, int u, void (*handler)(int, int, int, int, i
 	if (fscanf(fp, "%d\t%d\t%d\n", &x, &y, &z) == 3)
 	    handler(u, c, x, y, z);
 	else {
-	    fprintf(stderr, "corrupted counts for unit %d, site %d", u, c);
+	    fprintf(stderr, "corrupted counts for unit %d, site %d\n", u, c);
 	    exit(1);
 	}
     }
@@ -142,7 +142,7 @@ static void process_sites(FILE *fp, int u, void (*handler)(int, int, int, int, i
 	if (fscanf(fp, "%d\t%d\t%d\t%d\n", &x, &y, &z, &w) == 4)
 	    handler(u, c, x, y, z, w);
 	else {
-	    fprintf(stderr, "corrupted counts for unit %d, site %d", u, c);
+	    fprintf(stderr, "corrupted counts for unit %d, site %d\n", u, c);
 	    exit(1);
 	}
     }
