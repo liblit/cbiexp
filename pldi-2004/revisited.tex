@@ -2,7 +2,7 @@
 \input{table}
 
 In this section we compare our new algorithm with our previous
-approaches on the programs {\tt ccrypt} and {\tt bc}.
+approaches on the programs \ccrypt and \bc.
 \Autoref{tab:exps} shows raw counts for all four experiments of the
 successful and unsuccessful runs, number of instrumentation sites in
 the program, the number of predicates for each
@@ -18,7 +18,7 @@ offline downsampling program allows us generate sparser samples from this
 full data; thus, we were able to use the same set of runs to test the
 effect of different sampling rates on the results.  
 
-We analyzed {\tt ccrypt} version 1.2, which has a known bug \cite{Selinger:2003:cqual}.  At one point in the code the program attempts to write a file.  If the file already exists, the user is presented with a prompt asking for confirmation that the file should be written; if the user input is EOF (i.e., the user hits {\tt Enter} without typing anything) the program will crash.  We used only the returns
+We analyzed \ccrypt version 1.2, which has a known bug \cite{Selinger:2003:cqual}.  At one point in the code the program attempts to write a file.  If the file already exists, the user is presented with a prompt asking for confirmation that the file should be written; if the user input is EOF (i.e., the user hits {\tt Enter} without typing anything) the program will crash.  We used only the returns
 instrumentation scheme for this experiment. The top
 two entries of the report are (most information is elided for
 brevity):
@@ -39,7 +39,7 @@ Note also that the report is very short; only 6 predicates out of more than 3,00
 Uniformly throughout our experiments the returns and branches reports are short enough that all predicates can
 easily be examined by hand; we discuss the larger scalar-pairs reports below.
 
-Our second experiment isolates a buffer overrun in version 1.06 of GNU's {\tt bc}.  In our
+Our second experiment isolates a buffer overrun in version 1.06 of GNU \bc.  In our
 previous work, which used an algorithm based on logistic regression, all of the top
 predictors showed that the variable {\tt indx} was bigger than some other value on the first line of the following
 code fragment:
@@ -54,7 +54,7 @@ Using our new algorithm, the top 11 predicates (sorted by descending
 $\increase()$ score) involve predicates within a few lines of the line
 with the actual overrun.  However, these predicates also predict only
 20-100 failing runs, a small fraction of the number of failing runs
-for {\tt bc} in \Autoref{tab:exps}.  We have observed that this
+for \bc in \Autoref{tab:exps}.  We have observed that this
 phenomenon is fairly common: if there are enough failures caused by a
 bug, some predicates will predict failure for small subsets of the failure set.
 

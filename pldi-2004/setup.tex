@@ -66,7 +66,7 @@ output.
 \item \moss\ has the option to dump its internal data structures in a
 binary file format called a \termdef{database}.  We removed the check for a
 null {\tt FILE} pointer in the case that the database cannot be opened
-for writing.  This bug is analogous to one reported in {\tt ccrypt}
+for writing.  This bug is analogous to one reported in \ccrypt
 \cite{Selinger:2003:cqual}.  This is a deterministic bug, and in fact the
 program crashes almost immediately after failing to open the file.
 

@@ -158,7 +158,7 @@ ranked by how much $P$ causes their ranking score to decrease.
 
 \subsubsection{\ccrypt}
 
-We analyzed {\tt ccrypt} version 1.2, which has a known bug \cite{Selinger:2003:cqual}.  
+We analyzed \ccrypt version 1.2, which has a known bug \cite{Selinger:2003:cqual}.  
 The results are shown in Table~\ref{tab:views-ccrypt}.
 Our algorithm reports two predictors, which both point directly to the single bug. 
 It is easy to discover that the two predictors are for the same bug; the first predicate
@@ -167,7 +167,7 @@ is a sub-bug predictor of the second predicate.
 
 \subsubsection{\bc}
 
-The results for \bc\ are shown in Table~\ref{tab:views-bc}, which has a known buffer overrun.
+The results for \bc are shown in Table~\ref{tab:views-bc}, which has a known buffer overrun.
 The outcome is the same as for \ccrypt: two predicates are retained by elimination, and the second
 predicate lists the first predicate at the top of its affinity list, indicating the first predicate
 is a sub-bug predictor of the second.  Both predicates point to the cause of the overrun.  
