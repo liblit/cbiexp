@@ -50,9 +50,8 @@ effect of different sampling rates on the results.
 
 The time to run our algorithm on all the runs is about seven minutes on
 a fast machine.
-
 At \nicefrac{1}{100} sampling, step (1) of our analysis algorithm eliminates about 99\% of
-all branch and return predicates, and about 96\% of the scalar-pairs
+all branch and return predicates, and about 96\% of the scalar-pair
 predicates.  We retain only
 \begin{itemize}
 \item 51 branch predicates;
@@ -300,7 +299,7 @@ causes much more change in the final result.  A lot more predicates
 are eliminated when using fewer trials, and a lot more predicates are
 retained using more trials.
 
-Most of the volatility in the results come from the scalar-pairs
+Most of the volatility in the results come from the scalar-pair
 predicates.  \Autoref{fig:predkept-b} shows the same graph for
 only the branch and return predicates.  Here, across all data sizes,
 the number of selected predicates remains roughly constant at each
