@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -W -Wall -Werror -Wformat=2
+AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 $(BOOST_CPPFLAGS)
 
 noinst_LIBRARIES = libsymmetric.a
 
