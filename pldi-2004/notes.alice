@@ -1,25 +1,3 @@
-IV. Experiments
-- last paragraph before section 4.1: description of non-uniform sampling
-  "we choose a sampling rate for P to achieve ..."
-  + this sentence is confusing. [text modified, please check for accuracy]
-
-4.1 A validation experiment
-- first paragraph: "The nature of the bugs varies: ... 
-  comprise the eight crashing bugs."
-  + sentence seems a bit awkward.  I've moved the phrase "comprise the eight
-    crashing bugs" up into the first phrase.  See if you like it better.
-
-- second paragraph: "While the failure can be detected... "
-  + this sentence is also awkward.  I've rearranged things a little bit.
-
-- page 7, second column: "and each bug B the number of runs where bug B occurs"
-  + confusion of notation: we had defined B to be the set of runs causes by
-    a specific bug, but now we're using B to denote the name of the bug, AND
-    the associated set of runs.  One way to fix this would be to let $B$ denote
-    the bug, and {\cal B} the set of runs causes by B.  Then the above sentence
-    could be "and each bug $B$ the size of $|{\cal B}|$."  [haven't modified 
-    text]
-
 V. Previous and Related work
 5.1 Comparison with logistic regression
 - last paragraph
