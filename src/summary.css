@@ -11,6 +11,7 @@ table {
   border-collapse: collapse
 }
 
+th.label,
 td.label {
   text-align: left
 }
@@ -32,12 +33,14 @@ p.outcomes {
 }
 
 table.outcomes {
+  padding: 0;
   margin-left: 2em
 }
 
+table.outcomes th, 
 table.outcomes td {
   border: none;
-  padding: 0px;
+  padding: 0
 }
 
 
@@ -65,7 +68,7 @@ tr.all {
   border-top: 1px solid
 }
 
-th {
+table.scheme-links th {
   vertical-align: middle
 }
 
@@ -79,14 +82,14 @@ table.scheme-links td.retain,
 table.scheme-links td.solidus,
 table.scheme-links td.total {
   border-right: none;
-  padding-right: 0px
+  padding-right: 0
 }
 
 table.scheme-links td.solidus,
 table.scheme-links td.total,
 table.scheme-links td.percent {
   border-left: none;
-  padding-left: 0px
+  padding-left: 0
 }
 
 td.link a {

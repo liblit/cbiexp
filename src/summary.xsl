@@ -76,7 +76,7 @@
     <xsl:param name="count"/>
     <xsl:param name="total"/>
     <tr>
-      <td class="label"><strong><xsl:value-of select="$title"/>:</strong>&#160;</td>
+      <th class="label"><xsl:value-of select="$title"/>:&#160;</th>
       <td class="count"><xsl:number value="$count" grouping-size="3" grouping-separator=","/></td>
       <td class="percent">&#160;(<xsl:number value="round($count div $total * 100)"/>%)</td>
     </tr>
