@@ -4,7 +4,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <queue>
 #include <string>
 #include <vector>
