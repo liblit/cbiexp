@@ -10,6 +10,8 @@ use File::Temp qw(tempfile);
 use FileHandle;
 use Getopt::Long qw(:config bundling auto_abbrev);
 
+my $RunsPerSubdirectory = 10000;
+
 
 ########################################################################
 #
@@ -38,13 +40,20 @@ my $verbose;
 my $datadir = 'data';
 my $dry_run;
 
+my $usage = "Usage: $0 [--jobs=<count>] [--verbose] [--datadir=<dir>] <num-runs>\n";
+
+sub help () {
+  print $usage;
+  exit 0;
+}
+
 my $understood = GetOptions('jobs=i' => \$jobs,
 			    'verbose' => \$verbose,
 			    'datadir=s' => \$datadir,
-			    'dry-run' => \$dry_run);
+			    'dry-run' => \$dry_run,
+			    'help|?' => \&help);
 
-die "Usage: $0 [--jobs=<count>] [--verbose] [--datadir=<dir>] <num-runs>\n",
-    unless $understood && @ARGV == 1;
+die $usage unless $understood && @ARGV == 1;
 
 $verbose |= defined $dry_run;
 
@@ -73,7 +82,7 @@ local ($,, $\) = ("\n", "\n");
 
 my ($handle, $filename) = tempfile(UNLINK => 1);
 
-foreach 0 .. ($num_runs - 1) {
+foreach (0 .. ($num_runs - 1)) {
   my $subdir = int($_ / $RunsPerSubdirectory);
   print $handle "stamp-labels: $subdir/$_/label";
 }
