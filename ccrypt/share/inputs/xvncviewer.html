@@ -1,0 +1,548 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (X11; I; Linux 2.0.35 i686) [Netscape]">
+   <meta name="keywords" content="VNC, AT&T Laboratories Cambridge, Virtual Network Computing, thin-client">
+
+
+   <title>VNCviewer for X</title>
+<link REL="stylesheet" HREF="styles.css" TYPE="text/css">
+</head>
+<body bgcolor="#FFFFFF" vlink="#000080" marginheight="0" topmargin="0" leftmargin="0" marginwidth="0">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><a href="index.html"><img SRC="sidelogo.gif" ALT="VNC logo" BORDER=0 height=113 width=120></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="20"><img SRC="spacer.gif" HSPACE=8 height=1 width=1></td>
+
+<td>
+<table BORDER=0 WIDTH="100%" >
+<tr>
+<td WIDTH="90%" valign="center">
+<center>
+<h1>
+<IMG SRC="vnctitle.gif"  WIDTH=370 HEIGHT=30 ALT="Virtual Network Computing"></h1></center>
+</td>
+
+<td WIDTH="10%"><a href="http://www.uk.research.att.com/"><img SRC="attlogo.gif" ALT="AT&T" BORDER=0 height=75 width=66 align=RIGHT></a></td>
+</tr>
+</table>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+<tr><td colspan=5 bgcolor="#eecc80"><img src="spacer.gif" height=3 vspace=0 hspace=1></td></tr>
+<tr><td bgcolor="#eecc80"><img src="spacer.gif" height=4 vspace=0 hspace=1></td><td colspan=4></td></tr>
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><a href="index.html"><img SRC="homebutton.gif" ALT="[Home]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="screenshots.html"><img SRC="screenbutton.gif" ALT="[screenshots]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+
+<tr>
+<td><a href="start.html"><img SRC="startbutton.gif" ALT="[getting started]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="docs.html"><img SRC="docbutton.gif" ALT="[documentation]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="faq.html"><img SRC="faqbutton.gif" ALT="FAQs" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="download.html"><img SRC="downloadbutton.gif" ALT="[download]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="intouch.html"><img SRC="intouchbutton.gif" ALT="[keep in touch]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="contribs.html"><img SRC="contribbutton.gif" ALT="Others' ports and add-ons etc" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="help.html"><img SRC="helpbutton.gif" ALT="Project ideas" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="vncpeople.html"><img SRC="vncpeoplebutton.gif" ALT="VNC people" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/search.html"><img SRC="searchbutton.gif" ALT="Search" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/"><img SRC="attbutton.gif" ALT="[AT&T Laboratories Cambridge]" BORDER=0 height=33 width=120></a></td>
+</tr>
+</table></center>
+</td>
+
+<td VALIGN=TOP WIDTH="8%">
+<center><a href="docs.html"><img SRC="backbutton.gif" ALT="back to docs" HSPACE=2 BORDER=0 height=20 width=20></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="100%">
+<h2>
+<b>VNCviewer for X (3.3.3 onwards)</b></h2>
+Note: this page documents the Xt-based viewer in the 3.3.3 release.  For
+previous releases, see the <a href="xlibvncviewer.html">documentation for the
+old Xlib-based viewer.</a>
+<p>
+If you just run the viewer from the command line, it will prompt you for a VNC
+server to connect to:
+<p>
+<center><tt>vncviewer</tt></center>
+<p>
+Alternatively, specify the VNC server as an argument, e.g.:
+<p>
+<center><tt>vncviewer snoopy:2</tt></center>
+<p>
+where 'snoopy' is the name of the machine, and '2' is the display number of the
+VNC server on that machine.  Either the machine name or display number can be
+omitted.  So for example ":1" means display number 1 on the same machine, and
+"snoopy" means "snoopy:0" i.e. display 0 on machine "snoopy".
+<p>
+If the VNC server is successfully contacted, you will be prompted for a
+password to authenticate you.  If the password is correct, a window will appear
+showing the desktop of the VNC server.
+<h3>
+Popup window</h3>
+The viewer has a popup window containing a set of buttons which perform various
+actions.  It is usually brought up by pressing F8, but this is customisable, as
+is the entire contents of the popup.  Actions which buttons in the popup window
+can perform include:
+
+<ul>
+<li>switching in and out of full-screen mode</li>
+<li>quitting the viewer</li>
+<li>generating arbitrary key and mouse events, e.g. sending ctrl-alt-del</li>
+<li>transferring the clipboard to or from the VNC server</li>
+</ul>
+By default, key presses in the popup window get sent to the VNC server and
+dismiss the popup.  So to get an F8 through to the VNC server simply press it
+twice.
+<p>
+See the section on customisation below for how to customise the contents of the
+popup window.
+
+<h3>
+Full screen mode
+</h3>
+A full-screen mode is supported.  This is particularly useful when connecting
+to a remote screen which is the same size as your local one. If the remote
+screen is bigger, you can scroll by bumping the mouse against the edge of the
+screen.
+<p>
+Unfortunately this mode doesn't work completely with all window managers, since
+it breaks all the X window management conventions.  It tends to work better
+when the viewer is started in full-screen mode than when switching to it from
+normal mode.
+
+<h3>
+Command line options</h3>
+
+You can get a list of options by giving <tt>-h</tt> as an option to vncviewer.
+Most of these options can also be specified as X resources - see the section
+on customisation below.
+
+<dl>
+
+<dt><tt>-shared</tt></dt>
+<dd>
+When you make a connection to a VNC server, all other existing connections are
+normally closed.  This option requests that they be left open, allowing you to
+share the desktop with someone already using it.</dd>
+
+<p><dt><tt>-display </tt><i>Xdisplay</i></dt>
+<dd>
+Specifies the X display on which the VNC viewer window should appear.</dd>
+
+<p><dt><tt>-passwd </tt><i>password-file</i></dt>
+<dd>
+If you are on a filesystem which gives you access to the password file used by
+the server, you can specify it here to avoid typing it in.  It will usually be
+"~/.vnc/passwd".</dd>
+
+<p><dt><tt>-viewonly</tt></dt>
+<dd>
+Specifies that no keyboard or mouse events should be sent to the server.
+Useful if you want to view a desktop without interfering; often needs to be
+combined with <tt>-shared</tt>.</dd>
+
+<p><dt><tt>-fullscreen</tt></dt>
+<dd>
+Start in full-screen mode.</dd>
+
+<p><dt><tt>-geometry </tt><i>geometry</i></dt>
+<dd>
+Standard X position and sizing specification.</dd>
+
+<p><dt><tt>-bgr233</tt></dt>
+<dd>
+Tells the VNC server to send pixels which are only 8 bits deep.  If your server
+desktop is deeper than this then it will translate the pixels before sending
+them. Less data will generally be sent over then network, which can be a big
+advantage on slow links, but the server may have to work a bit harder, and you
+may get some colour mismatches.  "BGR233" means an 8-bit true colour pixel
+format, with the most significant two bits of each byte representing the blue
+component, the next three bits representing green and the least significant
+three representing red.  This format is also used by the java client.
+</dd>
+
+<p><dt><tt>-encodings </tt><i>encodings</i></dt>
+<dd>
+This option specifies a list of encodings to use in order of preference,
+separated by spaces.  The default is "copyrect hextile corre rre", or "raw
+copyrect hextile corre rre" for a VNC server on the same machine.  For example,
+to use only raw and CopyRect, specify "raw copyrect".</dd>
+
+<p><dt><tt>-owncmap</tt></dt>
+<dd>
+Try to use a PseudoColor visual and a private colormap - this allows the VNC
+server to control the colormap.</dd>
+
+<p><dt><tt>-truecolour</tt></dt>
+<dd>
+Try to use a TrueColor visual.</dd>
+
+<p><dt><tt>-depth </tt><i>d</i></dt>
+<dd>
+This is only useful on a (real) X server which supports multiple TrueColor
+depths.  On such a display vncviewer will try to find a Visual of the given
+depth.  If successful this means that the appropriate pixel format will be
+requested from the VNC server.  You cannot use this to force a particular depth
+from the VNC server.  The only option which does this is -bgr233.</dd>
+
+<p><dt><tt>-listen</tt></dt>
+<dd>
+Causes vncviewer to listen on port 5500+&lt;display-number> for reverse
+connections from a VNC server.  At present WinVNC is the only server which
+supports reverse connections - initiated using the 'Add New Client' menu
+option.  It is also used for our internal version of VNC - see
+<a href="http://www.uk.research.att.com/vnc/internalversion.html">
+http://www.uk.research.att.com/vnc/internalversion.html</a>.</dd>
+</dl>
+
+<h3>
+Customisation and X resources</h3>
+
+The behaviour of vncviewer is extremely customisable using X resources.  You
+can set X resources by any of the usual means - in an app-defaults file such as
+.Xresources, or on the command line with the '-xrm' option.  See the X window
+system documentation for details.
+<p>
+The application resources are:
+
+<dl>
+
+<p><dt><tt>shareDesktop </tt>(option -shared)</dt>
+<dd>
+Whether to leave other viewers connected.  Default false.</dd>
+
+<p><dt><tt>viewOnly </tt>(option -viewonly)</dt>
+<dd>
+Block mouse and keyboard events.  Default false.</dd>
+
+<p><dt><tt>fullScreen </tt>(option -fullscreen)</dt>
+<dd>
+Full screen mode.  Default false.</dd>
+
+<p><dt><tt>passwordFile </tt>(option -passwd)</dt>
+<dd>
+File from which to get the password (as generated by the vncpasswd
+program).  Default is null, i.e. to request password from the user.</dd>
+
+<p><dt><tt>passwordDialog</tt></dt>
+<dd>
+Whether to use a dialog box to get the password (true) or get it from the
+tty (false).  Irrelevant if passwordFile is set.  Default false.</dd>
+
+<p><dt><tt>encodings </tt>(option -encodings)</dt>
+<dd>
+A list of encodings to use in order of preference, separated by spaces.
+Default is null, which actually means "copyrect hextile corre rre", or "raw
+copyrect hextile corre rre" for a VNC server on the same machine.</dd>
+
+<p><dt><tt>useBGR233 </tt>(option -bgr233)</dt>
+<dd>
+Always use the BGR233 (8-bit) pixel format on the wire, regardless of the
+visual.  Default is false (though BGR233 is used anyway for non-TrueColor
+visuals with forceOwnCmap false).</dd>
+
+<p><dt><tt>nColours</tt></dt>
+<dd>
+When using BGR233, try to allocate this many "exact" colours from the
+BGR233 colour cube.  When using a shared colormap, setting this resource
+lower leaves more colours for other X clients.  Irrelevant when using
+truecolour.  Default is 256 (i.e. all of them).</dd>
+
+<p><dt><tt>useSharedColours</tt></dt>
+<dd>
+If the number of "exact" BGR233 colours successfully allocated is less than
+256 then the rest are filled in using the "nearest" colours available.
+This resource says whether to only use the "exact" BGR233 colours for this
+purpose, or whether to use other clients' "shared" colours as well.
+Default true (i.e. use other clients' colours).</dd>
+
+<p><dt><tt>forceOwnCmap </tt>(option -owncmap)</dt>
+<dd>
+Try to use a PseudoColor visual and a private colormap - this allows the
+VNC server to control the colormap.  Default false.</dd>
+
+<p><dt><tt>forceTrueColour </tt>(option -truecolour)</dt>
+<dd>
+Try to use a TrueColor visual.  Default false.</dd>
+
+<p><dt><tt>requestedDepth </tt>(option -depth)</dt>
+<dd>
+If forceTrueColour is true, try to use a visual of this depth.  Default 0
+(i.e. any depth).</dd>
+
+<p><dt><tt>useSharedMemory</tt></dt>
+<dd>
+Whether to use the MIT shared memory extension if on the same machine as
+the X server.  Default true.</dd>
+
+<p><dt><tt>wmDecorationWidth</tt></dt>
+<dt><tt>wmDecorationHeight</tt></dt>
+<dd>
+The total width and height taken up by window manager decorations.  This is
+used to calculate the maximum size of the VNC viewer window.  Default is
+width 4, height 24.</dd>
+
+<p><dt><tt>bumpScrollTime</tt></dt>
+<dt><tt>bumpScrollPixels</tt></dt>
+<dd>
+When in full screen mode and the VNC desktop is bigger than the X display,
+scrolling happens whenever the mouse hits the edge of the screen.  The
+maximum speed of scrolling is bumpScrollPixels pixels every bumpScrollTime
+milliseconds.  The actual speed of scrolling will be slower than this, of
+course, depending on how fast your machine is.  Default 20 pixels every 25
+milliseconds.</dd>
+
+<p><dt><tt>popupButtonCount</tt></dt>
+<dd>
+The number of buttons in the popup window.  See below for how to customise
+the buttons.</dd>
+
+<p><dt><tt>rawDelay</tt></dt>
+<dd>
+This is useful for debugging VNC servers by checking exactly which parts of
+the screen are being updated.  For each update rectangle vncviewer puts up
+a black rectangle for the given time in milliseconds before putting up the
+pixel data.  This only highlights pixel data sent using the raw encoding.
+Default 0 (i.e. don't do it).</dd>
+
+<p><dt><tt>copyRectDelay</tt></dt>
+<dd>
+Similar to rawDelay, but highlights the areas copied using the copyrect
+encoding.</dd>
+
+</dl>
+
+<h4>
+How to customise the popup window</h4>
+
+Set the number of buttons with the popupButtonCount resource, e.g.:
+
+<pre>
+ *popupButtonCount: 2
+</pre>
+
+For each button, set the label, and override the button press translations,
+e.g.:
+
+<pre>
+ *popup*button1.label: Left mouse button click at 100,100
+ *popup*button1.translations: #override\n\
+   &lt;Btn1Down>,&lt;Btn1Up>: SendRFBEvent(ptr,100,100,1)\
+                        SendRFBEvent(ptr,100,100,0)
+
+ *popup*button2.label: Send "Think thin!"
+ *popup*button2.translations: #override\n\
+   &lt;Btn1Down>,&lt;Btn1Up>:\
+     SendRFBEvent(key,T) SendRFBEvent(key,h)\
+     SendRFBEvent(key,i) SendRFBEvent(key,n)\
+     SendRFBEvent(key,k) SendRFBEvent(key,space)\
+     SendRFBEvent(key,t) SendRFBEvent(key,h)\
+     SendRFBEvent(key,i) SendRFBEvent(key,n)\
+     SendRFBEvent(key,exclam)
+</pre>
+
+<h4>
+How to customise the desktop window</h4>
+
+You can override translations on the desktop window.  For example to change the
+key used to bring up to popup window from F8 to Escape, and make F12 switch in
+and out of full screen mode:
+
+<pre>
+  *desktop.translations: #override\n\
+    &lt;Key>F8: SendRFBEvent()\n\
+    &lt;Key>Escape: ShowPopup()\n\
+    &lt;Key>F12: ToggleFullScreen()
+</pre>
+
+
+<h4>
+Actions</h4>
+
+These are the actions which you can use in translations:
+
+<dl>
+<dt><tt>ShowPopup()</tt></dt>
+<dt><tt>HidePopup()</tt></dt>
+<dd>
+Show and hide the popup window, respectively.</dd>
+
+<p><dt><tt>SendRFBEvent()</tt></dt>
+<dd>
+Send an RFB event to the VNC server.  With no argument, simply sends the
+RFB equivalent of the X event which caused the action.  With arguments,
+generates either key or pointer events depending on the arguments:
+
+<ul>
+<li>SendRFBEvent(keydown,<i>keysym</i>)</li>
+<li>SendRFBEvent(keyup,<i>keysym</i>)</li>
+<li>SendRFBEvent(key,<i>keysym</i>) (short for keydown followed by keyup)</li>
+
+<li>SendRFBEvent(ptr,<i>x</i>,<i>y</i>,<i>buttonMask</i>)</li>
+<li>SendRFBEvent(ptr,<i>buttonMask</i>)</li>
+</ul>
+
+where
+<ul>
+<li><i>keysym</i> is the string representing an X keysym.  The best way to find these
+is to use "xev", or look in /usr/include/X11/keysymdef.h and strip off the
+"XK_".
+</li>
+<li><i>x</i> and <i>y</i> are the position of the pointer event.  If not specified,
+use the position of the X event which caused the action.
+</li>
+<li><i>buttonMask</i> is a bit mask representing buttons 1 to 8 with bits 0 to 7
+respectively, 0 meaning up, 1 meaning down (pressed).  So 0 means no buttons, 1
+means button 1 pressed, 5 means buttons 1 & 3 pressed, etc.
+</li>
+</ul>
+</dd>
+
+<p>
+<p><dt><tt>SelectionToVNC()</tt></dt>
+<dd>
+Send the local X selection or cut buffer to the VNC server.  This is
+usually invoked when the mouse enters the viewer window.  With no argument
+or an argument "new", this is only done if this is a "new" selection,
+i.e. it hasn't already been sent.  With an argument "always", it is sent
+each time.</dd>
+
+
+<p><dt><tt>SelectionFromVNC()</tt></dt>
+<dd>
+Set the local X selection and cut buffer to the current value of the VNC
+server "cut text".  This is usually invoked when the mouse leaves the
+viewer window.  With no argument or an argument "new", this is only done if
+there has been new "cut text" since the last time it was called.  With an
+argument "always", it is set each time.</dd>
+
+
+<p><dt><tt>Quit()</tt></dt>
+<dd>
+Quit the VNC viewer.</dd>
+
+
+<p><dt><tt>Pause()</tt></dt>
+<dd>
+Pause for a given number of milliseconds (100 by default).  This is
+sometimes useful to space out events generated by SendRFBEvent.</dd>
+
+
+<p><dt><tt>ToggleFullScreen()</tt></dt>
+<dd>
+Toggle in and out of full screen mode.</dd>
+
+
+<p><dt><tt>SetFullScreenState()</tt></dt>
+<dd>
+Sets the "state" resource of a toggle widget to reflect whether we're in
+full screen mode.</dd>
+
+
+<p><dt><tt>ServerDialogDone()</tt></dt>
+<dt><tt>PasswordDialogDone()</tt></dt>
+<dd>
+Used to tell the dialog boxes that entry has finished.  Usually invoked by
+the return key.</dd>
+
+</dl>
+
+<h4>
+Widget hierarchy</h4>
+
+For the real experts amongst you, here is the widget hierarchy used by vncviewer in case you want to change the resources of the widgets.
+<p>
+Main window:
+<pre>
+  Vncviewer  vncviewer
+    Form       form
+      Viewport   viewport
+        Core       desktop
+</pre>
+
+Server dialog box:
+<pre>
+    TransientShell  serverDialog
+      Dialog          dialog
+</pre>
+
+
+Password dialog box:
+<pre>
+    TransientShell  passwordDialog
+      Dialog          dialog
+</pre>
+
+
+Popup window:
+<pre>
+    TransientShell   popup
+      Form             buttonForm
+        Command/Toggle   button1
+               .            .
+               .            .
+        Command/Toggle   buttonN
+</pre>
+
+<div align=right><a href="docs.html"><img SRC="backbutton.gif" ALT="back to docs" HSPACE=5 BORDER=0 height=20 width=20></a><i>go
+back to <a href="docs.html">documentation</a></i></div>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+
+<tr>
+<td bgcolor="#eecc80">&nbsp;</td><td ALIGN=CENTER VALIGN=TOP COLSPAN="4" WIDTH="100%">
+<!-- Ruler here? -->
+<center>
+<p><i><font size=-1>For comments, feedback, etc, please see the '<a href="intouch.html">Keeping
+in touch</a>' page</font>.</i>
+<br><i><font size=-1>Copyright 1999 - AT&amp;T Laboratories Cambridge
+</font></i></center>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

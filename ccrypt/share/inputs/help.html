@@ -1,0 +1,222 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (X11; I; Linux 2.0.35 i686) [Netscape]">
+   <meta name="keywords" content="VNC, AT&T Laboratories Cambridge, Virtual Network Computing, thin-client">
+
+
+   <title>Want to help?</title>
+<link REL="stylesheet" HREF="styles.css" TYPE="text/css">
+</head>
+<body bgcolor="#FFFFFF" vlink="#000080" marginheight="0" topmargin="0" leftmargin="0" marginwidth="0">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><a href="index.html"><img SRC="sidelogo.gif" ALT="VNC logo" BORDER=0 height=113 width=120></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="20"><img SRC="spacer.gif" HSPACE=8 height=1 width=1></td>
+
+<td>
+<table BORDER=0 WIDTH="100%" >
+<tr>
+<td WIDTH="90%" valign="center">
+<center>
+<h1>
+<IMG SRC="vnctitle.gif"  WIDTH=370 HEIGHT=30 ALT="Virtual Network Computing"></h1></center>
+</td>
+
+<td WIDTH="10%"><a href="http://www.uk.research.att.com/"><img SRC="attlogo.gif" ALT="AT&T" BORDER=0 height=75 width=66 align=RIGHT></a></td>
+</tr>
+</table>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+<tr><td colspan=5 bgcolor="#eecc80"><img src="spacer.gif" height=3 vspace=0 hspace=1></td></tr>
+<tr><td bgcolor="#eecc80"><img src="spacer.gif" height=4 vspace=0 hspace=1></td><td colspan=4></td></tr>
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><a href="index.html"><img SRC="homebutton.gif" ALT="[Home]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="screenshots.html"><img SRC="screenbutton.gif" ALT="[screenshots]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+
+<tr>
+<td><a href="start.html"><img SRC="startbutton.gif" ALT="[getting started]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="docs.html"><img SRC="docbutton.gif" ALT="[documentation]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="faq.html"><img SRC="faqbutton.gif" ALT="FAQs" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="download.html"><img SRC="downloadbutton.gif" ALT="[download]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="intouch.html"><img SRC="intouchbutton.gif" ALT="[keep in touch]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="contribs.html"><img SRC="contribbutton.gif" ALT="Others' ports and add-ons etc" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="help.html"><img SRC="helpbutton.gif" ALT="Project ideas" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="vncpeople.html"><img SRC="vncpeoplebutton.gif" ALT="VNC people" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/search.html"><img SRC="searchbutton.gif" ALT="Search" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/"><img SRC="attbutton.gif" ALT="[AT&T Laboratories Cambridge]" BORDER=0 height=33 width=120></a></td>
+</tr>
+</table></center>
+</td>
+
+<td VALIGN=TOP WIDTH="8%"></td>
+
+<td VALIGN=TOP WIDTH="100%">
+<h2>
+<b>Want to help?&nbsp; - Project suggestions</b></h2>
+One of the reasons we've made the source code available was so that people
+could modify and improve it, port it to new platforms, create new software
+using VNC, and so forth.&nbsp; Most of the contributions so far have been
+ports to new platforms; see the <a href="contribs.html">contribs</a> page
+for details.
+<p>Here are some things that we think would be worth doing.&nbsp; If you
+would like to sign up to work on any of these, or if you have any new suggestions,
+please let us know.&nbsp; We'll start with the most important:
+<h3>
+Improving WinVNC</h3>
+If you've used both the X server (Xvnc) and the Windows server (WinVNC)
+you will notice that the Windows one is considerably slower.&nbsp; There
+is a simple reason for this.&nbsp; We have the source code for X, and we
+know exactly what it is doing.&nbsp; With Windows, we can get hints by
+inserting system hooks to monitor messages, but they're only hints and
+not all applications use suitable messages, so we often have to poll areas
+of the screen just to see if anything has changed.&nbsp; The two main alternative
+approaches would be:
+<ul>writing a pseudo-video driver, which could notify WinVNC with more
+precise details
+<p>writing a wrapper around the GDI DLLs which would hook into all screen
+updates at that level</ul>
+
+<h3>Security</h3>
+
+VNC uses a single TCP/IP connection, so a version which runs over Secure
+Sockets should be easy to build.&nbsp; Some users have reported that wrapping
+the connection using SSH works well and gives you compression as well.
+See the <a href="faq.html">FAQ</a> for details.&nbsp; But it would be nice
+to have it built-in, not least because SSH for Windows is not free.
+<p>People have built the viewer to allow access outward through SOCKS firewalls.
+See the <a href="contribs.html">contribs</a> page.
+
+<h3>Compression</h3>
+
+The VNC protocol is fairly efficient in the way it transmits areas of the
+screen, but on slow networks a generic compression system would be worth
+incorporating.&nbsp;&nbsp; The important requirements are:
+<ul>It should be possible to switch it off, so that it doesn't increase
+latency on fast networks.&nbsp; This would probably mean adding an extra
+message to the VNC protocol.
+<p>The compression code needs to be easily portable to all platforms including
+Java.
+<p>The code needs to be freely distributable under the GPL.</ul>
+
+<h3>Single-application servers</h3>
+
+A VNC server doesn't have to be a desktop.&nbsp; In many circumstances
+it can be useful for a single application to be a VNC server; we've done
+a CD player, for example, that can be controlled by anyone in the room.
+It would be good to have a simple toolkit to do this - perhaps the Java
+Swing toolkit could be extended so that the graphic context object used
+for drawing operations could be a VNC server as well...&nbsp;
+<p>Steve Cheng has written a GGI 'target' which allows programs using libGGI
+to become VNC servers - see the <a href="contribs.html">contribs</a> page
+for details.
+<p>You can also get the source code for possibly the most basic VNC server
+we've written - <a href="rfbcounter.html">rfbcounter</a>.
+
+<h3>Attaching to a running X server</h3>
+
+As mentioned in the FAQ, the X-based VNC server appears as a separate
+display for your applications (typically :1).  In theory it would be
+possible to attach VNC code to a standard X server so that the
+applications on the main screen were accessible by VNC, though with
+many Unix platforms only the binary of the X server is shipped, making
+this more tricky.  With XFree86 4.0, it should be rather easier. There
+is some discussion about this on the mailing list <a
+href="http://www.uk.research.att.com/vnc/archives/2000-03/0228.html">here</a>.
+
+<h3>Other platforms</h3>
+
+One of our catch-phrases for VNC is <i>"Any-to-Any"</i>; the basic aim
+being to access any user interface from any other user interface. There
+are several platforms it would be good to support, but that we can't do
+here. We used to list several Unix platforms here but since the release
+of VNC others have ported it to HP-UX, SGI,. AIX, FreeBSD and SunOS 4 amongst
+others -&nbsp; see the <a href="contribs.html">contribs</a> page for details.
+<p>How about a Windows 3.1 client?&nbsp;&nbsp; The current Win32 viewer
+is multi-threaded, but if that aspect were removed it shouldn't be too
+hard to build for 3.1.
+<p>If you have either a client or server running on any new platforms,
+we'd like to hear about it. Remember that you should be able to run a viewer
+on any platform which supports Java...
+
+<h3>Record and Playback</h3>
+
+Proxies which do things like recording a session for later playback,
+extra compression, scaling, access control, etc are not difficult to
+create, though you need to keep the latency low. There has been some
+work on this - try searching the mailing lists for 'proxy' or
+'rfbproxy'.
+
+<h3>Other network transports</h3>
+
+At the moment VNC uses TCP/IP for the connection between viewer and server,
+but that's purely for convenience. It could just as well run over Firewire,
+USB, RS232, modems and ISDN lines without IP being there at all.&nbsp;
+A modem link would be very handy particularly for remote maintenance; you
+could dial up PCs which did not necessarily have an IP address.&nbsp;
+<p>We don't, at present, support simple dialup without TCP, for example,
+because it involves writing a lot of code to talk to the modem, which would
+take more time than we have available at present, and would also expand
+dramatically the otherwise slim viewer and server.&nbsp; The right way
+to do this is probably to provide a scripting extension, so that the dialup
+code could be external and easily customised.
+<p>&nbsp;</td>
+
+<td WIDTH="5%"></td>
+</tr>
+
+<tr>
+<td bgcolor="#eecc80">&nbsp;</td><td ALIGN=CENTER VALIGN=TOP COLSPAN="4" WIDTH="100%">
+<!-- Ruler here? -->
+<center>
+<p><i><font size=-1>For comments, feedback, etc, please see the '<a href="intouch.html">Keeping
+in touch</a>' page</font>.</i>
+<br><i><font size=-1>Copyright 1999 - AT&amp;T Laboratories Cambridge
+</font></i></center>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

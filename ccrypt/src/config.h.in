@@ -1,0 +1,35 @@
+/* config.h.in.  Generated automatically from configure.in by autoheader.  */
+
+/* The number of bytes in a unsigned int.  */
+#undef SIZEOF_UNSIGNED_INT
+
+/* The number of bytes in a unsigned long.  */
+#undef SIZEOF_UNSIGNED_LONG
+
+/* Define if you have the <stdint.h> header file.  */
+#undef HAVE_STDINT_H
+
+/* Define if you have the crypt library (-lcrypt).  */
+#undef HAVE_LIBCRYPT
+
+/* Name of package */
+#undef PACKAGE
+
+/* Version number of package */
+#undef VERSION
+
+/* Name of the ccrypt binary */
+#undef NAME
+
+/* Name of the ccencrypt binary */
+#undef NAMEENCRYPT
+
+/* Name of the ccdecrypt binary */
+#undef NAMEDECRYPT
+
+/* Name of the ccat binary */
+#undef NAMECAT
+
+/* Default suffix for encrypted files */
+#undef SUF
+

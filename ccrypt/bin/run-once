@@ -1,0 +1,167 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use Expect;
+use File::Basename;
+use File::Copy;
+use File::Path;
+use FileHandle;
+use FindBin;
+
+
+my $ccrypt = "$FindBin::Bin/../src/src/ccrypt";
+
+@ARGV == 1 or die "Usage: $0 <run-id>\n";
+my $runId = shift;
+
+
+########################################################################
+#
+#  record some small fact in an external file
+#
+
+sub note ($@) {
+    my ($filename, @message) = @_;
+    my $handle = new FileHandle $filename, 'w' or warn "cannot write to $filename: $!";
+    $handle->print("@message\n");
+}
+
+
+########################################################################
+#
+#  create a pristine copy of the inputs directory
+#
+
+my @inputs;
+
+mkdir 'inputs' or die "cannot mkdir inputs: $!";
+my $wipe = 1;
+END { rmtree 'inputs' if $wipe; }
+
+foreach (glob "$FindBin::Bin/../share/inputs/*") {
+    next unless -f;
+    my $input = 'inputs/' . basename $_;
+    copy $_, $input;
+    push @inputs, $input unless $_ =~ /\.cpt$/;
+}
+
+
+########################################################################
+#
+#  command line flag choices
+#
+
+# occasionally pick the wrong password
+my @words = ('good', 'good', 'good', 'good', 'bad', undef);
+#my @words = ('good');
+
+my @modes = ('', '-e', '-d', '-c', '-x');
+
+my %suffix = ('' => '',
+	      '-e' => '',
+	      '-d' => '.cpt',
+	      '-c' => '.cpt',
+	      '-x' => '.cpt');
+
+
+########################################################################
+#
+#  assorted randomization utilities
+#
+
+
+sub pick (@) {
+    $_[int(rand(@_))];
+}
+
+
+sub pick_send ($@) {
+    my $process = shift;
+    my $response = pick @_;
+    if (defined $response) {
+	$response .= "\r";
+    } else {
+	$response = "\cD";
+    }
+    $process->send($response);
+    exp_continue;
+}
+
+
+sub pick_yes_or_no ($@) {
+    my $process = shift;
+    pick_send $process, ('y', 'yes', 'n', 'no', '', 'foo',
+			 undef, undef, undef, undef, undef, undef,
+			 undef, undef, undef, undef, undef, undef);
+}
+
+
+sub pick_key ($@) {
+    my $process = shift;
+    pick_send $process, @words;
+}
+
+
+########################################################################
+#
+#  assemble randomized command line
+#
+
+srand $runId;
+
+my $mode = pick @modes;
+my $input = pick(@inputs) . $suffix{$mode};
+my @command = ($ccrypt);
+push @command, $mode if $mode;
+push @command, $input;
+
+note 'random-seed', $runId;
+note 'command-line', @command;
+
+
+########################################################################
+#
+#  prepare for sampler data collection
+#
+
+$ENV{SAMPLER_DEBUGGER} = '/usr/share/sampler/print-debug-info';
+$ENV{SAMPLER_FILE} = 'reports';
+$ENV{SAMPLER_REAL_EXECUTABLE} = $ccrypt;
+$ENV{SAMPLER_SPARSITY} = 1;
+
+delete $ENV{SAMPLER_REPORT_FD};
+
+
+########################################################################
+#
+#  run ccrypt
+#
+
+my $process = Expect->spawn (@command) or die $!;
+$process->expect(undef,
+		 ' key: (repeat) ', \&pick_key,
+		 ' key: ', \&pick_key,
+		 ' (y or n)? ', \&pick_yes_or_no);
+
+note 'outcome', $process->exitstatus();
+
+
+########################################################################
+#
+#  sanity check sampler output
+#
+
+my $handle = new FileHandle $ENV{SAMPLER_FILE}, 'r';
+
+if ($handle) {
+    my $last;
+    $last = $_ while <$handle>;
+    if (! defined $last) {
+	note 'bad', 'reports file empty';
+    } elsif ($last ne "</report>\n") {
+	note 'bad', 'reports file ends abruptly';
+    }
+} else {
+    note 'bad', 'reports file missing';
+}

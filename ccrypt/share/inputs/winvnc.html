@@ -1,0 +1,709 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.51 [en] (X11; I; Linux 2.2.6 i686) [Netscape]">
+   <meta name="keywords" content="VNC, AT&T Laboratories Cambridge, Virtual Network Computing, thin-client">
+   <title>WinVNC - The Win32 VNC server</title>
+<link REL="stylesheet" HREF="styles.css" TYPE="text/css">
+<style>
+<!--
+.itemheader { font-family: Arial, sans-serif; color: rgb(128,0,128); font-weight: bold; font-size: smaller }
+-->
+</style>
+</head>
+<body bgcolor="#FFFFFF" vlink="#000080" marginheight="0" topmargin="0" leftmargin="0" marginwidth="0">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><a href="index.html"><img SRC="sidelogo.gif" ALT="VNC logo" BORDER=0 height=113 width=120></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="20"><img SRC="spacer.gif" HSPACE=8 height=1 width=1></td>
+
+<td>
+<table BORDER=0 WIDTH="100%" >
+<tr>
+<td WIDTH="90%" valign="center">
+<center>
+<h1>
+<IMG SRC="vnctitle.gif"  WIDTH=370 HEIGHT=30 ALT="Virtual Network Computing"></h1></center>
+</td>
+
+<td WIDTH="10%"><a href="http://www.uk.research.att.com/"><img SRC="attlogo.gif" ALT="AT&T" BORDER=0 height=75 width=66 align=RIGHT></a></td>
+</tr>
+</table>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+<tr><td colspan=5 bgcolor="#eecc80"><img src="spacer.gif" height=3 vspace=0 hspace=1></td></tr>
+<tr><td bgcolor="#eecc80"><img src="spacer.gif" height=4 vspace=0 hspace=1></td><td colspan=4></td></tr>
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><a href="index.html"><img SRC="homebutton.gif" ALT="[Home]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="screenshots.html"><img SRC="screenbutton.gif" ALT="[screenshots]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+
+<tr>
+<td><a href="start.html"><img SRC="startbutton.gif" ALT="[getting started]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="docs.html"><img SRC="docbutton.gif" ALT="[documentation]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="faq.html"><img SRC="faqbutton.gif" ALT="FAQs" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="download.html"><img SRC="downloadbutton.gif" ALT="[download]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="intouch.html"><img SRC="intouchbutton.gif" ALT="[keep in touch]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="contribs.html"><img SRC="contribbutton.gif" ALT="Others' ports and add-ons etc" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="help.html"><img SRC="helpbutton.gif" ALT="Project ideas" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="vncpeople.html"><img SRC="vncpeoplebutton.gif" ALT="VNC people" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/search.html"><img SRC="searchbutton.gif" ALT="Search" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/"><img SRC="attbutton.gif" ALT="[AT&T Laboratories Cambridge]" BORDER=0 height=33 width=120></a></td>
+</tr>
+</table></center>
+</td>
+
+<td VALIGN=TOP WIDTH="8%">
+<center><a href="docs.html"><img SRC="backbutton.gif" ALT="back to docs" HSPACE=2 BORDER=0 height=20 width=20></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="100%">
+<h2>
+<b>WinVNC - The Windows NT VNC server</b></h2>
+<img SRC="winvnctray.GIF" ALT="WinVNC in system tray" HSPACE=6 VSPACE=5 height=118 width=199 align=RIGHT>WinVNC
+is a VNC server that will allow you to view your Windows desktop from any
+VNC viewer. Because Windows in its present, standard incarnation, only
+supports a single graphical user being logged in at any one time, WinVNC
+makes the existing desktop of the PC available remotely, rather than creating
+a separate desktop as happens with the Unix server. It is only fair to
+emphasise this: VNC does <b><i>not</i></b> make an NT machine into a multi-user
+server in the same way that Citrix-based software, for example, does. A
+single NT machine can therefore be accessed by multiple users, but if they
+all connect at the same time they will all see the same desktop!&nbsp;
+<p>On the other hand, WinVNC will run on Windows 95, Windows98, Windows
+NT 4.0, Windows 2000 and on any future Win32-based systems, without the
+need to replace any system files or run any OS-specific versions of the
+program. It is a standard application that can be run from the Start...
+menu and closed down just as easily.&nbsp;
+
+<p>WinVNC can also be run as a service, which means that you can log
+in remotely, do some work, and log out again. We recommend that you
+run it in this mode. See below for more details.</p>
+
+<p>And, of course, WinVNC is free. We hope that making the source code
+available will enable others to suggest improvements to any and all aspects of WinVNC.
+<p>If you haven't yet read the '<a href="start.html">Getting Started</a>'
+page, you might like to do that first to give you the general concepts.</p>
+
+<h3>
+Installation</h3>
+WinVNC is simple to install and to use:
+<ol>&nbsp;
+<li>
+Run the WinVNC setup program. (If you received VNC as a ZIP or TAR archive, you'll need to unpack it first!) </li>
+
+<li>
+Select <i>Install Default Registry Settings</i> from the WinVNC folder
+in the Start menu.  This will install the default hooks settings,
+which are tweaked to cope with some common, uncooperative
+applications, such as the clock. This is not vital, but will make
+things run a bit better. See later for more information about the
+registry settings.&nbsp;
+</li>
+
+<li>
+WinVNC can now be run (in Application mode) from the Start
+menu. Alternatively, you can use the Start->Settings->Taskbar menu to
+add a shortcut to your Startup group, which will cause WinVNC to be
+run every time you log in.  NOTE: After some initial tests, we suggest
+you run WinVNC as a service instead of as an application. See below
+for more information.
+</li>
+</ol>
+
+<h3>Using WinVNC</h3>
+
+On starting, WinVNC will add a small, green version of the VNC icon to
+the system task bar. Clicking on this icon with the right mouse button
+will cause a menu to be displayed, with the following options on it:
+<ul>&nbsp;
+<li>
+<span class="itemheader"><b>Properties</span></b> - This will cause the
+User Properties dialog to be displayed, allowing the user to change various
+per-user WinVNC parameters.&nbsp;</li>
+
+<li>
+<span class="itemheader"><b>Add New Client</span></b> - This allows outgoing
+connections to be made from the server to any "listening" viewer.  The name of
+the target viewer machine can be entered in the dialog.  Connections created this
+way are treated as shared, as of 3.3.3R2. See also the <tt>-connect</tt> option below.&nbsp;</li>
+
+<li>
+<span class="itemheader"><b>Kill All Clients</span></b> - This will disconnect
+all currently connected clients from the server.&nbsp;</li>
+
+<li>
+<span class="itemheader"><b>About WinVNC</span></b> - This should be obvious!&nbsp;</li>
+
+<li>
+<span class="itemheader"><b>Close</span></b> - Shutdown the server.&nbsp;</li>
+</ul>
+Moving the mouse over the icon should cause the IP addresses of the local
+machine to be displayed, if they can be discovered at that time.
+<p>You can connect to the server from another machine using a VNC viewer,
+as described in the <a href="start.html">Getting Started</a> page.
+
+<h3>WinVNC Properties</h3>
+
+The following options are available from the Properties dialog.
+<p><font color="#800080">Incoming Connections</font>
+<ul type="disc">&nbsp;
+<li>
+<span class="itemheader">Accept Socket Connections</span> - The server
+normally accepts direct, socket-based connections from the vncviewer program.
+Clearing this tick-box disables direct connection to WinVNC, so that only
+the CORBA interface used by our internal version may be used to start a
+connection. (See <a href="internalversion.html">AT&amp;T internal version</a>
+info).&nbsp; For the public version, clearing this will disable any incoming
+connections.</li>
+
+<li>
+<span class="itemheader">Display Number</span> - This allows the user to
+specify the display number which the server will use.&nbsp; There is normally
+no need to change this from the default of zero.</li>
+
+<li>
+<b><font color="#800080">Auto</font></b> - This tick box indicates to WinVNC
+whether it should use the display number specified in the Display Number
+box, or whether it should use the first display number not already in use
+on the server machine.</li>
+
+<li>
+<span class="itemheader">Password</span> - Incoming connections must be
+authenticated to verify that the person connecting is allowed to connect
+to this machine. This text box allows your password to be specified for
+authentication.</li>
+
+<li>
+<span class="itemheader">Disable Remote Keyboard &amp; Pointer</span> -&nbsp;
+Any new incoming connections will be able to view the screen but not send
+any input.</li>
+
+<li><span class="itemheader">Disable Local Keyboard &amp; Pointer</span> -&nbsp;
+This is experimental, and works on NT only. If selected, then the local keyboard 
+and mouse will be disabled during a connection. Useful if you want to log in to 
+a machine from elsewhere and don't want passers-by to be able to use your session.
+</li>
+
+</ul>
+<font color="#800080">Update Handling</font>
+<p><i>Note that clicking in a window will generally cause it to be updated,
+so if you have certain applications which don't update very well, try this!
+The default update handling settings should be the right ones for most
+people, and in general you will slow things down by changing them, so don't
+do this unless you have applications which cause problems.</i>
+<ul type="disc">&nbsp;
+<li>
+<span class="itemheader">Poll Full Screen</span>- Some applications are
+incompatible with the methods currently used in WinVNC to trap screen updates.
+For this reason, it is sometimes useful to be able to poll the entire screen
+in order to check for changes, sacrificing performance for accuracy.&nbsp;</li>
+
+<li>
+<span class="itemheader">Poll Foreground Window</span> - Polling only the
+currently selected window for changes is less CPU intensive than full-screen
+polling and often gives similar results, for example when using the Command
+Prompt, which is not normally compatible with WinVNC.&nbsp;</li>
+
+<li>
+<span class="itemheader">Poll Window Under Cursor</span>- A variation on
+Poll Foreground Window, this option causes the window under the mouse cursor
+to be polled for changes. Both options may be enabled simultaneously if
+required.&nbsp;</li>
+
+<li>
+<span class="itemheader">Poll Console Windows Only</span>- When this option
+is set, the only windows which will be ever be polled are Command Prompts.
+This works well in conjunction with Poll Window Under Cursor, to use polling
+only when the cursor is over a console window.&nbsp;</li>
+
+<li>
+<span class="itemheader">Poll On Event Received Only</span>- When this
+option is set, the screen will only be polled for updates when a mouse
+or keyboard event is received from the remote client. This is provided
+for low bandwidth networks, where it may be useful to control how often
+the screen is polled and changes sent.&nbsp;</li>
+</ul>
+The user's settings are saved into the user-specific section of the registry
+when WinVNC quits, meaning that they will be used next time you run WinVNC.
+<br>&nbsp;
+<ul type="disc">&nbsp;</ul>
+
+<h2>
+Running WinVNC as a service</h2>
+WinVNC can now be made to run as a service process under both Windows NT
+and Windows 95/98, by following the instructions outlined below. This allows you to connect to a machine which has nobody logged in to it, for example.
+On NT, you can also send Ctrl-Alt-Del to the server when it's running as a service, allowing you to unlock a locked workstation, for example. <B>Note</B> that in 'service' mode, many features are changed on a per-machine rather than per-user basis.  You can access the per-machine 'Defaults' from the 'Administrative Tools' section of the VNC Start Menu group.&nbsp; 
+
+The following 'features' should also be pointed out:
+<p>Windows NT 'features':
+<ul>
+<li>
+WinVNC will attempt to correctly identify the user and locate their
+preferred settings in the registry (unless AllowProperties has been
+used to disable this - see below).  To do this requires that a helper
+application be run when a user logs in, which will pass appropriate
+information to the main service portion of WinVNC.  If the helper
+fails to run for some reason then WinVNC will continue to operate but
+it won't know who is logged in, so its settings will be based on the
+local-machine and default-user settings only.</li>
+</ul>
+Windows 95 'features':
+<ul>
+<li>
+Whether or not the VNC password is set per-machine or per-user depends
+on the settings in the Passwords section of the Control Panel.&nbsp; If
+Win95 is set to use a different set of registry values for each user then
+when a user logs in, the password will change from the per-machine VNC
+password to that user's VNC password.&nbsp; If Win95 is set to use the
+same settings for all users then the per-machine VNC password will always
+be used.</li>
+</ul>
+General features for both Windows NT and Windows 95:
+<ul>
+<li>
+Anything which causes the Windows VNC server to change screen
+resolution will also cause all viewers to be disconnected, and you'll
+need to reconnect. Logging in can sometimes do this if the user has a
+different screen setup from the system default.
+</li>
+
+<li>
+If a user has specified a display number which is different from the
+default used by the service, viewers will be disconnected as that user
+logs in.  
+</li>
+
+<li>
+When WinVNC is running as a system service, no user-level copies can be
+run at the same time.&nbsp;</li>
+</ul>
+
+Here's how to get it running as a service, assuming you've already installed
+it.&nbsp; Under Windows NT you need to have administrator privileges on the local machine, so log on as administrator if your account doesn't have these.
+<ol>
+<li>
+<b>Either:</b>
+<P>Select "Install WinVNC service" from the WinVNC Administrative Tools section of the Start menu.
+</P>
+<p><b>Or:</b></p>
+<p>Open a Command Prompt and run WinVNC with the -install option. eg:
+<br><tt>D:\> C:</tt>
+<br><tt>C:\> cd "\Program Files\ORL\VNC"&nbsp;</tt>
+<br><tt>C:\Program Files\ORL\VNC> winvnc -install</tt></p>
+
+<li><b>Windows 95 :</b> The WinVNC service is now running and is installed
+to run whenever the system boots up into Windows 95.
+
+<p><b>Windows NT </b>: The WinVNC service is installed and set up to
+run whenever the machine is booted into Windows NT but <i>IS NOT YET
+RUNNING</i>! It will run when the machine next reboots. If you want to
+start it immediately, you can use the Services section of the Windows
+control panel, or "net start" from the command prompt:<br>
+
+<tt>C:\> net start winvnc</tt>
+<br>
+The service should now be running, but won't know that you are logged in until you log out and back in again.  It won't yet appear on the taskbar.  You can run the WinVNC Service Helper from the start menu to tell it who you are!
+</p>
+</li>
+<li>
+If you wish to change the WinVNC settings (eg. password) when it is
+not visible on the taskbar, you can use Show User Settings from the WinVNC section of the Start menu.&nbsp; <br> If
+you wish to change the default settings used by the service when
+there's nobody logged in, or no user-specific settings in are use, use Show Default Settings from the
+Administrative Tools subsection of the WinVNC Start Menu. See below for more information about defaults.</li>
+
+<p><b>NOTE : Windows 95 </b>: If Win95 has been set to use different settings
+for each user then the settings used are those of the currently logged
+in user.&nbsp; If no user is logged in or Win95 is set to use the same
+settings for all users then the settings used are the Default user settings
+and are stored per-machine, rather than on a per-user basis as is done
+when running WinVNC normally.&nbsp; (Under Win95, pressing Cancel on the
+login dialog gives access to the Default user settings.)
+<li>
+When you wish to install a new version of WinVNC or simply wish to remove
+WinVNC from&nbsp;&nbsp; your machine, you must first remove the service
+from the system, using the WinVNC Administrative Tools or the -remove command-line option.</li>
+
+<p>NOTE : A message about failure to remove the service usually indicates that it was not
+installed in the first place!
+</ol>
+
+<h2>Command-line options</h2>
+
+<p>The full command-line options available are as follows. You probably won't need anything other than those listed above
+unless you're a real VNC power-user!</p>
+
+<dl>
+<dt><tt>-run&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </tt></dt>
+<dd>Causes WinVNC to run
+normally &amp; ignore rest of command-line.</dd>
+<dt><tt>-install&nbsp; </tt></dt>
+<dd>Installs the WinVNC service and continues reading
+the command-line.</dd>
+<dt><tt>-remove&nbsp;&nbsp; </tt></dt>
+<dd>Removes the WinVNC service and continues
+reading the command-line.</dd>
+<dt><tt>-settings </tt></dt>
+<dd>Tells a running copy of WinVNC to show the User Properties
+box.</dd>
+<dt><tt>-defaultsettings </tt></dt>
+<dd>Tells a running copy of WinVNC to show the Default Properties box.</dd>
+<dt><tt>-connect</tt> <i>host</i></dt>
+<dd>
+Tells a running copy of WinVNC to initiate an outgoing connection to a listening viewer running on the specified machine.
+This is the equivalent of the 'Add New Client' menu option.  You can put multiple -connect options on one command line to connect to multiple viewers at once.</dd>
+<dt><tt>-kill&nbsp;&nbsp;&nbsp;&nbsp; </tt></dt>
+<dd>Kills a running copy of WinVNC.</dd>
+<dt><tt>-about&nbsp;&nbsp;&nbsp; </tt></dt>
+<dd>Tells a running copy of WinVNC to
+show its About box.</dd>
+</dl>
+<p>If no options are given then WinVNC runs normally. Multiple options may
+be given, so, for example, to upgrade a currently running WinVNC service to
+a new version, you could use:
+<br><tt>WinVNC_new -remove -install</tt>
+<br>which will stop &amp; remove the old copy &amp; install the new one
+as a service, or
+<br><tt>WinVNC_new -kill -run</tt>
+<br>which will stop the running copy &amp; run the new version as an application.
+
+<h2>
+WinVNC - Advanced Settings</h2>
+Extra options have been added to WinVNC for use primarily by system administrators,
+to tailor the server's behaviour to meet their particular needs.&nbsp;&nbsp;
+The options are DWORD values which can be set in the system registry, and
+tools such as the Windows Policy Editor can be used to apply these settings
+across a large number of machines.&nbsp;
+<p>Versions 3.3.2 R5 and later use a more sophisticated organisation of
+these options to allow more flexibility.&nbsp;&nbsp; It also makes it rather
+complex, so we're thinking about alternative ways of doing this. WinVNC
+will currently look for settings in the following places:
+<ol>&nbsp;
+<li>
+<b>Local machine-specific settings</b>. Options specified here are not
+overridable. Location:</li>
+
+<br>HKEY_LOCAL_MACHINE\Software\ORL\WinVNC3\
+<li>
+<b>Local default user settings. </b>Location:</li>
+
+<br>HKEY_LOCAL_MACHINE\Software\ORL\WinVNC3\Default
+<li>
+<b>Local per-user settings</b>.&nbsp; These override the local default
+user settings. If there is no current user, the username SYSTEM will be
+used. Location:</li>
+
+<br>HKEY_LOCAL_MACHINE\Software\ORL\WinVNC3\<i>&lt;username></i>
+<li>
+<b>Global per-user settings.</b>&nbsp;&nbsp; These are only read if AllowProperties
+has not been set to zero (see below) Location:</li>
+
+<br>HKEY_CURRENT_USER\Software\ORL\WinVNC3</ol>
+Most options can only be specified in a subset of these places, as specified
+in each option's description below.
+<h3>
+Advanced Options:</h3>
+
+<ul><b><font color="#800080">AuthRequired</font></b>
+<br>By default, all WinVNC servers will not accept incoming connections
+unless the server has had its password field set to a non-null value.&nbsp;
+This restriction was placed to ensure that misconfigured servers would
+not open security loopholes without the user realising.&nbsp; If a server
+is only to be used on a secure LAN, however, it may be desirable to forego
+such checking and allow machines to have a null password.&nbsp;&nbsp; Setting
+this registry value to zero will disable null-password checking by WinVNC.
+<b>Local
+machine-specific setting.</b>
+<p><b><font color="#800080">AllowLoopback</font></b>
+<br>By default, WinVNC servers disallow any vncviewer connections from
+the same machine.&nbsp;&nbsp; For testing purposes, or, potentially, when
+using multiple instances of WinVNC on Windows Terminal Server, this behaviour
+is undesirable.&nbsp; Setting this registry entry to 1 will cause local-loopback
+connections to be allowed.&nbsp; Setting it to zero will filter out such
+connections. <b>Local machine-specific setting.</b>
+<p><b><font color="#800080">AllowProperties</font></b>
+<br>If this is set to zero, the user is not allowed to view the properties
+dialog and hence cannot change any settings, including the password.&nbsp;
+Note that this stops all global per-user settings. A valid password must
+therefore be in force before using this setting, generally in the local
+default-user setting.<b>&nbsp; Local per-user setting.</b>
+<p><b><font color="#800080">AllowShutdown</font></b>
+<br>If this is set to zero, the user is not allowed to close down WinVNC.
+<b>Local
+per-user setting.</b>
+
+<p><b><font color="#800080">AuthHosts</font></b>
+<br>The AuthHosts setting is, unlike the other settings, a REG_SZ string.
+It is used to specify a set of IP address templates which incoming connections
+must match in order to be accepted.  By default, the template is empty and
+connections from all hosts are accepted.  The template is of the form:&nbsp;
+
+<br> +[ip-address-template]
+<br> ?[ip-address-template]
+<br> -[ip-address-template]
+<br> In the above, [ip-address-template] represents the leftmost bytes of the
+desired stringified IP-address.&nbsp;For example, +158.97 would match both
+158.97.12.10 and 158.97.14.2.&nbsp;Multiple match terms may be specified,
+delimited by the ":" character.  Terms appearing later in the template take
+precedence over earlier ones.&nbsp;e.g. -:+158.97: would filter out all
+incoming connections except those beginning with 158.97.  Terms beginning with
+the "?" character are treated by default as indicating hosts from whom connections
+must be accepted at the server side via a dialog box.  The QuerySetting option
+determines the precise behaviour of the three AuthHosts options.
+<b>Local machine-specific setting.</b>
+
+<p><b><font color="#800080">QuerySetting</font></b>
+<br>The QuerySetting allows individual users to tailor the degree of paranoia
+expressed by the per-machine AuthHosts setting.  It is a DWORD value ranging from
+zero (maximum availability) to four (maximum security).  The following table
+indicates how the value affects the AuthHosts behaviour:
+
+<br> 0 - +:Accept, ?:Accept, -:Query
+<br> 1 - +:Accept, ?:Accept, -:Reject
+<br> 2 - +:Accept, ?:Query, -:Reject [Default]
+<br> 3 - +:Query, ?:Query, -:Reject
+<br> 4 - +:Query, ?:Reject, -:Reject
+<br> By default, value 2 (Obey AuthHosts) will be assumed.
+<b>Local & global per-user setting.</b>
+
+<p><b><font color="#800080">QueryTimeout</font></b>
+<br>The QueryTimeout setting indicates the number of seconds for which the
+Accept Connection dialog (see AuthHosts and QuerySetting options) will be
+displayed before rejecting the incoming connection automatically.
+<b>Local & global per-user setting.</b>
+
+<p><b><font color="#800080">AutoPortSelect</font></b>
+<br>Causes WinVNC to select the first available display number automatically.
+Corresponds to the 'Auto' checkbox in the Properties dialog. <b>Local or
+Global per-user setting</b>
+<p><b><font color="#800080">CORBAConnect</font></b>
+<br>Only relevant in internal AT&amp;T version. <b>Local or Global per-user
+setting</b>
+<p><b><font color="#800080">DebugLevel</font></b>
+<br><b><font color="#800080">DebugMode</font></b>
+<br>Run-time logging of all internal debug messages is now supported. Log
+data may be output to a file or a console window (or the MSVC debugger
+if the program was compiled with debugging active.)&nbsp; Two registry
+keys are used:
+<p><i>DebugMode</i> indicates which logging methods to use,
+<br>[1 = MSVC debugger]
+<br>2 = Output to log file Winvnc.log in the WinVNC directory
+<br>4 = Output to a console window, displayed on-screen
+<br>Any combination of the above values may be used.&nbsp; e.g. DebugMode=6
+will cause output to be sent both to the WinVNC.log file and to the a console
+window on the desktop.
+<p><i>DebugLevel</i> indicates how much debug information to present. Any
+positive integer is valid. Zero indicates that no debugging information
+should be produced and is the default.&nbsp; A value of around 10-12 will
+cause full debugging output to be produced. <b>Local machine-specific setting.</b>
+<p><b><font color="#800080">ConnectPriority</font></b>
+<br>By default, all WinVNC servers will disconnect any existing connections
+when an incoming, non-shared connection is authenticated.&nbsp; This behaviour
+is undesirable when the server machine is being used as a shared workstation
+by several users or when remoting a single display to multiple clients
+for vewing, as in a classroom situation.
+<p><i>ConnectPriority</i> indicates what WinVNC should do when a non-shared
+connection is received:
+<br>0 = Disconnect all existing connections.
+<br>1 = Don't disconnect any existing connections.
+<br>2 = Refuse the new connection.
+<p>This is a <b>Local machine-specific setting.</b>
+<p><b><font color="#800080">InputsEnabled</font></b>
+<br>Corresponds (inversely) to the 'Disable Remote keyboard and pointer'
+option in the Properties dialog box. <b>Local or Global per-user setting</b>
+<p><b><font color="#800080">LockSetting</font></b>
+<br>WinVNC can be made to take actions when a viewer disconnectsby setting
+this value as follows:
+<br>0 - none
+<br>1 - lock workstation on disconnect (not currently implemented)
+<br>2 - logoff on disconnect
+<br><b>Local or Global per-user setting</b>
+<p><b><font color="#800080">LoopbackOnly</font></b>
+<br>By default, WinVNC servers accept incoming connections on any network
+adapter address, since this is the easiest way of coping with multihomed machines.
+In some cases, it is preferable to listen only for connections originating
+from the local machine and aimed at the "localhost" adapter - a particular
+example is the use of VNC over SSH to provide secure VNC.&nbsp;
+Setting this registry entry to 1 will cause WinVNC to only accept local
+connections - this overrides the AllowLoopback and AuthHosts settings.&nbsp;
+Setting this entry to zero causes WinVNC to accept connections on any adapter
+and is the default setting.<b>Local machine-specific setting.</b>
+<p><b><font color="#800080">Password</font></b>
+<br><b>Local or Global per-user setting</b>
+<p><b><font color="#800080">PollUnderCursor, PollForeground, PollFullScreen,
+OnlyPollConsole, OnlyPollOnEvent</font></b>
+<br>These correspond to the options in the Properties dialog box.<b> Local
+or Global per-user settings</b>
+<p><b><font color="#800080">PortNumber</font></b>
+<br>specifies the port number to be used for VNC. You will need to disable AutoPortSelect to use this.
+<br><b>Local or Global per-user setting</b>
+<p><b><font color="#800080">SocketConnect</font></b>
+<br>This corresponds to the 'Accept Socket Connections' option in the properties
+dialog box and is a <b>Local or Global per-user setting</b>.</ul>
+
+<h2>
+VNCHooks - Advanced Settings</h2>
+WinVNC uses a special library, VNCHooks, to hook into the other running
+applications and retrieve notifications of areas of the screen being changed.&nbsp;
+The VNCHooks library uses the messages sent to visible Windows to decide
+which areas need considering for update. Not all applications use the same
+method of updating the screen, so you can tweak the method used by WinVNC
+for particular applications by editing the registry. All the entries listed
+can be found under
+<center>
+<p>HKEY_CURRENT_USER\Software\ORL\VNCHooks\Application_Prefs</center>
+
+<ul type="disc">
+<li>
+<span class="itemheader">use_GetUpdateRect</span></li>
+
+<br>When a window recieves a message, (WM_PAINT), indicating that it should
+repaint itself, it is possible to find out precisely which regions have
+changed, so that WinVNC need only scan those for potential updates,increasing
+efficiency. However, this can cause graphical glitches occasionally, particularly
+when an application scrolls the contents of its window, in which case only
+the revealed section of the window is marked as needing to be updated.
+If these glitches prove to be a problem then edit the <tt><i>&lt;appname></i>\use_GetUpdateRect</tt>
+entry in the registry. A value of one indicates that this optimisation
+will be used, while a value of zero indicates that it will not.&nbsp;</ul>
+
+<ul type="disc">
+<li>
+<span class="itemheader">use_Timer</span></li>
+
+<br>A number of Windows applications, most notably the Clock program, use
+WM_TIMER events to trigger updates to their displays, rather than WM_PAINT
+messages. By default, timer messages are not used to notify WinVNC of potential
+updates, since many programs use timer events for purposes other than updating
+the screen. As a result, the clock and a few other applications don't normally
+update correctly under WinVNC. The fix to this is to edit the <tt><i>&lt;appname></i>\use_Timer</tt>
+entry in the registry. A value of one indicates that WM_TIMER messages
+will trigger WinVNC updates, while a value of zero indicates that they
+will not.&nbsp;</ul>
+
+<ul type="disc">
+<li>
+<span class="itemheader">use_KeyPress</span></li>
+
+<br>Some Windows applications write characters directly to the screen when
+a user types into a window, rather than using WM_PAINT messages to cause
+the text to be redrawn. To fix this, WinVNC can scan the window every time
+a key is pressed, in order to catch the change. To set this value for a
+problem application, edit the <tt><i>&lt;appname></i>\use_KeyPress</tt>
+entry in the registry. A value of one indicates that key presses will cause
+updates, while a value of zero indicates that they will not.&nbsp;</ul>
+
+<ul type="disc">
+<li>
+<span class="itemheader">use_LButtonUp, use_MButtonUp</span>,&nbsp;<span class="itemheader">use_RButtonUp</span>,</li>
+
+<br>Some Windows applications update the display directly in response to
+mouse clicks, without using intermediate WM_PAINT messages, for example.
+In order to catch such updates, it is necessary to trigger WinVNC to update
+the relevant window whenever the left mouse button is released. To set
+this value for a problem application, edit the <tt><i>&lt;appname></i>\use_LButtonUp</tt>
+entry in the registry. A value of one indicates that left-button clicks
+will cause updates, while a value of zero indicates that they will not.&nbsp;&nbsp;
+The same rules apply to the middle and right buttons using the appropriate
+value name.</ul>
+
+<ul type="disc">
+<li>
+<span class="itemheader">use_Deferral</span></li>
+
+<br>The VNCHooks library catches messages sent to windows <i>before</i>
+they are dealt with by the window. As a result, sending an update message
+to WinVNC to indicate the potential change can result in WinVNC sending
+the updated area to the client before it has actually been redrawn by the
+application! This is a common problem, especially on multiprocessor versions
+of NT, so deferred updates are used by default. Deferred updates are handled
+by posting a custom message back into the window's own message queue rather
+than posting to WinVNC directly. By the time this custom message is seen
+again by the VNCHooks library, the message that caused it will have been
+handled and the update can then be forwarded to WinVNC without danger of
+being handled prematurely. A few programs don't handle these extra messages
+in their queue very well, so this optimisation is optional. It can be set
+by editing the <tt><i>&lt;appname></i>\use_Deferral </tt>entry in the registry.
+A value of one indicates that deferred updates will be used, while a value
+of zero indicates that they will not.&nbsp;</ul>
+
+<h2>
+Running on other Win32 systems</h2>
+WinVNC runs fine on NT3.51 but the absence of a system tray means that
+the Properties dialog cannot be accessed.&nbsp; In addition, Ctrl-Alt-Del
+from clients cannot be correctly interpreted under NT 3.51, limiting WinVNC's
+usefulness when run as a service on this platform.&nbsp; It also runs on
+NT5 beta. If you have a choice we recommend NT4.0 with the latest service
+packs installed.
+<br>&nbsp;
+<h2>
+Problems?</h2>
+If you have difficulties which are not covered by this document, try reading
+the <a href="faq.html">FAQ</a>.&nbsp; If that doesn't help then try the
+<a href="intouch.html">mailing list</a>.
+<br>If you try to contact the developers directly, please remember that
+VNC has hundreds of thousands of users, and we cannot, in general, respond
+to individual queries. We will read your message, but don't expect an answer!
+<br>&nbsp;
+<br>&nbsp;
+<div align=right><a href="docs.html"><img SRC="backbutton.gif" ALT="back to docs" HSPACE=5 BORDER=0 height=20 width=20></a><i>go
+back to <a href="docs.html">documentation</a></i></div>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+
+<tr>
+<td bgcolor="#eecc80">&nbsp;</td><td ALIGN=CENTER VALIGN=TOP COLSPAN="4" WIDTH="100%">
+<!-- Ruler here? -->
+<center>
+<p><i><font size=-1>For comments, feedback, etc, please see the '<a href="intouch.html">Keeping
+in touch</a>' page</font>.</i>
+<br><i><font size=-1>Copyright 1999 - AT&amp;T Laboratories Cambridge</font></i></center>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

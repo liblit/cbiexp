@@ -1,0 +1,294 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (X11; I; Linux 2.0.35 i686) [Netscape]">
+   <meta name="keywords" content="VNC, AT&T Laboratories Cambridge, Virtual Network Computing, thin-client">
+
+
+   <title>X VNC History</title>
+<link REL="stylesheet" HREF="styles.css" TYPE="text/css">
+</head>
+<body bgcolor="#FFFFFF" vlink="#000080" marginheight="0" topmargin="0" leftmargin="0" marginwidth="0">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><a href="index.html"><img SRC="sidelogo.gif" ALT="VNC logo" BORDER=0 height=113 width=120></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="20"><img SRC="spacer.gif" HSPACE=8 height=1 width=1></td>
+
+<td>
+<table BORDER=0 WIDTH="100%" >
+<tr>
+<td WIDTH="90%" valign="center">
+<center>
+<h1>
+<IMG SRC="vnctitle.gif"  WIDTH=370 HEIGHT=30 ALT="Virtual Network Computing"></h1></center>
+</td>
+
+<td WIDTH="10%"><a href="http://www.uk.research.att.com/"><img SRC="attlogo.gif" ALT="AT&T" BORDER=0 height=75 width=66 align=RIGHT></a></td>
+</tr>
+</table>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+<tr><td colspan=5 bgcolor="#eecc80"><img src="spacer.gif" height=3 vspace=0 hspace=1></td></tr>
+<tr><td bgcolor="#eecc80"><img src="spacer.gif" height=4 vspace=0 hspace=1></td><td colspan=4></td></tr>
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><a href="index.html"><img SRC="homebutton.gif" ALT="[Home]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="screenshots.html"><img SRC="screenbutton.gif" ALT="[screenshots]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+
+<tr>
+<td><a href="start.html"><img SRC="startbutton.gif" ALT="[getting started]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="docs.html"><img SRC="docbutton.gif" ALT="[documentation]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="faq.html"><img SRC="faqbutton.gif" ALT="FAQs" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="download.html"><img SRC="downloadbutton.gif" ALT="[download]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="intouch.html"><img SRC="intouchbutton.gif" ALT="[keep in touch]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="contribs.html"><img SRC="contribbutton.gif" ALT="Others' ports and add-ons etc" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="help.html"><img SRC="helpbutton.gif" ALT="Project ideas" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="vncpeople.html"><img SRC="vncpeoplebutton.gif" ALT="VNC people" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/search.html"><img SRC="searchbutton.gif" ALT="Search" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/"><img SRC="attbutton.gif" ALT="[AT&T Laboratories Cambridge]" BORDER=0 height=33 width=120></a></td>
+</tr>
+</table></center>
+</td>
+
+<td VALIGN=TOP WIDTH="8%"></td>
+
+<td VALIGN=TOP WIDTH="100%">
+<h2>
+<b>X VNC History</b></h2>
+The version and release numbers are explained on the main <a href="vnchistory.html">VNC
+history</a> page. This page primarily concerns changes to the Unix and
+Java packages. The changes to the Windows packages are listed separately
+<a href="winhistory.html">here</a>.&nbsp;
+<p>The important changes in each version are summarised here; see the
+source package for more details.</p>
+<p>Want to get the latest version? Go to the 
+<A HREF="http://www.uk.research.att.com/vnc/download.html">Download Page</A>.</P>
+
+<h3>
+Changes in version 3.3.3R1</h3>
+
+<h4>
+<a href="xvnc.html">Xvnc</a></h4>
+
+<ul>
+<li>Xvnc now uses a "deferred update" mechanism which enhances performance in
+many cases.  After any change to the framebuffer, Xvnc waits for a time
+(default 40ms) before sending an update to any waiting clients.  This means
+that more changes tend to get coalesced together in a single update.  The time
+can be changed with the -deferupdate option.  Setting it to 0 results in the
+same behaviour as previous versions of Xvnc.</li>
+
+<li>There are a couple of security enhancements.  The -localhost option now
+causes Xvnc to only listen on the loopback interface.  This means that it
+shouldn't be vulnerable to port scanning.  Also a "too many tries" feature on
+authentication failure is now implemented.  After five failed attempts, further
+attempts are delayed by an exponentially increasing amount, starting at ten
+seconds.</li>
+</ul>
+
+<h4>
+<a href="xvnc.html">vncserver</a></h4>
+
+<ul>
+<li>Uses SO_REUSEADDR when testing to see which ports are free.</li>
+</ul>
+
+<h4>
+<a href="xvncviewer.html">vncviewer</a></h4>
+
+<ul>
+<li>When given -owncmap in full screen mode, tries to install the colormap.
+This works only when no window manager is running.</li>
+
+<li>The popup window now always uses the default colormap.</li>
+
+<li>The "backing store" attribute can now be set on the desktop window via the
+"backingStore" resource.  It defaults to "Always", meaning the X server should
+keep the contents of the viewer window when it gets obscured by other
+windows.</li>
+</ul>
+
+<h3>
+Changes in version 3.3.3</h3>
+
+<h4>
+<a href="xvnc.html">Xvnc</a></h4>
+
+<ul>New options -alwaysshared, -nevershared, -dontdisconnect and -localhost.
+<br>Fixed problem with 16-bit desktops on Solaris and other platforms.
+<br>Default dpi now 75.
+<br>Don't die on non-existent font directory at startup (common RedHat 6
+problem).
+<br>Copes with up to 5 pointer buttons.
+<br>Fixed zero-area copy bug.
+<br>Fixed occasional bug when multiple clients and one disconnects.
+</ul>
+
+<h4>
+<a href="xvnc.html">vncserver</a></h4>
+
+<ul>Work around bug in perl 5.005_02 which caused bad display names such as "snoopy:".
+</ul>
+
+<h4>
+vncpasswd</h4>
+
+<ul>Fixed minor bugs.
+</ul>
+
+<h4>
+<a href="xvncviewer.html">vncviewer</a></h4>
+
+<ul>Completely new viewer based on Xt.  Development has ceased on the old
+Xlib-based viewer.
+</ul>
+
+<h3>
+Changes in version 3.3.2 R3</h3>
+
+<h4>
+Xvnc</h4>
+
+<ul>Fixed an important memory leak.</ul>
+
+<h4>
+vncserver</h4>
+
+<ul>The vncserver script should cope better with different Perl versions.
+<br>X cookies generated more securely.</ul>
+
+<h4>
+vncviewer</h4>
+
+<ul>Uses shared memory on Linux.
+<br>More secure clearing of password.</ul>
+
+<h3>
+Changes in version 3.3.2 R2</h3>
+
+<h4>
+Xvnc</h4>
+
+<ul>Cutting text inside Xvnc works to a remote viewer again.
+<p>Resource leak fixed which limited total number of times Xvnc could be
+connected to.</ul>
+
+<h4>
+vncserver</h4>
+
+<ul>Warns of likely failure when starting a 16 bpp desktop on Solaris.
+<p>No longer tries to find out the geometry, depth and pixel format of
+the current X display being used. This feature can be enabled if desired
+by uncommenting a line in the script.</ul>
+
+<h3>
+Changes in version 3.3.2</h3>
+The changes in 3.3.2 will have little effect on the normal user.&nbsp;
+There should be a slight increase in speed in certain circumstances, but
+the majority of changes are 'under the hood'.&nbsp; The X server is now
+based on XFree86 3.3.2.&nbsp; This should make it easier to build on more
+platforms, and means that it is now based on X11R6.3 rather than X11R6.&nbsp;
+<h4>
+X vncviewer</h4>
+
+<ul>
+<li>
+-viewonly, -geometry, -wmdecoration options</li>
+
+<li>
+Options for debugging servers: change -delay to -rawdelay, plus</li>
+
+<br>-copyrectdelay, -region
+<li>
+Options allowed before or after host:dpynum argument</li>
+
+<li>
+Handle changes to local X keyboard mapping</li>
+
+<li>
+Rudimentary single bit-per-pixel support (thanks to Chris Hooper)</li>
+</ul>
+
+<h4>
+Xvnc server</h4>
+
+<ul>
+<li>
+Based on XFree86 3.3.2 distribution</li>
+
+<li>
+Faster pixel-format translation routines</li>
+
+<li>
+Improved HTTP server. Now performs substitution on any files ending in
+.vnc, so that default options to the VNC applet can be configured on the
+server side.</li>
+
+<li>
+-economictranslate option to use less memory-hungry translation</li>
+
+<li>
+Supports viewers requesting only a subregion of the screen.</li>
+
+<li>
+Better log file messages with timestamps.</li>
+</ul>
+&nbsp;</td>
+
+<td WIDTH="5%"></td>
+</tr>
+
+<tr>
+<td bgcolor="#eecc80">&nbsp;</td><td ALIGN=CENTER VALIGN=TOP COLSPAN="4" WIDTH="100%">
+<!-- Ruler here? -->
+<center>
+<p><i><font size=-1>For comments, feedback, etc, please see the '<a href="intouch.html">Keeping
+in touch</a>' page</font>.</i>
+<br><i><font size=-1>Copyright 1999 - AT&amp;T Laboratories Cambridge
+</font></i></center>
+</td>
+</tr>
+</table>
+
+</body>
+</html>
