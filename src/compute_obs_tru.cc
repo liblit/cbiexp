@@ -10,7 +10,6 @@
 #include "NumRuns.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
-#include "Progress/Unbounded.h"
 #include "ReportReader.h"
 #include "RunsDirectory.h"
 #include "SiteCoords.h"
@@ -275,7 +274,8 @@ int main(int argc, char** argv)
     InterestingPreds interesting;
 
     {
-	Progress::Unbounded progress("reading interesting predicate list");
+	const unsigned numPreds = PredStats::count();
+	Progress::Bounded progress("reading interesting predicate list", numPreds);
 	FILE * const pfp = fopenRead(PredStats::filename);
 	pred_info pi;
 	while (read_pred_full(pfp, pi)) {
