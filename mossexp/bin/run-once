@@ -214,7 +214,7 @@ close(M);
 #
 if ($full_option_list =~ /dbfile/) {
     if (rand(100) < $unwritable) {
-	check_system "touch dbfile; chmod a-wrx dbfile";
+	check_system "touch dbfile; chmod a-w dbfile";
     }
 }
 
