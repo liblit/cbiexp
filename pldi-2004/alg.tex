@@ -258,69 +258,6 @@ Then
 \subsection{Balancing Specificity \& Sensitivity}
 \label{sec:ranking}
 
-\issue[Mike]{I actually *don't* think that the unnormalized score (the
-  one without the log(NumF)) makes sense.  The harmonic mean is a
-  combination of some notion of specificity (aka, precision) and some
-  notion of sensivitity (aka, recall).  These notions have to be
-  measured on commensurate scales to be combined.  Now, a raw measure
-  of specificity would be Failure(P).  We're using a recentered
-  measure in which Context(P) has been subtracted away.  Both
-  Failure(P) and Context(P) are conditional probabilities, and their
-  difference, Increase(P), is thus in general a number between -1 and
-  1 (but between 0 and 1 for the predictors we're interested in).  A
-  raw measure of sensitivity would be F(P)/N, where N is the total
-  number of failures (Ben's "NumF").  This number also lies between 0
-  and 1, and thus its inverse is reasonably combined with the inverse
-  of Increase(P).  On the other hand, the quantity log F(P), and the
-  quantity F(P), lie between 0 and infinity (assuming F(P)>0), and its
-  inverse is *not* reasonably combined with the inverse of
-  Increase(P).
-
-  The easiest-to-justify quantity is of course
-
-  2 / (1 / Increase(p) + N / F(P)).
-
-  But we decided at some point that in measuring sensitivity (recall)
-  it would be better to put the raw counts on a transformed scale.
-  This is fine---it's always OK to consider scales other than the
-  original scale for measurement.  Letting \phi() denote the nonlinear
-  scaling transform, we're using \phi(F(P)) to measure "transformed
-  counts".  Now we need to normalize this quantity in order to combine
-  it with Increase.  A naive thought would be to normalize using
-  \sum_P \phi(F(P)).  But this doesn't take into account that the P
-  overlap in their coverage.  A better thing to do is to do what Ben
-  did:  use \phi(N).  This insures that the sensitivity (recall)
-  scores lie between 0 and 1, and that a predicate which is always on
-  will have a score of 1; perfect sensitivity.
-
-  I.e., I would write the formula:
-
-  2 / (1 / Increase(p) + \phi(N) / \phi(F(P))),
-
-  Or possibly:
-
-  2 / (1 / Increase(p) + 1 / (\phi(F(P)) / \phi(N))) ,
-
-  where the "/" between \phi(F(P)) and \phi(N) is an explicit "/", and
-  the other "/"'s are achieved via "\frac".  This is more symmetric
-  although it may be uglier.
-
-  (I'd suggest using the "phi" symbol, because the spirit of what we
-  did was to use some nonlinear transform; logarithm is just one of
-  many possible choices.)
-
-  A possibly unappealing aspect of the definition is that equal
-  proportions of failures don't lead to equal measures of sensitivity,
-  and one might have been tempted to use:
-
-   2 / (1 / Increase(p) + \phi(N / F(P))).
-
-   In this case scaling F(P) and N by the same factor yields an
-   invariant measure.  But this formula doesn't make sense: \phi() and
-   1/Increase aren't on the same scale.  And in any case, N isn't
-   varying in our analysis, so it's not necessary to worry about this
-   kind of invariance.}
-
 We now turn to the question of ranking the predicates.
 \autoref{tab:sorts} shows the top
 predicates under different ranking schemes (explained below) for one of our
