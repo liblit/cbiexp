@@ -234,7 +234,7 @@ inline void cull(int u, int c, int p)
     int f = site_info[u][c].F[p];
     float lb = compute_lb(s, f, site_info[u][c].os, site_info[u][c].of, confidence);
 
-    if (lb > 0 && s + f >= 10) {
+    if (retain_pred(s, f, lb)) {
         site_info[u][c].retain[p] = true;
         site_info[u][c].lb[p] = (int) rint(lb * 100);
     }
