@@ -49,7 +49,7 @@ int main(int argc, char** argv)
             sprintf(file, "%s%s_%s.html", prefix, scheme_codes[i], sortby_codes[m]);
             fp = fopen(file, "w"); assert(fp);
             fprintf(fp, "<html>\n"
-                        "<head><link type=\"text/css\" rel=\"stylesheet\" href=\"style.css\"/></head>\n"
+                        "<head><link type=\"text/css\" rel=\"stylesheet\" href=\"http://www.stanford.edu/~mhn/style.css\"/></head>\n"
                         "<body>\n<center><table>\n");
             fprintf(fp, "<tr>\n<td align=right>Scheme:</td><td align=left>");
             for (int j = 0; j < NUM_SCHEMES; j++) {
