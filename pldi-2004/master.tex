@@ -453,14 +453,13 @@ indicating whether the true or false branches were ever taken.
 \item[scalar-pairs:] Many bugs
   concern boundary issues in the relationship between a 
   variable and another variable or constant.  At
-  each scalar assignment \texttt{x = \dots}, we identify each
+  each scalar assignment \texttt{x = \dots}, identify each
   same-typed in-scope variable $\mathtt{y}_i$ and each
   constant expression $\mathtt{c}_j$.  For each   $\mathtt{y}_i$ and each $\mathtt{c}_j$,  
   we track six relationships to the new value of \texttt{x}: $<, \leq, >, \geq, =, \neq$.
 Each compared-to $\mathtt{y}_i$
   or $\mathtt{c}_j$ is treated as a distinct instrumentation site.
   %%
-  \issue[Alice]{Changed to "we identify" to match the next sentence.}
 \end{description}
 
 \issue[Mayur]{General comment on all three scheme descriptions:
@@ -490,16 +489,13 @@ Each compared-to $\mathtt{y}_i$
 \section{Previous and Related Work}
 \label{sec:related-work}
 
-\issue[Mike]{"run-time values to be sound" -> "run-time values to be found" (?)
-
-}
 In this section we briefly survey related work. There is currently a
 great deal of interest in applying static analysis to improve software
 quality.  While we firmly believe in the use of static analysis to
 find and prevent bugs, our dynamic approach has advantages. A dynamic
 analysis can observe actual run-time values, which is often better
 than either making a very conservative static assumption about run-time
-values to be sound, or allowing some even very simple bugs to escape
+values for the sake of soundness, or allowing some even very simple bugs to escape
 undetected.  Another advantage of dynamic analysis, especially one
 that uses actual user executions for its data, is the ability to
 assign an accurate importance to each bug.  Finally, as we have shown,
@@ -520,7 +516,6 @@ to use lightweight partial monitoring, suitable for either for testing
 or deployment to end users.  We never have complete information, and
 therefore must use a more statistical approach.
 
-\issue{Modified by Mike: "Our predicates, however,..." -> "Our predicates do, however,..."}
 \termdef{Software tomography} as realized through the GAMMA system
 \cite{PASTE'02*2,Orso:2003:LFDIART} shares our goal of low-overhead
 distributed monitoring of deployed code.  GAMMA collects code coverage
@@ -584,9 +579,6 @@ have helped to guide our own design of a wide public deployment of
 applications with sampled instrumentation, presently underway
 \cite{Liblit:2003:CBIP}.
 
-\issue{Modified by Mike: "uses the multivariate state estimation technique"
-->
-"uses multivariate state estimation techniques"}
 For some highly available systems, even a single failure must be
 avoided.  Once the behaviors that predict imminent failure are known,
 automatic corrective measures may be able to prevent the failure from
@@ -670,17 +662,11 @@ predicates that can be selected via a penalty has the effect of
 encouraging logistic regression to choose super-bug predictors, as
 these cover more failing runs at the expense of poorer predictive
 power compared to predictors of individual bugs.  On the other hand,
-some of the predicates are apparently excellent predictors for certain
-sub-bugs, and are therefore chosen over others.
+some of the predicates are apparently excellent sub-bug predictors,
+and are therefore chosen over others.
 %%Relaxing the penalty
 %%allows logistic regression to add more predicates to improve its
 %%prediction, but the sub-bug predictors apparently are favored.
-
-\issue[Alice]{I changed the justification for why sub-bug predictors
-  are selected.  We don't relax the regularization penalty during log
-  reg training, but I think sub-bug predictors are selected because
-  they are really good predictors for certain subsets of failed runs.
-  [text modified]}
 
 \section{Conclusions}
 \label{sec:conclusions}
@@ -690,19 +676,6 @@ in complex software systems.  Our experimental results show that we can
 detect a wide variety of both anticipated and unanticipated causes of failure
 in realistic systems and do so with a relatively modest number of program
 executions.
-
-\issue[Mayur]{Add one or two lines about future work to the end of the
-  conclusions section:
-
-  (1) tracking predicates about the heap structure (remember
-  rhythmbox)
-  
-  (2) creating counterexamples (traces) from predicates by using
-  static analysis (will ward off any criticism that predicates aren't
-  always sufficient)}
-
-\issue[Alex]{For (2) I don't think we have anything intelligent to say
-  about how to do that, so I'd rather not mention it.}
 
 {\small
 \bibliography{cacm1990,gcbib,icse02,icse03,misc,nips16,paste02,pldi03,pods,ramss,refs}
