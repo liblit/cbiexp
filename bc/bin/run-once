@@ -48,22 +48,15 @@ $ENV{LD_ASSUME_KERNEL} = '2.4.19';
 #  run bc on random input noise
 #
 
-my ($inFd, $inName) = tempfile(UNLINK => 1);
+my ($inHandle, $inName) = tempfile(UNLINK => 1);
 (system { $fuzz } $fuzz, $runId, 9, $inName) == 0
     or die "cannot create random input file: $!";
 
-open my $oldin, '<&', \*STDIN or die "cannot save standard input: $!";
-open my $oldout, '>&', \*STDOUT or die "cannot save standard output: $!";
-open my $olderr, '>&', \*STDERR or die "cannot save standard error: $!";
-
-open STDIN, '<&=', $inFd or die "cannot redirect standard input: $!";
-open STDOUT, '>', '/dev/null' or die "cannot redirect standard output: $!";
-open STDERR, '>', '/dev/null' or die "cannot redirect standard error: $!";
+open STDIN, '<&=' . fileno($inHandle) or die "cannot redirect standard input: $!";
+open STDOUT, '>/dev/null' or die "cannot redirect standard output: $!";
+open STDERR, '>/dev/null' or die "cannot redirect standard error: $!";
 
 system { $bc } $bc;
-
-open STDIN, '<&', $oldin or die "cannot restore standard input: $!";
-open STDOUT, '>&', $oldout or die "cannot restore standard output: $!";
-open STDERR, '>&', $olderr or die "cannot restore standard error: $!";
-
 note 'outcome', $?;
+
+exit 0;

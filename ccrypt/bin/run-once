@@ -16,9 +16,9 @@ my $ccrypt = "$FindBin::Bin/../src/src/ccrypt";
 my $runId = shift;
 
 
-open STDIN, '<', '/dev/null' or die "cannot redirect standard input: $!\n";
-open STDOUT, '>', 'stdout' or die "cannot redirect standard output: $!\n";
-open STDERR, '>', 'stderr' or die "cannot redirect standard error: $!\n";
+open STDIN, '</dev/null' or die "cannot redirect standard input: $!\n";
+open STDOUT, '>stdout' or die "cannot redirect standard output: $!\n";
+open STDERR, '>stderr' or die "cannot redirect standard error: $!\n";
 
 
 ########################################################################
