@@ -7,6 +7,9 @@ CFLAGS = -O3 -Wall
 
 all: moss mossbad mossbad2
 
+lib/regions-norc.o:
+	cd lib; make regions-norc.o
+
 moss: moss.o lib/regions-norc.o
 	$(CC) $(CFLAGS) moss.o lib/regions-norc.o -o moss
 
@@ -19,7 +22,7 @@ moss.c: moss_includes.flex
 
 moss_includes.flex: moss.flex
 	cd languages; ./build
-	../scripts/myinclude < moss.flex > moss_includes.flex
+	scripts/myinclude < moss.flex > moss_includes.flex
 
 mossbad: mossbad.o lib/regions-norc.o
 	$(SCC) $(CFLAGS) mossbad.o lib/regions-norc.o -o mossbad
@@ -39,7 +42,7 @@ mossbad.c: mossbad_includes.flex
 
 mossbad_includes.flex: mossbad.flex
 	cd languages; ./build
-	../scripts/myinclude < mossbad.flex > mossbad_includes.flex
+	scripts/myinclude < mossbad.flex > mossbad_includes.flex
 
 clean: 
 	rm -f moss.c moss mossbad.c mossbad2.c mossbad_includes.flex mossbad.o mossbad2.o mossbad mossbad2 moss_includes.flex moss.o *~
