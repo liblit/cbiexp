@@ -190,16 +190,18 @@ information on the stack at the point of the crash to assist in isolating this b
 
 \view{\exif}{exif}
 
-\autoref{tab:views-exif} shows results for \exif 0.6.9, an open source image processing program.
-The three predicates are predictors of three separate, and previously unknown, crashing bugs.  It took less
-than 20 minutes of work to find and verify the cause of each of the bugs using these predicates
-and the additional highly correlated predicates on their affinity lists.
+\autoref{tab:views-exif} shows results for \exif 0.6.9, an open source
+image processing program.  Each of the three predicates is a predictor
+of a distinct and previously unknown crashing bug.  It took less than
+20 minutes of work to find and verify the cause of each of the bugs
+using these predicates and the additional highly correlated predicates
+on their affinity lists.
 
-\issue[Mayur]{I am not sure whether the EXIF example is at the right place.}
-
-We will next elucidate how one of the predicates reported in \autoref{tab:views-exif},
-\exifpred, enabled us to effectively isolate the cause of one of the bugs.
-The bug has the following unique stack trace:
+To illustrate how statistical debugging is used in practice, we will
+elucidate how the last of these three failure predictors enabled us to
+effectively isolate the cause of one of the bugs.  Failed runs
+exhibiting \texttt{o + s > buf\_size} show the following unique stack
+trace at the point of termination:
 \begin{quote}
 \begin{verbatim}
 main
@@ -212,7 +214,7 @@ main
               memcpy
 \end{verbatim}
 \end{quote}
-and the code in the vicinity of the crash site is as follows:
+The code in the vicinity of this crash site is as follows:
 \begin{quote}
 \begin{verbatim}
 // snippet of exif_mnote_data_canon_save
@@ -226,9 +228,9 @@ for (i = 0; i < n->count; i++) {
 \end{quote}
 This alone provides little insight into the cause of the bug.
 However, our algorithm highlights {\tt o + s > buf\_size} in function
-{\tt exif\_mnote\_data\_canon\_load} as a strong failure predictor.
-This leads us to construct the following call sequence by a quick inspection of the
-source code:
+{\tt exif\_mnote\_data\_canon\_load} as a strong failure predictor.  A
+quick inspection of the source code this leads us to construct the
+following call sequence:
 \begin{quote}
 \begin{verbatim}
 main
@@ -260,20 +262,23 @@ for (i = 0; i < c; i++) {
 \end{verbatim}
 \end{quote}
 It is apparent from the above code snippets and the
-call sequence that whenever the predicate {\tt o + s > buf\_size} is true:
+call sequence that whenever the predicate {\tt o + s > buf\_size} is true,
+%%
 \begin{itemize}
-\item
-the function {\tt exif\_mnote\_data\_canon\_load} returns on line (a),
-thereby skipping the call to {\tt malloc} on line (b) and leaving {\tt n->entries[i]->data}
-uninitialized for some value of {\tt i}, and
-\item
-the function {\tt exif\_mnote\_data\_canon\_save} passes the uninitialized
-{\tt n->entries[i]->data} to {\tt memcpy} on line (c), which reads it
-and eventually crashes.
+\item the function \texttt{exif\_mnote\_data\_canon\_load} returns on
+  line \texttt{(a)}, thereby skipping the call to \texttt{malloc} on
+  line \texttt{(b)} and thus leaving \texttt{n->entries[i]->data}
+  uninitialized for some value of \texttt{i}, and
+
+\item the function {\tt exif\_mnote\_data\_canon\_save} passes the
+  uninitialized {\tt n->entries[i]->data} to {\tt memcpy} on line
+  \texttt{(c)}, which reads it and eventually crashes.
 \end{itemize}
-In summary, our algorithm enabled us to effectively isolate
-the cause of a previously unknown, crashing bug in source code unfamiliar to us in
-a couple of minutes and without explicit specifications.
+
+In summary, our algorithm enabled us to effectively isolate the causes
+of several previously unknown bugs in source code unfamiliar to us in
+a couple of minutes and with no explicit specification beyond
+``software shouldn't crash.''
 
 \subsubsection{\rhythmbox}
 
