@@ -372,7 +372,7 @@ symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml links
 	xmllint --valid --noout --catalogs $@
 
 symmetric.xml: %.xml: % $(stamp-decimate) s.runs f.runs
-	$(build) $*.dtd scores.dtd
+	$(build) $*.dtd scores.dtd bug-o-meter.dtd
 	./$< --runs-directory=$(datadir) --begin-runs=$(training-runs)
 	xmllint --valid --noout $@
 
