@@ -1,0 +1,966 @@
+\documentclass[10pt,twocolumn]{article}
+
+\usepackage{amsmath}
+\usepackage{graphics}
+\usepackage{ieee}
+\usepackage{nicefrac}
+
+\begin{document}
+
+\title{Public Deployment of Cooperative Bug Isolation}
+
+%% \author{...}
+
+\maketitle
+
+Why do a public deployment at all?
+
+\begin{itemize}
+\item validate the technique
+\item our approach requires large numbers to work at all
+\item keeps us honest; work out the kinks
+\item gauge receptiveness of user community; will they accept this?
+\item disadvantage: requires large engineering investment, documented here
+\end{itemize}
+
+\section{Target Selection}
+
+Decided to work with open source community.  Source code is freely
+available; we can download, modify, post new binaries without
+involving lawyers.  Explicit buy-in from open source project
+developers not required, although all we contacted responded quite
+enthusiastically.  General attitude seems to be that since most folks
+are working on this for free anyway, any additional help is welcome.
+Novelty of our approach also has a geek appeal.  Bug databases are
+open, so we can see if things we find have been reported through
+conventional channels.  And accessible developers mean that we can
+easily contribute fixes for any bugs we do find.
+
+A disadvantage of open source which we turn to our advantage: many
+projects are loathe to provide binaries, especially of development
+releases.  There are too many different platforms and it would just be
+too much work to track and build for them all.  Source code is
+available to anyone who wants to build their own, but in practice that
+can be difficult.  So our value proposition to users is: we give them
+convenient pre-built binaries, they give us feedback data for our
+research.
+
+We need to select applications and platforms to support.  For
+platform, currently Red Hat Linux 9.  Why?  Very large installed base,
+but current enough that many techies will still be using it.  (We
+expect that the techies will be the early adopters who will be willing
+to try something like this out.)  Debian would also be a good match,
+just haven't had the time.
+
+For applications, generally want interactive desktop applications so
+we can interact with the user directly.  This is also a place where we
+can offer enticing binaries of newer development releases not directly
+available from the platform vendor.  System support daemons (e.g.
+sendmail) would be interesting too, but system administrators may be
+less willing to deploy ``questionable'' instrumented binaries in
+critical infrastructure roles.
+
+Want apps which are stable enough to not have a new release every few
+days, since we want to collect a lot of data for any given version.
+But apps should be unstable enough to provide lots of interesting
+crashes.  Also, unstable development releases are harder for users to
+find and therefore our binaries are more attractive (see previous
+paragraph).  So there's a balancing act here.
+
+Also guiding application selection: our front end supports C only.
+This creates a bias in favor of GNOME over KDE, as the former mostly
+uses C while the later mostly uses C++.
+
+Also guiding application selection: interest expressed by influential
+outsiders.  Luis Villa is a GNOME QA demigod, highly respected.  Luis
+works for Ximian.  Ximian has a special interest in the GNOME desktop
+in general and in Nautilus and Evolution in particular.  So those go
+on the list.  Gnumeric developer Jody Goldberg very interested in
+project, receptive to patches from us, willing to announce our
+binaries with a major (long-awaited) new Gnumeric release.  So that
+goes on the list.
+
+Networked applications are more attractive: if the user is running
+that app, then the user's box must already be on the network.  So we
+know we'll be able to transmit feedback reports.
+
+Applications must be easy to install.  Ideally, just a single
+self-contained package.  Often, though, they require updated versions
+of supporting runtime packages (e.g. shared libraries).  We don't want
+to be completely disruptive, though, so we need to be conservative
+about how many other packages we make the user install.  For
+supporting packages we generally just repost a newer binary package
+from some other trusted third-party repository rather than building
+our own.
+
+\begin{table*}
+  \centering
+  \begin{tabular}{lrcccc}
+    Name & Lines of Code & Shared Libraries & Plugins & Threads \\\hline
+    Evolution & 460,912 & + & + & + \\
+    Gaim & 160,435 & & + & \\
+    The GIMP & 650,660 & + & + & \\
+    Gnumeric & 319,137 & & + & \\
+    Nautilus & 124,679 & + & + & + \\
+    Rhythmbox & 56,442 & + & &
+  \end{tabular}
+  \caption{Instrumented applications}
+  \label{apps}
+\end{table*}
+
+Table \ref{apps} gives more info on the selected applications.
+``Shared Libraries'' and ``Plugins'' refers only to the source code of
+the application proper which we see and can instrument.  Additionally,
+every app above uses dozens of shared libraries and several plugins
+which will be on the end user's machine.  So running environment will
+be a mix of code we have transformed and code we have never seen.
+
+Shared libraries are also interesting because they may be used by
+other applications that we have not instrumented.  So not only do
+instrumented apps need to cope with uninstrumented code, but
+instrumented code also needs to cope with finding itself in an
+uninstrumented application.
+
+\section{Technical Stuff}
+
+\subsection{Compiler Wrapper}
+
+The system as a whole looks like GCC with a few extra command line
+flags.  No manual annotation of source code is required, which is why
+we can instrument 1.8 million lines of code and keep up with new
+releases with very short turnaround.
+
+The meat of instrumentation happens as a source to source
+transformation after the preprocessor and before the real C compiler.
+However, we actually need to tweak all stages of compilation:
+
+\begin{description}
+\item[before preprocessing]: pull in extra headers declaring or
+  defining various things used by instrumented code.  It's easier to
+  use included headers for this rather than synthesizing the needed
+  constructs programmatically in CIL.
+\item[before compilation]: perform the source-to-source transformation
+\item[just after assembly]: inject extra static site information into
+  assembled object file (see below)
+\item[before linking]: pull in extra libraries containing common
+  runtime support code and data used by instrumented programs
+\end{description}
+
+We use GCC's ``\texttt{-B <path>}'' flag to give it a different
+directory in which to find the compiler stages.  We have Perl scripts
+in that directory named \texttt{cc1} and \texttt{asm} which do our
+extra work and call the real compiler stages as appropriate.
+
+We also use GCC's ``\texttt{-specs=<file>}'' to augment (not replace)
+the standard option specs file with one of our own.  An option specs
+file, or simply ``specfile,'' guides how GCC parses its command line
+arguments.  We can add flags of our own, request temporary file names,
+etc.  It's essentially a tiny domain-specific language for tweaking
+the command lines used for the various compiler stages.  Using this
+file we are able to take care of our ``before preprocessing'' and
+``before linking'' needs by modifying the \texttt{cpp0} and
+\texttt{ld} command lines without actually replacing those stages with
+custom scripts of our own.
+
+\subsection{Link Ordering, Libraries, Plugins}
+
+It's easy to issue a feedback report for an application consisting of
+a single object file.  Just dump out the predicate counters in the
+order in which they appear in that object.
+
+When multiple object files are linked together, life gets trickier.
+We don't have a lot of control over link order, so we don't know in
+what order object files will appear.  Furthermore, shared libraries
+bring additional code into the application's address space at runtime
+which may or may not have instrumentation of its own.  Plugins strain
+things even further, as they may be loaded late and unloaded at any
+time.  If an instrumented plugin is about to be unloaded, we need to
+grab its part of the feedback report immediately.  Otherwise, once the
+plugin is unloaded, its global predicate counters vanish from the
+address space and can no longer be accessed.
+
+Because instrumented code can come in from so many different places,
+no central static registry can have a complete picture of what is
+going on.  Instead we need instrumented object files to be more
+self-managing.  We do have a global object file registry, maintained
+as a doubly linked list.  Each instrumented object file contains
+special initialization code that adds itself to this global registry.
+Each instrumented object file also contains special finalization code
+that emits a report for its predicate counters and removes itself from
+this global registry.  The initialization and finalization code uses
+facilities provided by the ELF executable format; these are the same
+facilities used by C++ code to run constructors and destructors on
+global variables.
+
+Why doubly linked?  So we can remove an entry quickly when a
+compilation unit is unloaded.
+
+What data is actually put into the list for each compilation unit?  A
+pointer to a function that can be called to emit that compilation
+unit's report.
+
+For objects which are part of the main application binary, the
+initialization code runs early in program execution, before
+\texttt{main()}.  The finalization code runs after \texttt{main()}
+returns or after \texttt{exit()} is called.  Shared libraries are
+similar.  For plugins, the initialization code runs within
+\texttt{dlopen()} after the plugin has been mapped into memory.
+Plugin finalization code runs within \texttt{dlclose()} just before
+the plugin is removed from memory.
+
+So if the runtime loader promises to call the initialization and
+finalization code for us, then why do we need the global doubly linked
+list at all?  Because there is one circumstance under which the
+finalization code is not called: when the program crashes due to a
+fatal signal.  So we install our own handler for common fatal signals
+(\texttt{SIGABRT}, \texttt{SIGBUS}, \texttt{SIGFPE}, \texttt{SIGSEGV},
+\texttt{SIGTRAP}).  The signal handler walks down the doubly linked
+list and calls each reporting function.  So that takes care of issuing
+reports for any compilation units that were unlucky enough to be
+sitting around in memory when the program crashed.
+
+The doubly linked list could itself be trashed by a buggy program.  We
+maintain a global counter of the expected size of that list.  When
+walking the list in a signal handler, we stop when that counter tells
+us to stop regardless of whether we have actually reached the end of
+the list data structure.  This prevents us from getting an infinitely
+long feedback report if a memory error introduced a cycle into the
+doubly linked list.  Other kinds of trashing can still happen, of
+course, but avoiding cycles is the most important one.
+
+As you can tell, we don't have a lot of control over the order in
+which compilation units issue reports.  This is especially apparent
+for plugins.  Within a single compilation unit we know what order the
+sites appear in, but cross-unit ordering is out of our control.  So
+when a compilation unit issues a report, it needs to identify itself
+in a way that we can tell whose report we are looking at.  Using the
+name of the ``\texttt{.c}'' file may not be unique enough, since even
+within a single application you might have two files with the same
+name from two different subdirectories.  Ultimately we decided upon an
+MD5 checksum of the preprocessed source code for the source file.
+Collision is unlikely and this has the nice property of letting us see
+compilation units which remain unchanged across multiple releases of a
+given application.
+
+Surprisingly, we do occasionally see one compilation unit signature
+multiple times for a given application.  This happens when a small
+object file containing utility code is used in multiple shared
+libraries, and then these multiple shared libraries are used by a
+single application.  Each shared library has its own identical copy of
+the utility code.  In reports, we do not distinguish one from the
+other.  It will just look like one compilation unit that issued two
+reports.  The appropriate semantics here is to add those two reports
+together pointwise.  Same approach is used for a plugin which is
+loaded and unloaded multiple times: just add the corresponding counts
+together.
+
+The MD5 checksum is computer before we add instrumentation, so it
+remains fixed no matter which instrumentation scheme we use.  It will
+change, though, if a user rebuilds the application on his own box with
+different system headers.  That seems desirable.
+
+\subsection{Static Site Information}
+
+There's a lot of static information we want about each instrumentation
+site, but we don't want to include that in every feedback report: it's
+too big and is also extremely redundant.  This static information is
+produced as a sort of side effect of compilation.  But we don't want
+to store that info in a distinct file, because it can be very hard to
+keep a ``\texttt{.o}'' file and its corresponding site info file
+together.  These are complex applications and they tend to do things
+like move object files around, collect them into ``\texttt{.a}''
+archives, etc.  We need to bind the static site information more
+tightly to the object file.
+
+Solution is to embed the static site information within an extra
+non-standard section of the ELF object file itself.  We used to do
+this by serializing this data as a C string literal in the transformed
+C source code and using a GCC extension to put that string literal
+into a different section instead of the default \texttt{.data}
+section.  However, really huge applications have so much data that GCC
+crashes trying to parse it as a single string literal.  So our current
+approach is that the core source-to-source transformer prints out the
+static site information into a separate temporary file whose name was
+selected by our compiler wrapper script.  Our assembler wrapper script
+also knows this temporary file name.  After the real assembler
+produces a real object file, our assembler wrapper script uses the
+\texttt{objcopy} utility to copy the contents of this temporary file
+into a new specially-named section.
+
+That takes care of a single compilation unit.  What about linking?
+The linker's default behavior for dealing with unknown ELF sections is
+to pad each one out to a 16 byte (?) boundary and concatenate them.
+This concatenation happens both for individual ``\texttt{.o}'' files
+as well as any ``\texttt{.o}'' files pulled out of a ``\texttt{.a}''
+archive.  Our static site information is printed in a form where NULL
+characters are never used, so we can take any executable or shared
+library, extract the contents of this special section, discard NULL,
+and what we get is the concatenation of all of the static site
+information for the constituent compilation units.
+
+Now, linking with a shared library does not copy any code from the
+shared library into the linker output object, and similarly it does
+not concatenate the shared library's static site information.  So When
+a project is completely built, we have static site information of
+interest in each executable and in each shared library (including
+plugins, which are really just shared libraries).
+
+We mark our special sections as ELF debug information sections.  That
+means they will be removed by \texttt{strip}.  When building an RPM
+package for Red Hat Linux, all binaries are stripped before going into
+the package.  Just before stripping happens, though, a script runs
+across all binaries and extracts their debug information.  This
+information is built into a distinct ``\texttt{-debuginfo}'' package
+which most users do not need but which developers can use with GDB to
+debug the stripped binaries.  That's standard RPM build behavior.  We
+hook ourselves in a similar way: just before the debug info is
+extracted, we sweep through all files in the package and extract our
+static sampler information.  That will put into a distinct
+``\texttt{-samplerinfo}'' package.  Again, most users don't need it.
+But for us, it means that every user package we post has a
+corresponding sampler package with all of the static site information
+for the executables and shared libraries in the user package.
+
+We actually use \emph{two} special sections.  One contains static site
+information, the other contains serialized control flow graphs.  We
+don't seem to be using the CFG information these days, but for a brief
+while we thought we would.
+
+Hao Chen used a similar strategy for his MOPS system, and arguably I
+got the idea from him.  I don't know if he's mentioned it anywhere we
+can cite.
+
+\subsection{Report Format}
+
+A feedback report consists of several individual reports, of which the
+most interesting is the samples report.  A samples report consists of
+a sequence of counter dumps for individual compilation units and
+instrumentation schemes in arbitrary order.  We use a pseudo-XML
+format.  So the start of a feedback report might look like this:
+
+\begin{quote}
+  \begin{tt}
+    \begin{small}
+    \begin{tabbing}
+      \ \ \=\ \ \=\kill
+      <report id="samples"> \\
+      \> <samples unit="\textit{MD5 checksum}" scheme="returns"> \\
+      \>\> 1 0 3 \\
+      \>\> 0 0 0 \\
+      \> </samples> \\
+      \> <samples unit="\textit{MD5 checksum}" scheme="branches"> \\
+      \>\> 1 0 \\
+      \>\> 976 121 \\
+      \>\> 2 8 \\
+      \> </samples> \\
+      </report>
+    \end{tabbing}
+  \end{small}
+\end{tt}
+\end{quote}
+
+In this case, the first samples section was for a scheme with two
+sites and three predicates per site.  The second samples section was
+for a scheme with three sites and two predicates per site.  Each time
+a compilation unit reports, it gives its MD5 checksum and scheme so
+that we can tie the counter values that follow to static site
+information collected at compile time.
+
+Indentation in the above example is for clarity only.  In actual
+reports, newlines delimit sites within a \texttt{<samples>} section,
+tabs delimit predicate counts within a site line, and there is no
+indentation.
+
+Other reports may be included as well, such as a stack trace.  If
+present, these would marked using \texttt{<report>} tags with other
+\texttt{id}'s, such as ``\texttt{<report id="stack-trace"> \dots
+  </report>}''.  Right now we have a samples report for every run, and
+for crashes we additionally collect a stack trace and a list of the
+loaded shared libraries.
+
+Counts are represented as ASCII decimal numbers.  This has the nice
+property that small values use only one or two bytes.  Most values
+in actual reports are quite small and zeros are extremely common: this
+is in part due to sparse sampling and in part due to the fact that
+many predicates count things which can never happen in any run.
+
+The entire sequence of \texttt{<report>} sections is collected as a
+stream, compressed for transit, and sent up to the report collection
+server after the program exits.
+
+\subsection{User Interaction and Wrapping}
+
+When a user launches an instrumented application, he does not run the
+instrumented binary directly.  Instead, we install a wrapper script in
+the expected location (e.g. \texttt{/usr/bin/nautilus}) and put the
+real instrumented binary elsewhere.  The wrapper script has several
+responsibilities.  It performs all sampler-specific user interaction
+that goes beyond what the underlying application would normally do.
+It also collects the raw feedback report from the instrumented
+application, packages it for transit, and sends it up to the report
+collection server along with other information such as program
+outcome.  This way we don't need to add GUI infrastructure and
+encrypted networking support to the applications themselves.
+Consider, for example, that a \texttt{SIGSEGV} handler is probably not
+a very good place to be running \texttt{gzip} and creating socket
+connections.  Also, the script can be in a different language (Python)
+which has excellent networking and desktop interaction support.
+
+When the wrapper script starts up, it checks whether the user has run
+an instrumented version of this application before.  If not, it
+presents a first-time opt-in dialog.  The dialog briefly describes the
+goals of the project and the consequences of participating or not, and
+lets the user decide what to do.  There is also a hyperlink button to
+our web site for more information.  This dialog is presented in the
+background, however, and the real application launched without waiting
+for a reply.  On this first run, the real application will never
+sample and will report no data.  The idea here is to avoid getting in
+the user's way: if they don't want to answer the yes/no dialog now,
+they can just leave that dialog up in the background and get back to
+it later.  Once the user has selected yes or no, that preference is
+remembered and the first-time opt-in dialog is not shown on subsequent
+runs.
+
+Also in the background, the wrapper presents a small status icon in
+the GNOME desktop panel notification area.  This icon provides a
+visual reminder that an instrumented application is currently running.
+It provides a simple popup menu with a toggle to globally disable or
+enable sampling.  A second menu item launches the sampler control
+panel.  The status icon changes depending on whether sampling is
+enabled or disabled globally, and remains present as long as at least
+one instrumented application is running.  It vanishes when the last
+instrumented application goes away.
+
+The sampler control panel again offers a global enable/disable toggle.
+It also presents a list of all instrumented applications on the system
+with a distinct enable/disable toggle for each.  These
+application-specific toggles correspond to choices made in the
+first-time opt-in dialogs, and the two are connected and changing
+either updates the other live.  This provides a way for users to
+change their minds once the first-time opt-in dialog has already come
+and gone.
+
+Back to the wrapper script.  If the user has previously elected not to
+participate, the instrumented binary is launched directly.  The
+next-sample countdown is default-initialized to \texttt{MAXINT} and no
+feedback reports are ever written.  This is always the default
+behavior unless special environment variables have been set to enable
+sampling.  The intent is that unless everything works and agrees that
+the user wants to participate, the standard fallback should be no
+sampling or reporting whatsoever.  Note that this also covers the case
+of instrumented shared libraries or plugins being used by
+non-instrumented applications: if the environment variables have not
+been set properly, then the next-sample countdown is
+default-initialized to \texttt{MAXINT} and no feedback reports are
+written.
+
+If the user has decided to participate, the wrapper sets up these
+environment variables.  One of these is the sampling density.  We ship
+with a default density of 100, but this can be changed by technically
+astute end users on their own boxes.  The wrapper also creates a pipe
+connecting it with the instrumented application.  The instrumented
+application writes its feedback report down this pipe, which is read
+by the wrapper.  This is in part a security measure: the feedback
+report never appears in any temporary file on disk.
+
+[My description of the ordering is a bit broken, above.  We actually
+fork off the real binary first, and only activate the status icon and
+possibly the first-time dialog second.  Again, the idea is to get the
+user up and running as quickly as possible.]
+
+Because the wrapper script launched the real instrumented binary as a
+subprocess, it can also check that subprocess's exit status (either a
+result code or a fatal signal).  This will be included in the report
+uploaded to our feedback collection server.
+
+The wrapper script compresses the raw feedback report for transit
+using gzip-compatible compression.  This is a huge benefit, as reports
+are mostly zeros and compress very well.  Average compression rate for
+all reports received thus far: 96\%.
+
+Before submitting a report, the wrapper checks one more time whether
+sampling is enabled both globally and for this application.  If the
+user changed his mind after program launch, this gives a second chance
+for stopping an unwanted feedback report from going out.
+
+The wrapper script's next task is report submission.  The reporting
+destination is given by a configurable URL and supports either HTTP or
+HTTPS (HTTP over SSL).  The default destination is our collection
+server using HTTPS.  HTTPS is preferred here because it makes
+eavesdropping or interposition by malicious third parties
+substantially harder.  The actual report submission takes the form of
+an HTTP POST request with MIME type \texttt{multipart/form-data}.  The
+report is transmitted as form data in the same manner used by any
+web-based file upload.  Other information, such as the name and
+version of the reporting application and the exit status, is included
+in the request using extra request headers such as
+\texttt{SamplerApplicationName} and \texttt{SamplerExitStatus}.
+
+Because the submission is an HTTP request, it can have a response.
+Ordinarily the collection server does not give any response beyond a
+success code.  However, if the server does give a response, the
+wrapper script will receive it and present it to the user as an HTML
+page.  This gives us the ability to communicate information back to
+our users.  It might be used, for example, if a critical security
+issue were found requiring immediate upgrades.  In theory we could
+even use it to advise a user of fixes or workarounds for a crash he
+just experienced, though that would require more live analysis of the
+data than we are doing today.  So far we have not had need to use this
+facility, though it has been triggered a few times when server-side
+problems caused Apache diagnostic messages to be sent back to the
+client.
+
+The HTTP reply can also include a few special reply headers which
+update the local sampling configuration on the client.  We have the
+ability to promote a different destination URL for future reports,
+which may be useful if we need to relocate the collection server.  We
+can change the sampling density from its default of 100, which may be
+useful if performance problems arise.  We can also issue a ``poison
+pill'' which turns off sampling for future runs of this application.
+This is intended as a shutoff value should the Cooperative Bug
+Isolation project be discontinued at some future date.  It might also
+be used to quash future reports from individual misbehaving users.  So
+far we have not had need to use any of these facilities.  The term
+``poison pill'' may be a bit strong here; it simply sets the same
+application-specific yes/no toggle touched by the first-time opt-in
+dialog and the sampler control panel.  A user can certainly turn it on
+again later.
+
+How big are feedback reports?  The goal was that they should take no
+more than a second or two to cross a 56K modem.  Larger applications
+have larger reports, as do applications instrumented with more
+aggressive instrumentation schemes (scalar-pairs).  Report sizes are
+variable due to the decimal ASCII representation of numbers and due to
+varying compression rates.  The average compressed report size we have
+seen is under 10 kilobytes; the largest single report ever received
+was 39 kilobytes.  So we have succeeded in being kind both to the
+user's network and to our disks.
+
+\begin{table*}
+  \centering
+  \begin{tabular}{llrrrr}
+    app & scheme & min & max & total & count \\ \hline
+    evolution & returns & 830 & 39863 & 13824385 & 719 \\
+    gaim & scalar-pairs & 1786 & 18772 & 4641342 & 465 \\
+    gimp & branches & 15617 & 26304 & 1295183 & 68 \\
+    gnumeric & returns & 6661 & 15876 & 2112389 & 240 \\
+    nautilus & branches & 3252 & 10638 & 1899551 & 407 \\
+    rhythmbox & scalar-pairs & 897 & 5823 & 1536931 & 677
+  \end{tabular}
+  \caption{Feedback report sizes.  ``Min,'' ``max,'' and ``total'' are
+    in bytes.}
+  \label{report-sizes}
+\end{table*}
+
+Table \ref{report-sizes} gives raw data on compressed report sizes in
+case someone wants to slice it differently.
+
+As noted earlier, average compression rate for all reports received
+thus far: 96\%.
+  
+\subsection{Collection Server}
+
+The report collection server is an Apache web server with a very
+simple CGI script.  The CGI script does some basic sanity checking of
+the uploaded data and assigns it a globally unique ID string using the
+Apache \texttt{mod\_unique\_id} module.  That string is used as the
+name for a new directory into which the report is stored.  The extra
+request headers mentioned above are also recorded in this directory.
+The CGI script performs no database interaction; it is just there to
+stash the data away safely and quickly.
+
+Ultimately reports are collected into a database, currently MySQL.
+The database is hosted on a completely different machine and is
+network accessible only across SSH.  Neither the database nor the raw
+reports on the collection server are stored in network accessible
+filesystems.  Periodically we add newly received reports to the
+database.  New reports are brought over from the collection server to
+the database host via encrypted rsync over SSH and injected into the
+database using Perl scripted SQL.
+
+Rough description of our database schema follows.  Conceptually split
+into per-build information and per-run information.  Tables are:
+
+\begin{itemize}
+\item per-build information
+  \begin{description}
+  \item[\texttt{build}] one tuple (row) per posted build of any
+    application, with information about that build as a whole (e.g.
+    application name, version, etc.)
+  \item[\texttt{build\_module}] one tuple per compilation unit in any
+    build.  Associates MD5 compilation unit signatures with the ID
+    numbers of builds in which they appear, and also names the
+    containing module (a module is an executable or a shared library)
+  \item[\texttt{build\_site}] one tuple per site in any build.  Static
+    information about instrumentation sites, indexed by build ID,
+    compilation unit signature, and site number within that
+    compilation unit.  Gives source file, line number, function, CFG
+    node number, and additional scheme-specific information.
+  \end{description}
+\item per-run information
+  \begin{description}
+  \item[\texttt{run}] one tuple per feedback report received.  Indexed
+    by unique ID as assigned by Apache.  References a corresponding
+    build ID to tell us what the app was.  Gives information such as
+    exit status, sampling rate, date received.
+  \item[\texttt{run\_sample}] one tuple per non-zero predicate counter
+    in any feedback report.  Indexed by run ID, compilation unit
+    signature, site order within compilation unit, and predicate
+    number within site.  Gives corresponding count.
+  \end{description}
+\end{itemize}
+
+Worth noting is that the \texttt{run\_sample} table is sparse: it only
+stores non-zero predicate counters.  This is absolutely critical to
+keep the database size manageable and also to let us run queries in
+reasonable time.
+
+We do occasionally get runs with no samples taken anywhere at all.
+This can happen with sparse sampling when the run is especially
+short-lived, such as when the program is run with a \texttt{--help}
+flag to list its command line options.
+
+\subsection{Threads}
+
+Three kinds of global data need special attention in multithreaded
+applications.  Each of these can hurt performance, so we only do it if
+the compiler's command line contains the GCC \texttt{-pthread} flag.
+(We can also override this with our own \texttt{--threads} and
+\texttt{--no-threads} flags.)  Threaded and non-threaded code are
+incompatible, though, so this needs to be consistent for everything,
+including shared libraries and plugins.
+
+\subsubsection{Global Next-Sample Countdown}
+
+Critical properties:
+
+\begin{itemize}
+\item high contention: accessed very often by all instrumented code
+\item caching: even in single-threaded code, performance requires that
+  we cache this in local variable so compiler can do good register
+  allocation
+\item small: \texttt{sizeof(int)} for countdown +
+  \texttt{sizeof(struct drand48\_data)} for random number generator
+  state
+\end{itemize}
+
+Based on these, we opt for a distinct ``global'' countdown for each
+thread.  We avoid all locking and the extra space required is quite
+reasonable.
+
+Enacting this plan requires a bit of compiler support.  We use the
+\texttt{\_\_thread} storage qualifier to declare thread-specific
+storage.  This is a GCC extension and also requires support from the
+POSIX threadding runtime, C library, and even the runtime loader.  The
+good news is it's very fast, typically using some dedicated register
+to point at the base of each thread's thread-specific storage area.
+On x86 I think they use the segment register.
+
+We also need to interpose on thread creation so we can initialize the
+new thread's global state.  We use the \texttt{--wrap} flag provided
+by the GNU linker to replace \texttt{pthread\_create()} with our own
+special version.  Our version calls the real
+\texttt{pthread\_create()} but with an alternate initial function.
+Our initial function initializes the new (thread-specific) random
+number generator and next-event countdown and then calls the ``real''
+initial function that the original \texttt{pthread\_create()} caller
+wanted to run.  (Note that we cannot do this initialization
+\emph{before} calling the real \texttt{pthread\_create()} because the
+data we need to initialize is thread-specific and therefore visible
+only to the newly created thread, not the thread creator.)
+
+\subsubsection{Global Predicate Counters}
+
+Critical properties:
+
+\begin{itemize}
+\item low or no contention: any individual counter is accessed rarely
+  even within a single thread, and if multiple threads are running
+  distinct code, then the counters they access will be distinct as
+  well
+\item large: although individual counters are small, the entire vector
+  of counters can be quite large
+\item restricted access patterns: counters are only ever incremented
+  by one (exception: read-only access when printing out the counter
+  dump at the end of execution)
+\end{itemize}
+
+Based on these, we opt for only one copy of the predicate counter
+vector shared by all threads.  The standard access pattern, an
+increment by one, is so basic that every CPU architecture should have
+some way of doing this without resorting to heavyweight OS mutex
+locks.  Perhaps an atomic increment, perhaps a test-and-set, whatever
+you've got.  Any architecture should at least have something.  If
+there are multiple ways to do this, you should pick the one that is
+``optimistic,'' i.e. the one that is fastest in the case of no
+contention.  On x86 we use a ``\texttt{lock incl}'' instruction.  The
+\texttt{lock} prefix here refers, I think, to locking the bus.  It
+guarantees that the instruction behaves atomically with respect to
+memory even on an SMP.
+
+\subsubsection{Global Compilation Unit List and Report File}
+
+Critical properties:
+
+\begin{itemize}
+\item low or no contention: only used during module loading/unloading,
+  which doesn't happen much during regular execution
+\item must be accessible via a signal handler, which rules out any
+  kind of thread-local storage
+\end{itemize}
+
+Here we use a pair of POSIX mutex locks.  One controls access to the
+doubly linked list of compilation units.  A second controls access to
+the \texttt{FILE *} which is the reporting destination.  We need to
+make sure multiple threads don't write to that at the same time
+because buffering could badly interleave data from multiple threads.
+(I actually saw this in an earlier, non-thread-safe version.)
+
+\subsection{Fork Protection}
+
+A miscellaneous item that doesn't fit anywhere else.
+
+Some of the instrumented applications fork subprocesses of their own.
+For example, Nautilus is a file manager like Windows Explorer or the
+MacOS Finder and can be used to launch other applications.  If one of
+those other applications is an instrumented binary, we don't want it
+to start writing sample reports down the pipe to the Nautilus wrapper
+script.  Furthermore, launching a different process typically uses a
+\texttt{fork()} followed by \texttt{exec()}.  After the
+\texttt{fork()} but before the \texttt{exec()} we have a second
+instrumented Nautilus process.  We don't want to collect data from
+that short-lived process.
+
+We take two measures to avoid unwanted sampling and reporting in these
+situations.  Recall that a collection of environment variables must be
+set to enable sampling.  These environment variables are used during
+program initialization to do things like initialize the random
+countdown generator.  Once they are used, the instrumented process
+removes them from its environment using \texttt{unsetenv()}.  Any
+spawned subprocess, then, will not have these environment variables
+and therefore will not activate its own sampled instrumentation.  Of
+course, if the spawned subprocess is the wrapper script for an
+instrumented program, then this wrapper script may set the environment
+variables anew if the user has decided to enable sampling for that
+spawned application.
+
+The second special measure is to set the \texttt{FD\_CLOEXEC} flag on
+the feedback reporting pipe using \texttt{fcntl()}.  This ensures that
+the pipe connecting the instrumented application to the wrapper script
+will not be inherited by any spawned subprocess.
+
+As for the short-lived process that exists after \texttt{fork()} but
+before \texttt{exec()}, writing this up causes me to realize that we
+don't especially protect ourselves from seeing data from this
+process.  The only way that any feedback data would be given is if
+this short-lived process crashed or unloaded a plugin, since
+finalization code is not run when a process \texttt{exec()}s.  It
+seems very unlikely that a real application would pause to unload a
+plugin between \texttt{fork()} and \texttt{exec()}, but one could
+write code that did this.  Hmm.  I'll need to see if I can think up a
+cheap and easy fix.  I wonder if interposing on \texttt{fork()} like
+we did for \texttt{pthread\_create()} would work?  Maybe yes, maybe
+no, as \texttt{fork()} is a system call.  Need to do something for
+\texttt{clone()} too, come to think of it.  Hmm.
+
+\subsection{Weightless Library Calls}
+
+Another miscellaneous item that doesn't fit anywhere else.
+
+We do not post an instrumented standard C runtime library.  Most calls
+by instrumented programs into libc are calls to weightless functions.
+The only exceptions are calls which can reach back out into
+application code.  The \texttt{setjmp} and \texttt{longjmp} family
+have nonlocal transfers of control; we must assume that the global
+next-event countdown can change arbitrarily across a call to one of
+these functions.  The \texttt{bsearch} and \texttt{qsort} functions
+use comparison functions provided by the caller, and those comparison
+functions may be instrumented.  Everything else in the C library is
+weightless (contains no sites and only calls other weightless
+functions).  The instrumentor is configured by default to treat all
+other functions from the C library as weightless.  That function list
+is extracted using \texttt{nm} at instrumentor build time.
+
+There are certainly many other shared system libraries which we also
+do not instrument.  For applications like these, the X and GNOME
+runtime libraries are large blocks of instrumentation-free code.
+However, one needs to be careful.  Libraries such as these make heavy
+use of event loops and callbacks, and it may not always be obvious
+where a call back up to instrumented code may appear.  For now we have
+restricted ourself to marking most of libc as weightless.
+
+\subsection{Common Complaints, and the Lack Thereof}
+
+We have received zero complaints about application performance.
+Apparently \nicefrac{1}{100} sampling is sparse enough; we probably
+could have sampled even more densely for these interactive
+applications which spend most of their time waiting for the user to do
+something.  Note however that even these applications do have
+CPU-intensive phases, such as when Rhythmbox is loading up a library
+with thousands of music files or when Gnumeric is recalculating a very
+large spreadsheet.
+
+\begin{table*}
+  \centering
+  \begin{tabular}{|l|l|rr|rr|rr|}
+    & & \multicolumn{2}{c|}{download} & \multicolumn{2}{c|}{unpacked} & \multicolumn{2}{c|}{code} \\
+    \raisebox{1.5ex}[0pt]{app} & \raisebox{1.5ex}[0pt]{scheme} & regular & instrumented & regular & instrumented & regular & instrumented \\ \hline
+    Evolution & returns & 9591960 & 11721539 & 22753964 & 28528328 & 339905 & 777643 \\
+    Gaim & scalar-pairs & 2561692 & 3829336 & 6078264 & 9732765 & 786883 & 2563820 \\
+    Gnumeric & returns & 9757168 & 11459997 & 24850914 & 29880154 & 2945596 & 5118739 \\
+    Nautilus & branches & 3405386 & 3848678 & 9152133 & 10385078 & 467576 & 872085 \\
+    Rhythmbox & scalar-pairs & 1172654 & 1667450 & 3037155 & 5182268 & 686558 & 2773302
+  \end{tabular}
+  \caption{Sizes of regular and instrumented packages.  Sizes are in
+    bytes.  ``Download'' is the size of the complete RPM package,
+    whose contents are compressed.  ``Unpacked'' is the size as
+    installed on disk, without that compression. ``Code'' is just the
+    size of the code for the main instrumented executable.}
+  \label{package-sizes}
+\end{table*}
+
+We have received zero complaints about package sizes, either
+downloaded or as expanded onto disk.  Perhaps our early adopters all
+have nice fat DSL pipes.  In brief, downloaded packages grow between
+13\% and 49\%.  Installed footprint on disk grows between 13\% and
+71\%.  The actual application code considered alone grows between 74\%
+and 304\%.  Table \ref{package-sizes} has raw data on sizes in case
+anyone wants to crunch some numbers.
+
+The GIMP is missing from the above.  I don't have that data right now
+and don't have time to collect it.  Sorry.
+
+\section{Social Engineering}
+
+Make friends with developers.  Gnumeric, The GIMP, and Rhythmbox have
+all posted links to our binaries for people to download and use.  This
+appears to have worked particularly well with Rhythmbox which is a
+cool application under rapid development which does not provide
+binaries of its own and which is not available in any version from a
+standard Red Hat Linux 9 distribution.  We fill a need, and I've run
+into at least one person who told me he uses our build simply because
+it's the only up-to-date prebuilt binary he can find.
+
+Luis Villa and Jody Goldberg have been especially supportive.  Luis
+and I coordinated a media blitz where we sent blurbs about this
+project to numerous web-based news sites.  We got coverage or at least
+mention on Slashdot, CNet News.com, Linux Weekly News, ACM News
+Service, ZDNet, ZDNet Russia, NewsForge, and Digitoday.  The point is
+not to boost our egos; the point is to get lots of users.  Getting a
+front-page Slashdot article in particular probably gave us a huge user
+base boost.  There was also quite a bit of discussion, most of it less
+hostile than anticipated.  (Anything with privacy concerns touches a
+nerve with the Slashdot crowd.)  Some of these sites were not
+contacted by us directly, but reposted or wrote their own stories
+based on what they saw at high profile sites like Slashdot and CNet
+News.com.
+
+We've got an announcement-only mailing list and another for general
+discussion and bug reporting.  Things have gotten pretty quiet on the
+later, with essentially no new messages since early December.  We use
+the former regularly to announce newly posted releases.  We've got
+four subscribers to the annouce list and five subscribers to the
+general discussion list.  I wonder if that's the entire size of our
+user base?  Seems a bit small relative to the number of reports we get
+per day, but I don't really know.
+
+I've been a presence in various IRC chat rooms which are used by
+developers of the applications I have instrumented.  Even though open
+source means we don't need their approval, it's good politics to keep
+them in the loop.  Open source development is very much a
+community-based thing, and we need to appear to be part of that
+community.
+
+We have a web site.  There web site is designed for progressive
+disclosure.  You can get a very quick overview, a more thorough
+description of how things work, or really drill down for complete
+technical information on various parts of the system.  We expect that
+most of our early adopters are going to be technically sophisticated,
+so we want them to be able to find answers to any questions they may
+have so that they can make fully informed (or as fully informed as
+they want to be) decisions about whether to participate.  Privacy and
+security issues are given particularly extensive treatment, as this is
+an area where potential users are most likely to have doubts.
+
+Install is supported using manual RPM download, using
+\texttt{apt-rpm}, using \texttt{yum}, and using \texttt{red-carpet}.
+We want to make this as painless as possible, especially when
+instrumentor changes cause us to post new releases more frequently
+than the underlying applications.
+
+We have an icon.  It took me three days to draw and I'm very proud of
+it.  This is not just a frivolous matter, though.  The icon is used as
+a consistent project marker throughout the web site, but it is also
+used in the GUI tools that run on the user's machine.  In those tools,
+the icon doubles as a state indicator so the user knows when feedback
+reporting is enabled.  We want to make sure that we can never be
+accused of doing anything behind the user's back.
+
+\section{Current Status}
+
+\begin{table}
+  \begin{tabular}{lrrrrr}
+    app & count & good & error & crash & crash rate \\ \hline
+    rhythmbox & 726 & 598 & 36 & 92 & 0.15 \\
+    gnumeric & 247 & 228 & 2 & 17 & 0.07 \\
+    gaim & 464 & 386 & 62 & 16 & 0.04 \\
+    evolution & 702 & 647 & 39 & 16 & 0.02 \\
+    nautilus & 468 & 426 & 36 & 6 & 0.01 \\
+    gimp & 77 & 77 & 0 & 0 & 0.00
+  \end{tabular}
+  \caption{Number of runs received for each application.  ``count'' is
+    the total, which is broken out into ``good'' runs, runs that
+    exited with a non-zero ``error'' status, and runs that ended in a
+    ``crash'' due to a fatal signal.  Ordered by decreasing crash
+    rate; Rhythmbox ends by crashing 15\% of the time.}
+  \label{reports-per-app}
+\end{table}
+
+\begin{table}
+  \centering
+  \begin{tabular}{rrr}
+    year & week & count \\ \hline
+    2003 & 33 & 27 \\
+    2003 & 34 & 49 \\
+    2003 & 35 & 39 \\
+    2003 & 36 & 17 \\
+    2003 & 37 & 87 \\
+    2003 & 38 & 165 \\
+    2003 & 39 & 73 \\
+    2003 & 40 & 126 \\
+    2003 & 41 & 149 \\
+    2003 & 42 & 221 \\
+    2003 & 43 & 200 \\
+    2003 & 44 & 238 \\
+    2003 & 45 & 171 \\
+    2003 & 46 & 132 \\
+    2003 & 47 & 145 \\
+    2003 & 48 & 131 \\
+    2003 & 49 & 120 \\
+    2003 & 50 & 85 \\
+    2003 & 51 & 80 \\
+    2003 & 52 & 28 \\
+    2004 & 0 & 11 \\
+    2004 & 1 & 54 \\
+    2004 & 2 & 57 \\
+    2004 & 3 & 61 \\
+    2004 & 4 & 45 \\
+    2004 & 5 & 28 \\
+    2004 & 6 & 28 \\
+    2004 & 7 & 86 \\
+    2004 & 8 & 40 \\
+    2004 & 9 & 18
+  \end{tabular}
+  \caption{Reports received per week.  You can certainly see the mark
+    of our fifteen minutes of Slashdot fame.  If you can understand
+    MySQL's documentation for its \texttt{WEEK()} function, and how
+    that suggests interpreting week 52 and week 0, then you're a
+    better person than I.}
+  \label{reports-per-week}
+\end{table}
+
+Tables \ref{reports-per-app} and \ref{reports-per-week} give some raw
+numbers that you may be able to coerce into a discussion of the
+project's current status.
+
+\end{document}
