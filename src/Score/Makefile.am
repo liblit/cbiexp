@@ -11,6 +11,8 @@ libScore_a_SOURCES =				\
 	HarmonicMeanSqrt.h			\
 	Increase.cc				\
 	Increase.h				\
+	IncreaseFails.cc			\
+	IncreaseFails.h				\
 	LowerBound.cc				\
 	LowerBound.h				\
 	TrueInFails.cc				\

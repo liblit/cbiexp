@@ -19,6 +19,7 @@
 #include "Score/HarmonicMeanLog.h"
 #include "Score/HarmonicMeanSqrt.h"
 #include "Score/Increase.h"
+#include "Score/IncreaseFails.h"
 #include "Score/LowerBound.h"
 #include "Score/TrueInFails.h"
 #include "Stylesheet.h"
@@ -118,6 +119,7 @@ buildViews(const Rho &rho, const Schemes::value_type &scheme)
   buildView(rho, scheme, Increase());
   buildView(rho, scheme, Fail());
   buildView(rho, scheme, TrueInFails());
+  buildView(rho, scheme, IncreaseFails());
   buildView(rho, scheme, HarmonicMeanLog());
   buildView(rho, scheme, HarmonicMeanSqrt());
 }
