@@ -209,8 +209,8 @@ int main(int argc, char** argv)
 	add_link(incdir, "sorts", "xml");
 	shell("%s %s/gen_summary.o %s.o %s.o -L%s -lanalyze -o gen-summary",
 	      linker, objdir, MapSites::sitesBasename, MapSites::unitsBasename, objdir);
-	shell("./gen-summary --confidence=%u --source-directory=%s --number-of-runs=%d >summary.xml",
-	      Confidence::level, SourceDirectory::root, NumRuns::value());
+	shell("./gen-summary --confidence=%u --source-directory=%s --number-of-runs=%d --sparsity=%u >summary.xml",
+	      Confidence::level, SourceDirectory::root, NumRuns::value(), CompactReport::sparsity);
 	needLogoLinks = true;
     }
 
