@@ -55,7 +55,7 @@ $(sparse): $(corrdir)/mhn2sparsemat.pl f.runs s.runs obs.txt tru.txt
 	$(time) ./$< . .
 clean:: ; rm -f $(sparse)
 
-obs.txt tru.txt: $(datadir)/stamp-labels $(datadir)/0/reports.new preds.txt s.runs f.runs sites.o units.o
+obs.txt tru.txt: $(tooldir)/compute_obs_tru.o $(datadir)/0/reports.new preds.txt s.runs f.runs sites.o units.o
 	$(time) $(tooldir)/analyze_runs --do=compute-obs-tru --runs-directory=$(datadir)
 clean:: ; rm -f obs.txt tru.txt compute-obs-tru
 
