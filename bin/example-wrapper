@@ -1,12 +1,18 @@
 #!/bin/sh -e
 
-/moa/sc3/mhn/bin/analyze-runs -do-process-labels -n 31998 -l /moa/sc3/cbiexp/rhythmbox/data/%d/label
-/moa/sc3/mhn/bin/analyze-runs -do-map-sites -vs /moa/sc3/cbiexp/rhythmbox/share/rhythmbox.sites
-/moa/sc3/mhn/bin/analyze-runs -do-convert-reports -s ./s.runs -f ./f.runs -vr /moa/sc3/cbiexp/rhythmbox/data/%d/reports -cr /moa/sc3/cbiexp/rhythmbox/data/%d/reports.new -u ./units.h
-/moa/sc3/mhn/bin/analyze-runs -do-compute-results -s ./s.runs -f ./f.runs -cs ./sites.txt -cr /moa/sc3/cbiexp/rhythmbox/data/%d/reports.new -u ./units.h
-/moa/sc3/mhn/bin/analyze-runs -do-print-results-1 -r ./summary.html -pf ./preds.full.txt 
+root=`cd \`dirname $0\`/..; pwd`
+experiment=$root/rhythmbox
+analysis=$experiment/analysis
+rm -rf $analysis
+mkdir $analysis
+cd $analysis
+
+$root/bin/analyze-runs -do-process-labels -n 40 -l $experiment/data/%d/label
+$root/bin/analyze-runs -do-map-sites -vs $experiment/share/rhythmbox.sites
+$root/bin/analyze-runs -do-convert-reports -s ./s.runs -f ./f.runs -vr $experiment/data/%d/reports -cr $experiment/data/%d/reports.new -u ./units.h
+$root/bin/analyze-runs -do-compute-results -s ./s.runs -f ./f.runs -cs ./sites.txt -cr $experiment/data/%d/reports.new -u ./units.h
+$root/bin/analyze-runs -do-print-results-1 -r ./summary.html -pf ./preds.full.txt 
 
 # the above was an illustration of how to use analyze-runs to perform specific tasks.
 # usually, you should use it as follows:
-#/moa/sc3/mhn/bin/analyze-runs -do-process-labels -do-map-sites -do-convert-reports -do-compute-results -do-print-results-1 -n 31998 -l /moa/sc3/cbiexp/rhythmbox/data/%d/label -vs /moa/sc3/cbiexp/rhythmbox/share/rhythmbox.sites -vr /moa/sc3/cbiexp/rhythmbox/data/%d/reports -cr /moa/sc3/cbiexp/rhythmbox/data/%d/reports.new 
-
+#$root/bin/analyze-runs -do-process-labels -do-map-sites -do-convert-reports -do-compute-results -do-print-results-1 -n 31998 -l $experiment/data/%d/label -vs $experiment/share/rhythmbox.sites -vr $experiment/data/%d/reports -cr $experiment/data/%d/reports.new 
