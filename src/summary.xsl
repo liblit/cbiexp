@@ -29,7 +29,7 @@
 	<!-- outcome summary -->
 	<p># runs: <xsl:value-of select="sum(runs/*)"/>
 	[successful: <xsl:value-of select="runs/success"/>
-	failing: <xsl:value-of select="runs/fail"/>
+	failing: <xsl:value-of select="runs/failure"/>
 	discarded: <xsl:value-of select="runs/ignore"/>]
 	</p>
 

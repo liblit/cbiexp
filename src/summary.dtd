@@ -8,9 +8,9 @@
 <!ELEMENT date (#PCDATA)>
 
 <!-- outcome summary for the runs in an experiment -->
-<!ELEMENT runs (success, fail, ignore)>
+<!ELEMENT runs (success, failure, ignore)>
 <!ELEMENT success (#PCDATA)>
-<!ELEMENT fail (#PCDATA)>
+<!ELEMENT failure (#PCDATA)>
 <!ELEMENT ignore (#PCDATA)>
 
 <!-- data analysis parameters -->
