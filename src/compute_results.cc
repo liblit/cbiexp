@@ -4,12 +4,13 @@
 #include <cstdlib>
 #include <cmath>
 #include <ctime>
+#include <iostream>
 #include <vector>
 #include "classify_runs.h"
 #include "scaffold.h"
 #include "units.h"
 
-using std::vector;
+using namespace std;
 
 #define CBI_WEBPAGE "http://www.cs.berkeley.edu/~liblit/sampler/"
 
@@ -354,7 +355,8 @@ void process_site(FILE* fp, int r, int u, int c)
 	}
 	break;
     default:
-	assert(0);
+	cerr << "unrecognized scheme code: " << units[u].s[0] << endl;
+	exit(1);
     }
 }
 
