@@ -166,8 +166,7 @@ void cull_preds()
 void cull_preds_aggressively()
 {
     enum { LT, GEQ, EQ, NEQ, GT, LEQ };
-
-    int u, c, p;
+    int u, c;
 
     for (u = 0; u < NumUnits; u++) {
 	for (c = 0; c < units[u].c; c++) {
@@ -176,78 +175,91 @@ void cull_preds_aggressively()
             case 'R':
             {
                 site_summary_t& s = site_summary[u][c];
-                int n = 0;
 
-	        for (p = 0; p < 6; p++)
-	            if (s.retain[p]) 
-		        n++;
-
-	        if (n == 2) {
-	            if (s.retain[LT]) {
-		        if (s.retain[LEQ] && s.S[LT] == s.S[LEQ] && s.F[LT] == s.F[LEQ]) {
-		            s.retain[LEQ] = false;
-                            break;
-                        }
-		        if (s.retain[NEQ] && s.S[LT] == s.S[NEQ] && s.F[LT] == s.F[NEQ]) {
-		            s.retain[NEQ] = false;
-                            break;
-                        }
-                        break;
-	            }
-                    if (s.retain[GT]) {
-		        if (s.retain[GEQ] && s.S[GT] == s.S[GEQ] && s.F[GT] == s.F[GEQ]) {
-		            s.retain[GEQ] = false;
-                            break;
-                        }
-		        if (s.retain[NEQ] && s.S[GT] == s.S[NEQ] && s.F[GT] == s.F[NEQ]) {
-		            s.retain[NEQ] = false;
-                            break;
-                        }
-                        break;
-	            }
-                    if (s.retain[EQ]) {
-		        if (s.retain[LEQ] && s.S[EQ] == s.S[LEQ] && s.F[EQ] == s.F[LEQ]) {
-		            s.retain[LEQ] = false;
-                            break;
-                        }
-		        if (s.retain[GEQ] && s.S[EQ] == s.S[GEQ] && s.F[EQ] == s.F[GEQ]) {
-		            s.retain[GEQ] = false;
-                            break;
-                        }
-                        break;
-	            }
-	        } else if (n == 3) {
-	            if (s.retain[LT] && s.retain[EQ] && s.retain[LEQ] &&
-                        s.S[LT] == s.S[LEQ] && s.F[LT] == s.F[LEQ] && s.S[EQ] == s.S[LEQ] && s.F[EQ] == s.F[LEQ]) {
-		        s.retain[LT] = s.retain[EQ] = false;
-                        break;
-                    }
-	            if (s.retain[GT] && s.retain[EQ] && s.retain[GEQ] &&
-                        s.S[GT] == s.S[GEQ] && s.F[GT] == s.F[GEQ] && s.S[EQ] == s.S[GEQ] && s.F[EQ] == s.F[GEQ]) {
-		        s.retain[GT] = s.retain[EQ] = false;
-                        break;
-                    }
-	            if (s.retain[LT] && s.retain[GT] && s.retain[NEQ] &&
-                        s.S[LT] == s.S[NEQ] && s.F[LT] == s.F[NEQ] && s.S[GT] == s.S[NEQ] && s.F[GT] == s.F[NEQ]) {
-		        s.retain[LT] = s.retain[GT] = false;
-                        break;
-                    }
-	            if (s.retain[LT] && s.retain[LEQ] && s.retain[NEQ] &&
-                        s.S[LT] == s.S[LEQ] && s.F[LT] == s.F[LEQ] && s.S[LT] == s.S[NEQ] && s.F[LT] == s.F[NEQ]) {
-		        s.retain[LEQ] = s.retain[NEQ] = false;
-                        break;
-                    }
-	            if (s.retain[GT] && s.retain[GEQ] && s.retain[NEQ] &&
-                        s.S[GT] == s.S[GEQ] && s.F[GT] == s.F[GEQ] && s.S[GT] == s.S[NEQ] && s.F[GT] == s.F[NEQ]) {
-		        s.retain[GEQ] = s.retain[NEQ] = false;
-                        break;
-                    }
-	            if (s.retain[EQ] && s.retain[LEQ] && s.retain[GEQ] &&
-                        s.S[EQ] == s.S[LEQ] && s.F[EQ] == s.F[LEQ] && s.S[EQ] == s.S[GEQ] && s.F[EQ] == s.F[GEQ]) {
-		        s.retain[LEQ] = s.retain[GEQ] = false;
-                        break;
-                    }
-	        }
+                if (s.retain[LEQ] &&
+                    s.retain[LT ] &&
+                    s.retain[EQ ] &&
+                    s.S[LEQ] == s.S[LT] && s.F[LEQ] == s.F[LT] &&
+                    s.S[LEQ] == s.S[EQ] && s.F[LEQ] == s.F[EQ]) {
+                    s.retain[LT] = s.retain[EQ] = false;
+                    break;
+                }             
+                if (s.retain[GEQ] &&
+                    s.retain[GT ] &&
+                    s.retain[EQ ] &&
+                    s.S[GEQ] == s.S[GT] && s.F[GEQ] == s.F[GT] &&
+                    s.S[GEQ] == s.S[EQ] && s.F[GEQ] == s.F[EQ]) {
+                    s.retain[GT] = s.retain[EQ] = false;
+                    break;
+                }
+                if (s.retain[NEQ] &&
+                    s.retain[LT ] &&
+                    s.retain[GT ] &&
+                    s.S[NEQ] == s.S[LT] && s.F[NEQ] == s.F[LT] &&
+                    s.S[NEQ] == s.S[GT] && s.F[NEQ] == s.F[GT]) {
+                    s.retain[LT] = s.retain[GT] = false;
+                    break;
+                }
+                if (s.retain[LT ] &&
+                    s.retain[LEQ] &&
+                    s.retain[NEQ] &&
+                    s.S[LT] == s.S[LEQ] && s.F[LT] == s.F[LEQ] &&
+                    s.S[LT] == s.S[NEQ] && s.F[LT] == s.F[NEQ]) {
+                    s.retain[LEQ] = s.retain[NEQ] = false;
+                    break;
+                }
+                if (s.retain[GT ] &&
+                    s.retain[GEQ] &&
+                    s.retain[NEQ] &&
+                    s.S[GT] == s.S[GEQ] && s.F[GT] == s.F[GEQ] &&
+                    s.S[GT] == s.S[NEQ] && s.F[GT] == s.F[NEQ]) {
+                    s.retain[GEQ] = s.retain[NEQ] = false;
+                    break;
+                }
+                if (s.retain[EQ ] &&
+                    s.retain[LEQ] &&
+                    s.retain[GEQ] &&
+                    s.S[EQ] == s.S[LEQ] && s.F[EQ] == s.F[LEQ] &&
+                    s.S[EQ] == s.S[GEQ] && s.F[EQ] == s.F[GEQ]) {
+                    s.retain[LEQ] = s.retain[GEQ] = false;
+                    break;
+                }
+                if (s.retain[LT ] &&
+                    s.retain[LEQ] &&
+                    s.S[LT] == s.S[LEQ] && s.F[LT] == s.F[LEQ]) {
+                    s.retain[LEQ] = false;
+                    break;
+                }
+                if (s.retain[LT ] &&
+                    s.retain[NEQ] &&
+                    s.S[LT] == s.S[NEQ] && s.F[LT] == s.F[NEQ]) {
+                    s.retain[NEQ] = false;
+                    break;
+                }
+                if (s.retain[GT ] &&
+                    s.retain[GEQ] &&
+                    s.S[GT] == s.S[GEQ] && s.F[GT] == s.F[GEQ]) {
+                    s.retain[GEQ] = false;
+                    break;
+                }
+                if (s.retain[GT ] &&
+                    s.retain[NEQ] &&
+                    s.S[GT] == s.S[NEQ] && s.F[GT] == s.F[NEQ]) {
+                    s.retain[NEQ] = false;
+                    break;
+                }
+                if (s.retain[EQ ] &&
+                    s.retain[LEQ] &&
+                    s.S[EQ] == s.S[LEQ] && s.F[EQ] == s.F[LEQ]) {
+                    s.retain[LEQ] = false;
+                    break;
+                }
+                if (s.retain[EQ ] &&
+                    s.retain[GEQ] &&
+                    s.S[EQ] == s.S[GEQ] && s.F[EQ] == s.F[GEQ]) {
+                    s.retain[GEQ] = false;
+                    break;
+                }
                 break;
             }
             case 'B':
