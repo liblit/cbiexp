@@ -17,9 +17,6 @@ test, a reduction of 99.9\%.  The elimination algorithm then yields 15 predicate
 reduction of 97\%.  The other case studies show a similar reduction in the number of
 predicates by 3-4 orders of magnitude.
 
-\issue{Modified by Mike: "Sampling can have serious negative effects on our algorithm"
-->
-"Sampling creates additional challenges that must be faced by our algorithm"}
 The results we discuss are all on sampled data.  Sampling creates
 additional challenges that must be faced by our algorithm.  Assume $P_1$ and $P_2$ are
 equivalent bug predictors and both are sampled at a rate of
@@ -28,17 +25,9 @@ $P_1$ and $P_2$ are equivalent, they will be observed in nearly disjoint
 sets of runs and treated as close to independent by the elimination
 algorithm.
 
-\issue{Modified by "Thus, rarely executed code has a much higher sampling rate
-than very frequently executed code; a similar strategy has been pursued
-for similar reasons in [?]."
-->
-"Thus, rarely executed code has a much higher sampling rate than 
-very frequently executed code.  (A similar strategy has been pursued
-for similar reasons in [?].)"}
 To address this problem, we set the sampling rates of predicates to be
 inversely proportional to their frequency of execution.  Based on a
-\issue{modified by Alice, check for accuracy}
-training set of 1,000 executions, we set a sampling rate for each $P$ so 
+training set of 1,000 executions, we set the sampling rate of each predicate so 
 as to obtain an expected 100 samples of each predicate in subsequent program 
 executions; the sampling rate is clamped to a minimum of $\nicefrac{1}{100}$.  
 Thus, rarely executed code has a
@@ -52,13 +41,9 @@ judge the differences to be minor: sometimes a different but logically
 equivalent predicate is chosen, the ranking of predictors of different
 bugs is slightly different, or one or the other version has a few
 extra, weak predictors at the tail end of the list.  
-%%
-\issue[Alice]{"we choose a sampling rate for P to achieve ..." was
-  confusing. [text modified, please check for accuracy]}
 
 \subsection{A Validation Experiment}
 
-\issue{Modified by Mike: "an experiment where we knew" -> "an experiment in which we knew" }
 To validate our algorithm we first performed an experiment in which we
 knew the set of bugs in advance.  We added nine bugs to \moss, a
 widely used service for detecting plagiarism in software
@@ -66,26 +51,16 @@ widely used service for detecting plagiarism in software
 and repaired bugs in \moss that we reintroduced; the other three were
 variations on three of the original bugs, to see if our algorithm could
 discriminate between pairs of bugs with very similar behavior but
-\issue{modified by Alice}
 distinct causes.  The nature of the eight crasing bugs varies: four
 buffer overruns, a null file pointer dereference in certain cases, a
 missing end-of-list check in the traversal of a hash table bucket, a missing
 out-of-memory check, and a violation of a subtle invariant that must be maintained between two
 parts of a complex data structure.  
-%%
-\issue[Alice]{"The nature of the bugs varies: ... comprise the eight
-  crashing bugs."  was a bit awkward.  I've moved the phrase "comprise
-  the eight crashing bugs" up into the first phrase.  See if you like
-  it better.}
 
-\issue{modified by Alice}
-\issue[Mike]{The paragraph beginning with "The last bug..." doesn't read very
-well to me.  I think that the purpose should be introduced at the outset.
-If people agree, I'm happy to take a crack at a rewrite.}
 The last bug -- incorrect handling of comments in certain cases -- only
 causes incorrect output, not a crash.  For most of the other bugs, failure can 
-be detected by noting program crashes.  (Some of the bugs are non-deterministic 
-and do not always cause crashes.)  The last bug, however, cannot be detected 
+be detected by noting program crashes (though some of these bugs are non-deterministic 
+and do not always cause crashes).  The last bug, however, cannot be detected 
 in such an easy fashion.
 For our experiment we also ran a correct version of \moss\ and
 compared the output of the two versions, labeling any run where the
@@ -94,9 +69,6 @@ is to show that, in principle, bugs other than crashing bugs can also
 be isolated using our techniques, provided there is some way, whether
 by automatic self-checking or human inspection, to recognize failing
 runs.
-%%
-\issue[Alice]{"While the failure can be detected... " was also
-  awkward.  I've rearranged things a little bit.}
 
 \input{moss-view/table}
 
@@ -112,21 +84,9 @@ the initial and effective importance (harmonic mean) scores, respectively.
 
 As part of the experiment we separately recorded the exact set of
 bugs that occurred in each run.
-The table at the far right of \autoref{tab:mossdilute} shows for
-each selected predicate $P$ and each bug ${\cal B}$ the number of runs where
-bug ${\cal B}$ occurs and $P$ is observed to be true.  
-%%
-\issue[Alice]{Confusion of notation: we had defined B to be the set of
-  runs causes by a specific bug, but now we're using B to denote the
-  name of the bug, AND the associated set of runs.  One way to fix
-  this would be to let $B$ denote the bug, and {\cal B} the set of
-  runs causes by B.  Then the above sentence could be "and each bug
-  $B$ the size of $|{\cal B}|$."  [haven't modified text]}
-\issue[Mike]{"the number of runs where bug {\cal B} occurs" 
-This is inconsistent with the definition of a bug on the first
-page, which is a set of runs.  I'd suggest just dropping the
-"{\cal B}" in both places in which it occurs in this sentence.}
-%%
+The table at the far right of \autoref{tab:mossdilute} shows, for
+each selected predicate and for each bug, the number of runs in which
+both the selected predicate is observed to be true and the bug occurs.
 Note that while each
 predicate has a very strong spike at one bug, indicating it is a
 strong predictor of that bug, there are always some runs with other
@@ -169,8 +129,6 @@ the cause of the bug. Overall, the elimination algorithm does an excellent
 job of listing separate causes of each of the bugs in order of priority,
 with very little redundancy.
 
-\issue{Modified by Mike: "its sub-bug at position two" -> "its companion sub-bug predictor
-at position two" }
 Below the eighth position there are no new bugs to report and every
 predicate is correlated with predicates higher on the list.  Even
 without the table of numbers at the right it is easy to spot the
@@ -223,8 +181,6 @@ ranked by how much $P$ causes their ranking score to decrease.
 
 \subsubsection{\ccrypt}
 
-\issue{Modified by Mike: "a sub-bug predictor of the second" -> "a sub-bug predictor 
-associated with the second" }
 We analyzed \ccrypt 1.2, which has a known bug \cite{Selinger:2003:cqual}.  
 The results are shown in \autoref{tab:views-ccrypt}.
 Our algorithm reports two predictors, which both point directly to the single bug. 
@@ -333,8 +289,6 @@ Crash-reporting systems are also of limited utility in analyzing
 event-driven systems, as the stack in the main event loop is
 unchanging and all of the interesting state is in the queues.
 
-\issue{Modified by Mike: "We could not have even begun to understand" -> 
-"Note, however, that we could not have even begun to understand"}
 We isolated two distinct bugs in \rhythmbox.  The first predicate led
 us to a race condition.  The second predicate was not useful directly,
 but we were able to isolate the bug using the predicates in its
@@ -361,8 +315,4 @@ understand these bugs without the information provided by our tool.
   then mention that we currently do not track predicates on heap
   structures (as Alex mentions at the end of the Background section
   (sec 2)) and then round off the para by saying that we leave this
-  for future work?  Of course, we will retain the positive sentence
-  that is currently the last sentence of this para:
-
-  "We could not have even begun to understand these bugs without the
-  information provided by our tool"}
+  for future work?}
