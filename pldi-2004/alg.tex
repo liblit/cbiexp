@@ -29,8 +29,8 @@ Consider the following code fragment, which we use to motivate and illustrate
 our technique:
 \begin{verbatim}
 if (f == NULL) {  (a)
-	x = 0;    (b)
-	*f;       (c)
+        x = 0;    (b)
+        *f;       (c)
 }
 \end{verbatim}
 Consider the predicate {\tt f == NULL} at line {\tt (a)}.  Clearly
@@ -44,13 +44,13 @@ that bugs are independent, and there is no reason to assume that
 a predicate that is a good predictor for one bug is at all correlated
 with any other bug.
 
-The bug in the code fragment above is {\em deterministic} with respect
+The bug in the code fragment above is \termdef{deterministic} with respect
 to {\tt f == NULL}: once {\tt f == NULL} becomes true, the program is guaranteed to eventually
 fail.  In many cases it is simply impossible to observe the exact
 conditions that cause failure; for example, buffer overrun bugs in a C
 program may or may not cause the program to crash depending on runtime
 system decisions about how data is layed out in memory.  Such bugs are
-{\em non-deterministic} with respect to every predicate that we instrument:
+\termdef{non-deterministic} with respect to every predicate that we instrument:
 even for the best predictor $P$, it is possible that $P$ is true and
 the program terminates normally.  In the example above, if we replace line
 {\tt (c)} by
