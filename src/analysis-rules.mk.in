@@ -256,14 +256,6 @@ theta: train_utillog train.runs val.runs nonconst_preds.txt
 	$(time) ./$< --runs-directory=$(datadir) --report-suffix=$(report-series)
 clean:: ; rm -f theta.txt train_lls.txt val_lls.txt confmat.txt
 
-clip_params: %: $(tooldir)/%.o sites.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -lm -o $@
-clean:: ; rm -f clip_params
-
-clipped_ll: clip_params train.runs val.runs nonconst_preds.txt
-	$(time) ./$< --runs-directory=$(datadir) --report-suffix=$(report-series)
-clean:: ;
-
 sites.o units.o: %.o: %.cc
 clean:: ; rm -f sites.o units.o
 
@@ -283,6 +275,11 @@ max-observed: %: $(tooldir)/%.o units.o $(tooldir)/libanalyze.a
 	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
 clean:: ; rm -f max-observed
 
+partial_order: $(tooldir)/partial_order.o units.o
+	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
+	$(time) $@ --runs-directory=$(datadir) --timestamp-when=first
+	$(time) $@ --runs-directory=$(datadir) --timestamp-when=last
+clean:: ; rm -f partial_order
 
 ########################################################################
 

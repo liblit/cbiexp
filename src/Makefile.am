@@ -1,6 +1,7 @@
 SUBDIRS = corrective-ranking Score
 
-AM_CPPFLAGS = -W -Wall -Werror -Wformat
+AM_CPPFLAGS = -W -Wall -Werror -Wformat 
+AM_CXXFLAGS = -I./boost_1_32_0/include/boost-1_32
 
 EXTRA_DIST =					\
 	summary.css				\
@@ -77,12 +78,16 @@ libanalyze_a_SOURCES =				\
 	RunsSplit.h				\
 	SiteCoords.cc				\
 	SiteCoords.h				\
+	SitePairs.cc				\
+	SitePairs.h				\
 	SourceDirectory.cc			\
 	SourceDirectory.h			\
 	Stylesheet.cc				\
 	Stylesheet.h				\
 	TimestampReport.cc			\
 	TimestampReport.h			\
+	TsReportReader.cc			\
+	TsReportReader.h			\
 	UtilLogReg.cc				\
 	UtilLogReg.h				\
 	Verbose.cc				\
@@ -129,10 +134,10 @@ liblate_a_SOURCES =				\
 	gen_views.cc				\
 	logreg.cc				\
 	max-observed.cc				\
+	partial_order.cc			\
 	preds.h					\
 	project.cc				\
 	sites.h					\
 	train_utillog.cc			\
 	units.h					\
-	xmlify-results.cc			\
-	clip_params.cc
+	xmlify-results.cc
