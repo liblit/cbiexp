@@ -70,19 +70,21 @@ AC_SUBST(BOOST_CPPFLAGS)
 
 AC_ARG_WITH(sampler-build,
   AC_HELP_STRING([--with-sampler-build=DIR],
-                 [use sampler tools from build tree DIR]),
-  sampler_builddir="$withval")
+                 [use sampler tools from build tree DIR]))
 
 if test -z "$with_sampler_build"; then
-  AC_CHECK_PROGS(sampler_cc, sampler-cc)
+  AC_PATH_PROG(sampler_cc, sampler-cc)
   if test -z "$sampler_cc"; then
     AC_MSG_ERROR(cannot find sampler-cc; please use "--with-sampler-build=DIR")
   fi
-  AC_PATH_PROG(EXTRACT_SECTION, extract-section, false, $sampler_tooldir)
-  if test -z "$EXTRACT_SECTION"; then
-    AC_MSG_ERROR(cannot find sampler tools; please use "--with-sampler-build=DIR")
+  AC_MSG_CHECKING(sampler tools)
+  sampler_tooldir="`dirname $sampler_cc`/../lib/sampler/tools"
+  if test -x "$sampler_tooldir/extract-section"; then
+    sampler_tooldir="`cd $sampler_tooldir; pwd`"
+    AC_MSG_RESULT($sampler_tooldir)
+  else
+    AC_MSG_ERROR(cannot find sampler tools in $sampler_tooldir; please use "--with-sampler-build=DIR")
   fi
-  sampler_tooldir="`dirname $EXTRACT_SECTION`"
 else
   AC_SUBST(sampler_builddir, $with_sampler_build)
   sampler_cc='${sampler_builddir}/instrumentor/driver/sampler-cc-here'
