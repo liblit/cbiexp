@@ -257,7 +257,7 @@ while ($numruns-- > 0) {
     my $goodExit = (new FileHandle 'good/exit')->getline;
     my $abnormality = ($goodExit !~ /^normal\t/) ? 'good run crashed or hung' : '';
     $abnormality ||= (diff 'bad/exit', 'bad2/exit') ? 'bad and bad2 runs exited differently' : '';
-    (new FileHandle 'abnormal')->print("$abnormality\n") if $abnormality;
+    (new FileHandle 'abnormal', 'w')->print("$abnormality\n") if $abnormality;
 
     chdir("..");
 }
