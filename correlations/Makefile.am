@@ -1,7 +1,8 @@
-all-local: readsp.mexglx
+mexglx = readsp.mexglx
+
+all-local: $(mexglx)
 
 %.mexglx: %.c
 	mex $<
 
-clean-local:
-	rm -f *.mexglx
+CLEANFILES = $(mexglx)
