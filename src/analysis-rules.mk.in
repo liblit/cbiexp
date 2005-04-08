@@ -191,7 +191,7 @@ clean:: ; rm -f compute-obs-tru
 
 $(filter %_none.xml, $(views)): gen-views preds.txt
 	$(build) operands.xsl view.css view.dtd view.xsl scores.css scores.dtd scores.xsl
-	./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) $(view_flags)
+	./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) $(schemes:%=--force-scheme=%) $(view_flags)
 	xmllint --valid --noout $(filter %_none.xml, $(views))
 clean:: ; rm -f $(filter %_none.xml, $(views))
 

@@ -60,9 +60,43 @@ gen_views(const string &scheme, Stats &stats)
 }
 
 
-static void process_cmdline(int argc, char *argv[])
+////////////////////////////////////////////////////////////////////////
+//
+//  command line processing
+//
+
+
+// group predicates by scheme for easier iteraton later
+// map key "all" includes all schemes
+typedef map<string, Stats> StatsMap;
+static StatsMap statsMap;
+
+
+static int
+parseFlag(int key, char *arg, argp_state *)
+{
+    switch (key) {
+    case 'f':
+	statsMap[arg];
+	return 0;
+    default:
+	return ARGP_ERR_UNKNOWN;
+    }
+}
+
+
+static void
+process_cmdline(int argc, char *argv[])
 {
     static const argp_option options[] = {
+	{
+	    "force-scheme",
+	    'f',
+	    "SCHEME",
+	    0,
+	    "always generate view for SCHEME sites; may be given multiple times",
+	    0
+	},
 	{ 0, 0, 0, 0, 0, 0 }
     };
 
@@ -74,7 +108,7 @@ static void process_cmdline(int argc, char *argv[])
     };
 
     static const argp argp = {
-	options, 0, 0, 0, children, 0, 0
+	options, parseFlag, 0, 0, children, 0, 0
     };
 
     argp_parse(&argp, argc, argv, 0, 0, 0);
@@ -94,19 +128,14 @@ main(int argc, char** argv)
     process_cmdline(argc, argv);
     classify_runs();
 
-    // group predicates by scheme for easier iteraton later
-    // map key "all" includes all schemes
-    typedef map<string, Stats> StatsMap;
-    StatsMap statsMap;
-
     // load up predicates, grouped by scheme
     FILE * const statsFile = fopenRead(PredStats::filename);
     pred_info info;
     unsigned index = 0;
     while (read_pred_full(statsFile, info)) {
-	static const string all("all");
 	const string &scheme = scheme_name(sites[info.siteIndex].scheme_code);
 	const IndexedPredInfo indexed(info, index++);
+	static const string all("all");
 	statsMap[all].push_back(indexed);
 	statsMap[scheme].push_back(indexed);
     }
