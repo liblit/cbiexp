@@ -85,26 +85,31 @@ bool print_s_site(const Fields &fields)
 	return false;
     }
 
-    fprintf(sfp, "\'S\', { \"%s\", \"%s\" } ", fields[left], fields[right]);
+    fprintf(sfp, "%s, \'S\', { \"%s\", \"%s\" } ",
+	    fields[3], fields[left], fields[right]);
     return true;
 }
 
 bool print_1_site(const Fields &fields, char scheme_code)
 {
+    const char *cfg;
     size_t operand;
 
     switch (fields.size()) {
     case 5:
+	cfg = fields[3];
 	operand = 4;
 	break;
     case 4:
+	cfg = "-1";		// placeholder
 	operand = 3;
 	break;
     default:
 	return false;
     }
 
-    fprintf(sfp, "\'%c\', { \"%s\" } ", scheme_code, fields[operand]);
+    fprintf(sfp, "%s, \'%c\', { \"%s\" } ",
+	    cfg, scheme_code, fields[operand]);
     return true;
 }
 
@@ -117,8 +122,7 @@ void print_site(char scheme_code, char* s)
     const char * const file = fields[0];
     const char * const line = fields[1];
     const char * const func = fields[2];
-    const char * const node = fields[3];
-    fprintf(sfp, "\t{ \"%s\", %s, \"%s\", %s, ", file, line, func, node);
+    fprintf(sfp, "\t{ \"%s\", %s, \"%s\", ", file, line, func);
 
     bool ok;
     switch (scheme_code) {
