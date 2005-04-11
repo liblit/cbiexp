@@ -66,18 +66,22 @@ char* get_scheme_code_and_signature(char* x)
 
 bool print_s_site(const Fields &fields)
 {
+    const char *cfg;
     size_t left, right;
 
     switch (fields.size()) {
     case 9:
+	cfg = fields[3];
 	left = 4;
 	right = 7;
 	break;
     case 6:
+	cfg = fields[3];
 	left = 4;
 	right = 5;
 	break;
     case 5:
+	cfg = "-1";
 	left = 3;
 	right = 4;
 	break;
@@ -86,7 +90,7 @@ bool print_s_site(const Fields &fields)
     }
 
     fprintf(sfp, "%s, \'S\', { \"%s\", \"%s\" } ",
-	    fields[3], fields[left], fields[right]);
+	    cfg, fields[left], fields[right]);
     return true;
 }
 
