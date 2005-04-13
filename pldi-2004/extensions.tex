@@ -1,6 +1,3 @@
-
-
-
 While we have targeted our algorithm at finding bugs, there are other
 possible applications, and there are variations
 on and extensions of the basic approach we have presented that may
@@ -15,7 +12,7 @@ or suspend itself.  Furthermore, it is interesting to consider
 applications in which the predictors are used on-line by the running
 program; for example, knowing that a strong predictor of program
 failure has become true may enable preemptive action (see
-Section~\ref{sec:related-work}).
+\autoref{sec:related-work}).
 
 There are also variations on the specific algorithm we have proposed
 that are worth investigating.  For example, we have chosen to discard
@@ -33,7 +30,7 @@ We have already given the intuition for (1), our current choice.  For
 (2), the idea is that whatever the bug is, it is not present in the
 successful runs and thus retaining all successful runs is more
 representative of correct program behavior.  Proposal (3) goes one step
-farther, asserting that even the failing runs will look mostly the same
+further, asserting that even the failing runs will look mostly the same
 once the bug is fixed, and the best approximation to a program without the
 bug is simply that the failing runs are now successful runs.
 
@@ -44,13 +41,11 @@ runs, while proposal (1) discards the most runs and so
 potentially renders more paths unreached in the runs that
 remain.  This difference in paths preserved translates into differences
 in the \crash\ and \context\ scores of predicates under the different schemes.
-In fact, it is possible to prove that for a predicate $P$ and its complement
-$\neg P$, that when predicate $P$ is selected by the elimination algorithm,
-then 
+In fact, for a predicate $P$ and its complement $\neg P$, it is
+possible to prove that just after predicate $P$ is selected by the
+elimination algorithm, then 
 \[ \increase_3(\neg P) \geq \increase_2(\neg P) \geq \increase_1(\neg P) = 0 \]
 where the subscripts indicate which scheme for discarding runs is used and
 assuming all the quantities are defined.
 Thus, scheme (1) is the most conservative, in the sense that only one of $P$
 or $\neg P$ can have positive predictive power, while scheme (3) potentially allows more predictors to have positive \increase\ scores.
-
-
