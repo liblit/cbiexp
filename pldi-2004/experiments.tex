@@ -54,7 +54,7 @@ buffer overruns, a null file pointer dereference in certain cases, a
 missing end-of-list check in the traversal of a hash table bucket, a missing
 out-of-memory check, and a violation of a subtle invariant that must be maintained between two
 parts of a complex data structure.  In addition, some of these bugs
-are non-deterministic any may not even crash when they should.
+are non-deterministic and may not even crash when they should.
 
 The ninth bug---incorrect handling of comments in some cases---only
 causes incorrect output, not a crash.  We include this bug in our
