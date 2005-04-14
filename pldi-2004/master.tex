@@ -341,10 +341,11 @@ be of interest when hunting for bugs.  At present our system offers
 the following instrumentation schemes for C programs:
 
 \begin{description}
-\sloppy
-\item[branches:] At each conditional, including implicit conditionals
-such as loop tests and short-circuiting logical operators, we track two predicates
-indicating whether the true or false branches were ever taken.
+
+\item[branches:] At each conditional we track two predicates
+  indicating whether the true or false branches were ever taken.  This
+  applies to \texttt{if} statements as well as implicit conditionals
+  such as loop tests and short-circuiting logical operators.
 
 \item[returns:] In C, the
   sign of a function's return value is often used to signal success or failure.
