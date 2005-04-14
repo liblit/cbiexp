@@ -1,6 +1,6 @@
 %% -*- TeX-master: t -*-
 
-\documentclass[preprint,final]{sigplanconf}
+\documentclass[final]{sigplanconf}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -14,7 +14,6 @@
 \usepackage{ifthen}
 \usepackage{nicefrac}
 \usepackage{fancyvrb}
-\usepackage[scrtime]{prelim2e}
 \usepackage[TABTOPCAP]{subfigure}
 \usepackage{url}
 \usepackage{xspace}
@@ -80,7 +79,6 @@ pdfpagemode=UseOutlines
 %%
 
 
-
 \title{Scalable Statistical Bug Isolation
   %%
   \renewcommand{\ast}[0]{}
@@ -117,7 +115,7 @@ pdfpagemode=UseOutlines
 \maketitle
 
 \begin{abstract}
-  We present a statistical debugging algorithm that 
+  We present a statistical debugging algorithm that
   isolates bugs in programs containing multiple undiagnosed bugs.
   Earlier statistical algorithms that focus solely on identifying
   predictors that correlate with program failure perform poorly
@@ -436,7 +434,7 @@ client program, and attempts to relate state changes in candidate
 predicates to manifestation of bugs.  Both projects assume complete
 monitoring, such as within a controlled test environment.  Our goal is
 to use lightweight partial monitoring, suitable for either testing
-or deployment to end users.  
+or deployment to end users.
 %We never have complete information, and
 %therefore we must use a more statistical approach.
 
