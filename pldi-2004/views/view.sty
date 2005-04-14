@@ -1,6 +1,6 @@
 %% -*- TeX-master: "../master.tex" -*-
 
-\newcommand{\view}[3][\small]{%
+\newenvironment{view}[3][\small]{%
   \begin{table}
     \nocaptionrule
     \caption{Predictors for #2}
@@ -10,8 +10,7 @@
     \begin{tabular}{lll}
       \toprule
       Initial & Effective & Predicate \\
-      \midrule
-      \input{views/#3/rows}
+      \midrule}{%
       \bottomrule
     \end{tabular}
   \end{table}}

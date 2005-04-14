@@ -10,4 +10,5 @@
 *.xyc
 auto
 body.tmp
+flat.tex
 head.tmp

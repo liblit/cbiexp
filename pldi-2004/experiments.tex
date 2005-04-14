@@ -167,7 +167,9 @@ all experiments may be browsed interactively at
 
 \subsubsection{\ccrypt}
 
-\view{\ccrypt}{ccrypt}
+\begin{view}{\ccrypt}{ccrypt}
+  \input{views/ccrypt/rows}
+\end{view}
 
 We analyzed \ccrypt 1.2, which has a known input validation bug.  The
 results are shown in \autoref{tab:views-ccrypt}.  Our algorithm
@@ -179,7 +181,9 @@ with the second predicate.
 
 \subsubsection{\bc}
 
-\view{\bc}{bc}
+\begin{view}{\bc}{bc}
+  \input{views/bc/rows}
+\end{view}
 
 GNU \bc 1.06 has a previously reported buffer overrun.  Our results
 are shown in \autoref{tab:views-bc}.  The outcome is the same as for
@@ -193,7 +197,9 @@ bug.
 
 \subsubsection{\exif}
 
-\view{\exif}{exif}
+\begin{view}{\exif}{exif}
+  \input{views/exif/rows}
+\end{view}
 
 \autoref{tab:views-exif} shows results for \exif 0.6.9, an open source
 image processing program.  Each of the three predicates is a predictor
@@ -292,7 +298,9 @@ a small amount of time and without any explicit specification beyond
 
 \begingroup
 \setlength{\segunit}{10pt}
-\view[\tiny]{\rhythmbox}{rhythmbox}
+\begin{view}[\tiny]{\rhythmbox}{rhythmbox}
+  \input{views/rhythmbox/rows}
+\end{view}
 \endgroup
 
 \autoref{tab:views-rhythmbox} shows our results for \rhythmbox 0.6.5,

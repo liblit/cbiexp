@@ -7,22 +7,30 @@
   \label{tab:sorts}
   \centering
 
-  \newcommand{\stats}[2]{%
-    \subtable[#1]{%
+  \newenvironment{stats}[2]{%
+    \begin{subtab}
+      \caption{Sort descending by #1}
       \small
       \label{tab:sorts-#2}
       \begin{tabular}{l|rr@{$\:\pm\:$}rr|rrl}
         \toprule
         Thermometer & Context & \multicolumn{2}{r}{Increase} &
         S & F & F + S & Predicate \\
-        \midrule
-        \input{moss-view/stats-by-#2}
+        \midrule}{%
         \bottomrule
-      \end{tabular}}
+      \end{tabular}
+    \end{subtab}}
 
-  }
+  \begin{stats}{$\text{F}(P)$}{failure}
+    \input{moss-view/stats-by-failure}
+  \end{stats}
 
-  \stats{Sort descending by $\text{F}(P)$}{failure}
-  \stats{Sort descending by $\text{Increase}(P)$}{increase}
-  \stats{Sort descending by harmonic mean}{harmonic}
+  \begin{stats}{$\text{Increase}(P)$}{increase}
+    \input{moss-view/stats-by-increase}
+  \end{stats}
+
+  \begin{stats}{harmonic mean}{harmonic}
+    \input{moss-view/stats-by-harmonic}
+  \end{stats}
+
 \end{table*}

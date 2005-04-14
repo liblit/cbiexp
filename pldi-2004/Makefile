@@ -24,6 +24,7 @@ texs :=						\
 	refs.bib				\
 	revisited.tex				\
 	setup.tex				\
+	subtab.sty				\
 	table.tex				\
 	views/bc/rows.tex			\
 	views/bug-o-meter.sty			\
@@ -56,6 +57,9 @@ master.dvi: %.dvi: $(texs) $(epss)
 	bibtex $*
 	latex  $*
 	latex  $*
+
+flat.tex: master.bbl $(texs)
+	cat master.tex | sed 's/\\bibliography{\(.*\)}/\\input{master.bbl}/' | texexpand - >$@
 
 $(pdfs): %.pdf: %.eps
 	epstopdf --outfile=$@ $<
