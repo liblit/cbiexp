@@ -10,10 +10,10 @@
 
 \usepackage{amsmath}
 \usepackage{booktabs}
+\usepackage{fancyvrb}
 \usepackage{graphicx}
 \usepackage{ifthen}
 \usepackage{nicefrac}
-\usepackage{fancyvrb}
 \usepackage[TABTOPCAP]{subfigure}
 \usepackage{url}
 \usepackage{xspace}
@@ -51,8 +51,8 @@ pdfpagemode=UseOutlines
 \renewcommand{\subsectionautorefname}[0]{\sectionautorefname}
 \newcommand{\subtableautorefname}[0]{\tableautorefname}
 
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{lemma}{Lemma}[section]
+\newcommand{\lemmaautorefname}[0]{Lemma}
 
 \newcommand{\bug}{\ensuremath{B}}
 \newcommand{\bugprofile}{\ensuremath{\mathcal{B}}}
@@ -390,10 +390,10 @@ number of times $P$ is observed to be true, but the analysis of the
 feedback reports only uses whether $P$ is observed to be true at least
 once.}
 
-  These are natural properties to check and provide good coverage of a
-  program's scalar values and control flow.  This set is by no means
-  complete, however; in particular, we believe it would be useful to have
-  predicates on heap structures as well (see Section~\ref{sec:experiments}).
+These are natural properties to check and provide good coverage of a
+program's scalar values and control flow.  This set is by no means
+complete, however; in particular, we believe it would be useful to have
+predicates on heap structures as well (see \autoref{sec:experiments}).
 
 \section{Cause Isolation Algorithm}
 \label{sec:algorithm}
