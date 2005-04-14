@@ -352,6 +352,8 @@ numbers of failures.  Thus our overall metric is the following:
   \frac{1}{log(F(P)) / log(\numfail)}}
 \]
 
+It is possible for this formula to be undefined (due to a division by 0),
+in which case we define the \importance\ to be 0.
 \autoref{tab:sorts-harmonic} gives results using this metric.
 Individual $F(P)$ counts are smaller than in
 \autoref{tab:sorts-failure}, and individual $\increase(P)$ scores are
@@ -383,6 +385,7 @@ a simple iterative algorithm to eliminate redundant predicates:
 
 We can now state an easy-to-prove but important property of this algorithm.
 \begin{lemma}
+\label{lem1}
 Let $P_1,\ldots,P_n$ be a set of instrumented predicates, $\bug_1,\ldots,\bug_m$
 a set of bugs, and $\bugprofile_1,\ldots, \bugprofile_2$ the corresponding
 bug profiles.  Let
@@ -398,18 +401,24 @@ We are, in effect, covering the set of bugs with a ranked subset of predicates.
 The other property we might like, that the algorithm chooses exactly
 one predicate to represent each bug, does not hold; we shall see in
 \autoref{sec:experiments} that the algorithm sometimes selects a
-strong sub-bug predictor as well as a more natural predictor.
+strong sub-bug predictor as well as a more natural predictor.  (As a
+technical aside, note that Lemma~\ref{lem1} does not guarantee that every
+selected predicate has a positive \increase\ score at the time it is
+selected.  Even if predicates with non-positive \increase\ scores are
+discarded before running the elimination algorithm, new ones can arise
+during the elimination algorithm.  However, the
+\increase\ score of any predicate that covers at least one failing run will
+at least be defined.  See Section~\ref{sec:extensions} for related discussion.)
 
-Beyond
-always representing each bug, the algorithm works well for two other
-reasons.  First, two predicates are redundant if they predict the same
-(or nearly the same) set of failing runs.  Thus, simply removing the
-set of runs in which a predicate is true automatically dramatically
-reduces the importance of any related predicates in the correct
-proportions. Second, because elimination is
-iterative, it is only necessary that $\importance$ selects a good
-predictor at each step, and not necessarily the best one; any
-predicate that covers a different set of failing runs than all
-higher-ranked predicates is selected eventually.
+Beyond always representing each bug, the algorithm works well for two
+other reasons.  First, two predicates are redundant if they predict
+the same (or nearly the same) set of failing runs.  Thus, simply
+removing the set of runs in which a predicate is true automatically
+dramatically reduces the importance of any related predicates in the
+correct proportions. Second, because elimination is iterative, it is
+only necessary that $\importance$ selects a good predictor at each
+step, and not necessarily the best one; any predicate that covers a
+different set of failing runs than all higher-ranked predicates is
+selected eventually.
 
 %% LocalWords:  bc

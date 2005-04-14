@@ -1,8 +1,7 @@
 While we have targeted our algorithm at finding bugs, there are other
-possible applications, and there are variations
-on and extensions of the basic approach we have presented that may
-prove useful.  In this section we briefly discuss some of these
-possibilities.
+possible applications, and there are variations of the basic approach
+we have presented that may prove useful.  In this section we briefly
+discuss some of these possibilities.
 
 While we have focused on bug finding, the same ideas
 can be used to isolate predictors of any program event.  For example,
@@ -27,7 +26,7 @@ elimination algorithm, but there are at least three natural choices:
 \end{enumerate}
 
 We have already given the intuition for (1), our current choice.  For
-(2), the idea is that whatever the bug is, it is not present in the
+(2), the idea is that whatever the bug is, it is not manifested in the
 successful runs and thus retaining all successful runs is more
 representative of correct program behavior.  Proposal (3) goes one step
 further, asserting that even the failing runs will look mostly the same
@@ -40,12 +39,30 @@ all the code paths that were executed in the original
 runs, while proposal (1) discards the most runs and so
 potentially renders more paths unreached in the runs that
 remain.  This difference in paths preserved translates into differences
-in the \crash\ and \context\ scores of predicates under the different schemes.
+in the \crash\ and \context\ scores of predicates under the different proposals.
 In fact, for a predicate $P$ and its complement $\neg P$, it is
 possible to prove that just after predicate $P$ is selected by the
 elimination algorithm, then 
 \[ \increase_3(\neg P) \geq \increase_2(\neg P) \geq \increase_1(\neg P) = 0 \]
-where the subscripts indicate which scheme for discarding runs is used and
-assuming all the quantities are defined.
-Thus, scheme (1) is the most conservative, in the sense that only one of $P$
-or $\neg P$ can have positive predictive power, while scheme (3) potentially allows more predictors to have positive \increase\ scores.
+where the subscripts indicate which proposal for discarding runs is used
+and assuming all the quantities are defined.  Thus, proposal (1) is the
+most conservative, in the sense that only one of $P$ or $\neg P$ can
+have positive predictive power, while proposal (3) potentially allows
+more predictors to have positive \increase\ scores.  
+
+This analysis reveals that a predicate $P$ with a negative \increase\
+score is not necessarily useless---the score may be negative only
+because it is temporarily overshadowed by stronger predictors of
+different bugs that are anti-correlated with $P$.  It is possible to
+construct examples where both $P$ and $\neg P$ are the best predictors
+of different bugs, but the result mentioned above assures us that once
+one is selected by the elimination algorithm, the other's
+\increase\ score is non-negative if it is defined.  This line of
+reasoning also suggests that when using proposal (2) or (3) for discarding runs,
+a predicate $P$ with $\increase(P) \leq 0$ should not be
+discarded in a preprocessing step, as $P$ may be become a positive
+predictor once $\neg P$ is selected by the elimination algorithm.  In
+the case of proposal (1), only one of $P$ or $\neg P$ can ever have a
+non-negative \increase\ score, and so it seems reasonable to eliminate
+predicates with negative scores early.
+
