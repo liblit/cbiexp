@@ -20,7 +20,7 @@
 
 
 \NeedsTeXFormat{LaTeX2e}[1995/12/01]
-\ProvidesClass{sigplanconf}[2005/01/20 v0.9 ACM SIGPLAN Proceedings]
+\ProvidesClass{sigplanconf}[2005/03/07 v0.93 ACM SIGPLAN Proceedings]
 
 % The following few pages contain LaTeX programming extensions adapted
 % from the ZzTeX macro package.
@@ -29,9 +29,9 @@
 %                       ----- -------
 
 
-\def \expandaftertwice {\expandafter\expandafter\expandafter}
-\def \expandafterthrice {\expandafter\expandafter\expandafter\expandafter
-                         \expandafter\expandafter\expandafter}
+\def \@expandaftertwice {\expandafter\expandafter\expandafter}
+\def \@expandafterthrice {\expandafter\expandafter\expandafter\expandafter
+                          \expandafter\expandafter\expandafter}
 
 % This macro discards the next token.
 
@@ -63,83 +63,82 @@
 %                       Flags (Booleans)
 %                       ----- ----------
 
-% The boolean literals \true and \false are appropriate for use with
+% The boolean literals \@true and \@false are appropriate for use with
 % the \if command, which tests the codes of the next two characters.
 
-\def \true {TT}
-\def \false {FL}
+\def \@true {TT}
+\def \@false {FL}
 
-\def \setflag #1=#2{\edef #1{#2}}%              \flag = boolean
+\def \@setflag #1=#2{\edef #1{#2}}%              \flag = boolean
 
 %                       IF and Predicates
 %                       -- --- ----------
 
-% A "predicate" is a macro that returns \true or \false as its value.
+% A "predicate" is a macro that returns \@true or \@false as its value.
 % Such values are suitable for use with the \if conditional.  For example:
 %
 %   \if \oddp{\x} <then-clause> \else <else-clause> \fi
 
-% A predicate can be used with \setflag as follows:
+% A predicate can be used with \@setflag as follows:
 %
-%   \setflag \flag = {<predicate>}
+%   \@setflag \flag = {<predicate>}
 
 % Here are the predicates for TeX's repertoire of conditional
 % commands.  These might be more appropriately interspersed with
 % other definitions in this module, but what the heck.
 % Some additional "obvious" predicates are defined.
 
-
-\def \eqlp   #1#2{\ifnum #1 = #2\true \else \false \fi}
-\def \neqlp  #1#2{\ifnum #1 = #2\false \else \true \fi}
-\def \lssp   #1#2{\ifnum #1 < #2\true \else \false \fi}
-\def \gtrp   #1#2{\ifnum #1 > #2\true \else \false \fi}
-\def \zerop  #1{\ifnum #1 = 0\true \else \false \fi}
-\def \onep   #1{\ifnum #1 = 1\true \else \false \fi}
-\def \posp   #1{\ifnum #1 > 0\true \else \false \fi}
-\def \negp   #1{\ifnum #1 < 0\true \else \false \fi}
-\def \oddp   #1{\ifodd #1\true \else \false \fi}
-\def \evenp  #1{\ifodd #1\false \else \true \fi}
-\def \rangep #1#2#3{\if \orp{\lssp{#1}{#2}}{\gtrp{#1}{#3}}\false \else
-                                                          \true \fi}
+\def \eqlp   #1#2{\ifnum #1 = #2\@true \else \@false \fi}
+\def \neqlp  #1#2{\ifnum #1 = #2\@false \else \@true \fi}
+\def \lssp   #1#2{\ifnum #1 < #2\@true \else \@false \fi}
+\def \gtrp   #1#2{\ifnum #1 > #2\@true \else \@false \fi}
+\def \zerop  #1{\ifnum #1 = 0\@true \else \@false \fi}
+\def \onep   #1{\ifnum #1 = 1\@true \else \@false \fi}
+\def \posp   #1{\ifnum #1 > 0\@true \else \@false \fi}
+\def \negp   #1{\ifnum #1 < 0\@true \else \@false \fi}
+\def \oddp   #1{\ifodd #1\@true \else \@false \fi}
+\def \evenp  #1{\ifodd #1\@false \else \@true \fi}
+\def \rangep #1#2#3{\if \orp{\lssp{#1}{#2}}{\gtrp{#1}{#3}}\@false \else
+                                                          \@true \fi}
 \def \tensp  #1{\rangep{#1}{10}{19}}
 
-\def \dimeqlp   #1#2{\ifdim #1 = #2\true \else \false \fi}
-\def \dimneqlp  #1#2{\ifdim #1 = #2\false \else \true \fi}
-\def \dimlssp   #1#2{\ifdim #1 < #2\true \else \false \fi}
-\def \dimgtrp   #1#2{\ifdim #1 > #2\true \else \false \fi}
-\def \dimzerop  #1{\ifdim #1 = 0pt\true \else \false \fi}
-\def \dimposp   #1{\ifdim #1 > 0pt\true \else \false \fi}
-\def \dimnegp   #1{\ifdim #1 < 0pt\true \else \false \fi}
+\def \dimeqlp   #1#2{\ifdim #1 = #2\@true \else \@false \fi}
+\def \dimneqlp  #1#2{\ifdim #1 = #2\@false \else \@true \fi}
+\def \dimlssp   #1#2{\ifdim #1 < #2\@true \else \@false \fi}
+\def \dimgtrp   #1#2{\ifdim #1 > #2\@true \else \@false \fi}
+\def \dimzerop  #1{\ifdim #1 = 0pt\@true \else \@false \fi}
+\def \dimposp   #1{\ifdim #1 > 0pt\@true \else \@false \fi}
+\def \dimnegp   #1{\ifdim #1 < 0pt\@true \else \@false \fi}
 
-\def \vmodep     {\ifvmode \true \else \false \fi}
-\def \hmodep     {\ifhmode \true \else \false \fi}
-\def \mathmodep  {\ifmmode \true \else \false \fi}
-\def \textmodep  {\ifmmode \false \else \true \fi}
-\def \innermodep {\ifinner \true \else \false \fi}
+\def \vmodep     {\ifvmode \@true \else \@false \fi}
+\def \hmodep     {\ifhmode \@true \else \@false \fi}
+\def \mathmodep  {\ifmmode \@true \else \@false \fi}
+\def \textmodep  {\ifmmode \@false \else \@true \fi}
+\def \innermodep {\ifinner \@true \else \@false \fi}
 
-\long\def \codeeqlp #1#2{\if #1#2\true \else \false \fi}
+\long\def \codeeqlp #1#2{\if #1#2\@true \else \@false \fi}
 
-\long\def \cateqlp #1#2{\ifcat #1#2\true \else \false \fi}
+\long\def \cateqlp #1#2{\ifcat #1#2\@true \else \@false \fi}
 
-\long\def \tokeqlp  #1#2{\ifx #1#2\true \else \false \fi}
-\long\def \xtokeqlp #1#2{\expandafter\ifx #1#2\true \else \false \fi}
+\long\def \tokeqlp  #1#2{\ifx #1#2\@true \else \@false \fi}
+\long\def \xtokeqlp #1#2{\expandafter\ifx #1#2\@true \else \@false \fi}
 
 \long\def \definedp #1{%
   \expandafter\ifx \csname \expandafter\@discardtok \string#1\endcsname
-                   \relax \false \else \true \fi}
+                   \relax \@false \else \@true \fi}
 
 \long\def \undefinedp #1{%
   \expandafter\ifx \csname \expandafter\@discardtok \string#1\endcsname
-                   \relax \true \else \false \fi}
+                   \relax \@true \else \@false \fi}
 
-\def \emptydefp #1{\ifx #1\@empty \true \else \false \fi}%       {\name}
+\def \emptydefp #1{\ifx #1\@empty \@true \else \@false \fi}%       {\name}
 
 \let \emptylistp = \emptydefp
 
 \long\def \emptyargp #1{%                               {#n}
   \@empargp #1\@empargq\@mark}
 \long\def \@empargp #1#2\@mark{%
-  \ifx #1\@empargq \true \else \false \fi}
+  \ifx #1\@empargq \@true \else \@false \fi}
 \def \@empargq {\@empargq}
 
 \def \emptytoksp #1{%                                   {\tokenreg}
@@ -147,11 +146,11 @@
 
 \long\def \@emptoksp #1\@mark{\emptyargp{#1}}
 
-\def \voidboxp #1{\ifvoid #1\true \else \false \fi}
-\def \hboxp #1{\ifhbox #1\true \else \false \fi}
-\def \vboxp #1{\ifvbox #1\true \else \false \fi}
+\def \voidboxp #1{\ifvoid #1\@true \else \@false \fi}
+\def \hboxp #1{\ifhbox #1\@true \else \@false \fi}
+\def \vboxp #1{\ifvbox #1\@true \else \@false \fi}
 
-\def \eofp #1{\ifeof #1\true \else \false \fi}
+\def \eofp #1{\ifeof #1\@true \else \@false \fi}
 
 
 % Flags can also be used as predicates, as in:
@@ -161,55 +160,59 @@
 
 % Now here we have predicates for the common logical operators.
 
-\def \notp #1{\if #1\false \else \true \fi}
+\def \notp #1{\if #1\@false \else \@true \fi}
 
 \def \andp #1#2{\if #1%
-                  \if #2\true \else \false \fi
+                  \if #2\@true \else \@false \fi
                 \else
-                  \false
+                  \@false
                 \fi}
 
 \def \orp #1#2{\if #1%
-                 \true
+                 \@true
                \else
-                 \if #2\true \else \false \fi
+                 \if #2\@true \else \@false \fi
                \fi}
 
 \def \xorp #1#2{\if #1%
-                  \if #2\false \else \true \fi
+                  \if #2\@false \else \@true \fi
                 \else
-                  \if #2\true \else \false \fi
+                  \if #2\@true \else \@false \fi
                 \fi}
 
 %                       Arithmetic
 %                       ----------
 
-\def \increment #1{\advance #1 by 1\relax}%             {\count}
+\def \@increment #1{\advance #1 by 1\relax}%             {\count}
 
-\def \decrement #1{\advance #1 by -1\relax}%            {\count}
+\def \@decrement #1{\advance #1 by -1\relax}%            {\count}
 
 %                       Options
 %                       -------
 
 
-\setflag \@blockstyle = \false
-\setflag \@copyrightwanted = \true
-\setflag \@mathtime = \false
-\setflag \@ninepoint = \true
-\setflag \@onecolumn = \false
-\setflag \@preprint = \false
+\@setflag \@blockstyle = \@false
+\@setflag \@copyrightwanted = \@true
+\@setflag \@explicitsize = \@false
+\@setflag \@mathtime = \@false
+\@setflag \@ninepoint = \@true
+\@setflag \@onecolumn = \@false
+\@setflag \@preprint = \@false
 \newcount{\@numheaddepth} \@numheaddepth = 3
-\setflag \@times = \false
+\@setflag \@times = \@false
 
 % Note that all the dangerous article class options are trapped.
 
-\DeclareOption{9pt}{\setflag \@ninepoint = \true}
+\DeclareOption{9pt}{\@setflag \@ninepoint = \@true
+                    \@setflag \@explicitsize = \@true}
 
 \DeclareOption{10pt}{\PassOptionsToClass{10pt}{article}%
-                     \setflag \@ninepoint = \false}
+                     \@setflag \@ninepoint = \@false
+                     \@setflag \@explicitsize = \@true}
 
 \DeclareOption{11pt}{\PassOptionsToClass{11pt}{article}%
-                     \setflag \@ninepoint = \false}
+                     \@setflag \@ninepoint = \@false
+                     \@setflag \@explicitsize = \@true}
 
 \DeclareOption{12pt}{\@unsupportedoption{12pt}}
 
@@ -219,15 +222,15 @@
 
 \DeclareOption{b5paper}{\@unsupportedoption{b5paper}}
 
-\DeclareOption{blockstyle}{\setflag \@blockstyle = \true}
+\DeclareOption{blockstyle}{\@setflag \@blockstyle = \@true}
 
-\DeclareOption{cm}{\setflag \@times = \false}
+\DeclareOption{cm}{\@setflag \@times = \@false}
 
-\DeclareOption{computermodern}{\setflag \@times = \false}
+\DeclareOption{computermodern}{\@setflag \@times = \@false}
 
 \DeclareOption{executivepaper}{\@unsupportedoption{executivepaper}}
 
-\DeclareOption{indentedstyle}{\setflag \@blockstyle = \false}
+\DeclareOption{indentedstyle}{\@setflag \@blockstyle = \@false}
 
 \DeclareOption{landscape}{\@unsupportedoption{landscape}}
 
@@ -235,30 +238,35 @@
 
 \DeclareOption{letterpaper}{\@unsupportedoption{letterpaper}}
 
-\DeclareOption{mathtime}{\setflag \@mathtime = \true}
+\DeclareOption{mathtime}{\@setflag \@mathtime = \@true}
 
-\DeclareOption{nocopyrightspace}{\setflag \@copyrightwanted = \false}
+\DeclareOption{nocopyrightspace}{\@setflag \@copyrightwanted = \@false}
 
 \DeclareOption{notitlepage}{\@unsupportedoption{notitlepage}}
 
 \DeclareOption{numberedpars}{\@numheaddepth = 4}
 
-\DeclareOption{onecolumn}{\setflag \@onecolumn = \true}
+\DeclareOption{onecolumn}{\@setflag \@onecolumn = \@true}
 
-\DeclareOption{preprint}{\setflag \@preprint = \true}
+\DeclareOption{preprint}{\@setflag \@preprint = \@true}
 
-\DeclareOption{times}{\setflag \@times = \true}
+\DeclareOption{times}{\@setflag \@times = \@true}
 
 \DeclareOption{titlepage}{\@unsupportedoption{titlepage}}
 
-\DeclareOption{twocolumn}{\setflag \@onecolumn = \false}
+\DeclareOption{twocolumn}{\@setflag \@onecolumn = \@false}
 
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 
 \ExecuteOptions{9pt,indentedstyle,times}
+\@setflag \@explicitsize = \@false
 \ProcessOptions
 
 \if \@onecolumn
+  \if \notp{\@explicitsize}%
+    \@setflag \@ninepoint = \@false
+    \PassOptionsToClass{11pt}{article}%
+  \fi
   \PassOptionsToClass{twoside,onecolumn}{article}
 \else
   \PassOptionsToClass{twoside,twocolumn}{article}
@@ -303,7 +311,7 @@
 \setlength{\standardtextwidth}{42pc}
 
 \if \@onecolumn
-  \setlength{\textwidth}{32pc}
+  \setlength{\textwidth}{40.5pc}
 \else
   \setlength{\textwidth}{\standardtextwidth}
 \fi
@@ -479,12 +487,12 @@
 %                       ----------
 
 
-\setflag \@firstcategory = \true
+\@setflag \@firstcategory = \@true
 
 \newcommand{\category}[3]{%
   \if \@firstcategory
     \paragraph*{Categories and Subject Descriptors}%
-    \setflag \@firstcategory = \false
+    \@setflag \@firstcategory = \@false
   \else
     \unskip ;\hspace{.75em}%
   \fi
@@ -545,7 +553,7 @@
 
 \def \@copyrightinfo {%
   \if \notp{\emptydefp{\copyrightinfo}}%
-    Copyright \copyright\ \@copyrightyear\ ACM \@copyrightdata\ \dots\ \$5.00
+    Copyright \copyright\ \@copyrightyear\ ACM \@copyrightdata\dots \$5.00.
   \fi}
 
 %                       Enunciations
@@ -566,10 +574,10 @@
   \itshape\selectfont
   \ignorespaces}
 
-\setflag \@qeddone = \false
+\@setflag \@qeddone = \@false
 
 \newenvironment{proof}{%
-  \global\setflag \@qeddone = \false
+  \global\@setflag \@qeddone = \@false
   \@ifnextchar[{\@titledproof}{\@titledproof[]}}{%
   \if \notp{\@qeddone}\qed \fi
   \endtrivlist}
@@ -586,7 +594,7 @@
   \unskip
   \kern 6pt
   {\linethickness{.5pt}\framebox(4,4){}}%
-  \global\setflag \@qeddone = \true}
+  \global\@setflag \@qeddone = \@true}
 
 \newcommand{\newdef}[2]{%                            {type}{name}
   \@withname\@ifdefinable {#1}{%
@@ -611,7 +619,7 @@
 %                       -------
 
 
-\setflag \@caprule = \true
+\@setflag \@caprule = \@true
 
 \long\def \@makecaption #1#2{%
   \addvspace{4pt}
@@ -619,15 +627,15 @@
     \hrule width \hsize height .33pt
     \vspace{4pt}
   \fi
-  \setbox \@tempboxa = \hbox{\@setfigurenumber{#1.} #2}%
+  \setbox \@tempboxa = \hbox{\@setfigurenumber{#1.}\nut #2}%
   \if \dimgtrp{\wd\@tempboxa}{\hsize}%
-    \noindent \@setfigurenumber{#1.} #2\par
+    \noindent \@setfigurenumber{#1.}\nut #2\par
   \else
     \centerline{\box\@tempboxa}%
   \fi}
 
 \newcommand{\nocaptionrule}{%
-  \setflag \@caprule = \false}
+  \@setflag \@caprule = \@false}
 
 \def \@setfigurenumber #1{%
   {\rmfamily \bfseries \selectfont #1}}
@@ -712,7 +720,7 @@
 \def \@conferencename {}
 \def \@conferenceinfo {}
 \def \@copyrightyear {}
-\def \@copyrightdata {0-89791-88-6/97/05}
+\def \@copyrightdata {[to be supplied]}
 
 
 \newcommand{\conferenceinfo}[2]{%
@@ -836,7 +844,7 @@
 %                       ----- ----
 
 
-\setflag \@addauthorsdone = \false
+\@setflag \@addauthorsdone = \@false
 
 \def \@titletext {\@latex@error{No title was provided}{}}
 \def \@subtitletext {}
@@ -853,7 +861,7 @@
   \gdef \@subtitletext {#1}}
 
 \newcommand{\authorinfo}[3]{%           {names}{affiliation}{email/URL}
-  \global\increment \@authorcount
+  \global\@increment \@authorcount
   \@withname\gdef {\@authorname\romannumeral\@authorcount}{#1}%
   \@withname\gdef {\@authoraffil\romannumeral\@authorcount}{#2}%
   \@withname\gdef {\@authoremail\romannumeral\@authorcount}{#3}}
@@ -908,14 +916,14 @@
 
 \def \@titleauthors #1#2#3{%
   \if \andp{\emptyargp{#2}}{\emptyargp{#3}}%
-    \noindent \@setauthor{40pc}{#1}{\false}\par
+    \noindent \@setauthor{40pc}{#1}{\@false}\par
   \else\if \emptyargp{#3}%
-    \noindent \@setauthor{17pc}{#1}{\false}\hspace{3pc}%
-              \@setauthor{17pc}{#2}{\false}\par
+    \noindent \@setauthor{17pc}{#1}{\@false}\hspace{3pc}%
+              \@setauthor{17pc}{#2}{\@false}\par
   \else
-    \noindent \@setauthor{12.5pc}{#1}{\false}\hspace{2pc}%
-              \@setauthor{12.5pc}{#2}{\false}\hspace{2pc}%
-              \@setauthor{12.5pc}{#3}{\true}\par
+    \noindent \@setauthor{12.5pc}{#1}{\@false}\hspace{2pc}%
+              \@setauthor{12.5pc}{#2}{\@false}\hspace{2pc}%
+              \@setauthor{12.5pc}{#3}{\@true}\par
     \relax
   \fi\fi
   \vspace{20pt}}
@@ -941,7 +949,7 @@
 \newtoks{\@fnmark}
 
 \newcommand{\titlenote}[1]{%
-  \global\increment \@titlenotecount
+  \global\@increment \@titlenotecount
   \ifcase \@titlenotecount \relax \or
     \@fnmark = {\ast}\or
     \@fnmark = {\dagger}\or
@@ -972,11 +980,11 @@
        \textbf{\@name{\@authorname\romannumeral\@authori}},
        \@name{\@authoraffil\romannumeral\@authori},
        email: \@name{\@authoremail\romannumeral\@authori}.%
-       \increment \@authori
+       \@increment \@authori
      \if \notp{\gtrp{\@authori}{\@authorcount}} \repeat}%
     \par
   \fi
-  \global\setflag \@addauthorsdone = \true}
+  \global\@setflag \@addauthorsdone = \@true}
 \fi
 
 \let \addauthorsection = \additionalauthors
@@ -1021,7 +1029,7 @@
 
 \def \@seccntformat #1{%
   \@name{\the#1}%
-  \expandaftertwice\@seccntformata \csname the#1\endcsname.\@mark
+  \@expandaftertwice\@seccntformata \csname the#1\endcsname.\@mark
   \quad}
 
 \def \@seccntformata #1.#2\@mark{%
@@ -1052,3 +1060,10 @@
 %                               coexist with latexym or amssymb.
 
 %  2005.01.20   PCA     0.9     Rename class file to sigplanconf.cls.
+
+%  2005.03.05   PCA     0.91    Change default copyright data.
+
+%  2005.03.06   PCA     0.92    Add at-signs to some macro names.
+
+%  2005.03.07   PCA     0.93    The 'onecolumn' option defaults to '11pt',
+%                               and it uses the full type width.
