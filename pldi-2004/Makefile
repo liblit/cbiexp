@@ -3,9 +3,11 @@ texs :=						\
 	bibnames.sty				\
 	cacm1990.bib				\
 	experiments.tex				\
+	extensions.tex				\
 	gcbib.bib				\
 	icse02.bib				\
 	icse03.bib				\
+	mailto.sty				\
 	master.tex				\
 	misc.bib				\
 	moss-view/rows.tex			\
