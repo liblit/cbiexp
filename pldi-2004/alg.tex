@@ -413,7 +413,7 @@ Beyond always representing each bug, the algorithm works well for two
 other reasons.  First, two predicates are redundant if they predict
 the same (or nearly the same) set of failing runs.  Thus, simply
 removing the set of runs in which a predicate is true automatically
-dramatically reduces the importance of any related predicates in the
+reduces the importance of any related predicates in the
 correct proportions. Second, because elimination is iterative, it is
 only necessary that $\importance$ selects a good predictor at each
 step, and not necessarily the best one; any predicate that covers a
