@@ -354,10 +354,9 @@ numbers of failures.  Thus our overall metric is the following:
 
 It is possible for this formula to be undefined (due to a division by 0),
 in which case we define the \importance\ to be 0.
-\autoref{tab:sorts-harmonic} gives results using this metric.
-Individual $F(P)$ counts are smaller than in
-\autoref{tab:sorts-failure}, and individual $\increase(P)$ scores are
-smaller than in \autoref{tab:sorts-increase}, but the harmonic mean
+\autoref{tab:sorts-harmonic}(c) gives results using this metric.
+Both individual $F(P)$ counts and individual $\increase(P)$ scores are smaller than in
+\autoref{tab:sorts-failure} and \autoref{tab:sorts-increase}, but the harmonic mean
 has effectively balanced both of these important factors.  All of the
 predicates on this list indeed have both high specificity and
 sensitivity.  Each of these predictors accurately describes a large
@@ -421,11 +420,12 @@ step, and not necessarily the best one; any predicate that covers a
 different set of failing runs than all higher-ranked predicates is
 selected eventually.
 
-Finally, we studied an optimization in which we eliminated redundant
+Finally, we studied an optimization in which we eliminated logically redundant
 predicates within instrumentation sites prior to running the iterative algorithm.
-For instance, given three scalar-pairs predicates $x < y$, $x = y$, and
-$x \leq y$ having the same \increase\ score at an instrumentation site, we 
-eliminated both $x < y$ and $x = y$.
-However, we obtained nearly identical experimental results with and without 
-this optimization, indicating that it was unnecessary. 
+%For instance, given three scalar-pairs predicates $x < y$, $x = y$, and
+%$x \leq y$ having the same \increase\ score at an instrumentation site, we 
+%eliminated both $x < y$ and $x = y$.
+However, the elimination algorithm proved to be sufficiently powerful that
+we obtained nearly identical experimental results with and without 
+this optimization, indicating it is unnecessary. 
 

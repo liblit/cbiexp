@@ -349,7 +349,7 @@ to yield the same predictors in the same order as 32,000 runs;
 
 \item for the best predictor $P$ of each distinct bug, the number of failing runs $F$ 
 within the minimum number of runs $N$ (both successful and failing) such that
-\[ |\importance_{32,000}(P) - \importance_N(P)| < 0.2 \]
+\[ \importance_{32,000}(P) - \importance_N(P) < 0.2 \]
 where $\importance_k(P)$ is the importance of $P$ computed using $k$
 runs.  We chose the threshold 0.2 because it is sufficient, at least
 in these studies, to give all these predictors scores well above the ``background
