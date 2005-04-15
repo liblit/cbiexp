@@ -99,11 +99,11 @@ pick just one possible combination).
 
 A particularly interesting case of this phenomenon is bug \#7, one of
 the buffer overruns.  Bug \#7 is not strongly predicted by any
-predicate on the list but in fact occurs in at least a few of the
+predicate on the list but occurs in at least a few of the
 failing runs of most predicates.  We have examined the runs of bug \#7
-in detail and found that the only failing runs involving bug \#7 also
+in detail and found that the failing runs involving bug \#7 also
 trigger at least one other bug.  That is, even when the bug \#7 overrun
-happens, it never causes incorrect output or a crash
+occurs, it never causes incorrect output or a crash
 in any run.  Bug \#8, another overrun, is not even shown because the
 overrun is never triggered in our data (its column would be all
 0's).\footnote{Bug \#8 was originally found by a code inspection.}
@@ -326,13 +326,45 @@ developers confirmed the bugs and enthusiastically applied patches
 within a few days, in part because we could quantify the bugs as
 important crashing bugs.  It required several hours to isolate each of
 the two bugs (and there are additional bugs represented in the
-predictors that we did not isolate) in part because \rhythmbox is
-complex and in part because the bugs were violations of subtle heap
+predictors that we did not isolate) because they were violations of subtle heap
 invariants which are not directly captured by our current
 instrumentation schemes.  Note, however, that we could not have even
 begun to understand these bugs without the information provided by our
 tool.  We intend to explore schemes that track predicates on heap
 structure in future work.
+
+\subsection{How many runs do we need?}
+\label{sec:numruns}
+
+\input{runs}
+
+Recall that we used about 32,000 runs in each of the five case studies.
+We studied the minimum number of runs needed in each case study in order
+to yield the same results as those obtained using 32,000 runs.
+For each bug $B_i$,
+we computed the minimum number of runs $N_i$ such that the initial $Importance$ of
+predictor $P_i$ of bug $B_i$ computed using $N_i$ runs is roughly the same as that
+computed using 32,000 runs.
+Specifically, let $Importance_N(P)$ denote the initial $Importance$ of predicate $P$
+computed using $N$ runs.
+Then, we computed the minimum number of runs $N_i$ such that for predictor
+$P_i$ of bug $B_i$, $Importance_{32,000}(P_i) - Importance_{N_i}(P_i) < 0.2$.
+
+Table~\ref{tab:numruns} presents the results of our analysis.
+The second column shows the maximum $N_i$ over all bugs detected in each case
+study.
+Intuitively, it is the minimum number of runs needed in each case
+study in order to yield the same results as those obtained using
+32,000 runs.
+The reason we need 21,000 runs in the \exif experiment is that only
+21 failing runs out of 33,000 runs share bug \#3 as the cause of failure.
+If we exclude bug \#3, then just 2000 runs suffice.
+The third column contains entries of the form $B_i : F_i$, where $F_i$ denotes
+the number of failing runs in which predictor $P_i$ of bug $B_i$ is true
+when $N_i$ runs are used.
+Notice that less than 100 failing runs must share any given bug as their cause of
+failure before the predictor for that bug is reported by our algorithm.
+
 
 \subsection{Comparison with Logistic Regression}
 \label{sec:comparison}
