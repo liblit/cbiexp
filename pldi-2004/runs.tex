@@ -1,17 +1,20 @@
-\begin{table*}[tb]
+\begin{table}
 \nocaptionrule
 \caption{Minimum number of runs needed.}
 \label{tab:numruns}
+\small
 \centering
-\begin{tabular}{lrl}
+\begin{tabular}{lrrrrrrrr}
   \toprule
-              & Runs & Bug \# : Failing runs \\
+              &          & \multicolumn{7}{c}{Failing Runs Also Exhibiting Bug \#$n$} \\
+              \cmidrule(lr){3-9}
+              & All Runs & \#1 & \#2 & \#3 & \#4 & \#5 & \#6 & \#9 \\
   \midrule
-  \moss       &  3,000 & 1 : 18, 2 : 10, 3 : 32, 4 : 12, 5 : 21, 6 : 11, 9 : 20 \\
-  \ccrypt     &    200 & 1 : 26 \\
-  \bc         &    200 & 1 : 40 \\
-  \rhythmbox  &    300 & 1 : 22, 2 : 70 \\
-  \exif       & 21,000 & 1 : 28, 2 : 12, 3 : 13 \\
+  \moss       &    3,000 & 18 & 10 & 32 & 12 & 21 & 11 & 20 \\
+  \ccrypt     &      200 & 26 \\
+  \bc         &      200 & 40 \\
+  \rhythmbox  &      300 & 22 & 70 \\
+  \exif       &   21,000 & 28 & 12 & 13 \\
   \bottomrule
 \end{tabular}
-\end{table*}
+\end{table}

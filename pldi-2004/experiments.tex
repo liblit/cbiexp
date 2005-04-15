@@ -341,47 +341,42 @@ structure in future work.
 Recall that we used about 32,000 runs in each of the five case studies, but
 for many of the bugs found this number is clearly far more than the minimum
 required. To understand how many feedback reports are needed to isolate
-bugs, we computed two metrics:
-\begin{itemize}
+bugs, we consider two metrics.
 
-\item for each study, the minimum number of runs needed 
-to yield the same predictors in the same order as 32,000 runs;
+First, for each study, we determine the minimum number of runs needed
+to see results equivalent to those for 32,000 runs.
+\autoref{tab:numruns} presents the results of this analysis.  The
+``All Runs'' column shows the the minimum number of runs needed to
+produce the same overall results (same predictors in the same order)
+as using the full set of runs.  Note that the number of runs needed
+varies by two orders of magnitude.  We need 21,000 runs in \exif{}
+because the last bug in that study is extremely rare: only 21 failing
+runs out of our total population of 33,000 runs share bug \#3 as the
+cause of failure.  If we exclude bug \#3, then just 2,000 runs are
+sufficient to isolate \exif{} bugs \#1 and \#2.
 
-\item for the best predictor $P$ of each distinct bug, the number of failing runs $F$ 
-within the minimum number of runs $N$ (both successful and failing) such that
+Second, for the best predictor $P$ of each distinct bug, we determine
+the number of failing runs $F$ within the minimum number of runs $N$
+(both successful and failing) such that
 \[ \importance_{32,000}(P) - \importance_N(P) < 0.2 \]
 where $\importance_k(P)$ is the importance of $P$ computed using $k$
 runs.  We chose the threshold 0.2 because it is sufficient, at least
-in these studies, to give all these predictors scores well above the ``background
-noise'' of non-predictive predicates.
+in these studies, to give all these predictors scores well above the
+``background noise'' of non-predictive predicates.
 
-\end{itemize}
-
-The intuition behind the second metric is that in understanding how
+The intuition behind this second metric is that in understanding how
 many runs are needed by our algorithm, we should normalize by the
 frequency with which bugs occur.  If $F$ failures are needed to
 isolate a bug that causes failure in a fraction $0 \leq p \leq 1$ of
-runs, then $N = F/p$ runs will be required by our
-algorithm.
+runs, then $N = F/p$ runs will be required by our algorithm.
 
-\autoref{tab:numruns} presents the results of this analysis.  The
-second column shows the the minimum number of runs needed to produce
-the same overall results (same predictors in the same order) as using
-the full set of runs.  Note that the number of runs needed varies by
-two orders of magnitude.  We need 21,000 runs in \exif
-because the last bug in that study is extremely rare: only
-21 failing runs out of our total population of 33,000 runs share bug
-\#3 as the cause of failure.  If we exclude bug \#3, then just 2,000
-runs are sufficient to isolate the other two bugs.
-
-The third column shows the results for the second metric.
-Entries are of the form $B : F$, where $F$ denotes
-the minimum number of failing runs (in which predictor $P$ of bug $B$ is true)
-at which the importance threshold test is met.
-Notice that with one exception we can isolate bugs with between 10 and 40 
-observations of failing runs caused by the bug.  The outlier is the second
-\rhythmbox\ bug, which requires 70 failing runs.
-
+The ``\#1'' through ``\#9'' columns of \autoref{tab:numruns} present
+the results of this analysis.  Each of these columns shows the minimum
+number of failing runs (in which predictor $P$ of bug $B$ is true) at
+which the importance threshold test is met.  Notice that with one
+exception we can isolate bugs with between 10 and 40 observations of
+failing runs caused by the bug.  The outlier is the second
+\rhythmbox{} bug, which requires 70 failing runs.
 
 \subsection{Comparison with Logistic Regression}
 \label{sec:comparison}
