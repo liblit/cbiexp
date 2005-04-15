@@ -123,7 +123,6 @@ ccrypt/config.site
 correlations/Makefile
 exif/Makefile
 exif/config.site
-mossexp/Makefile
 rhythmbox/Makefile
 rhythmbox/config.site
 sanity/Makefile
@@ -133,5 +132,7 @@ src/symmetric/Makefile
 src/Score/Makefile
 src/analysis-rules.mk
 ])
+
+dnl test -d mossexp && AC_CONFIG_FILES([mossexp/Makefile])
 
 AC_OUTPUT
