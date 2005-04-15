@@ -183,7 +183,7 @@ that ${\cal S}$ has predictors of all bugs.  We also rank the
 predictors in ${\cal S}$ from the most to least important.  The set
 ${\cal S}$ and associated metrics (see
 \autoref{sec:experiments}) are then available to engineers to help
-speed the process of finding and fixing the most serious bugs.
+in finding and fixing the most serious bugs.
 
 In previous work, we focused on techniques
 for lightweight instrumentation and sampling of program executions, but
@@ -203,8 +203,8 @@ thousands of predicates, many of which are, or are very nearly,
 logically redundant.  In our experience, this redundancy in ${\cal P}$
 causes regularized logistic regression to choose highly redundant lists of
 predictors ${\cal S}$.  Redundancy is
-already evident in prior work \cite{PLDI`03*141} but becomes much
-worse for larger programs.
+already evident in prior work \cite{PLDI`03*141} but becomes a much
+more serious problem for larger programs.
 
 \item A separate difficulty is the prevalence of predicates predicting
 multiple bugs.  For example, for many Unix programs a bug is more
