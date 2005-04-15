@@ -39,7 +39,7 @@
   <xsl:template match="predictor" mode="dynamic-cells">
     <td><xsl:value-of select="@initial"/></td>
     <xsl:variable name="index" select="number(@index)"/>
-    <xsl:apply-templates select="document('predictor-info.xml')/predictor-info/info[$index]/bug-o-meter"/>
+    <xsl:apply-templates select="document('predictor-info.xml', /)/predictor-info/info[$index]/bug-o-meter"/>
     <td><xsl:value-of select="@effective"/></td>
     <xsl:apply-templates select="bug-o-meter"/>
     <xsl:if test="$link-to-zoom">

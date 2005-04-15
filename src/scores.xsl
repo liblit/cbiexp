@@ -91,7 +91,7 @@
     <tr>
       <xsl:variable name="index" select="number(@index)"/>
       <xsl:attribute name="title">rank: <xsl:number/>, pred: <xsl:value-of select="@index"/></xsl:attribute>
-      <xsl:copy-of select="document('predictor-info.xml')/predictor-info/info[$index]/@class"/>
+      <xsl:copy-of select="document('predictor-info.xml', /)/predictor-info/info[$index]/@class"/>
       <xsl:apply-templates select="." mode="predictor-row-cells"/>
     </tr>
   </xsl:template>
@@ -113,7 +113,7 @@
   <!-- several cells depending only on static predicate information -->
   <xsl:template match="predictor" mode="static-cells">
     <xsl:variable name="index" select="number(@index)"/>
-    <xsl:variable name="info" select="document('predictor-info.xml')/predictor-info/info[$index]"/>
+    <xsl:variable name="info" select="document('predictor-info.xml', /)/predictor-info/info[$index]"/>
     <xsl:if test="not($info)">
       <xsl:message terminate="yes">
 	<xsl:text>No static information for predictor index </xsl:text>
@@ -133,7 +133,7 @@
 
   <!-- link to a single line of source code -->
   <xsl:template match="info" mode="source-link">
-    <xsl:variable name="source-dir" select="document('summary.xml')/experiment/@source-dir"/>
+    <xsl:variable name="source-dir" select="document('summary.xml', /)/experiment/@source-dir"/>
     <xsl:variable name="prefix">
       <xsl:choose>
 	<xsl:when test="starts-with(@file, '/')"/>
