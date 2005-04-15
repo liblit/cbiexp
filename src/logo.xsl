@@ -6,7 +6,7 @@
 >
 
 
-  <xsl:variable name="projectURL" select="'http://www.cs.berkeley.edu/~liblit/sampler/'"/>
+  <xsl:variable name="projectURL" select="'http://www.cs.wisc.edu/cbi/'"/>
 
 
   <xsl:variable name="logo-icon">
