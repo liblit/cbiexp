@@ -9,9 +9,8 @@
 
   \newenvironment{stats}[2]{%
     \begin{subtab}
-      \caption{Sort descending by #1}
+      \caption{Sort descending by #1\label{tab:sorts-#2}}
       \small
-      \label{tab:sorts-#2}
       \begin{tabular}{l|rr@{$\:\pm\:$}rr|rrl}
         \toprule
         Thermometer & Context & \multicolumn{2}{r}{Increase} &
