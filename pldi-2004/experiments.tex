@@ -362,8 +362,9 @@ If we exclude bug \#3, then just 2000 runs suffice.
 The third column contains entries of the form $B_i : F_i$, where $F_i$ denotes
 the number of failing runs in which predictor $P_i$ of bug $B_i$ is true
 when $N_i$ runs are used.
-Notice that less than 100 failing runs must share any given bug as their cause of
-failure before the predictor for that bug is reported by our algorithm.
+Notice that we hardly need between 10 and 40 failing runs to share a bug
+as their cause of failure in order for the predictor of that bug to be reported by
+our algorithm.
 
 
 \subsection{Comparison with Logistic Regression}
