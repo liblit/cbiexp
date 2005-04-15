@@ -421,4 +421,11 @@ step, and not necessarily the best one; any predicate that covers a
 different set of failing runs than all higher-ranked predicates is
 selected eventually.
 
-%% LocalWords:  bc
+Finally, we studied an optimization in which we eliminated redundant
+predicates within instrumentation sites prior to running the iterative algorithm.
+For instance, given three scalar-pairs predicates $x < y$, $x = y$, and
+$x \leq y$ having the same \increase\ score at an instrumentation site, we 
+eliminated both $x < y$ and $x = y$.
+However, we obtained nearly identical experimental results with and without 
+this optimization, indicating that it was unnecessary. 
+
