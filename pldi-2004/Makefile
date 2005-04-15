@@ -23,6 +23,7 @@ texs :=						\
 	ramss.bib				\
 	refs.bib				\
 	revisited.tex				\
+	runs.tex				\
 	setup.tex				\
 	subtab.sty				\
 	table.tex				\
