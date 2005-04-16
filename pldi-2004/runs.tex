@@ -1,22 +1,27 @@
-\begin{table}
+\begin{table*}
 \nocaptionrule
-\caption{Minimum number of runs needed.}
+\caption{Minimum number of runs needed}
 \label{tab:numruns}
 \small
 \centering
 \begin{tabular}{lrrrrrrrr}
   \toprule
-              &          & \multicolumn{7}{c}{Failing Runs Also Exhibiting Bug \#$n$} \\
+              &          & \multicolumn{7}{c}{Bug \#} \\
               \cmidrule(lr){3-9}
-              & All Runs & \#1 & \#2 & \#3 & \#4 & \#5 & \#6 & \#9 \\
+             & \mbox{\em runs} & \#1 & \#2 & \#3 & \#4 & \#5 & \#6 & \#9 \\
   \midrule
-  \moss       &    3,000 & 18 & 10 & 32 & 12 & 21 & 11 & 20 \\
-  \ccrypt     &      200 & 26 \\
-  \bc         &      200 & 40 \\
-  \rhythmbox  &      300 & 22 & 70 \\
-  \exif       &   21,000 & 28 & 12 & 13 \\
+  \moss       & $F(P)$ & 18 & 10 & 32 & 12 & 21 & 11 & 20 \\
+              &$N$   & 500 & 3000 & 2000 & 800 & 300 & 1000 & 600 \\ \midrule
+  \ccrypt     & $F(P)$ & 26 \\
+		& $N$ & 200 \\ \midrule
+  \bc         & $F(P)$ & 40 \\
+		& $N$ & 200 \\ \midrule
+  \rhythmbox  & $F(P)$ & 22 & 35 \\
+		& $N$ & 300 & 100 \\ \midrule
+  \exif       & $F(P)$ & 28 & 12 & 13 \\
+		& $N$ & 2000 & 300 & 21000 \\
   \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 %% LocalWords:  lrrrrrrrr lr

@@ -346,47 +346,53 @@ structure in future work.
 
 \input{runs}
 
-Recall that we used about 32,000 runs in each of the five case studies, but
-for many of the bugs this number is clearly far more than the minimum
-required. To understand how many feedback reports are needed to isolate
-bugs, we consider two metrics.
+Recall that we used about 32,000 runs in each of the five case
+studies, but for many of the bugs this number is clearly far more than
+the minimum required. In this section, we estimate how many runs are
+required for the bug predictors to be isolated.
 
-First, for each study, we determine the minimum number of runs needed
-to see results equivalent to those obtained from 32,000 runs.
-\autoref{tab:numruns} presents the results of this analysis.  The
-``All Runs'' column shows the minimum number of runs needed to
-produce the same overall results (same predictors in the same order)
-as using the full set of runs.  Note that the number of runs needed
-varies by two orders of magnitude.  We need 21,000 runs in \exif{}
-because the last bug in that study is extremely rare: only 21 failing
-runs out of our total population of 33,000 runs share bug \#3 as the
-cause of failure.  If we exclude bug \#3, then just 2,000 runs are
-sufficient to isolate \exif{} bugs \#1 and \#2.  In general, results
-degrade gracefully below the minimum number listed, with predictors
+Our estimates are computed using the following methodology.
+We chose the predictor of each bug identified
+in the case studies; where the elimination algorithm selected two
+predictors for a bug, we picked the more natural one (i.e., not the sub-bug
+predictor).  For each chosen predictor $P$, we then computed
+the importance of $P$ using many different numbers of runs.
+Let $\importance_N(P)$ be the importance of $P$ using $N$ runs.
+We are interested in the minimum $N$ such that
+\[ \importance_{32,000}(P) - \importance_N(P) < 0.2 \]
+where the threshold $0.2$ is selected because we observed that 
+all of the chosen predictors in our studies would still
+be ranked very highly even if their importance scores were $0.2$ lower.
+
+\autoref{tab:numruns} presents the results of the analysis.  
+In these
+experiments, the number of runs $N$ ranges over the values $100, 200, \ldots, 1000, $ $2000, 
+\ldots, 25000$.  
+For each study, we list two numbers for each bug with predictor $P$:
+the minimum number of runs $N$ such that the threshold test is met, and the value of
+$F(P)$, the number of failing runs among those $N$ runs where $P$ is
+observed to be true.  Note that the number of runs $N$ needed for
+different bugs varies by two orders of magnitude.  We need 21,000 runs
+to isolate all of the bug predictors in \exif{} because the last bug in that study is extremely rare: only 21
+failing runs out of our total population of 33,000 runs share bug \#3
+as the cause of failure.  If we exclude bug \#3, then just 2,000 runs
+are sufficient to isolate \exif{} bugs \#1 and \#2.
+Thus, results
+degrade gracefully with fewer runs, with the predictors
 for rare bugs dropping out first.
 
-Second, for the best predictor $P$ of each distinct bug, we determine
-the number of failing runs $F$ within the minimum number of runs $N$
-(both successful and failing) such that
-\[ \importance_{32,000}(P) - \importance_N(P) < 0.2 \]
-where $\importance_k(P)$ is the importance of $P$ computed using $k$
-runs.  We chose the threshold 0.2 because it is sufficient, at least
-in these studies, to give all these predictors scores well above the
-``background noise'' of non-predictive predicates.
+The number $F(P)$ is independent of the rate at which the different
+bugs occur and allows us to compare the absolute number of failures
+needed to isolate different bugs.  Notice that 
+we can isolate all of the bug predictors with only between 10 and 40 observations of
+failing runs caused by the bug.  How long it takes
+to get those observations of failing runs depends on the frequency
+with which the bug occurs and the sampling rate of the bug predictor.
+Assume $F$ failures are needed to isolate the predictor of a bug.
+If the failing runs where the predictor is observed to be
+true is a fraction $0 \leq p \leq 1$ of all runs,
+then $N = F/p$ runs will be required by our algorithm.
 
-The intuition behind this second metric is that in understanding how
-many runs are needed by our algorithm, we should normalize by the
-frequency with which bugs occur.  If $F$ failures are needed to
-isolate a bug that causes failure in a fraction $0 \leq p \leq 1$ of
-runs, then $N = F/p$ runs will be required by our algorithm.
-
-The ``\#1'' through ``\#9'' columns of \autoref{tab:numruns} present
-the results of this analysis.  Each of these columns shows the minimum
-number of failing runs (in which predictor $P$ of bug $B$ is true) at
-which the importance threshold test is met.  Notice that with one
-exception we can isolate bugs with between 10 and 40 observations of
-failing runs caused by the bug.  The outlier is the second
-\rhythmbox{} bug, which requires 70 failing runs.
 
 \subsection{Comparison with Logistic Regression}
 \label{sec:comparison}
