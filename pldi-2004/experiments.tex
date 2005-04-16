@@ -104,9 +104,9 @@ failing runs of most predicates.  We have examined the runs of bug \#7
 in detail and found that the failing runs involving bug \#7 also
 trigger at least one other bug.  That is, even when the bug \#7 overrun
 occurs, it never causes incorrect output or a crash
-in any run.  Bug \#8, another overrun, is not even shown because the
-overrun is never triggered in our data (its column would be all
-0's).\footnote{Bug \#8 was originally found by a code inspection.}
+in any run.  Bug \#8, another overrun, was originally found by a code
+inspection.  It is not shown here because the overrun is never
+triggered in our data (its column would be all 0's).
 There is no way our algorithm can find causes of bugs that do not
 occur, but recall that part of our purpose in sampling user executions
 is to get an accurate picture of the most important bugs.  It is
@@ -120,9 +120,7 @@ strong sub-bug predictor in the second spot and another predictor
 in the sixth position.  Notice that even the rarest bug, bug \#2,
 which occurs more than an order of magnitude less frequently than
 the most common bug, is identified immediately after the last of
-the other bugs.\footnote{The peculiar eighth predicate, \texttt{f < f},
-says that after an assignment the new value of \texttt{f} is less than
-the old value of \texttt{f}.}  Furthermore, we have verified by hand that
+the other bugs.  Furthermore, we have verified by hand that
 the selected predicates would, in our judgment, lead an engineer to
 the cause of the bug. Overall, the elimination algorithm does an excellent
 job of listing separate causes of each of the bugs in order of priority,
@@ -204,7 +202,7 @@ bug.
 \autoref{tab:views-exif} shows results for \exif 0.6.9, an open source
 image processing program.  Each of the three predicates is a predictor
 of a distinct and previously unknown crashing bug.  It took less than
-20 minutes of work to find and verify the cause of each of the bugs
+twenty minutes of work to find and verify the cause of each of the bugs
 using these predicates and the additional highly correlated predicates
 on their affinity lists.  All bugs have been confirmed as valid by
 \exif project developers.
@@ -228,10 +226,10 @@ main
               memcpy
 \end{verbatim}
 \end{quote}
-The code in the vicinity of this crash site is as follows:
+The code in the vicinity of the call to \texttt{memcpy} in function
+\texttt{exif\_mnote\_data\_canon\_save} is as follows:
 \begin{quote}
 \begin{verbatim}
-// snippet of exif_mnote_data_canon_save
 for (i = 0; i < n->count; i++) {
     ...
     memcpy(*buf + doff,             (c)
@@ -261,10 +259,10 @@ main
               memcpy
 \end{verbatim}
 \end{quote}
-The code in the vicinity of the predicate \texttt{o + s > buf\_size} is as follows:
+The code in the vicinity of the predicate \texttt{o + s > buf\_size}
+in function \texttt{exif\_mnote\_data\_canon\_load} is as follows:
 \begin{quote}
 \begin{verbatim}
-// snippet of exif_mnote_data_canon_load
 for (i = 0; i < c; i++) {
     ...
     n->count = i + 1;

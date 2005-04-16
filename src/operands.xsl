@@ -56,27 +56,54 @@
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'scalar-pairs' and @predicate = 0]">
-    <xsl:value-of select="operand[1]/@source"/> &lt; <xsl:value-of select="operand[2]/@source"/>
+    <xsl:apply-templates mode="operands-scalar-pairs" select=".">
+      <xsl:with-param name="order" select="'&lt;'"/>
+    </xsl:apply-templates>
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'scalar-pairs' and @predicate = 1]">
-    <xsl:value-of select="operand[1]/@source"/> &gt;= <xsl:value-of select="operand[2]/@source"/>
+    <xsl:apply-templates mode="operands-scalar-pairs" select=".">
+      <xsl:with-param name="order" select="'&gt;='"/>
+    </xsl:apply-templates>
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'scalar-pairs' and @predicate = 2]">
-    <xsl:value-of select="operand[1]/@source"/> == <xsl:value-of select="operand[2]/@source"/>
+    <xsl:apply-templates mode="operands-scalar-pairs" select=".">
+      <xsl:with-param name="order" select="'=='"/>
+    </xsl:apply-templates>
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'scalar-pairs' and @predicate = 3]">
-    <xsl:value-of select="operand[1]/@source"/> != <xsl:value-of select="operand[2]/@source"/>
+    <xsl:apply-templates mode="operands-scalar-pairs" select=".">
+      <xsl:with-param name="order" select="'!='"/>
+    </xsl:apply-templates>
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'scalar-pairs' and @predicate = 4]">
-    <xsl:value-of select="operand[1]/@source"/> &gt; <xsl:value-of select="operand[2]/@source"/>
+    <xsl:apply-templates mode="operands-scalar-pairs" select=".">
+      <xsl:with-param name="order" select="'&gt;'"/>
+    </xsl:apply-templates>
   </xsl:template>
 
   <xsl:template mode="operands" match="*[@scheme = 'scalar-pairs' and @predicate = 5]">
-    <xsl:value-of select="operand[1]/@source"/> &lt;= <xsl:value-of select="operand[2]/@source"/>
+    <xsl:apply-templates mode="operands-scalar-pairs" select=".">
+      <xsl:with-param name="order" select="'&lt;='"/>
+    </xsl:apply-templates>
+  </xsl:template>
+
+  <xsl:template mode="operands-scalar-pairs" match="*">
+    <xsl:param name="order"/>
+    <xsl:if test="operand[1]/@source = operand[2]/@source">
+      <xsl:text>new value of </xsl:text>
+    </xsl:if>
+    <xsl:value-of select="operand[1]/@source"/>
+    <xsl:text> </xsl:text>
+    <xsl:value-of select="$order"/>
+    <xsl:text> </xsl:text>
+    <xsl:if test="operand[1]/@source = operand[2]/@source">
+      <xsl:text>old value of </xsl:text>
+    </xsl:if>
+    <xsl:value-of select="operand[2]/@source"/>
   </xsl:template>
 
   <xsl:template mode="operands" match="*">
