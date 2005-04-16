@@ -275,7 +275,6 @@ The code in the vicinity of the predicate \texttt{o + s > buf\_size}
 in function \texttt{exif\_mnote\_data\_canon\_load} is as follows:
 
 \begin{quote}
-  \begin{minipage}{\linewidth}
 \begin{verbatim}
 for (i = 0; i < c; i++) {
     ...
@@ -287,7 +286,6 @@ for (i = 0; i < c; i++) {
     ...
 }
 \end{verbatim}
-  \end{minipage}
 \end{quote}
 
 It is apparent from the above code snippets and the
@@ -353,30 +351,29 @@ structure in future work.
 \input{runs}
 
 Recall that we used about 32,000 runs in each of the five case
-studies, but for many of the bugs this number is clearly far more than
-the minimum required. In this section, we estimate how many runs are
-required for the bug predictors to be isolated.
+studies.  For many of the bugs this number is clearly far more than
+the minimum required.  In this section, we estimate how many runs are
+actually needed for all bug predictors to be identified.
 
 Our estimates are computed using the following methodology.
-We chose the predictor of each bug identified
-in the case studies; where the elimination algorithm selected two
-predictors for a bug, we picked the more natural one (i.e., not the sub-bug
-predictor).  For each chosen predictor $P$, we then computed
+We choose one predictor for each bug identified
+in the case studies.  Where the elimination algorithm selects two
+predictors for a bug, we pick the more natural one (i.e., not the
+sub-bug predictor).  For each chosen predictor $P$, we compute
 the importance of $P$ using many different numbers of runs.
 Let $\importance_N(P)$ be the importance of $P$ using $N$ runs.
 We are interested in the minimum $N$ such that
 \[ \importance_{32,000}(P) - \importance_N(P) < 0.2 \]
-where the threshold $0.2$ is selected because we observed that 
+The threshold $0.2$ is selected because we observe that 
 all of the chosen predictors in our studies would still
 be ranked very highly even if their importance scores were $0.2$ lower.
 
 \autoref{tab:numruns} presents the results of the analysis.  
-In these
-experiments, the number of runs $N$ ranges over the values $100, 200, \ldots, 1,000, $ $2,000, 
-\ldots, 25,000$.  
+In these experiments, the number of runs $N$ ranges over the values
+100, 200, \ldots, 900, 1,000, 2,000, \ldots, 25,000.
 For each study, we list two numbers for each bug with predictor $P$:
-the minimum number of runs $N$ such that the threshold test is met, and the value of
-$F(P)$, the number of failing runs among those $N$ runs where $P$ is
+the minimum number of runs $N$ such that the threshold test is met, and the
+number of failing runs $F(P)$ among those $N$ runs where $P$ is
 observed to be true.  Note that the number of runs $N$ needed for
 different bugs varies by two orders of magnitude.  We need 21,000 runs
 to isolate all of the bug predictors in \exif{} because the last bug in that study is extremely rare: only 21
@@ -396,8 +393,8 @@ to get those observations of failing runs depends on the frequency
 with which the bug occurs and the sampling rate of the bug predictor.
 Assume $F$ failures are needed to isolate the predictor of a bug.
 If the failing runs where the predictor is observed to be
-true is a fraction $0 \leq p \leq 1$ of all runs,
-then about $N = F/p$ runs will be required by our algorithm.
+true constitute a fraction $0 \leq p \leq 1$ of all runs,
+then about $N = \nicefrac{F}{p}$ runs will be required by our algorithm.
 
 
 \subsection{Comparison with Logistic Regression}
