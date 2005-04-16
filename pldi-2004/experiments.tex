@@ -339,7 +339,7 @@ within a few days, in part because we could quantify the bugs as
 important crashing bugs.  It required several hours to isolate each of
 the two bugs (and there are additional bugs represented in the
 predictors that we did not isolate) because they were violations of subtle heap
-invariants which are not directly captured by our current
+invariants that are not directly captured by our current
 instrumentation schemes.  Note, however, that we could not have even
 begun to understand these bugs without the information provided by our
 tool.  We intend to explore schemes that track predicates on heap
@@ -432,7 +432,7 @@ failure-prediction strength \cite{PLDI`03*141,NIPS2003_AP05}.
 Logistic regression uses linearly weighted
 combinations of predicates to classify a trial run as successful or
 failed.  Regularized logistic regression incorporates a penalty
-term which drives most coefficients towards zero, thereby
+term that drives most coefficients towards zero, thereby
 giving weights to only the most important predicates.  The output
 is a set of coefficients for predicates giving the best overall prediction.
 

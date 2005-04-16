@@ -172,7 +172,7 @@ succeeded or failed, as well as a bit vector with one bit for each
 predicate $P$.  If $P$ is observed to be true at least once during run
 $R$ then $\report{P} = 1$, otherwise $\report{P} = 0$.
 
-Let $\bug$ denote a bug (i.e., something which causes incorrect
+Let $\bug$ denote a bug (i.e., something that causes incorrect
 behavior in a program).  We use $\bugprofile$ to denote a \termdef{bug
 profile}, i.e., a set of failing runs (feedback reports) that share
 $\bug$ as the cause of failure.  The union of all bug profiles is
@@ -295,7 +295,7 @@ specification of the program properties to be analyzed.  Thus,
 statistical debugging provides a complementary approach to static
 analyses, which generally do require specification of the properties
 to check.  Statistical debugging can identify bugs beyond the reach of
-current static analysis techniques and even new classes of bugs which may be
+current static analysis techniques and even new classes of bugs that may be
 amenable to static analysis if anyone thought to check for them.
 One of the bugs we found, in the \rhythmbox open source music player,
 provides a good illustration of the potential for positive interaction
@@ -478,10 +478,10 @@ derived offline from fine-grained execution traces without sampling;
 this approach reduces the noise level of the data but greatly restricts the
 instrumentation schemes that are practical to deploy outside of a
 controlled testing environment.  As in our own earlier work, Podgurski
-uses logistic regression to select features which are highly
+uses logistic regression to select features that are highly
 predictive of failure.
-Clustering tends to identify small, tight groups of runs which do
-share a single cause but which are not always maximal.  That is, one
+Clustering tends to identify small, tight groups of runs that do
+share a single cause but that are not always maximal.  That is, one
 cause may be split across several clusters.  This problem is similar
 to covering a bug profile with sub-bug predictors.
 
@@ -493,7 +493,7 @@ reports of the same failure.  This heuristic works to the extent that a single
 cause corresponds to a single point of failure, but our experience
 with \moss, \rhythmbox, and \exif suggests that this assumption may not often hold.  In \moss,
 we find that only bugs \#2 and \#5 have truly unique ``signature'' stacks: a
-crash location which is present if and only if the corresponding bug
+crash location that is present if and only if the corresponding bug
 was actually triggered.  These bugs are also our most deterministic.
 Bugs \#4 and \#6 also have nearly unique stack signatures.
 The remaining bugs are much less consistent: each stack signature is
