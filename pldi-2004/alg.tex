@@ -179,11 +179,16 @@ we have
 \[\crash(\texttt{x == 0}) = \context(\texttt{x == 0}) = 1.0 \]
 and so $\increase(\texttt{x == 0}) = 0$.
 
-A predicate $P$ with $\increase(P) \leq 0$ has no predictive power.  Being true does not increase the
-probability of failure, and we can safely discard all such predicates.
-But because some $\increase(P)$ scores may be based on few observations of $P$, it is important
-to attach confidence intervals to the scores.  Since $\increase(P)$ is a statistic, computing
-a confidence interval for the underlying parameter is a well-understood problem. In our experiments we retain a predicate $P$ only if 
+In most cases, a predicate $P$ with $\increase(P) \leq 0$ has no predictive
+power.  For our algorithm, we can safely discard all such predicates.
+We will discuss possible exceptions to this case in Section~\ref{sec:extensions}.
+%Being true does not increase the
+%probability of failure, and 
+Because some $\increase(P)$ scores may be based on few observations of $P$,
+it is important to attach confidence intervals to the scores.  
+%Since $\increase(P)$ is a statistic, computing
+%a confidence interval for the underlying parameter is a well-understood problem. 
+In our experiments we retain a predicate $P$ only if 
 the 95\% confidence interval based on  $\increase(P)$ lies
 strictly above zero; this removes predicates from consideration 
 that have high increase scores but very low confidence because of 
@@ -361,6 +366,20 @@ has effectively balanced both of these important factors.  All of the
 predicates on this list indeed have both high specificity and
 sensitivity.  Each of these predictors accurately describes a large
 number of failures.
+
+As in the case of the pruning based on the $\increase$ score, it is
+also useful to assess statistical significance of $\importance$ scores
+by computing a confidence interval for the harmonic mean.  Exact 
+confidence intervals for the harmonic mean are not available, but 
+we can use the delta method (see, e.g., \cite{Lehmann:2003:theory}) to derive 
+approximate confidence intervals.  Computing the means and variances 
+needed for applying the delta method requires computing estimates of 
+underlying binomial probabilities for the predicates and conditioning 
+on the event that the corresponding counts are non-zero.  
+%In our experiments,
+%we use a simplified version of the algorithm without the confidence interval
+%for the harmonic mean.  But such computation is feasible.
+
 
 \subsection{Redundancy Elimination}
 \label{sec:elimination}

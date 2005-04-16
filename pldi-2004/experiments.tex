@@ -73,7 +73,7 @@ those based on program crashes.
 predicates listed were selected by the elimination algorithm in the
 order shown.  The first column is the initial bug thermometer for each
 predicate, showing the \context{} and \increase{} scores before
-elimination is performed. The fourth column is the \termdef{effective}
+elimination is performed. The second column is the \termdef{effective}
 bug thermometer, showing the \context{} and \increase{} scores for a
 predicate $P$ at the time $P$ is selected (i.e., when it is the
 top-ranked predicate).  Thus the effective thermometer reflects the
@@ -282,11 +282,11 @@ call sequence that whenever the predicate \texttt{o + s > buf\_size} is true,
 \begin{itemize}
 \item the function \texttt{exif\_mnote\_data\_canon\_load} returns on
   line \texttt{(a)}, thereby skipping the call to \texttt{malloc} on
-  line \texttt{(b)} and thus leaving \texttt{n->entries[i]->data}
+  line \texttt{(b)} and thus leaving \texttt{n->entries[i].data}
   uninitialized for some value of \texttt{i}, and
 
 \item the function \texttt{exif\_mnote\_data\_canon\_save} passes the
-  uninitialized \texttt{n->entries[i]->data} to \texttt{memcpy} on line \texttt{(c)}, which reads it and eventually crashes.
+  uninitialized \texttt{n->entries[i].data} to \texttt{memcpy} on line \texttt{(c)}, which reads it and eventually crashes.
 \end{itemize}
 
 In summary, our algorithm enabled us to effectively isolate the causes
@@ -339,14 +339,14 @@ structure in future work.
 \input{runs}
 
 Recall that we used about 32,000 runs in each of the five case studies, but
-for many of the bugs found this number is clearly far more than the minimum
+for many of the bugs this number is clearly far more than the minimum
 required. To understand how many feedback reports are needed to isolate
 bugs, we consider two metrics.
 
 First, for each study, we determine the minimum number of runs needed
-to see results equivalent to those for 32,000 runs.
+to see results equivalent to those obtained from 32,000 runs.
 \autoref{tab:numruns} presents the results of this analysis.  The
-``All Runs'' column shows the the minimum number of runs needed to
+``All Runs'' column shows the minimum number of runs needed to
 produce the same overall results (same predictors in the same order)
 as using the full set of runs.  Note that the number of runs needed
 varies by two orders of magnitude.  We need 21,000 runs in \exif{}
@@ -413,9 +413,9 @@ failure-prediction strength \cite{PLDI`03*141,NIPS2003_AP05}.
 Logistic regression uses linearly weighted
 combinations of predicates to classify a trial run as successful or
 failed.  Regularized logistic regression incorporates a penalty
-forcing most coefficients to be set to zero, thereby
-selecting only the most important predicates.  The output is a set of
-coefficients for predicates giving the best overall prediction.
+term which drives most coefficients towards zero, thereby
+giving weights to only the most important predicates.  The output
+is a set of coefficients for predicates giving the best overall prediction.
 
 A weakness of logistic regression for our application is that it seeks
 to cover the set of failing runs without regard to the orthogonality
