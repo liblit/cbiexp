@@ -24,7 +24,6 @@ texs :=						\
 	refs.bib				\
 	revisited.tex				\
 	runs.tex				\
-	setup.tex				\
 	subtab.sty				\
 	table.tex				\
 	views/bc/rows.tex			\
