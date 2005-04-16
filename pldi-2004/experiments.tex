@@ -353,7 +353,9 @@ varies by two orders of magnitude.  We need 21,000 runs in \exif{}
 because the last bug in that study is extremely rare: only 21 failing
 runs out of our total population of 33,000 runs share bug \#3 as the
 cause of failure.  If we exclude bug \#3, then just 2,000 runs are
-sufficient to isolate \exif{} bugs \#1 and \#2.
+sufficient to isolate \exif{} bugs \#1 and \#2.  In general, results
+degrade gracefully below the minimum number listed, with predictors
+for rare bugs dropping out first.
 
 Second, for the best predictor $P$ of each distinct bug, we determine
 the number of failing runs $F$ within the minimum number of runs $N$
