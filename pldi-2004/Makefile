@@ -34,9 +34,6 @@ texs :=						\
 	views/rhythmbox/rows.tex		\
 	views/view.sty
 
-epss := predkept3a.eps predkept3b.eps
-pdfs := $(epss:.eps=.pdf)
-
 all: master.pdf master.ps
 
 pubbase := $(shell echo $$HOME)/public/html/pldi-2005/pldi-2005
@@ -45,7 +42,7 @@ publish: $(publish)
 $(publish): $(pubbase).%: master.%
 	cat $< >$@
 
-master.pdf: %.pdf: %.dvi $(texs) $(pdfs)
+master.pdf: %.pdf: %.dvi $(texs)
 	pdflatex $*
 	thumbpdf $*
 	pdflatex $*
@@ -53,7 +50,7 @@ master.pdf: %.pdf: %.dvi $(texs) $(pdfs)
 master.ps: %.ps: %.dvi
 	dvips -o$@ -Pgeneric $*
 
-master.dvi: %.dvi: $(texs) $(epss)
+master.dvi: %.dvi: $(texs)
 	latex  $*
 	bibtex $*
 	latex  $*
@@ -61,9 +58,6 @@ master.dvi: %.dvi: $(texs) $(epss)
 
 flat.tex: master.bbl $(texs)
 	cat master.tex | sed 's/\\bibliography{\(.*\)}/\\input{master.bbl}/' | texexpand - >$@
-
-$(pdfs): %.pdf: %.eps
-	epstopdf --outfile=$@ $<
 
 moss-view/rows.tex moss-view/stats-by-%.tex: force
 	$(MAKE) -C $(@D) $(@F)
