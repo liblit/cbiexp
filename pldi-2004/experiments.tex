@@ -216,6 +216,7 @@ trace at the point of termination:
 
 \begin{quote}
   \small
+  \begin{minipage}{\linewidth}
 \begin{verbatim}
 main
   exif_data_save_data
@@ -226,13 +227,14 @@ main
             exif_mnote_data_canon_save
               memcpy
 \end{verbatim}
+  \end{minipage}
 \end{quote}
 
 The code in the vicinity of the call to \texttt{memcpy} in function
 \texttt{exif\_mnote\_data\_canon\_save} is as follows:
 
 \begin{quote}
-\begin{minipage}{\linewidth}
+  \begin{minipage}{\linewidth}
 \begin{verbatim}
 for (i = 0; i < n->count; i++) {
     ...
@@ -241,7 +243,7 @@ for (i = 0; i < n->count; i++) {
     ...
 }
 \end{verbatim}
-\end{minipage}
+  \end{minipage}
 \end{quote}
 
 This stack trace alone provides little insight into the cause of the
@@ -252,6 +254,7 @@ construct the following call sequence:
 
 \begin{quote}
   \small
+  \begin{minipage}{\linewidth}
 \begin{verbatim}
 main
   exif_loader_get_data
@@ -265,12 +268,14 @@ main
             exif_mnote_data_canon_save
               memcpy
 \end{verbatim}
+  \end{minipage}
 \end{quote}
 
 The code in the vicinity of the predicate \texttt{o + s > buf\_size}
 in function \texttt{exif\_mnote\_data\_canon\_load} is as follows:
 
 \begin{quote}
+  \begin{minipage}{\linewidth}
 \begin{verbatim}
 for (i = 0; i < c; i++) {
     ...
@@ -282,6 +287,7 @@ for (i = 0; i < c; i++) {
     ...
 }
 \end{verbatim}
+  \end{minipage}
 \end{quote}
 
 It is apparent from the above code snippets and the
