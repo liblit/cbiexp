@@ -64,7 +64,7 @@ way, whether by automatic self-checking or human inspection, to recognize
 failing runs.  In particular, for our experiment we also ran a correct 
 version of \moss{} and compared the output of the two versions. 
 This oracle provides a labeling of runs as ``success'' or ``failure,'' 
-and the resulting labels are treated identically by our program as
+and the resulting labels are treated identically by our algorithm as
 those based on program crashes.
 
 \input{moss-view/table}
@@ -151,7 +151,7 @@ strongly $P$ implies another predicate $P'$: How does removing the
 runs where $\report{P} = 1$ affect the importance of $P'$?  The more
 closely related $P$ and $P'$ are, the more $P'$'s importance drops
 when $P$'s failing runs are removed.  In the interactive version of
-our analysis tools, each predicate $P$ in the final, ranked list of
+our analysis tools, each predicate $P$ in the final, ranked list
 links to an \termdef{affinity list} of all
 predicates ranked by how much $P$ causes their ranking score to
 decrease.
