@@ -163,7 +163,7 @@ $(sparse): $(corrdir)/mhn2sparsemat.pl f.runs s.runs obs.txt tru.txt
 clean:: ; rm -f $(sparse)
 
 $(corrected): all_hl_corrected-%.xml: $(tooldir)/corrective-ranking/% f.runs obs.txt tru.txt
-	$(time) $< --zoom --begin-runs=$(training-runs) --runs-directory=$(datadir) $(corrected_view_flags)
+	$(time) $< --zoom --begin-runs=$(training-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
 	$(build) links
 	xmllint --valid --noout $@
 	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
@@ -200,7 +200,7 @@ gen-views: $(tooldir)/gen_views.o sites.o
 clean:: ; rm -f gen-views
 
 summary.xml: gen-summary preds.txt s.runs f.runs
-	$(time) ./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) --source-directory=src >$@
+	$(time) ./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) --source-directory=src $(confidence:%=--confidence=%) >$@
 	$(build) link-cell.css logo.css summary.css summary.dtd summary.xsl
 	xmllint --valid --noout $@
 clean:: ; rm -f summary.xml
@@ -386,7 +386,7 @@ clean:: ; rm -f symmetric.html
 
 symmetric.xml: %.xml: % $(stamp-decimate) s.runs f.runs
 	$(build) $*.dtd scores.dtd bug-o-meter.dtd
-	$(time) ./$< --runs-directory=$(datadir) --begin-runs=$(training-runs) --report-suffix=$(report-series)
+	$(time) ./$< --runs-directory=$(datadir) --begin-runs=$(training-runs) --report-suffix=$(report-series) $(confidence:%=--confidence=%)
 	xmllint --valid --noout $@
 clean:: ; rm -f symmetric.xml debug.xml
 
