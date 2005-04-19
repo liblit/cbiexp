@@ -210,7 +210,7 @@ gen-summary: $(tooldir)/gen_summary.o sites.o units.o
 clean:: ; rm -f gen-summary
 
 preds.txt: compute-results s.runs f.runs $(stamp-decimate)
-	$(time) ./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
+	$(time) ./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) $(confidence:%=--confidence=%)
 clean:: ; rm -f preds.txt
 
 compute-results: $(tooldir)/compute_results.o sites.o units.o
