@@ -4,6 +4,7 @@ texs :=						\
 	cacm1990.bib				\
 	experiments.tex				\
 	extensions.tex				\
+	flushend.sty				\
 	gcbib.bib				\
 	icse02.bib				\
 	icse03.bib				\
