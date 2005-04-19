@@ -49,11 +49,13 @@ master.pdf: %.pdf: %.dvi $(texs)
 master.ps: %.ps: %.dvi
 	dvips -o$@ -Pgeneric $*
 
-master.dvi: %.dvi: $(texs)
+master.dvi: %.dvi: %.bbl $(texs)
 	latex  $*
+	latex  $*
+
+master.bbl: %.bbl: $(texs)
+	latex $*
 	bibtex $*
-	latex  $*
-	latex  $*
 
 flat.tex: master.bbl $(texs)
 	cat master.tex | sed 's/\\bibliography{\(.*\)}/\\input{master.bbl}/' | texexpand - >$@
