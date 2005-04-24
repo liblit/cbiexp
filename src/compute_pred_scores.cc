@@ -21,21 +21,36 @@
 
 using namespace std;
 
-const unsigned MAX_ITER = 100;
+const unsigned watch1 = 2577;
+const unsigned watch2 = 2434;
+const unsigned watch3 = 2594;
+const unsigned watch4 = 2595;
+static ofstream watchfp1 ("pred_2577.log", ios_base::trunc);
+static ofstream watchfp2 ("pred_2434.log", ios_base::trunc);
+static ofstream watchfp3 ("pred_2594.log", ios_base::trunc);
+static ofstream watchfp4 ("pred_2595.log", ios_base::trunc);
+
+const unsigned MAX_ITER = 20;
 const double thresh = 10e-12;
 const double smooth = 1.0;
 
 typedef list<IndexedPredInfo> Stats;
 static Stats predList;
-static ostringstream * contribRuns;
+typedef list<unsigned> RunList;
+static RunList * contribRuns;
+static RunList * runbugs;
+static int numbugs = 10;
 
 static double * W;
-//static double * denom_weights[2];
+static double * tsW;
 static double * run_weights;
 static double * notW;
 static double * notrun_weights;
+//static double * truW;
+//static double * trurun_weights;
+static double * pred_weights[2];
 //static double sign[] = {1.0, -1.0};
-static double mask[2][2] = {{1.0, 0.0}, {0.0, -1.0}};
+//static double mask[2][2] = {{1.0, 0.0}, {0.0, -1.0}};
 
 static ofstream logfp ("pred_scores.log", ios_base::trunc);
 
@@ -87,7 +102,7 @@ read_preds()
   }
   fclose(pfp);
 
-  contribRuns = new ostringstream[predList.size()];
+  contribRuns = new RunList[predList.size()];
 }
 
 void 
@@ -96,25 +111,29 @@ read_weights()
   unsigned npreds = predList.size();
   unsigned nruns = num_sruns + num_fruns;
   unsigned mode;
-  double x;
-  double notx;
-  //double w, x;
+  double x, notx;
+  double w;
+  //double trux;
 
   W = new double[nruns*npreds];
-  //  denom_weights[F] = new double[npreds];
-  //  denom_weights[S] = new double[npreds];
-  run_weights = new double[nruns];
+  tsW = new double[nruns*npreds];
   notW = new double[nruns*npreds];
+  run_weights = new double[nruns];
   notrun_weights = new double[nruns];
+  //truW = new double[nruns*npreds];
+  //trurun_weights = new double[nruns];
 
-  //  memset(denom_weights[F], 0, sizeof(double)*npreds);
-  //  memset(denom_weights[S], 0, sizeof(double)*npreds);
+  memset(W, 0, sizeof(double)*nruns*npreds);
+  memset(tsW, 0, sizeof(double)*nruns*npreds);
+  memset(notW, 0, sizeof(double)*nruns*npreds);
   memset(run_weights, 0, sizeof(double)*nruns);
   memset(notrun_weights, 0, sizeof(double)*nruns);
+  //memset(trurun_weights, 0, sizeof(double)*nruns);
 
   FILE * wfp = fopenRead("W.first.dat");
   FILE * xfp = fopenRead("X.dat");
   FILE * notxfp = fopenRead("notX.dat");
+  //FILE * truxfp = fopenRead("truX.dat");
   int ctr;
   unsigned i = 0;
   for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
@@ -123,25 +142,33 @@ read_weights()
     
     mode = (is_srun[r]);
     for (unsigned j = 0; j < npreds; ++j) {
-      //ctr = fscanf(wfp, "%lg ", &w);
-      //assert(ctr == 1);
+      ctr = fscanf(wfp, "%lg ", &w);
+      assert(ctr == 1);
       ctr = fscanf(xfp, "%lg ", &x);
       assert(ctr == 1);
       ctr = fscanf(notxfp, "%lg ", &notx);
       assert(ctr == 1);
+      //ctr = fscanf(truxfp, "%lg ", &trux);
+      //assert(ctr == 1);
       //assert(w >= 0.0);
+      assert(w >= 0.0);
       assert(x >= 0.0);
       assert(notx >= 0.0);
+      //assert(trux >= 0.0);
       //W[i*npreds+j] = w*x;
+      tsW[i*npreds+j] = w;
       W[i*npreds+j] = x;
       notW[i*npreds+j] = notx;
+      //truW[i*npreds+j] = trux;
       run_weights[i] += W[i*npreds+j];
       notrun_weights[i] += notW[i*npreds+j];
+      //trurun_weights[i] += truW[i*npreds+j];
       //      denom_weights[mode][j] += W[i*npreds+j];
     }
-    //fscanf(wfp, "\n");
+    fscanf(wfp, "\n");
     fscanf(xfp, "\n");
     fscanf(notxfp, "\n");
+    //fscanf(truxfp, "\n");
 
     ++i;
   }
@@ -149,6 +176,7 @@ read_weights()
   fclose (wfp);
   fclose (xfp);
   fclose (notxfp);
+  //fclose (truxfp);
 
 //   for (unsigned j = 0; j < npreds; ++j) {
 //     if (denom_weights[F][j] < 0.0)
@@ -159,6 +187,79 @@ read_weights()
 //   }
 }
 
+// read in the list of failed runs and their bugs
+void
+read_runbugs ()
+{
+  const unsigned numRuns = NumRuns::end;
+  runbugs = new RunList[numRuns];
+  for (unsigned i = 0; i < numRuns; ++i) {
+    runbugs[i].clear();
+  }
+
+  FILE * runfp = fopenRead("run-bugs.txt");
+  assert(runfp);
+  char buf[1024];
+  char *pos;
+  int r;
+  while (true) {
+    fgets(buf, 1024, runfp);
+    if (feof(runfp))
+      break;
+
+    pos = strtok(buf, "\t");
+    r = atoi(pos);
+    pos = strtok(NULL, "\t\n");
+    while (pos != NULL) {
+      runbugs[r].push_back(atoi(pos));
+      pos = strtok(NULL, "\t\n");
+    }
+  }
+
+  fclose(runfp);
+}
+
+// aggregate the bug histogram correponsing to a list of runs
+void
+bug_hist (int * bugs, int numbugs, const RunList &runs)
+{
+  memset(bugs, 0, sizeof(int)*numbugs);
+  for (RunList::const_iterator c = runs.begin(); 
+       c != runs.end(); ++c) {
+    const RunList &buglist = runbugs[(*c)];
+    for (RunList::const_iterator d = buglist.begin();
+         d != buglist.end(); ++d) {
+      int b = (*d);
+      assert(b >= 1 && b <= numbugs);
+      bugs[b-1] += 1;
+    }
+  }
+}
+
+void
+print_histograms()
+{
+  int bugs[numbugs];
+
+  read_runbugs();
+  ofstream outfp ("pred_histograms.xml");
+  outfp << "<?xml version=\"1.0\"?>" << endl
+        << "<!DOCTYPE histograms SYSTEM \"histograms.dtd\">" << endl
+        << "<histograms>" << endl;
+
+  unsigned npreds = predList.size();
+  for (unsigned i = 0; i < npreds; ++i) {
+    bug_hist(bugs, numbugs, contribRuns[i]);
+    outfp << "<predictor>" << endl;
+    for (int j = 0; j < numbugs; ++j) {
+      outfp << "<bug count=\"" << bugs[j] << "\"/>" << endl; 
+    }
+    outfp << "</predictor>" << endl;
+  }
+  
+  outfp << "</histograms>" << endl;
+  outfp.close();
+}
  
 void
 print_scores()
@@ -197,9 +298,13 @@ logvalues (const double * v, const unsigned n) {
 void 
 logruns (const unsigned n) {
   for (unsigned i = 0; i < n; ++i) {
-    if (! contribRuns[i].str().empty()) {
+    if (! contribRuns[i].empty()) {
       logfp << "Pred ind " << i+1 << " Runs: " << endl;
-      logfp << contribRuns[i].str() << endl;
+      for (RunList::const_iterator c = contribRuns[i].begin(); 
+           c != contribRuns[i].end(); ++c) {
+        logfp << (*c) << ' ';
+      }
+      logfp << endl;
     }
   }
 }
@@ -222,91 +327,209 @@ compute_change(const double *u, const double * v, const unsigned n)
 }
 
 inline double
-contrib(const double *W, const unsigned k, const unsigned j, 
+contrib(const double *W_data, const unsigned k, const unsigned j, 
 	const unsigned r, const double *v, const unsigned npreds) 
 {
-  double Akj = W[j*npreds+k];
+  double Akj = W_data[j*npreds+k];
+  double vk = (is_srun[r]) ? 1.0/v[k] : v[k];
   
-  return (Akj * v[k] * mask[is_srun[r]][(v[k]<=0.0)]);
+  return (Akj * vk);
+}
+
+inline void
+update_sum(const unsigned j, const unsigned r, const unsigned npreds,
+           double *v, double *notv,
+           double pscore[][2], double notpscore[][2])
+{
+  double Aij, notAij;
+  unsigned mode = (is_srun[r]);
+  double discount = 0.0;
+  double disci = 0.0;
+  double notdiscount = 0.0;
+  double notdisci = 0.0;
+  for (unsigned k = 0; k < npreds; ++k) {
+    discount += contrib(W, k, j, r, v, npreds);
+    notdiscount += contrib(notW, k, j, r, notv, npreds);
+  }
+  for (unsigned i = 0; i < npreds; ++i) {
+    Aij = W[j*npreds+i];
+    disci = (discount - contrib(W,i,j,r,v,npreds)) / discount / run_weights[j];
+    pscore[i][mode] += Aij * ( 1.0 - disci);
+
+    notAij = notW[j*npreds+i];
+    notdisci = (notdiscount - contrib(notW,i,j,r,notv,npreds)) / notdiscount / notrun_weights[j];
+    notpscore[i][mode] += notAij * ( 1.0 - notdisci);
+  }
 }
 
 void
-iterate_max(double * u, double * v, unsigned npreds)
+print_pred(ofstream &outfp, double * v, double * notv, 
+           const unsigned j, const unsigned r, const unsigned npreds)
 {
-  double Aij, change;
-  double notAij;
-  double pscore[2][npreds];
-  double notpscore[2][npreds];
-  unsigned mode;
-  unsigned ctr = 0;
-
-  Progress::Bounded progress("Giving weight to max pred", MAX_ITER);
-  do {
-    progress.step();
-    ctr++;
-    memset(pscore, 0, sizeof(double)*2*npreds);
-    memset(notpscore, 0, sizeof(double)*2*npreds);
-    memset(u, 0, sizeof(double)*npreds);
-    for (unsigned i = 0; i < npreds; ++i) {
-      contribRuns[i].str("");  // reset the string of attributed runs
-    }
-
-    unsigned j = 0;
-    for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
-      if (!is_srun[r] && !is_frun[r])
-	continue;
-
-      mode = (is_srun[r]);
-      double disck = 0.0;
+  for (unsigned k = 0; k < npreds; ++k) 
+    outfp << contrib(W, k, j, r, v, npreds) << ' ';
+  outfp << endl;
+  for (unsigned k = 0; k < npreds; ++k) 
+    outfp << contrib(notW, k, j, r, notv, npreds) << ' ';
+  outfp << endl;
+  for (unsigned k = 0; k < npreds; ++k) 
+    outfp << W[j*npreds+k] << ' ';
+  outfp << endl;
+  for (unsigned k = 0; k < npreds; ++k) 
+    outfp << notW[j*npreds+k] << ' ';
+  outfp << endl;
+  for (unsigned k = 0; k < npreds; ++k) 
+    outfp << tsW[j*npreds+k] << ' ';
+  outfp << endl;
+}
+           
+inline void
+update_max(const unsigned j, const unsigned r, const unsigned npreds,
+           double *v, double *notv,
+           double oldpscore[][2], double oldnotpscore[][2],
+           double pscore[][2], double notpscore[][2])
+{
+    double Aij, notAij;
+    double d = 0.0;
+    double notd = 0.0;
+    unsigned argmax = 0;
+    if (is_frun[r]) {
       double maxd = 0.0;
-      unsigned argmax = 0;
+      double val = 0.0;
       for (unsigned k = 0; k < npreds; ++k) {
-        disck = contrib(W, k, j, r, v, npreds);
-        if (disck > maxd) {
-          maxd = disck;
+        d = contrib(W, k, j, r, v, npreds);
+        notd = contrib(notW, k, j, r, notv, npreds);
+        //val = d;
+        //val = (d + 1e-12)/(notd + 1e-12)
+              //*(oldnotpscore[k][S]+smooth)/(oldpscore[k][S]+smooth);
+        oldnotpscore[k][S] = oldpscore[k][S] = 0.0;
+        //val = (d + 1e-12)/(notd + 1e-12);
+        val = d - notd;
+        if (val > maxd || (val == maxd && tsW[j*npreds+k] > tsW[j*npreds+argmax])) {
+          maxd = val;
           argmax = k;
         }
       }
       Aij = W[j*npreds+argmax];
       notAij = notW[j*npreds+argmax];
-      //if (denom_weights[mode][argmax] > 0.0)
-        //u[argmax] += sign[mode] * Aij / denom_weights[mode][argmax];
-      pscore[mode][argmax] += Aij / run_weights[j];
-      notpscore[mode][argmax] += notAij / notrun_weights[j];
-      if (is_frun[r])
-        contribRuns[argmax] << r << ' ';
-      j++;
+      pscore[argmax][F] += Aij / run_weights[j];
+      notpscore[argmax][F] += notAij / notrun_weights[j];
+      contribRuns[argmax].push_back(r);
     }
-
-    for (unsigned i = 0; i < npreds; ++i) {
-      if (pscore[F][i] > 0.0)
-        u[i] = (pscore[F][i] + smooth) / (pscore[S][i] + smooth)
-	  * (notpscore[S][i] + smooth) / (notpscore[F][i] + smooth);
+    else if (is_srun[r]) {
+      double maxd = 0.0;
+      double val = 0.0;
+      for (unsigned k = 0; k < npreds; ++k) {
+        d = contrib(W, k, j, r, v, npreds);
+        notd = contrib(notW, k, j, r, notv, npreds);
+        //val = d;
+        //val = (d + 1e-12)/(notd + 1e-12)
+              //*(oldnotpscore[k][F]+smooth)/(oldpscore[k][F]+smooth);
+        oldnotpscore[k][F] = oldpscore[k][F] = 0.0;
+        //val = (d + 1e-12)/(notd + 1e-12);
+        val = d - notd;
+        if (val > maxd || (val == maxd && tsW[j*npreds+k] > tsW[j*npreds+argmax])) {
+          maxd = val;
+          argmax = k;
+        }
+      }
+      Aij = W[j*npreds+argmax];
+      notAij = notW[j*npreds+argmax];
+      pscore[argmax][S] += Aij / run_weights[j];
+      notpscore[argmax][S] += notAij / notrun_weights[j];
+      //double discount = 0.0;
+      //double notdiscount = 0.0;
+      //for (unsigned k = 0; k < npreds; ++k) {
+        //discount += contrib(W, k, j, r, v, npreds);
+        //notdiscount += contrib(notW, k, j, r, notv, npreds);
+      //}
+      //for (unsigned i = 0; i < npreds; ++i) {
+	//Aij = W[j*npreds+i];
+	//d = (discount - contrib(W,i,j,r,v,npreds)) / discount / run_weights[j];
+	//pscore[i][S] += Aij * ( 1.0 - d);
+//
+	//notAij = notW[j*npreds+i];
+	//notd = (notdiscount - contrib(notW,i,j,r,notv,npreds)) / notdiscount / notrun_weights[j];
+	//notpscore[i][S] += notAij * ( 1.0 - notd);
+      //}
     }
+    else 
+      assert(0);
 
-    normalize(u, npreds, MAX);
+  if (argmax == watch1)
+    print_pred(watchfp1, v, notv, j, r, npreds);
+  else if (argmax == watch2)
+    print_pred(watchfp2, v, notv, j, r, npreds);
+  else if (argmax == watch3)
+    print_pred(watchfp3, v, notv, j, r, npreds);
+  else if (argmax == watch4)
+    print_pred(watchfp4, v, notv, j, r, npreds);
 
-    change = compute_change(u, v, npreds);
-    //copy over from u to v 
-    memcpy(v, u, sizeof(double)*npreds);
-    // logvalues (v, npreds);
-    logruns (npreds);
-    logfp << "iterate_max: iteration: " << ctr << " change: " << change << endl;
-  } while (change > thresh && ctr <= MAX_ITER);
+  
 }
 
 void
-iterate_sum(double * u, double * v, unsigned npreds)
+iterate_max(double * u, double * notu, double * v, double * notv,
+            double oldpscore[][2], double oldnotpscore[][2],
+            unsigned npreds)
 {
-  double Aij, change;
-  double notAij;
-  double pscore[2][npreds];
-  double notpscore[2][npreds];
-  unsigned mode;
+  double pscore[npreds][2], notpscore[npreds][2];
+  double change;
   unsigned ctr = 0;
+
+  memset(pscore, 0, sizeof(double)*2*npreds);
+  memset(notpscore, 0, sizeof(double)*2*npreds);
+  memset(u, 0, sizeof(double)*npreds);
+  for (unsigned i = 0; i < npreds; ++i) {
+    contribRuns[i].clear();
+  }
+
+  cout << "Giving weight to max pred..." << endl;
+
+  unsigned j = 0;
+  for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+    if (!is_srun[r] && !is_frun[r])
+      continue;
+
+    update_max(j, r, npreds, v, notv, oldpscore, oldnotpscore, pscore, notpscore);
+
+    j++;
+  }
+
+  for (unsigned i = 0; i < npreds; ++i) {
+    pred_weights[F][i] = (pscore[i][F] + smooth)/(notpscore[i][F] + smooth);
+    pred_weights[S][i] = (notpscore[i][S] + smooth)/(pscore[i][S] + smooth);
+    u[i] = contribRuns[i].size();
+    //u[i] = pred_weights[F][i] * pred_weights[S][i] * contribRuns[i].size();
+    //u[i] = pred_weights[F][i];
+    //pred_weights[F][i] = pscore[i][F] * notpscore[i][S];
+    //pred_weights[S][i] = pscore[i][S] * notpscore[i][F];
+    //u[i] = (pred_weights[F][i] + smooth) / (pred_weights[S][i] + smooth);
+    notu[i] = 1.0/u[i];
+  }
+
+  normalize(u, npreds, MAX);
+
+  change = compute_change(u, v, npreds);
+  //copy over from u to v 
+  memcpy(v, u, sizeof(double)*npreds);
+  // logvalues (v, npreds);
+  logruns (npreds);
+  logfp << "iterate_max: iteration: " << ctr << " change: " << change << endl;
+}
+
+void
+iterate_sum(double * u, double * notu, double * v, double * notv,
+            double pscore[][2], double notpscore[][2],
+            unsigned npreds)
+{
+  double change;
+  unsigned ctr = 0;
+  unsigned mode;
 
   for (unsigned i = 0; i < npreds; ++i) {
     v[i] = 1.0;
+    notv[i] = 1.0;
   }
 
   Progress::Bounded progress("Iterating sum updates", MAX_ITER);
@@ -322,57 +545,50 @@ iterate_sum(double * u, double * v, unsigned npreds)
 	continue;
 
       mode = (is_srun[r]);
-      double discount = 0.0;
-      double disci = 0.0;
-      double notdiscount = 0.0;
-      double notdisci = 0.0;
-      for (unsigned k = 0; k < npreds; ++k) {
-        discount += contrib(W, k, j, r, v, npreds);
-        notdiscount += contrib(notW, k, j, r, v, npreds);
-      }
-      for (unsigned i = 0; i < npreds; ++i) {
-	Aij = W[j*npreds+i];
-	disci = (discount - contrib(W, i,j,r,v,npreds)) / run_weights[j];
-	pscore[mode][i] += Aij * ( 1.0 - disci);
-	notAij = notW[j*npreds+i];
-	notdisci = (notdiscount - contrib(notW, i,j,r,v,npreds)) / notrun_weights[j];
-	notpscore[mode][i] += notAij * ( 1.0 - notdisci);
-      }
-
+      update_sum(j, r, npreds, v, notv, pscore, notpscore);
       j++;
     }
 
     for (unsigned i = 0; i < npreds; ++i) {
-      u[i] = (pscore[F][i] + smooth) / (pscore[S][i] + smooth) 
-	* (notpscore[S][i] + smooth) / (notpscore[F][i] + smooth);
+      u[i] = (pscore[i][F] + smooth) / (pscore[i][S] + smooth) 
+	* (notpscore[i][S] + smooth) / (notpscore[i][F] + smooth);
+      //u[i] = (pscore[i][F] * notpscore[i][S] + smooth)
+        /// (pscore[i][S] * notpscore[i][F] + smooth);
+      notu[i] = 1.0 / u[i];
     }
 
     normalize(u, npreds, MAX);
+    normalize(notu, npreds, MAX);
 
-    change = compute_change(u, v, npreds);
+    change = compute_change(u, v, npreds) + compute_change(notu, notv, npreds);
     //copy over from u to v 
     memcpy(v, u, sizeof(double)*npreds);
+    memcpy(notv, notu, sizeof(double)*npreds);
     // logvalues (v, npreds);
     logfp << "iterate_sum: iteration: " << ctr << " change: " << change << endl;
-  } while (change > thresh && ctr <= MAX_ITER);
+  } while (change > thresh && ctr < MAX_ITER);
 }
 
 void
 compute_scores()
 {
   unsigned npreds = predList.size();
-  double v[npreds];
-  double u[npreds];
+  double pscore[npreds][2];
+  double notpscore[npreds][2];
+  double v[npreds], u[npreds];
+  double notv[npreds], notu[npreds];
+  pred_weights[F] = new double[npreds];
+  pred_weights[S] = new double[npreds];
+  memset(pred_weights[F], 0, sizeof(double)*npreds);
+  memset(pred_weights[S], 0, sizeof(double)*npreds);
 
-  iterate_sum(u, v, npreds);
-  iterate_max(u, v, npreds);
+  iterate_sum(u, notu, v, notv, pscore, notpscore, npreds);
+  iterate_max(u, notu, v, notv, pscore, notpscore, npreds);
 
   unsigned i = 0;
   for (Stats::iterator c = predList.begin(); c != predList.end(); ++c) {
-    //    (*c).ps.fdenom = denom_weights[F][i];
-    //    (*c).ps.sdenom = denom_weights[S][i];
-    (*c).ps.fdenom = 0.0;
-    (*c).ps.sdenom = 0.0;
+    (*c).ps.fdenom = pred_weights[F][i];
+    (*c).ps.sdenom = pred_weights[S][i];
     (*c).ps.imp = v[i++];
   }
 
@@ -416,15 +632,24 @@ int main (int argc, char** argv)
 
   compute_scores();
 
+  // must print out histograms before the scores,
+  // because print_scores alters the ordering of predicates
+  // through sorting
+  if (XMLTemplate::prefix == "moss")
+    print_histograms();
+
   print_scores();
 
+  watchfp1.close();
+  watchfp2.close();
   logfp.close();
   delete[] W;
   delete[] notW;
   delete[] run_weights;
   delete[] notrun_weights;
-  //  delete[] denom_weights[F];
-  //  delete[] denom_weights[S];
+  delete[] pred_weights[F];
+  delete[] pred_weights[S];
   delete[] contribRuns;
+  delete[] runbugs;
   return 0;
 }

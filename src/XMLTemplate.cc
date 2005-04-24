@@ -45,7 +45,7 @@ std::string
 XMLTemplate::format(char * name)
 {
   ostringstream collect;
-  if (!prefix.empty())
+  if (prefix == "moss")
     collect << prefix << "-";
   collect << name;
   return collect.str();

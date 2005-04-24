@@ -158,13 +158,11 @@ void set_rates ()
 	const PredCoords &pc = c->first;
 	PredPair &pp = c->second;
 	const site_hash_t::iterator found = sampleRates.find(pc);
-	if (found == sampleRates.end()) {
-	    cerr << "Cannot find sample rate for predicate " << pc << endl;
-	    exit(1);
-	}
-	const double rho = found->second;
-	pp.f.setrho(rho);
-	pp.s.setrho(rho);
+	if (found != sampleRates.end()) {
+	    const double rho = found->second;
+	    pp.f.setrho(rho);
+	    pp.s.setrho(rho);
+        }
     }
 }
 

@@ -30,6 +30,7 @@ static double score3 = 0.0;
 static ofstream logfp("truthprobs.txt", ios_base::trunc);
 static ofstream datfp("X.dat", ios_base::trunc);
 static ofstream notdatfp("notX.dat", ios_base::trunc);
+static ofstream gdatfp("truX.dat", ios_base::trunc);
 
 static vector<PredCoords> predVec;
 static vector<PredCoords> notpredVec;
@@ -399,10 +400,22 @@ operator<< (ostream &out, const vector<PredCoords> &pv)
     return out;
 }
 
+void
+print_groundtruth()
+{
+  for (unsigned i = 0; i < predVec.size(); ++i) {
+    pred_hash_t::iterator found = predHash.find(predVec[i]);
+    assert(found != predHash.end());
+    gdatfp << (found->second.*pptr).dst << ' ';
+  }
+  gdatfp << endl;
+}
+
 void print_results()
 {
   datfp << predVec << endl;
   notdatfp << notpredVec << endl;
+  print_groundtruth();
 }
 
 
@@ -472,6 +485,8 @@ int main(int argc, char** argv)
     logfp << "Compare observed with real val: " << score3/ctr << endl;
     logfp.close();
     datfp.close();
+    notdatfp.close();
+    gdatfp.close();
     return 0;
 }
 

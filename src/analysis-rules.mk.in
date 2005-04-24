@@ -333,7 +333,7 @@ collect_parmstats: $(tooldir)/collect_parmstats.o units.o sites.o
 	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
 clean:: ; rm -f colect_parmstats
 
-parmstats.txt: collect_parmstats $(stamp-decimate) s.runs f.runs
+parmstats.txt: collect_parmstats $(stamp-decimate) s.runs f.runs preds.txt
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) --sample-rates=$(stamp-decimate)
 clean:: ; rm -f parmstats.txt
 
