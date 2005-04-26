@@ -64,32 +64,6 @@ enum { L0, L1, L2, MAX};
 //
 
 void 
-normalize (double * u, unsigned n, unsigned mode) 
-{
-  double norm = 0.0;
-  for (unsigned i = 0; i < n; ++i) {
-    switch (mode) {
-    case L1:
-      norm += abs(u[i]);
-      break;
-    case L2:
-      norm += u[i] * u[i];
-      break;
-    case MAX:
-      norm = (norm > abs(u[i])) ? norm : abs(u[i]);
-      break;
-    default:
-      cerr << "Unknown mode for normalization: " << mode << endl;
-      assert(0);
-    }
-  }
-
-  for (unsigned i = 0; i < n; ++i) {
-    u[i] = u[i] / norm;
-  }
-}
-
-void 
 read_preds()
 {
 
@@ -287,6 +261,27 @@ print_scores()
   outfp.close();
 }
 
+void
+print_pred(ofstream &outfp, double * v, double * notv, 
+           const unsigned j, const unsigned r, const unsigned npreds)
+{
+  for (unsigned k = 0; k < npreds; ++k) 
+    outfp << contrib(W, k, j, r, v, npreds) << ' ';
+  outfp << endl;
+  for (unsigned k = 0; k < npreds; ++k) 
+    outfp << contrib(notW, k, j, r, notv, npreds) << ' ';
+  outfp << endl;
+  for (unsigned k = 0; k < npreds; ++k) 
+    outfp << W[j*npreds+k] << ' ';
+  outfp << endl;
+  for (unsigned k = 0; k < npreds; ++k) 
+    outfp << notW[j*npreds+k] << ' ';
+  outfp << endl;
+  for (unsigned k = 0; k < npreds; ++k) 
+    outfp << tsW[j*npreds+k] << ' ';
+  outfp << endl;
+}
+
 void 
 logvalues (const double * v, const unsigned n) {
   for (unsigned i = 0; i < n; ++i) {
@@ -313,6 +308,32 @@ logruns (const unsigned n) {
 //
 //  Computation routines
 //
+void 
+normalize (double * u, unsigned n, unsigned mode) 
+{
+  double norm = 0.0;
+  for (unsigned i = 0; i < n; ++i) {
+    switch (mode) {
+    case L1:
+      norm += abs(u[i]);
+      break;
+    case L2:
+      norm += u[i] * u[i];
+      break;
+    case MAX:
+      norm = (norm > abs(u[i])) ? norm : abs(u[i]);
+      break;
+    default:
+      cerr << "Unknown mode for normalization: " << mode << endl;
+      assert(0);
+    }
+  }
+
+  for (unsigned i = 0; i < n; ++i) {
+    u[i] = u[i] / norm;
+  }
+}
+
 double
 compute_change(const double *u, const double * v, const unsigned n)
 {
@@ -336,52 +357,7 @@ contrib(const double *W_data, const unsigned k, const unsigned j,
   return (Akj * vk);
 }
 
-inline void
-update_sum(const unsigned j, const unsigned r, const unsigned npreds,
-           double *v, double *notv,
-           double pscore[][2], double notpscore[][2])
-{
-  double Aij, notAij;
-  unsigned mode = (is_srun[r]);
-  double discount = 0.0;
-  double disci = 0.0;
-  double notdiscount = 0.0;
-  double notdisci = 0.0;
-  for (unsigned k = 0; k < npreds; ++k) {
-    discount += contrib(W, k, j, r, v, npreds);
-    notdiscount += contrib(notW, k, j, r, notv, npreds);
-  }
-  for (unsigned i = 0; i < npreds; ++i) {
-    Aij = W[j*npreds+i];
-    disci = (discount - contrib(W,i,j,r,v,npreds)) / discount / run_weights[j];
-    pscore[i][mode] += Aij * ( 1.0 - disci);
 
-    notAij = notW[j*npreds+i];
-    notdisci = (notdiscount - contrib(notW,i,j,r,notv,npreds)) / notdiscount / notrun_weights[j];
-    notpscore[i][mode] += notAij * ( 1.0 - notdisci);
-  }
-}
-
-void
-print_pred(ofstream &outfp, double * v, double * notv, 
-           const unsigned j, const unsigned r, const unsigned npreds)
-{
-  for (unsigned k = 0; k < npreds; ++k) 
-    outfp << contrib(W, k, j, r, v, npreds) << ' ';
-  outfp << endl;
-  for (unsigned k = 0; k < npreds; ++k) 
-    outfp << contrib(notW, k, j, r, notv, npreds) << ' ';
-  outfp << endl;
-  for (unsigned k = 0; k < npreds; ++k) 
-    outfp << W[j*npreds+k] << ' ';
-  outfp << endl;
-  for (unsigned k = 0; k < npreds; ++k) 
-    outfp << notW[j*npreds+k] << ' ';
-  outfp << endl;
-  for (unsigned k = 0; k < npreds; ++k) 
-    outfp << tsW[j*npreds+k] << ' ';
-  outfp << endl;
-}
            
 inline void
 update_max(const unsigned j, const unsigned r, const unsigned npreds,
@@ -518,6 +494,32 @@ iterate_max(double * u, double * notu, double * v, double * notv,
   logfp << "iterate_max: iteration: " << ctr << " change: " << change << endl;
 }
 
+inline void
+update_sum(const unsigned j, const unsigned r, const unsigned npreds,
+           double *v, double *notv,
+           double pscore[][2], double notpscore[][2])
+{
+  double Aij, notAij;
+  unsigned mode = (is_srun[r]);
+  double discount = 0.0;
+  double disci = 0.0;
+  double notdiscount = 0.0;
+  double notdisci = 0.0;
+  for (unsigned k = 0; k < npreds; ++k) {
+    discount += contrib(W, k, j, r, v, npreds);
+    notdiscount += contrib(notW, k, j, r, notv, npreds);
+  }
+  for (unsigned i = 0; i < npreds; ++i) {
+    Aij = W[j*npreds+i];
+    disci = (discount - contrib(W,i,j,r,v,npreds)) / discount / run_weights[j];
+    pscore[i][mode] += Aij * ( 1.0 - disci);
+
+    notAij = notW[j*npreds+i];
+    notdisci = (notdiscount - contrib(notW,i,j,r,notv,npreds)) / notdiscount / notrun_weights[j];
+    notpscore[i][mode] += notAij * ( 1.0 - notdisci);
+  }
+}
+
 void
 iterate_sum(double * u, double * notu, double * v, double * notv,
             double pscore[][2], double notpscore[][2],
@@ -525,7 +527,6 @@ iterate_sum(double * u, double * notu, double * v, double * notv,
 {
   double change;
   unsigned ctr = 0;
-  unsigned mode;
 
   for (unsigned i = 0; i < npreds; ++i) {
     v[i] = 1.0;
@@ -544,7 +545,6 @@ iterate_sum(double * u, double * notu, double * v, double * notv,
       if (!is_srun[r] && !is_frun[r])
 	continue;
 
-      mode = (is_srun[r]);
       update_sum(j, r, npreds, v, notv, pscore, notpscore);
       j++;
     }
