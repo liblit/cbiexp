@@ -21,18 +21,15 @@
 
 using namespace std;
 
-const unsigned watch1 = 2577;
-const unsigned watch2 = 2434;
-const unsigned watch3 = 2594;
-const unsigned watch4 = 2595;
-static ofstream watchfp1 ("pred_2577.log", ios_base::trunc);
-static ofstream watchfp2 ("pred_2434.log", ios_base::trunc);
-static ofstream watchfp3 ("pred_2594.log", ios_base::trunc);
-static ofstream watchfp4 ("pred_2595.log", ios_base::trunc);
+const unsigned numwatch = 4;
+const unsigned watch[] = {2577, 2434, 2594, 2595};
+static ofstream watchfp[numwatch];
+static ofstream runsfp[numwatch];
 
 const unsigned MAX_ITER = 20;
 const double thresh = 10e-12;
 const double smooth = 1.0;
+const double smooth2 = 1e-12;
 
 typedef list<IndexedPredInfo> Stats;
 static Stats predList;
@@ -60,6 +57,60 @@ enum { L0, L1, L2, MAX};
 
 ////////////////////////////////////////////////////////////////////////
 //
+//  Utilities
+//
+
+void 
+normalize (double * u, unsigned n, unsigned mode) 
+{
+  double norm = 0.0;
+  for (unsigned i = 0; i < n; ++i) {
+    switch (mode) {
+    case L1:
+      norm += abs(u[i]);
+      break;
+    case L2:
+      norm += u[i] * u[i];
+      break;
+    case MAX:
+      norm = (norm > abs(u[i])) ? norm : abs(u[i]);
+      break;
+    default:
+      cerr << "Unknown mode for normalization: " << mode << endl;
+      assert(0);
+    }
+  }
+
+  for (unsigned i = 0; i < n; ++i) {
+    u[i] = u[i] / norm;
+  }
+}
+
+double
+compute_change(const double *u, const double * v, const unsigned n)
+{
+  double change = 0.0;
+  double diff;
+  for (unsigned i = 0; i < n; ++i) {
+    diff = u[i] - v[i];
+    change += diff*diff;
+  }
+
+  return change;
+}
+
+inline double
+contrib(const double *W_data, const unsigned k, const unsigned j, 
+	const unsigned r, const double *v, const unsigned npreds) 
+{
+  double Akj = W_data[j*npreds+k];
+  double vk = (is_srun[r]) ? 1.0/v[k] : v[k];
+  
+  return (Akj * vk);
+}
+
+////////////////////////////////////////////////////////////////////////
+//
 //  Input and output
 //
 
@@ -84,7 +135,7 @@ read_weights()
 {
   unsigned npreds = predList.size();
   unsigned nruns = num_sruns + num_fruns;
-  unsigned mode;
+  unsigned type;
   double x, notx;
   double w;
   //double trux;
@@ -105,8 +156,8 @@ read_weights()
   //memset(trurun_weights, 0, sizeof(double)*nruns);
 
   FILE * wfp = fopenRead("W.first.dat");
-  FILE * xfp = fopenRead("X.dat");
-  FILE * notxfp = fopenRead("notX.dat");
+  FILE * xfp = fopenRead("truX.dat");
+  FILE * notxfp = fopenRead("trunotX.dat");
   //FILE * truxfp = fopenRead("truX.dat");
   int ctr;
   unsigned i = 0;
@@ -114,7 +165,7 @@ read_weights()
     if (!is_srun[r] && !is_frun[r])
       continue;
     
-    mode = (is_srun[r]);
+    type = (is_srun[r]);
     for (unsigned j = 0; j < npreds; ++j) {
       ctr = fscanf(wfp, "%lg ", &w);
       assert(ctr == 1);
@@ -137,7 +188,7 @@ read_weights()
       run_weights[i] += W[i*npreds+j];
       notrun_weights[i] += notW[i*npreds+j];
       //trurun_weights[i] += truW[i*npreds+j];
-      //      denom_weights[mode][j] += W[i*npreds+j];
+      //      denom_weights[type][j] += W[i*npreds+j];
     }
     fscanf(wfp, "\n");
     fscanf(xfp, "\n");
@@ -262,14 +313,22 @@ print_scores()
 }
 
 void
-print_pred(ofstream &outfp, double * v, double * notv, 
+print_pred(ofstream &outfp, ofstream &runfp, double * v, double * notv, 
+           double oldpscore[][2], double oldnotpscore[][2],
            const unsigned j, const unsigned r, const unsigned npreds)
 {
+  runfp << j << " " << r << endl;
   for (unsigned k = 0; k < npreds; ++k) 
     outfp << contrib(W, k, j, r, v, npreds) << ' ';
   outfp << endl;
   for (unsigned k = 0; k < npreds; ++k) 
     outfp << contrib(notW, k, j, r, notv, npreds) << ' ';
+  outfp << endl;
+  for (unsigned k = 0; k < npreds; ++k) 
+    outfp << oldpscore[k][S] << ' ';
+  outfp << endl;
+  for (unsigned k = 0; k < npreds; ++k) 
+    outfp << oldnotpscore[k][S] << ' ';
   outfp << endl;
   for (unsigned k = 0; k < npreds; ++k) 
     outfp << W[j*npreds+k] << ' ';
@@ -308,140 +367,44 @@ logruns (const unsigned n) {
 //
 //  Computation routines
 //
-void 
-normalize (double * u, unsigned n, unsigned mode) 
-{
-  double norm = 0.0;
-  for (unsigned i = 0; i < n; ++i) {
-    switch (mode) {
-    case L1:
-      norm += abs(u[i]);
-      break;
-    case L2:
-      norm += u[i] * u[i];
-      break;
-    case MAX:
-      norm = (norm > abs(u[i])) ? norm : abs(u[i]);
-      break;
-    default:
-      cerr << "Unknown mode for normalization: " << mode << endl;
-      assert(0);
-    }
-  }
 
-  for (unsigned i = 0; i < n; ++i) {
-    u[i] = u[i] / norm;
-  }
-}
-
-double
-compute_change(const double *u, const double * v, const unsigned n)
-{
-  double change = 0.0;
-  double diff;
-  for (unsigned i = 0; i < n; ++i) {
-    diff = u[i] - v[i];
-    change += diff*diff;
-  }
-
-  return change;
-}
-
-inline double
-contrib(const double *W_data, const unsigned k, const unsigned j, 
-	const unsigned r, const double *v, const unsigned npreds) 
-{
-  double Akj = W_data[j*npreds+k];
-  double vk = (is_srun[r]) ? 1.0/v[k] : v[k];
-  
-  return (Akj * vk);
-}
-
-
-           
 inline void
 update_max(const unsigned j, const unsigned r, const unsigned npreds,
            double *v, double *notv,
            double oldpscore[][2], double oldnotpscore[][2],
            double pscore[][2], double notpscore[][2])
 {
-    double Aij, notAij;
-    double d = 0.0;
-    double notd = 0.0;
-    unsigned argmax = 0;
-    if (is_frun[r]) {
-      double maxd = 0.0;
-      double val = 0.0;
-      for (unsigned k = 0; k < npreds; ++k) {
-        d = contrib(W, k, j, r, v, npreds);
-        notd = contrib(notW, k, j, r, notv, npreds);
-        //val = d;
-        //val = (d + 1e-12)/(notd + 1e-12)
-              //*(oldnotpscore[k][S]+smooth)/(oldpscore[k][S]+smooth);
-        oldnotpscore[k][S] = oldpscore[k][S] = 0.0;
-        //val = (d + 1e-12)/(notd + 1e-12);
-        val = d - notd;
-        if (val > maxd || (val == maxd && tsW[j*npreds+k] > tsW[j*npreds+argmax])) {
-          maxd = val;
-          argmax = k;
-        }
-      }
-      Aij = W[j*npreds+argmax];
-      notAij = notW[j*npreds+argmax];
-      pscore[argmax][F] += Aij / run_weights[j];
-      notpscore[argmax][F] += notAij / notrun_weights[j];
-      contribRuns[argmax].push_back(r);
+  double Aij, notAij;
+  double d = 0.0;
+  double notd = 0.0;
+  unsigned argmax = 0;
+  double maxd = 0.0;
+  double val = 0.0;
+  unsigned type = (is_srun[r]);
+  unsigned othertype = !type;
+  for (unsigned k = 0; k < npreds; ++k) {
+    d = contrib(W, k, j, r, v, npreds);
+    notd = contrib(notW, k, j, r, notv, npreds);
+    val = (d + smooth2)/(notd + smooth2)
+          *(oldnotpscore[k][othertype]+smooth)/(oldpscore[k][othertype]+smooth);
+    if (val > maxd || (val == maxd && tsW[j*npreds+k] > tsW[j*npreds+argmax])) {
+      maxd = val;
+      argmax = k;
     }
-    else if (is_srun[r]) {
-      double maxd = 0.0;
-      double val = 0.0;
-      for (unsigned k = 0; k < npreds; ++k) {
-        d = contrib(W, k, j, r, v, npreds);
-        notd = contrib(notW, k, j, r, notv, npreds);
-        //val = d;
-        //val = (d + 1e-12)/(notd + 1e-12)
-              //*(oldnotpscore[k][F]+smooth)/(oldpscore[k][F]+smooth);
-        oldnotpscore[k][F] = oldpscore[k][F] = 0.0;
-        //val = (d + 1e-12)/(notd + 1e-12);
-        val = d - notd;
-        if (val > maxd || (val == maxd && tsW[j*npreds+k] > tsW[j*npreds+argmax])) {
-          maxd = val;
-          argmax = k;
-        }
-      }
-      Aij = W[j*npreds+argmax];
-      notAij = notW[j*npreds+argmax];
-      pscore[argmax][S] += Aij / run_weights[j];
-      notpscore[argmax][S] += notAij / notrun_weights[j];
-      //double discount = 0.0;
-      //double notdiscount = 0.0;
-      //for (unsigned k = 0; k < npreds; ++k) {
-        //discount += contrib(W, k, j, r, v, npreds);
-        //notdiscount += contrib(notW, k, j, r, notv, npreds);
-      //}
-      //for (unsigned i = 0; i < npreds; ++i) {
-	//Aij = W[j*npreds+i];
-	//d = (discount - contrib(W,i,j,r,v,npreds)) / discount / run_weights[j];
-	//pscore[i][S] += Aij * ( 1.0 - d);
-//
-	//notAij = notW[j*npreds+i];
-	//notd = (notdiscount - contrib(notW,i,j,r,notv,npreds)) / notdiscount / notrun_weights[j];
-	//notpscore[i][S] += notAij * ( 1.0 - notd);
-      //}
-    }
-    else 
-      assert(0);
+  }
 
-  if (argmax == watch1)
-    print_pred(watchfp1, v, notv, j, r, npreds);
-  else if (argmax == watch2)
-    print_pred(watchfp2, v, notv, j, r, npreds);
-  else if (argmax == watch3)
-    print_pred(watchfp3, v, notv, j, r, npreds);
-  else if (argmax == watch4)
-    print_pred(watchfp4, v, notv, j, r, npreds);
+  Aij = W[j*npreds+argmax];
+  notAij = notW[j*npreds+argmax];
+  pscore[argmax][type] += Aij / run_weights[j];
+  notpscore[argmax][type] += notAij / notrun_weights[j];
+  if (is_frun[r])
+    contribRuns[argmax].push_back(r);
 
-  
+  for (unsigned i = 0; i < numwatch; i++) {
+    if (argmax == watch[i])
+      print_pred(watchfp[i], runsfp[i], v, notv, oldpscore, oldnotpscore, j, r, npreds);
+  }
+
 }
 
 void
@@ -478,9 +441,6 @@ iterate_max(double * u, double * notu, double * v, double * notv,
     u[i] = contribRuns[i].size();
     //u[i] = pred_weights[F][i] * pred_weights[S][i] * contribRuns[i].size();
     //u[i] = pred_weights[F][i];
-    //pred_weights[F][i] = pscore[i][F] * notpscore[i][S];
-    //pred_weights[S][i] = pscore[i][S] * notpscore[i][F];
-    //u[i] = (pred_weights[F][i] + smooth) / (pred_weights[S][i] + smooth);
     notu[i] = 1.0/u[i];
   }
 
@@ -500,7 +460,7 @@ update_sum(const unsigned j, const unsigned r, const unsigned npreds,
            double pscore[][2], double notpscore[][2])
 {
   double Aij, notAij;
-  unsigned mode = (is_srun[r]);
+  unsigned type = (is_srun[r]);
   double discount = 0.0;
   double disci = 0.0;
   double notdiscount = 0.0;
@@ -512,11 +472,11 @@ update_sum(const unsigned j, const unsigned r, const unsigned npreds,
   for (unsigned i = 0; i < npreds; ++i) {
     Aij = W[j*npreds+i];
     disci = (discount - contrib(W,i,j,r,v,npreds)) / discount / run_weights[j];
-    pscore[i][mode] += Aij * ( 1.0 - disci);
+    pscore[i][type] += Aij * ( 1.0 - disci);
 
     notAij = notW[j*npreds+i];
     notdisci = (notdiscount - contrib(notW,i,j,r,notv,npreds)) / notdiscount / notrun_weights[j];
-    notpscore[i][mode] += notAij * ( 1.0 - notdisci);
+    notpscore[i][type] += notAij * ( 1.0 - notdisci);
   }
 }
 
@@ -630,6 +590,14 @@ int main (int argc, char** argv)
 
   read_weights();
 
+  for (unsigned i = 0; i < numwatch; i++) {
+    char fname[128];
+    sprintf(fname, "pred_%d.log", watch[i]);
+    watchfp[i].open (fname, ios_base::trunc);
+    sprintf(fname, "pred_%d.runs", watch[i]);
+    runsfp[i].open (fname, ios_base::trunc);
+  }
+
   compute_scores();
 
   // must print out histograms before the scores,
@@ -640,8 +608,10 @@ int main (int argc, char** argv)
 
   print_scores();
 
-  watchfp1.close();
-  watchfp2.close();
+  for (unsigned i = 0; i < numwatch; i++) {
+    watchfp[i].close();
+    runsfp[i].close();
+  }
   logfp.close();
   delete[] W;
   delete[] notW;

@@ -31,6 +31,7 @@ static ofstream logfp("truthprobs.txt", ios_base::trunc);
 static ofstream datfp("X.dat", ios_base::trunc);
 static ofstream notdatfp("notX.dat", ios_base::trunc);
 static ofstream gdatfp("truX.dat", ios_base::trunc);
+static ofstream gnotdfp("trunotX.dat", ios_base::trunc);
 
 static vector<PredCoords> predVec;
 static vector<PredCoords> notpredVec;
@@ -371,6 +372,8 @@ read_parms()
       notpredVec[i++] = notpredQueue.front();
       notpredQueue.pop();
   }
+
+  assert(notpredVec.size() == predVec.size());
 }
 
 void calc_zero_prob(piptr pp) // calculate truthprobs of predicates we didn't see in this previous run
@@ -407,8 +410,12 @@ print_groundtruth()
     pred_hash_t::iterator found = predHash.find(predVec[i]);
     assert(found != predHash.end());
     gdatfp << (found->second.*pptr).dst << ' ';
+    found = predHash.find(notpredVec[i]);
+    assert(found != predHash.end());
+    gnotdfp << (found->second.*pptr).dst << ' ';
   }
   gdatfp << endl;
+  gnotdfp << endl;
 }
 
 void print_results()
