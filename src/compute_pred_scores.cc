@@ -156,8 +156,8 @@ read_weights()
   //memset(trurun_weights, 0, sizeof(double)*nruns);
 
   FILE * wfp = fopenRead("W.first.dat");
-  FILE * xfp = fopenRead("truX.dat");
-  FILE * notxfp = fopenRead("trunotX.dat");
+  FILE * xfp = fopenRead("X.dat");
+  FILE * notxfp = fopenRead("notX.dat");
   //FILE * truxfp = fopenRead("truX.dat");
   int ctr;
   unsigned i = 0;
