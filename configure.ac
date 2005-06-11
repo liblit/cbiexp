@@ -84,14 +84,14 @@ AC_ARG_WITH(sampler-prefix,
                  [use sampler tools installed under DIR]))
 
 if test -n "$with_sampler_build"; then
-  AC_PATH_PROG(sampler_cc, sampler-cc-here, , $with_sampler_build/instrumentor/driver)
+  AC_PATH_PROG(sampler_cc, sampler-cc-here, , $with_sampler_build/driver)
   sampler_tooldir="$with_sampler_build/tools"
 elif test -n "$with_sampler_prefix"; then
   AC_PATH_PROG(sampler_cc, sampler-cc, , $with_sampler_prefix/bin)
   sampler_tooldir="$with_sampler_prefix/lib/sampler/tools"
 else
   AC_PATH_PROG(sampler_cc, sampler-cc)
-  sampler_tooldir="`cd \`dirname $sampler_cc\`/../lib/sampler/tools; pwd`"
+  sampler_tooldir="`cd \`dirname \"$sampler_cc\"\`/../lib/sampler/tools; pwd`"
 fi
 
 if ! test -x "$sampler_cc"; then
