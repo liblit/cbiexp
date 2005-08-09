@@ -1,8 +1,8 @@
 AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 $(BOOST_CPPFLAGS)
 
-noinst_LIBRARIES = libsymmetric.a
+noinst_PROGRAMS = symmetric
 
-libsymmetric_a_SOURCES =			\
+symmetric_SOURCES =				\
 	Both.h					\
 	Boths.cc				\
 	Boths.h					\
@@ -22,6 +22,8 @@ libsymmetric_a_SOURCES =			\
 	SuccessReader.h				\
 	allFailures.cc				\
 	main.cc
+
+symmetric_LDADD = ../libanalyze.a -ldl
 
 ../libanalyze.a: force
 	$(MAKE) -C $(@D) $(@F)

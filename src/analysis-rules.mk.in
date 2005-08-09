@@ -119,25 +119,17 @@ $(links): %: $(tooldir)/%
 	cp $< $@
 clean:: ; rm -f $(links)
 
-predictor-info.xml: xmlify-results preds.txt
-	./$< $(source-strip-prefixes:%=--strip-prefix=%) $(xmlify_results_flags)
+predictor-info.xml: $(tooldir)/xmlify-results preds.txt sites.so units.so
+	$< $(source-strip-prefixes:%=--strip-prefix=%) $(xmlify_results_flags)
 	$(build) $(@:.xml=.dtd) bug-o-meter.dtd operand.dtd predictor-info.dtd
 	xmllint --valid --noout $@
 clean:: ; rm -f predictor-info.xml
 
-xmlify-results: %: $(tooldir)/%.o sites.o units.o $(tooldir)/libanalyze.a
-	$(LINK.cc) $^ -o $@
-clean:: ; rm -f xmlify-results
-
-$(filter-out %_none.xml, $(views)): project preds.txt rho.bin
-	$(time) ./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) $(projected_view_flags)
+$(filter-out %_none.xml, $(views)): $(tooldir)/project preds.txt rho.bin sites.so
+	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) $(projected_view_flags)
 	$(build) projected-view.dtd view.dtd
 	xmllint --valid --noout $(filter-out %_none.xml, $(views))
 clean:: ; rm -f $(filter-out %_none.xml, $(views))
-
-project: $(tooldir)/project.o sites.o units.o $(tooldir)/libanalyze.a $(tooldir)/Score/libScore.a
-	$(LINK.cc) $^ -o $@
-clean:: ; rm -f project
 
 $(topRho): top-rho_%: $(tooldir)/top-rho all_% rho.bin
 	$<
@@ -181,56 +173,31 @@ $(stamp-decimate):
 	cp plan-$(report-series).txt $@
 endif
 
-obs.txt tru.txt: compute-obs-tru $(stamp-decimate) preds.txt s.runs f.runs
-	$(time) ./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
+obs.txt tru.txt: $(tooldir)/compute-obs-tru $(stamp-decimate) preds.txt s.runs f.runs units.so
+	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
 clean:: ; rm -f obs.txt tru.txt
 
-compute-obs-tru: $(tooldir)/compute_obs_tru.o sites.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
-clean:: ; rm -f compute-obs-tru
-
-$(filter %_none.xml, $(views)): gen-views preds.txt
+$(filter %_none.xml, $(views)): $(tooldir)/gen-views preds.txt sites.so
 	$(build) operands.xsl view.css view.dtd view.xsl scores.css scores.dtd scores.xsl
-	./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) $(schemes:%=--force-scheme=%) $(view_flags)
+	$< --begin-runs=$(training-runs) --runs-directory=$(datadir) $(schemes:%=--force-scheme=%) $(view_flags)
 	xmllint --valid --noout $(filter %_none.xml, $(views))
 clean:: ; rm -f $(filter %_none.xml, $(views))
 
-gen-views: $(tooldir)/gen_views.o sites.o
-	$(LINK.cc) $^ -L$(tooldir) -L$(tooldir)/Score -lanalyze -lScore -o $@
-clean:: ; rm -f gen-views
-
-summary.xml: gen-summary preds.txt s.runs f.runs
-	$(time) ./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) --source-directory=src $(confidence:%=--confidence=%) >$@
+summary.xml: $(tooldir)/gen-summary preds.txt s.runs f.runs sites.so units.so
+	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --source-directory=src $(confidence:%=--confidence=%) >$@
 	$(build) link-cell.css logo.css summary.css summary.dtd summary.xsl
 	xmllint --valid --noout $@
 clean:: ; rm -f summary.xml
 
-gen-summary: $(tooldir)/gen_summary.o sites.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
-clean:: ; rm -f gen-summary
-
-preds.txt: compute-results s.runs f.runs $(stamp-decimate)
-	$(time) ./$< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) $(confidence:%=--confidence=%)
+preds.txt: $(tooldir)/compute-results s.runs f.runs $(stamp-decimate) sites.so units.so
+	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) $(confidence:%=--confidence=%)
 clean:: ; rm -f preds.txt
 
-compute-results: $(tooldir)/compute_results.o sites.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
-clean:: ; rm -f compute-results
-
-$(datadir)/stamp-convert-reports:
-	$(build) convert-reports s.runs f.runs
-	./convert-reports --runs-directory=$(datadir)
+$(datadir)/stamp-convert-reports: $(tooldir)/convert-reports s.runs f.runs units.so
+	$< --runs-directory=$(datadir)
 	touch $@
 
-convert-reports: $(tooldir)/convert_reports.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze $(LEXLIB) -o $@
-clean:: ; rm -f convert-reports
-
-extract-timestamps: $(tooldir)/extract_timestamps.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze $(LEXLIB) -o $@
-clean:: ; rm -f extract-timestamps
-
-stamp-extract-timestamps:
+$(datadir)/stamp-extract-timestamps: $(tooldir)/extract-timestamps units.so
 	$(build) extract-timestamps
 	./extract-timestamps --runs-directory=$(datadir)
 	touch $(datadir)/$@
@@ -239,51 +206,32 @@ s.runs f.runs: $(tooldir)/process_run_labels $(datadir)/stamp-labels
 	$(time) $< --runs-directory=$(datadir)
 clean:: ; rm -f s.runs f.runs
 
-logreg.xml: %.xml: %.txt %
-	./$* <$< >$@
+logreg.xml: %.xml: $(tooldir)/% %.txt sites.so units.so
+	$< $*.txt >$@
 	$(build) logreg.dtd logreg.xsl operand.dtd operands.xsl view.css
 	xmllint --valid --noout $@
 clean:: ; rm -f logreg.xml
 
-logreg: %: $(tooldir)/%.o sites.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
-clean:: ; rm -f logreg
-
-gather_prior_dist: %: $(tooldir)/%.o sites.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
-clean:: ; rm -f gather_prior_dist
-
-prior-dist: gather_prior_dist s.runs f.runs preds.txt
-	$(time) ./$< --runs-directory=$(datadir)
+prior-dist: $(tooldir)/gather_prior_dist s.runs f.runs preds.txt units.so
+	$(time) $< --runs-directory=$(datadir)
 	mv fpriors.dat fpriors-full.dat
 	mv spriors.dat spriors-full.dat
-	$(time) ./$< --runs-directory=$(datadir) --report-suffix=$(report-series)
+	$(time) $< --runs-directory=$(datadir) --report-suffix=$(report-series)
 
-gather_prior_truths: %: $(tooldir)/%.o sites.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
-clean:: ; rm -f gather_prior_truths
+truth-dist: $(tooldir)/gather_prior_truths s.runs f.runs preds.txt units.so
+	$(time) $< --runs-directory=$(datadir)
 
-truth-dist: gather_prior_truths s.runs f.runs preds.txt
-	$(time) ./$< --runs-directory=$(datadir)
-
-compute_nonconst_preds: %: $(tooldir)/%.o sites.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -lm -o $@
-clean:: ; rm -f compute_nonconst_preds
-
-nonconst-preds: compute_nonconst_preds s.runs f.runs
-	$(time) ./$< --runs-directory=$(datadir) --report-suffix=$(report-series)
+nonconst-preds: $(tooldir)/compute_nonconst_preds s.runs f.runs units.so
+	$(time) $< --runs-directory=$(datadir) --report-suffix=$(report-series)
 clean:: ; rm -f train.runs val.runs nonconst_preds.txt
 
-train_utillog: %: $(tooldir)/%.o sites.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -lm -o $@
-clean:: ; rm -f train_utillog
-
-theta: train_utillog train.runs val.runs nonconst_preds.txt
-	$(time) ./$< --runs-directory=$(datadir) --report-suffix=$(report-series)
+theta: $(tooldir)/train_utillog train.runs val.runs nonconst_preds.txt units.so
+	$(time) $< --runs-directory=$(datadir) --report-suffix=$(report-series)
 clean:: ; rm -f theta.txt train_lls.txt val_lls.txt confmat.txt
 
-sites.o units.o: %.o: %.cc
-clean:: ; rm -f sites.o units.o
+sites.so units.so: %.so: %.cc
+	$(LINK.cc) -shared -o $@ $<
+clean:: ; rm -f sites.so units.so
 
 sites.cc units.cc: $(tooldir)/map_sites $(tooldir)/map_sites.sed $(sites)
 	$<.sed $(sites) | $<
@@ -293,106 +241,75 @@ plan-inverse-100.txt: $(tooldir)/sampling-plans/inverse max-observed.txt
 	$< 100 <max-observed.txt >$@
 clean:: ; rm -f plan-inverse-100.txt
 
-max-observed.txt: %.txt: % s.runs f.runs $(datadir)/stamp-convert-reports
-	$(time) ./$< --end-runs=$(training-runs) --runs-directory=$(datadir) >$@
+max-observed.txt: %.txt: $(tooldir)/% s.runs f.runs $(datadir)/stamp-convert-reports units.so
+	$(time) $< --end-runs=$(training-runs) --runs-directory=$(datadir) >$@
 clean:: ; rm -f max-observed.txt
 
-max-observed: %: $(tooldir)/%.o units.o $(tooldir)/libanalyze.a
-	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
-clean:: ; rm -f max-observed
+ts_nodes.first.txt ts_edges.first.txt: $(tooldir)/build_tsgraph units.so
+	$(time) $< --runs-directory=$(datadir) --timestamp-when=first
+clean:: ; rm -f ts_nodes.first.txt ts_edges.first.txt
 
-build_tsgraph: $(tooldir)/build_tsgraph.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
-	$(time) $@ --runs-directory=$(datadir) --timestamp-when=first
-	$(time) $@ --runs-directory=$(datadir) --timestamp-when=last
-clean:: ; rm -f build_tsgraph
+ts_nodes.last.txt ts_edges.last.txt: $(tooldir)/build_tsgraph units.so
+	$(time) $< --runs-directory=$(datadir) --timestamp-when=last
+clean:: ; rm -f ts_nodes.last.txt ts_edges.last.txt
 
-find_tsSCC: $(tooldir)/find_tsSCC.o units.o sites.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
-
-sccgraph: find_tsSCC ts_nodes.first.txt ts_edges.first.txt ts_nodes.last.txt ts_edges.last.txt
+sccgraph: $(tooldir)/find_tsSCC ts_nodes.first.txt ts_edges.first.txt ts_nodes.last.txt ts_edges.last.txt
 	$(time) $< --timestamp-when=first
 	$(time) $< --timestamp-when=last
 
-sanity_check: $(tooldir)/sanity_check.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
+sanity_check: $(tooldir)/sanity_check units.so
 	$(time) $@ --runs-directory=$(datadir) --timestamp-when=first
 
-partial_order: $(tooldir)/partial_order.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
+ts_sites.first.txt: $(tooldir)/partial_order units.so
 	$(time) $@ --runs-directory=$(datadir) --timestamp-when=first
+clean:: ; rm -f ts_sites.first.txt
+
+ts_sites.last.txt: $(tooldir)/partial_order units.so
 	$(time) $@ --runs-directory=$(datadir) --timestamp-when=last
+clean:: ; rm -f ts_sites.last.txt
 
-get_ts_ordering: $(tooldir)/get_ts_ordering.o units.o sites.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
-
-W.dat: get_ts_ordering $(datadir)/stamp-extract-timestamps
+W.dat: $(tooldir)/get_ts_ordering $(datadir)/stamp-extract-timestamps units.so
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --timestamp-when=first
 
-collect_parmstats: $(tooldir)/collect_parmstats.o units.o sites.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
-clean:: ; rm -f colect_parmstats
-
-parmstats.txt: collect_parmstats $(stamp-decimate) s.runs f.runs preds.txt
+parmstats.txt: $(tooldir)/collect_parmstats $(stamp-decimate) s.runs f.runs preds.txt units.so
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) --sample-rates=$(stamp-decimate)
 clean:: ; rm -f parmstats.txt
 
-est_hyperparms: $(tooldir)/est_hyperparms.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -lm -o $@
-clean:: ; rm -f est_hyperparms
-
-hyperparms.txt: est_hyperparms parmstats.txt
+hyperparms.txt: $(tooldir)/est_hyperparms parmstats.txt units.so
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) 
 
 ifdef $(HAVE_GSL_CDF)
-chi2test: $(tooldir)/chi2test.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lgsl -lgslcblas -lm -o $@
-
-chi2stats.txt: chi2test parmstats.txt fpriors.dat fpriors-full.dat spriors.dat spriors-full.dat
+chi2stats.txt: $(tooldir)/chi2test parmstats.txt fpriors.dat fpriors-full.dat spriors.dat spriors-full.dat
 	$(time) $<
 endif
 
-calc_truthprobs: $(tooldir)/calc_truthprobs.o units.o sites.o 
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -lm -o $@
-
 #truthprobs: calc_truthprobs parmstats.txt preds.txt
-truthprobs: calc_truthprobs
+truthprobs: $(tooldir)/calc_truthprobs units.so
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
 
-get_tp_weights: $(tooldir)/get_tp_weights.o units.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
-
-X.dat: get_tp_weights 
+X.dat: $(tooldir)/get_tp_weights units.so
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
 
-mult_WX: $(tooldir)/mult_WX.o units.o sites.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
-
-WX: mult_WX
+WX: $(tooldir)/mult_WX
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir)
 
-compute_pred_scores: $(tooldir)/compute_pred_scores.o sites.o
-	$(LINK.cc) $^ -L$(tooldir) -lanalyze -o $@
-
-predscores: compute_pred_scores
+predscores: pred_scores.xml
+pred_scores.xml: $(tooldir)/compute_pred_scores
 	$(build) links
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name)
 	xmllint --valid --noout pred_scores.xml
+clean:: ; rm -f pred_scores.xml
 
 symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml links
 	xsltproc --output $@ $<
 	xmllint --valid --noout --catalogs $@
 clean:: ; rm -f symmetric.html
 
-symmetric.xml: %.xml: % $(stamp-decimate) s.runs f.runs
+symmetric.xml: %.xml: $(tooldir)/%/% $(stamp-decimate) s.runs f.runs
 	$(build) $*.dtd scores.dtd bug-o-meter.dtd
-	$(time) ./$< --runs-directory=$(datadir) --begin-runs=$(training-runs) --report-suffix=$(report-series) $(confidence:%=--confidence=%)
+	$(time) $< --runs-directory=$(datadir) --begin-runs=$(training-runs) --report-suffix=$(report-series) $(confidence:%=--confidence=%)
 	xmllint --valid --noout $@
 clean:: ; rm -f symmetric.xml debug.xml
-
-symmetric: units.o $(tooldir)/symmetric/libsymmetric.a
-	$(LINK.cc) $< -L$(tooldir)/symmetric -L$(tooldir) -lsymmetric -lanalyze -o $@
-clean:: ; rm -f symmetric
 
 static-site-info.xml: %.xml: $(tooldir)/% $(sites)
 	$(build) $*.dtd
@@ -400,8 +317,8 @@ static-site-info.xml: %.xml: $(tooldir)/% $(sites)
 	xmllint --valid --noout $@
 clean:: ; rm -f static-site-info.xml
 
-results: symmetric static-site-info.xml
-	{ $(time) ./$< --runs-directory=$(datadir) --begin-runs=$(training-runs) --end-runs=1100 --report-suffix=$(report-series) ; } 2>&1 | tee symmetric.log
+results: $(tooldir)/symmetric static-site-info.xml
+	{ $(time) $< --runs-directory=$(datadir) --begin-runs=$(training-runs) --end-runs=1100 --report-suffix=$(report-series) ; } 2>&1 | tee symmetric.log
 	xmllint --valid --noout $<.xml
 	$(build) links
 	xsltproc $<.xml | xmllint --valid --catalogs --format >| $<.html

@@ -1,12 +1,8 @@
 #ifndef INCLUDE_UNITS_H
 #define INCLUDE_UNITS_H
 
+#include "unit_t.h"
 
-struct unit_t {
-  char scheme_code;
-  const char *signature;
-  unsigned num_sites;
-};
 
 extern const struct unit_t units[];
 

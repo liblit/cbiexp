@@ -18,8 +18,6 @@
 #include "ReportReader.h"
 #include "RunsDirectory.h"
 #include "SiteCoords.h"
-#include "sites.h"
-#include "units.h"
 #include "utils.h"
 
 using namespace std;

@@ -16,8 +16,6 @@
 #include "TsReportReader.h"
 #include "classify_runs.h"
 #include "fopen.h"
-#include "sites.h"
-#include "units.h"
 #include "utils.h"
 
 using namespace std;

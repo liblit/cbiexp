@@ -13,9 +13,8 @@
 #include "ReportReader.h"
 #include "RunsDirectory.h"
 #include "SiteCoords.h"
+#include "Units.h"
 #include "classify_runs.h"
-#include "sites.h"
-#include "units.h"
 #include "utils.h"
 
 using namespace std;
@@ -131,6 +130,7 @@ read_rates()
     return;
   }
 
+  Units units;
   FILE *const rates = fopenRead(sampleRateFile.c_str());
   SiteCoords coords;
   double rho;
@@ -141,8 +141,8 @@ read_rates()
     if (ctr != 3)
 	break;
 
-    assert(coords.unitIndex < num_units);
-    const unit_t unit = units[coords.unitIndex];
+    assert(coords.unitIndex < units.size);
+    const unit_t &unit = units[coords.unitIndex];
     assert(coords.siteOffset < unit.num_sites);
 
     sampleRates[coords] = rho;

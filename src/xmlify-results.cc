@@ -6,9 +6,9 @@
 #include <sysexits.h>
 #include "PredStats.h"
 #include "SiteCoords.h"
+#include "Sites.h"
+#include "Units.h"
 #include "fopen.h"
-#include "sites.h"
-#include "units.h"
 #include "utils.h"
 
 using namespace std;
@@ -77,6 +77,9 @@ int main(int argc, char *argv[])
   set_terminate(__gnu_cxx::__verbose_terminate_handler);
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
+
+  const Units units;
+  const Sites sites;
 
   ofstream xml("predictor-info.xml");
   xml << "<?xml version=\"1.0\"?>"

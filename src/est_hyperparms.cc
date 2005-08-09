@@ -16,8 +16,6 @@
 #include "PredCoords.h"
 #include "RunsDirectory.h"
 #include "classify_runs.h"
-#include "sites.h"
-#include "units.h"
 
 using namespace std;
 using __gnu_cxx::hash_map;

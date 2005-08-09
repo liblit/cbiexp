@@ -22,12 +22,12 @@
 #include "Score/LowerBound.h"
 #include "Score/LowerTimesFails.h"
 #include "Score/TrueInFails.h"
+#include "Sites.h"
 #include "Stylesheet.h"
 #include "Verbose.h"
 #include "ViewPrinter.h"
 #include "classify_runs.h"
 #include "fopen.h"
-#include "sites.h"
 #include "utils.h"
 
 using namespace std;
@@ -169,6 +169,7 @@ main(int argc, char *argv[])
   PredInfos &all = schemes["all"];
 
   // load up predicates and note set of active schemes
+  Sites sites;
   FILE * const statsFile = fopenRead(PredStats::filename);
   pred_info info;
   unsigned index = 0;

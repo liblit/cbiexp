@@ -3,11 +3,15 @@
 #include <iterator>
 #include <set>
 #include "PredCoords.h"
-#include "sites.h"
-#include "units.h"
+#include "Sites.h"
+#include "Units.h"
 #include "utils.h"
 
 using namespace std;
+
+
+Units units;
+Sites sites;
 
 
 ////////////////////////////////////////////////////////////////////////

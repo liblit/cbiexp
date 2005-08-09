@@ -10,9 +10,8 @@
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
 #include "RunsDirectory.h"
+#include "Units.h"
 #include "classify_runs.h"
-#include "sites.h"
-#include "units.h"
 #include "utils.h"
 
 using namespace std;
@@ -149,12 +148,12 @@ inline void cull(int u, int c, int p) {
     site_info[u][c].retain[p] = true;
 }
 
-void cull_preds()
+static void cull_preds(const Units &units)
 {
     unsigned u, c;
     int p;
 
-    for (u = 0; u < num_units; u++) {
+    for (u = 0; u < units.size; u++) {
 	for (c = 0; c < units[u].num_sites; c++) {
 	    switch (units[u].scheme_code) {
 	    case 'S':
@@ -302,14 +301,13 @@ int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
 
+    Units units;
     init_gsl_generator();
-
     classify_runs();
-
     split_runs();
 
-    site_info.resize(num_units);
-    for (unsigned u = 0; u < num_units; u++)
+    site_info.resize(units.size);
+    for (unsigned u = 0; u < units.size; u++)
 	site_info[u].resize(units[u].num_sites);
 
     Progress::Bounded progress("computing non-constant predicates", NumRuns::count());
@@ -321,7 +319,7 @@ int main(int argc, char** argv)
 	Reader().read(cur_run);
     }
 
-    cull_preds();
+    cull_preds(units);
 
     print_retained_preds();
     print_runsplit();

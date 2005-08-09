@@ -17,8 +17,6 @@
 #include "RunsDirectory.h"
 #include "SiteCoords.h"
 #include "classify_runs.h"
-#include "sites.h"
-#include "units.h"
 
 using namespace boost;
 using namespace std;

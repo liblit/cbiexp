@@ -5,8 +5,6 @@
 #include <cstdlib>
 #include <string>
 #include "Confidence.h"
-#include "sites.h"
-#include "units.h"
 #include "utils.h"
 
 using std::string;

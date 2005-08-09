@@ -3,13 +3,14 @@
 #include <iostream>
 #include "TsReportReader.h"
 #include "SiteCoords.h"
+#include "Units.h"
 #include "fopen.h"
-#include "units.h"
 
 using namespace std;
 
 void TsReportReader::read(unsigned runId, const char *when)
 {
+  Units units;
   FILE * const report = fopenRead(TimestampReport::format(runId, when));
 
   SiteCoords coords;
@@ -22,8 +23,8 @@ void TsReportReader::read(unsigned runId, const char *when)
       if (ctr != 3)
         break;
 
-      assert(coords.unitIndex < num_units);
-      const unit_t unit = units[coords.unitIndex];
+      assert(coords.unitIndex < units.size);
+      const unit_t &unit = units[coords.unitIndex];
       assert(coords.siteOffset < unit.num_sites);
 
       siteTs(coords, ts);

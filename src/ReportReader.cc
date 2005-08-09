@@ -4,8 +4,8 @@
 #include "CompactReport.h"
 #include "ReportReader.h"
 #include "SiteCoords.h"
+#include "Units.h"
 #include "fopen.h"
-#include "units.h"
 
 using namespace std;
 
@@ -13,6 +13,7 @@ using namespace std;
 void
 ReportReader::read(unsigned runId)
 {
+  Units units;
   FILE * const report = fopenRead(CompactReport::format(runId));
 
   SiteCoords coords;
@@ -23,8 +24,8 @@ ReportReader::read(unsigned runId)
       if (feof(report))
 	break;
 
-      assert(coords.unitIndex < num_units);
-      const unit_t unit = units[coords.unitIndex];
+      assert(coords.unitIndex < units.size);
+      const unit_t &unit = units[coords.unitIndex];
       assert(coords.siteOffset < unit.num_sites);
 
       switch (unit.scheme_code)

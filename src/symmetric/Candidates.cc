@@ -1,13 +1,19 @@
 #include <cassert>
 #include <iostream>
 #include <iterator>
-#include "../units.h"
+#include "../Units.h"
 #include "../utils.h"
 #include "Both.h"
 #include "Candidates.h"
 #include "Predicate.h"
 
 using namespace std;
+
+
+static Units units;
+
+
+////////////////////////////////////////////////////////////////////////
 
 
 static bool

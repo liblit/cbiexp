@@ -9,8 +9,6 @@
 #include <gsl/gsl_randist.h>
 #include "fopen.h"
 #include "SiteCoords.h"
-#include "sites.h"
-#include "units.h"
 
 using namespace std;
 using __gnu_cxx::hash_map;

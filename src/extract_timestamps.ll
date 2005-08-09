@@ -5,7 +5,7 @@
 #include <cstring>
 #include <iostream>
 #include <string>
-#include "units.h"
+#include "Units.h"
 
 using namespace std;
 
@@ -16,13 +16,15 @@ static FILE *ofp2 = NULL;
 
 static int get_unit_indx(char scheme_code, const string &signature);
 
-string signature;
-string scheme;
-string when;
+static Units units;
+ 
+static string signature;
+static string scheme;
+static string when;
 
-unsigned unitIndex;
-unsigned sitesActual;
-unsigned sitesExpected;
+static unsigned unitIndex;
+static unsigned sitesActual;
+static unsigned sitesExpected;
 
 #define YY_DECL int yylex(const string &infile)
  
@@ -168,7 +170,7 @@ uint 0|[1-9][0-9]*
 
 static int get_unit_indx(char scheme_code, const string &signature)
 {
-    for (unsigned i = 0; i < num_units; i++)
+    for (unsigned i = 0; i < units.size; i++)
 	if (scheme_code == units[i].scheme_code && signature == units[i].signature)
 	    return i;
 

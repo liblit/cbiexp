@@ -14,11 +14,11 @@
 #include "Score/LowerBound.h"
 #include "Score/LowerTimesFails.h"
 #include "Score/TrueInFails.h"
+#include "Sites.h"
 #include "Stylesheet.h"
 #include "ViewPrinter.h"
 #include "classify_runs.h"
 #include "fopen.h"
-#include "sites.h"
 #include "sorts.h"
 #include "utils.h"
 
@@ -129,6 +129,7 @@ main(int argc, char** argv)
     classify_runs();
 
     // load up predicates, grouped by scheme
+    Sites sites;
     FILE * const statsFile = fopenRead(PredStats::filename);
     pred_info info;
     unsigned index = 0;

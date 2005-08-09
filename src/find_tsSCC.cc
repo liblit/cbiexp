@@ -19,9 +19,9 @@
 #include "Progress/Bounded.h"
 #include "RunsDirectory.h"
 #include "SiteCoords.h"
+#include "Sites.h"
+#include "Units.h"
 #include "classify_runs.h"
-#include "sites.h"
-#include "units.h"
 
 using namespace boost;
 using namespace std;
@@ -71,11 +71,12 @@ const SiteCoords firstSite(2, 169);
 void
 build_siteIndex()
 {
+  Units units;
   unsigned s = 0;
   
   siteIndex.clear();
   SiteCoords coords;
-  for (coords.unitIndex = 0; coords.unitIndex < num_units; ++(coords.unitIndex))
+  for (coords.unitIndex = 0; coords.unitIndex < units.size; ++(coords.unitIndex))
     for (coords.siteOffset = 0; 
          coords.siteOffset < units[coords.unitIndex].num_sites; 
          ++(coords.siteOffset), ++s) {
@@ -96,6 +97,7 @@ find_siteindex(VertexD &v)
 string
 sitename_format(unsigned i)
 {
+  static Sites sites;
   ostringstream collect;
   collect << sites[i].scheme_code << '\t' << sites[i].file << '\t' 
 	  << sites[i].line << '\t' << sites[i].fun << '\t';

@@ -17,8 +17,6 @@
 #include "RunsDirectory.h"
 #include "classify_runs.h"
 #include "split_runs.h"
-#include "sites.h"
-#include "units.h"
 #include "PredCoords.h"
 #include "Nonconst_PredStats.h"
 #include "UtilLogReg.h"

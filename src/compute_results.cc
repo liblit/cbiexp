@@ -9,14 +9,17 @@
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
 #include "RunsDirectory.h"
+#include "Sites.h"
+#include "Units.h"
 #include "classify_runs.h"
 #include "fopen.h"
-#include "sites.h"
-#include "units.h"
 #include "utils.h"
 
 using namespace std;
 
+
+Units units;
+Sites sites;
 
 enum { LT, GEQ, EQ, NEQ, GT, LEQ };
 
@@ -48,7 +51,7 @@ static int num_g_preds = 0;
  * Procedures for printing retained predicates
  ***************************************************************************/
 
-inline void print_pred(FILE* fp, int u, int c, int p, int site)
+static void print_pred(FILE* fp, int u, int c, int p, int site)
 {
     int s  = site_info[u][c].S[p];
     int f  = site_info[u][c].F[p];
@@ -66,7 +69,7 @@ inline void print_pred(FILE* fp, int u, int c, int p, int site)
 	s, f, os, of);
 }
 
-void print_retained_preds()
+static void print_retained_preds()
 {
     unsigned u, c;
     int p, site = 0;
@@ -74,7 +77,7 @@ void print_retained_preds()
     FILE* fp = fopenWrite(PredStats::filename);
     assert(fp);
 
-    for (u = 0; u < num_units; u++) {
+    for (u = 0; u < units.size; u++) {
 	for (c = 0; c < units[u].num_sites; c++, site++) {
 	    switch (units[u].scheme_code) {
 	    case 'S':
@@ -219,7 +222,7 @@ void cull_preds()
     unsigned u, c;
     int p;
 
-    for (u = 0; u < num_units; u++) {
+    for (u = 0; u < units.size; u++) {
 	for (c = 0; c < units[u].num_sites; c++) {
 	    switch (units[u].scheme_code) {
 	    case 'S':
@@ -254,7 +257,7 @@ void cull_preds_aggressively1()
 {
     unsigned u, c;
 
-    for (u = 0; u < num_units; u++) {
+    for (u = 0; u < units.size; u++) {
 	for (c = 0; c < units[u].num_sites; c++) {
 	    switch (units[u].scheme_code) {
 	    case 'S':
@@ -398,7 +401,7 @@ void cull_preds_aggressively2()
 {
     unsigned u, c, s;
 
-    for (s = 0, u = 0; u < num_units; s += units[u].num_sites, u++) {
+    for (s = 0, u = 0; u < units.size; s += units[u].num_sites, u++) {
 	if (units[u].scheme_code == 'S') {
 	    for (c = 0; c < units[u].num_sites; c++) {
 		if (is_eligible(u, c, GT , s))
@@ -446,8 +449,8 @@ int main(int argc, char** argv)
 
     classify_runs();
 
-    site_info.resize(num_units);
-    for (unsigned u = 0; u < num_units; u++)
+    site_info.resize(units.size);
+    for (unsigned u = 0; u < units.size; u++)
 	site_info[u].resize(units[u].num_sites);
 
     Progress::Bounded progress("computing results", NumRuns::count());

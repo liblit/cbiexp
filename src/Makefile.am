@@ -7,28 +7,132 @@ EXTRA_DIST =					\
 	summary.dtd				\
 	summary.xsl
 
+if HAVE_GSL_CDF
+chi2test = chi2test
+endif
+
 noinst_PROGRAMS =				\
+	build_tsgraph				\
+	calc_truthprobs				\
+	$(chi2test)				\
+	collect_parmstats			\
+	compute_nonconst_preds			\
+	compute-obs-tru				\
+	compute_pred_scores			\
+	compute-results				\
+	convert-reports				\
 	decimate-sparse				\
+	est_hyperparms				\
+	extract-timestamps			\
+	find_tsSCC				\
+	gather_prior_dist			\
+	gather_prior_truths			\
+	gen-summary				\
+	gen-views				\
+	get_tp_weights				\
+	get_ts_ordering				\
+	logreg					\
 	map_sites				\
-	process_run_labels
+	max-observed				\
+	partial_order				\
+	process_run_labels			\
+	project					\
+	sanity_check				\
+	train_utillog				\
+	xmlify-results
 
 noinst_SCRIPTS =				\
 	map_sites.sed
 
-noinst_LIBRARIES = libanalyze.a liblate.a
+noinst_LIBRARIES = libanalyze.a
 
 all-local: analysis-rules.mk
 
 
-map_sites_SOURCES = map_sites.cc
-map_sites_LDADD = libanalyze.a
+build_tsgraph_SOURCES = build_tsgraph.cc
+build_tsgraph_LDADD = libanalyze.a -ldl
 
-process_run_labels_SOURCES = process_run_labels.cc
-process_run_labels_LDADD = libanalyze.a
+calc_truthprobs_SOURCES = calc_truthprobs.cc
+calc_truthprobs_LDADD = libanalyze.a -ldl
+
+chi2test_SOURCES = chi2test.cc
+chi2test_LDADD = libanalyze.a $(GSL_LIBS)
+
+collect_parmstats_SOURCES = collect_parmstats.cc
+collect_parmstats_LDADD = libanalyze.a -ldl
+
+compute_obs_tru_SOURCES = compute_obs_tru.cc
+compute_obs_tru_LDADD = libanalyze.a -ldl
+
+compute_nonconst_preds_SOURCES = compute_nonconst_preds.cc
+compute_nonconst_preds_LDADD = libanalyze.a -ldl $(GSL_LIBS)
+
+compute_pred_scores_SOURCES = compute_pred_scores.cc
+compute_pred_scores_LDADD = libanalyze.a
+
+compute_results_SOURCES = compute_results.cc
+compute_results_LDADD = libanalyze.a -ldl
+
+convert_reports_SOURCES = convert_reports.ll
+convert_reports_LDADD = libanalyze.a -ldl $(LEXLIB)
 
 decimate_sparse_SOURCES = decimate-sparse.ll
 decimate_sparse_INCLUDES = $(GSL_CFLAGS)
 decimate_sparse_LDADD = libanalyze.a $(GSL_LIBS)
+
+est_hyperparms_SOURCES = est_hyperparms.cc
+est_hyperparms_LDADD = libanalyze.a $(GSL_LIBS)
+
+extract_timestamps_SOURCES = extract_timestamps.ll
+extract_timestamps_LDADD = libanalyze.a -ldl $(LEXLIB)
+
+find_tsSCC_SOURCES = find_tsSCC.cc
+find_tsSCC_LDADD = libanalyze.a -ldl
+
+gather_prior_dist_SOURCES = gather_prior_dist.cc
+gather_prior_dist_LDADD = libanalyze.a -ldl
+
+gather_prior_truths_SOURCES = gather_prior_truths.cc
+gather_prior_truths_LDADD = libanalyze.a -ldl
+
+gen_summary_SOURCES = gen_summary.cc
+gen_summary_LDADD = libanalyze.a -ldl
+
+gen_views_SOURCES = gen_views.cc
+gen_views_LDADD = Score/libScore.a libanalyze.a -ldl
+
+get_tp_weights_SOURCES = get_tp_weights.cc
+get_tp_weights_LDADD = libanalyze.a -ldl
+
+get_ts_ordering_SOURCES = get_ts_ordering.cc
+get_ts_ordering_LDADD = libanalyze.a -ldl
+
+logreg_SOURCES = logreg.cc
+logreg_LDADD = libanalyze.a -ldl
+
+map_sites_SOURCES = map_sites.cc
+map_sites_LDADD = libanalyze.a
+
+max_observed_SOURCES = max-observed.cc
+max_observed_LDADD = libanalyze.a -ldl
+
+partial_order_SOURCES = partial_order.cc
+partial_order_LDADD = libanalyze.a -ldl
+
+process_run_labels_SOURCES = process_run_labels.cc
+process_run_labels_LDADD = libanalyze.a
+
+project_SOURCES = project.cc
+project_LDADD = Score/libScore.a libanalyze.a -ldl
+
+sanity_check_SOURCES = sanity_check.cc
+sanity_check_LDADD = libanalyze.a -ldl
+
+train_utillog_SOURCES = train_utillog.cc
+train_utillog_LDADD = libanalyze.a -ldl $(GSL_LIBS)
+
+xmlify_results_SOURCES = xmlify-results.cc
+xmlify_results_LDADD = libanalyze.a -ldl
 
 
 ########################################################################
@@ -47,6 +151,8 @@ libanalyze_a_SOURCES =				\
 	Confidence.h				\
 	Dilute.cc				\
 	Dilute.h				\
+	DynamicLibrary.cc			\
+	DynamicLibrary.h			\
 	IndexedPredInfo.cc			\
 	IndexedPredInfo.h			\
 	MapSites.cc				\
@@ -77,6 +183,8 @@ libanalyze_a_SOURCES =				\
 	RunsSplit.h				\
 	SiteCoords.cc				\
 	SiteCoords.h				\
+	Sites.cc				\
+	Sites.h					\
 	SourceDirectory.cc			\
 	SourceDirectory.h			\
 	Stylesheet.cc				\
@@ -85,73 +193,27 @@ libanalyze_a_SOURCES =				\
 	TimestampReport.h			\
 	TsReportReader.cc			\
 	TsReportReader.h			\
+	Units.cc				\
+	Units.h					\
 	UtilLogReg.cc				\
 	UtilLogReg.h				\
 	Verbose.cc				\
 	Verbose.h				\
 	ViewPrinter.cc				\
 	ViewPrinter.h				\
-	XMLTemplate.h				\
 	XMLTemplate.cc				\
+	XMLTemplate.h				\
 	classify_runs.cc			\
 	classify_runs.h				\
 	fopen.cc				\
 	fopen.h					\
+	preds.h					\
 	shell.cc				\
 	shell.h					\
+	sites.h					\
 	sorts.h					\
 	split_runs.cc				\
 	split_runs.h				\
+	units.h					\
 	utils.cc				\
 	utils.h
-
-
-########################################################################
-#
-#  special handling for "late" programs
-#
-#  Some programs depend on data extracted from a particular suite of
-#  runs.  We can compile them ahead of time, but linking is postponed.
-#  The "analysis-rules.mk" makefile fragment takes care of preparing
-#  the extra data objects and linking them with these
-#  previously-compiled objects to produce complete programs.
-#
-#  The actual library archive is not used.  This is simply a hack to
-#  trick automake into adding the appropriate build rules for the
-#  constituent object files.
-#
-
-if HAVE_GSL_CDF
-chi2test = chi2test.cc
-endif
-
-liblate_a_SOURCES =				\
-	$(chi2test)				\
-	build_tsgraph.cc			\
-	calc_truthprobs.cc			\
-	collect_parmstats.cc			\
-	compute_obs_tru.cc			\
-	compute_results.cc			\
-	compute_nonconst_preds.cc		\
-	compute_pred_scores.cc			\
-	convert_reports.ll			\
-	est_hyperparms.cc			\
-	extract_timestamps.ll			\
-	find_tsSCC.cc				\
-	gather_prior_dist.cc			\
-	gather_prior_truths.cc			\
-	gen_preds_file.cc			\
-	gen_summary.cc				\
-	gen_views.cc				\
-	get_tp_weights.cc			\
-	get_ts_ordering.cc			\
-	logreg.cc				\
-	max-observed.cc				\
-	partial_order.cc			\
-	preds.h					\
-	project.cc				\
-	sanity_check.cc				\
-	sites.h					\
-	train_utillog.cc			\
-	units.h					\
-	xmlify-results.cc

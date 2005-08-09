@@ -6,11 +6,11 @@
 #include "NumRuns.h"
 #include "PredStats.h"
 #include "RunsDirectory.h"
+#include "Sites.h"
 #include "SourceDirectory.h"
+#include "Units.h"
 #include "classify_runs.h"
 #include "fopen.h"
-#include "sites.h"
-#include "units.h"
 #include "utils.h"
 
 using namespace std;
@@ -85,10 +85,11 @@ print_summary(ostream &out, Tally &tally)
 
       << "<schemes>";
 
-  print_summary_scheme(out, "branches", NumBPreds, tally['B']);
-  print_summary_scheme(out, "returns", NumRPreds, tally['R']);
-  print_summary_scheme(out, "scalar-pairs", NumSPreds, tally['S']);
-  print_summary_scheme(out, "g-object-unref", NumGPreds, tally['G']);
+  Units units;
+  print_summary_scheme(out, "branches", units.numBPreds, tally['B']);
+  print_summary_scheme(out, "returns", units.numRPreds, tally['R']);
+  print_summary_scheme(out, "scalar-pairs", units.numSPreds, tally['S']);
+  print_summary_scheme(out, "g-object-unref", units.numGPreds, tally['G']);
 
   out << "</schemes></experiment>\n";
 }
@@ -109,6 +110,7 @@ main(int argc, char** argv)
 
   Tally tally;
   {
+    Sites sites;
     FILE *predStats = fopenRead(PredStats::filename);
 
     pred_info info;
