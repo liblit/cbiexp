@@ -125,6 +125,7 @@ predictor-info.xml: $(tooldir)/xmlify-results preds.txt sites.so units.so
 	xmllint --valid --noout $@
 clean:: ; rm -f predictor-info.xml
 
+ifdef HAVE_MEX
 $(filter-out %_none.xml, $(views)): $(tooldir)/project preds.txt rho.bin sites.so
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) $(projected_view_flags)
 	$(build) projected-view.dtd view.dtd
@@ -153,6 +154,7 @@ $(sparse): $(corrdir)/mhn2sparsemat.pl f.runs s.runs obs.txt tru.txt
 	$(time) $< . .
 	for goal in $(sparse); do test -r $$goal; done
 clean:: ; rm -f $(sparse)
+endif
 
 $(corrected): all_hl_corrected-%.xml: $(tooldir)/corrective-ranking/% f.runs obs.txt tru.txt
 	$(time) $< --zoom --begin-runs=$(training-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
