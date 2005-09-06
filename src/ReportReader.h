@@ -7,6 +7,7 @@ class SiteCoords;
 class ReportReader
 {
 public:
+  virtual ~ReportReader() { }
   void read(unsigned runId);
 
   virtual void branchesSite(    const SiteCoords &, unsigned, unsigned) = 0;

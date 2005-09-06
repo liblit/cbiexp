@@ -9,6 +9,7 @@ class SiteCoords;
 class TsReportReader
 {
 public:
+  virtual ~TsReportReader() { }
   void read (unsigned runId, const char *when = TimestampReport::when.c_str());
 
   virtual void siteTs(const SiteCoords &, timestamp) = 0;
