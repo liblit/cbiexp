@@ -6,4 +6,5 @@ config.site
 data
 image-list
 install
+share
 thumbnail-list
