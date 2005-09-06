@@ -21,6 +21,7 @@ symmetric_SOURCES =				\
 	SuccessReader.cc			\
 	SuccessReader.h				\
 	allFailures.cc				\
+	allFailures.h				\
 	main.cc
 
 symmetric_LDADD = ../libanalyze.a -ldl
