@@ -230,6 +230,7 @@ EXTRA_DIST =					\
 	$(noinst_SCRIPTS)			\
 	bug-o-meter.css				\
 	bug-o-meter.dtd				\
+	bug-o-meter.js				\
 	bug-o-meter.xsl				\
 	corrected-view.dtd			\
 	corrected-view.xsl			\
