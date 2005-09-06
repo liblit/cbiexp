@@ -1,6 +1,6 @@
 package MakeRuns;
 
-use Cwd;
+use Cwd 'abs_path';
 use File::Path;
 use FileHandle;
 use RunsRunner;
@@ -16,9 +16,9 @@ sub new ($@) {
     my $class = ref($proto) || $proto;
     my $self = bless $proto->SUPER::new(@_, description => 'making runs'), $class;
 
-    my $cwd = getcwd;
-    $self->{run_once} = "$cwd/bin/run-once";
-    $self->{label_once} = "$cwd/bin/label-once";
+    my $bindir = abs_path $self->{bindir};
+    $self->{run_once} = "$bindir/run-once";
+    $self->{label_once} = "$bindir/label-once";
     $self->check_script($self->{run_once});
     $self->check_script($self->{label_once});
 

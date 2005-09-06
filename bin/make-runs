@@ -16,12 +16,14 @@ use MakeRuns;
 #
 
 my $jobs;
+my $bindir = 'bin';
 my $datadir = 'data';
 my $start = 0;
 
 my $usage = <<EOT;
 Usage: $0 [OPTION...] <num-runs>
 
+  --bindir=DIR   look in DIR for helper scripts (default "bin")
   --datadir=DIR  store run suite in DIR (default "data")
   --jobs=COUNT   use COUNT simultaneous jobs (default is CPU count - 1)
   --start=NUM    assume that runs 0 through NUM - 1 have already been done
@@ -32,8 +34,9 @@ sub help () {
   exit 0;
 }
 
-my $understood = GetOptions('jobs=i' => \$jobs,
+my $understood = GetOptions('bindir=s' => \$bindir,
 			    'datadir=s' => \$datadir,
+			    'jobs=i' => \$jobs,
 			    'start=i' => \$start,
 			    'help|?' => \&help);
 
@@ -64,7 +67,7 @@ if (-x $prep) {
 #  perform all runs
 #
 
-my $runner = new MakeRuns(jobs => $jobs, datadir => $datadir);
+my $runner = new MakeRuns(jobs => $jobs, bindir => $bindir, datadir => $datadir);
 $runner->run_tasks($start .. $num_runs - 1);
 
 exit 1 if $runner->{error};
