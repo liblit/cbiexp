@@ -37,7 +37,11 @@ noinst_PROGRAMS =				\
 	xmlify-results
 
 noinst_SCRIPTS =				\
-	map_sites.sed
+	decimate-all				\
+	htmlify-sources				\
+	map_sites.sed				\
+	static-site-info			\
+	top-rho
 
 noinst_LIBRARIES = libanalyze.a
 
