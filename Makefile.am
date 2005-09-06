@@ -1,10 +1,14 @@
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I /usr/share/aclocal
 
-SUBDIRS =					\
-	correlations				\
-	src
+SUBDIRS = src
 
-DIST_SUBDIRS =					\
-	$(SUBDIRS)				\
-	bc
+if HAVE_MEX
+SUBDIRS += correlations
+endif
+
+DIST_SUBDIRS = correlations sanity src
+EXTRA_DIST = bin
+
+check-local:
+	$(MAKE) -C sanity check
