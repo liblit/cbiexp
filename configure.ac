@@ -3,7 +3,7 @@
 #  basic project setup
 #
 
-AC_INIT(cbiexp, 0.0)
+AC_INIT(cbiexp, 0.1)
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
@@ -70,6 +70,10 @@ CPPFLAGS="$old_CPPFLAGS"
 AC_SUBST(BOOST_CPPFLAGS)
 
 
+AC_CHECK_PROGS(HAVE_MEX, mex, [])
+AM_CONDITIONAL(HAVE_MEX, test -n "$HAVE_MEX")
+
+
 ########################################################################
 #
 #  instrumenting compiler
@@ -116,15 +120,7 @@ AM_CONFIG_HEADER(config.h)
 
 AC_CONFIG_FILES([
 Makefile
-bc/Makefile
-bc/config.site
-ccrypt/Makefile
-ccrypt/config.site
 correlations/Makefile
-exif/Makefile
-exif/config.site
-rhythmbox/Makefile
-rhythmbox/config.site
 sanity/Makefile
 src/Makefile
 src/corrective-ranking/Makefile
@@ -133,6 +129,10 @@ src/Score/Makefile
 src/analysis-rules.mk
 ])
 
-dnl test -d mossexp && AC_CONFIG_FILES([mossexp/Makefile])
+CBI_CONFIG_APP(bc)
+CBI_CONFIG_APP(ccrypt)
+CBI_CONFIG_APP(exif)
+CBI_CONFIG_APP(mossexp, mossexp/Makefile)
+CBI_CONFIG_APP(rhythmbox)
 
 AC_OUTPUT
