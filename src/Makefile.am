@@ -2,11 +2,6 @@ SUBDIRS = corrective-ranking Score symmetric
 
 AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 $(BOOST_CPPFLAGS)
 
-EXTRA_DIST =					\
-	summary.css				\
-	summary.dtd				\
-	summary.xsl
-
 if HAVE_GSL_CDF
 chi2test = chi2test
 endif
@@ -51,6 +46,7 @@ all-local: analysis-rules.mk
 
 build_tsgraph_SOURCES = build_tsgraph.cc
 build_tsgraph_LDADD = libanalyze.a -ldl
+build_tsgraph_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
 
 calc_truthprobs_SOURCES = calc_truthprobs.cc
 calc_truthprobs_LDADD = libanalyze.a -ldl
@@ -88,6 +84,7 @@ extract_timestamps_LDADD = libanalyze.a -ldl $(LEXLIB)
 
 find_tsSCC_SOURCES = find_tsSCC.cc
 find_tsSCC_LDADD = libanalyze.a -ldl
+find_tsSCC_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
 
 gather_prior_dist_SOURCES = gather_prior_dist.cc
 gather_prior_dist_LDADD = libanalyze.a -ldl
@@ -118,6 +115,7 @@ max_observed_LDADD = libanalyze.a -ldl
 
 partial_order_SOURCES = partial_order.cc
 partial_order_LDADD = libanalyze.a -ldl
+partial_order_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
 
 process_run_labels_SOURCES = process_run_labels.cc
 process_run_labels_LDADD = libanalyze.a
@@ -127,6 +125,7 @@ project_LDADD = Score/libScore.a libanalyze.a -ldl
 
 sanity_check_SOURCES = sanity_check.cc
 sanity_check_LDADD = libanalyze.a -ldl
+sanity_check_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
 
 train_utillog_SOURCES = train_utillog.cc
 train_utillog_LDADD = libanalyze.a -ldl $(GSL_LIBS)
@@ -157,6 +156,8 @@ libanalyze_a_SOURCES =				\
 	IndexedPredInfo.h			\
 	MapSites.cc				\
 	MapSites.h				\
+	MappedArray.h				\
+	Matrix.h				\
 	Nonconst_PredStats.cc			\
 	Nonconst_PredStats.h			\
 	NumRuns.cc				\
@@ -210,10 +211,59 @@ libanalyze_a_SOURCES =				\
 	preds.h					\
 	shell.cc				\
 	shell.h					\
+	site_t.h				\
 	sites.h					\
 	sorts.h					\
 	split_runs.cc				\
 	split_runs.h				\
+	timestamp.h				\
+	unit_t.h				\
 	units.h					\
 	utils.cc				\
 	utils.h
+
+
+########################################################################
+
+
+EXTRA_DIST =					\
+	$(noinst_SCRIPTS)			\
+	bug-o-meter.css				\
+	bug-o-meter.dtd				\
+	bug-o-meter.xsl				\
+	corrected-view.dtd			\
+	corrected-view.xsl			\
+	link-cell.css				\
+	logo.css				\
+	logo.xsl				\
+	logreg.dtd				\
+	logreg.xsl				\
+	operand.dtd				\
+	operands.xsl				\
+	predictor-info.dtd			\
+	pred-scores.css				\
+	pred-scores.dtd				\
+	pred-scores.xsl				\
+	projected-view.dtd			\
+	projected-view.xsl			\
+	projections.dtd				\
+	projections.xml				\
+	rho.dtd					\
+	rho.xsl					\
+	schemes.dtd				\
+	schemes.xml				\
+	scores.css				\
+	scores.dtd				\
+	scores.xsl				\
+	sorts.dtd				\
+	sorts.xml				\
+	static-site-info.dtd			\
+	summary.css				\
+	summary.dtd				\
+	summary.xsl				\
+	symmetric.css				\
+	symmetric.dtd				\
+	symmetric.xsl				\
+	view.css				\
+	view.dtd				\
+	view.xsl
