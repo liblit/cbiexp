@@ -13,11 +13,6 @@ AM_INIT_AUTOMAKE
 #  compilation basics
 #
 
-new_cxx=/moa/sc2/gcc-3.3.3/bin/c++
-if test -x "$new_cxx"; then
-  : ${CXX:=$new_cxx}
-fi
-
 AC_PROG_CXX
 AC_PROG_RANLIB
 AM_PROG_LEX
