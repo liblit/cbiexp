@@ -102,7 +102,7 @@ publish: $(web:%=$(publish)/%)
 
 $(publish)/stamp-src: stamp-src
 	rm -rf $(publish)/src
-	cp -a src $< $(publish)
+	cp -r src $< $(publish)
 
 $(publish)/%: %
 	[ -d $(@D) ] || mkdir $(@D)
