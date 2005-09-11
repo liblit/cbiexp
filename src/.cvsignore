@@ -18,6 +18,7 @@ decimate-sparse
 decimate-sparse.cc
 est_hyperparms
 extract-timestamps
+extract_timestamps.cc
 find_tsSCC
 format
 gather_prior_dist
