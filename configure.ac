@@ -133,10 +133,10 @@ src/Score/Makefile
 src/analysis-rules.mk
 ])
 
-CBI_CONFIG_APP(bc)
-CBI_CONFIG_APP(ccrypt, ccrypt/Makefile ccrypt/config.site ccrypt/bin/run-once, chmod +x ccrypt/bin/run-once)
-CBI_CONFIG_APP(exif)
-CBI_CONFIG_APP(mossexp, mossexp/Makefile)
-CBI_CONFIG_APP(rhythmbox)
+CBI_CONFIG_APP(bc, run-once)
+CBI_CONFIG_APP(ccrypt, run-once)
+CBI_CONFIG_APP(exif, run-once)
+CBI_CONFIG_APP(mossexp, run-once)
+CBI_CONFIG_APP(rhythmbox, run-client)
 
 AC_OUTPUT
