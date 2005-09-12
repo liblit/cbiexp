@@ -69,6 +69,9 @@ AC_CHECK_PROGS(HAVE_MEX, mex, [])
 AM_CONDITIONAL(HAVE_MEX, test -n "$HAVE_MEX")
 
 
+AC_PATH_PROG(PERL, perl)
+
+
 ########################################################################
 #
 #  instrumenting compiler
@@ -125,7 +128,7 @@ src/analysis-rules.mk
 ])
 
 CBI_CONFIG_APP(bc)
-CBI_CONFIG_APP(ccrypt)
+CBI_CONFIG_APP(ccrypt, ccrypt/Makefile ccrypt/config.site ccrypt/bin/run-once)
 CBI_CONFIG_APP(exif)
 CBI_CONFIG_APP(mossexp, mossexp/Makefile)
 CBI_CONFIG_APP(rhythmbox)
