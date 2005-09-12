@@ -329,7 +329,7 @@ results: $(tooldir)/symmetric static-site-info.xml
 ########################################################################
 
 
-update-tools := update-tools
+update-tools ?= update-tools
 
 $(tooldir)/analysis-rules.mk: $(update-tools)
 	$(MAKE) -C $(@D)
