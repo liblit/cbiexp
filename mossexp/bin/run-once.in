@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!@PERL@ -w
 
 use FileHandle;
 use FindBin;
@@ -9,7 +9,7 @@ umask 002;
 $DPATH = "/moa/sc1/cbi/sources";           # source code data is here
 $MPATH = "$FindBin::Bin/../src";           # moss binaries are here
 $watchdog = "$FindBin::Bin/watchdog.pl";
-$ENV{'SAMPLER_DEBUGGER'} = "/usr/share/sampler/print-debug-info";  # collect stack traces
+$ENV{'SAMPLER_DEBUGGER'} = '@sampler_debug@';  # collect stack traces
 #
 # This array contains a parameterized list of options.  Each option is
 # a pair: a number and the option.  As perl does not support nested arrays

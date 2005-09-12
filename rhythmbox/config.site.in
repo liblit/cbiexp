@@ -7,6 +7,7 @@ localstatedir=/var
 GST_INSPECT=gst-inspect-0.6
 
 CC="@sampler_cc@"
+CC="$CC --relative-paths"
 CC="$CC --no-sample"
 CC="$CC --sampler-scheme=branches"
 CC="$CC --sampler-scheme=returns"

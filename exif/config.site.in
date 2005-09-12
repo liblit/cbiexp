@@ -1,6 +1,7 @@
 #-*- sh -*-
 
 CC="@sampler_cc@"
+CC="$CC --relative-paths"
 CC="$CC --no-sample"
 CC="$CC --sampler-scheme=branches"
 CC="$CC --sampler-scheme=scalar-pairs"
