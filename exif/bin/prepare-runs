@@ -2,7 +2,7 @@
 
 top=`cd \`dirname $0\`/.. && pwd;`
 
-find /moa/sc5/cbi/mhn/www-db.stanford.edu/mor/gpsphotos/ -name "*.jpg" >$top/image-list
+find $top/images -follow -name '*.jpg' >$top/image-list
 test -s $top/image-list
 
 find $top/thumbnails/* >$top/thumbnail-list
