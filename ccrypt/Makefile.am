@@ -11,7 +11,7 @@ share/ccrypt.sites: $(ccrypt)
 	mv $@. $@
 
 $(ccrypt): build/Makefile force
-	$(MAKE) -C $(<D)
+	$(MAKE) -C $(<D) CFLAGS='-g -O3'
 
 $(cyphertext): %.cpt: % $(ccrypt)
 	build/src/ccrypt -e -K good <$< >$@.
