@@ -8,6 +8,7 @@ SUBDIRS += correlations
 endif
 
 DIST_SUBDIRS = correlations sanity src
+
 EXTRA_DIST =					\
 	bin/Check.pm				\
 	bin/make-runs				\
@@ -19,4 +20,4 @@ check-local:
 	$(MAKE) -C sanity check
 
 dist-hook:
-	rmdir $(distdir)/bc $(distdir)/ccrypt $(distdir)/exif $(distdir)/rhythmbox
+	rm -rf $(distdir)/bc $(distdir)/ccrypt $(distdir)/exif $(distdir)/mossexp $(distdir)/rhythmbox

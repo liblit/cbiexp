@@ -3,7 +3,7 @@
 #  basic project setup
 #
 
-AC_INIT(cbiexp, 0.1)
+AC_INIT(cbiexp, 0.2)
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
@@ -137,11 +137,11 @@ src/Score/Makefile
 src/analysis-rules.mk
 ])
 
-CBI_CONFIG_APP(bc, run-once)
-CBI_CONFIG_APP(ccrypt, run-once)
-CBI_CONFIG_APP(exif, run-once)
-CBI_CONFIG_APP(mossexp, run-once)
-CBI_CONFIG_APP(rhythmbox, run-client)
-CBI_CONFIG_APP(sanity, run-once)
+CBI_CONFIG_APP(bc, [bc/bin/run-once bc/Makefile bc/config.site], [chmod +x bc/bin/run-once])
+CBI_CONFIG_APP(ccrypt, [ccrypt/bin/run-once ccrypt/Makefile ccrypt/config.site], [chmod +x ccrypt/bin/run-once])
+CBI_CONFIG_APP(exif, [exif/bin/run-once exif/Makefile exif/config.site], [chmod +x exif/bin/run-once])
+CBI_CONFIG_APP(mossexp, [mossexp/bin/run-once mossexp/Makefile], [chmod +x mossexp/bin/run-once])
+CBI_CONFIG_APP(rhythmbox, [rhythmbox/bin/run-client rhythmbox/Makefile rhythmbox/config.site], [chmod +x rhythmbox/bin/run-client])
+CBI_CONFIG_APP(sanity, [sanity/bin/run-once sanity/Makefile], [chmod +x sanity/bin/run-once])
 
 AC_OUTPUT
