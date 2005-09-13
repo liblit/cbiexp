@@ -52,7 +52,7 @@ AC_SUBST(HAVE_GSL_CDF)
 
 AC_ARG_WITH(boost,
   AC_HELP_STRING([--with-boost=PREFIX],
-                 [look for Boost in PREFIX (optional)]),
+                 [look for Boost in PREFIX]),
   BOOST_CPPFLAGS="-I$withval/include",
   BOOST_CPPFLAGS='')
 
@@ -77,6 +77,8 @@ AC_PATH_PROG(PERL, perl)
 #  instrumenting compiler
 #
 
+
+
 AC_ARG_WITH(sampler-build,
   AC_HELP_STRING([--with-sampler-build=DIR],
                  [use sampler tools from build tree DIR]))
@@ -95,21 +97,24 @@ elif test -n "$with_sampler_prefix"; then
   sampler_debug="$with_sampler_prefix/share/sampler"
 else
   AC_PATH_PROG(sampler_cc, sampler-cc)
-  sampler_tooldir="`cd \`dirname \"$sampler_cc\"\`/../lib/sampler/tools; pwd`"
-  sampler_debug="`cd \`dirname \"$sampler_cc\"\`/../share/sampler; pwd`"
+  if test -n "$sampler_cc"; then
+    sampler_tooldir="`cd \`dirname \"$sampler_cc\"\`/../lib/sampler/tools; pwd`"
+    sampler_debug="`cd \`dirname \"$sampler_cc\"\`/../share/sampler; pwd`"
+  fi
 fi
 
 if ! test -x "$sampler_cc"; then
-  AC_MSG_ERROR(cannot find sampler-cc; please use "--with-sampler-build=DIR")
+  with_experiments=no
 fi
 
 AC_MSG_CHECKING(sampler tools)
 if test -x "$sampler_tooldir/extract-section"; then
   AC_MSG_RESULT($sampler_tooldir)
-  AC_SUBST(sampler_tooldir)
 else
-  AC_MSG_ERROR(cannot find sampler tools in $sampler_tooldir; please use "--with-sampler-build=DIR")
+  AC_MSG_RESULT(no)
+  with_experiments=no
 fi
+AC_SUBST(sampler_tooldir)
 
 sampler_debug="$sampler_debug/print-debug-info"
 AC_SUBST(sampler_debug)
@@ -125,7 +130,6 @@ AM_CONFIG_HEADER(config.h)
 AC_CONFIG_FILES([
 Makefile
 correlations/Makefile
-sanity/Makefile
 src/Makefile
 src/corrective-ranking/Makefile
 src/symmetric/Makefile
@@ -138,5 +142,6 @@ CBI_CONFIG_APP(ccrypt, run-once)
 CBI_CONFIG_APP(exif, run-once)
 CBI_CONFIG_APP(mossexp, run-once)
 CBI_CONFIG_APP(rhythmbox, run-client)
+CBI_CONFIG_APP(sanity, run-once)
 
 AC_OUTPUT
