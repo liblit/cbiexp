@@ -213,8 +213,6 @@ libanalyze_a_SOURCES =				\
 	fopen.cc				\
 	fopen.h					\
 	preds.h					\
-	shell.cc				\
-	shell.h					\
 	site_t.h				\
 	sites.h					\
 	sorts.h					\
