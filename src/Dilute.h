@@ -33,7 +33,13 @@ namespace Dilute
 inline double
 Dilute::Circular::operator () (double correlation) const
 {
-  return std::abs(std::cos(M_PIl / 2 * correlation));
+#ifdef M_PIl
+# define DILUTE_PI M_PIl
+#else
+# define DILUTE_PI M_PI
+#endif
+
+  return std::abs(std::cos(DILUTE_PI / 2 * correlation));
 }
 
 
