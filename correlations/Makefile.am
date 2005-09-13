@@ -6,3 +6,8 @@ all-local: $(mexglx)
 	mex $<
 
 CLEANFILES = $(mexglx)
+
+EXTRA_DIST =					\
+	genMscript.pl				\
+	mhn2sparsemat.pl			\
+	readsp.c
