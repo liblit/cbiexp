@@ -214,13 +214,11 @@ libanalyze_a_SOURCES =				\
 	fopen.h					\
 	preds.h					\
 	site_t.h				\
-	sites.h					\
 	sorts.h					\
 	split_runs.cc				\
 	split_runs.h				\
 	timestamp.h				\
 	unit_t.h				\
-	units.h					\
 	utils.cc				\
 	utils.h
 
