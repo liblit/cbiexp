@@ -50,12 +50,17 @@ Predicate::recall() const
   assert(trueFailuresCount > 0);
   assert(allFailuresCount > 0);
 
-  const double result = log(trueFailuresCount) / log(allFailuresCount);
-  return (result < 0
-	  ? 0
-	  : (result > 1
-	     ? 1
-	     : result));
+  if (trueFailuresCount == 1 && allFailuresCount == 1)
+    return 1;
+  else
+    {
+      const double result = log(trueFailuresCount) / log(allFailuresCount);
+      return (result < 0
+	      ? 0
+	      : (result > 1
+		 ? 1
+		 : result));
+    }
 }
 
 
