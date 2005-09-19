@@ -10,7 +10,7 @@ srcdir ?= $(experiment)/src
 training-runs ?= 0
 
 sitesdir ?= $(experiment)/share
-sitesglob := $(experiment)/share/*.sites
+sitesglob := $(sitesdir)/*.sites
 sites ?= $(wildcard $(sitesglob))
 sites := $(if $(sites), $(sites), $(error no sites files in $(sitesglob)))
 xmlify-add-suffix := .html
