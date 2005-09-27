@@ -176,10 +176,12 @@ int main(int argc, char** argv)
 	ufp = fopenWrite(filename);
     }
 
-    fputs("const struct site_t sites[] = {\n",
+    fputs("#include <site_t.h>\n"
+	  "const struct site_t sites[] = {\n",
           sfp);
 
-    fputs("const struct unit_t units[] = {\n",
+    fputs("#include <unit_t.h>\n"
+	  "const struct unit_t units[] = {\n",
           ufp);
 
     while (1) {
