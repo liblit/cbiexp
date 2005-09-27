@@ -118,23 +118,24 @@ $(links): %: $(tooldir)/%
 	if [ -L $@ ]; then rm -f $@; fi
 	cp $< $@
 clean:: ; rm -f $(links)
+.PHONY: links
 
 predictor-info.xml: $(tooldir)/xmlify-results preds.txt sites.so units.so
 	$< $(source-strip-prefixes:%=--strip-prefix=%) $(xmlify_results_flags)
-	$(build) $(@:.xml=.dtd) bug-o-meter.dtd operand.dtd predictor-info.dtd
+	$(build) links
 	xmllint --valid --noout $@
 clean:: ; rm -f predictor-info.xml
 
 ifdef HAVE_MEX
 $(filter-out %_none.xml, $(views)): $(tooldir)/project preds.txt rho.bin sites.so
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) $(projected_view_flags)
-	$(build) projected-view.dtd view.dtd
+	$(build) links
 	xmllint --valid --noout $(filter-out %_none.xml, $(views))
 clean:: ; rm -f $(filter-out %_none.xml, $(views))
 
 $(topRho): top-rho_%: $(tooldir)/top-rho all_% rho.bin
 	$<
-	$(build) rho.dtd
+	$(build) links
 	xmllint --valid --noout $(topRho)
 clean:: ; rm -f $(topRho)
 
@@ -180,14 +181,14 @@ obs.txt tru.txt: $(tooldir)/compute-obs-tru $(stamp-decimate) preds.txt s.runs f
 clean:: ; rm -f obs.txt tru.txt
 
 $(filter %_none.xml, $(views)): $(tooldir)/gen-views preds.txt sites.so
-	$(build) operands.xsl view.css view.dtd view.xsl scores.css scores.dtd scores.xsl
+	$(build) links
 	$< --begin-runs=$(training-runs) --runs-directory=$(datadir) $(schemes:%=--force-scheme=%) $(view_flags)
 	xmllint --valid --noout $(filter %_none.xml, $(views))
 clean:: ; rm -f $(filter %_none.xml, $(views))
 
 summary.xml: $(tooldir)/gen-summary preds.txt s.runs f.runs sites.so units.so
 	$(time) $< --begin-runs=$(training-runs) --runs-directory=$(datadir) --source-directory=src $(confidence:%=--confidence=%) >$@
-	$(build) link-cell.css logo.css summary.css summary.dtd summary.xsl
+	$(build) links
 	xmllint --valid --noout $@
 clean:: ; rm -f summary.xml
 
@@ -210,7 +211,7 @@ clean:: ; rm -f s.runs f.runs
 
 logreg.xml: %.xml: $(tooldir)/% %.txt sites.so units.so
 	$< $*.txt >$@
-	$(build) logreg.dtd logreg.xsl operand.dtd operands.xsl view.css
+	$(build) links
 	xmllint --valid --noout $@
 clean:: ; rm -f logreg.xml
 
@@ -302,19 +303,20 @@ pred_scores.xml: $(tooldir)/compute_pred_scores
 	xmllint --valid --noout pred_scores.xml
 clean:: ; rm -f pred_scores.xml
 
-symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml links
+symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml
+	$(build) links
 	xsltproc --output $@ $<
 	xmllint --valid --noout --catalogs $@
 clean:: ; rm -f symmetric.html
 
 symmetric.xml: %.xml: $(tooldir)/%/% $(stamp-decimate) s.runs f.runs
-	$(build) $*.dtd scores.dtd bug-o-meter.dtd
+	$(build) links
 	$(time) $< --runs-directory=$(datadir) --begin-runs=$(training-runs) --report-suffix=$(report-series) $(confidence:%=--confidence=%)
 	xmllint --valid --noout $@
 clean:: ; rm -f symmetric.xml debug.xml
 
 static-site-info.xml: %.xml: $(tooldir)/% $(sites)
-	$(build) $*.dtd
+	$(build) links
 	$^ $(source-strip-prefixes:%=--strip-prefix=%) >$@
 	xmllint --valid --noout $@
 clean:: ; rm -f static-site-info.xml
