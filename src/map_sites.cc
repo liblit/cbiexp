@@ -177,11 +177,11 @@ int main(int argc, char** argv)
     }
 
     fputs("#include <site_t.h>\n"
-	  "const struct site_t sites[] = {\n",
+	  "extern const struct site_t sites[] = {\n",
           sfp);
 
     fputs("#include <unit_t.h>\n"
-	  "const struct unit_t units[] = {\n",
+	  "extern const struct unit_t units[] = {\n",
           ufp);
 
     while (1) {
@@ -214,14 +214,14 @@ int main(int argc, char** argv)
     }
 
     fputs("};\n\n", sfp);
-    fprintf(sfp, "const unsigned num_sites = %d;\n", num_sites);
+    fprintf(sfp, "extern const unsigned num_sites = %d;\n", num_sites);
 
     fputs("};\n\n", ufp);
-    fprintf(ufp, "const unsigned num_units = %d;\n", num_units);
-    fprintf(ufp, "const int NumBPreds = %d;\n", num_b_preds);
-    fprintf(ufp, "const int NumRPreds = %d;\n", num_r_preds);
-    fprintf(ufp, "const int NumSPreds = %d;\n", num_s_preds);
-    fprintf(ufp, "const int NumGPreds = %d;\n", num_g_preds);
+    fprintf(ufp, "extern const unsigned num_units = %d;\n", num_units);
+    fprintf(ufp, "extern const int NumBPreds = %d;\n", num_b_preds);
+    fprintf(ufp, "extern const int NumRPreds = %d;\n", num_r_preds);
+    fprintf(ufp, "extern const int NumSPreds = %d;\n", num_s_preds);
+    fprintf(ufp, "extern const int NumGPreds = %d;\n", num_g_preds);
 
     fclose(sfp);
     fclose(ufp);
