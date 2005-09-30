@@ -327,6 +327,10 @@ results: $(tooldir)/symmetric static-site-info.xml
 	$(build) links
 	xsltproc $<.xml | xmllint --valid --catalogs --format >| $<.html
 
+failure-points: %: $(tooldir)/find-% f.runs
+	$< $(datadir)
+clean:: ; rm -f failure-points
+
 
 ########################################################################
 
