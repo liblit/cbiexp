@@ -10,18 +10,49 @@ unsigned Confidence::level = 95;
 double
 Confidence::critical(unsigned level)
 {
+  // calculated using <http://davidmlane.com/hyperstat/z_table.html>
   switch (level)
     {
+    case 80:
+      return 1.2816;
+    case 81:
+      return 1.3106;
+    case 82:
+      return 1.3408;
+    case 83:
+      return 1.3722;
+    case 84:
+      return 1.4051;
+    case 85:
+      return 1.4395;
+    case 86:
+      return 1.4758;
+    case 87:
+      return 1.5141;
+    case 88:
+      return 1.5548;
+    case 89:
+      return 1.5982;
     case 90:
-      return 1.645;
+      return 1.6449;
+    case 91:
+      return 1.6954;
+    case 92:
+      return 1.7507;
+    case 93:
+      return 1.8119;
+    case 94:
+      return 1.8808;
     case 95:
-      return 1.96;
+      return 1.9600;
     case 96:
-      return 2.05;
+      return 2.0537;
+    case 97:
+      return 2.1701;
     case 98:
-      return 2.33;
+      return 2.3263;
     case 99:
-      return 2.58;
+      return 2.5758;
     default:
       std::cerr << "confidence table is incomplete for level " << level << "%\n";
       exit(1);
