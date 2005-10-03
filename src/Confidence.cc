@@ -13,6 +13,8 @@ Confidence::critical(unsigned level)
   // calculated using <http://davidmlane.com/hyperstat/z_table.html>
   switch (level)
     {
+    case 0:
+      return 0;
     case 80:
       return 1.2816;
     case 81:
@@ -83,7 +85,7 @@ parseFlag(int key, char *arg, argp_state *state)
     char *tail;
     errno = 0;
     level = strtol(arg, &tail, 0);
-    if (errno || *tail || level <= 0 || level > 100)
+    if (errno || *tail || level > 100)
       argp_error(state, "invalid confidence level \"%s\"", arg);
     return 0;
   default:
