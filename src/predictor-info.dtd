@@ -12,7 +12,7 @@
 <!ATTLIST info unit NMTOKEN #REQUIRED>
 
 <!-- name of instrumentation scheme -->
-<!ATTLIST info scheme (branches|g-object-unref|returns|scalar-pairs) #REQUIRED>
+<!ATTLIST info scheme (branches|float-kinds|g-object-unref|returns|scalar-pairs) #REQUIRED>
 
 <!-- integer site offset within (unit, scheme) -->
 <!-- Sites are numbered from 1, not from 0. -->

@@ -8,18 +8,12 @@ class PredCoords;
 
 class Reader : public ReportReader
 {
-public:
-  void branchesSite(    const SiteCoords &, unsigned, unsigned);
-  void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned);
-  void returnsSite(     const SiteCoords &, unsigned, unsigned, unsigned);
-  void scalarPairsSite( const SiteCoords &, unsigned, unsigned, unsigned);
+protected:
+  void handleSite(const SiteCoords &, const std::vector<unsigned> &);
 
 private:
-  void tripleSite(const SiteCoords &, unsigned, unsigned, unsigned) const;
-  void tallyPair(const SiteCoords &, int id, unsigned, unsigned) const;
-
-  virtual void tallyPair(const PredCoords &, unsigned,
-			 const PredCoords &, unsigned) const = 0;
+  void tallyPair(const SiteCoords &, int id, bool, bool) const;
+  virtual void tallyPair(const PredCoords &, bool, const PredCoords &, bool) const = 0;
 };
 
 

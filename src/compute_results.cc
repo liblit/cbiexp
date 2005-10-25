@@ -1,6 +1,7 @@
 #include <cassert>
 #include <cmath>
 #include <ctype.h>
+#include <numeric>
 #include <vector>
 #include "CompactReport.h"
 #include "Confidence.h"
@@ -9,8 +10,7 @@
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
 #include "RunsDirectory.h"
-#include "Sites.h"
-#include "Units.h"
+#include "StaticSiteInfo.h"
 #include "classify_runs.h"
 #include "fopen.h"
 #include "utils.h"
@@ -18,20 +18,19 @@
 using namespace std;
 
 
-Units units;
-Sites sites;
+static StaticSiteInfo staticSiteInfo;
 
 enum { LT, GEQ, EQ, NEQ, GT, LEQ };
 
 struct site_info_t {
-    int S[6], F[6];
+    int S[18], F[18];
     int os, of;
-    bool retain[6];
-    int lb[6];
+    bool retain[18];
+    int lb[18];
     site_info_t()
     {
 	os = of = 0;
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 18; i++) {
 	    S[i] = 0;
 	    F[i] = 0;
 	    retain[i] = false;
@@ -45,6 +44,7 @@ static vector<vector<site_info_t> > site_info;
 static int num_s_preds = 0;
 static int num_r_preds = 0;
 static int num_b_preds = 0;
+static int num_f_preds = 0;
 static int num_g_preds = 0;
 
 /****************************************************************************
@@ -60,10 +60,8 @@ static void print_pred(FILE* fp, int u, int c, int p, int site)
 
     pred_stat ps = compute_pred_stat(s, f, os, of, Confidence::level);
 
-    assert(units[u].scheme_code == sites[site].scheme_code);
-
     fprintf(fp, "%c %d %d %d %d %g %g %g %g %d %d %d %d\n",
-	units[u].scheme_code,
+	staticSiteInfo.unit(u).scheme_code,
 	u, c, p, site,
 	ps.lb, ps.in, ps.fs, ps.co,
 	s, f, os, of);
@@ -77,9 +75,10 @@ static void print_retained_preds()
     FILE* fp = fopenWrite(PredStats::filename);
     assert(fp);
 
-    for (u = 0; u < units.size; u++) {
-	for (c = 0; c < units[u].num_sites; c++, site++) {
-	    switch (units[u].scheme_code) {
+    for (u = 0; u < staticSiteInfo.unitCount; u++) {
+	const unit_t &unit = staticSiteInfo.unit(u);
+	for (c = 0; c < unit.num_sites; c++, site++) {
+	    switch (unit.scheme_code) {
 	    case 'S':
 		for (p = 0; p < 6; p++)
 		    if (site_info[u][c].retain[p]) {
@@ -101,8 +100,15 @@ static void print_retained_preds()
 			print_pred(fp, u, c, p, site);
 		    }
 		break;
+	    case 'F':
+		for (p = 0; p < 18; p++)
+		    if (site_info[u][c].retain[p]) {
+			num_f_preds++;
+			print_pred(fp, u, c, p, site);
+		    }
+		break;
 	    case 'G':
-		for (p = 0; p < 4; p++)
+		for (p = 0; p < 8; p++)
 		    if (site_info[u][c].retain[p]) {
 			num_g_preds++;
 			print_pred(fp, u, c, p, site);
@@ -143,65 +149,30 @@ unsigned cur_run;
 
 class Reader : public ReportReader
 {
-public:
-    void branchesSite(    const SiteCoords &, unsigned, unsigned);
-    void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned);
-    void returnsSite(     const SiteCoords &, unsigned, unsigned, unsigned);
-    void scalarPairsSite( const SiteCoords &, unsigned, unsigned, unsigned);
-
-private:
-    void tripleSite(      const SiteCoords &, unsigned, unsigned, unsigned) const;
+protected:
+    void handleSite(const SiteCoords &, const vector<unsigned> &);
 };
 
 
-void Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
+void Reader::handleSite(const SiteCoords &coords, const vector<unsigned> &counts)
 {
-    assert(x || y || z);
     obs(cur_run, coords);
-    if (x)
-	inc(cur_run, coords, 0);
-    if (y || z)
-	inc(cur_run, coords, 1);
-    if (y)
-	inc(cur_run, coords, 2);
-    if (x || z)
-	inc(cur_run, coords, 3);
-    if (z)
-	inc(cur_run, coords, 4);
-    if (x || y)
-	inc(cur_run, coords, 5);
-}
 
-
-void Reader::scalarPairsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z)
-{
-    tripleSite(coords, x, y, z);
-}
-
-
-void Reader::returnsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z)
-{
-    tripleSite(coords, x, y, z);
-}
-
-
-void Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y)
-{
-    assert(x || y);
-    obs(cur_run, coords);
-    if (x) inc(cur_run, coords, 0);
-    if (y) inc(cur_run, coords, 1);
-}
-
-
-void Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z, unsigned w)
-{
-    assert(x || y || z || w);
-    obs(cur_run, coords);
-    if (x) inc(cur_run, coords, 0);
-    if (y) inc(cur_run, coords, 1);
-    if (z) inc(cur_run, coords, 2);
-    if (w) inc(cur_run, coords, 3);
+    const size_t size = counts.size();
+    if (size == 2)
+	for (unsigned predicate = 0; predicate < counts.size(); ++predicate) {
+	    if (counts[predicate])
+		inc(cur_run, coords, predicate);
+	}
+    else {
+	const unsigned sum = accumulate(counts.begin(), counts.end(), 0);
+	for (unsigned predicate = 0; predicate < counts.size(); ++predicate) {
+	    if (counts[predicate])
+		inc(cur_run, coords, 2 * predicate);
+	    if (sum - counts[predicate])
+		inc(cur_run, coords, 2 * predicate + 1);
+	}
+    }
 }
 
 
@@ -219,31 +190,29 @@ inline void cull(int u, int c, int p)
 
 void cull_preds()
 {
-    unsigned u, c;
-    int p;
-
-    for (u = 0; u < units.size; u++) {
-	for (c = 0; c < units[u].num_sites; c++) {
-	    switch (units[u].scheme_code) {
-	    case 'S':
-		for (p = 0; p < 6; p++)
-		    cull(u, c, p);
-		break;
-	    case 'R':
-		for (p = 0; p < 6; p++)
-		    cull(u, c, p);
-		break;
+    for (unsigned u = 0; u < staticSiteInfo.unitCount; u++) {
+	const unit_t &unit = staticSiteInfo.unit(u);
+	for (unsigned c = 0; c < unit.num_sites; c++) {
+	    int numPreds;
+	    switch (unit.scheme_code) {
 	    case 'B':
-		for (p = 0; p < 2; p++)
-		    cull(u, c, p);
+		numPreds = 2;
+		break;
+	    case 'F':
+		numPreds = 18;
 		break;
 	    case 'G':
-		for (p = 0; p < 4; p++)
-		    cull(u, c, p);
+		numPreds = 8;
+		break;
+	    case 'R':
+	    case 'S':
+		numPreds = 6;
 		break;
 	    default:
 		assert(0);
 	    }
+	    for (int p = 0; p < numPreds; p++)
+		cull(u, c, p);
 	}
     }
 }
@@ -257,9 +226,10 @@ void cull_preds_aggressively1()
 {
     unsigned u, c;
 
-    for (u = 0; u < units.size; u++) {
-	for (c = 0; c < units[u].num_sites; c++) {
-	    switch (units[u].scheme_code) {
+    for (u = 0; u < staticSiteInfo.unitCount; u++) {
+	const unit_t &unit = staticSiteInfo.unit(u);
+	for (c = 0; c < unit.num_sites; c++) {
+	    switch (unit.scheme_code) {
 	    case 'S':
 	    case 'R':
 	    {
@@ -352,6 +322,7 @@ void cull_preds_aggressively1()
 		break;
 	    }
 	    case 'B':
+	    case 'F':
 	    case 'G':
 		break;
 	    default:
@@ -363,17 +334,24 @@ void cull_preds_aggressively1()
 
 inline bool is_eligible(int u, int c, int p, int s)
 {
-    return site_info[u][c].retain[p] &&
-	   (isdigit(sites[s + c].args[1][0]) || sites[s + c].args[1][0] != '-');
+    if (!site_info[u][c].retain[p])
+	return false;
+
+    const site_t site = staticSiteInfo.site(s + c);
+    return isdigit(site.args[1][0]) || site.args[1][0] != '-';
 }
 
 void checkG(unsigned u, unsigned c, int p, int s)
 {
-    for (unsigned d = 0; d < units[u].num_sites; d++) {
+    const unit_t &unit = staticSiteInfo.unit(u);
+    const site_t siteC = staticSiteInfo.site(s + c);
+
+    for (unsigned d = 0; d < unit.num_sites; d++) {
+	const site_t siteD = staticSiteInfo.site(s + d);
 	if (c != d &&
-	    sites[s + c].line == sites[s + d].line &&
-	    strcmp(sites[s + c].args[0], sites[s + d].args[0]) == 0 &&
-	    atoi(sites[s + c].args[1]) < atoi(sites[s + d].args[1]) &&
+	    siteC.line == siteD.line &&
+	    strcmp(siteC.args[0], siteD.args[0]) == 0 &&
+	    atoi(siteC.args[1]) < atoi(siteD.args[1]) &&
 	    ((is_eligible(u, d, GT , s) && have_equal_increase(u, c, p, u, d, GT )) ||
 	     (is_eligible(u, d, GEQ, s) && have_equal_increase(u, c, p, u, d, GEQ)))) {
 	    site_info[u][c].retain[p] = false;
@@ -384,11 +362,15 @@ void checkG(unsigned u, unsigned c, int p, int s)
 
 void checkL(unsigned u, unsigned c, int p, int s)
 {
-    for (unsigned d = 0; d < units[u].num_sites; d++) {
+    const unit_t &unit = staticSiteInfo.unit(u);
+    const site_t siteC = staticSiteInfo.site(s + c);
+
+    for (unsigned d = 0; d < unit.num_sites; d++) {
+	const site_t siteD = staticSiteInfo.site(s + d);
 	if (c != d &&
-	    sites[s + c].line == sites[s + d].line &&
-	    strcmp(sites[s + c].args[0], sites[s + d].args[0]) == 0 &&
-	    atoi(sites[s + c].args[1]) > atoi(sites[s + d].args[1]) &&
+	    siteC.line == siteD.line &&
+	    strcmp(siteC.args[0], siteD.args[0]) == 0 &&
+	    atoi(siteC.args[1]) > atoi(siteD.args[1]) &&
 	    ((is_eligible(u, d, LT , s) && have_equal_increase(u, c, p, u, d, LT )) ||
 	     (is_eligible(u, d, LEQ, s) && have_equal_increase(u, c, p, u, d, LEQ)))) {
 	    site_info[u][c].retain[p] = false;
@@ -401,9 +383,10 @@ void cull_preds_aggressively2()
 {
     unsigned u, c, s;
 
-    for (s = 0, u = 0; u < units.size; s += units[u].num_sites, u++) {
-	if (units[u].scheme_code == 'S') {
-	    for (c = 0; c < units[u].num_sites; c++) {
+    for (s = 0, u = 0; u < staticSiteInfo.unitCount; s += staticSiteInfo.unit(u).num_sites, u++) {
+	const unit_t &unit = staticSiteInfo.unit(u);
+	if (unit.scheme_code == 'S') {
+	    for (c = 0; c < unit.num_sites; c++) {
 		if (is_eligible(u, c, GT , s))
 		    checkG(u, c, GT , s);
 		if (is_eligible(u, c, GEQ, s))
@@ -449,9 +432,9 @@ int main(int argc, char** argv)
 
     classify_runs();
 
-    site_info.resize(units.size);
-    for (unsigned u = 0; u < units.size; u++)
-	site_info[u].resize(units[u].num_sites);
+    site_info.resize(staticSiteInfo.unitCount);
+    for (unsigned u = 0; u < staticSiteInfo.unitCount; u++)
+	site_info[u].resize(staticSiteInfo.unit(u).num_sites);
 
     Progress::Bounded progress("computing results", NumRuns::count());
     for (cur_run = NumRuns::begin; cur_run < NumRuns::end; cur_run++) {

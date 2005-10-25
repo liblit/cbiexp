@@ -1,4 +1,4 @@
-SUBDIRS = corrective-ranking Score symmetric
+SUBDIRS = corrective-ranking never-reached Score symmetric
 
 AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 $(BOOST_CPPFLAGS)
 
@@ -27,7 +27,6 @@ noinst_PROGRAMS =				\
 	get_tp_weights				\
 	get_ts_ordering				\
 	logreg					\
-	map_sites				\
 	max-observed				\
 	partial_order				\
 	process_run_labels			\
@@ -39,7 +38,7 @@ noinst_PROGRAMS =				\
 noinst_SCRIPTS =				\
 	decimate-all				\
 	htmlify-sources				\
-	map_sites.sed				\
+	map-sites				\
 	static-site-info			\
 	top-rho
 
@@ -111,9 +110,6 @@ get_ts_ordering_LDADD = libanalyze.a -ldl
 logreg_SOURCES = logreg.cc
 logreg_LDADD = libanalyze.a -ldl
 
-map_sites_SOURCES = map_sites.cc
-map_sites_LDADD = libanalyze.a
-
 max_observed_SOURCES = max-observed.cc
 max_observed_LDADD = libanalyze.a -ldl
 
@@ -158,8 +154,6 @@ libanalyze_a_SOURCES =				\
 	DynamicLibrary.h			\
 	IndexedPredInfo.cc			\
 	IndexedPredInfo.h			\
-	MapSites.cc				\
-	MapSites.h				\
 	MappedArray.h				\
 	Matrix.h				\
 	Nonconst_PredStats.cc			\
@@ -188,8 +182,6 @@ libanalyze_a_SOURCES =				\
 	RunsSplit.h				\
 	SiteCoords.cc				\
 	SiteCoords.h				\
-	Sites.cc				\
-	Sites.h					\
 	SourceDirectory.cc			\
 	SourceDirectory.h			\
 	Stylesheet.cc				\
@@ -198,8 +190,8 @@ libanalyze_a_SOURCES =				\
 	TimestampReport.h			\
 	TsReportReader.cc			\
 	TsReportReader.h			\
-	Units.cc				\
-	Units.h					\
+	StaticSiteInfo.cc			\
+	StaticSiteInfo.h			\
 	UtilLogReg.cc				\
 	UtilLogReg.h				\
 	Verbose.cc				\

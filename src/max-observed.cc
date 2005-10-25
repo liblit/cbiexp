@@ -2,6 +2,7 @@
 #include <ext/hash_map>
 #include <fstream>
 #include <iostream>
+#include <numeric>
 #include "CompactReport.h"
 #include "NumRuns.h"
 #include "Progress/Bounded.h"
@@ -29,13 +30,8 @@ public:
   Reader();
   unsigned increased;
 
-  void branchesSite(    const SiteCoords &, unsigned, unsigned);
-  void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned);
-  void returnsSite(     const SiteCoords &, unsigned, unsigned, unsigned);
-  void scalarPairsSite( const SiteCoords &, unsigned, unsigned, unsigned);
-
-private:
-  void update(const SiteCoords &, unsigned);
+protected:
+  void handleSite(const SiteCoords &, const vector<unsigned> &);
 };
 
 
@@ -46,36 +42,9 @@ Reader::Reader()
 
 
 void
-Reader::branchesSite(const SiteCoords &coords, unsigned a, unsigned b)
+Reader::handleSite(const SiteCoords &coords, const vector<unsigned> &counts)
 {
-  update(coords, a + b);
-}
-
-
-void
-Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned a, unsigned b, unsigned c, unsigned d)
-{
-  update(coords, a + b + c + d);
-}
-
-
-void
-Reader::returnsSite(const SiteCoords &coords, unsigned a, unsigned b, unsigned c)
-{
-  update(coords, a + b + c);
-}
-
-
-void
-Reader::scalarPairsSite(const SiteCoords &coords, unsigned a, unsigned b, unsigned c)
-{
-  update(coords, a + b + c);
-}
-
-
-void
-Reader::update(const SiteCoords &coords, unsigned observations)
-{
+  const unsigned observations = accumulate(counts.begin(), counts.end(), 0);
   unsigned &maxObserved = sites[coords];
   if (maxObserved < observations)
     {

@@ -22,7 +22,7 @@
 #include "Score/LowerBound.h"
 #include "Score/LowerTimesFails.h"
 #include "Score/TrueInFails.h"
-#include "Sites.h"
+#include "StaticSiteInfo.h"
 #include "Stylesheet.h"
 #include "Verbose.h"
 #include "ViewPrinter.h"
@@ -169,12 +169,12 @@ main(int argc, char *argv[])
   PredInfos &all = schemes["all"];
 
   // load up predicates and note set of active schemes
-  Sites sites;
+  StaticSiteInfo staticSiteInfo;
   FILE * const statsFile = fopenRead(PredStats::filename);
   pred_info info;
   unsigned index = 0;
   while (read_pred_full(statsFile, info)) {
-    const string &scheme = scheme_name(sites[info.siteIndex].scheme_code);
+    const string &scheme = scheme_name(staticSiteInfo.site(info.siteIndex).scheme_code);
     IndexedPredInfo indexed(info, index);
     all.push_back(indexed);
     schemes[scheme].push_back(indexed);

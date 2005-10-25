@@ -4,6 +4,7 @@
 #include <ext/hash_map>
 #include <fstream>
 #include <iostream>
+#include <numeric>
 #include <queue>
 #include <vector>
 #include "CompactReport.h"
@@ -147,13 +148,10 @@ class Reader : public ReportReader
 public:
     Reader(Outcome, unsigned);
 
-    void branchesSite(    const SiteCoords &, unsigned, unsigned);
-    void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned);
-    void returnsSite(     const SiteCoords &, unsigned, unsigned, unsigned);
-    void scalarPairsSite( const SiteCoords &, unsigned, unsigned, unsigned);
+protected:
+    void handleSite(const SiteCoords &, const vector<unsigned> &);
 
 private:
-    void tripleSite(const SiteCoords &, unsigned, unsigned, unsigned) const;
     void notice(const SiteCoords &coords, unsigned, bool) const;
 
     const Outcome outcome;
@@ -184,49 +182,20 @@ Reader::notice(const SiteCoords &site, unsigned predicate, bool tru) const
 
 
 void
-Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
+Reader::handleSite(const SiteCoords &coords, const vector<unsigned> &counts)
 {
-    assert(x || y || z);
-    notice(coords, 0, x);
-    notice(coords, 1, y || z);
-    notice(coords, 2, y);
-    notice(coords, 3, x || z);
-    notice(coords, 4, z);
-    notice(coords, 5, x || y);
-}
+    const unsigned sum = accumulate(counts.begin(), counts.end(), 0);
+    assert(sum > 0);
 
-
-inline void
-Reader::scalarPairsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z)
-{
-    tripleSite(coords, x, y, z);
-}
-
-
-inline void
-Reader::returnsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z)
-{
-    tripleSite(coords, x, y, z);
-}
-
-
-void
-Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y)
-{
-    assert(x || y);
-    notice(coords, 0, x);
-    notice(coords, 1, y);
-}
-
-
-void
-Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z, unsigned w)
-{
-    assert(x || y || z || w);
-    notice(coords, 0, x);
-    notice(coords, 1, y);
-    notice(coords, 2, z);
-    notice(coords, 3, w);
+    const size_t size = counts.size();
+    if (size == 2)
+	for (unsigned predicate = 0; predicate < size; ++predicate)
+	    notice(coords, predicate, counts[predicate]);
+    else
+	for (unsigned predicate = 0; predicate < size; ++predicate) {
+	    notice(coords, 2 * predicate,           counts[predicate]);
+	    notice(coords, 2 * predicate + 1, sum - counts[predicate]);
+	}
 }
 
 

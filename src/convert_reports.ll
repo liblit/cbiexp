@@ -5,7 +5,7 @@
 #include <cstring>
 #include <iostream>
 #include <string>
-#include "Units.h"
+#include "StaticSiteInfo.h"
 
 using namespace std;
 
@@ -21,7 +21,7 @@ static unsigned unitIndex;
 static unsigned sitesActual;
 static unsigned sitesExpected;
 
-static Units units;
+static StaticSiteInfo staticSiteInfo;
 
 #define YY_DECL int yylex(const string &infile)
  
@@ -38,6 +38,7 @@ static Units units;
 %x SITES_2
 %x SITES_3
 %x SITES_4
+%x SITES_9
 
 
 uint 0|[1-9][0-9]*
@@ -78,6 +79,9 @@ uint 0|[1-9][0-9]*
     } else if (scheme == "returns") {
 	schemeCode = 'R';
 	BEGIN(SITES_3);
+    } else if (scheme == "float-kinds") {
+	schemeCode = 'F';
+	BEGIN(SITES_9);
     } else if (scheme == "g-object-unref") {
 	schemeCode = 'G';
 	BEGIN(SITES_4);
@@ -87,8 +91,9 @@ uint 0|[1-9][0-9]*
     }
 
     unitIndex = get_unit_indx(schemeCode, signature);
-    assert(units[unitIndex].scheme_code == schemeCode);
-    sitesExpected = units[unitIndex].num_sites;
+    const unit_t &unit = staticSiteInfo.unit(unitIndex);
+    assert(unit.scheme_code == schemeCode);
+    sitesExpected = unit.num_sites;
     sitesActual = 0;
 }
 
@@ -97,7 +102,7 @@ uint 0|[1-9][0-9]*
 }
 
 
-<SITES_2,SITES_3,SITES_4><\/samples>\n {
+<SITES_2,SITES_3,SITES_4,SITES_9><\/samples>\n {
     /* Counts end at the closing </samples> tag. */
     /* Sanity check that we got as many sites as we expected. */
     if (sitesActual != sitesExpected) {
@@ -136,8 +141,17 @@ uint 0|[1-9][0-9]*
     ++sitesActual;
 }
 
+<SITES_9>(0\t){8}0\n {
+    ++sitesActual;
+}
 
-<SITES_2,SITES_3,SITES_4>.*\n|. {
+<SITES_9>({uint}\t){8}{uint}\n {
+    fprintf(ofp, "%u\t%u\t%s", unitIndex, sitesActual, yytext);
+    ++sitesActual;
+}
+
+
+<SITES_2,SITES_3,SITES_4,SITES_9>.*\n|. {
     cerr << "\nmalformed input near \"" << yytext << "\"\n"
 	 << "\tinput: " << infile << '\n'
 	 << "\tunit: " << signature << '\n'
@@ -162,9 +176,11 @@ uint 0|[1-9][0-9]*
 
 static int get_unit_indx(char scheme_code, const string &signature)
 {
-    for (unsigned i = 0; i < units.size; i++)
-	if (scheme_code == units[i].scheme_code && signature == units[i].signature)
+    for (unsigned i = 0; i < staticSiteInfo.unitCount; i++) {
+	const unit_t &unit = staticSiteInfo.unit(i);
+	if (scheme_code == unit.scheme_code && signature == unit.signature)
 	    return i;
+    }
 
     cerr << "cannot find unit index\n"
 	 << "\tunit: " << signature << '\n'

@@ -1,5 +1,6 @@
 #include <cassert>
 #include <iostream>
+#include <numeric>
 #include "../PredCoords.h"
 #include "Reader.h"
 
@@ -7,7 +8,7 @@ using namespace std;
 
 
 void
-Reader::tallyPair(const SiteCoords &site, int id, unsigned a, unsigned b) const
+Reader::tallyPair(const SiteCoords &site, int id, bool a, bool b) const
 {
   assert(a || b);
 
@@ -19,54 +20,9 @@ Reader::tallyPair(const SiteCoords &site, int id, unsigned a, unsigned b) const
 
 
 void
-Reader::branchesSite(const SiteCoords &site, unsigned a, unsigned b)
+Reader::handleSite(const SiteCoords &site, const vector<unsigned> &counts)
 {
-  assert(a || b);
-
-  tallyPair(site, 0, a, b);
-}
-
-
-void
-Reader::tripleSite(const SiteCoords &site, unsigned a, unsigned b, unsigned c) const
-{
-  assert(a || b || c);
-
-  tallyPair(site, 0, a, b || c);
-  tallyPair(site, 1, b, a || c);
-  tallyPair(site, 2, c, a || b);
-}
-
-
-void
-Reader::gObjectUnrefSite(const SiteCoords &site, unsigned a, unsigned b, unsigned c, unsigned d)
-{
-  assert(a || b || c || d);
-
-  tallyPair(site, 0, a, b || c || d);
-  tallyPair(site, 1, b, a || c || d);
-  tallyPair(site, 2, c, a || b || d);
-  tallyPair(site, 3, d, a || b || c);
-}
-
-
-void
-Reader::returnsSite(const SiteCoords &site, unsigned a, unsigned b, unsigned c)
-{
-  assert(a || b || c);
-
-  tallyPair(site, 0, a, b || c);
-  tallyPair(site, 1, b, a || c);
-  tallyPair(site, 2, c, a || b);
-}
-
-
-void
-Reader::scalarPairsSite(const SiteCoords &site, unsigned a, unsigned b, unsigned c)
-{
-  assert(a || b || c);
-
-  tallyPair(site, 0, a, b || c);
-  tallyPair(site, 1, b, a || c);
-  tallyPair(site, 2, c, a || b);
+  const unsigned sum = accumulate(counts.begin(), counts.end(), 0);
+  for (unsigned predicate = 0; predicate < counts.size(); ++predicate)
+    tallyPair(site, predicate, counts[predicate], sum - counts[predicate]);
 }

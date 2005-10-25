@@ -6,8 +6,7 @@
 #include <sysexits.h>
 #include "PredStats.h"
 #include "SiteCoords.h"
-#include "Sites.h"
-#include "Units.h"
+#include "StaticSiteInfo.h"
 #include "fopen.h"
 #include "utils.h"
 
@@ -78,8 +77,7 @@ int main(int argc, char *argv[])
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
 
-  const Units units;
-  const Sites sites;
+  const StaticSiteInfo staticSiteInfo;
 
   ofstream xml("predictor-info.xml");
   xml << "<?xml version=\"1.0\"?>"
@@ -90,8 +88,8 @@ int main(int argc, char *argv[])
   pred_info stats;
   while (read_pred_full(raw, stats))
     {
-      const unit_t &unit = units[stats.unitIndex];
-      const site_t &site = sites[stats.siteIndex];
+      const unit_t &unit = staticSiteInfo.unit(stats.unitIndex);
+      const site_t &site = staticSiteInfo.site(stats.siteIndex);
       const string &scheme = scheme_name(unit.scheme_code);
 
       string filename(site.file);
@@ -127,9 +125,10 @@ int main(int argc, char *argv[])
 	  << "\" log10-true=\"" << log10(double(stats.s + stats.f))
 	  << "\"/>";
 
-      switch (units[stats.unitIndex].scheme_code)
+      switch (unit.scheme_code)
 	{
 	case 'B':
+	case 'F':
 	case 'G':
 	case 'R':
 	  xml << "<operand source=\"" << site.args[0] << "\"/>";

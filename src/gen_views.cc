@@ -14,7 +14,7 @@
 #include "Score/LowerBound.h"
 #include "Score/LowerTimesFails.h"
 #include "Score/TrueInFails.h"
-#include "Sites.h"
+#include "StaticSiteInfo.h"
 #include "Stylesheet.h"
 #include "ViewPrinter.h"
 #include "classify_runs.h"
@@ -129,12 +129,12 @@ main(int argc, char** argv)
     classify_runs();
 
     // load up predicates, grouped by scheme
-    Sites sites;
+    StaticSiteInfo staticSiteInfo;
     FILE * const statsFile = fopenRead(PredStats::filename);
     pred_info info;
     unsigned index = 0;
     while (read_pred_full(statsFile, info)) {
-	const string &scheme = scheme_name(sites[info.siteIndex].scheme_code);
+	const string &scheme = scheme_name(staticSiteInfo.site(info.siteIndex).scheme_code);
 	const IndexedPredInfo indexed(info, index++);
 	static const string all("all");
 	statsMap[all].push_back(indexed);

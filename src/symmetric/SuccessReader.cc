@@ -15,8 +15,8 @@ SuccessReader::SuccessReader(const Candidates &candidates)
 
 
 void
-SuccessReader::tallyPair(const PredCoords &aCoords, unsigned a,
-			 const PredCoords &,        unsigned b) const
+SuccessReader::tallyPair(const PredCoords &aCoords, bool a,
+			 const PredCoords &,        bool b) const
 {
   Candidates::const_iterator found = candidates.find(aCoords);
   if (found == candidates.end())

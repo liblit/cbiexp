@@ -5,6 +5,7 @@
 #include <iostream>
 #include <ext/hash_map>
 #include <fstream>
+#include <numeric>
 #include <queue>
 #include "CompactReport.h"
 #include "NumRuns.h"
@@ -84,14 +85,11 @@ class Reader : public ReportReader
 public:
   Reader(Dist);
 
-  void branchesSite(const SiteCoords &, unsigned, unsigned);
-  void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned);
-  void returnsSite(const SiteCoords &, unsigned, unsigned, unsigned);
-  void scalarPairsSite(const SiteCoords &, unsigned, unsigned, unsigned);
+protected:
+  void handleSite(const SiteCoords &, const vector<unsigned> &);
 
 private:
   void notice(const SiteCoords &, unsigned, unsigned, unsigned);
-  void tripleSite(const SiteCoords &, unsigned, unsigned, unsigned);
   const Dist d;
 };
 
@@ -105,6 +103,7 @@ Reader::Reader(Dist _d)
 void
 Reader::notice(const SiteCoords &coords, unsigned p, unsigned n, unsigned x)
 {
+  assert(x <= n);
   PredCoords pc(coords, p);
   PredCounter::iterator f = predCount.find(pc);
   if (f == predCount.end())
@@ -120,41 +119,20 @@ Reader::notice(const SiteCoords &coords, unsigned p, unsigned n, unsigned x)
   }
 }
 
-void Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z)
+void Reader::handleSite(const SiteCoords &coords, const vector<unsigned> &counts)
 {
-  assert(x || y || z);
-  notice(coords, 0, x+y+z, x);
-  notice(coords, 1, x+y+z, y+z);
-  notice(coords, 2, x+y+z, y);
-  notice(coords, 3, x+y+z, x+z);
-  notice(coords, 4, x+y+z, z);
-  notice(coords, 5, x+y+z, x+y);
-}
+  const unsigned sum = accumulate(counts.begin(), counts.end(), 0);
+  assert(sum > 0);
 
-void Reader::scalarPairsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z)
-{
-  tripleSite(coords, x, y, z);
-}
-
-void Reader::returnsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z)
-{
-  tripleSite(coords, x, y, z);
-}
-
-void Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y)
-{
-  assert (x || y);
-  notice(coords, 0, x+y, x);
-  notice(coords, 1, x+y, y);
-}
-
-void Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z, unsigned w)
-{
-  assert (x || y || z || w);
-  notice(coords, 0, x+y+z+w, x);
-  notice(coords, 1, x+y+z+w, y);
-  notice(coords, 2, x+y+z+w, z);
-  notice(coords, 3, x+y+z+w, w);
+  const size_t size = counts.size();
+  if (size == 2)
+    for (unsigned predicate = 0; predicate < size; ++predicate)
+      notice(coords, predicate, sum, counts[predicate]);
+  else
+    for (unsigned predicate = 0; predicate < size; ++predicate) {
+      notice(coords, 2 * predicate,     sum,       counts[predicate]);
+      notice(coords, 2 * predicate + 1, sum, sum - counts[predicate]);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////

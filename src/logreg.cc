@@ -3,15 +3,13 @@
 #include <iterator>
 #include <set>
 #include "PredCoords.h"
-#include "Sites.h"
-#include "Units.h"
+#include "StaticSiteInfo.h"
 #include "utils.h"
 
 using namespace std;
 
 
-Units units;
-Sites sites;
+static StaticSiteInfo staticSiteInfo;
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -37,11 +35,7 @@ operator>>(istream &in, Predictor &predictor)
 static ostream &
 operator<<(ostream &out, const Predictor &predictor)
 {
-  unsigned siteIndex = predictor.siteOffset;
-  for (unsigned unit = 0; unit < predictor.unitIndex; ++unit)
-    siteIndex += units[unit].num_sites;
-
-  const site_t &site = sites[siteIndex];
+  const site_t &site = staticSiteInfo.site(predictor);
 
   out << "<predictor "
       << "scheme=\"" << scheme_name(site.scheme_code)
@@ -50,9 +44,10 @@ operator<<(ostream &out, const Predictor &predictor)
       << "\" function=\"" << site.fun;
 
   // hack to get the right predicate offset
-  switch (units[predictor.unitIndex].scheme_code)
+  switch (site.scheme_code)
   {
     case 'B':
+    case 'F':
     case 'G':
       out << "\" predicate=\"" << predictor.predicate;
       break;
@@ -65,9 +60,10 @@ operator<<(ostream &out, const Predictor &predictor)
   out << "\" importance=\"" << predictor.importance
       << "\">";
 
-  switch (units[predictor.unitIndex].scheme_code)
+  switch (site.scheme_code)
     {
     case 'B':
+    case 'F':
     case 'G':
     case 'R':
       out << "<operand source=\"" << site.args[0] << "\"/>";

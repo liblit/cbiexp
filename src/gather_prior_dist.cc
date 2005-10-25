@@ -4,6 +4,7 @@
 #include <iostream>
 #include <ext/hash_map>
 #include <fstream>
+#include <numeric>
 #include <queue>
 #include "CompactReport.h"
 #include "NumRuns.h"
@@ -83,16 +84,12 @@ class Reader : public ReportReader
 public:
   Reader(Dist);
 
-  void branchesSite(const SiteCoords &, unsigned, unsigned);
-  void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned);
-  void returnsSite(const SiteCoords &, unsigned, unsigned, unsigned);
-  void scalarPairsSite(const SiteCoords &, unsigned, unsigned, unsigned);
-
   void countZeros();
 
+protected:
+  void handleSite(const SiteCoords &, const vector<unsigned> &);
+
 private:
-  void notice(const SiteCoords &, unsigned);
-  void tripleSite(const SiteCoords &, unsigned, unsigned, unsigned);
   const Dist d;
 };
 
@@ -104,7 +101,7 @@ Reader::Reader(Dist _d)
 }
 
 void
-Reader::notice(const SiteCoords &coords, unsigned n)
+Reader::handleSite(const SiteCoords &coords, const vector<unsigned> &counts)
 {
   SiteCounter::iterator f = siteCount.find(coords);
   if (f == siteCount.end())
@@ -115,37 +112,10 @@ Reader::notice(const SiteCoords &coords, unsigned n)
   const SiteSeen::iterator found = siteSeen.find(coords);
   if (found != siteSeen.end())
   {
+    const unsigned sum = accumulate(counts.begin(), counts.end(), 0);
     SiteInfo &info = found->second;
-    info.notice(d, n);
+    info.notice(d, sum);
   }
-}
-
-void Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z)
-{
-  assert(x || y || z);
-  notice(coords, x+y+z);
-}
-
-void Reader::scalarPairsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z)
-{
-  tripleSite(coords, x, y, z);
-}
-
-void Reader::returnsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z)
-{
-  tripleSite(coords, x, y, z);
-}
-
-void Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y)
-{
-  assert (x || y);
-  notice(coords, x+y);
-}
-
-void Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z, unsigned w)
-{
-  assert (x || y || z || w);
-  notice(coords, x+y+z+w);
 }
 
 // Compact reports do not contain sites which are not reached.

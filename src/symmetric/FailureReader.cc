@@ -18,8 +18,8 @@ FailureReader::FailureReader(Candidates &candidates, Boths &boths, unsigned fail
 
 
 void
-FailureReader::tallyPair(const PredCoords &aCoords, unsigned a,
-			 const PredCoords &bCoords, unsigned b) const
+FailureReader::tallyPair(const PredCoords &aCoords, bool a,
+			 const PredCoords &bCoords, bool b) const
 {
   Predicate *&aCounts = candidates[aCoords];
   Predicate *&bCounts = candidates[bCoords];

@@ -6,6 +6,26 @@
     <predicate text="is FALSE"/>
     <predicate text="is TRUE"/>
   </scheme>
+  <scheme id="float-kinds">
+    <predicate text="== -inf"/>
+    <predicate text="!= -inf"/>
+    <predicate text="is negative and normalized"/>
+    <predicate text="is not (negative and normalized)"/>
+    <predicate text="is negative and denormalized"/>
+    <predicate text="is not (negative and denormalized)"/>
+    <predicate text="== -0"/>
+    <predicate text="!= -0"/>
+    <predicate text="is NaN"/>
+    <predicate text="is not NaN"/>
+    <predicate text="== +0"/>
+    <predicate text="!= +0"/>
+    <predicate text="is positive and denormalized"/>
+    <predicate text="is not (positive and denormalized)"/>
+    <predicate text="is positive and normalized"/>
+    <predicate text="is not (positive and normalized)"/>
+    <predicate text="== +inf"/>
+    <predicate text="!= +inf"/>
+  </scheme>
   <scheme id="g-object-unref">
     <predicate text="== 0"/>
     <predicate text="!= 0"/>
@@ -17,12 +37,12 @@
     <predicate text="is valid"/>
   </scheme>
   <scheme id="returns">
-    <predicate text="&lt;"/>
-    <predicate text="&gt;="/>
-    <predicate text="=="/>
-    <predicate text="!="/>
-    <predicate text="&gt;"/>
-    <predicate text="&lt;="/>
+    <predicate text="&lt; 0"/>
+    <predicate text="&gt;= 0"/>
+    <predicate text="== 0"/>
+    <predicate text="!= 0"/>
+    <predicate text="&gt; 0"/>
+    <predicate text="&lt;= 0"/>
   </scheme>
   <scheme id="scalar-pairs">
     <predicate text="&lt;"/>

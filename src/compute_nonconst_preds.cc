@@ -10,7 +10,7 @@
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
 #include "RunsDirectory.h"
-#include "Units.h"
+#include "StaticSiteInfo.h"
 #include "classify_runs.h"
 #include "utils.h"
 
@@ -25,6 +25,8 @@ static unsigned num_train_runs = 0;
 static unsigned num_val_runs = 0;
 static vector<bool> is_trainrun;
 static vector<bool> is_valrun;
+
+static StaticSiteInfo staticSiteInfo;
 
 /***********************
  * site_info
@@ -54,14 +56,8 @@ static vector<vector<site_info_t> > site_info;
  *********************/
 class Reader : public ReportReader
 {
-public:
-  void branchesSite(const SiteCoords &, unsigned, unsigned);
-  void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned);
-  void returnsSite(const SiteCoords &, unsigned, unsigned, unsigned);
-  void scalarPairsSite(const SiteCoords &, unsigned, unsigned, unsigned);
-
-private:
-  void tripleSite(const SiteCoords &, unsigned, unsigned, unsigned) const;
+protected:
+  void handleSite(const SiteCoords &, const vector<unsigned> &);
 };
 
 inline void obs (const SiteCoords &coords) 
@@ -82,41 +78,11 @@ inline void inc (const SiteCoords &coords, unsigned p, unsigned count)
   site.max[p] = (count > site.max[p]) ? count : site.max[p];
 }
 
-void Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
+void Reader::handleSite(const SiteCoords &coords, const vector<unsigned> &counts)
 {
-  assert(x||y||z);
   obs(coords);
-  inc(coords, 0, x);
-  inc(coords, 1, y);
-  inc(coords, 2, z);
-}
-
-void Reader::scalarPairsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z)
-{
-  tripleSite(coords, x, y, z);
-}
-
-void Reader::returnsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z)
-{
-  tripleSite(coords, x, y, z);
-}
-
-void Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y)
-{
-  assert (x||y);
-  obs(coords);
-  inc(coords, 0, x);
-  inc(coords, 1, y);
-}
-
-void Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z, unsigned w)
-{
-  assert (x || y || z || w);
-  obs(coords);
-  inc(coords, 0, x);
-  inc(coords, 1, y);
-  inc(coords, 2, z);
-  inc(coords, 3, w);
+  for (unsigned predicate = 0; predicate < counts.size(); ++predicate)
+      inc(coords, predicate, counts[predicate]);
 }
 
 /****************************************************************************
@@ -148,33 +114,31 @@ inline void cull(int u, int c, int p) {
     site_info[u][c].retain[p] = true;
 }
 
-static void cull_preds(const Units &units)
+static void cull_preds()
 {
-    unsigned u, c;
-    int p;
-
-    for (u = 0; u < units.size; u++) {
-	for (c = 0; c < units[u].num_sites; c++) {
-	    switch (units[u].scheme_code) {
-	    case 'S':
-		for (p = 0; p < 3; p++) 
-		    cull(u, c, p);
-		break;
-	    case 'R':
-		for (p = 0; p < 3; p++)
-		    cull(u, c, p);
-		break;
+    for (unsigned u = 0; u < staticSiteInfo.unitCount; u++) {
+	const unit_t &unit = staticSiteInfo.unit(u);
+	for (unsigned c = 0; c < unit.num_sites; c++) {
+	    int numPreds;
+	    switch (unit.scheme_code) {
 	    case 'B':
-		for (p = 0; p < 2; p++)
-		    cull(u, c, p);
+		numPreds = 2;
+		break;
+	    case 'F':
+		numPreds = 9;
 		break;
 	    case 'G':
-		for (p = 0; p < 4; p++)
-		    cull(u, c, p);
+		numPreds = 4;
+		break;
+	    case 'R':
+	    case 'S':
+		numPreds = 3;
 		break;
 	    default:
 		assert(0);
 	    }
+	    for (int p = 0; p < numPreds; p++)
+		cull(u, c, p);
 	}
     }
 }
@@ -301,14 +265,13 @@ int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
 
-    Units units;
     init_gsl_generator();
     classify_runs();
     split_runs();
 
-    site_info.resize(units.size);
-    for (unsigned u = 0; u < units.size; u++)
-	site_info[u].resize(units[u].num_sites);
+    site_info.resize(staticSiteInfo.unitCount);
+    for (unsigned u = 0; u < staticSiteInfo.unitCount; u++)
+	site_info[u].resize(staticSiteInfo.unit(u).num_sites);
 
     Progress::Bounded progress("computing non-constant predicates", NumRuns::count());
     for (cur_run = NumRuns::begin; cur_run < NumRuns::end; cur_run++) {
@@ -319,7 +282,7 @@ int main(int argc, char** argv)
 	Reader().read(cur_run);
     }
 
-    cull_preds(units);
+    cull_preds();
 
     print_retained_preds();
     print_runsplit();

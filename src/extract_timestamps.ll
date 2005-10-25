@@ -5,7 +5,7 @@
 #include <cstring>
 #include <iostream>
 #include <string>
-#include "Units.h"
+#include "StaticSiteInfo.h"
 
 using namespace std;
 
@@ -16,7 +16,7 @@ static FILE *ofp2 = NULL;
 
 static int get_unit_indx(char scheme_code, const string &signature);
 
-static Units units;
+static StaticSiteInfo staticSiteInfo;
  
 static string signature;
 static string scheme;
@@ -95,6 +95,8 @@ uint 0|[1-9][0-9]*
 	schemeCode = 'B';
     } else if (scheme == "returns") {
 	schemeCode = 'R';
+    } else if (scheme == "float-kinds") {
+	schemeCode = 'F';
     } else if (scheme == "g-object-unref") {
 	schemeCode = 'G';
     } else {
@@ -103,8 +105,9 @@ uint 0|[1-9][0-9]*
     }
 
     unitIndex = get_unit_indx(schemeCode, signature);
-    assert(units[unitIndex].scheme_code == schemeCode);
-    sitesExpected = units[unitIndex].num_sites;
+    const unit_t &unit = staticSiteInfo.unit(unitIndex);
+    assert(unit.scheme_code == schemeCode);
+    sitesExpected = unit.num_sites;
     sitesActual = 0;
 }
 
@@ -170,9 +173,11 @@ uint 0|[1-9][0-9]*
 
 static int get_unit_indx(char scheme_code, const string &signature)
 {
-    for (unsigned i = 0; i < units.size; i++)
-	if (scheme_code == units[i].scheme_code && signature == units[i].signature)
+    for (unsigned i = 0; i < staticSiteInfo.unitCount; i++) {
+	const unit_t &unit = staticSiteInfo.unit(i);
+	if (scheme_code == unit.scheme_code && signature == unit.signature)
 	    return i;
+    }
 
     cerr << "cannot find unit index\n"
 	 << "\tunit: " << signature << '\n'

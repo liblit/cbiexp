@@ -14,8 +14,8 @@ public:
 private:
   const Candidates &candidates;
 
-  void tallyPair(const PredCoords &, unsigned,
-		 const PredCoords &, unsigned) const;
+  void tallyPair(const PredCoords &, bool,
+		 const PredCoords &, bool) const;
 };
 
 

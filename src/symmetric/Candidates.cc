@@ -1,7 +1,7 @@
 #include <cassert>
 #include <iostream>
 #include <iterator>
-#include "../Units.h"
+#include "../StaticSiteInfo.h"
 #include "../utils.h"
 #include "Both.h"
 #include "Candidates.h"
@@ -10,7 +10,8 @@
 using namespace std;
 
 
-static Units units;
+static StaticSiteInfo staticSiteInfo;
+static const unit_t *units = staticSiteInfo.unitsBegin();
 
 
 ////////////////////////////////////////////////////////////////////////

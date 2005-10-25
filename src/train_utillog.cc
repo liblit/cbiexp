@@ -137,14 +137,9 @@ class Reader : public ReportReader
 {
 public:
   Reader(unsigned);
-  void branchesSite(const SiteCoords &, unsigned, unsigned);
-  void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned);
-  void returnsSite(const SiteCoords &, unsigned, unsigned, unsigned);
-  void scalarPairsSite(const SiteCoords &, unsigned, unsigned, unsigned);
 
-private:
-  void tripleSite(const SiteCoords &, unsigned, unsigned, unsigned) const;
-  void insert_val(const SiteCoords &, unsigned, unsigned) const;
+protected:
+  void handleSite(const SiteCoords &, const vector<unsigned> &);
 };
 
 inline
@@ -154,63 +149,18 @@ Reader::Reader(unsigned r)
     curr_run.runId = r;
 }
 
-void Reader::insert_val(const SiteCoords &coords, unsigned offset, unsigned val) const
+void Reader::handleSite(const SiteCoords &coords, const vector<unsigned> &counts)
 {
-    PredCoords pcoords(coords,offset);
-    pred_info_t pinfo;
-    pinfo.val = val;
-    pred_pair_t pval;
-    pval.first = pcoords;
-    pval.second = pinfo;
-    curr_run.preds.insert(pval);
-}
-
-void Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
-{
-    assert(x || y || z);
-    if (x > 0)
-	insert_val(coords, 0, x);
-    if (y > 0)
-	insert_val(coords, 1, y);
-    if (z > 0)
-	insert_val(coords, 2, z);
-}
-
-inline void
-Reader::scalarPairsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) 
-{
-    tripleSite(coords, x, y, z);
-}
-
-
-inline void
-Reader::returnsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) 
-{
-    tripleSite(coords, x, y, z);
-}
-
-inline void
-Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y)
-{
-    assert(x||y);
-    if (x > 0)
-	insert_val(coords, 0, x);
-    if (y > 0)
-	insert_val(coords, 1, y);
-}
-
-inline void
-Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z, unsigned w)
-{
-    assert(x || y || z || w);
-    if (x > 0)
-	insert_val(coords, 0, x);
-    if (y > 0)
-	insert_val(coords, 1, y);
-    if (z > 0)
-	insert_val(coords, 2, z);
-    if (w > 0)
-	insert_val(coords, 3, w);
+    for (unsigned predicate = 0; predicate < counts.size(); ++predicate)
+	if (counts[predicate]) {
+	    PredCoords pcoords(coords, predicate);
+	    pred_info_t pinfo;
+	    pinfo.val = counts[predicate];
+	    pred_pair_t pval;
+	    pval.first = pcoords;
+	    pval.second = pinfo;
+	    curr_run.preds.insert(pval);
+	}
 }
 
 /****************************************************************************

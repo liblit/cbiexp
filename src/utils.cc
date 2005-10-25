@@ -50,6 +50,10 @@ scheme_name(char code)
 	static const string name("branches");
 	return name;
     }
+    case 'F': {
+	static const string name("float-kinds");
+	return name;
+    }
     case 'G': {
 	static const string name("g-object-unref");
 	return name;

@@ -19,8 +19,7 @@
 #include "Progress/Bounded.h"
 #include "RunsDirectory.h"
 #include "SiteCoords.h"
-#include "Sites.h"
-#include "Units.h"
+#include "StaticSiteInfo.h"
 #include "classify_runs.h"
 
 using namespace boost;
@@ -71,14 +70,14 @@ const SiteCoords firstSite(2, 169);
 void
 build_siteIndex()
 {
-  Units units;
+  StaticSiteInfo staticSiteInfo;
   unsigned s = 0;
   
   siteIndex.clear();
   SiteCoords coords;
-  for (coords.unitIndex = 0; coords.unitIndex < units.size; ++(coords.unitIndex))
+  for (coords.unitIndex = 0; coords.unitIndex < staticSiteInfo.unitCount; ++(coords.unitIndex))
     for (coords.siteOffset = 0; 
-         coords.siteOffset < units[coords.unitIndex].num_sites; 
+         coords.siteOffset < staticSiteInfo.unit(coords.unitIndex).num_sites; 
          ++(coords.siteOffset), ++s) {
       siteIndex[coords] = s;
     }
@@ -97,18 +96,19 @@ find_siteindex(VertexD &v)
 string
 sitename_format(unsigned i)
 {
-  static Sites sites;
+  static StaticSiteInfo staticSiteInfo;
   ostringstream collect;
-  collect << sites[i].scheme_code << '\t' << sites[i].file << '\t' 
-	  << sites[i].line << '\t' << sites[i].fun << '\t';
-  switch(sites[i].scheme_code) {
-  case 'S':
-    collect << sites[i].args[0] << '\t' << sites[i].args[1];
-    break;
-  case 'R':
+  const site_t &site = staticSiteInfo.site(i);
+  collect << site.scheme_code << '\t' << site.file << '\t' 
+	  << site.line << '\t' << site.fun << '\t';
+  switch(site.scheme_code) {
   case 'B':
+  case 'F':
   case 'G':
-    collect << sites[i].args[0];
+  case 'R':
+    collect << site.args[0];
+  case 'S':
+    collect << '\t' << site.args[1];
     break;
   default:
     assert(0);

@@ -6,9 +6,8 @@
 #include "NumRuns.h"
 #include "PredStats.h"
 #include "RunsDirectory.h"
-#include "Sites.h"
 #include "SourceDirectory.h"
-#include "Units.h"
+#include "StaticSiteInfo.h"
 #include "classify_runs.h"
 #include "fopen.h"
 #include "utils.h"
@@ -17,6 +16,9 @@ using namespace std;
 
 
 typedef map<char, unsigned> Tally;
+
+
+StaticSiteInfo staticSiteInfo;
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -53,11 +55,11 @@ processCommandLine(int argc, char *argv[])
 
 
 static void
-print_summary_scheme(ostream &out, const char name[], size_t total, size_t retain)
+print_summary_scheme(ostream &out, const char name[], Tally &total, Tally &retain, char key)
 {
   out << "<scheme name=\"" << name
-      << "\" total=\"" << total
-      << "\" retain=\"" << retain
+      << "\" total=\"" << total[key]
+      << "\" retain=\"" << retain[key]
       << "\"/>";
 }
 
@@ -85,11 +87,40 @@ print_summary(ostream &out, Tally &tally)
 
       << "<schemes>";
 
-  Units units;
-  print_summary_scheme(out, "branches", units.numBPreds, tally['B']);
-  print_summary_scheme(out, "returns", units.numRPreds, tally['R']);
-  print_summary_scheme(out, "scalar-pairs", units.numSPreds, tally['S']);
-  print_summary_scheme(out, "g-object-unref", units.numGPreds, tally['G']);
+  Tally total;
+  for (StaticSiteInfo::SiteIterator site = staticSiteInfo.sitesBegin();
+       site != staticSiteInfo.sitesEnd(); ++site)
+    {
+      unsigned predsPerSite;
+      switch (site->scheme_code)
+	{
+	case 'B':
+	  predsPerSite = 2;
+	  break;
+	case 'R':
+	case 'S':
+	  predsPerSite = 6;
+	  break;
+	case 'G':
+	  predsPerSite = 8;
+	  break;
+	case 'F':
+	  predsPerSite = 18;
+	  break;
+	default:
+	  cerr << "unknown instrumentation scheme code '"
+	       << site->scheme_code << "'\n";
+	  exit(1);
+	}
+
+      total[site->scheme_code] += predsPerSite;
+    }
+
+  print_summary_scheme(out, "branches", total, tally, 'B');
+  print_summary_scheme(out, "float-kinds", total, tally, 'F');
+  print_summary_scheme(out, "g-object-unref", total, tally, 'G');
+  print_summary_scheme(out, "returns", total, tally, 'R');
+  print_summary_scheme(out, "scalar-pairs", total, tally, 'S');
 
   out << "</schemes></experiment>\n";
 }
@@ -109,16 +140,13 @@ main(int argc, char** argv)
   ios::sync_with_stdio(false);
 
   Tally tally;
-  {
-    Sites sites;
-    FILE *predStats = fopenRead(PredStats::filename);
+  FILE *predStats = fopenRead(PredStats::filename);
 
-    pred_info info;
-    while (read_pred_full(predStats, info))
-      ++tally[sites[info.siteIndex].scheme_code];
+  pred_info info;
+  while (read_pred_full(predStats, info))
+    ++tally[staticSiteInfo.site(info.siteIndex).scheme_code];
 
-    fclose(predStats);
-  }
+  fclose(predStats);
 
   print_summary(cout, tally);
 
