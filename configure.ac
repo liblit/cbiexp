@@ -132,6 +132,7 @@ Makefile
 correlations/Makefile
 src/Makefile
 src/corrective-ranking/Makefile
+src/never-reached/Makefile
 src/symmetric/Makefile
 src/Score/Makefile
 src/analysis-rules.mk
