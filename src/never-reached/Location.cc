@@ -36,6 +36,5 @@ ostream &
 operator<<(ostream &out, const Location &location)
 {
   return out << location.file << '\t'
-	     << location.line << '\t'
-	     << location.func << '\n';
+	     << location.line << '\n';
 }
