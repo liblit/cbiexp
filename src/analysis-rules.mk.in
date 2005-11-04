@@ -331,8 +331,11 @@ failure-points: %: $(tooldir)/find-% f.runs
 	$< $(datadir)
 clean:: ; rm -f failure-points
 
-never-reached.txt: %.txt: $(tooldir)/%/never-reached $(stamp-decimate) f.runs static-site-info.so
-	$< --begin-runs=$(training-runs) --runs-directory=$(datadir) >$@
+never-kinds := reached false true
+nevers := $(never-kinds:%=never-%.txt)
+$(nevers): $(tooldir)/never-reached/never-reached $(stamp-decimate) f.runs static-site-info.so
+	$< --begin-runs=$(training-runs) --runs-directory=$(datadir)
+	for goal in $(nevers); do test -r $$goal; done
 
 
 ########################################################################

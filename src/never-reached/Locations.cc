@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iterator>
 #include "../StaticSiteInfo.h"
 #include "Locations.h"
@@ -6,7 +7,12 @@ using namespace std;
 
 
 void
-Locations::dump(ostream &out) const
+Locations::dump(const char kind[]) const
 {
-  copy(begin(), end(), ostream_iterator<Location>(out, ""));
+  string sinkName("never-");
+  sinkName += kind;
+  sinkName += ".txt";
+  ofstream sink(sinkName.c_str());
+
+  copy(begin(), end(), ostream_iterator<Location>(sink, ""));
 }

@@ -2,35 +2,28 @@
 #define INCLUDE_Reader_h
 
 #include "../ReportReader.h"
+#include "../StaticSiteInfo.h"
 
-class Locations;
-class StaticSiteInfo;
-
+#include "Locations.h"
 
 
 class Reader : public ReportReader
 {
 public:
-  Reader(Locations &, const StaticSiteInfo &);
+  Reader();
+
+  Locations neverReached;
+  Locations neverFalse;
+  Locations neverTrue;
+
+  void dump() const;
 
 protected:
   void handleSite(const SiteCoords &, const std::vector<unsigned> &);
 
 private:
-  Locations &unreached;
-  const StaticSiteInfo &staticSiteInfo;
+  const StaticSiteInfo staticSiteInfo;
 };
-
-
-////////////////////////////////////////////////////////////////////////
-
-
-inline
-Reader::Reader(Locations &locations, const StaticSiteInfo &staticSiteInfo)
-  : unreached(locations),
-    staticSiteInfo(staticSiteInfo)
-{
-}
 
 
 #endif // !INCLUDE_Reader_h

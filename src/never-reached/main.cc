@@ -5,8 +5,6 @@
 #include "../NumRuns.h"
 #include "../Progress/Bounded.h"
 #include "../RunsDirectory.h"
-#include "../StaticSiteInfo.h"
-#include "Locations.h"
 #include "Reader.h"
 
 using namespace std;
@@ -35,10 +33,7 @@ int main(int argc, char *argv[])
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
 
-  // start out optimistic: assume every site's location is unreached
-  Locations unreached;
-  StaticSiteInfo staticSiteInfo;
-  unreached.insert(staticSiteInfo.sitesBegin(), staticSiteInfo.sitesEnd());
+  Reader reader;
 
   {
     unsigned runId;
@@ -51,7 +46,6 @@ int main(int argc, char *argv[])
       }
 
     Progress::Bounded progress("scanning failed runs", NumRuns::count());
-    Reader reader(unreached, staticSiteInfo);
 
     // knock any location observed in sparse report from failed runs
     while (runs >> runId && runId < NumRuns::end)
@@ -62,6 +56,6 @@ int main(int argc, char *argv[])
 	}
   }
 
-  unreached.dump(std::cout);
+  reader.dump();
   return 0;
 }
