@@ -336,6 +336,7 @@ nevers := $(never-kinds:%=never-%.txt)
 $(nevers): $(tooldir)/never-reached/never-reached $(stamp-decimate) f.runs static-site-info.so
 	$< --begin-runs=$(training-runs) --runs-directory=$(datadir)
 	for goal in $(nevers); do test -r $$goal; done
+clean:: ; rm -f $(nevers)
 
 
 ########################################################################
