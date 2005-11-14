@@ -4,6 +4,8 @@ Makefile.in
 TAGS
 analysis-rules.mk
 build_tsgraph
+cbi-to-sober
+cbi-to-sober.cc
 calc_truthprobs
 chi2test
 collect_parmstats

@@ -36,6 +36,7 @@ find-zooms := find . -maxdepth 1 -name 'zoom-corrected-*.xml'
 find-xmls  := find . -name '*.xml'
 
 links :=					\
+	$(extra-links)				\
 	bug-o-meter.css				\
 	bug-o-meter.dtd				\
 	bug-o-meter.js				\

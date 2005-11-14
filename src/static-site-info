@@ -22,9 +22,9 @@ sub cleanup_operand ($) {
     s/([0-9][0-9]*)ULL/$1/g;
 
     # entity-escape special XML characters
-    s/&/\&amp;/g;
-    s/</\&lt;/g;
-    s/>/\&gt;/g;
+    s/&/&amp;/g;
+    s/</&lt;/g;
+    s/>/&gt;/g;
     s/"/&#34;/g;
 
     return $_;
@@ -32,13 +32,21 @@ sub cleanup_operand ($) {
 
 
 sub print_simple ($) {
-    die unless @_ == 1;
+    die "wrong number of details: @_" unless @_ == 1;
     my $operand = cleanup_operand shift;
     print "<operand source=\"$operand\"/>";
 }
 
 
-sub print_scalar_pairs (@) {
+sub print_float_kinds ($$$) {
+    die "too many operands: @_" unless @_ == 3;
+    my ($operand, $operandScope, $operandAccess) = @_;
+    my $operand = cleanup_operand shift;
+    print "<operand source=\"$operand\" scope=\"$operandScope\" access=\"$operandAccess\"/>";
+}
+
+
+sub print_scalar_pairs ($$$$$) {
     die "wrong number of details: @_" unless @_ == 5;
     my ($left, $leftScope, $leftAccess, $right, $rightScope) = @_;
     $left = cleanup_operand $left;
@@ -51,6 +59,7 @@ sub print_scalar_pairs (@) {
 
 my %print_details = (
     'branches' => \&print_simple,
+    'float-kinds' => \&print_float_kinds,
     'g-object-unref' => \&print_simple,
     'returns' => \&print_simple,
     'scalar-pairs' => \&print_scalar_pairs,

@@ -9,6 +9,7 @@ endif
 noinst_PROGRAMS =				\
 	build_tsgraph				\
 	calc_truthprobs				\
+	cbi-to-sober				\
 	$(chi2test)				\
 	collect_parmstats			\
 	compute_nonconst_preds			\
@@ -53,6 +54,9 @@ build_tsgraph_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
 
 calc_truthprobs_SOURCES = calc_truthprobs.cc
 calc_truthprobs_LDADD = libanalyze.a -ldl
+
+cbi_to_sober_SOURCES = cbi-to-sober.ll
+cbi_to_sober_LDADD = libanalyze.a
 
 chi2test_SOURCES = chi2test.cc
 chi2test_LDADD = libanalyze.a $(GSL_LIBS)
