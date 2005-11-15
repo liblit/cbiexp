@@ -41,7 +41,7 @@ sub print_simple ($) {
 sub print_float_kinds ($$$) {
     die "too many operands: @_" unless @_ == 3;
     my ($operand, $operandScope, $operandAccess) = @_;
-    my $operand = cleanup_operand shift;
+    $operand = cleanup_operand $operand;
     print "<operand source=\"$operand\" scope=\"$operandScope\" access=\"$operandAccess\"/>";
 }
 
