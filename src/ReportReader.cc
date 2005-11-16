@@ -34,7 +34,8 @@ ReportReader::read(unsigned runId)
       if (report.eof())
 	break;
 
-      vector<unsigned> counts(3);
+      vector<unsigned> counts;
+      counts.reserve(3);
 
       while (report.peek() != '\n')
 	{
