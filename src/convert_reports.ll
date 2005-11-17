@@ -12,7 +12,7 @@ using namespace std;
 
 static FILE *ofp = NULL;
 
-static int get_unit_indx(char scheme_code, const string &signature);
+static int get_unit_indx(char scheme_code, const string &signature, unsigned runId);
 
 static string signature;
 static string scheme;
@@ -23,7 +23,7 @@ static unsigned sitesExpected;
 
 static StaticSiteInfo staticSiteInfo;
 
-#define YY_DECL int yylex(const string &infile)
+#define YY_DECL int yylex(unsigned runId, const string &infile)
  
 %}
 
@@ -90,7 +90,7 @@ uint 0|[1-9][0-9]*
 	exit(1);
     }
 
-    unitIndex = get_unit_indx(schemeCode, signature);
+    unitIndex = get_unit_indx(schemeCode, signature, runId);
     const unit_t &unit = staticSiteInfo.unit(unitIndex);
     assert(unit.scheme_code == schemeCode);
     sitesExpected = unit.num_sites;
@@ -174,7 +174,7 @@ uint 0|[1-9][0-9]*
 #include "fopen.h"
 #include "utils.h"
 
-static int get_unit_indx(char scheme_code, const string &signature)
+static int get_unit_indx(char scheme_code, const string &signature, unsigned runId)
 {
     for (unsigned i = 0; i < staticSiteInfo.unitCount; i++) {
 	const unit_t &unit = staticSiteInfo.unit(i);
@@ -183,6 +183,7 @@ static int get_unit_indx(char scheme_code, const string &signature)
     }
 
     cerr << "cannot find unit index\n"
+	 << "\treport: " << runId << '\n'
 	 << "\tunit: " << signature << '\n'
 	 << "\tscheme: " << scheme_code << '\n';
     exit(1);
@@ -222,7 +223,7 @@ int main(int argc, char** argv)
 	ofp = fopenWrite(CompactReport::format(i));
 
 	yyrestart(ifp);
-	failed |= yylex(infile);
+	failed |= yylex(i, infile);
 
 	fclose(ifp);
 	fclose(ofp);

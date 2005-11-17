@@ -293,7 +293,8 @@ print_scores()
   predList.sort(Sort::Descending<Score::Importance>());
 
   ofstream outfp ("pred_scores.xml");
-  outfp << "<?xml version=\"1.0\"?>" << endl
+  outfp << fixed
+	<< "<?xml version=\"1.0\"?>" << endl
         << "<?xml-stylesheet type=\"text/xsl\" href=\"" 
 	<< XMLTemplate::format("pred-scores") << ".xsl\"?>" << endl
 	<< "<!DOCTYPE scores SYSTEM \"pred-scores.dtd\">" << endl

@@ -102,7 +102,8 @@ main(int argc, char** argv)
   argp_parse(0, argc, argv, 0, 0, 0);
   ios::sync_with_stdio(false);
 
-  cout << "<?xml version=\"1.0\"?>"
+  cout << fixed
+       << "<?xml version=\"1.0\"?>"
        << "<?xml-stylesheet type=\"text/xsl\" href=\"logreg.xsl\"?>"
        << "<!DOCTYPE logreg SYSTEM \"logreg.dtd\">"
        << "<logreg>";

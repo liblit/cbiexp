@@ -80,7 +80,8 @@ int main(int argc, char *argv[])
   const StaticSiteInfo staticSiteInfo;
 
   ofstream xml("predictor-info.xml");
-  xml << "<?xml version=\"1.0\"?>"
+  xml << fixed
+      << "<?xml version=\"1.0\"?>"
       << "<!DOCTYPE predictor-info SYSTEM \"predictor-info.dtd\">"
       << "<predictor-info>";
 

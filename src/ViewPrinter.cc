@@ -9,7 +9,8 @@ ViewPrinter::ViewPrinter(const char *stylesheet, const char dtd[], const char fi
 {
   init(filename, stylesheet, dtd);
 
-  (*this) << "<scores>";
+  (*this) << fixed
+	  << "<scores>";
 }
 
 
