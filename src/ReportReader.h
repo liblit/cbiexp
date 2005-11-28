@@ -13,7 +13,7 @@ public:
   void read(unsigned runId);
 
 protected:
-  virtual void handleSite(const SiteCoords &, const std::vector<unsigned> &) = 0;
+  virtual void handleSite(const SiteCoords &, std::vector<unsigned> &) = 0;
 };
 
 

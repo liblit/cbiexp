@@ -86,7 +86,7 @@ public:
   Reader(Dist);
 
 protected:
-  void handleSite(const SiteCoords &, const vector<unsigned> &);
+  void handleSite(const SiteCoords &, vector<unsigned> &);
 
 private:
   void notice(const SiteCoords &, unsigned, unsigned, unsigned);
@@ -119,7 +119,7 @@ Reader::notice(const SiteCoords &coords, unsigned p, unsigned n, unsigned x)
   }
 }
 
-void Reader::handleSite(const SiteCoords &coords, const vector<unsigned> &counts)
+void Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
 {
   const unsigned sum = accumulate(counts.begin(), counts.end(), 0);
   assert(sum > 0);

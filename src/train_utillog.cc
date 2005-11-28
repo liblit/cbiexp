@@ -139,7 +139,7 @@ public:
   Reader(unsigned);
 
 protected:
-  void handleSite(const SiteCoords &, const vector<unsigned> &);
+  void handleSite(const SiteCoords &, vector<unsigned> &);
 };
 
 inline
@@ -149,7 +149,7 @@ Reader::Reader(unsigned r)
     curr_run.runId = r;
 }
 
-void Reader::handleSite(const SiteCoords &coords, const vector<unsigned> &counts)
+void Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
 {
     for (unsigned predicate = 0; predicate < counts.size(); ++predicate)
 	if (counts[predicate]) {

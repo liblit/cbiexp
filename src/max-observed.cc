@@ -31,7 +31,7 @@ public:
   unsigned increased;
 
 protected:
-  void handleSite(const SiteCoords &, const vector<unsigned> &);
+  void handleSite(const SiteCoords &, vector<unsigned> &);
 };
 
 
@@ -42,7 +42,7 @@ Reader::Reader()
 
 
 void
-Reader::handleSite(const SiteCoords &coords, const vector<unsigned> &counts)
+Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
 {
   const unsigned observations = accumulate(counts.begin(), counts.end(), 0);
   unsigned &maxObserved = sites[coords];

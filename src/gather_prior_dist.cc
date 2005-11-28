@@ -87,7 +87,7 @@ public:
   void countZeros();
 
 protected:
-  void handleSite(const SiteCoords &, const vector<unsigned> &);
+  void handleSite(const SiteCoords &, vector<unsigned> &);
 
 private:
   const Dist d;
@@ -101,7 +101,7 @@ Reader::Reader(Dist _d)
 }
 
 void
-Reader::handleSite(const SiteCoords &coords, const vector<unsigned> &counts)
+Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
 {
   SiteCounter::iterator f = siteCount.find(coords);
   if (f == siteCount.end())

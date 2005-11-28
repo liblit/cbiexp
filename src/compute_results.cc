@@ -150,11 +150,11 @@ unsigned cur_run;
 class Reader : public ReportReader
 {
 protected:
-    void handleSite(const SiteCoords &, const vector<unsigned> &);
+    void handleSite(const SiteCoords &, vector<unsigned> &);
 };
 
 
-void Reader::handleSite(const SiteCoords &coords, const vector<unsigned> &counts)
+void Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
 {
     obs(cur_run, coords);
 

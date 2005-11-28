@@ -180,7 +180,7 @@ public:
   Reader(PredInfoPtr);
 
 protected:
-  void handleSite(const SiteCoords &, const vector<unsigned> &);
+  void handleSite(const SiteCoords &, vector<unsigned> &);
 
 private:
     void update(const SiteCoords &, unsigned, unsigned, unsigned) const;
@@ -205,7 +205,7 @@ Reader::update(const SiteCoords &coords, unsigned p, unsigned nobs, unsigned ntr
 }
 
 void
-Reader::handleSite(const SiteCoords &coords, const vector<unsigned> &counts)
+Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
 {
     const unsigned sum = accumulate(counts.begin(), counts.end(), 0);
     assert(sum > 0);

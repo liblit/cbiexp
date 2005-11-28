@@ -23,7 +23,7 @@ Reader::Reader()
 
 
 void
-Reader::handleSite(const SiteCoords &coords, const std::vector<unsigned> &counts)
+Reader::handleSite(const SiteCoords &coords, std::vector<unsigned> &counts)
 {
   const site_t &site(staticSiteInfo.site(coords));
   const Location reached(site);

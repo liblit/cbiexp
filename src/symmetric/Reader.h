@@ -9,7 +9,7 @@ class PredCoords;
 class Reader : public ReportReader
 {
 protected:
-  void handleSite(const SiteCoords &, const std::vector<unsigned> &);
+  void handleSite(const SiteCoords &, std::vector<unsigned> &);
 
 private:
   void tallyPair(const SiteCoords &, int id, bool, bool) const;

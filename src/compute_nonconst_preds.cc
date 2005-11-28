@@ -57,7 +57,7 @@ static vector<vector<site_info_t> > site_info;
 class Reader : public ReportReader
 {
 protected:
-  void handleSite(const SiteCoords &, const vector<unsigned> &);
+  void handleSite(const SiteCoords &, vector<unsigned> &);
 };
 
 inline void obs (const SiteCoords &coords) 
@@ -78,7 +78,7 @@ inline void inc (const SiteCoords &coords, unsigned p, unsigned count)
   site.max[p] = (count > site.max[p]) ? count : site.max[p];
 }
 
-void Reader::handleSite(const SiteCoords &coords, const vector<unsigned> &counts)
+void Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
 {
   obs(coords);
   for (unsigned predicate = 0; predicate < counts.size(); ++predicate)

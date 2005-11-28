@@ -20,7 +20,7 @@ Reader::tallyPair(const SiteCoords &site, int id, bool a, bool b) const
 
 
 void
-Reader::handleSite(const SiteCoords &site, const vector<unsigned> &counts)
+Reader::handleSite(const SiteCoords &site, vector<unsigned> &counts)
 {
   const unsigned sum = accumulate(counts.begin(), counts.end(), 0);
   for (unsigned predicate = 0; predicate < counts.size(); ++predicate)
