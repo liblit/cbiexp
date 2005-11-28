@@ -13,10 +13,6 @@
   <xsl:import href="bug-o-meter.xsl"/>
 
 
-  <!-- should we offer zoom pages? -->
-  <xsl:param name="link-to-zoom" select="true()"/>
-
-
   <!-- customized page CSS stylesheet -->
   <xsl:template match="/" mode="css">
     view.css
@@ -29,9 +25,7 @@
     <th>Initial Thermometer</th>
     <th>Effective Score</th>
     <th>Effective Thermometer</th>
-    <xsl:if test="$link-to-zoom">
-      <th>Zoom</th>
-    </xsl:if>
+    <th>Zoom</th>
   </xsl:template>
 
 
@@ -42,11 +36,11 @@
     <xsl:apply-templates select="document('predictor-info.xml', /)/predictor-info/info[$index]/bug-o-meter"/>
     <td><xsl:value-of select="@effective"/></td>
     <xsl:apply-templates select="bug-o-meter"/>
-    <xsl:if test="$link-to-zoom">
-      <td class="link">
-	<a href="zoom-{/scores/@projection}-{@index}.xml">&link;</a>
-      </td>
-    </xsl:if>
+    <td class="link">
+      <a href="zoom-{/scores/@projection}-{@index}.xml">
+	&link;
+      </a>
+    </td>
   </xsl:template>
 
 
