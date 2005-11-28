@@ -9,12 +9,15 @@ noinst_PROGRAMS =				\
 	exact-complete
 
 libcorrective_a_SOURCES =			\
+	Candidates.cc				\
+	Candidates.cc				\
+	Candidates.h				\
+	Candidates.h				\
 	Outcome.cc				\
 	Outcome.h				\
-	Predicates.cc				\
-	Predicates.h				\
 	Predicate.cc				\
 	Predicate.h				\
+	Predicates.h				\
 	RunSet.cc				\
 	RunSet.h				\
 	RunSuite.cc				\

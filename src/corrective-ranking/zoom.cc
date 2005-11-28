@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 #include "../Progress/Bounded.h"
 #include "../Stylesheet.h"
-#include "Predicates.h"
+#include "Candidates.h"
 #include "allFailures.h"
 #include "zoom.h"
 
@@ -33,20 +33,20 @@ typedef set<Predicate, MoreDilutedThan> Neighbors;
 
 
 void
-buildZooms(const Predicates &candidates, const char projection[])
+buildZooms(const Predicates &foci, const Candidates &candidates, const char projection[])
 {
   Progress::Bounded progress("building zoom views", candidates.count);
 
-  const RunSet originalAllFailures(allFailures);
+  const AllFailuresSnapshot snapshot;
 
-  for (Predicates::const_iterator winner = candidates.begin(); winner != candidates.end(); ++winner)
+  for (Predicates::const_iterator winner = foci.begin(); winner != foci.end(); ++winner)
     {
       progress.step();
 
       allFailures.dilute(*winner, winner->tru.failures);
 
       Neighbors losers;
-      for (Predicates::const_iterator loser = candidates.begin(); loser != candidates.end(); ++loser)
+      for (Candidates::const_iterator loser = candidates.begin(); loser != candidates.end(); ++loser)
 	{
 	  Predicate copy(*loser);
 	  copy.dilute(*winner);
@@ -68,6 +68,6 @@ buildZooms(const Predicates &candidates, const char projection[])
       copy(losers.begin(), losers.end(), ostream_iterator<Predicate>(view));
       view << "</scores>\n";
 
-      allFailures = originalAllFailures;
+      snapshot.restore();
     }
 }

@@ -2,10 +2,10 @@
 #define INCLUDE_corrective_ranking_zoom_h
 
 
-class Predicates;
+class Candidates;
 
 
-void buildZooms(const Predicates &candidates, const char []);
+void buildZooms(const Predicates &foci, const Candidates &, const char projection[]);
 
 
 #endif // !INCLUDE_corrective_ranking_zoom_h

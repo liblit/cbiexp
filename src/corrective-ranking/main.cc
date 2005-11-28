@@ -8,11 +8,21 @@
 #include "../Stylesheet.h"
 #include "../ViewPrinter.h"
 
-#include "Predicates.h"
+#include "Candidates.h"
 #include "allFailures.h"
 #include "zoom.h"
 
 using namespace std;
+
+
+typedef std::list<Predicate> Winners;
+
+
+const char *Stylesheet::filename = "corrected-view.xsl";
+
+enum ZoomsWanted { ZoomNone, ZoomWinners, ZoomAll };
+static ZoomsWanted zoomsWanted;
+static string zoomAttr;
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -22,30 +32,29 @@ using namespace std;
 
 
 static void
-buildView(Predicates &candidates, const char projection[])
+buildView(Candidates candidates, const char projection[], Winners *winners = 0)
 {
   // create XML output file and write initial header
-  ViewPrinter view(Stylesheet::filename, "corrected-view", "all", "hl", projection);
+  ViewPrinter view;
 
   Progress::Bounded progress("ranking predicates", candidates.count);
+  AllFailuresSnapshot snapshot;
 
   // pluck out predicates one by one, printing as we go
   while (!candidates.empty())
     {
-      const Predicates::iterator winner = max_element(candidates.begin(), candidates.end());
-      view << *winner;;
+      const Candidates::iterator winner = max_element(candidates.begin(), candidates.end());
+      view << *winner;
+      if (winners)
+	winners->push_back(*winner);
 
-      // cerr << "winner " << winner->index << " dilutes all failures\n";
       allFailures.dilute(*winner, winner->tru.failures);
       if (allFailures.count <= 0)
 	break;
 
-      for (Predicates::iterator loser = candidates.begin(); loser != candidates.end(); ++loser)
+      for (Candidates::iterator loser = candidates.begin(); loser != candidates.end(); ++loser)
 	if (loser != winner)
-	  {
-	    // cerr << "winner " << winner->index << " dilutes loser " << loser->index << '\n';
-	    loser->dilute(*winner);
-	  }
+	  loser->dilute(*winner);
 
       progress.step();
       candidates.erase(winner);
@@ -60,19 +69,22 @@ buildView(Predicates &candidates, const char projection[])
 //
 
 
-const char *Stylesheet::filename = "corrected-view.xsl";
-
-static bool zoomsWanted = false;
-
-
 static int
-parseFlag(int key, char *, argp_state *)
+parseFlag(int key, char *arg, argp_state *state)
 {
   using namespace Confidence;
 
   switch (key) {
   case 'z':
-    zoomsWanted = true;
+    zoomAttr = arg;
+    if (zoomAttr == "all")
+      zoomsWanted = ZoomAll;
+    else if (zoomAttr == "winners")
+      zoomsWanted = ZoomWinners;
+    else if (zoomAttr == "none")
+      zoomsWanted = ZoomNone;
+    else
+      argp_error(state, "argument to --zoom must be one of \"all\", \"winners\", or \"none\"");
     return 0;
   default:
     return ARGP_ERR_UNKNOWN;
@@ -87,9 +99,9 @@ processCommandLine(int argc, char *argv[])
     {
       "zoom",
       'z',
+      "PREDS",
       0,
-      0,
-      "generate zoom views in addition to main ranking",
+      "generate zoom views for selected predicates: \"all\", \"winners\", or \"none\" (default: none)",
       0
     },
     { 0, 0, 0, 0, 0, 0 }
@@ -135,10 +147,22 @@ rankMain(const char projection[])
   assert(failuresFile);
   failuresFile >> allFailures;
 
-  Predicates candidates;
+  Candidates candidates;
   candidates.load();
 
-  if (zoomsWanted)
-    buildZooms(candidates, projection);
-  buildView(candidates, projection);
+  switch (zoomsWanted)
+    {
+    case ZoomNone:
+      buildView(candidates, projection);
+      break;
+    case ZoomAll:
+      buildView(candidates, projection);
+      buildZooms(candidates, candidates, projection);
+      break;
+    case ZoomWinners:
+      Winners winners;
+      buildView(candidates, projection, &winners);
+      buildZooms(winners, candidates, projection);
+      break;
+    }
 }
