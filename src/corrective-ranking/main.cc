@@ -35,7 +35,7 @@ static void
 buildView(Candidates candidates, const char projection[], Winners *winners = 0)
 {
   // create XML output file and write initial header
-  ViewPrinter view;
+  ViewPrinter view(Stylesheet::filename, "corrected-view", "all", "hl", projection);
 
   Progress::Bounded progress("ranking predicates", candidates.count);
   AllFailuresSnapshot snapshot;
