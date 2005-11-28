@@ -31,7 +31,7 @@ sorts := lb is fs nf hl hs lbnf
 projections := none #circular linear
 views := $(foreach scheme, $(schemes), $(foreach sort, $(sorts), $(foreach projection, $(projections), $(scheme)_$(sort)_$(projection).xml)))
 #topRho := $(foreach sort, hl hs, $(foreach proj, circular linear, top-rho_$(sort)_$(proj).xml))
-zooms ?= all
+zoom ?= all
 
 find-zooms := find . -maxdepth 1 -name 'zoom-corrected-*.xml'
 find-xmls  := find . -name '*.xml'
@@ -160,7 +160,7 @@ clean:: ; rm -f $(sparse)
 endif
 
 $(corrected): all_hl_corrected-%.xml: $(tooldir)/corrective-ranking/% f.runs obs.txt tru.txt
-	$(time) $< --zoom=$(zooms) --begin-runs=$(training-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
+	$(time) $< --zoom=$(zoom) --begin-runs=$(training-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
 	$(build) links
 	xmllint --valid --noout $@
 	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
