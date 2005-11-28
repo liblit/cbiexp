@@ -35,7 +35,7 @@ typedef set<Predicate, MoreDilutedThan> Neighbors;
 void
 buildZooms(const Predicates &foci, const Candidates &candidates, const char projection[])
 {
-  Progress::Bounded progress("building zoom views", candidates.count);
+  Progress::Bounded progress("building zoom views", foci.size());
 
   const AllFailuresSnapshot snapshot;
 
