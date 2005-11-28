@@ -1,8 +1,0 @@
-<!ELEMENT sober-static-info (predicate*)>
-
-<!ELEMENT predicate (#PCDATA)>
-<!ATTLIST predicate
-  file CDATA #REQUIRED
-  line NMTOKEN #REQUIRED
-  function NMTOKEN #REQUIRED
->
