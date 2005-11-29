@@ -22,6 +22,7 @@ public:
 
   double count;
   void load(std::istream &);
+  void swap(RunSet &);
 
   void dilute(const Predicate &, const RunSet &);
 

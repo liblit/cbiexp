@@ -67,6 +67,14 @@ RunSet::load(istream &in)
 }
 
 
+void
+RunSet::swap(RunSet &other)
+{
+  ::swap(count, other.count);
+  std::vector<bool>::swap(other);
+}
+
+
 size_t
 RunSet::intersectionSize(const RunSet &other)
 {
