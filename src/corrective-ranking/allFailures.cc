@@ -7,17 +7,11 @@ RunSet allFailures(Failure);
 AllFailuresSnapshot::AllFailuresSnapshot()
   : original(allFailures)
 {
+  assert(allFailures.count > 0);
 }
 
 
 AllFailuresSnapshot::~AllFailuresSnapshot()
 {
-  restore();
-}
-
-
-void
-AllFailuresSnapshot::restore() const
-{
-  allFailures = original;
+  original.swap(allFailures);
 }

@@ -15,9 +15,6 @@
 using namespace std;
 
 
-typedef std::list<Predicate> Winners;
-
-
 const char *Stylesheet::filename = "corrected-view.xsl";
 
 enum ZoomsWanted { ZoomNone, ZoomWinners, ZoomAll };
@@ -32,21 +29,22 @@ static string zoomAttr;
 
 
 static void
-buildView(Candidates candidates, const char projection[], Winners *winners = 0)
+buildView(Candidates candidates, const char projection[], Foci *foci = 0)
 {
   // create XML output file and write initial header
   ViewPrinter view(Stylesheet::filename, "corrected-view", "all", "hl", projection);
 
   Progress::Bounded progress("ranking predicates", candidates.count);
-  AllFailuresSnapshot snapshot;
+
+  const AllFailuresSnapshot snapshot;
 
   // pluck out predicates one by one, printing as we go
   while (!candidates.empty())
     {
       const Candidates::iterator winner = max_element(candidates.begin(), candidates.end());
       view << *winner;
-      if (winners)
-	winners->push_back(*winner);
+      if (foci)
+	foci->insert(winner->index);
 
       allFailures.dilute(*winner, winner->tru.failures);
       if (allFailures.count <= 0)
@@ -157,12 +155,12 @@ rankMain(const char projection[])
       break;
     case ZoomAll:
       buildView(candidates, projection);
-      buildZooms(candidates, candidates, projection);
+      buildZooms(candidates, projection);
       break;
     case ZoomWinners:
-      Winners winners;
-      buildView(candidates, projection, &winners);
-      buildZooms(winners, candidates, projection);
+      Foci foci;
+      buildView(candidates, projection, &foci);
+      buildZooms(candidates, projection, foci);
       break;
     }
 }

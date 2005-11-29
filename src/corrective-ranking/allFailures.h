@@ -22,10 +22,9 @@ class AllFailuresSnapshot
 public:
   AllFailuresSnapshot();
   ~AllFailuresSnapshot();
-  void restore() const;
 
 private:
-  const RunSet original;
+  RunSet original;
 };
 
 
