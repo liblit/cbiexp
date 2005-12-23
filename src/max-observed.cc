@@ -10,6 +10,7 @@
 #include "RunsDirectory.h"
 #include "SiteCoords.h"
 #include "classify_runs.h"
+#include "termination.h"
 
 using namespace std;
 
@@ -87,7 +88,7 @@ processCommandLine(int argc, char **argv)
 int
 main(int argc, char** argv)
 {
-  set_terminate(__gnu_cxx::__verbose_terminate_handler);
+  set_terminate_verbose();
   processCommandLine(argc, argv);
 
   {

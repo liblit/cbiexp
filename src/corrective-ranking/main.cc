@@ -7,6 +7,7 @@
 #include "../RunsDirectory.h"
 #include "../Stylesheet.h"
 #include "../ViewPrinter.h"
+#include "../termination.h"
 
 #include "Candidates.h"
 #include "allFailures.h"
@@ -131,7 +132,7 @@ void
 initialize(int argc, char *argv[])
 {
   // command line processing and other initialization
-  set_terminate(__gnu_cxx::__verbose_terminate_handler);
+  set_terminate_verbose();
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
   // feenableexcept(FE_DIVBYZERO | FE_INVALID);

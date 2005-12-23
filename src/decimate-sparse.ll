@@ -5,6 +5,7 @@
 #include <ext/hash_map>
 #include <gsl/gsl_randist.h>
 #include "SiteCoords.h"
+#include "termination.h"
 
 static gsl_rng *generator;
 
@@ -139,7 +140,7 @@ processCommandLine(int argc, char *argv[])
 int
 main(int argc, char *argv[])
 {
-  set_terminate(__gnu_cxx::__verbose_terminate_handler);
+  set_terminate_verbose();
   processCommandLine(argc, argv);
 
   ifstream entropy;

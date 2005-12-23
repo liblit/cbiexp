@@ -286,6 +286,9 @@
 				RelativePath="Stylesheet.h">
 			</File>
 			<File
+				RelativePath=".\termination.h">
+			</File>
+			<File
 				RelativePath="timestamp.h">
 			</File>
 			<File

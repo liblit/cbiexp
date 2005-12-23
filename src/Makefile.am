@@ -211,6 +211,7 @@ libanalyze_a_SOURCES =				\
 	sorts.h					\
 	split_runs.cc				\
 	split_runs.h				\
+	termination.h				\
 	timestamp.h				\
 	unit_t.h				\
 	utils.cc				\

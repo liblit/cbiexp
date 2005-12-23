@@ -6,6 +6,7 @@
 #include "StaticSiteInfo.h"
 #include "arguments.h"
 #include "fopen.h"
+#include "termination.h"
 #include "utils.h"
 
 using namespace std;
@@ -71,7 +72,7 @@ processCommandLine(int, char *[])
 
 int main(int argc, char *argv[])
 {
-  // set_terminate(__gnu_cxx::__verbose_terminate_handler);
+  set_terminate_verbose();
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
 

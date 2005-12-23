@@ -5,6 +5,7 @@
 #include "../NumRuns.h"
 #include "../Progress/Bounded.h"
 #include "../RunsDirectory.h"
+#include "../termination.h"
 #include "Reader.h"
 
 using namespace std;
@@ -29,7 +30,7 @@ processCommandLine(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-  set_terminate(__gnu_cxx::__verbose_terminate_handler);
+  set_terminate_verbose();
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
 

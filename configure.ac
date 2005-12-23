@@ -35,6 +35,15 @@ fi
 
 AC_CHECK_HEADERS([argp.h dlfcn.h])
 
+AC_MSG_CHECKING(for GNU C++ verbose terminate handler)
+AC_COMPILE_IFELSE(
+  AC_LANG_PROGRAM([[#include <exception>]], [[__gnu_cxx::__verbose_terminate_handler();]]),
+  AC_DEFINE(HAVE_GNU_CXX_VERBOSE_TERMINATE_HANDLER, 1,
+    [Define to 1 if you have the __gnu_cxx::__verbose_terminate_handler() function.])
+  AC_MSG_RESULT(yes)
+,
+  AC_MSG_RESULT(no))
+
 
 ########################################################################
 #
