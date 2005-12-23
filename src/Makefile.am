@@ -150,8 +150,9 @@ libanalyze_a_SOURCES =				\
 	Confidence.h				\
 	Dilute.cc				\
 	Dilute.h				\
-	DynamicLibrary.cc			\
 	DynamicLibrary.h			\
+	DynamicLibrary-dl.cc			\
+	DynamicLibrary-dl.h			\
 	IndexedPredInfo.cc			\
 	IndexedPredInfo.h			\
 	MappedArray.h				\
@@ -200,6 +201,7 @@ libanalyze_a_SOURCES =				\
 	ViewPrinter.h				\
 	XMLTemplate.cc				\
 	XMLTemplate.h				\
+	arguments.h				\
 	classify_runs.cc			\
 	classify_runs.h				\
 	fopen.cc				\

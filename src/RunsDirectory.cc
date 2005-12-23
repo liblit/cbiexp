@@ -10,6 +10,8 @@ enum { RunsPerSubdirectory = 10000 };
 const char *RunsDirectory::root = ".";
 
 
+#ifdef HAVE_ARGP_H
+
 static const argp_option options[] = {
   {
     "runs-directory",
@@ -40,6 +42,7 @@ const argp RunsDirectory::argp = {
     options, parseFlag, 0, 0, 0, 0, 0
 };
 
+#endif // HAVE_ARGP_H
 
 void
 RunsDirectory::format(ostream &sink, unsigned runId, const char filename[])

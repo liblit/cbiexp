@@ -1,8 +1,8 @@
 #ifndef INCLUDE_SourceDirectory_h
 #define INCLUDE_SourceDirectory_h
 
-#include <argp.h>
 #include <string>
+#include "arguments.h"
 
 
 namespace SourceDirectory

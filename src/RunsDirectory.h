@@ -1,9 +1,9 @@
 #ifndef INCLUDE_RunsDirectory_h
 #define INCLUDE_RunsDirectory_h
 
-#include <argp.h>
 #include <iosfwd>
 #include <string>
+#include "arguments.h"
 
 
 namespace RunsDirectory

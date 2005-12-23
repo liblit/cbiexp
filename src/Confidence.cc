@@ -62,6 +62,8 @@ Confidence::critical(unsigned level)
 }
 
 
+#ifdef HAVE_ARGP_H
+
 static const argp_option options[] = {
   {
     "confidence",
@@ -97,3 +99,5 @@ parseFlag(int key, char *arg, argp_state *state)
 const argp Confidence::argp = {
   options, parseFlag, 0, 0, 0, 0, 0
 };
+
+#endif // HAVE_ARGP_H

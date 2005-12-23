@@ -1,7 +1,13 @@
 #include <cerrno>
 #include <stdexcept>
-#include <unistd.h>
 #include "AutoFD.h"
+#include "config.h"
+
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#else // !HAVE_UNISTD_H
+#  include <io.h>
+#endif // !HAVE_UNISTD_H
 
 using namespace std;
 

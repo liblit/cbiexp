@@ -1,7 +1,6 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
-#include <sysexits.h>
 #include "NumRuns.h"
 #include "RunsDirectory.h"
 
@@ -10,6 +9,8 @@ using namespace std;
 unsigned NumRuns::begin = 0;
 unsigned NumRuns::end = 0;
 
+#ifdef HAVE_ARGP_H
+#include <sysexits.h>
 
 static const argp_option options[] = {
   {
@@ -95,3 +96,5 @@ parseFlag(int key, char *arg, argp_state *state)
 const argp NumRuns::argp = {
   options, parseFlag, 0, 0, 0, 0, 0
 };
+
+#endif // HAVE_ARGP_H

@@ -7,10 +7,10 @@
 
 
 struct pred_stat {
-    float lb;
-    float in;
-    float fs;
-    float co;
+    double lb;
+    double in;
+    double fs;
+    double co;
     double imp;
     double fdenom;
     double sdenom;
@@ -25,7 +25,7 @@ struct pred_info : public PredCoords {
 
 pred_stat compute_pred_stat(int s, int f, int os, int of, int confidence);
 
-bool retain_pred(int s, int f, float lb);
+bool retain_pred(int s, int f, double lb);
 bool retain_pred(int s, int f, int os, int of, int conf);
 
 bool read_pred_full(FILE* fp, pred_info &);

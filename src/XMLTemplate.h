@@ -1,8 +1,8 @@
 #ifndef INCLUDE_XMLTemplate_h
 #define INCLUDE_XMLTemplate_h
 
-#include <argp.h>
 #include <string>
+#include "arguments.h"
 
 
 namespace XMLTemplate

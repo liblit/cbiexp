@@ -1,6 +1,8 @@
 #include "Stylesheet.h"
 
 
+#ifdef HAVE_ARGP_H
+
 static const argp_option options[] = {
   {
     "stylesheet",
@@ -30,3 +32,5 @@ parseFlag(int key, char *arg, argp_state *)
 const argp Stylesheet::argp = {
   options, parseFlag, 0, 0, 0, 0, 0
 };
+
+#endif // HAVE_ARGP_H

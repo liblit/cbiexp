@@ -1,7 +1,6 @@
 #ifndef INCLUDE_RawReport_h
 #define INCLUDE_RawReport_h
 
-#include <argp.h>
 #include <string>
 
 

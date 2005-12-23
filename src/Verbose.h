@@ -1,7 +1,7 @@
 #ifndef INCLUDE_Verbose_h
 #define INCLUDE_Verbose_h
 
-#include <argp.h>
+#include "arguments.h"
 
 
 namespace Verbose

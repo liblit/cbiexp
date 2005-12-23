@@ -1,8 +1,8 @@
 #ifndef INCLUDE_CompactReport_h
 #define INCLUDE_CompactReport_h
 
-#include <argp.h>
 #include <string>
+#include "arguments.h"
 
 
 namespace CompactReport

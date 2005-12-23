@@ -33,6 +33,8 @@ if test "$GXX" = yes; then
     AC_MSG_WARN(this compiler version may not handle large numbers of sites)])
 fi
 
+AC_CHECK_HEADERS([argp.h dlfcn.h])
+
 
 ########################################################################
 #

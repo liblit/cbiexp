@@ -4,6 +4,8 @@
 bool Verbose::on = false;
 
 
+#ifdef HAVE_ARGP_H
+
 static const argp_option options[] = {
   { "verbose", 'v', 0, 0, "trace analysis in greater detail", 0 },
   { 0, 0, 0, 0, 0, 0 }
@@ -27,3 +29,5 @@ parseFlag(int key, char *, argp_state *)
 const argp Verbose::argp = {
   options, parseFlag, 0, 0, 0, 0, 0
 };
+
+#endif // HAVE_ARGP_H

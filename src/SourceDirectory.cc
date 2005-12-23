@@ -4,6 +4,8 @@
 const char *SourceDirectory::root = ".";
 
 
+#ifdef HAVE_ARGP_H
+
 static const argp_option options[] = {
   {
     "source-directory",
@@ -34,3 +36,5 @@ parseFlag(int key, char *arg, argp_state *)
 const argp SourceDirectory::argp = {
   options, parseFlag, 0, 0, 0, 0, 0
 };
+
+#endif // HAVE_ARGP_H

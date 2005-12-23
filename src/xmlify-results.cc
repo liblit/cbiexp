@@ -1,19 +1,16 @@
-#include <argp.h>
 #include <cmath>
-#include <ext/hash_set>
 #include <fstream>
 #include <list>
-#include <sysexits.h>
 #include "PredStats.h"
 #include "SiteCoords.h"
 #include "StaticSiteInfo.h"
+#include "arguments.h"
 #include "fopen.h"
 #include "utils.h"
 
 using namespace std;
 
 
-static __gnu_cxx::hash_set<SiteCoords> rareSites;
 static list<string> prefixes;
 
 
@@ -23,21 +20,14 @@ static list<string> prefixes;
 //
 
 
+#ifdef HAVE_ARGP_H
+#include <sysexits.h>
+
 static int
-parseFlag(int key, char *arg, argp_state *state)
+parseFlag(int key, char *arg, argp_state *)
 {
   switch (key)
     {
-    case 'r':
-      {
-	ifstream file(arg);
-	if (!file)
-	  argp_failure(state, EX_NOINPUT, errno, "cannot read rare site list %s", arg);
-	file.exceptions(ios::badbit);
-	copy(istream_iterator<SiteCoords>(file), istream_iterator<SiteCoords>(), inserter(rareSites, rareSites.end()));
-	return 0;
-      }
-
     case 'p':
       prefixes.push_back(arg);
       return 0;
@@ -52,7 +42,6 @@ static void
 processCommandLine(int argc, char *argv[])
 {
   static const argp_option options[] = {
-    { "rare-sites", 'r', "FILE", 0, "mark sites listed in FILE as rare", 0 },
     { "strip-prefix", 'p', "TEXT", 0, "remove TEXT from the start of file names; may be given multiple times", 0 },
     { 0, 0, 0, 0, 0, 0 }
   };
@@ -64,6 +53,15 @@ processCommandLine(int argc, char *argv[])
   argp_parse(&argp, argc, argv, 0, 0, 0);
 }
 
+#else // !HAVE_ARGP_H
+
+inline void
+processCommandLine(int, char *[])
+{
+}
+
+#endif // !HAVE_ARGP_H
+
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -73,7 +71,7 @@ processCommandLine(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-  set_terminate(__gnu_cxx::__verbose_terminate_handler);
+  // set_terminate(__gnu_cxx::__verbose_terminate_handler);
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
 
@@ -108,12 +106,8 @@ int main(int argc, char *argv[])
 	  << "\" file=\"" << filename
 	  << "\" line=\"" << site.line
 	  << "\" function=\"" << site.fun
-	  << "\" cfg-node=\"" << site.cfg_node;
-
-      if (rareSites.find(stats) != rareSites.end())
-	xml << "\" class=\"rare";
-
-      xml << "\">"
+	  << "\" cfg-node=\"" << site.cfg_node
+	  << "\">"
 
 	  << "<bug-o-meter true-success=\"" << stats.s
 	  << "\" true-failure=\"" << stats.f

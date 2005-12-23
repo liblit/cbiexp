@@ -6,6 +6,8 @@ using namespace std;
 
 string TimestampReport::when("first");
 
+#ifdef HAVE_ARGP_H
+
 static const argp_option options[] = {
   {
     "timestamp-when",
@@ -36,6 +38,8 @@ parseFlag(int key, char *arg, argp_state *)
 const argp TimestampReport::argp = {
   options, parseFlag, 0, 0, 0, 0, 0
 };
+
+#endif // HAVE_ARGP_H
 
 std::string
 TimestampReport::format(unsigned runId, const char *w)

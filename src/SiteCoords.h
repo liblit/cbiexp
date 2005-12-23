@@ -5,8 +5,9 @@
 #include <iosfwd>
 
 
-struct SiteCoords
+class SiteCoords
 {
+public:
   SiteCoords();
   SiteCoords(unsigned unit, unsigned site);
   unsigned unitIndex;

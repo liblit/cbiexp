@@ -1,6 +1,6 @@
-#include <argp.h>
 #include <iostream>
 #include <string>
+#include "arguments.h"
 #include "fopen.h"
 #include "ClassifyRuns.h"
 #include "NumRuns.h"
@@ -9,6 +9,8 @@
 
 using namespace std;
 
+
+#ifdef HAVE_ARGP_H
 
 static void process_cmdline(int argc, char** argv)
 {
@@ -24,6 +26,13 @@ static void process_cmdline(int argc, char** argv)
 
     argp_parse(&argp, argc, argv, 0, 0, 0);
 }
+
+#else // !HAVE_ARGP_H
+
+inline void process_cmdline(int, char *[]) { }
+
+#endif // !HAVE_ARGP_H
+
 
 int main(int argc, char** argv)
 {

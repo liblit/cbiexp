@@ -1,8 +1,8 @@
 #ifndef INCLUDE_Confidence_h
 #define INCLUDE_Confidence_h
 
-#include <argp.h>
 #include <string>
+#include "arguments.h"
 
 
 namespace Confidence

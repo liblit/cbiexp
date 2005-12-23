@@ -1,7 +1,7 @@
 #ifndef INCLUDE_Stylesheet_h
 #define INCLUDE_Stylesheet_h
 
-#include <argp.h>
+#include "arguments.h"
 
 
 namespace Stylesheet

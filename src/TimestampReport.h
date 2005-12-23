@@ -1,8 +1,9 @@
 #ifndef INCLUDE_TimestampReport_h
 #define INCLUDE_TimestampReport_h
 
-#include <argp.h>
 #include <string>
+#include "arguments.h"
+
 
 namespace TimestampReport
 {

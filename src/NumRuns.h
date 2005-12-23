@@ -1,7 +1,7 @@
 #ifndef INCLUDE_NumRuns_h
 #define INCLUDE_NumRuns_h
 
-#include <argp.h>
+#include "arguments.h"
 
 
 namespace NumRuns

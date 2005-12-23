@@ -8,6 +8,8 @@ using namespace std;
 string CompactReport::suffix;
 
 
+#ifdef HAVE_ARGP_H
+
 static const argp_option options[] = {
   {
     "report-suffix",
@@ -41,6 +43,7 @@ const argp CompactReport::argp = {
   options, parseFlag, 0, 0, 0, 0, 0
 };
 
+#endif // HAVE_ARGP_H
 
 std::string
 CompactReport::format(unsigned runId)

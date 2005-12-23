@@ -13,14 +13,14 @@ using std::string;
 pred_stat compute_pred_stat(int s, int f, int os, int of, int confidence)
 {
     pred_stat p;
-    p.fs = ((float)  f) / ( s +  f);
-    p.co = ((float) of) / (os + of);
+    p.fs = ((double)  f) / ( s +  f);
+    p.co = ((double) of) / (os + of);
     p.in = p.fs - p.co;
     p.lb = p.in - Confidence::critical(confidence) * sqrt(((p.fs * (1 - p.fs)) / (f + s)) + ((p.co * (1 - p.co))/(of + os)));
     return p;
 }
 
-bool retain_pred(int s, int f, float lb) { return lb > 0 && s + f >= 10; }
+bool retain_pred(int s, int f, double lb) { return lb > 0 && s + f >= 10; }
 
 bool retain_pred(int s, int f, int os, int of, int confidence)
 {

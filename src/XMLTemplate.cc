@@ -7,6 +7,8 @@ using namespace std;
 string XMLTemplate::prefix;
 
 
+#ifdef HAVE_ARGP_H
+
 static const argp_option options[] = {
   {
     "xmltemplate-prefix",
@@ -40,6 +42,7 @@ const argp XMLTemplate::argp = {
   options, parseFlag, 0, 0, 0, 0, 0
 };
 
+#endif // HAVE_ARGP_H
 
 std::string
 XMLTemplate::format(char * name)
