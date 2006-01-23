@@ -40,5 +40,6 @@ partial_order
 process_run_labels
 project
 sanity_check
+sparsity-metrics
 train_utillog
 xmlify-results
