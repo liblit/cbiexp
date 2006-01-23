@@ -16,6 +16,9 @@ web_extras :=					\
 	moss-view.xsl				\
 	projected-moss-view.xsl
 
+-include ../../site-rules.mk
+-include site-rules.mk
+
 include ../../src/analysis-rules.mk
 
 histograms.xml: %.xml: % run-bugs.txt tru.txt
