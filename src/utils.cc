@@ -31,7 +31,7 @@ bool read_pred_full(FILE* fp, pred_info &pi)
 {
     char scheme_code;
 
-    const int got = fscanf(fp, "%c %d %d %d %d %f %f %f %f %d %d %d %d\n",
+    const int got = fscanf(fp, "%c %d %d %d %d %lf %lf %lf %lf %d %d %d %d\n",
 			   &scheme_code,
 			   &pi.unitIndex, &pi.siteOffset, &pi.predicate,
 			   &pi.siteIndex,
