@@ -31,6 +31,7 @@ noinst_PROGRAMS =				\
 	partial_order				\
 	process_run_labels			\
 	project					\
+	sampling-plans/uniform			\
 	sanity_check				\
 	sparsity-metrics			\
 	train_utillog				\
@@ -123,6 +124,9 @@ process_run_labels_LDADD = libanalyze.a
 
 project_SOURCES = project.cc
 project_LDADD = Score/libScore.a libanalyze.a -ldl
+
+sampling_plans_uniform_SOURCES = sampling-plans/uniform.cc
+sampling_plans_uniform_LDADD = libanalyze.a -ldl
 
 sanity_check_SOURCES = sanity_check.cc
 sanity_check_LDADD = libanalyze.a -ldl
