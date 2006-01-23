@@ -242,11 +242,11 @@ static-site-info.cc: $(tooldir)/map-sites $(sites)
 	$^ >$@
 clean:: ; rm -f static-site-info.cc
 
-plan-uniform-100.txt: $(tooldir)/sampling-plans/uniform
+plan-uniform-100.txt: $(tooldir)/sampling-plans/uniform static-site-info.so
 	$< 0.01 >$@
 clean:: ; rm -f plan-inverse-100.txt
 
-plan-uniform-1000.txt: $(tooldir)/sampling-plans/uniform
+plan-uniform-1000.txt: $(tooldir)/sampling-plans/uniform static-site-info.so
 	$< 0.001 >$@
 clean:: ; rm -f plan-inverse-1000.txt
 
