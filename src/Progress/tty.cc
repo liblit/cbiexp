@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include "../config.h"
 #include "tty.h"
 
 #ifdef HAVE_UNISTD_H
