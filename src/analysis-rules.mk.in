@@ -206,7 +206,7 @@ $(datadir)/stamp-convert-reports: $(tooldir)/convert-reports s.runs f.runs stati
 $(datadir)/stamp-extract-timestamps: $(tooldir)/extract-timestamps static-site-info.so
 	$(build) extract-timestamps
 	./extract-timestamps --runs-directory=$(datadir)
-	touch $(datadir)/$@
+	touch $@
 
 s.runs f.runs: $(tooldir)/process_run_labels $(datadir)/stamp-labels
 	$(time) $< --runs-directory=$(datadir)
