@@ -199,6 +199,7 @@ preds.txt: $(tooldir)/compute-results s.runs f.runs $(stamp-decimate) static-sit
 clean:: ; rm -f preds.txt
 
 $(datadir)/stamp-convert-reports: $(tooldir)/convert-reports s.runs f.runs static-site-info.so
+	test -w $@ -o ! -e $@
 	$< --runs-directory=$(datadir)
 	touch $@
 
