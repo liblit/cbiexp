@@ -68,7 +68,6 @@ static Plan plan;
 #include <argp.h>
 #include <fstream>
 #include <sysexits.h>
-#include "CompactReport.h"
 
 using namespace std;
 
@@ -119,7 +118,6 @@ processCommandLine(int argc, char *argv[])
   };
 
   static const argp_child children[] = {
-    { &CompactReport::argp, 0, 0, 0 },
     { 0, 0, 0, 0 }
   };
 
