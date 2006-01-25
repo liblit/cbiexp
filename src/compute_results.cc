@@ -156,6 +156,11 @@ protected:
 
 void Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
 {
+    assert(coords.unitIndex < staticSiteInfo.unitCount);
+    assert(coords.unitIndex < site_info.size());
+    assert(coords.siteOffset < staticSiteInfo.unit(coords.unitIndex).num_sites);
+    assert(coords.siteOffset < site_info[coords.unitIndex].size());
+
     obs(cur_run, coords);
 
     const size_t size = counts.size();
