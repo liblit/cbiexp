@@ -29,6 +29,7 @@ logreg.xsl
 obs.txt
 operand.dtd
 operands.xsl
+plan-*-*.txt
 pred-scores.css
 pred-scores.dtd
 pred-scores.xsl
@@ -60,6 +61,7 @@ sorts.dtd
 sorts.xml
 src
 stamp-src
+static-site-info.cc
 static-site-info.dtd
 static-site-info.xml
 str.
