@@ -51,7 +51,7 @@ sub run_task ($$$) {
 	my @command = $self->{decimator};
 	push @command, '--plan', $_ foreach @{$self->{plans}};
 	exec @command;
-	die "cannot spawn $decimator: $!\n";
+	die "cannot spawn $self->{decimator}: $!\n";
     }
 
     return 0;
