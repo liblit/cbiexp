@@ -50,7 +50,13 @@ int main(int argc, char *argv[])
   ios::sync_with_stdio(false);
 
   const StaticSiteInfo info;
-  for (StaticSiteInfo::UnitIterator unit = info.unitsBegin(); unit != info.unitsEnd(); ++unit)
-    for (unsigned site = 0; site < unit->num_sites; ++site)
-      cout << unit << '\t' << site << '\t' << rate << '\n';
+  SiteCoords coords;
+  for (unsigned unitNum = 0; unitNum < info.unitCount; ++unitNum)
+    {
+      const unit_t &unit = info.unit(unitNum);
+      for (unsigned siteNum = 0; siteNum < unit.num_sites; ++siteNum)
+	cout << unitNum << '\t' << siteNum << '\t' << rate << '\n';
+    }
+
+  return 0;
 }
