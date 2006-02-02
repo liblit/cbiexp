@@ -25,7 +25,6 @@ die "cannot find instrumented binary: $!" unless -x $command[0];
 
 push @command, $ARGV[0] if $ARGV[0] % 10 != 0;
 
-$ENV{SAMPLER_DEBUGGER} = '@sampler_debug@';
 $ENV{SAMPLER_FILE} = 'reports';
 $ENV{SAMPLER_REAL_EXECUTABLE} = $command[0];
 $ENV{SAMPLER_SPARSITY} = 1;

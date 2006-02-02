@@ -130,7 +130,6 @@ note 'command-line', @command;
 #  prepare for sampler data collection
 #
 
-$ENV{SAMPLER_DEBUGGER} = '@sampler_debug@';
 $ENV{SAMPLER_FILE} = 'reports';
 $ENV{SAMPLER_REAL_EXECUTABLE} = $ccrypt;
 $ENV{SAMPLER_SPARSITY} = 1;

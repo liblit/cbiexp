@@ -39,7 +39,6 @@ my $rhythmbox = "$FindBin::Bin/../build/shell/rhythmbox";
 
 $ENV{GCONF_LOCAL_LOCKS} = 1;
 $ENV{GNOME_DISABLE_CRASH_DIALOG} = 1;
-$ENV{SAMPLER_DEBUGGER} = '@sampler_debug@';
 $ENV{SAMPLER_FILE} = 'reports';
 $ENV{SAMPLER_REAL_EXECUTABLE} = $rhythmbox;
 $ENV{SAMPLER_SPARSITY} = 1;

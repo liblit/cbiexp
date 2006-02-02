@@ -57,7 +57,6 @@ note 'command-line', "@argv";
 open STDOUT, '>', 'stdout' or die;
 open STDERR, '>', 'stderr' or die;
 
-$ENV{SAMPLER_DEBUGGER} = '@sampler_debug@';
 $ENV{SAMPLER_FILE} = 'reports';
 $ENV{SAMPLER_REAL_EXECUTABLE} = $argv[0];
 $ENV{SAMPLER_SPARSITY} = 1;
