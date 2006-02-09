@@ -37,7 +37,7 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
 
   Progress::Bounded progress("ranking predicates", candidates.count);
 
-  if (allFailures.count > 0)
+  if (allFailures.count <= 0)
     return;
 
   const AllFailuresSnapshot snapshot;
