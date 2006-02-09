@@ -37,27 +37,30 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
 
   Progress::Bounded progress("ranking predicates", candidates.count);
 
-  const AllFailuresSnapshot snapshot;
-
-  // pluck out predicates one by one, printing as we go
-  while (!candidates.empty())
+  if (allFailures.count > 0)
     {
-      const Candidates::iterator winner = max_element(candidates.begin(), candidates.end());
-      view << *winner;
-      if (foci)
-	foci->insert(winner->index);
+      const AllFailuresSnapshot snapshot;
 
-      allFailures.dilute(*winner, winner->tru.failures);
-      if (allFailures.count <= 0)
-	break;
+      // pluck out predicates one by one, printing as we go
+      while (!candidates.empty())
+	{
+	  const Candidates::iterator winner = max_element(candidates.begin(), candidates.end());
+	  view << *winner;
+	  if (foci)
+	    foci->insert(winner->index);
 
-      for (Candidates::iterator loser = candidates.begin(); loser != candidates.end(); ++loser)
-	if (loser != winner)
-	  loser->dilute(*winner);
+	  allFailures.dilute(*winner, winner->tru.failures);
+	  if (allFailures.count <= 0)
+	    break;
 
-      progress.step();
-      candidates.erase(winner);
-      candidates.rescore(progress);
+	  for (Candidates::iterator loser = candidates.begin(); loser != candidates.end(); ++loser)
+	    if (loser != winner)
+	      loser->dilute(*winner);
+
+	  progress.step();
+	  candidates.erase(winner);
+	  candidates.rescore(progress);
+	}
     }
 }
 
