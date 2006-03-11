@@ -11,6 +11,7 @@ noinst_PROGRAMS =				\
 libcorrective_a_SOURCES =			\
 	Candidates.cc				\
 	Candidates.h				\
+	Foci.h					\
 	Outcome.cc				\
 	Outcome.h				\
 	Predicate.cc				\
