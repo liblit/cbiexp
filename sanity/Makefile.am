@@ -28,3 +28,6 @@ check-local: data/stamp-labels
 
 data/stamp-labels: build/sanity
 	$(top_srcdir)/bin/make-runs --bindir=$(srcdir)/bin 100
+
+dist-hook:
+	rm -r $(distdir)/*/CVS
