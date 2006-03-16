@@ -1,4 +1,4 @@
-SUBDIRS = corrective-ranking never-reached Score symmetric
+SUBDIRS = amplify corrective-ranking never-reached Score symmetric
 
 AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 $(BOOST_CPPFLAGS)
 

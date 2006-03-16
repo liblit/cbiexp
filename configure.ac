@@ -142,6 +142,7 @@ AC_CONFIG_FILES([
 Makefile
 correlations/Makefile
 src/Makefile
+src/amplify/Makefile
 src/corrective-ranking/Makefile
 src/never-reached/Makefile
 src/symmetric/Makefile
