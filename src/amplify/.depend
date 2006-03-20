@@ -1,0 +1,21 @@
+implicationAccumulator.cmo: predicate.cmi implicationAccumulator.cmi 
+implicationAccumulator.cmx: predicate.cmx implicationAccumulator.cmi 
+implications.cmo: predicate.cmi implications.cmi 
+implications.cmx: predicate.cmx implications.cmi 
+predicate.cmo: predicate.cmi 
+predicate.cmx: predicate.cmi 
+predicateAccumulator.cmo: predicate.cmi predicateAccumulator.cmi 
+predicateAccumulator.cmx: predicate.cmx predicateAccumulator.cmi 
+predicates.cmo: predicate.cmi predicates.cmi 
+predicates.cmx: predicate.cmx predicates.cmi 
+reconstruct.cmo: predicate.cmi reconstruct.cmi 
+reconstruct.cmx: predicate.cmx reconstruct.cmi 
+runner.cmo: implicationAccumulator.cmi implications.cmi predicate.cmi \
+    predicateAccumulator.cmi predicates.cmi 
+runner.cmx: implicationAccumulator.cmx implications.cmx predicate.cmx \
+    predicateAccumulator.cmx predicates.cmx 
+implicationAccumulator.cmi: predicate.cmi 
+implications.cmi: predicate.cmi 
+predicateAccumulator.cmi: predicate.cmi 
+predicates.cmi: predicate.cmi 
+reconstruct.cmi: predicate.cmi 

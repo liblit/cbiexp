@@ -7,7 +7,7 @@ let implFileName : string ref = ref ""
 let reportFileName : string ref = ref ""
 let outputFileName : string ref = ref ""
 
-let usage_msg = "Usage: sharpen -i <implication file name> -r <report file name> -o <output file name>" 
+let usage_msg = "Usage: amplify -i <implication file name> -r <report file name> -o <output file name>" 
 
 let argActions =
   [("-i", Set_string implFileName, "implication file name");
@@ -36,7 +36,7 @@ let doAnalysis () =
  
     (* second pass *)
   let areTrue =
-    (Sharpen.doAnalysis (implications :> Sharpen.implications) observedTrue notObservedTrue) 
+    (Reconstruct.doAnalysis (implications :> Reconstruct.implications) observedTrue notObservedTrue) 
   in 
   let ps = new Predicates.c areTrue in
   let inchannel = open_in !reportFileName in
