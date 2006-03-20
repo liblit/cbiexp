@@ -16,7 +16,6 @@
 
 let compilationUnit = ['0' - '9' 'a' - 'f']
                       ['0' - '9' 'a' - 'f']
-(*                      ['0' - '9' 'a' - 'f']
                       ['0' - '9' 'a' - 'f']
                       ['0' - '9' 'a' - 'f']
                       ['0' - '9' 'a' - 'f']
@@ -46,7 +45,7 @@ let compilationUnit = ['0' - '9' 'a' - 'f']
                       ['0' - '9' 'a' - 'f']
                       ['0' - '9' 'a' - 'f']
                       ['0' - '9' 'a' - 'f']
-*)
+                      ['0' - '9' 'a' - 'f']
 
 rule initial preds outchannel = shortest 
   | ("<report id=\"samples\">\n") as lxm	{ 
