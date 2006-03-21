@@ -1,33 +1,34 @@
-noinst_PROGRAMS = amplify
+lexers =					\
+	implLexer.mll				\
+	passOneLexer.mll			\
+	passTwoLexer.mll
 
-amplify_SOURCES = implLexer.mll 
-amplify_SOURCES += implicationAccumulator.ml
-amplify_SOURCES += implicationAccumulator.mli
-amplify_SOURCES += implications.ml
-amplify_SOURCES += implications.mli
-amplify_SOURCES += passOneLexer.mll
-amplify_SOURCES += passTwoLexer.mll
-amplify_SOURCES += predicate.ml
-amplify_SOURCES += predicate.mli
-amplify_SOURCES += predicateAccumulator.ml
-amplify_SOURCES += predicateAccumulator.mli
-amplify_SOURCES += predicates.ml
-amplify_SOURCES += predicates.mli
-amplify_SOURCES += reconstruct.ml
-amplify_SOURCES += reconstruct.mli
-amplify_SOURCES += runner.ml
+others =					\
+	implicationAccumulator.ml		\
+	predicate.ml				\
+	implications.ml				\
+	predicateAccumulator.ml			\
+	predicates.ml				\
+	reconstruct.ml				\
+	runner.ml
 
-OBJECTS = predicate.cmo 
-OBJECTS += implLexer.cmo 
-OBJECTS += passOneLexer.cmo 
-OBJECTS += passTwoLexer.cmo 
-OBJECTS += implicationAccumulator.cmo 
-OBJECTS += predicateAccumulator.cmo 
-OBJECTS += implications.cmo 
-OBJECTS += predicates.cmo 
-OBJECTS += reconstruct.cmo 
-OBJECTS += runner.cmo 
-	
+objects =					\
+	predicate.cmo				\
+	implicationAccumulator.cmo		\
+	implications.cmo			\
+	predicateAccumulator.cmo		\
+	predicates.cmo				\
+	implLexer.cmo				\
+	passOneLexer.cmo			\
+	passTwoLexer.cmo			\
+	reconstruct.cmo				\
+	runner.cmo
+
+mls = $(lexers:.mll=.ml) $(others)
+mlis = $(others:=.mli)
+
+depends = $(objects:.cmo=.do) $(mlis:.mli=.di)
+
 OCAMLC=ocamlc 
 OCAMLOPT=ocamlopt 
 OCAMLDEP=ocamldep 
@@ -35,11 +36,13 @@ OCAMLFLAGS=
 OCAMLOPTFLAGS=
 OCAMLLEX=ocamllex
 
-amplify$(EXEEXT): $(OBJECTS)
-	$(OCAMLC) $(OCAMLFLAGS) -o amplify $(OBJECTS)
+all-local: amplify
+
+amplify: $(objects)
+	$(OCAMLC) $(OCAMLFLAGS) -o amplify $(objects)
 
 # Common rules 
-SUFFIXES: .ml .mli .cmo .cmi .cmx 
+SUFFIXES: .ml .mli .cmo .cmi .cmx .di .do
 
 .ml.cmo: 
 	$(OCAMLC) $(OCAMLFLAGS) -c $< 
@@ -54,10 +57,17 @@ SUFFIXES: .ml .mli .cmo .cmi .cmx
 	$(OCAMLLEX) $<
 
 clean-local: 
+	rm -f *.d[io]
 	rm -f *.cm[iox]
 	rm -f implLexer.ml
 	rm -f passOneLexer.ml
 	rm -f passTwoLexer.ml 
 
-include $(srcdir)/.lexdepend
-include $(srcdir)/.depend
+.mli.di:
+	$(OCAMLDEP) $^ >$@
+
+.ml.do:
+	$(OCAMLDEP) $^ >$@
+
+#include .lexdepend
+-include $(depends)

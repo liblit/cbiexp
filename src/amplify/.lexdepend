@@ -1,6 +1,0 @@
-implLexer.cmo: predicate.cmi  
-implLexer.cmi: predicate.cmi
-passOneLexer.cmo: predicate.cmi
-passOneLexer.cmi: predicate.cmi
-passTwoLexer.cmo: predicate.cmi
-passTwoLexer.cmi: predicate.cmi
