@@ -8,6 +8,7 @@ corrdir := $(root)/correlations
 tooldir := $(root)/src
 srcdir ?= $(experiment)/src
 training-runs ?= 0
+raw-report-name ?= reports
 
 sitesdir ?= $(experiment)/share
 sitesglob := $(sitesdir)/*.sites
@@ -207,7 +208,7 @@ CLEANFILES += preds.txt
 
 $(datadir)/stamp-convert-reports: s.runs f.runs static-site-info.so $(call tool-deps, convert-reports)
 	test -w $@ -o ! -e $@
-	$(tooldir)/convert-reports --runs-directory=$(datadir)
+	$(tooldir)/convert-reports --runs-directory=$(datadir) --raw-report-name=$(raw-report-name)
 	touch $@
 
 $(datadir)/stamp-extract-timestamps: static-site-info.so $(call tool-deps, extract-timestamps)
