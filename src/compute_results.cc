@@ -416,6 +416,7 @@ void process_cmdline(int argc, char** argv)
 	{ &CompactReport::argp, 0, 0, 0 },
 	{ &Confidence::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
+	{ &ReportReader::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
