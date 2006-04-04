@@ -12,6 +12,14 @@ operator<(const PredCoords &a, const PredCoords &b)
     || (aSite == bSite && (a.predicate < b.predicate));
 }
 
+bool
+operator==(const PredCoords &a, const PredCoords &b)
+{
+  const SiteCoords &aSite(a);
+  const SiteCoords &bSite(b);
+  return (aSite == bSite) && (a.predicate == b.predicate);
+}
+
 
 istream &
 operator>>(istream &in, PredCoords &coords)

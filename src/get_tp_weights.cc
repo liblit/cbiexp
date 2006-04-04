@@ -24,6 +24,7 @@
 using namespace std;
 using __gnu_cxx::hash_map;
 
+static int score_ctr = 0;
 static double score1 = 0.0, score2 = 0.0, score_n1 = 0.0, score_n2 = 0.0;
 static double score3 = 0.0;
 static ofstream logfp("truthprobs.txt", ios_base::trunc);
@@ -31,6 +32,8 @@ static ofstream datfp("X.dat", ios_base::trunc);
 static ofstream notdatfp("notX.dat", ios_base::trunc);
 static ofstream gdatfp("truX.dat", ios_base::trunc);
 static ofstream gnotdfp("trunotX.dat", ios_base::trunc);
+static ofstream freqfp("truFreq.dat", ios_base::trunc);
+static ofstream nfreqfp("trunotFreq.dat", ios_base::trunc);
 
 static vector<PredCoords> predVec;
 static vector<PredCoords> notpredVec;
@@ -41,14 +44,14 @@ static vector<PredCoords> notpredVec;
 
 struct PredInfo
 {
-    unsigned tru, obs;
+    count_tp tru, obs;
     double rho;
     double alpha; // truth rate = tru/obs
     double beta[3];
     double lambda, gamma;
     double tp, tp_n; // tp is P(X > 0|r,y), tp_n is P(X>0|n,r,y)
     double tp2, tp_n2; // truth probabilities from model 2
-    unsigned dst, dso, realt, realo;
+    count_tp dst, dso, realt, realo;
     PredInfo() {
 	tru = obs = 0;
 	rho = alpha = beta[0] = beta[1] = beta[2] = lambda = gamma = 0.0;
@@ -61,18 +64,18 @@ struct PredInfo
 	tp2 = tp_n2 = 0.0;
 	dst = dso = realt = realo = 0;
     }
-    void update_stats(unsigned _tru, unsigned _obs) {
+    void update_stats(count_tp _tru, count_tp _obs) {
 	tru += _tru;
 	obs += _obs;
     }
     void set_parms(FILE *fp);
-    void calc_prob(unsigned t, unsigned o);
-    void calc_prob_n(unsigned t, unsigned o, unsigned n);
-    void calc_prob2(unsigned t, unsigned o);
-    void calc_prob_n2(unsigned t, unsigned o, unsigned n);
+    void calc_prob(count_tp t, count_tp o);
+    void calc_prob_n(count_tp t, count_tp o, count_tp n);
+    void calc_prob2(count_tp t, count_tp o);
+    void calc_prob_n2(count_tp t, count_tp o, count_tp n);
     void calc_zero_prob() {  calc_prob(0,0);    }
     void calc_zero_prob2() {  calc_prob2(0,0);    }
-    void compare_prob (unsigned t, unsigned o) {
+    void compare_prob (count_tp t, count_tp o) {
         realt = t;
         realo = o;
         calc_prob_n(dst, dso, realo);
@@ -90,10 +93,12 @@ struct PredInfo
 void
 PredInfo::set_parms (FILE * fp)
 {
-  unsigned S, N, Y, Z;
+  count_tp S, Y;
+  unsigned N, Z;
   double a, b;
-  unsigned Asize, Asumtrue, Asumobs, Bsize, Csize;
-  int ctr = fscanf(fp, "%u %u %u %u %lg %lg %lg %u %u %u %u %u %lg %lg %lg %lg %lg %lg\n", 
+  unsigned Asize, Bsize, Csize;
+  count_tp Asumtrue, Asumobs;
+  int ctr = fscanf(fp, "%Lu %u %Lu %u %lg %lg %lg %u %Lu %Lu %u %u %lg %lg %lg %lg %lg %lg\n", 
 		   &S, &N, &Y, &Z, &a, &b, &rho, 
 		   &Asize, &Asumtrue, &Asumobs, &Bsize, &Csize,
 		   &alpha, beta, beta+1, beta+2, &lambda, &gamma);
@@ -101,7 +106,7 @@ PredInfo::set_parms (FILE * fp)
 }
 
 void 
-PredInfo::calc_prob(unsigned t, unsigned o) 
+PredInfo::calc_prob(count_tp t, count_tp o) 
 {
     dst = t;
     dso = o;
@@ -120,7 +125,7 @@ PredInfo::calc_prob(unsigned t, unsigned o)
 }
 
 void
-PredInfo::calc_prob_n(unsigned t, unsigned o, unsigned n)
+PredInfo::calc_prob_n(count_tp t, count_tp o, count_tp n)
 {
   if (t > 0)
     tp_n = 1.0;
@@ -129,7 +134,7 @@ PredInfo::calc_prob_n(unsigned t, unsigned o, unsigned n)
 }
 
 void
-PredInfo::calc_prob2(unsigned t, unsigned o)
+PredInfo::calc_prob2(count_tp t, count_tp o)
 {
     if (t > 0)
 	tp2 = 1.0;
@@ -150,7 +155,7 @@ PredInfo::calc_prob2(unsigned t, unsigned o)
 }
 
 void
-PredInfo::calc_prob_n2(unsigned t, unsigned o, unsigned n)
+PredInfo::calc_prob_n2(count_tp t, count_tp o, count_tp n)
 {
     if (t > 0)
 	tp_n2 = 1.0;
@@ -230,10 +235,10 @@ public:
   Reader(int);
 
 protected:
-  void handleSite(const SiteCoords &, vector<unsigned> &);
+  void handleSite(const SiteCoords &, vector<count_tp> &);
 
 private:
-  void update(const SiteCoords &, unsigned, unsigned, unsigned) const;
+  void update(const SiteCoords &, unsigned, count_tp, count_tp) const;
   const int mode;
 };
 
@@ -244,7 +249,7 @@ Reader::Reader(int _mode)
 }
 
 inline void
-Reader::update(const SiteCoords &coords, unsigned p, unsigned obs, unsigned tru) const
+Reader::update(const SiteCoords &coords, unsigned p, count_tp obs, count_tp tru) const
 {
     assert(tru <= obs);
     PredCoords pc(coords, p);
@@ -257,6 +262,7 @@ Reader::update(const SiteCoords &coords, unsigned p, unsigned obs, unsigned tru)
 	    (pp.*pptr).calc_prob2(tru, obs);
 	    break;
 	case READ_FULL:
+            score_ctr++;
 	    (pp.*pptr).compare_prob(tru, obs);
 	    break;
 	default:
@@ -265,9 +271,9 @@ Reader::update(const SiteCoords &coords, unsigned p, unsigned obs, unsigned tru)
     }
 }
 
-void Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
+void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 {
-    const unsigned sum = accumulate(counts.begin(), counts.end(), 0);
+    const count_tp sum = accumulate(counts.begin(), counts.end(), (count_tp) 0);
     assert(sum > 0);
 
     const size_t size = counts.size();
@@ -378,16 +384,28 @@ operator<< (ostream &out, const vector<PredCoords> &pv)
 void
 print_groundtruth()
 {
+  double freq;
   for (unsigned i = 0; i < predVec.size(); ++i) {
     pred_hash_t::iterator found = predHash.find(predVec[i]);
     assert(found != predHash.end());
     gdatfp << (found->second.*pptr).dst << ' ';
+    freq = 0.0;
+    if ((found->second.*pptr).dso > 0)
+      freq = (double) (found->second.*pptr).dst/(found->second.*pptr).dso;
+    freqfp << freq << ' ';
+
     found = predHash.find(notpredVec[i]);
     assert(found != predHash.end());
     gnotdfp << (found->second.*pptr).dst << ' ';
+    freq = 0.0;
+    if ((found->second.*pptr).dso > 0)
+      freq = (double) (found->second.*pptr).dst/(found->second.*pptr).dso;
+    nfreqfp << freq << ' ';
   }
   gdatfp << endl;
+  freqfp << endl;
   gnotdfp << endl;
+  nfreqfp << endl;
 }
 
 void print_results()
@@ -432,9 +450,10 @@ int main(int argc, char** argv)
     read_parms();
 
     datfp << scientific << setprecision(12);
+    notdatfp << scientific << setprecision(12);
+    freqfp << scientific << setprecision(12);
 
     string report_suffix = CompactReport::suffix;
-    unsigned ctr = 0;
     Progress::Bounded prog("Calculating truth probabilities", NumRuns::count());
     for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
 	if (is_srun[r])
@@ -445,7 +464,6 @@ int main(int argc, char** argv)
 	    continue;
 
 	prog.step();
-	ctr++;
         predHash.reinit_probs(pptr);
 
 	CompactReport::suffix = report_suffix;
@@ -458,14 +476,17 @@ int main(int argc, char** argv)
         print_results();
     }
 
-    logfp << "------\nScores over " << ctr << " runs:\n";
-    logfp << "Model 1: " << score1/ctr << " Given n: " << score_n1/ctr <<endl;
-    logfp << "Model 2: " << score2/ctr << " Given n: " << score_n2/ctr << endl;
-    logfp << "Compare observed with real val: " << score3/ctr << endl;
+    logfp << "------\nScores over " << score_ctr << " predicates:\n";
+    logfp << "Model 1: " << score1/score_ctr << " Given n: " << score_n1/score_ctr <<endl;
+    logfp << "Model 2: " << score2/score_ctr << " Given n: " << score_n2/score_ctr << endl;
+    logfp << "Compare observed with real val: " << score3/score_ctr << endl;
     logfp.close();
     datfp.close();
     notdatfp.close();
     gdatfp.close();
+    gnotdfp.close();
+    freqfp.close();
+    nfreqfp.close();
     return 0;
 }
 

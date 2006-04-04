@@ -11,6 +11,7 @@
 #include <gsl/gsl_randist.h>
 #include <math.h>
 #include <vector>
+#include "DiscreteDist.h"
 #include "fopen.h"
 #include "NumRuns.h"
 #include "PredCoords.h"
@@ -33,13 +34,13 @@ static gsl_rng *generator;
 /****************************************************************
  * Pred-specific information
  ***************************************************************/
-typedef hash_map<unsigned, unsigned> DiscreteDist;
-
 struct pred_info_t {
-    unsigned S, N, Y, Z;
+    unsigned N, Z;
+    count_tp S, Y;
     double a, b;
     double rho;
-    unsigned Asize, Asumtrue, Asumobs;
+    unsigned Asize;
+    count_tp Asumtrue, Asumobs;
     unsigned Bsize, Csize;
     double alpha, lambda, gamma;
     double beta[3];
@@ -55,6 +56,13 @@ struct pred_info_t {
 	Cset.clear();
     }
     void read_stats(FILE * fp);
+    void scale_t() {
+      double mint = t[0];
+      mint = (t[1] < mint) ? t[1] : mint;
+      mint = (t[2] < mint) ? t[2] : mint;
+      for (unsigned i = 0; i < 3; ++i)
+        t[i] -= mint;
+    }
     void init_parms() {
 	alpha = (double) Y/S;
 	lambda = (double) S/N/rho;
@@ -64,6 +72,7 @@ struct pred_info_t {
 	beta[2] = (double) Csize/(Asize + Bsize + Csize);
 	for (unsigned i = 0; i < 3; ++i) 
 	  t[i] = log(beta[i]);
+        scale_t();
 	//t[0] = t[1] = t[2] = 1.0;
 	//beta[0] = beta[1] = beta[2] = 1.0/3.0;
 	//beta = gsl_rng_uniform(generator);
@@ -119,15 +128,16 @@ pred_info_t::read_stats (FILE * fp)
     Cset.clear();
     int res;
 
-    res = fscanf(fp, "%u %u %u %u %lg %lg %lg %u %u %u %u %u\n", 
+    res = fscanf(fp, "%Lu %u %Lu %u %lg %lg %lg %u %Lu %Lu %u %u\n", 
 		 &S, &N, &Y, &Z, &a, &b, &rho,
 		 &Asize, &Asumtrue, &Asumobs, &Bsize, &Csize);
     assert(res == 12);
 
-    unsigned val, count;
+    count_tp val;
+    unsigned count;
     unsigned total = 0;
     while (total < Bsize) {
-	res = fscanf(fp, "%u %u ", &val, &count);
+	res = fscanf(fp, "%Lu %u ", &val, &count);
 	assert(res == 2);
 	Bset[val] = count;
 	total += count;
@@ -137,7 +147,7 @@ pred_info_t::read_stats (FILE * fp)
 
     total = 0;
     while (total < Csize) {
-	res = fscanf(fp, "%u %u ", &val, &count);
+	res = fscanf(fp, "%Lu %u ", &val, &count);
 	assert(res == 2);
 	Cset[val] = count;
 	total += count;
@@ -220,11 +230,11 @@ pred_info_t::newton_raphson_N()
     double lchange = det*(dd*ga-bb*gb);
     double gchange = det *(-bb*ga + aa*gb);
 
-     logfp << "ex: " << ex << " C: " << C << " A: " << A 
- 	  << " E: " << E << " B: " << B << " D: " << D
- 	  << " t1: " << t1 << endl;
-     logfp << S << ' ' << -S/(lambda*lambda) << ' ' << B*B/A-D << endl;
-     logfp << "a: " << ga << " b: " << gb << " aa: " << aa << " bb: " << bb << " dd: " << dd << " det: " << det << " lchange: " << lchange << " gchange: " << gchange << endl;
+     //logfp << "ex: " << ex << " C: " << C << " A: " << A 
+ 	  //<< " E: " << E << " B: " << B << " D: " << D
+ 	  //<< " t1: " << t1 << endl;
+     //logfp << S << ' ' << -S/(lambda*lambda) << ' ' << B*B/A-D << endl;
+     //logfp << "a: " << ga << " b: " << gb << " aa: " << aa << " bb: " << bb << " dd: " << dd << " det: " << det << " lchange: " << lchange << " gchange: " << gchange << endl;
 
     lambda -= lchange;
     gamma -= gchange;
@@ -312,13 +322,13 @@ pred_info_t::B_der(double dB[4], double ddB[4][4], const double d[3][3],
 	}
     }
 
-    logfp << "Bi: " << *Bi << endl;
-    logfp << "dB: " << dB[0] << ' ' << dB[1] << ' ' << dB[2] << ' ' << dB[3] << endl;
-    logfp << "ddB: " << endl;
-    logfp << ddB[0][0] << ' ' << ddB[0][1] << ' ' << ddB[0][2] << ' ' << ddB[0][3] << endl
-          << ddB[1][0] << ' ' << ddB[1][1] << ' ' << ddB[1][2] << ' ' << ddB[1][3] << endl
-          << ddB[2][0] << ' ' << ddB[2][1] << ' ' << ddB[2][2] << ' ' << ddB[2][3] << endl
-          << ddB[3][0] << ' ' << ddB[3][1] << ' ' << ddB[3][2] << ' ' << ddB[3][3] << endl;
+    //logfp << "Bi: " << *Bi << endl;
+    //logfp << "dB: " << dB[0] << ' ' << dB[1] << ' ' << dB[2] << ' ' << dB[3] << endl;
+    //logfp << "ddB: " << endl;
+    //logfp << ddB[0][0] << ' ' << ddB[0][1] << ' ' << ddB[0][2] << ' ' << ddB[0][3] << endl
+          //<< ddB[1][0] << ' ' << ddB[1][1] << ' ' << ddB[1][2] << ' ' << ddB[1][3] << endl
+          //<< ddB[2][0] << ' ' << ddB[2][1] << ' ' << ddB[2][2] << ' ' << ddB[2][3] << endl
+          //<< ddB[3][0] << ' ' << ddB[3][1] << ' ' << ddB[3][2] << ' ' << ddB[3][3] << endl;
 }
 
 void 
@@ -341,14 +351,14 @@ pred_info_t::C_der(double dC[4], double ddC[4][4], const double d[3][3] ,
 	}
     }
 
-    logfp << "m: " << m << " am: " << am << " beta[0]: " << beta[0] << " beta[2]: " << beta[2] << endl;
-    logfp << "Ci: " << *Ci << endl;
-    logfp << "dC: " << dC[0] << ' ' << dC[1] << ' ' << dC[2] << ' ' << dC[3] << endl;
-    logfp << "ddC: " << endl;
-    logfp << ddC[0][0] << ' ' << ddC[0][1] << ' ' << ddC[0][2] << ' ' << ddC[0][3] << endl
-          << ddC[1][0] << ' ' << ddC[1][1] << ' ' << ddC[1][2] << ' ' << ddC[1][3] << endl
-          << ddC[2][0] << ' ' << ddC[2][1] << ' ' << ddC[2][2] << ' ' << ddC[2][3] << endl
-          << ddC[3][0] << ' ' << ddC[3][1] << ' ' << ddC[3][2] << ' ' << ddC[3][3] << endl;
+    //logfp << "m: " << m << " am: " << am << " beta[0]: " << beta[0] << " beta[2]: " << beta[2] << endl;
+    //logfp << "Ci: " << *Ci << endl;
+    //logfp << "dC: " << dC[0] << ' ' << dC[1] << ' ' << dC[2] << ' ' << dC[3] << endl;
+    //logfp << "ddC: " << endl;
+    //logfp << ddC[0][0] << ' ' << ddC[0][1] << ' ' << ddC[0][2] << ' ' << ddC[0][3] << endl
+          //<< ddC[1][0] << ' ' << ddC[1][1] << ' ' << ddC[1][2] << ' ' << ddC[1][3] << endl
+          //<< ddC[2][0] << ' ' << ddC[2][1] << ' ' << ddC[2][2] << ' ' << ddC[2][3] << endl
+          //<< ddC[3][0] << ' ' << ddC[3][1] << ' ' << ddC[3][2] << ' ' << ddC[3][3] << endl;
 }
 
 void
@@ -361,22 +371,23 @@ pred_info_t::update_Xparms(double grad[4], double Hess[4][4])
 
     gsl_vector_view vec = gsl_vector_view_array(grad, 4);
     gsl_matrix_view Mat = gsl_matrix_view_array(H_data, 4, 4);
-    int signum;
-    gsl_permutation * p = gsl_permutation_alloc(4);
+    //gsl_matrix * V = gsl_matrix_alloc(4,4);
+    gsl_vector * tau = gsl_vector_alloc (4);
     gsl_vector * change = gsl_vector_alloc (4);
 
-    gsl_linalg_LU_decomp (&Mat.matrix, p, &signum);
-    gsl_linalg_LU_solve (&Mat.matrix, p, &vec.vector, change);
+    gsl_linalg_QR_decomp (&Mat.matrix, tau);
+    gsl_linalg_QR_solve (&Mat.matrix, tau, &vec.vector, change);
     
     for (unsigned i = 0; i < 3; ++i) {
-	t[i] -= gsl_vector_get(change, i);
+        t[i] -= gsl_vector_get(change, i);
     }
+    scale_t();
     calc_beta();
     alpha -= gsl_vector_get(change, 3);
-    project (&alpha, 0.0, 1.0);
 
-    gsl_permutation_free (p);
     gsl_vector_free (change);
+    gsl_vector_free (tau);
+    //gsl_matrix_free (V);
 }
 
 double
@@ -400,22 +411,22 @@ pred_info_t::newton_raphson_X()
         + (double) Asumtrue * loga + (double) (Asumobs - Asumtrue) * log1a;
 
     beta_der(d, D);
-    logfp << "d: " << endl;
-    logfp << d[0][0] << ' ' << d[0][1] << ' ' << d[0][2] << endl
-          << d[1][0] << ' ' << d[1][1] << ' ' << d[1][2] << endl
-          << d[2][0] << ' ' << d[2][1] << ' ' << d[2][2] << endl;
-    logfp << "D[0]: " << endl;
-    logfp << D[0][0][0] << ' ' << D[0][0][1] << ' ' << D[0][0][2] << endl
-          << D[0][1][0] << ' ' << D[0][1][1] << ' ' << D[0][1][2] << endl
-          << D[0][2][0] << ' ' << D[0][2][1] << ' ' << D[0][2][2] << endl;
-    logfp << "D[1]: " << endl;
-    logfp << D[1][0][0] << ' ' << D[1][0][1] << ' ' << D[1][0][2] << endl
-          << D[1][1][0] << ' ' << D[1][1][1] << ' ' << D[1][1][2] << endl
-          << D[1][2][0] << ' ' << D[1][2][1] << ' ' << D[1][2][2] << endl;
-    logfp << "D[2]: " << endl;
-    logfp << D[2][0][0] << ' ' << D[2][0][1] << ' ' << D[2][0][2] << endl
-          << D[2][1][0] << ' ' << D[2][1][1] << ' ' << D[2][1][2] << endl
-          << D[2][2][0] << ' ' << D[2][2][1] << ' ' << D[2][2][2] << endl;
+    //logfp << "d: " << endl;
+    //logfp << d[0][0] << ' ' << d[0][1] << ' ' << d[0][2] << endl
+          //<< d[1][0] << ' ' << d[1][1] << ' ' << d[1][2] << endl
+          //<< d[2][0] << ' ' << d[2][1] << ' ' << d[2][2] << endl;
+    //logfp << "D[0]: " << endl;
+    //logfp << D[0][0][0] << ' ' << D[0][0][1] << ' ' << D[0][0][2] << endl
+          //<< D[0][1][0] << ' ' << D[0][1][1] << ' ' << D[0][1][2] << endl
+          //<< D[0][2][0] << ' ' << D[0][2][1] << ' ' << D[0][2][2] << endl;
+    //logfp << "D[1]: " << endl;
+    //logfp << D[1][0][0] << ' ' << D[1][0][1] << ' ' << D[1][0][2] << endl
+          //<< D[1][1][0] << ' ' << D[1][1][1] << ' ' << D[1][1][2] << endl
+          //<< D[1][2][0] << ' ' << D[1][2][1] << ' ' << D[1][2][2] << endl;
+    //logfp << "D[2]: " << endl;
+    //logfp << D[2][0][0] << ' ' << D[2][0][1] << ' ' << D[2][0][2] << endl
+          //<< D[2][1][0] << ' ' << D[2][1][1] << ' ' << D[2][1][2] << endl
+          //<< D[2][2][0] << ' ' << D[2][2][1] << ' ' << D[2][2][2] << endl;
 
 
     // derivative ordering: t[0], t[1], t[2], alpha
@@ -439,7 +450,7 @@ pred_info_t::newton_raphson_X()
     Hess[3][3] = -(at + (double) Asumtrue)/(alpha*alpha) 
 	- (as + (double) (Asumobs - Asumtrue))/((1.0-alpha)*(1.0-alpha));
 
-    logfp << "grad (before): " << grad[0] << ' ' << grad[1] << ' ' << grad[2] << ' ' << grad[3] << endl;
+    //logfp << "grad (before): " << grad[0] << ' ' << grad[1] << ' ' << grad[2] << ' ' << grad[3] << endl;
 
     // Add the terms involving set B
     for (DiscreteDist::iterator c = Bset.begin(); c != Bset.end(); ++c) {
@@ -478,10 +489,10 @@ pred_info_t::newton_raphson_X()
 
     logfp << "Grad: " << grad[0] << ' ' << grad[1] << ' ' << grad[2] << ' ' << grad[3] << endl;
     logfp << "Hess: " << endl <<
-             Hess[0][0] << ' ' << Hess[0][1] << ' ' << Hess[0][2] << ' ' << Hess[0][3] << endl <<
-		Hess[1][0] << ' ' << Hess[1][1] << ' ' << Hess[1][2] << ' ' << Hess[1][3] << endl <<
-		Hess[2][0] << ' ' << Hess[2][1] << ' ' << Hess[2][2] << ' ' << Hess[2][3] << endl << 
-		Hess[3][0] << ' ' << Hess[3][1] << ' ' << Hess[3][2] << ' ' << Hess[3][3] << endl;
+          Hess[0][0] << ' ' << Hess[0][1] << ' ' << Hess[0][2] << ' ' << Hess[0][3] << endl <<
+   	  Hess[1][0] << ' ' << Hess[1][1] << ' ' << Hess[1][2] << ' ' << Hess[1][3] << endl <<
+	  Hess[2][0] << ' ' << Hess[2][1] << ' ' << Hess[2][2] << ' ' << Hess[2][3] << endl << 
+	  Hess[3][0] << ' ' << Hess[3][1] << ' ' << Hess[3][2] << ' ' << Hess[3][3] << endl;
 
     update_Xparms(grad, Hess);
 
@@ -491,27 +502,44 @@ pred_info_t::newton_raphson_X()
 bool
 pred_info_t::est_Xparms() 
 {
-    double alphap = alpha;
-    double tp[3];
-    tp[0] = t[0];
-    tp[1] = t[1];
-    tp[2] = t[2];
+    double alphap;
+    double betap[3];
     double L0 = (std::numeric_limits<double>::min)(), L1;
     unsigned niter = 0;
     double change;
+    unsigned nbzero = 0;
 
-    logfp << "L0 " << L0 << " alpha0: " << alphap << 
-	" t0: " << tp[0] << ' ' << tp[1] << ' ' << tp[2] << endl;
+    for (unsigned i = 0; i < 3; ++i)
+      if (beta[i] == 0.0)
+        nbzero++;
+
+    if (nbzero == 1) {
+        beta[0] = (double) (Asize+1.0)/(Asize + Bsize + Csize + 3.0);
+        beta[1] = (double) (Bsize+1.0)/(Asize + Bsize + Csize + 3.0);
+        beta[2] = (double) (Csize+1.0)/(Asize + Bsize + Csize + 3.0);
+        for (unsigned i = 0; i < 3; ++i)
+          t[i] = log(beta[i]);
+        scale_t();
+    }
+    else if (nbzero > 1) 
+      return 0;
+     
+    if (alpha == 0.0)
+      alpha = 0.5;
+
+    logfp << "L0 " << L0 << " alpha0: " << alpha << 
+	" t0: " << t[0] << ' ' << t[1] << ' ' << t[2] << endl;
     do {
 	alphap = alpha;
-	tp[0] = t[0];
-	tp[1] = t[1];
-	tp[2] = t[2];
+	betap[0] = beta[0];
+	betap[1] = beta[1];
+	betap[2] = beta[2];
 	L1 = newton_raphson_X();
 	project(&alpha, 0.0, 1.0);
 	logfp << "L1: " << L1 << " alpha1: " << alpha << " t1: " 
-	      << t[0] << ' ' << t[1] << ' ' << t[2] << endl;
-	change = abs(alphap - alpha) + abs(tp[0] - t[0]) + abs(tp[1] - t[1]) + abs(tp[2] - t[2]) ;
+	      << t[0] << ' ' << t[1] << ' ' << t[2] << " beta: " 
+              << beta[0] << ' ' << beta[1] << ' ' << beta[2] << endl;
+	change = abs(alphap - alpha) + abs(betap[0] - beta[0]) + abs(betap[1] - beta[1]) + abs(betap[2] - beta[2]) ;
 	niter++;
 	L0 = L1;
     } while (change > thresh && niter < MAXITER);
@@ -527,7 +555,7 @@ pred_info_t::est_Xparms()
 inline void
 pred_info_t::map_estimate() {
     checkstatus(est_Nparms(), "Map estimates of N prior parms did not converge");
-    //checkstatus(est_Xparms(), "Map estimates of X prior parms did not converge");
+    checkstatus(est_Xparms(), "Map estimates of X prior parms did not converge");
 }
 
 void estimate_parms()

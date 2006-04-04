@@ -15,7 +15,7 @@
 using namespace std;
 
 
-typedef __gnu_cxx::hash_map<SiteCoords, unsigned> SitesMap;
+typedef __gnu_cxx::hash_map<SiteCoords, count_tp> SitesMap;
 SitesMap sites;
 
 
@@ -32,7 +32,7 @@ public:
   unsigned increased;
 
 protected:
-  void handleSite(const SiteCoords &, vector<unsigned> &);
+  void handleSite(const SiteCoords &, vector<count_tp> &);
 };
 
 
@@ -43,10 +43,10 @@ Reader::Reader()
 
 
 void
-Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
+Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 {
-  const unsigned observations = accumulate(counts.begin(), counts.end(), 0);
-  unsigned &maxObserved = sites[coords];
+  const count_tp observations = accumulate(counts.begin(), counts.end(), (count_tp) 0);
+  count_tp &maxObserved = sites[coords];
   if (maxObserved < observations)
     {
       maxObserved = observations;

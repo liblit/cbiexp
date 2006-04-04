@@ -4,6 +4,7 @@
 #include <ext/hash_map>
 #include <fstream>
 #include <iostream>
+#include <list>
 #include <numeric>
 #include <string>
 #include "classify_runs.h"
@@ -21,7 +22,8 @@
 using namespace std;
 using __gnu_cxx::hash_map;
 
-static unsigned ntestruns = 100;
+static unsigned currun;
+static list<PredCoords> predList;
 static double score1 = 0.0, score2 = 0.0, score_n1 = 0.0, score_n2 = 0.0;
 static ofstream logfp("truthprobs.txt", ios_base::trunc);
 
@@ -31,19 +33,28 @@ static ofstream logfp("truthprobs.txt", ios_base::trunc);
 
 struct PredInfo
 {
-    unsigned tru, obs;
+    count_tp tru, obs;
     double rho;
     double alpha; // truth rate = tru/obs
     double beta[3];
     double lambda, gamma;
     double tp, tp_n; // tp is P(X > 0|r,y), tp_n is P(X>0|n,r,y)
     double tp2, tp_n2; // truth probabilities from model 2
-    unsigned dst, dso, realt, realo;
+    double ll; // cumulative log likelihood of inferred model on all runs
+    unsigned nwrong; // number of 0 likelihoods (problem for log)
+    unsigned nright; // number of matches
+    unsigned nwrong_obs; // number of mismatches between observed and real truth vals
+    unsigned nright_obs; // number of matches between observed and real truth vals
+    unsigned ybetter, pbetter; // number of runs where observed/inferred is better
+    count_tp dst, dso, realt, realo;
     PredInfo() {
 	tru = obs = 0;
 	rho = alpha = beta[0] = beta[1] = beta[2] = lambda = gamma = 0.0;
 	tp = tp_n = 0.0;
 	tp2 = tp_n2 = 0.0;
+        ll = 0.0;
+        nwrong = nright = nwrong_obs = nright_obs = 0;
+        ybetter = pbetter = 0;
 	dst = dso = realt = realo = 0;
     }
     void reinit_probs() {
@@ -51,37 +62,30 @@ struct PredInfo
 	tp2 = tp_n2 = 0.0;
 	dst = dso = realt = realo = 0;
     }
-    void update_stats(unsigned _tru, unsigned _obs) {
+    void update_stats(count_tp _tru, count_tp _obs) {
 	tru += _tru;
 	obs += _obs;
     }
     void set_parms(FILE *fp);
-    void calc_prob(unsigned t, unsigned o);
-    void calc_prob_n(unsigned t, unsigned o, unsigned n);
-    void calc_prob2(unsigned t, unsigned o);
-    void calc_prob_n2(unsigned t, unsigned o, unsigned n);
+    void calc_prob(count_tp t, count_tp o);
+    void calc_prob_n(count_tp t, count_tp o, count_tp n);
+    void calc_prob2(count_tp t, count_tp o);
+    void calc_prob_n2(count_tp t, count_tp o, count_tp n);
     void calc_zero_prob() {  calc_prob(0,0);    }
     void calc_zero_prob2() {  calc_prob2(0,0);    }
-    void compare_prob (unsigned t, unsigned o) {
-        realt = t;
-        realo = o;
-        calc_prob_n(dst, dso, realo);
-	calc_prob_n2(dst, dso, realo);
-        double answer = (realt > 0) ? 1.0 : 0.0;
-        score1 += abs(answer - tp);
-        score2 += abs(answer - tp2);
-        score_n1 += abs(answer - tp_n);
-        score_n2 += abs(answer - tp_n2);
-    }
+    void calc_ll();
+    void compare_prob (count_tp t, count_tp o);
 };
 
 void
 PredInfo::set_parms (FILE * fp)
 {
-  unsigned S, N, Y, Z;
+  unsigned N, Z;
+  count_tp S, Y;
   double a, b;
-  unsigned Asize, Asumtrue, Asumobs, Bsize, Csize;
-  int ctr = fscanf(fp, "%u %u %u %u %lg %lg %lg %u %u %u %u %u %lg %lg %lg %lg %lg %lg\n", 
+  count_tp Asumtrue, Asumobs;
+  unsigned Asize, Bsize, Csize;
+  int ctr = fscanf(fp, "%Lu %u %Lu %u %lg %lg %lg %u %Lu %Lu %u %u %lg %lg %lg %lg %lg %lg\n", 
 		   &S, &N, &Y, &Z, &a, &b, &rho, 
 		   &Asize, &Asumtrue, &Asumobs, &Bsize, &Csize,
 		   &alpha, beta, beta+1, beta+2, &lambda, &gamma);
@@ -89,7 +93,7 @@ PredInfo::set_parms (FILE * fp)
 }
 
 void 
-PredInfo::calc_prob(unsigned t, unsigned o) 
+PredInfo::calc_prob(count_tp t, count_tp o) 
 {
     dst = t;
     dso = o;
@@ -108,7 +112,7 @@ PredInfo::calc_prob(unsigned t, unsigned o)
 }
 
 void
-PredInfo::calc_prob_n(unsigned t, unsigned o, unsigned n)
+PredInfo::calc_prob_n(count_tp t, count_tp o, count_tp n)
 {
   if (t > 0)
     tp_n = 1.0;
@@ -117,7 +121,7 @@ PredInfo::calc_prob_n(unsigned t, unsigned o, unsigned n)
 }
 
 void
-PredInfo::calc_prob2(unsigned t, unsigned o)
+PredInfo::calc_prob2(count_tp t, count_tp o)
 {
     if (t > 0)
 	tp2 = 1.0;
@@ -136,7 +140,7 @@ PredInfo::calc_prob2(unsigned t, unsigned o)
 }
 
 void
-PredInfo::calc_prob_n2(unsigned t, unsigned o, unsigned n)
+PredInfo::calc_prob_n2(count_tp t, count_tp o, count_tp n)
 {
     if (t > 0)
 	tp_n2 = 1.0;
@@ -149,6 +153,54 @@ PredInfo::calc_prob_n2(unsigned t, unsigned o, unsigned n)
 	else // t = 0, m = 0, n > 0
 	    tp_n2 = 1.0 - numerator;
     }
+}
+
+void 
+PredInfo::calc_ll() {
+  int y = (dst > 0) ? 1 : 0;
+  int x = (realt > 0) ? 1 : 0;
+  int p = (tp > 0.5) ? 1 : 0;
+  int dy = abs(y-x);
+  int dp = abs(p-x);
+
+  if (dy-dp > 0) pbetter++;
+  if (dy-dp < 0) ybetter++;
+
+  if (tp > 1.0) {
+    cerr << tp << endl;
+    tp = 1.0;
+  }
+  if (tp < 0.0) {
+    if (tp < -1e-15)
+      cerr << tp << endl;
+    tp = 0.0;
+  }
+
+  if (x != y) nwrong_obs++;
+  else nright_obs++;
+  if (tp == (double) x) nright++;
+  if (x == 1) {
+    if (tp == 0.0) nwrong++;
+    else ll += log(tp);
+  }
+  else { // x = 0
+    if (tp == 1.0) nwrong++;
+    else ll += log(1.0-tp);
+  }
+}
+
+void 
+PredInfo::compare_prob (count_tp t, count_tp o) {
+    realt = t;
+    realo = o;
+    calc_prob_n(dst, dso, realo);
+    calc_prob_n2(dst, dso, realo);
+    double x = (realt > 0) ? 1.0 : 0.0;
+    score1 += abs(x - tp);
+    score2 += abs(x - tp2);
+    score_n1 += abs(x - tp_n);
+    score_n2 += abs(x - tp_n2);
+    calc_ll();
 }
 
 class PredInfoPair;
@@ -184,7 +236,9 @@ operator<< (ostream &out, const PredInfo &pi)
 	<< pi.tp << ' ' << pi.tp_n << ' ' 
 	<< pi.tp2 << ' ' << pi.tp_n2 << ' '
         << pi.dst << ' ' << pi.dso << ' '
-	<< pi.realt << ' ' << pi.realo;
+	<< pi.realt << ' ' << pi.realo << ' ' 
+        << pi.ll << ' ' << pi.nwrong << ' ' << pi.nwrong_obs << ' ' 
+        << pi.nright << ' ' << pi.nright_obs;
     return out;
 }
 
@@ -216,10 +270,10 @@ public:
   Reader(int);
 
 protected:
-  void handleSite(const SiteCoords &, vector<unsigned> &);
+  void handleSite(const SiteCoords &, vector<count_tp> &);
 
 private:
-  void update(const SiteCoords &, unsigned, unsigned, unsigned) const;
+  void update(const SiteCoords &, unsigned, count_tp, count_tp) const;
   const int mode;
 };
 
@@ -230,9 +284,12 @@ Reader::Reader(int _mode)
 }
 
 inline void
-Reader::update(const SiteCoords &coords, unsigned p, unsigned obs, unsigned tru) const
+Reader::update(const SiteCoords &coords, unsigned p, count_tp obs, count_tp tru) const
 {
-    assert(tru <= obs);
+    if (tru > obs) {
+      cout << "run " << currun << " coords: " << coords << "	" << p << " tru: " << tru << " obs: " << obs << endl;
+      assert(tru <= obs);
+    }
     PredCoords pc(coords, p);
     const pred_hash_t::iterator found = predHash.find(pc);
     if (found != predHash.end()) {
@@ -251,9 +308,9 @@ Reader::update(const SiteCoords &coords, unsigned p, unsigned obs, unsigned tru)
     }
 }
 
-void Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
+void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 {
-    const unsigned sum = accumulate(counts.begin(), counts.end(), 0);
+    const count_tp sum = accumulate(counts.begin(), counts.end(), (count_tp) 0);
     assert(sum > 0);
 
     const size_t size = counts.size();
@@ -295,6 +352,7 @@ read_parms()
       pp.s.set_parms(fp);
 
       predHash[coords] = pp;
+      predList.push_back(coords);
   }
 
   fclose(fp);
@@ -317,16 +375,20 @@ void calc_zero_prob(piptr pp) // calculate truthprobs of predicates we didn't se
  * Print results to file
  ***************************************************************************/
 
-void print_results(unsigned r)
+void print_results()
 {
-  logfp << "Run " << r;
-  if (pptr == &PredInfoPair::f)
-    logfp << " (f)\n";
-  else if (pptr == &PredInfoPair::s)
-    logfp << " (s)\n";
-  else
-    assert(0);
-  logfp << predHash;
+  for (list<PredCoords>::iterator c = predList.begin(); c != predList.end(); ++c) {
+    const pred_hash_t::iterator found = predHash.find(*c);
+    assert (found != predHash.end());
+    PredInfoPair &pp = found->second;
+    logfp << *c << "\t";
+    logfp << pp.f.ll << "\t" << pp.f.nwrong << "\t" << pp.f.nwrong_obs << "\t";
+    logfp << pp.f.nright << '\t' << pp.f.nright_obs << '\t';
+    logfp << pp.f.ybetter << '\t' << pp.f.pbetter << '\t';
+    logfp << pp.s.ll << "\t" << pp.s.nwrong << "\t" << pp.s.nwrong_obs << '\t';
+    logfp << pp.s.nright << '\t' << pp.s.nright_obs << '\t';
+    logfp << pp.s.ybetter << '\t' << pp.s.pbetter << endl;
+  }
 }
 
 
@@ -379,23 +441,25 @@ int main(int argc, char** argv)
 //    calc_alpha ();
 
     string report_suffix = CompactReport::suffix;
-    unsigned ctr = 0;
-    Progress::Bounded prog2("Calculating truth probabilities", ntestruns);
+    unsigned nsruns = 0, nfruns = 0;
+    Progress::Bounded prog("Calculating truth probabilities", NumRuns::end);
     for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
-	if (ctr == ntestruns)
-	    break;
 
-	if (is_srun[r])
+	if (is_srun[r]) {
 	    pptr = &PredInfoPair::s;
-	else if (is_frun[r])
+            nsruns++;
+        }
+	else if (is_frun[r]) {
 	    pptr = &PredInfoPair::f;
+            nfruns++;
+        }
 	else
 	    continue;
 
-	prog2.step();
-	ctr++;
+	prog.step();
         predHash.reinit_probs(pptr);
 
+	currun = r;
 	CompactReport::suffix = report_suffix;
 	Reader(READ_DS).read(r);
 	calc_zero_prob(pptr);
@@ -403,12 +467,13 @@ int main(int argc, char** argv)
 	CompactReport::suffix = "";
 	Reader(READ_FULL).read(r);
 
-        print_results(r);
     }
 
 
+    print_results();
     logfp << "Model 1 score: " << score1 << " Given n: " << score_n1 <<endl;
     logfp << "Model 2 score: " << score2 << " Given n: " << score_n2 << endl;
+    logfp << "nsruns: " << nsruns << " nfruns: " << nfruns << endl;
     logfp.close();
     return 0;
 }

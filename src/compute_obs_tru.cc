@@ -150,7 +150,7 @@ public:
     Reader(Outcome, unsigned);
 
 protected:
-    void handleSite(const SiteCoords &, vector<unsigned> &);
+    void handleSite(const SiteCoords &, vector<count_tp> &);
 
 private:
     void notice(const SiteCoords &coords, unsigned, bool) const;
@@ -183,9 +183,9 @@ Reader::notice(const SiteCoords &site, unsigned predicate, bool tru) const
 
 
 void
-Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
+Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 {
-    const unsigned sum = accumulate(counts.begin(), counts.end(), 0);
+    const count_tp sum = accumulate(counts.begin(), counts.end(), (count_tp) 0);
     assert(sum > 0);
 
     const size_t size = counts.size();

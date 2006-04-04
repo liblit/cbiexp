@@ -2,11 +2,11 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
-#include <ext/hash_map>
 #include <queue>
 #include <math.h>
 #include <gsl/gsl_cdf.h>
 #include <gsl/gsl_randist.h>
+#include "DiscreteDist.h"
 #include "fopen.h"
 #include "SiteCoords.h"
 
@@ -50,7 +50,6 @@ class site_hash_t : public hash_map<SiteCoords, SiteInfoPair>
 
 static site_hash_t siteHash;
 static queue<SiteCoords> siteSel;
-typedef hash_map<unsigned, unsigned> DiscreteDist;
 static DiscreteDist dist;
 
 inline ostream &
@@ -65,7 +64,7 @@ operator<< (ostream &out, const site_info_t &si)
 /****************************************************************************
  * Utilities
  ***************************************************************************/
-double rexp(const site_info_t &si, unsigned r, unsigned n) 
+double rexp(const site_info_t &si, count_tp r, count_tp n) 
 {
   const double lambda = si.lambda;
   const double beta = si.beta;
@@ -92,7 +91,8 @@ read_parms()
 
   SiteCoords coords;
   SiteInfoPair sp;
-  unsigned S, N, Z;
+  unsigned N, Z;
+  count_tp S;
   double a, b;
   int ctr;
   
@@ -102,10 +102,10 @@ read_parms()
       break;
     assert(ctr == 2);
 
-    ctr = fscanf(fp, "%u\t%u\t%u\t%lg\t%lg\t%lg\t%lg\t%lg\n", &S, &N, &Z, &a, &b, &sp.f.rho, &sp.f.lambda, &sp.f.beta);
+    ctr = fscanf(fp, "%Lu\t%u\t%u\t%lg\t%lg\t%lg\t%lg\t%lg\n", &S, &N, &Z, &a, &b, &sp.f.rho, &sp.f.lambda, &sp.f.beta);
     assert(ctr == 8);
 
-    ctr = fscanf(fp, "%u\t%u\t%u\t%lg\t%lg\t%lg\t%lg\t%lg\n", 
+    ctr = fscanf(fp, "%Lu\t%u\t%u\t%lg\t%lg\t%lg\t%lg\t%lg\n", 
            &S, &N, &Z, &a, &b, &sp.s.rho, &sp.s.lambda, &sp.s.beta);
     assert(ctr == 8);
 
@@ -118,11 +118,11 @@ read_parms()
 bool read_dist (FILE * const fp, SiteInfo si, bool push) 
 {
   SiteCoords coords;
-  unsigned nvals, val, of;
+  unsigned nvals, of;
+  count_tp val, N=0;
   double ef;
   double chi2stat = 0.0;
   int ctr;
-  int N = 0;
 
   ctr = fscanf(fp, "%u\t%u\n", &coords.unitIndex, &coords.siteOffset);
   if (feof(fp))
@@ -145,7 +145,7 @@ bool read_dist (FILE * const fp, SiteInfo si, bool push)
   dist.clear();
   // read the observed frequencies
   for (unsigned i = 0; i < nvals; i++) {
-    ctr = fscanf(fp, "%u %u ", &val, &of);
+    ctr = fscanf(fp, "%Lu %u ", &val, &of);
     assert(ctr == 2);
     dist[val] = of;
     N += of;

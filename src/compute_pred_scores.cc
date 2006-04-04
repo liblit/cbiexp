@@ -5,12 +5,12 @@
 #include <iomanip>
 #include <iostream>
 #include <fstream>
-#include <list>
 #include <sstream>
 #include "IndexedPredInfo.h"
 #include "NumRuns.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
+#include "RunBugs.h"
 #include "RunsDirectory.h"
 #include "Score/Importance.h"
 #include "XMLTemplate.h"
@@ -21,11 +21,6 @@
 
 using namespace std;
 
-const unsigned numwatch = 4;
-const unsigned watch[] = {2577, 2434, 2594, 2595};
-static ofstream watchfp[numwatch];
-static ofstream runsfp[numwatch];
-
 const unsigned MAX_ITER = 20;
 const double thresh = 10e-12;
 const double smooth = 1.0;
@@ -33,13 +28,10 @@ const double smooth2 = 1e-12;
 
 typedef list<IndexedPredInfo> Stats;
 static Stats predList;
-typedef list<unsigned> RunList;
 static RunList * contribRuns;
-static RunList * runbugs;
-static int numbugs = 10;
 
 static double * W;
-static double * tsW;
+//static double * tsW;
 static double * run_weights;
 static double * notW;
 static double * notrun_weights;
@@ -83,6 +75,33 @@ normalize (double * u, unsigned n, unsigned mode)
 
   for (unsigned i = 0; i < n; ++i) {
     u[i] = u[i] / norm;
+  }
+}
+
+void 
+normalize (double u[][2], unsigned type, unsigned n, unsigned mode) 
+{
+  double norm = 0.0;
+  assert(type < 2);
+  for (unsigned i = 0; i < n; ++i) {
+    switch (mode) {
+    case L1:
+      norm += abs(u[i][type]);
+      break;
+    case L2:
+      norm += u[i][type] * u[i][type];
+      break;
+    case MAX:
+      norm = (norm > abs(u[i][type])) ? norm : abs(u[i][type]);
+      break;
+    default:
+      cerr << "Unknown mode for normalization: " << mode << endl;
+      assert(0);
+    }
+  }
+
+  for (unsigned i = 0; i < n; ++i) {
+    u[i][type] = u[i][type] / norm;
   }
 }
 
@@ -137,11 +156,11 @@ read_weights()
   unsigned nruns = num_sruns + num_fruns;
   unsigned type;
   double x, notx;
-  double w;
+  //double w;
   //double trux;
 
   W = new double[nruns*npreds];
-  tsW = new double[nruns*npreds];
+  //tsW = new double[nruns*npreds];
   notW = new double[nruns*npreds];
   run_weights = new double[nruns];
   notrun_weights = new double[nruns];
@@ -149,15 +168,17 @@ read_weights()
   //trurun_weights = new double[nruns];
 
   memset(W, 0, sizeof(double)*nruns*npreds);
-  memset(tsW, 0, sizeof(double)*nruns*npreds);
+  //memset(tsW, 0, sizeof(double)*nruns*npreds);
   memset(notW, 0, sizeof(double)*nruns*npreds);
   memset(run_weights, 0, sizeof(double)*nruns);
   memset(notrun_weights, 0, sizeof(double)*nruns);
   //memset(trurun_weights, 0, sizeof(double)*nruns);
 
-  FILE * wfp = fopenRead("W.first.dat");
+  //FILE * wfp = fopenRead("W.first.dat");
   FILE * xfp = fopenRead("X.dat");
   FILE * notxfp = fopenRead("notX.dat");
+  //FILE * xfp = fopenRead("truFreq.dat");
+  //FILE * notxfp = fopenRead("trunotFreq.dat");
   //FILE * truxfp = fopenRead("truX.dat");
   int ctr;
   unsigned i = 0;
@@ -167,8 +188,8 @@ read_weights()
     
     type = (is_srun[r]);
     for (unsigned j = 0; j < npreds; ++j) {
-      ctr = fscanf(wfp, "%lg ", &w);
-      assert(ctr == 1);
+      //ctr = fscanf(wfp, "%lg ", &w);
+      //assert(ctr == 1);
       ctr = fscanf(xfp, "%lg ", &x);
       assert(ctr == 1);
       ctr = fscanf(notxfp, "%lg ", &notx);
@@ -176,12 +197,12 @@ read_weights()
       //ctr = fscanf(truxfp, "%lg ", &trux);
       //assert(ctr == 1);
       //assert(w >= 0.0);
-      assert(w >= 0.0);
+      //assert(w >= 0.0);
       assert(x >= 0.0);
       assert(notx >= 0.0);
       //assert(trux >= 0.0);
       //W[i*npreds+j] = w*x;
-      tsW[i*npreds+j] = w;
+      //tsW[i*npreds+j] = w;
       W[i*npreds+j] = x;
       notW[i*npreds+j] = notx;
       //truW[i*npreds+j] = trux;
@@ -190,7 +211,7 @@ read_weights()
       //trurun_weights[i] += truW[i*npreds+j];
       //      denom_weights[type][j] += W[i*npreds+j];
     }
-    fscanf(wfp, "\n");
+    //fscanf(wfp, "\n");
     fscanf(xfp, "\n");
     fscanf(notxfp, "\n");
     //fscanf(truxfp, "\n");
@@ -198,7 +219,7 @@ read_weights()
     ++i;
   }
   
-  fclose (wfp);
+  //fclose (wfp);
   fclose (xfp);
   fclose (notxfp);
   //fclose (truxfp);
@@ -212,61 +233,34 @@ read_weights()
 //   }
 }
 
-// read in the list of failed runs and their bugs
 void
-read_runbugs ()
+read_freqs ()
 {
-  const unsigned numRuns = NumRuns::end;
-  runbugs = new RunList[numRuns];
-  for (unsigned i = 0; i < numRuns; ++i) {
-    runbugs[i].clear();
-  }
-
-  FILE * runfp = fopenRead("run-bugs.txt");
-  assert(runfp);
-  char buf[1024];
-  char *pos;
-  int r;
-  while (true) {
-    fgets(buf, 1024, runfp);
-    if (feof(runfp))
-      break;
-
-    pos = strtok(buf, "\t");
-    r = atoi(pos);
-    pos = strtok(NULL, "\t\n");
-    while (pos != NULL) {
-      runbugs[r].push_back(atoi(pos));
-      pos = strtok(NULL, "\t\n");
+  unsigned npreds = predList.size();
+  double w;
+  FILE * wfp = fopenRead("truFreq.dat");
+  int ctr; 
+  unsigned i = 0;
+  for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+    if (!is_srun[r] && !is_frun[r])
+      continue;
+    for (unsigned j = 0; j < npreds; ++j) {
+      ctr = fscanf(wfp, "%lg ", &w);
+      assert(ctr == 1);
+      W[i*npreds+j] = w;
     }
+    fscanf(wfp, "\n");
+    ++i;
   }
-
-  fclose(runfp);
-}
-
-// aggregate the bug histogram correponsing to a list of runs
-void
-bug_hist (int * bugs, int numbugs, const RunList &runs)
-{
-  memset(bugs, 0, sizeof(int)*numbugs);
-  for (RunList::const_iterator c = runs.begin(); 
-       c != runs.end(); ++c) {
-    const RunList &buglist = runbugs[(*c)];
-    for (RunList::const_iterator d = buglist.begin();
-         d != buglist.end(); ++d) {
-      int b = (*d);
-      assert(b >= 1 && b <= numbugs);
-      bugs[b-1] += 1;
-    }
-  }
+  fclose(wfp);
 }
 
 void
 print_histograms()
 {
-  int bugs[numbugs];
+  RunBugs::BugVec bugs;
 
-  read_runbugs();
+  RunBugs::read_runbugs();
   ofstream outfp ("pred_histograms.xml");
   outfp << "<?xml version=\"1.0\"?>" << endl
         << "<!DOCTYPE histograms SYSTEM \"histograms.dtd\">" << endl
@@ -274,9 +268,9 @@ print_histograms()
 
   unsigned npreds = predList.size();
   for (unsigned i = 0; i < npreds; ++i) {
-    bug_hist(bugs, numbugs, contribRuns[i]);
+    RunBugs::bug_hist(bugs, contribRuns[i]);
     outfp << "<predictor>" << endl;
-    for (int j = 0; j < numbugs; ++j) {
+    for (unsigned j = 0; j < bugs.size(); ++j) {
       outfp << "<bug count=\"" << bugs[j] << "\"/>" << endl; 
     }
     outfp << "</predictor>" << endl;
@@ -287,14 +281,13 @@ print_histograms()
 }
  
 void
-print_scores()
+print_scores(const char *outfn)
 {
   // sort according to descending order
   predList.sort(Sort::Descending<Score::Importance>());
 
-  ofstream outfp ("pred_scores.xml");
-  outfp << fixed
-	<< "<?xml version=\"1.0\"?>" << endl
+  ofstream outfp (outfn);
+  outfp << "<?xml version=\"1.0\"?>" << endl
         << "<?xml-stylesheet type=\"text/xsl\" href=\"" 
 	<< XMLTemplate::format("pred-scores") << ".xsl\"?>" << endl
 	<< "<!DOCTYPE scores SYSTEM \"pred-scores.dtd\">" << endl
@@ -337,8 +330,8 @@ print_pred(ofstream &outfp, ofstream &runfp, double * v, double * notv,
   for (unsigned k = 0; k < npreds; ++k) 
     outfp << notW[j*npreds+k] << ' ';
   outfp << endl;
-  for (unsigned k = 0; k < npreds; ++k) 
-    outfp << tsW[j*npreds+k] << ' ';
+  //for (unsigned k = 0; k < npreds; ++k) 
+    //outfp << tsW[j*npreds+k] << ' ';
   outfp << endl;
 }
 
@@ -386,9 +379,10 @@ update_max(const unsigned j, const unsigned r, const unsigned npreds,
   for (unsigned k = 0; k < npreds; ++k) {
     d = contrib(W, k, j, r, v, npreds);
     notd = contrib(notW, k, j, r, notv, npreds);
-    val = (d + smooth2)/(notd + smooth2)
-          *(oldnotpscore[k][othertype]+smooth)/(oldpscore[k][othertype]+smooth);
-    if (val > maxd || (val == maxd && tsW[j*npreds+k] > tsW[j*npreds+argmax])) {
+    val = (d + smooth2) / (notd + smooth2)
+          * (oldnotpscore[k][othertype]+ smooth)/(oldpscore[k][othertype]+ smooth);
+    //if (val > maxd || (val == maxd && tsW[j*npreds+k] > tsW[j*npreds+argmax])) {
+    if (val > maxd) {
       maxd = val;
       argmax = k;
     }
@@ -401,11 +395,6 @@ update_max(const unsigned j, const unsigned r, const unsigned npreds,
   if (is_frun[r])
     contribRuns[argmax].push_back(r);
 
-  for (unsigned i = 0; i < numwatch; i++) {
-    if (argmax == watch[i])
-      print_pred(watchfp[i], runsfp[i], v, notv, oldpscore, oldnotpscore, j, r, npreds);
-  }
-
 }
 
 void
@@ -414,8 +403,6 @@ iterate_max(double * u, double * notu, double * v, double * notv,
             unsigned npreds)
 {
   double pscore[npreds][2], notpscore[npreds][2];
-  double change;
-  unsigned ctr = 0;
 
   memset(pscore, 0, sizeof(double)*2*npreds);
   memset(notpscore, 0, sizeof(double)*2*npreds);
@@ -425,6 +412,11 @@ iterate_max(double * u, double * notu, double * v, double * notv,
   }
 
   cout << "Giving weight to max pred..." << endl;
+
+  //normalize(oldpscore, F, npreds, MAX);
+  //normalize(oldpscore, S, npreds, MAX);
+  //normalize(oldnotpscore, F, npreds, MAX);
+  //normalize(oldnotpscore, S, npreds, MAX);
 
   unsigned j = 0;
   for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
@@ -445,14 +437,14 @@ iterate_max(double * u, double * notu, double * v, double * notv,
     notu[i] = 1.0/u[i];
   }
 
-  normalize(u, npreds, MAX);
+  //normalize(u, npreds, MAX);
 
-  change = compute_change(u, v, npreds);
+  //change = compute_change(u, v, npreds);
   //copy over from u to v 
   memcpy(v, u, sizeof(double)*npreds);
   // logvalues (v, npreds);
   logruns (npreds);
-  logfp << "iterate_max: iteration: " << ctr << " change: " << change << endl;
+  //logfp << "iterate_max: iteration: " << ctr << " change: " << change << endl;
 }
 
 inline void
@@ -513,8 +505,8 @@ iterate_sum(double * u, double * notu, double * v, double * notv,
     for (unsigned i = 0; i < npreds; ++i) {
       u[i] = (pscore[i][F] + smooth) / (pscore[i][S] + smooth) 
 	* (notpscore[i][S] + smooth) / (notpscore[i][F] + smooth);
-      //u[i] = (pscore[i][F] * notpscore[i][S] + smooth)
-        /// (pscore[i][S] * notpscore[i][F] + smooth);
+      //u[i] = (pscore[i][F] + notpscore[i][S] + smooth)
+        /// (pscore[i][S] + notpscore[i][F] + smooth);
       notu[i] = 1.0 / u[i];
     }
 
@@ -555,6 +547,123 @@ compute_scores()
 
 }
 
+unsigned
+collect_stats(double *m, double *v, unsigned npreds, const vector<bool> &collect)
+{
+  cout << "Collecting statistics ..." << endl;
+  memset(m, 0, sizeof(double)*npreds);
+  memset(v, 0, sizeof(double)*npreds);
+  double val;
+  unsigned n = 0, j = 0; 
+  for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+    if (!is_srun[r] && !is_frun[r])
+      continue;
+    if (collect[r]) {
+      n++;
+      for (unsigned i = 0; i < npreds; ++i) {
+        val = W[j*npreds+i];
+        m[i] += val;
+        v[i] += val*val;
+      }
+    }
+    j++;
+  }
+
+  for (unsigned i = 0; i < npreds; ++i) {
+    if (n > 0)
+      m[i] /= (double) n;
+    if (n > 1)
+      v[i] = (v[i] - (double) n*m[i]*m[i])/(double) (n-1.0);
+    else v[i] = 0.0;
+  }
+
+  logfp << n << " number of runs used." << endl;
+  logfp << "Truth prob means" << endl;
+  logvalues(m, npreds);
+  logfp << "Truth prob vars" << endl;
+  logvalues(v, npreds);
+
+  return n;
+}
+
+void
+compute_tstats(double *tstat, double *m1, double *s1, 
+               double *m2, double *s2, double n1,
+               double n2, unsigned len)
+{
+  cout << "n1: " << n1 << " n2: " << n2 << endl;
+  assert(n1 >= 1.0);
+  assert(n2 >= 1.0);
+  assert(n1+n2 >= 2.0);
+  double c1;
+  double c2;
+  double sigma;
+  c1 = sqrt(1.0/n1 + 1.0/n2);
+  c2 = sqrt(n1+n2-2.0);
+  for (unsigned i = 0; i < len; ++i) {
+    sigma = sqrt(s1[i]*(n1-1.0) + s2[i]*(n2-1.0));
+    //tstat[i] = (m2[i]-m1[i])/c1;
+    tstat[i] = m2[i] - m1[i];
+    if (sigma > 0.0)
+      tstat[i] = tstat[i] / sigma * c2;
+  }
+  logfp << "T-test stats" << endl;
+  logvalues(tstat, len);
+}
+
+void
+ttest_rank()
+{
+  unsigned npreds = predList.size();
+  double smean[npreds], svar[npreds];
+  double fmean[npreds], fvar[npreds];
+  double tstat[npreds];
+  vector<bool> collect;
+  vector<unsigned> check;
+  unsigned ns, nf;
+  unsigned maxlen = 10, ctr = 0;
+  char filename[128];
+
+  //read_freqs();  // read in the real dst/dso frequencies
+
+  // do two-sample t-test for the failed runs accounted for by 
+  // the 10 most important predicates
+  check.resize(maxlen);
+  for (Stats::iterator c = predList.begin(); c != predList.end(); ++c) {
+    check[ctr] = c->index;
+    if (ctr++ >= maxlen)
+      break;
+  }
+
+  cout << "num_sruns: " << num_sruns << " num_fruns: " << num_fruns << endl;
+  ns = collect_stats(smean, svar, npreds, is_srun);
+  assert(ns == num_sruns);
+  nf = collect_stats(fmean,fvar, npreds, is_frun);
+  assert(nf == num_fruns);
+  compute_tstats(tstat, smean, svar, fmean, fvar, ns, nf, npreds);
+  for (Stats::iterator c = predList.begin(); c != predList.end(); ++c)
+    c->ps.imp = tstat[c->index];
+  print_scores("list0.xml");
+
+  for (unsigned i = 0; i < maxlen; ++i) {
+    unsigned pind = check[i];
+    if (contribRuns[pind].size() == 0)
+      continue;
+    collect.clear();
+    collect.resize(NumRuns::end);
+    for (RunList::const_iterator c = contribRuns[pind].begin();
+         c != contribRuns[pind].end(); ++c) {
+      collect[(*c)] = 1;
+    }
+    nf = collect_stats(fmean, fvar, npreds, collect);
+    compute_tstats(tstat, smean, svar, fmean, fvar, ns, nf, npreds);
+    for (Stats::iterator c = predList.begin(); c != predList.end(); ++c) 
+      c->ps.imp = tstat[c->index];
+    sprintf(filename, "list%d.xml", i+1);
+    print_scores(filename);
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////
 //
 //  Command line processing
@@ -591,14 +700,6 @@ int main (int argc, char** argv)
 
   read_weights();
 
-  for (unsigned i = 0; i < numwatch; i++) {
-    char fname[128];
-    sprintf(fname, "pred_%d.log", watch[i]);
-    watchfp[i].open (fname, ios_base::trunc);
-    sprintf(fname, "pred_%d.runs", watch[i]);
-    runsfp[i].open (fname, ios_base::trunc);
-  }
-
   compute_scores();
 
   // must print out histograms before the scores,
@@ -607,12 +708,10 @@ int main (int argc, char** argv)
   if (XMLTemplate::prefix == "moss")
     print_histograms();
 
-  print_scores();
+  print_scores("pred_scores.xml");
 
-  for (unsigned i = 0; i < numwatch; i++) {
-    watchfp[i].close();
-    runsfp[i].close();
-  }
+  ttest_rank();
+
   logfp.close();
   delete[] W;
   delete[] notW;
@@ -621,6 +720,5 @@ int main (int argc, char** argv)
   delete[] pred_weights[F];
   delete[] pred_weights[S];
   delete[] contribRuns;
-  delete[] runbugs;
   return 0;
 }

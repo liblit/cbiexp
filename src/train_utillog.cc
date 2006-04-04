@@ -46,8 +46,8 @@ struct confusion_matrix {
  ***************************************************************/
 struct pred_info_t {
     float mean, var, std;
-    unsigned min, max;
-    unsigned val;
+    count_tp min, max;
+    count_tp val;
     double theta;
     pred_info_t () {
 	mean = var = std = 0.0;
@@ -71,7 +71,7 @@ static pred_hash_t pred_hash;
 bool read_nonconst_pred (FILE *fp, PredCoords &pc, pred_info_t &pi) 
 {
     unsigned ntallied;
-    const int got = fscanf(fp, "%u %u %u %g %g %u %u %u\n", &pc.unitIndex, &pc.siteOffset,
+    const int got = fscanf(fp, "%u %u %u %g %g %Lu %Lu %u\n", &pc.unitIndex, &pc.siteOffset,
 			   &pc.predicate, &pi.mean, &pi.var, &pi.min, &pi.max, &ntallied);
     
     pi.std = sqrt(pi.var);
@@ -139,7 +139,7 @@ public:
   Reader(unsigned);
 
 protected:
-  void handleSite(const SiteCoords &, vector<unsigned> &);
+  void handleSite(const SiteCoords &, vector<count_tp> &);
 };
 
 inline
@@ -149,7 +149,7 @@ Reader::Reader(unsigned r)
     curr_run.runId = r;
 }
 
-void Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
+void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 {
     for (unsigned predicate = 0; predicate < counts.size(); ++predicate)
 	if (counts[predicate]) {
@@ -372,6 +372,7 @@ void process_cmdline(int argc, char** argv)
 	{ &CompactReport::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
+	{ &UtilLogReg::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
 
@@ -430,6 +431,9 @@ int main(int argc, char** argv)
     ofstream valfp ("val_lls.txt", ios_base::trunc);
     ofstream cmfp ("confmat.txt", ios_base::trunc);
     ofstream thetafp ("theta.txt", ios_base::trunc);
+    cmfp << "delta1 = " << UtilLogReg::delta1 
+         << "; delta2 = " << UtilLogReg::delta2 
+         << "; delta3 = " << UtilLogReg::delta3 << endl;
     trainfp.close();
     valfp.close();
     cmfp.close();

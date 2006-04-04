@@ -186,6 +186,8 @@ libanalyze_a_SOURCES =				\
 	ReportReader.h				\
 	Rho.cc					\
 	Rho.h					\
+	RunBugs.cc				\
+	RunBugs.h				\
 	RunsDirectory.cc			\
 	RunsDirectory.h				\
 	RunsSplit.cc				\

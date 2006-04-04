@@ -7,7 +7,7 @@
   xmlns="http://www.w3.org/1999/xhtml"
   >
 
-  <xsl:import href="scores.xsl"/>
+  <xsl:import href="pred-scores.xsl"/>
   <xsl:import href="histograms.xsl"/>
 
   <xsl:template match="scores" mode="scores-table-headings">

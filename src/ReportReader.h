@@ -2,9 +2,9 @@
 #define INCLUDE_ReportReader_h
 
 #include <vector>
+#include "Counts.h"
 
 class SiteCoords;
-
 
 class ReportReader
 {
@@ -13,7 +13,7 @@ public:
   void read(unsigned runId);
 
 protected:
-  virtual void handleSite(const SiteCoords &, std::vector<unsigned> &) = 0;
+  virtual void handleSite(const SiteCoords &, std::vector<count_tp> &) = 0;
 };
 
 

@@ -15,7 +15,7 @@ static const argp_option options[] = {
     'x',
     "PREFIX",
     0,
-    "put \"PREFIX\" to XML template names (default no prefix)",
+    "include \"PREFIX\" in XML template names (default no prefix)",
     0
   },
   { 0, 0, 0, 0, 0, 0 }

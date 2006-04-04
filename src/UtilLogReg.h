@@ -1,6 +1,9 @@
 #ifndef INCLUDE_UTILLOGREG_H
 #define INCLUDE_UTILLOGREG_H
 
+#include <argp.h>
+#include <stdlib.h>
+
 namespace UtilLogReg
 {
   extern double tau;  // learning rate
@@ -9,6 +12,8 @@ namespace UtilLogReg
   extern double delta2;
   extern double delta3;
   extern unsigned niters; // number of epochs through the training data
+
+  extern const argp argp;
 }
 
 #endif // !INCLUDE_UTILLOGREG_H

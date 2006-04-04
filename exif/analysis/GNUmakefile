@@ -1,7 +1,9 @@
 name := exif
-experiment := /moa/sc5/cbi/best-known-datasets/$(name)
+experiment := ..
 schemes := all branches scalar-pairs
 source-strip-prefixes := ../../../../src/ ../../../src/
+report-series := inverse-100
+training-runs := 1000
 
 -include ../../site-rules.mk
 -include site-rules.mk

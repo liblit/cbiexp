@@ -150,11 +150,11 @@ unsigned cur_run;
 class Reader : public ReportReader
 {
 protected:
-    void handleSite(const SiteCoords &, vector<unsigned> &);
+    void handleSite(const SiteCoords &, vector<count_tp> &);
 };
 
 
-void Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
+void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 {
     assert(coords.unitIndex < staticSiteInfo.unitCount);
     assert(coords.unitIndex < site_info.size());
@@ -170,7 +170,7 @@ void Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
 		inc(cur_run, coords, predicate);
 	}
     else {
-	const unsigned sum = accumulate(counts.begin(), counts.end(), 0);
+	const count_tp sum = accumulate(counts.begin(), counts.end(), (count_tp) 0);
 	for (unsigned predicate = 0; predicate < counts.size(); ++predicate) {
 	    if (counts[predicate])
 		inc(cur_run, coords, 2 * predicate);

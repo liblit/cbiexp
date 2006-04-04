@@ -7,6 +7,7 @@
 #include <numeric>
 #include <queue>
 #include "CompactReport.h"
+#include "DiscreteDist.h"
 #include "NumRuns.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
@@ -28,7 +29,6 @@ static unsigned cur_run;
 // (Actually, it's a measure, i.e., unnormalized counts
 //
 
-typedef hash_map<unsigned, unsigned> DiscreteDist;
 typedef pair<DiscreteDist, DiscreteDist> DistPair;
 typedef DiscreteDist (DistPair::* Dist);
 
@@ -37,7 +37,7 @@ operator<<(ostream &out, const DiscreteDist &d)
 {
   out << d.size() << '\n';
   for (DiscreteDist::const_iterator c = d.begin(); c != d.end(); c++) {
-    const unsigned n = c->first;
+    const count_tp n = c->first;
     const unsigned val = c->second;
     out << n << ' ' << val << ' ';
   }
@@ -52,14 +52,14 @@ struct SiteInfo
 {
   DistPair reached;
 
-  void notice(Dist, unsigned);
+  void notice(Dist, count_tp);
   //void print(ostream &, ostream &) const;
 };
 
 // Since the site is reached n times during this run, increment the
 // corresponding counter in the empirical measure
 inline void
-SiteInfo::notice(Dist d, unsigned n){
+SiteInfo::notice(Dist d, count_tp n){
   DiscreteDist &disthash = reached.*d;
   DiscreteDist::iterator found = disthash.find(n);
   if (found == disthash.end())
@@ -87,7 +87,7 @@ public:
   void countZeros();
 
 protected:
-  void handleSite(const SiteCoords &, vector<unsigned> &);
+  void handleSite(const SiteCoords &, vector<count_tp> &);
 
 private:
   const Dist d;
@@ -101,7 +101,7 @@ Reader::Reader(Dist _d)
 }
 
 void
-Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
+Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 {
   SiteCounter::iterator f = siteCount.find(coords);
   if (f == siteCount.end())
@@ -112,7 +112,7 @@ Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
   const SiteSeen::iterator found = siteSeen.find(coords);
   if (found != siteSeen.end())
   {
-    const unsigned sum = accumulate(counts.begin(), counts.end(), 0);
+    const count_tp sum = accumulate(counts.begin(), counts.end(), (count_tp) 0);
     SiteInfo &info = found->second;
     info.notice(d, sum);
   }

@@ -52,14 +52,14 @@ struct PredInfo
 {
   DistPair reached;
 
-  void notice(Dist, unsigned, unsigned);
+  void notice(Dist, count_tp, count_tp);
   //void print(ostream &, ostream &) const;
 };
 
 // Since the site is reached n times during this run, increment the
 // corresponding counter in the empirical measure
 inline void
-PredInfo::notice(Dist d, unsigned n, unsigned x){
+PredInfo::notice(Dist d, count_tp n, count_tp x){
   DiscreteDist &disthash = reached.*d;
   int ratio = (int) round((double) x*100/n); // round to nearest .01
   DiscreteDist::iterator found = disthash.find(ratio);
@@ -86,10 +86,10 @@ public:
   Reader(Dist);
 
 protected:
-  void handleSite(const SiteCoords &, vector<unsigned> &);
+  void handleSite(const SiteCoords &, vector<count_tp> &);
 
 private:
-  void notice(const SiteCoords &, unsigned, unsigned, unsigned);
+  void notice(const SiteCoords &, unsigned, count_tp, count_tp);
   const Dist d;
 };
 
@@ -101,7 +101,7 @@ Reader::Reader(Dist _d)
 }
 
 void
-Reader::notice(const SiteCoords &coords, unsigned p, unsigned n, unsigned x)
+Reader::notice(const SiteCoords &coords, unsigned p, count_tp n, count_tp x)
 {
   assert(x <= n);
   PredCoords pc(coords, p);
@@ -119,9 +119,9 @@ Reader::notice(const SiteCoords &coords, unsigned p, unsigned n, unsigned x)
   }
 }
 
-void Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
+void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 {
-  const unsigned sum = accumulate(counts.begin(), counts.end(), 0);
+  const count_tp sum = accumulate(counts.begin(), counts.end(), (count_tp) 0);
   assert(sum > 0);
 
   const size_t size = counts.size();

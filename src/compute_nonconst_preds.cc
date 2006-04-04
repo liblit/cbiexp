@@ -32,7 +32,7 @@ static StaticSiteInfo staticSiteInfo;
  * site_info
  **********************/
 struct site_info_t {
-  unsigned min[4], max[4];
+  count_tp min[4], max[4];
   double mean[4], var[4];
   bool retain[4];
   unsigned ntallied;
@@ -57,7 +57,7 @@ static vector<vector<site_info_t> > site_info;
 class Reader : public ReportReader
 {
 protected:
-  void handleSite(const SiteCoords &, vector<unsigned> &);
+  void handleSite(const SiteCoords &, vector<count_tp> &);
 };
 
 inline void obs (const SiteCoords &coords) 
@@ -66,19 +66,19 @@ inline void obs (const SiteCoords &coords)
     site.ntallied += 1;
 }
 
-inline void inc (const SiteCoords &coords, unsigned p, unsigned count)
+inline void inc (const SiteCoords &coords, unsigned p, count_tp count)
 {
   site_info_t &site = site_info[coords.unitIndex][coords.siteOffset];
   unsigned n = site.ntallied;  // n should have just been increased by obs()
   site.mean[p] = site.mean[p] * ((double) (n-1.0) / n) 
       + (double) count / n;
   site.var[p] = site.var[p] * ((double) (n-1.0)/n) 
-      + (double) (count * count)/n;
+      + (double) count / n * count;
   site.min[p] = (count < site.min[p]) ? count : site.min[p];
   site.max[p] = (count > site.max[p]) ? count : site.max[p];
 }
 
-void Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
+void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 {
   obs(coords);
   for (unsigned predicate = 0; predicate < counts.size(); ++predicate)
@@ -94,8 +94,10 @@ inline void adj_for_zeros(int u, int c, int p) {
     unsigned n = site.ntallied;
     // (num_trainruns - ntallied) is the number of omitted zeros
     double adj = (double)  n/num_train_runs;
+    double adj2 = (double) num_train_runs/(num_train_runs-1.0);
     site.mean[p] = site.mean[p] * adj;
     site.var[p] = site.var[p] * adj;
+    site.var[p] = (site.var[p] - site.mean[p]*site.mean[p])*adj2;
     site.min[p] = (0 < site.min[p]) ? 0 : site.min[p];
     // the maximum is set to zero by default
 }
@@ -106,8 +108,11 @@ inline void cull(int u, int c, int p) {
 
   double var = site_info[u][c].var[p];
   if (var < 0.0) {
-    cerr << "Variance is not non-negative: " << var << '\n';
-    assert (0);
+    cerr << "Variance is negative: " << u << ' ' << c << ' ' << p << ' ' << var << '\n';
+  }
+
+  if (isinf(var) || isnan(var)) {
+    cerr << "Variance is infinite or nan: " << u << ' ' << c << ' ' << p << ' ' << var << '\n';
   }
 
   if (var > 0.0)

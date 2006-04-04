@@ -20,9 +20,9 @@ Reader::tallyPair(const SiteCoords &site, int id, bool a, bool b) const
 
 
 void
-Reader::handleSite(const SiteCoords &site, vector<unsigned> &counts)
+Reader::handleSite(const SiteCoords &site, vector<count_tp> &counts)
 {
-  const unsigned sum = accumulate(counts.begin(), counts.end(), 0);
+  const count_tp sum = accumulate(counts.begin(), counts.end(), 0);
   for (unsigned predicate = 0; predicate < counts.size(); ++predicate)
     tallyPair(site, predicate, counts[predicate], sum - counts[predicate]);
 }

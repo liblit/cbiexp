@@ -19,7 +19,7 @@ public:
   void dump() const;
 
 protected:
-  void handleSite(const SiteCoords &, std::vector<unsigned> &);
+  void handleSite(const SiteCoords &, std::vector<count_tp> &);
 
 private:
   const StaticSiteInfo staticSiteInfo;

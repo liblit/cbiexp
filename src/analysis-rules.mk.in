@@ -100,6 +100,18 @@ web :=						\
 	stamp-src				\
 	summary.xml
 
+biclustering :=					\
+	preds.txt				\
+	s.runs f.runs				\
+	parmstats.txt				\
+	hyperparms.txt				\
+	truthprobs				\
+	X.dat					\
+	predscores
+
+bicluster: $(biclustering)
+.PHONY: bicluster
+
 publish ?= $(HOME)/www/$(name)-new
 
 all: $(web)
@@ -235,11 +247,11 @@ truth-dist: s.runs f.runs preds.txt static-site-info.so $(call tool-deps, gather
 	$(time) $(tooldir)/gather_prior_truths --runs-directory=$(datadir)
 
 nonconst-preds: s.runs f.runs static-site-info.so $(call tool-deps, compute_nonconst_preds)
-	$(time) $(tooldir)/compute_nonconst_preds --runs-directory=$(datadir) --report-suffix=$(report-series)
+	$(time) $(tooldir)/compute_nonconst_preds --runs-directory=$(datadir) --report-suffix=$(report-series) --begin-runs=$(training-runs)
 CLEANFILES += train.runs val.runs nonconst_preds.txt
 
 theta: train.runs val.runs nonconst_preds.txt static-site-info.so $(call tool-deps, train_utillog)
-	$(time) $(tooldir)/train_utillog --runs-directory=$(datadir) --report-suffix=$(report-series)
+	$(time) $(tooldir)/train_utillog --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) --delta1=10.0 --delta2=2.0 --delta3=1.0
 CLEANFILES += theta.txt train_lls.txt val_lls.txt confmat.txt
 
 static-site-info.so: %.so: %.cc
@@ -249,6 +261,13 @@ CLEANFILES += static-site-info.so
 static-site-info.cc: $(sites) $(call tool-deps, map-sites)
 	$(tooldir)/map-sites $(sites) >$@
 CLEANFILES += static-site-info.cc
+
+
+clusters: static-site-info.so $(call tool-deps, cluster_runs)
+	$(time) $(tooldir)/cluster_runs --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) --nonconst-file=f_nonconst_preds.txt
+
+viewclusters: static-site-info.so $(call tool-deps, view_clusters)
+	$(time) $(tooldir)/view_clusters --begin-runs=$(training-runs) --runs-directory=$(datadir)
 
 plan-uniform-100.txt: static-site-info.so $(call tool-deps, sampling-plans/uniform)
 	$(tooldir)/sampling-plans/uniform 0.01 >$@
@@ -321,6 +340,11 @@ pred_scores.xml: $(call tool-deps, compute_pred_scores)
 	xmllint --valid --noout pred_scores.xml
 CLEANFILES += pred_scores.xml
 
+sober: static-site-info.so $(call tool-deps, calc_sober)
+	$(build) links
+	$(time) $(tooldir)/calc_sober --begin-runs=$(training-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name) --report-suffix=$(report-series)
+	xmllint --valid --noout sober.xml
+	
 symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml
 	$(build) links
 	xsltproc --output $@ $<

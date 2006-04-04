@@ -1,12 +1,12 @@
 #include <argp.h>
 #include <cassert>
-#include <ext/hash_map>
 #include <fstream>
 #include <iostream>
 #include <numeric>
 #include <queue>
 #include "fopen.h"
 #include "CompactReport.h"
+#include "DiscreteDist.h"
 #include "NumRuns.h"
 #include "PredCoords.h"
 #include "PredStats.h"
@@ -29,15 +29,15 @@ Preds retainedPreds;
  * Information about non-constant predicates
  ***************************************************************/
 
-typedef hash_map<unsigned, unsigned> DiscreteDist;
-
 class pred_info_t {
 private:
-    unsigned S, N, Y, Z;
+    unsigned N, Z;
+    count_tp S, Y;
     double a;
     double b;
     double rho;
-    unsigned Asize, Asumtrue, Asumobs;
+    unsigned Asize;
+    count_tp Asumtrue, Asumobs;
     unsigned Bsize, Csize;
     DiscreteDist Bset; // a histogram of m values in set B
     DiscreteDist Cset; // a histogram of m values in set C
@@ -49,13 +49,13 @@ public:
 	rho = 1.0;
 	Asize = Asumtrue = Asumobs = Bsize = Csize = 0;
     }
-    void update(const unsigned m, const unsigned y);
+    void update(const count_tp m, const count_tp y);
     void setrho(const double r) { rho = r; }
     void setmin(const unsigned nruns);
     void print(ostream &out) const;
 };
 
-void pred_info_t::update (const unsigned m, const unsigned y)
+void pred_info_t::update (const count_tp m, const count_tp y)
 {
   N += 1;
   S += m; // S = total observed
@@ -100,11 +100,11 @@ public:
     pred_info_t s;
 
     void init() {}
-    void update(PredInfoPtr, unsigned, unsigned);
+    void update(PredInfoPtr, count_tp, count_tp);
 };
 
 inline void
-PredPair::update(PredInfoPtr pipt, unsigned nobs, unsigned ntrue)
+PredPair::update(PredInfoPtr pipt, count_tp nobs, count_tp ntrue)
 {
     (this->*pipt).update(nobs, ntrue);
 }
@@ -180,10 +180,10 @@ public:
   Reader(PredInfoPtr);
 
 protected:
-  void handleSite(const SiteCoords &, vector<unsigned> &);
+  void handleSite(const SiteCoords &, vector<count_tp> &);
 
 private:
-    void update(const SiteCoords &, unsigned, unsigned, unsigned) const;
+    void update(const SiteCoords &, unsigned, count_tp, count_tp) const;
     const PredInfoPtr pipt;
 };
 
@@ -194,7 +194,7 @@ Reader::Reader(PredInfoPtr _pipt)
 }
 
 inline void
-Reader::update(const SiteCoords &coords, unsigned p, unsigned nobs, unsigned ntrue) const
+Reader::update(const SiteCoords &coords, unsigned p, count_tp nobs, count_tp ntrue) const
 {
     const PredCoords pc(coords, p);
     pred_hash_t::iterator found = predHash.find(pc);
@@ -205,9 +205,9 @@ Reader::update(const SiteCoords &coords, unsigned p, unsigned nobs, unsigned ntr
 }
 
 void
-Reader::handleSite(const SiteCoords &coords, vector<unsigned> &counts)
+Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 {
-    const unsigned sum = accumulate(counts.begin(), counts.end(), 0);
+    const count_tp sum = accumulate(counts.begin(), counts.end(), (count_tp) 0);
     assert(sum > 0);
 
     const size_t size = counts.size();

@@ -34,12 +34,12 @@ ReportReader::read(unsigned runId)
       if (report.eof())
 	break;
 
-      vector<unsigned> counts;
+      vector<count_tp> counts;
       counts.reserve(3);
 
       while (report.peek() != '\n')
 	{
-	  unsigned count;
+	  count_tp count;
 	  report >> count;
 	  counts.push_back(count);
 	}
