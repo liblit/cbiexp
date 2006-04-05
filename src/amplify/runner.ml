@@ -3,23 +3,25 @@ open Arg
 type predicate = Predicate.p
 module PredicateSet = Predicate.Set 
 
-let implFileName : string ref = ref ""
 let reportFileName : string ref = ref ""
 let outputFileName : string ref = ref ""
+let logFileName : string ref = ref "" 
 
-let usage_msg = "Usage: amplify -i <implication file name> -r <report file name> -o <output file name>" 
+let usage_msg = "Usage: amplify -r <report file
+name> -o <output file name> [-l <log file name>]" 
 
 let argActions =
-  [("-i", Set_string implFileName, "implication file name");
-   ("-r", Set_string reportFileName, "report file name");
-   ("-o", Set_string outputFileName, "output file name")]
+  [("-r", Set_string reportFileName, "report file name");
+   ("-o", Set_string outputFileName, "output file name");
+   ("-l", Set_string logFileName, "log file name");]
+
+let log numChanged =
+    let doLogging = !logFileName <> "" in
+    let outchannel = open_out !logFileName in
+    output_string outchannel ((string_of_int numChanged)^"\n"); 
+    close_out outchannel
 
 let doAnalysis () = 
-  let impls = new ImplicationAccumulator.c in
-  let inchannel = open_in !implFileName in
-  ImplLexer.readImplications inchannel (impls :> ImplLexer.implications);
-  close_in inchannel;
-
   let preds = new PredicateAccumulator.c in 
   let inchannel = open_in !reportFileName in
   PassOneLexer.readPredicates inchannel (preds :> PassOneLexer.predicates); 
@@ -30,15 +32,13 @@ let doAnalysis () =
   let notObservedTrue =
     List.fold_left (fun s x -> PredicateSet.add x s) PredicateSet.empty (preds#getPredicates false ) in
 
-    (* build implication structure *)
-  let implications = new Implications.c in
-    List.iter (fun (l,r) -> implications#add l r) (impls#getImplications ()); 
- 
     (* second pass *)
   let areTrue =
-    (Reconstruct.doAnalysis (implications :> Reconstruct.implications) observedTrue notObservedTrue) 
+    (Reconstruct.doAnalysis (new Impls.c :> Reconstruct.implications) observedTrue notObservedTrue) 
   in 
-  let ps = new Predicates.c areTrue in
+  let areChanged = PredicateSet.diff areTrue observedTrue in
+  log (PredicateSet.cardinal areChanged);
+  let ps = new Predicates.c areChanged in
   let inchannel = open_in !reportFileName in
   let outchannel = open_out !outputFileName in
   PassTwoLexer.updatePredicates inchannel outchannel (ps :> PassTwoLexer.predicates);
@@ -47,8 +47,11 @@ let doAnalysis () =
 
 let main () =
   Arg.parse argActions (fun s -> ()) usage_msg;
-  if !implFileName = "" or !reportFileName = "" or !outputFileName = "" 
-  then usage argActions usage_msg 
+  if !reportFileName = "" or !outputFileName = "" 
+  then begin 
+    usage argActions usage_msg; 
+    invalid_arg "Missing mandatory arguments" 
+  end
   else doAnalysis () 
 
 let _ =  main ()

@@ -1,31 +1,44 @@
-lexers =					\
-	implLexer.mll				\
+implication_lexer =	\
+	implLexer.mll
+
+implication_others =	\
+	predicate.ml	\
+	implicationAccumulator.ml	\
+	implications.ml	\
+	makeImplications.ml
+
+implication_objects = 	\
+	predicate.cmo	\
+	implicationAccumulator.cmo	\	 
+	implLexer.cmo	\
+	implications.cmo	\
+	makeImplications.cmo
+
+amplify_lexers =					\
 	passOneLexer.mll			\
 	passTwoLexer.mll
 
-others =					\
-	implicationAccumulator.ml		\
+amplify_others =					\
 	predicate.ml				\
-	implications.ml				\
+	impls.ml				\
 	predicateAccumulator.ml			\
 	predicates.ml				\
 	reconstruct.ml				\
-	runner.ml
+	runner.cmo
 
-objects =					\
+amplify_objects =					\
 	predicate.cmo				\
-	implicationAccumulator.cmo		\
-	implications.cmo			\
 	predicateAccumulator.cmo		\
+	impls.cmo		\
 	predicates.cmo				\
-	implLexer.cmo				\
 	passOneLexer.cmo			\
 	passTwoLexer.cmo			\
 	reconstruct.cmo				\
 	runner.cmo
 
-mls = $(lexers:.mll=.ml) $(others)
-mlis = $(others:=.mli)
+objects = $(amplify_objects) $(implication_objects)
+
+mlis = $(amplify_others:=.mli) $(implication_others:=.mli) 
 
 depends = $(objects:.cmo=.do) $(mlis:.mli=.di)
 
@@ -36,10 +49,13 @@ OCAMLFLAGS=
 OCAMLOPTFLAGS=
 OCAMLLEX=ocamllex
 
-all-local: amplify
+all-local: amplify makeImplications
 
-amplify: $(objects)
-	$(OCAMLC) $(OCAMLFLAGS) -o amplify $(objects)
+amplify: $(amplify_objects)
+	$(OCAMLC) $(OCAMLFLAGS) -o amplify $(amplify_objects)
+
+makeImplications: $(implication_objects)
+	$(OCAMLC) $(OCAMLFLAGS) -o makeImplications $(implication_objects)
 
 # Common rules 
 SUFFIXES: .ml .mli .cmo .cmi .cmx .di .do
@@ -69,5 +85,4 @@ clean-local:
 .ml.do:
 	$(OCAMLDEP) $^ >$@
 
-#include .lexdepend
 -include $(depends)

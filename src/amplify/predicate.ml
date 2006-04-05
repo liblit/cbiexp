@@ -3,10 +3,10 @@ type p = { compilationUnit : string; scheme : string; site : int; id : int }
 let make cU sc si i = {compilationUnit = cU; scheme = sc; site = si; id = i}
 
 let string_of_p p = 
-  p.compilationUnit^":"^
-  p.scheme^":"^
-  (string_of_int p.site)^":"^
-  (string_of_int p.id)
+  "{compilationUnit = \""^p.compilationUnit^"\"; "^
+  "scheme = \""^p.scheme^"\"; "^
+  "site = "^(string_of_int p.site)^"; "^
+  "id = "^(string_of_int p.id)^"}"
 
 module Set = Set.Make (
   struct 

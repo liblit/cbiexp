@@ -26,4 +26,10 @@ class c =
       with
         Not_found -> false
 
+     method toList () =
+       PredicateTable.fold 
+         (fun k v l -> (k, PredicateSet.fold (fun x l -> x::l) v [])::l) 
+         table 
+         []
+
   end

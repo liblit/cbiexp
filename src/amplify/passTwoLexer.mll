@@ -5,13 +5,13 @@
 
   class type predicates =
     object
-      method isTrue : ?curValue:bool -> predicate -> bool
+      method isTrue : bool -> predicate -> bool
     end
 
-  let mkLine (preds : predicates) p0 p1 p2 =
-    (if preds#isTrue p0 then "1\t" else "0\t")^ 
-    (if preds#isTrue p1 then "1\t" else "0\t")^
-    (if preds#isTrue p2 then "1\n" else "0\n")
+  let mkLine (preds : predicates) (v0,p0) (v1,p1) (v2,p2) =
+    (if preds#isTrue v0 p0 then "1\t" else "0\t")^ 
+    (if preds#isTrue v1 p1 then "1\t" else "0\t")^
+    (if preds#isTrue v2 p2 then "1\n" else "0\n")
 }
 
 let compilationUnit = ['0' - '9' 'a' - 'f']
@@ -88,35 +88,43 @@ and scalar_pairs preds cU siteId outchannel = shortest
       report preds outchannel lexbuf }
   | '0' '\t' '0' '\t' '0' '\n'          { 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
-      output_string outchannel (mkLine preds (mkP 0) (mkP 1) (mkP 2));
+      output_string outchannel 
+        (mkLine preds (false, (mkP 0)) (false, (mkP 1)) (false, (mkP 2)));
       scalar_pairs preds cU (siteId + 1) outchannel lexbuf } 
   | '0' '\t' '0' '\t' '1' '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
-      output_string outchannel (mkLine preds (mkP 0) (mkP 1) (mkP 2));
+      output_string outchannel 
+        (mkLine preds (false, (mkP 0)) (false, (mkP 1)) (true, (mkP 2)));
       scalar_pairs preds cU (siteId + 1) outchannel lexbuf }
   | '0' '\t' '1' '\t' '0' '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
-      output_string outchannel (mkLine preds (mkP 0) (mkP 1) (mkP 2));
+      output_string outchannel 
+        (mkLine preds (false, (mkP 0)) (true, (mkP 1)) (false, (mkP 2)));
       scalar_pairs preds cU (siteId + 1) outchannel lexbuf } 
   | '0' '\t' '1' '\t' '1' '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
-      output_string outchannel (mkLine preds (mkP 0) (mkP 1) (mkP 2));
+      output_string outchannel 
+        (mkLine preds (false, (mkP 0)) (true, (mkP 1)) (true, (mkP 2)));
       scalar_pairs preds cU (siteId + 1) outchannel lexbuf } 
   | '1' '\t' '0' '\t' '0' '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
-      output_string outchannel (mkLine preds (mkP 0) (mkP 1) (mkP 2));
+      output_string outchannel 
+        (mkLine preds (true, (mkP 0)) (false, (mkP 1)) (false, (mkP 2)));
       scalar_pairs preds cU (siteId + 1) outchannel lexbuf } 
   | '1' '\t' '0' '\t' '1' '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
-      output_string outchannel (mkLine preds (mkP 0) (mkP 1) (mkP 2));
+      output_string outchannel 
+        (mkLine preds (true, (mkP 0)) (false, (mkP 1)) (true, (mkP 2)));
       scalar_pairs preds cU (siteId + 1) outchannel lexbuf } 
   | '1' '\t' '1' '\t' '0' '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
-      output_string outchannel (mkLine preds (mkP 0) (mkP 1) (mkP 2));
+      output_string outchannel 
+        (mkLine preds (true, (mkP 0)) (true, (mkP 1)) (false, (mkP 2)));
       scalar_pairs preds cU (siteId + 1) outchannel lexbuf } 
   | '1' '\t' '1' '\t' '1' '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
-      output_string outchannel (mkLine preds (mkP 0) (mkP 1) (mkP 2));
+      output_string outchannel 
+        (mkLine preds (true, (mkP 0)) (true, (mkP 1)) (true, (mkP 2)));
       scalar_pairs preds cU (siteId + 1) outchannel lexbuf } 
 and sites_skip preds outchannel = shortest
   | ("</samples>\n") as lxm		{ 
