@@ -1,8 +1,5 @@
 name := moss
 schemes := all branches returns scalar-pairs
-experiment := /moa/sc5/cbi/alicez/cbiexp/mossexp
-report-series := inverse-100
-training-runs := 1000
 
 view_flags := --stylesheet=moss-view.xsl
 projected_view_flags := --stylesheet=projected-moss-view.xsl
