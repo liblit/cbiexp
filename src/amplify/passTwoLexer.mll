@@ -47,6 +47,8 @@ let compilationUnit = ['0' - '9' 'a' - 'f']
                       ['0' - '9' 'a' - 'f']
                       ['0' - '9' 'a' - 'f']
 
+let nonZeroCount = ['1' - '9'] ['0' - '9']* 
+
 rule initial preds outchannel = shortest 
   | ("<report id=\"samples\">\n") as lxm	{ 
       output_string outchannel lxm;
@@ -91,37 +93,37 @@ and scalar_pairs preds cU siteId outchannel = shortest
       output_string outchannel 
         (mkLine preds (false, (mkP 0)) (false, (mkP 1)) (false, (mkP 2)));
       scalar_pairs preds cU (siteId + 1) outchannel lexbuf } 
-  | '0' '\t' '0' '\t' '1' '\n'		{ 
+  | '0' '\t' '0' '\t' nonZeroCount '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
       output_string outchannel 
         (mkLine preds (false, (mkP 0)) (false, (mkP 1)) (true, (mkP 2)));
       scalar_pairs preds cU (siteId + 1) outchannel lexbuf }
-  | '0' '\t' '1' '\t' '0' '\n'		{ 
+  | '0' '\t' nonZeroCount '\t' '0' '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
       output_string outchannel 
         (mkLine preds (false, (mkP 0)) (true, (mkP 1)) (false, (mkP 2)));
       scalar_pairs preds cU (siteId + 1) outchannel lexbuf } 
-  | '0' '\t' '1' '\t' '1' '\n'		{ 
+  | '0' '\t' nonZeroCount '\t' nonZeroCount '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
       output_string outchannel 
         (mkLine preds (false, (mkP 0)) (true, (mkP 1)) (true, (mkP 2)));
       scalar_pairs preds cU (siteId + 1) outchannel lexbuf } 
-  | '1' '\t' '0' '\t' '0' '\n'		{ 
+  | nonZeroCount '\t' '0' '\t' '0' '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
       output_string outchannel 
         (mkLine preds (true, (mkP 0)) (false, (mkP 1)) (false, (mkP 2)));
       scalar_pairs preds cU (siteId + 1) outchannel lexbuf } 
-  | '1' '\t' '0' '\t' '1' '\n'		{ 
+  | nonZeroCount '\t' '0' '\t' nonZeroCount '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
       output_string outchannel 
         (mkLine preds (true, (mkP 0)) (false, (mkP 1)) (true, (mkP 2)));
       scalar_pairs preds cU (siteId + 1) outchannel lexbuf } 
-  | '1' '\t' '1' '\t' '0' '\n'		{ 
+  | nonZeroCount '\t' nonZeroCount '\t' '0' '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
       output_string outchannel 
         (mkLine preds (true, (mkP 0)) (true, (mkP 1)) (false, (mkP 2)));
       scalar_pairs preds cU (siteId + 1) outchannel lexbuf } 
-  | '1' '\t' '1' '\t' '1' '\n'		{ 
+  | nonZeroCount '\t' nonZeroCount '\t' nonZeroCount '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
       output_string outchannel 
         (mkLine preds (true, (mkP 0)) (true, (mkP 1)) (true, (mkP 2)));

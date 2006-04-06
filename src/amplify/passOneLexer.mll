@@ -37,6 +37,8 @@ let compilationUnit = ['0' - '9' 'a' - 'f']
                       ['0' - '9' 'a' - 'f']
                       ['0' - '9' 'a' - 'f']
 
+let nonZeroCount = ['1' - '9'] ['0' - '9']* 
+
 rule initial preds = shortest 
   | "<report id=\"samples\">\n"		{ report preds lexbuf }  
   | "<report id=\"" _* "\">\n"      	{ report_skip preds lexbuf }
@@ -64,43 +66,43 @@ and scalar_pairs preds cU siteId = shortest
       preds#addPredicate false (mkP 1);
       preds#addPredicate false (mkP 2);
       scalar_pairs preds cU (siteId + 1) lexbuf } 
-  | '0' '\t' '0' '\t' '1' '\n'		{ 
+  | '0' '\t' '0' '\t' nonZeroCount '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
       preds#addPredicate false (mkP 0);
       preds#addPredicate false (mkP 1);
       preds#addPredicate true (mkP 2);
       scalar_pairs preds cU (siteId + 1) lexbuf }
-  | '0' '\t' '1' '\t' '0' '\n'		{ 
+  | '0' '\t' nonZeroCount '\t' '0' '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
       preds#addPredicate false (mkP 0);
       preds#addPredicate true (mkP 1);
       preds#addPredicate false (mkP 2);
       scalar_pairs preds cU (siteId + 1) lexbuf } 
-  | '0' '\t' '1' '\t' '1' '\n'		{ 
+  | '0' '\t' nonZeroCount '\t' nonZeroCount '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
       preds#addPredicate false (mkP 0);
       preds#addPredicate true (mkP 1);
       preds#addPredicate true (mkP 2);
       scalar_pairs preds cU (siteId + 1) lexbuf } 
-  | '1' '\t' '0' '\t' '0' '\n'		{ 
+  | nonZeroCount '\t' '0' '\t' '0' '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
       preds#addPredicate true (mkP 0);
       preds#addPredicate false (mkP 1);
       preds#addPredicate false (mkP 2);
       scalar_pairs preds cU (siteId + 1) lexbuf } 
-  | '1' '\t' '0' '\t' '1' '\n'		{ 
+  | nonZeroCount '\t' '0' '\t' nonZeroCount '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
       preds#addPredicate true (mkP 0);
       preds#addPredicate false (mkP 1);
       preds#addPredicate true (mkP 2);
       scalar_pairs preds cU (siteId + 1) lexbuf } 
-  | '1' '\t' '1' '\t' '0' '\n'		{ 
+  | nonZeroCount '\t' nonZeroCount '\t' '0' '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
       preds#addPredicate true (mkP 0);
       preds#addPredicate true (mkP 1);
       preds#addPredicate false (mkP 2);
       scalar_pairs preds cU (siteId + 1) lexbuf } 
-  | '1' '\t' '1' '\t' '1' '\n'		{ 
+  | nonZeroCount '\t' nonZeroCount '\t' nonZeroCount '\n'		{ 
       let mkP = Predicate.make cU "scalar-pairs" siteId in
       preds#addPredicate true (mkP 0);
       preds#addPredicate true (mkP 1);
