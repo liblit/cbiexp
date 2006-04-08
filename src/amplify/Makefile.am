@@ -1,3 +1,5 @@
+SUBDIRS = command-line
+
 implication_lexer =	\
 	implLexer.mll
 
@@ -9,18 +11,20 @@ implication_others =	\
 
 implication_objects = 	\
 	predicate.cmo	\
-	implicationAccumulator.cmo	\	 
+	implicationAccumulator.cmo	\
 	implLexer.cmo	\
 	implications.cmo	\
 	makeImplications.cmo
 
 amplify_lexers =					\
+  implLexer.mll
 	passOneLexer.mll			\
 	passTwoLexer.mll
 
 amplify_others =					\
 	predicate.ml				\
-	impls.ml				\
+	implicationAccumulator.ml	\
+	implications.ml	\
 	predicateAccumulator.ml			\
 	predicates.ml				\
 	reconstruct.ml				\
@@ -28,8 +32,10 @@ amplify_others =					\
 
 amplify_objects =					\
 	predicate.cmo				\
+	implicationAccumulator.cmo	\
+  implLexer.cmo \
+	implications.cmo	\
 	predicateAccumulator.cmo		\
-	impls.cmo		\
 	predicates.cmo				\
 	passOneLexer.cmo			\
 	passTwoLexer.cmo			\
@@ -42,6 +48,8 @@ mlis = $(amplify_others:=.mli) $(implication_others:=.mli)
 
 depends = $(objects:.cmo=.do) $(mlis:.mli=.di)
 
+libs = command-line/commandLine.cma
+
 OCAMLC=ocamlc 
 OCAMLOPT=ocamlopt 
 OCAMLDEP=ocamldep 
@@ -49,22 +57,24 @@ OCAMLFLAGS=
 OCAMLOPTFLAGS=
 OCAMLLEX=ocamllex
 
+includes = -I command-line
+
 all-local: amplify makeImplications
 
-amplify: $(amplify_objects)
-	$(OCAMLC) $(OCAMLFLAGS) -o amplify $(amplify_objects)
+amplify: $(amplify_objects) $(libs)
+	$(OCAMLC) $(includes) $(OCAMLFLAGS) -o amplify $(libs) $(amplify_objects)
 
 makeImplications: $(implication_objects)
-	$(OCAMLC) $(OCAMLFLAGS) -o makeImplications $(implication_objects)
+	$(OCAMLC) $(includes) $(OCAMLFLAGS) -o makeImplications $(implication_objects)
 
 # Common rules 
 SUFFIXES: .ml .mli .cmo .cmi .cmx .di .do
 
 .ml.cmo: 
-	$(OCAMLC) $(OCAMLFLAGS) -c $< 
+	$(OCAMLC) $(includes) $(OCAMLFLAGS) -c $< 
 
 .mli.cmi: 
-	$(OCAMLC) $(OCAMLFLAGS) -c $< 
+	$(OCAMLC) $(includes) $(OCAMLFLAGS) -c $< 
 
 .ml.cmx: 
 	$(OCAMLOPT) $(OCAMLOPTFLAGS) -c $< 
@@ -80,9 +90,9 @@ clean-local:
 	rm -f passTwoLexer.ml 
 
 .mli.di:
-	$(OCAMLDEP) $^ >$@
+	$(OCAMLDEP) $(includes) $^ >$@
 
 .ml.do:
-	$(OCAMLDEP) $^ >$@
+	$(OCAMLDEP) $(includes) $^ >$@
 
 -include $(depends)
