@@ -143,6 +143,7 @@ Makefile
 correlations/Makefile
 src/Makefile
 src/amplify/Makefile
+src/amplify/command-line/Makefile
 src/corrective-ranking/Makefile
 src/never-reached/Makefile
 src/symmetric/Makefile
