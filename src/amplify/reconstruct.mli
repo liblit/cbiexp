@@ -2,7 +2,7 @@ type predicate = Predicate.p
 
 class type implications =
   object
-    method holds : predicate -> predicate -> bool
+    method implicands : predicate -> Predicate.Set.t -> Predicate.Set.t 
   end
 
 val doAnalysis : implications -> Predicate.Set.t -> Predicate.Set.t -> Predicate.Set.t

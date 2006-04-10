@@ -4,33 +4,32 @@ module PredicateSet = Predicate.Set
 
 class type implications =
   object
-    method holds : predicate -> predicate -> bool
+    method implicands : predicate -> PredicateSet.t -> PredicateSet.t
   end
 
 let doAnalysis impls observedTrue notObservedTrue =
   if PredicateSet.is_empty observedTrue then observedTrue else
   if PredicateSet.is_empty notObservedTrue then observedTrue else
-  let deduced = ref [] in
+  let deduced = ref PredicateSet.empty in
   let worklist = Queue.create () in
-  let others = ref (PredicateSet.elements notObservedTrue) in
+  let others = ref (PredicateSet.union notObservedTrue PredicateSet.empty) in
   PredicateSet.iter (fun x -> Queue.push x worklist) observedTrue;
 
    let analyze item =
-     let (implied, notImplied) =
-       List.partition (fun x -> impls#holds item x) !others
+     let implicands = (impls#implicands item !others)
      in
-       List.iter (fun x -> Queue.push x worklist) implied;
-       others := notImplied;
-       deduced := List.rev_append implied !deduced
+       PredicateSet.iter (fun x -> Queue.push x worklist) implicands;
+       others := PredicateSet.diff !others implicands;
+       deduced := PredicateSet.union implicands !deduced
    in
      
    let rec doNext () =
-     if List.length !others = 0 
-     then List.fold_left (fun s x -> PredicateSet.add x s) observedTrue !deduced 
+     if PredicateSet.cardinal !others = 0 
+     then PredicateSet.union observedTrue !deduced 
      else
        try 
          let workitem = Queue.pop worklist in
          analyze workitem; doNext ()
        with Queue.Empty -> 
-         List.fold_left (fun s x -> PredicateSet.add x s) observedTrue !deduced 
+         PredicateSet.union observedTrue !deduced 
   in doNext ()            

@@ -18,13 +18,19 @@ class c =
         Not_found -> 
           PredicateTable.add table l (PredicateSet.singleton r)
         
-
     method holds (left : predicate) (right : predicate) =
       try 
         let rights = PredicateTable.find table left  
         in PredicateSet.mem right rights
       with
         Not_found -> false
+
+    method implicands (left : predicate) (searchSet : PredicateSet.t) =
+      try
+        let rights = PredicateTable.find table left in
+        PredicateSet.inter rights searchSet 
+      with
+        Not_found -> PredicateSet.empty
 
      method toList () =
        PredicateTable.fold 
