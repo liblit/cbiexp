@@ -109,10 +109,6 @@ biclustering :=					\
 	X.dat					\
 	predscores
 
-bicluster: $(biclustering)
-.PHONY: bicluster
-CLEANFILES += est_hyperparms.log hyperparms.txt list*.xml notp-hyperparms.txt notp-parmstats.txt notX.dat pred_scores.log truFreq.dat trunotFreq.dat trunotX.dat truthprobs.txt truX.dat X.dat
-
 publish ?= $(HOME)/www/$(name)-new
 
 all: $(web)
@@ -374,6 +370,10 @@ $(nevers): $(stamp-decimate) f.runs static-site-info.so $(call tool-deps, never-
 	$(tooldir)/never-reached/never-reached --begin-runs=$(training-runs) --runs-directory=$(datadir)
 	for goal in $(nevers); do test -r $$goal; done
 CLEANFILES += $(nevers)
+
+bicluster: $(biclustering)
+.PHONY: bicluster
+CLEANFILES += est_hyperparms.log hyperparms.txt list*.xml notp-hyperparms.txt notp-parmstats.txt notX.dat pred_scores.log truFreq.dat trunotFreq.dat trunotX.dat truthprobs.txt truX.dat X.dat
 
 
 ########################################################################
