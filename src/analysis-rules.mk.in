@@ -111,6 +111,7 @@ biclustering :=					\
 
 bicluster: $(biclustering)
 .PHONY: bicluster
+CLEANFILES += est_hyperparms.log hyperparms.txt list*.xml notp-hyperparms.txt notp-parmstats.txt notX.dat pred_scores.log truFreq.dat trunotFreq.dat trunotX.dat truthprobs.txt truX.dat X.dat
 
 publish ?= $(HOME)/www/$(name)-new
 
@@ -344,7 +345,7 @@ sober: static-site-info.so $(call tool-deps, calc_sober)
 	$(build) links
 	$(time) $(tooldir)/calc_sober --begin-runs=$(training-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name) --report-suffix=$(report-series)
 	xmllint --valid --noout sober.xml
-	
+
 symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml
 	$(build) links
 	xsltproc --output $@ $<
