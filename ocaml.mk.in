@@ -33,7 +33,7 @@ CLEANFILES = *.d[io]
 SUFFIXES: .ml .mli .cmo .cmi .cmx .di .do
 
 .ml.cmo: 
-	$(OCAMLC) $(ocamlflags) $(includes)-c $< 
+	$(OCAMLC) $(ocamlflags) $(includes) -c $< 
 
 .mli.cmi: 
 	$(compiler) $(includes) -c $< 
