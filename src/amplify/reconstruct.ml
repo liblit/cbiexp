@@ -7,7 +7,12 @@ class type implications =
     method implicands : predicate -> PredicateSet.t -> PredicateSet.t
   end
 
-let doAnalysis impls observedTrue notObservedTrue =
+class type logger =
+  object
+    method logImplications : predicate -> PredicateSet.t -> unit
+  end
+
+let doAnalysis logger impls observedTrue notObservedTrue =
   if PredicateSet.is_empty observedTrue then observedTrue else
   if PredicateSet.is_empty notObservedTrue then observedTrue else
   let deduced = ref PredicateSet.empty in
@@ -18,6 +23,7 @@ let doAnalysis impls observedTrue notObservedTrue =
    let analyze item =
      let implicands = (impls#implicands item !others)
      in
+       logger#logImplications item implicands;
        PredicateSet.iter (fun x -> Queue.push x worklist) implicands;
        others := PredicateSet.diff !others implicands;
        deduced := PredicateSet.union implicands !deduced

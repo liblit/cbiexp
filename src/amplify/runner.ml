@@ -7,6 +7,7 @@ let input = new InputReport.c rd
 let output = new OutputReport.c rd
 let lr = new LogReport.c rd
 let ir = new ImplicationsReport.c 
+let dl = new Logging.c
 
 let parsers = [ 
   (ir :> CommandLine.argParser) ;  
@@ -14,16 +15,15 @@ let parsers = [
   (nr :> CommandLine.argParser) ; 
   (input :> CommandLine.argParser) ; 
   (output :> CommandLine.argParser) ; 
-  (lr :> CommandLine.argParser) ]
+  (lr :> CommandLine.argParser) ;
+  (dl :> CommandLine.argParser) ]
 
 let parser = new CommandLine.parser parsers "amplify"
 
-let log logFileName numChanged =
-    let outchannel = open_out logFileName in
-    output_string outchannel ((string_of_int numChanged)^"\n"); 
-    close_out outchannel
-
 let doAnalysis implications inputFileName outputFileName logFileName = 
+  let logchannel = open_out logFileName in
+  let logger = (Logger.factory (dl#doLogging()) logchannel) in
+
   let preds = new PredicateAccumulator.c in 
   let inchannel = open_in inputFileName in
   PassOneLexer.readPredicates inchannel (preds :> PassOneLexer.predicates); 
@@ -34,19 +34,24 @@ let doAnalysis implications inputFileName outputFileName logFileName =
   let notObservedTrue =
     List.fold_left (fun s x -> PredicateSet.add x s) PredicateSet.empty (preds#getPredicates false ) in
 
-    (* second pass *)
+  (* second pass *)
   let areTrue =
-    (Reconstruct.doAnalysis (implications :> Reconstruct.implications) observedTrue notObservedTrue) 
+    Reconstruct.doAnalysis 
+      (logger :> Reconstruct.logger) 
+      (implications :> Reconstruct.implications) 
+      observedTrue 
+      notObservedTrue 
   in 
   let areChanged = PredicateSet.diff areTrue observedTrue in
-  log logFileName (PredicateSet.cardinal areChanged);
+  logger#logNumChanged (PredicateSet.cardinal areChanged);
 
   let ps = new Predicates.c areChanged in
   let inchannel = open_in inputFileName in
   let outchannel = open_out outputFileName in
   PassTwoLexer.updatePredicates inchannel outchannel (ps :> PassTwoLexer.predicates);
   close_in inchannel;
-  close_out outchannel
+  close_out outchannel;
+  close_out logchannel
 
 let analyzeAll () =
   let failed = false in

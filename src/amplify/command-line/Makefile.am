@@ -1,4 +1,5 @@
 mls = \
+	logging	\
 	commandLine	\
 	runsDirectory	\
 	implicationsReport	\

@@ -16,6 +16,7 @@ amplify_others =					\
 	predicateAccumulator.ml			\
 	predicates.ml				\
 	reconstruct.ml				\
+	logger.ml	\
 	runner.ml
 
 amplify_objects =					\
@@ -28,6 +29,7 @@ amplify_objects =					\
 	passOneLexer.$(cmo)			\
 	passTwoLexer.$(cmo)			\
 	reconstruct.$(cmo)				\
+	logger.$(cmo)	\
 	runner.$(cmo)
 
 objects = $(amplify_objects) 
@@ -40,12 +42,7 @@ libs = command-line/commandLine.$(cma)
 
 all-local: amplify 
 
-amplify: $(amplify_objects) $(libs)
+amplify: $(amplify_objects) $(libs) 
 	$(compiler) -o amplify $(libs) $(amplify_objects)
-
-clean-local: 
-	rm -f implLexer.ml
-	rm -f passOneLexer.ml
-	rm -f passTwoLexer.ml 
 
 -include $(depends)

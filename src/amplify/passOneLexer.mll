@@ -116,7 +116,6 @@ and sites_skip preds = shortest
   class type predicates =
     object
       method addPredicate : bool -> predicate -> unit
-      method getPredicates : bool -> predicate list
     end
 
   let readPredicates inchannel preds =
