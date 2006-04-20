@@ -4,31 +4,30 @@
 
 #include <argp.h>
 #include <cassert>
-#include <fstream>
-#include <iomanip>
-#include <iostream>
 #include <ext/hash_map>
-#include <vector>
-#include <math.h>
+#include <fstream>
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_permutation.h>
 #include <gsl/gsl_permute.h>
+#include <iomanip>
+#include <iostream>
+#include <math.h>
+#include <numeric>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include "fopen.h"
+#include <vector>
+#include "classify_runs.h"
 #include "CompactReport.h"
+#include "fopen.h"
+#include "Nonconst_PredStats.h"
 #include "NumRuns.h"
 #include "Progress/Unbounded.h"
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
 #include "RunsDirectory.h"
-#include "classify_runs.h"
-#include "sites.h"
-#include "units.h"
 #include "PredCoords.h"
-#include "Nonconst_PredStats.h"
 
 using namespace std;
 using __gnu_cxx::hash_map;
@@ -36,7 +35,7 @@ using __gnu_cxx::hash_map;
 /****************************************************************************
  * Definitions of constants, structs, and classes
  ***************************************************************************/
-const unsigned K = 3;
+const unsigned K = 2;
 static gsl_rng *generator;
 
 /****************************************************************
@@ -78,7 +77,7 @@ operator<< (ostream &out, const pred_hash_t &ph)
     for (pred_hash_t::const_iterator c = ph.begin(); c != ph.end(); c++) {
 	const PredCoords pc = c->first;
 	const pred_info_t pi = c->second;
-        //if (pi.var > 0.0)
+        if (pi.var > 0.0)
 	  out << pc.unitIndex << ' ' << pc.siteOffset << ' ' << pc.predicate << ' '
               << pi.mean << ' ' << pi.var << ' ' << pi.min << ' '
               << pi.max << ' ' << pi.ntallied << endl;
@@ -93,7 +92,7 @@ adjust_val(const pred_info_t &pstat, double &val)
 }
 
 void 
-update(pred_hash_t &oldhash, const pred_hash_t &newhash)
+update_center(pred_hash_t &oldhash, const pred_hash_t &newhash)
 {
   // go through the list of all retained predicates
   for (pred_hash_t::const_iterator c = PredHash.begin(); c != PredHash.end(); ++c)
@@ -145,14 +144,12 @@ class Reader : public ReportReader
 {
 public:
   Reader(unsigned, unsigned);
-  void branchesSite(const SiteCoords &, unsigned, unsigned);
-  void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned);
-  void returnsSite(const SiteCoords &, unsigned, unsigned, unsigned);
-  void scalarPairsSite(const SiteCoords &, unsigned, unsigned, unsigned);
+
+protected:
+  void handleSite(const SiteCoords &, vector<count_tp> &);
 
 private:
-  void tripleSite(const SiteCoords &, unsigned, unsigned, unsigned) const;
-  void insert_val(const SiteCoords &, unsigned, unsigned) const;
+  void insert_val(const SiteCoords &, unsigned, count_tp) const;
 };
 
 inline
@@ -163,7 +160,19 @@ Reader::Reader(unsigned r, unsigned m)
     curr_run.mode = m;
 }
 
-void Reader::insert_val(const SiteCoords &coords, unsigned offset, unsigned val) const
+void
+Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
+{
+    const count_tp sum = accumulate(counts.begin(), counts.end(), (count_tp) 0);
+    assert(sum > 0);
+
+    const size_t size = counts.size();
+    for (unsigned predicate = 0; predicate < size; ++predicate)
+        if (counts[predicate] > 0)
+            insert_val(coords, predicate, counts[predicate]);
+}
+
+void Reader::insert_val(const SiteCoords &coords, unsigned offset, count_tp val) const
 {
     PredCoords pcoords(coords,offset);
     pred_hash_t::iterator found = PredHash.find(pcoords);
@@ -201,54 +210,6 @@ void Reader::insert_val(const SiteCoords &coords, unsigned offset, unsigned val)
       cerr << "Unknown mode: " << curr_run.mode << endl;
       break;
     }
-}
-
-void Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
-{
-    assert(x || y || z);
-    if (x > 0)
-	insert_val(coords, 0, x);
-    if (y > 0)
-	insert_val(coords, 1, y);
-    if (z > 0)
-	insert_val(coords, 2, z);
-}
-
-inline void
-Reader::scalarPairsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) 
-{
-    tripleSite(coords, x, y, z);
-}
-
-
-inline void
-Reader::returnsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) 
-{
-    tripleSite(coords, x, y, z);
-}
-
-inline void
-Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y)
-{
-    assert(x||y);
-    if (x > 0)
-	insert_val(coords, 0, x);
-    if (y > 0)
-	insert_val(coords, 1, y);
-}
-
-inline void
-Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z, unsigned w)
-{
-    assert(x || y || z || w);
-    if (x > 0)
-	insert_val(coords, 0, x);
-    if (y > 0)
-	insert_val(coords, 1, y);
-    if (z > 0)
-	insert_val(coords, 2, z);
-    if (w > 0)
-	insert_val(coords, 3, w);
 }
 
 /****************************************************************************
@@ -510,7 +471,7 @@ int main(int argc, char** argv)
             nchange++;
           groups[r] = label;
           group_sizes[label]++;
-          update(newcenters[label], curr_run.preds);
+          update_center(newcenters[label], curr_run.preds);
 	}
 
         cout << " nchanged: " << nchange << " distance: " << setprecision(16) << total_dist << endl;

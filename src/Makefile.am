@@ -10,6 +10,7 @@ noinst_PROGRAMS =				\
 	build_tsgraph				\
 	calc_truthprobs				\
 	$(chi2test)				\
+	cluster_runs				\
 	collect_parmstats			\
 	compute_nonconst_preds			\
 	compute-obs-tru				\
@@ -58,6 +59,9 @@ calc_truthprobs_LDADD = libanalyze.a -ldl
 
 chi2test_SOURCES = chi2test.cc
 chi2test_LDADD = libanalyze.a $(GSL_LIBS)
+
+cluster_runs_SOURCES = cluster_runs.cc
+cluster_runs_LDADD = libanalyze.a $(GSL_LIBS)
 
 collect_parmstats_SOURCES = collect_parmstats.cc
 collect_parmstats_LDADD = libanalyze.a -ldl
