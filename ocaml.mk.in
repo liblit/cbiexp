@@ -16,7 +16,7 @@ cma := cmxa
 cmo := cmx
 else 
 ocamlc := $(OCAMLC) 
-ocamlflags_native = -g $(DTYPES)
+ocamlflags_debug = -g $(DTYPES)
 cma := cma
 cmo := cmo
 endif 
