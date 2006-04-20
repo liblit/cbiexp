@@ -25,10 +25,9 @@ class c =
       with
         Not_found -> false
 
-    method implicands (left : predicate) (searchSet : PredicateSet.t) =
+    method implicands (left : predicate) =
       try
-        let rights = PredicateTable.find table left in
-        PredicateSet.inter rights searchSet 
+        PredicateTable.find table left 
       with
         Not_found -> PredicateSet.empty
 

@@ -2,7 +2,7 @@ type predicate = Predicate.p
 
 class type implications =
   object
-    method implicands : predicate -> Predicate.Set.t -> Predicate.Set.t 
+    method implicands : predicate -> Predicate.Set.t 
   end
 
 class type logger =
@@ -10,4 +10,4 @@ class type logger =
     method logImplications : predicate -> Predicate.Set.t -> unit 
   end
 
-val doAnalysis : logger -> implications -> Predicate.Set.t -> Predicate.Set.t -> Predicate.Set.t
+val doAnalysis : logger -> implications -> Predicate.Set.t -> Predicate.Set.t

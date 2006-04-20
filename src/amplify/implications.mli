@@ -5,5 +5,5 @@ class c :
     method add : predicate -> predicate -> unit
     method holds : predicate -> predicate -> bool
     method toList : unit -> (predicate * predicate list) list
-    method implicands : predicate -> Predicate.Set.t -> Predicate.Set.t
+    method implicands : predicate -> Predicate.Set.t
   end

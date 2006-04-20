@@ -7,10 +7,12 @@ let input = new InputReport.c rd
 let output = new OutputReport.c rd
 let lr = new LogReport.c rd
 let ir = new ImplicationsReport.c 
+let sr = new SitesReport.c
 let dl = new Logging.c
 
 let parsers = [ 
   (ir :> CommandLine.argParser) ;  
+  (sr :> CommandLine.argParser) ;
   (rd :> CommandLine.argParser) ; 
   (nr :> CommandLine.argParser) ; 
   (input :> CommandLine.argParser) ; 
@@ -20,36 +22,33 @@ let parsers = [
 
 let parser = new CommandLine.parser parsers "amplify"
 
-let doAnalysis implications inputFileName outputFileName logFileName = 
+let doAnalysis sites implications inputFileName outputFileName logFileName = 
   let logchannel = open_out logFileName in
   let logger = (Logger.factory (dl#doLogging()) logchannel) in
 
-  let preds = new PredicateAccumulator.c in 
+  let preds = new PredicateAccumulator.c (sites :> PredicateAccumulator.translator) in 
   let inchannel = open_in inputFileName in
-  PassOneLexer.readPredicates inchannel (preds :> PassOneLexer.predicates); 
+  PassOneLexer.readPredicates 
+    inchannel 
+    (preds :> PassOneLexer.predicates); 
   close_in inchannel;
 
-  let observedTrue =
-    List.fold_left (fun s x -> PredicateSet.add x s) PredicateSet.empty (preds#getPredicates true ) in
-  let notObservedTrue =
-    List.fold_left (fun s x -> PredicateSet.add x s) PredicateSet.empty (preds#getPredicates false ) in
+  let observedTrue = preds#getObservedTrue () in
 
-  (* second pass *)
   let areTrue =
     Reconstruct.doAnalysis 
       (logger :> Reconstruct.logger) 
       (implications :> Reconstruct.implications) 
       observedTrue 
-      notObservedTrue 
   in 
+
   let areChanged = PredicateSet.diff areTrue observedTrue in
   logger#logNumChanged (PredicateSet.cardinal areChanged);
 
-  let ps = new Predicates.c areChanged in
-  let inchannel = open_in inputFileName in
+  PredicateSet.iter (preds#addPredicate) areChanged;
+
   let outchannel = open_out outputFileName in
-  PassTwoLexer.updatePredicates inchannel outchannel (ps :> PassTwoLexer.predicates);
-  close_in inchannel;
+  preds#printSortedEntries outchannel;
   close_out outchannel;
   close_out logchannel
 
@@ -60,11 +59,18 @@ let analyzeAll () =
   ImplLexer.readImplications inchannel (impls :> ImplLexer.implications); 
   close_in inchannel;
 
+  let sites = new SiteInfoAccumulator.c in
+  let inchannel = open_in (sr#getName ()) in
+  SitesLexer.readSites inchannel (sites :> SitesLexer.sites);
+  close_in inchannel;
+
+  let sites = new PredicateTranslator.c (sites#getSiteInfos ()) in
+
   let implications = new Implications.c in
     List.iter (fun (l,r) -> implications#add l r) (impls#getImplications ());
 
   for i = nr#getBeginRuns () to nr#getEndRuns () - 1 do
-    doAnalysis implications (input#format i) (output#format i) (lr#format i) 
+    doAnalysis sites implications (input#format i) (output#format i) (lr#format i) 
   done
 
 let main () =

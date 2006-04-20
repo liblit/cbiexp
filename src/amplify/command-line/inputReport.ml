@@ -3,11 +3,11 @@ open CommandLine
 
 class c (rd : RunsDirectory.c) =
   object (self)
-    val name = new box "reports"
+    val name = new box "reports.sparse"
     method usage_msg () = "[-input-report-name <input report name>]" 
 
     method argActions () =
-      [("-input-report-name", String self#setName, "input report name (default \"reports\")")]
+      [("-input-report-name", String self#setName, "input report name (default \"reports.sparse\")")]
 
     method setName n = name#set n
 

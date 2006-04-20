@@ -4,7 +4,7 @@ module PredicateSet = Predicate.Set
 
 class type implications =
   object
-    method implicands : predicate -> PredicateSet.t -> PredicateSet.t
+    method implicands : predicate -> PredicateSet.t
   end
 
 class type logger =
@@ -12,30 +12,24 @@ class type logger =
     method logImplications : predicate -> PredicateSet.t -> unit
   end
 
-let doAnalysis logger impls observedTrue notObservedTrue =
-  if PredicateSet.is_empty observedTrue then observedTrue else
-  if PredicateSet.is_empty notObservedTrue then observedTrue else
-  let deduced = ref PredicateSet.empty in
+let doAnalysis (logger : logger) (impls : implications) observedTrue =
+  if PredicateSet.is_empty observedTrue then PredicateSet.empty else
   let worklist = Queue.create () in
-  let others = ref (PredicateSet.union notObservedTrue PredicateSet.empty) in
+  let areTrue = ref (PredicateSet.union PredicateSet.empty observedTrue) in
   PredicateSet.iter (fun x -> Queue.push x worklist) observedTrue;
 
    let analyze item =
-     let implicands = (impls#implicands item !others)
-     in
-       logger#logImplications item implicands;
-       PredicateSet.iter (fun x -> Queue.push x worklist) implicands;
-       others := PredicateSet.diff !others implicands;
-       deduced := PredicateSet.union implicands !deduced
+     let implicands = (impls#implicands item) in
+     let added = PredicateSet.diff implicands !areTrue in 
+       logger#logImplications item added;
+       PredicateSet.iter (fun x -> Queue.push x worklist) added;
+       areTrue := PredicateSet.union !areTrue added
    in
      
    let rec doNext () =
-     if PredicateSet.cardinal !others = 0 
-     then PredicateSet.union observedTrue !deduced 
-     else
-       try 
-         let workitem = Queue.pop worklist in
-         analyze workitem; doNext ()
-       with Queue.Empty -> 
-         PredicateSet.union observedTrue !deduced 
+     try 
+       let workitem = Queue.pop worklist in
+       analyze workitem; doNext ()
+     with Queue.Empty -> !areTrue 
+
   in doNext ()            

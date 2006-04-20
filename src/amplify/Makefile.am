@@ -6,28 +6,32 @@ include $(top_srcdir)/ocaml.mk.in
 
 amplify_lexers =					\
   implLexer.mll		\
-	passOneLexer.mll			\
-	passTwoLexer.mll
+	sitesLexer.mll	\
+	passOneLexer.mll			
 
 amplify_others =					\
 	predicate.ml				\
+	schemes.ml					\
+	predicateTranslator.ml	\
+	siteInfoAccumulator.ml  \
 	implicationAccumulator.ml	\
 	implications.ml	\
 	predicateAccumulator.ml			\
-	predicates.ml				\
 	reconstruct.ml				\
 	logger.ml	\
 	runner.ml
 
 amplify_objects =					\
 	predicate.$(cmo)				\
+	schemes.$(cmo)						\
+	predicateTranslator.$(cmo)	\
+	siteInfoAccumulator.$(cmo)	\
+	sitesLexer.$(cmo)						\
 	implicationAccumulator.$(cmo)	\
   implLexer.$(cmo) \
 	implications.$(cmo)	\
 	predicateAccumulator.$(cmo)		\
-	predicates.$(cmo)				\
 	passOneLexer.$(cmo)			\
-	passTwoLexer.$(cmo)			\
 	reconstruct.$(cmo)				\
 	logger.$(cmo)	\
 	runner.$(cmo)
