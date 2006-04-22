@@ -8,6 +8,7 @@ endif
 
 noinst_PROGRAMS =				\
 	build_tsgraph				\
+	calc_sober				\
 	calc_truthprobs				\
 	$(chi2test)				\
 	cluster_runs				\
@@ -53,6 +54,9 @@ all-local: analysis-rules.mk
 build_tsgraph_SOURCES = build_tsgraph.cc
 build_tsgraph_LDADD = libanalyze.a -ldl
 build_tsgraph_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
+
+calc_sober_SOURCES = calc_sober.cc
+calc_sober_LDADD = libanalyze.a $(GSL_LIBS)
 
 calc_truthprobs_SOURCES = calc_truthprobs.cc
 calc_truthprobs_LDADD = libanalyze.a -ldl
