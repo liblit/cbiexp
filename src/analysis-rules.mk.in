@@ -97,6 +97,7 @@ web :=						\
 	$(topRho)				\
 	$(web_extras)				\
 	predictor-info.xml			\
+	sober.xml				\
 	stamp-src				\
 	summary.xml
 
@@ -342,10 +343,11 @@ pred_scores.xml: $(call tool-deps, compute_pred_scores)
 	xmllint --valid --noout pred_scores.xml
 CLEANFILES += pred_scores.xml
 
-sober: static-site-info.so $(call tool-deps, calc_sober)
+sober.xml: static-site-info.so $(call tool-deps, calc_sober)
 	$(build) links
 	$(time) $(tooldir)/calc_sober --begin-runs=$(training-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name) --report-suffix=$(report-series)
 	xmllint --valid --noout sober.xml
+CLEANFILES += sober.xml
 
 symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml
 	$(build) links
