@@ -29,6 +29,7 @@ const double smooth2 = 1e-12;
 typedef list<IndexedPredInfo> Stats;
 static Stats predList;
 static RunList * contribRuns;
+static int nselected = 0;
 
 static double * W;
 //static double * tsW;
@@ -432,6 +433,8 @@ iterate_max(double * u, double * notu, double * v, double * notv,
     pred_weights[F][i] = (pscore[i][F] + smooth)/(notpscore[i][F] + smooth);
     pred_weights[S][i] = (notpscore[i][S] + smooth)/(pscore[i][S] + smooth);
     u[i] = contribRuns[i].size();
+    if (u[i] > 0.0) 
+      nselected++;
     //u[i] = pred_weights[F][i] * pred_weights[S][i] * contribRuns[i].size();
     //u[i] = pred_weights[F][i];
     notu[i] = 1.0/u[i];
@@ -621,11 +624,18 @@ ttest_rank()
   vector<bool> collect;
   vector<unsigned> check;
   unsigned ns, nf;
-  unsigned maxlen = 10, ctr = 0;
+  unsigned maxlen = nselected, ctr = 0;
   char filename[128];
 
   //read_freqs();  // read in the real dst/dso frequencies
 
+  ofstream bestfp ("bicluster-preds.xml");
+  bestfp << "<?xml version=\"1.0\"?>" << endl
+         << "<?xml-stylesheet type=\"text/xsl\" href=\"" 
+	 << XMLTemplate::format("pred-scores") << ".xsl\"?>" << endl
+	 << "<!DOCTYPE scores SYSTEM \"pred-scores.dtd\">" << endl
+	 << "<scores>" << endl;
+  
   // do two-sample t-test for the failed runs accounted for by 
   // the 10 most important predicates
   check.resize(maxlen);
@@ -660,8 +670,19 @@ ttest_rank()
     for (Stats::iterator c = predList.begin(); c != predList.end(); ++c) 
       c->ps.imp = tstat[c->index];
     sprintf(filename, "list%d.xml", i+1);
-    print_scores(filename);
+    print_scores(filename); // this modified the ordering of predicates in predList
+
+    // output the first ranked predicate to the final list
+    bestfp << "<predictor index=\"" << predList.front().index+1
+           << "\" score=\"" << setprecision(10) << predList.front().ps.imp
+           << "\" stat1=\"" << predList.front().ps.fdenom
+           << "\" stat2=\"" << predList.front().ps.sdenom
+           << "\"/>" << endl;
+    bestfp.unsetf(ios::floatfield);
   }
+
+  bestfp << "</scores>" << endl;
+  bestfp.close();
 }
 
 ////////////////////////////////////////////////////////////////////////
