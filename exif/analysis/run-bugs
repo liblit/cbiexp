@@ -1,0 +1,79 @@
+#!/usr/bin/perl -w
+
+########################################################################
+##  Which bugs are triggered in each failing run?
+##  Output is a sequence of tab-delimited lines of the following form:
+##      <run-id> <bug-number> <bug-number> ...
+##  Thus each line summarizes exactly one run.  Run lines are in
+#  numeric order and bugs are in numeric order on each line.
+#
+
+use strict;
+
+my $datadir = shift;
+die "datadir not defined" unless defined $datadir;
+
+local ($,, $\) = ("\t", "\n");
+
+# this is the o+s > buf_size predicate we want to check
+my ($unit, $scheme, $site) = ("332ebdb824ff8ac8616ac0a38439f7c6", "branches", 41);
+
+open (FRUNS, "f.runs") || die "Open: $!";
+while (my $runId = <FRUNS>) {
+  chomp $runId;
+  my $subdir = int($runId / 10000);
+  my $comfn = "$datadir/$subdir/$runId/command-line";
+  my $outcomefn = "$datadir/$subdir/$runId/outcome";
+  my $reportfn = "$datadir/$subdir/$runId/reports";
+
+  # look at the commandline flags first
+  open(COMMAND, "$comfn") || die "Open: $!";
+  my $com = <COMMAND>;
+  close (COMMAND);
+  open (OUTCOME, "$outcomefn") || die "Open: $!";
+  my $outcome = <OUTCOME>;
+  chomp $outcome;
+  close (OUTCOME);
+
+  if ($com =~ /-r / || $com =~ /-n /) {
+    my $count = &find_predicate($reportfn, $unit, $scheme, $site);
+    if ($count > 0) {
+      print $runId, "3";  # bug 3, unmalloc'ed memory associated with o + s > buf_size
+    }
+    elsif ($com =~ /-m / && $outcome == 11) {  # bug 1, printing NULL in -m mode
+      print $runId, "1";
+    }
+    else {
+      print $runId, "2";
+    }
+  }
+  elsif ($com =~ /-m / && $outcome == 11) {  # bug 1, printing NULL in -m mode
+    print $runId, "1";
+  }
+  else { print STDERR "Unknown bug: run $runId $com" };
+}
+close (FRUNS);
+
+sub find_predicate {
+  my ($fn, $unit, $scheme, $site) = @_;
+  my $count;
+
+  open (REPORT, "$fn") || die "Open: $!";
+  while (<REPORT>) {
+    next unless /^<samples unit="$unit" scheme="$scheme">/;
+    my $ctr = 0;
+    while (<REPORT>) {
+      $ctr++;
+      if ($ctr == $site) {
+        chomp;
+        (undef, $count) = split /\t/;
+        last;
+      }
+    }
+    last;
+    
+  }
+  close(REPORT);
+
+  return $count;
+}
