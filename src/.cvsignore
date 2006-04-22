@@ -11,6 +11,7 @@ calc_truthprobs
 cbi-to-sober
 cbi-to-sober.cc
 chi2test
+cluster_runs
 collect_parmstats
 compiler.cc
 compute-obs-tru
