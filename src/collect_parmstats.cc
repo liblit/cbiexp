@@ -374,6 +374,7 @@ int main(int argc, char** argv)
 	notpp.init();
 	retainedPreds.push(pi);
     }
+    fclose(pfp);
 
     read_rates();
     set_rates();

@@ -24,10 +24,10 @@
 using namespace std;
 using __gnu_cxx::hash_map;
 
+bool full = 0;
 static int score_ctr = 0;
-static double score1 = 0.0, score2 = 0.0, score_n1 = 0.0, score_n2 = 0.0;
+static double score2 = 0.0, score_n2 = 0.0;
 static double score3 = 0.0;
-static ofstream logfp("truthprobs.txt", ios_base::trunc);
 static ofstream datfp("X.dat", ios_base::trunc);
 static ofstream notdatfp("notX.dat", ios_base::trunc);
 static ofstream gdatfp("truX.dat", ios_base::trunc);
@@ -49,18 +49,15 @@ struct PredInfo
     double alpha; // truth rate = tru/obs
     double beta[3];
     double lambda, gamma;
-    double tp, tp_n; // tp is P(X > 0|r,y), tp_n is P(X>0|n,r,y)
     double tp2, tp_n2; // truth probabilities from model 2
     count_tp dst, dso, realt, realo;
     PredInfo() {
 	tru = obs = 0;
 	rho = alpha = beta[0] = beta[1] = beta[2] = lambda = gamma = 0.0;
-	tp = tp_n = 0.0;
 	tp2 = tp_n2 = 0.0;
 	dst = dso = realt = realo = 0;
     }
     void reinit_probs() {
-        tp = tp_n = 0.0;
 	tp2 = tp_n2 = 0.0;
 	dst = dso = realt = realo = 0;
     }
@@ -69,22 +66,20 @@ struct PredInfo
 	obs += _obs;
     }
     void set_parms(FILE *fp);
-    void calc_prob(count_tp t, count_tp o);
-    void calc_prob_n(count_tp t, count_tp o, count_tp n);
     void calc_prob2(count_tp t, count_tp o);
     void calc_prob_n2(count_tp t, count_tp o, count_tp n);
-    void calc_zero_prob() {  calc_prob(0,0);    }
     void calc_zero_prob2() {  calc_prob2(0,0);    }
+    void record_vals (count_tp t, count_tp o) {
+        realt = t;
+        realo = o;
+    }
     void compare_prob (count_tp t, count_tp o) {
         realt = t;
         realo = o;
-        calc_prob_n(dst, dso, realo);
 	calc_prob_n2(dst, dso, realo);
         double answer = (realt > 0) ? 1.0 : 0.0;
 	double obstru = (dst > 0) ? 1.0 : 0.0;
-        score1 += abs(answer - tp);
         score2 += abs(answer - tp2);
-        score_n1 += abs(answer - tp_n);
         score_n2 += abs(answer - tp_n2);
 	score3 += abs(answer - obstru);
     }
@@ -103,34 +98,6 @@ PredInfo::set_parms (FILE * fp)
 		   &Asize, &Asumtrue, &Asumobs, &Bsize, &Csize,
 		   &alpha, beta, beta+1, beta+2, &lambda, &gamma);
   assert(ctr == 18);
-}
-
-void 
-PredInfo::calc_prob(count_tp t, count_tp o) 
-{
-    dst = t;
-    dso = o;
-    if (t > 0)
-	tp = 1.0;
-    else {
-	if (o == 0) {
-	    double numerator = gamma * exp(-lambda*rho-lambda*alpha*(1.0-rho)) + (1.0-gamma);
-	    double denom = gamma*exp(-lambda*rho) + (1.0-gamma);
-	    tp = 1.0- numerator/denom;
-	}
-	else {
-            tp = 1.0 - exp(-lambda*alpha*(1.0-rho));
-	}
-    }
-}
-
-void
-PredInfo::calc_prob_n(count_tp t, count_tp o, count_tp n)
-{
-  if (t > 0)
-    tp_n = 1.0;
-  else 
-    tp_n = 1.0 - exp((double) (n-o) * log(1.0-alpha));
 }
 
 void
@@ -200,7 +167,6 @@ operator<< (ostream &out, const PredInfo &pi)
     out << pi.tru << ' ' << pi.obs << ' ' << pi.rho << ' ' 
 	<< pi.alpha << ' ' << pi.beta[0] << ' ' << pi.beta[1] << ' ' << pi.beta[2] << ' ' 
 	<< pi.lambda << ' ' << pi.gamma << ' '
-	<< pi.tp << ' ' << pi.tp_n << ' ' 
 	<< pi.tp2 << ' ' << pi.tp_n2 << ' '
         << pi.dst << ' ' << pi.dso << ' '
 	<< pi.realt << ' ' << pi.realo;
@@ -227,7 +193,7 @@ operator<< (ostream &out, const pred_hash_t &hash)
 /****************************************************************
  * Information about each run
  ***************************************************************/
-enum { READ_DS, READ_FULL };
+enum { READ_DS, READ_FULL, RECORD_FULL };
 
 class Reader : public ReportReader
 {
@@ -258,13 +224,16 @@ Reader::update(const SiteCoords &coords, unsigned p, count_tp obs, count_tp tru)
 	PredInfoPair &pp = found->second;
 	switch (mode) {
 	case READ_DS:
-	    (pp.*pptr).calc_prob(tru, obs);
 	    (pp.*pptr).calc_prob2(tru, obs);
 	    break;
 	case READ_FULL:
             score_ctr++;
 	    (pp.*pptr).compare_prob(tru, obs);
 	    break;
+        case RECORD_FULL:
+            score_ctr++;
+            (pp.*pptr).record_vals(tru, obs);
+            break;
 	default:
 	    assert(0);
 	}
@@ -290,6 +259,55 @@ void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 /****************************************************************************
  * Utilities
  ***************************************************************************/
+
+PredCoords
+notP (PredCoords &p) {
+  PredCoords notp(p);
+  if (p.predicate % 2 == 0) {
+    notp.predicate = p.predicate + 1;
+  }
+  else {
+    notp.predicate = p.predicate - 1;
+  }
+
+  return notp;
+}
+
+void
+read_preds()
+{
+  queue<PredCoords> predQueue;
+  queue<PredCoords> notpredQueue;
+  PredInfoPair pp;
+  pred_info pi;
+
+  FILE * const pfp = fopenRead(PredStats::filename);
+  while (read_pred_full(pfp,pi)) {
+      predQueue.push(pi);
+      predHash[pi] = pp;
+
+      PredCoords notp = notP(pi);
+      notpredQueue.push(notp);
+      predHash[notp] = pp;
+  }
+  fclose(pfp);
+
+  predVec.resize(predQueue.size());
+  int i = 0;
+  while (!predQueue.empty()) {
+      predVec[i++] = predQueue.front();
+      predQueue.pop();
+  }
+
+  notpredVec.resize(notpredQueue.size());
+  i = 0;
+  while (!notpredQueue.empty()) {
+      notpredVec[i++] = notpredQueue.front();
+      notpredQueue.pop();
+  }
+
+  assert(notpredVec.size() == predVec.size());
+}
 
 void
 read_parms()
@@ -360,7 +378,6 @@ void calc_zero_prob(piptr pp) // calculate truthprobs of predicates we didn't se
     PredInfoPair &PP = c->second;
     if ((PP.*pp).dso == 0) // it is zero if the predicate hasn't been observed in the previous run
     {
-	(PP.*pp).calc_zero_prob();
 	(PP.*pp).calc_zero_prob2();
     }
     
@@ -376,7 +393,13 @@ operator<< (ostream &out, const vector<PredCoords> &pv)
     for (unsigned i = 0; i < pv.size(); ++i) {
 	pred_hash_t::iterator found = predHash.find(pv[i]);
 	assert(found != predHash.end());
-	out << (found->second.*pptr).tp2 << ' ';
+        if (full) {
+          int t = (found->second.*pptr).realt > (count_tp) 0 ? 1 : 0;
+          out << t << ' ';
+        }
+        else {
+	  out << (found->second.*pptr).tp2 << ' ';
+        }
     }
     return out;
 }
@@ -412,7 +435,8 @@ void print_results()
 {
   datfp << predVec << endl;
   notdatfp << notpredVec << endl;
-  print_groundtruth();
+  if (!full)
+    print_groundtruth();
 }
 
 
@@ -445,15 +469,20 @@ int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
 
+    string report_suffix = CompactReport::suffix;
+    full = report_suffix.empty();  // are we using non-downsampled data
+
     classify_runs();
 
-    read_parms();
+    if (full) 
+      read_preds();
+    else 
+      read_parms();
 
     datfp << scientific << setprecision(12);
     notdatfp << scientific << setprecision(12);
     freqfp << scientific << setprecision(12);
 
-    string report_suffix = CompactReport::suffix;
     Progress::Bounded prog("Calculating truth probabilities", NumRuns::count());
     for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
 	if (is_srun[r])
@@ -466,21 +495,21 @@ int main(int argc, char** argv)
 	prog.step();
         predHash.reinit_probs(pptr);
 
-	CompactReport::suffix = report_suffix;
-	Reader(READ_DS).read(r);
-	calc_zero_prob(pptr);
-
-	CompactReport::suffix = "";
-	Reader(READ_FULL).read(r);
+        if (!full) { // looking at downsampled data
+	  Reader(READ_DS).read(r);
+	  calc_zero_prob(pptr);
+  
+	  CompactReport::suffix = "";
+	  Reader(READ_FULL).read(r);
+	  CompactReport::suffix = report_suffix;
+        }
+        else {
+          Reader(RECORD_FULL).read(r);
+        }
 
         print_results();
     }
 
-    logfp << "------\nScores over " << score_ctr << " predicates:\n";
-    logfp << "Model 1: " << score1/score_ctr << " Given n: " << score_n1/score_ctr <<endl;
-    logfp << "Model 2: " << score2/score_ctr << " Given n: " << score_n2/score_ctr << endl;
-    logfp << "Compare observed with real val: " << score3/score_ctr << endl;
-    logfp.close();
     datfp.close();
     notdatfp.close();
     gdatfp.close();

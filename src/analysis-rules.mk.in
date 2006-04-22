@@ -105,7 +105,12 @@ biclustering :=					\
 	s.runs f.runs				\
 	parmstats.txt				\
 	hyperparms.txt				\
-	truthprobs				\
+	X.dat					\
+	predscores
+
+biclustering-full :=				\
+	preds.txt				\
+	s.runs f.runs				\
 	X.dat					\
 	predscores
 
