@@ -43,7 +43,8 @@ static gsl_rng *generator;
  ***************************************************************/
 struct pred_info_t {
     float mean, var, std;
-    unsigned min, max, ntallied;
+    count_tp min, max;
+    unsigned ntallied;
     double val;
     pred_info_t () {
 	mean = var = std = 0.0;
@@ -201,7 +202,7 @@ void Reader::insert_val(const SiteCoords &coords, unsigned offset, count_tp val)
       if (found != PredHash.end()) {
         const pred_info_t &pstat = found->second;
         pred_info_t pinfo;
-        pinfo.val = val;
+        pinfo.val = (double) val;
         adjust_val(pstat, pinfo.val);
         curr_run.preds[pcoords] = pinfo;
       }
@@ -218,7 +219,7 @@ void Reader::insert_val(const SiteCoords &coords, unsigned offset, count_tp val)
 bool read_nonconst_pred (FILE *fp, PredCoords &pc, pred_info_t &pi) 
 {
     unsigned ntallied;
-    const int got = fscanf(fp, "%u %u %u %g %g %u %u %u\n", &pc.unitIndex, &pc.siteOffset,
+    const int got = fscanf(fp, "%u %u %u %g %g %Lu %Lu %u\n", &pc.unitIndex, &pc.siteOffset,
 			   &pc.predicate, &pi.mean, &pi.var, &pi.min, &pi.max, &ntallied);
     
     pi.std = sqrt(pi.var);

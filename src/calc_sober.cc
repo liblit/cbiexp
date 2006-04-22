@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <iostream>
 #include <list>
+#include <numeric>
 #include <string>
 #include "classify_runs.h"
 #include "CompactReport.h"
@@ -20,9 +21,7 @@
 #include "RunsDirectory.h"
 #include "SiteCoords.h"
 #include "Score/Importance.h"
-#include "sites.h"
 #include "sorts.h"
-#include "units.h"
 #include "utils.h"
 #include "XMLTemplate.h"
 
@@ -45,7 +44,7 @@ struct PredInfo
         mean = std = 0.0;
     }
     void init() { mean = std = 0.0; }
-    void update(unsigned _tru, unsigned _obs) {
+    void update(count_tp _tru, count_tp _obs) {
       double ratio = (double) _tru/_obs;
       mean += ratio;
       std += ratio * ratio;
@@ -96,14 +95,12 @@ class Reader : public ReportReader
 {
 public:
   Reader();
-  void branchesSite(const SiteCoords &, unsigned, unsigned);
-  void gObjectUnrefSite(const SiteCoords &, unsigned, unsigned, unsigned, unsigned);
-  void returnsSite(const SiteCoords &, unsigned, unsigned, unsigned);
-  void scalarPairsSite(const SiteCoords &, unsigned, unsigned, unsigned);
+
+protected:
+  void handleSite(const SiteCoords &, vector<count_tp> &);
 
 private:
-  void tripleSite(const SiteCoords &, unsigned, unsigned, unsigned) const;
-  void update(const SiteCoords &, unsigned, unsigned, unsigned) const;
+    void update(const SiteCoords &, unsigned, count_tp, count_tp) const;
 };
 
 inline
@@ -112,7 +109,7 @@ Reader::Reader()
 }
 
 inline void
-Reader::update(const SiteCoords &coords, unsigned p, unsigned obs, unsigned tru) const
+Reader::update(const SiteCoords &coords, unsigned p, count_tp obs, count_tp tru) const
 {
     PredCoords pc(coords, p);
     const pred_hash_t::iterator found = predHash.find(pc);
@@ -122,46 +119,21 @@ Reader::update(const SiteCoords &coords, unsigned p, unsigned obs, unsigned tru)
     }
 }
 
-void Reader::tripleSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) const
+void
+Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 {
-    assert(x || y || z);
-    update(coords, 0, x+y+z, x);
-    update(coords, 1, x+y+z, y+z);
-    update(coords, 2, x+y+z, y);
-    update(coords, 3, x+y+z, x+z);
-    update(coords, 4, x+y+z, z);
-    update(coords, 5, x+y+z, x+y);
-}
+    const count_tp sum = accumulate(counts.begin(), counts.end(), (count_tp) 0);
+    assert(sum > 0);
 
-inline void
-Reader::scalarPairsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) 
-{
-    tripleSite(coords, x, y, z);
-}
-
-
-inline void
-Reader::returnsSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z) 
-{
-    tripleSite(coords, x, y, z);
-}
-
-inline void
-Reader::branchesSite(const SiteCoords &coords, unsigned x, unsigned y)
-{
-    assert(x||y);
-    update(coords, 0, x+y, x);
-    update(coords, 1, x+y, y);
-}
-
-inline void
-Reader::gObjectUnrefSite(const SiteCoords &coords, unsigned x, unsigned y, unsigned z, unsigned w)
-{
-    assert(x || y || z || w);
-    update(coords, 0, x+y+z+w, x);
-    update(coords, 1, x+y+z+w, y);
-    update(coords, 2, x+y+z+w, z);
-    update(coords, 3, x+y+z+w, w);
+    const size_t size = counts.size();
+    if (size == 2)
+	for (unsigned predicate = 0; predicate < size; ++predicate)
+	    update(coords, predicate, sum, counts[predicate]);
+    else
+	for (unsigned predicate = 0; predicate < size; ++predicate) {
+	    update(coords, 2 * predicate,     sum,       counts[predicate]);
+	    update(coords, 2 * predicate + 1, sum, sum - counts[predicate]);
+	}
 }
 
 /****************************************************************************
