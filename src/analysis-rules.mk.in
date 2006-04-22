@@ -377,7 +377,8 @@ $(nevers): $(stamp-decimate) f.runs static-site-info.so $(call tool-deps, never-
 CLEANFILES += $(nevers)
 
 bicluster: $(biclustering)
-.PHONY: bicluster
+bicluster-full: $(biclustering-full)
+.PHONY: bicluster bicluster-full
 CLEANFILES += est_hyperparms.log hyperparms.txt list*.xml notp-hyperparms.txt notp-parmstats.txt notX.dat pred_scores.log truFreq.dat trunotFreq.dat trunotX.dat truthprobs.txt truX.dat X.dat
 
 
