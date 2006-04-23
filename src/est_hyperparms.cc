@@ -91,6 +91,7 @@ struct pred_info_t {
     void C_der(double dC[4], double ddC[4][4], const double d[3][3] , 
 	       const double D[3][3][3] , const double m, double *Ci);
     void calc_beta() {
+	scale_t();
 	double T = exp(t[0]) + exp(t[1]) + exp(t[2]);
 	for (unsigned i = 0; i < 3; ++i) {
 	    beta[i] = exp(t[i])/T;
@@ -381,7 +382,8 @@ pred_info_t::update_Xparms(double grad[4], double Hess[4][4])
     for (unsigned i = 0; i < 3; ++i) {
         t[i] -= gsl_vector_get(change, i);
     }
-    scale_t();
+
+    // scale_t();
     calc_beta();
     alpha -= gsl_vector_get(change, 3);
 
