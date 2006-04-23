@@ -1,8 +1,6 @@
 name := exif
 schemes := all branches scalar-pairs
 source-strip-prefixes := ../../../../src/ ../../../src/
-training-runs := 1000
-report-series := inverse-100
 
 -include ../../site-rules.mk
 -include site-rules.mk
