@@ -90,17 +90,6 @@ corrected :=						\
 	all_hl_corrected-exact-complete.xml		\
 	all_hl_corrected-approximate-complete.xml
 
-web :=						\
-	$(views)				\
-	$(corrected)				\
-	$(links)				\
-	$(topRho)				\
-	$(web_extras)				\
-	predictor-info.xml			\
-	sober.xml				\
-	stamp-src				\
-	summary.xml
-
 biclustering :=					\
 	preds.txt				\
 	s.runs f.runs				\
@@ -114,6 +103,18 @@ biclustering-full :=				\
 	s.runs f.runs				\
 	X.dat					\
 	predscores
+
+web :=						\
+	$(biclustering)				\
+	$(corrected)				\
+	$(links)				\
+	$(topRho)				\
+	$(views)				\
+	$(web_extras)				\
+	predictor-info.xml			\
+	sober.xml				\
+	stamp-src				\
+	summary.xml
 
 publish ?= $(HOME)/www/$(name)-new
 
