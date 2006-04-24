@@ -13,9 +13,7 @@
 #include <vector>
 #include "DiscreteDist.h"
 #include "fopen.h"
-#include "NumRuns.h"
 #include "PredCoords.h"
-#include "RunsDirectory.h"
 #include "classify_runs.h"
 
 using namespace std;
@@ -91,7 +89,6 @@ struct pred_info_t {
     void C_der(double dC[4], double ddC[4][4], const double d[3][3] , 
 	       const double D[3][3][3] , const double m, double *Ci);
     void calc_beta() {
-	scale_t();
 	double T = exp(t[0]) + exp(t[1]) + exp(t[2]);
 	for (unsigned i = 0; i < 3; ++i) {
 	    beta[i] = exp(t[i])/T;
@@ -379,11 +376,16 @@ pred_info_t::update_Xparms(double grad[4], double Hess[4][4])
     gsl_linalg_QR_decomp (&Mat.matrix, tau);
     gsl_linalg_QR_solve (&Mat.matrix, tau, &vec.vector, change);
     
+    logfp << "change: " << gsl_vector_get(change,0) << " "
+    << gsl_vector_get(change,1) << " "
+    << gsl_vector_get(change,2) << " "
+    << gsl_vector_get(change,3) << endl;
+
     for (unsigned i = 0; i < 3; ++i) {
         t[i] -= gsl_vector_get(change, i);
     }
 
-    // scale_t();
+    scale_t();
     calc_beta();
     alpha -= gsl_vector_get(change, 3);
 
@@ -511,6 +513,10 @@ pred_info_t::est_Xparms()
     double change;
     unsigned nbzero = 0;
 
+    if (Asize == 0) {  // didn't observe and runs where m > y > 0, just use initial values
+       return (0);
+    }
+
     for (unsigned i = 0; i < 3; ++i)
       if (beta[i] == 0.0)
         nbzero++;
@@ -603,8 +609,6 @@ operator << (ostream &out, const PredPair &pp)
 void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
-        { &NumRuns::argp, 0, 0, 0 },
-	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
 

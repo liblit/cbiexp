@@ -320,7 +320,7 @@ parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt static-site-info.so $(c
 CLEANFILES += parmstats.txt
 
 hyperparms.txt: parmstats.txt static-site-info.so $(call tool-deps, est_hyperparms)
-	$(time) $(tooldir)/est_hyperparms --begin-runs=$(training-runs) --runs-directory=$(datadir) 
+	$(time) $(tooldir)/est_hyperparms
 
 ifdef $(HAVE_GSL_CDF)
 chi2stats.txt: parmstats.txt fpriors.dat fpriors-full.dat spriors.dat spriors-full.dat $(call tool-deps, chi2test)
