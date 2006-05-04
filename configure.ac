@@ -101,16 +101,13 @@ AC_ARG_WITH(sampler-prefix,
 if test -n "$with_sampler_build"; then
   AC_PATH_PROG(sampler_cc, sampler-cc-here, , $with_sampler_build/driver)
   sampler_tooldir="$with_sampler_build/tools"
-  sampler_debug="$with_sampler_build/launcher"
 elif test -n "$with_sampler_prefix"; then
   AC_PATH_PROG(sampler_cc, sampler-cc, , $with_sampler_prefix/bin)
   sampler_tooldir="$with_sampler_prefix/lib/sampler/tools"
-  sampler_debug="$with_sampler_prefix/share/sampler"
 else
   AC_PATH_PROG(sampler_cc, sampler-cc)
   if test -n "$sampler_cc"; then
     sampler_tooldir="`cd \`dirname \"$sampler_cc\"\`/../lib/sampler/tools; pwd`"
-    sampler_debug="`cd \`dirname \"$sampler_cc\"\`/../share/sampler; pwd`"
   fi
 fi
 
@@ -126,9 +123,6 @@ else
   with_experiments=no
 fi
 AC_SUBST(sampler_tooldir)
-
-sampler_debug="$sampler_debug/print-debug-info"
-AC_SUBST(sampler_debug)
 
 
 ########################################################################
