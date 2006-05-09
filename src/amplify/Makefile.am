@@ -36,17 +36,30 @@ amplify_objects =					\
 	logger.$(cmo)	\
 	runner.$(cmo)
 
-objects = $(amplify_objects) 
+logreader_lexers = \
+	logLexer.mll
 
-mlis = $(amplify_others:=.mli) 
+logreader_others = \
+	logReader.ml
+
+logreader_objects = \
+	logLexer.$(cmo)	\
+	logReader.$(cmo)
+
+objects = $(amplify_objects) $(logreader_objects) 
+
+mlis = $(amplify_others:=.mli) $(logreader_other:=.mli)
 
 depends = $(objects:.$(cmo)=.do) $(mlis:.mli=.di)
 
 libs = command-line/commandLine.$(cma)
 
-all-local: amplify 
+all-local: amplify logreader
 
 amplify: $(amplify_objects) $(libs) 
 	$(compiler) -o amplify $(libs) $(amplify_objects)
+
+logreader: $(logreader_objects) $(libs) 
+	$(compiler) -o logreader $(libs) $(logreader_objects)
 
 -include $(depends)

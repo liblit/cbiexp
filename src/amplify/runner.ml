@@ -43,7 +43,6 @@ let doAnalysis sites implications inputFileName outputFileName logFileName =
   in 
 
   let areChanged = PredicateSet.diff areTrue observedTrue in
-  logger#logNumChanged (PredicateSet.cardinal areChanged);
 
   PredicateSet.iter (preds#addPredicate) areChanged;
 

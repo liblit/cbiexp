@@ -7,7 +7,8 @@ mls = \
 	inputReport	\
 	logReport	\
 	numRuns	\
-	outputReport
+	outputReport \
+	statsReport
 
 mlis = $(mls:=.mli)
 objects = $(mls:=.$(cmo))

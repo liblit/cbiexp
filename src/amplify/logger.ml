@@ -6,16 +6,12 @@ module PredicateSet = Predicate.Set
 
 class type c = 
   object
-    method logNumChanged : int -> unit
     method logImplications : predicate -> PredicateSet.t -> unit
   end
 
 class c_impl out =
   object (self)
     val outchannel = out 
-
-    method logNumChanged num = 
-      output_string outchannel ((string_of_int num)^"\n")
 
     method logImplications (left : predicate)  (rights : PredicateSet.t) =
       PredicateSet.iter 
@@ -31,8 +27,6 @@ class c_impl out =
 class c_null out =
   object (self)
     val outchannel : out_channel = out
-
-    method logNumChanged (num : int) = ()
 
     method logImplications (left : predicate) (rights : PredicateSet.t)  = ()
   end
