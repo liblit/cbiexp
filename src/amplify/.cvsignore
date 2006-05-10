@@ -1,0 +1,10 @@
+*.annot
+*.cmi
+*.cmo
+*.di
+*.do
+.deps
+Makefile
+Makefile.in
+amplify
+logreader

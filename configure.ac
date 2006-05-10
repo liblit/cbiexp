@@ -127,6 +127,15 @@ AC_SUBST(sampler_tooldir)
 
 ########################################################################
 #
+#  for amplify
+#
+
+AM_CONDITIONAL(ENABLE_AMPLIFY_NATIVE, test "$enable_amplify_native" = yes)
+AM_CONDITIONAL(ENABLE_AMPLIFY_PROFILING, test "$enable_amplify_profiling" = yes)
+
+
+########################################################################
+#
 #  generate output files
 #
 
@@ -136,6 +145,8 @@ AC_CONFIG_FILES([
 Makefile
 correlations/Makefile
 src/Makefile
+src/amplify/Makefile
+src/amplify/command-line/Makefile
 src/corrective-ranking/Makefile
 src/never-reached/Makefile
 src/symmetric/Makefile

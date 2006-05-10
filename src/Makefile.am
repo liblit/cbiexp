@@ -1,4 +1,4 @@
-SUBDIRS = corrective-ranking never-reached Score symmetric
+SUBDIRS = amplify corrective-ranking never-reached Score symmetric
 
 AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 $(BOOST_CPPFLAGS)
 
@@ -56,7 +56,7 @@ build_tsgraph_LDADD = libanalyze.a -ldl
 build_tsgraph_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
 
 calc_sober_SOURCES = calc_sober.cc
-calc_sober_LDADD = libanalyze.a $(GSL_LIBS)
+calc_sober_LDADD = libanalyze.a $(GSL_LIBS) -ldl
 
 calc_truthprobs_SOURCES = calc_truthprobs.cc
 calc_truthprobs_LDADD = libanalyze.a -ldl
@@ -65,7 +65,7 @@ chi2test_SOURCES = chi2test.cc
 chi2test_LDADD = libanalyze.a $(GSL_LIBS)
 
 cluster_runs_SOURCES = cluster_runs.cc
-cluster_runs_LDADD = libanalyze.a $(GSL_LIBS)
+cluster_runs_LDADD = libanalyze.a $(GSL_LIBS) -ldl
 
 collect_parmstats_SOURCES = collect_parmstats.cc
 collect_parmstats_LDADD = libanalyze.a -ldl

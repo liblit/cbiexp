@@ -1,0 +1,51 @@
+ocamlflags = -warn-error A $(ocamlflags_profile) $(ocamlflags_debug)
+OCAMLC=ocamlc.opt 
+OCAMLOPT=ocamlopt.opt 
+OCAMLDEP=ocamldep.opt 
+OCAMLLEX=ocamllex
+
+DTYPES = -dtypes 
+
+if ENABLE_AMPLIFY_PROFILING
+ocamlflags_profile = -p
+endif
+
+if ENABLE_AMPLIFY_NATIVE
+ocamlc := $(OCAMLOPT)
+cma := cmxa
+cmo := cmx
+else 
+ocamlc := $(OCAMLC) 
+ocamlflags_debug = -g $(DTYPES)
+cma := cma
+cmo := cmo
+endif 
+
+compiler = $(ocamlc) $(ocamlflags)
+depend = $(OCAMLDEP) $(includes) -o $@ -c $<
+compile = $(compiler) $(includes) -o $@ -c $<
+archive = $(compiler) -a -o $@ $^
+
+MOSTLYCLEANFILES = $(targets) *.annot *.cma *.cmxa *.cmi *.cmo *.cmx *.o *.a
+CLEANFILES = *.d[io]
+
+# Common rules 
+SUFFIXES: .ml .mli .cmo .cmi .cmx .di .do
+
+.ml.cmo: 
+	$(OCAMLC) $(ocamlflags) $(includes) -c $< 
+
+.mli.cmi: 
+	$(compiler) $(includes) -c $< 
+
+.ml.cmx: 
+	$(OCAMLOPT) $(ocamlflags) $(includes) -c $< 
+
+.mll.ml:
+	$(OCAMLLEX) $<
+
+.mli.di:
+	$(OCAMLDEP) $(includes) $^ >$@
+
+.ml.do:
+	$(OCAMLDEP) $(includes) $^ >$@
