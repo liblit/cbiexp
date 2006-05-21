@@ -61,9 +61,9 @@ $ENV{SAMPLER_FILE} = 'reports';
 $ENV{SAMPLER_REAL_EXECUTABLE} = $argv[0];
 $ENV{SAMPLER_SPARSITY} = 1;
 
-system @argv;
+my $outcome = system @argv;
 
-note 'outcome', $?;
+note 'outcome', $outcome;
 
 unlink glob '*.jpg';
 unlink glob '*.jpeg';
