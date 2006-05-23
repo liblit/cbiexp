@@ -215,7 +215,7 @@ stamp-amplify := $(stamp-decimate)-amplify
 report-series-amplify := $(if $(report-series),$(report-series).amplify,amplify)
 $(stamp-amplify): $(stamp-decimate)
 	test -w $@ -o ! -e $@
-	$(time) $(tooldir)/amplify/amplify -implications-report $(implications) -sites-report $(sites) -runs-directory $(datadir) -begin-runs $(training-runs) -do-logging -input-report-name reports.sparse.$(report-series) -output-report-name reports.sparse.$(report-series-amplify)
+	$(time) $(tooldir)/amplify/amplify -implications-report $(implications) -sites-report $(sites) -runs-directory $(datadir) -begin-runs $(training-runs) -do-logging -input-report-name $(if $(report-series),reports.sparse.$(report-series),reports.sparse) -output-report-name reports.sparse.$(report-series-amplify)
 	$(time) $(tooldir)/amplify/logreader -runs-directory $(datadir) -begin-runs $(training-runs)
 	touch $@
 endif
