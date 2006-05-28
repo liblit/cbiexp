@@ -5,9 +5,9 @@ includes = -I command-line
 include $(top_srcdir)/ocaml.mk.in
 
 amplify_lexers =					\
-  implLexer.mll						\
+	implLexer.mll					\
 	sitesLexer.mll					\
-	passOneLexer.mll			
+	passOneLexer.mll
 
 amplify_others =				\
 	predicate.ml				\
@@ -28,7 +28,7 @@ amplify_objects =				\
 	siteInfoAccumulator.$(cmo)		\
 	sitesLexer.$(cmo)			\
 	implicationAccumulator.$(cmo)		\
-  implLexer.$(cmo)				\
+	implLexer.$(cmo)			\
 	implications.$(cmo)			\
 	predicateAccumulator.$(cmo)		\
 	passOneLexer.$(cmo)			\
@@ -44,7 +44,7 @@ logreader_objects =				\
 	logLexer.$(cmo)				\
 	logReader.$(cmo)
 
-objects = $(amplify_objects) $(logreader_objects) 
+objects = $(amplify_objects) $(logreader_objects)
 
 mlis = $(amplify_others:=.mli) $(logreader_other:=.mli)
 
@@ -54,10 +54,10 @@ libs = command-line/commandLine.$(cma)
 
 all-local: amplify logreader
 
-amplify: $(amplify_objects) $(libs) 
+amplify: $(amplify_objects) $(libs)
 	$(compiler) -o amplify $(libs) $(amplify_objects)
 
-logreader: $(logreader_objects) $(libs) 
+logreader: $(logreader_objects) $(libs)
 	$(compiler) -o logreader $(libs) $(logreader_objects)
 
 -include $(depends)
