@@ -52,7 +52,6 @@ let doAnalysis sites implications inputFileName outputFileName logFileName =
   close_out logchannel
 
 let analyzeAll () =
-  let failed = false in
   let impls = new ImplicationAccumulator.c in 
   let inchannel = open_in (ir#getName ()) in
   ImplLexer.readImplications inchannel (impls :> ImplLexer.implications); 
