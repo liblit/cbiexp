@@ -3,6 +3,7 @@ SUBDIRS = command-line
 includes = -I command-line
 
 include $(top_srcdir)/ocaml.mk.in
+ocamlflags += -warn-error x
 
 amplify_lexers =				\
 	implLexer.mll				\
