@@ -4,9 +4,9 @@ includes = -I command-line
 
 include $(top_srcdir)/ocaml.mk.in
 
-amplify_lexers =					\
-	implLexer.mll					\
-	sitesLexer.mll					\
+amplify_lexers =				\
+	implLexer.mll				\
+	sitesLexer.mll				\
 	passOneLexer.mll
 
 amplify_others =				\
