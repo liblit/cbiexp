@@ -370,11 +370,11 @@ WX: $(call tool-deps, mult_WX)
 	$(time) $(tooldir)/mult_WX --begin-runs=$(training-runs) --runs-directory=$(datadir)
 
 predscores: pred_scores.xml
-pred_scores.xml: preds.txt $(call tool-deps, compute_pred_scores)
+pred_scores.xml bicluster-preds.xml: preds.txt $(call tool-deps, compute_pred_scores)
 	$(build) links
 	$(time) $(tooldir)/compute_pred_scores --begin-runs=$(training-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name)
 	xmllint --valid --noout pred_scores.xml
-CLEANFILES += pred_scores.xml
+CLEANFILES += pred_scores.xml bicluster-preds.xml
 
 sober.xml sober.txt: static-site-info.so preds.txt $(call tool-deps, calc_sober)
 	$(build) links
