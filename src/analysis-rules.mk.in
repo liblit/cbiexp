@@ -376,11 +376,11 @@ pred_scores.xml: preds.txt $(call tool-deps, compute_pred_scores)
 	xmllint --valid --noout pred_scores.xml
 CLEANFILES += pred_scores.xml
 
-sober.xml: static-site-info.so preds.txt $(call tool-deps, calc_sober)
+sober.xml sober.txt: static-site-info.so preds.txt $(call tool-deps, calc_sober)
 	$(build) links
 	$(time) $(tooldir)/calc_sober --begin-runs=$(training-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name) --report-suffix=$(report-series)
 	xmllint --valid --noout sober.xml
-CLEANFILES += sober.xml
+CLEANFILES += sober.xml sober.txt
 
 symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml
 	$(build) links
