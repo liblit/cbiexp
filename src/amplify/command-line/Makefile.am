@@ -2,6 +2,7 @@ mls = \
 	logging	\
 	commandLine	\
 	runsDirectory	\
+	multiReports 	\
 	sitesReport 			\
 	implicationsReport	\
 	inputReport	\

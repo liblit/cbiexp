@@ -6,8 +6,8 @@ let nr = new NumRuns.c rd
 let input = new InputReport.c rd
 let output = new OutputReport.c rd
 let lr = new LogReport.c rd
-let ir = new ImplicationsReport.c 
-let sr = new SitesReport.c
+let ir = ImplicationsReport.factory ()
+let sr = SitesReport.factory ()
 let dl = new Logging.c
 
 let parsers = [ 
@@ -51,16 +51,33 @@ let doAnalysis sites implications inputFileName outputFileName logFileName =
   close_out outchannel;
   close_out logchannel
 
-let analyzeAll () =
-  let impls = new ImplicationAccumulator.c in 
-  let inchannel = open_in (ir#getName ()) in
-  ImplLexer.readImplications inchannel (impls :> ImplLexer.implications); 
-  close_in inchannel;
+let readImplications () =
+  let impls = new ImplicationAccumulator.c in
 
+  let readOne impls filename =
+    let inchannel = open_in filename in
+    ImplLexer.readImplications inchannel (impls :> ImplLexer.implications);
+    close_in inchannel;
+    impls
+  in
+
+  List.fold_left (readOne) impls (ir#getNames())
+
+let readSites () =
   let sites = new SiteInfoAccumulator.c in
-  let inchannel = open_in (sr#getName ()) in
-  SitesLexer.readSites inchannel (sites :> SitesLexer.sites);
-  close_in inchannel;
+
+  let readOne sites filename = 
+    let inchannel = open_in filename in 
+    SitesLexer.readSites inchannel (sites :> SitesLexer.sites);
+    close_in inchannel;
+    sites
+  in 
+
+  List.fold_left (readOne) sites (sr#getNames()) 
+
+let analyzeAll () =
+  let impls = readImplications () in
+  let sites = readSites () in
 
   let sites = new PredicateTranslator.c (sites#getSiteInfos ()) in
 
