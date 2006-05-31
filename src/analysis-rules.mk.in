@@ -213,10 +213,14 @@ report-series-amplify := $(report-series)
 else
 stamp-amplify := $(stamp-decimate)-amplify
 report-series-amplify := $(if $(report-series),$(report-series).amplify,amplify)
-$(stamp-amplify): $(stamp-decimate)
+input-report := $(if $(report-series),reports.sparse.$(report-series),reports.sparse)
+amplify-log := $(if $(report-series),amplify.$(report-series).log,amplify.log)
+site-args := $(foreach site,$(sites),-sites-report $(site))
+implication-args := $(foreach implication,$(implications),-implications-report $(implication))
+$(stamp-amplify): $(stamp-decimate) $(sites) $(implications)
 	test -w $@ -o ! -e $@
-	$(time) $(tooldir)/amplify/amplify -implications-report $(implications) -sites-report $(sites) -runs-directory $(datadir) -begin-runs $(training-runs) -do-logging -input-report-name $(if $(report-series),reports.sparse.$(report-series),reports.sparse) -output-report-name reports.sparse.$(report-series-amplify)
-	$(time) $(tooldir)/amplify/logreader -runs-directory $(datadir) -begin-runs $(training-runs)
+	$(time) $(tooldir)/amplify/amplify $(implication-args) $(site-args) -runs-directory $(datadir) -begin-runs $(training-runs) -do-logging -input-report-name $(input-report) -output-report-name reports.sparse.$(report-series-amplify) -amplify-log-name $(amplify-log)
+	$(time) $(tooldir)/amplify/logreader -runs-directory $(datadir) -begin-runs $(training-runs) -amplify-log-name $(amplify-log)
 	touch $@
 endif
 CLEANFILES += amps.txt
