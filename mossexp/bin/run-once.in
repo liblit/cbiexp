@@ -67,9 +67,10 @@ sub fatal ($) {
 
 
 sub check_system ($) {
-    fatal "cannot run command \"@_\": $!" if (system $_[0]) == -1;
-    fatal "command \"@_\" crashed" if $? & 127;
-    return $? >> 8;
+    my $outcome = system $_[0];
+    fatal "cannot run command \"@_\": $!" if $outcome == -1;
+    fatal "command \"@_\" crashed" if $outcome & 127;
+    return $outcome >> 8;
 }
 
 

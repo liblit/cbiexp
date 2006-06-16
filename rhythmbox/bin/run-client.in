@@ -54,5 +54,5 @@ delete $ENV{SAMPLER_REPORT_FD};
 my $song = $music[int rand @music];
 Utils::note 'initial-song', $song;
 
-system { $rhythmbox } $rhythmbox, $song;
-Utils::note 'outcome', $?;
+my $outcome = system { $rhythmbox } $rhythmbox, $song;
+Utils::note 'outcome', $outcome;
