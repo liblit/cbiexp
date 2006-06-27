@@ -10,12 +10,9 @@ class type c =
     method cleanup : unit -> unit
   end
 
-class c_impl u f d = 
+class c_impl (usage : string) (flag : string) description = 
   object (self)
     val names : string list ref = ref [] 
-    val usage : string = u
-    val flag : string = f
-    val description : string = d
 
     method usage_msg () = usage 
 
@@ -28,7 +25,7 @@ class c_impl u f d =
 
     method cleanup () =
       if (List.length !names = 0) then 
-        raise (Bad "no implications report specified")
+        raise (Bad ("no "^description^" specified"))
 
   end 
 

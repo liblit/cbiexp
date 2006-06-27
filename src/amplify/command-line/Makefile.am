@@ -1,15 +1,21 @@
 mls = \
-	logging	\
 	commandLine	\
 	runsDirectory	\
 	multiReports 	\
+	perRunReport	\
+	analysisReport	\
+	flag		\	
+	counts		\
+	logging		\
+	predRanking	\
 	sitesReport 			\
 	implicationsReport	\
 	inputReport	\
 	logReport	\
 	numRuns	\
 	outputReport \
-	statsReport
+	statsReport	\
+	predRankReport
 
 mlis = $(mls:=.mli)
 objects = $(mls:=.$(cmo))

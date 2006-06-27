@@ -3,12 +3,12 @@ module PredicateSet = Predicate.Set
 
 let rd = new RunsDirectory.c
 let nr = new NumRuns.c rd
-let input = new InputReport.c rd
-let output = new OutputReport.c rd
-let lr = new LogReport.c rd
+let input = InputReport.factory rd
+let output = OutputReport.factory rd
+let lr = LogReport.factory rd
 let ir = ImplicationsReport.factory ()
 let sr = SitesReport.factory ()
-let dl = new Logging.c
+let dl = Logging.factory ()
 
 let parsers = [ 
   (ir :> CommandLine.argParser) ;  
@@ -24,7 +24,7 @@ let parser = new CommandLine.parser parsers "amplify"
 
 let doAnalysis sites implications inputFileName outputFileName logFileName = 
   let logchannel = open_out logFileName in
-  let logger = (Logger.factory (dl#doLogging()) logchannel) in
+  let logger = (Logger.factory (dl#shouldDo()) logchannel) in
 
   let preds = new PredicateAccumulator.c (sites :> PredicateAccumulator.translator) in 
   let inchannel = open_in inputFileName in

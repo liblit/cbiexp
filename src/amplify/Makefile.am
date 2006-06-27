@@ -37,12 +37,17 @@ amplify_objects =				\
 	logger.$(cmo)				\
 	runner.$(cmo)
 
-logreader_lexers = logLexer.mll
+logreader_lexers = lineCountLexer.mll		\
+	logImplLexer.mll    
 
-logreader_others = logReader.ml
+logreader_others = predicate.ml			\
+	implicationAccumulator.ml		\
+	logReader.ml  
 
-logreader_objects =				\
-	logLexer.$(cmo)				\
+logreader_objects = predicate.$(cmo)		\
+	implicationAccumulator.$(cmo)		\
+	lineCountLexer.$(cmo)			\
+	logImplLexer.$(cmo)			\
 	logReader.$(cmo)
 
 objects = $(amplify_objects) $(logreader_objects)

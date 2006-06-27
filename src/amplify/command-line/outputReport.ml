@@ -1,18 +1,10 @@
 open Arg
 open CommandLine
 
-class c (rd : RunsDirectory.c) =
-  object (self)
-    val name = new box "reports.sparse.amplify"
-    method usage_msg () = "[-output-report-name <output report name>]"
+let factory rd = PerRunReport.factory
+  rd
+  "reports.sparse.amplify"
+  "-output-report-name <output report name>"
+  "-output-report-name"
+  "output report name (default \"reports.sparse.amplify\")"
 
-    method argActions () =
-      [("-output-report-name", String self#setName, "output report name (default \"reports.sparse.amplify\")")]
-
-    method setName n = name#set n
-
-    method cleanup () = ()
-
-    method format runId =
-      rd#format runId (name#get ()) 
-  end 
