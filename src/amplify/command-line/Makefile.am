@@ -5,17 +5,7 @@ mls = \
 	perRunReport	\
 	analysisReport	\
 	flag		\	
-	counts		\
-	logging		\
-	predRanking	\
-	sitesReport 			\
-	implicationsReport	\
-	inputReport	\
-	logReport	\
-	numRuns	\
-	outputReport \
-	statsReport	\
-	predRankReport
+	numRuns
 
 mlis = $(mls:=.mli)
 objects = $(mls:=.$(cmo))

@@ -1,9 +1,19 @@
 type predicate = Predicate.p 
 
-class c :
+class type impliesRelation =
   object
     method add : predicate -> predicate -> unit
     method holds : predicate -> predicate -> bool
-    method toList : unit -> (predicate * predicate list) list
     method implicands : predicate -> Predicate.Set.t
   end
+
+class impliesRelationImpl : impliesRelation
+
+class type isImpliedByRelation =
+  object
+    method add : predicate -> predicate -> unit
+    method holds : predicate -> predicate -> bool
+    method impliers : predicate -> Predicate.Set.t
+  end
+
+class isImpliedByRelationImpl : isImpliedByRelation 

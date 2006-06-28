@@ -9,4 +9,12 @@ class type c =
     method cleanup : unit -> unit
   end
 
-val factory : string -> string -> string -> c 
+module ImplicationsReports :
+  sig
+    val factory : unit -> c
+  end
+
+module SitesReports :
+  sig
+    val factory : unit -> c
+  end

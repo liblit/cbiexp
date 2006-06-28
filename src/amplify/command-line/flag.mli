@@ -8,4 +8,17 @@ class type c =
     method cleanup : unit -> unit 
   end
 
-val factory : bool -> string -> string -> string -> c 
+module CountAmplificationsPerRun : 
+  sig
+    val factory : unit -> c
+  end
+
+module Log :
+  sig
+    val factory : unit -> c
+  end
+
+module RankPredsByRunsAmplified :
+  sig
+    val factory : unit -> c
+  end

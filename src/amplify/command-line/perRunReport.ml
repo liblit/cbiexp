@@ -29,3 +29,33 @@ class c_impl (rd : RunsDirectory.c) (default : string) (usage : string) (flag : 
 
 let factory rd default usage flag description =
   let obj = new c_impl rd default usage flag description in (obj :> c)
+
+module InputReport =
+  struct
+    let factory rd = factory 
+      rd
+      "reports.sparse"
+      "-input-report-name <input report name>"
+      "-input-report-name"
+      "input report name (default \"reports.sparse\")"
+  end
+
+module LogReport =
+  struct
+    let factory rd = factory
+      rd
+      "amplify.log"
+      "-amplify-log-name <amplify log name>"
+      "-amplify-log-name"
+      "amplify log name (default \"amplify.log\")"
+  end
+
+module OutputReport =
+  struct
+    let factory rd = factory
+      rd
+      "reports.sparse.amplify"
+      "-output-report-name <output report name>"
+      "-output-report-name"
+      "output report name (default \"reports.sparse.amplify\")"
+  end

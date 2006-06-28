@@ -9,4 +9,17 @@ class type c =
     method cleanup : unit -> unit
   end
 
-val factory : RunsDirectory.c -> string -> string -> string -> string -> c 
+module InputReport :
+  sig
+    val factory : RunsDirectory.c -> c 
+  end
+
+module LogReport :
+  sig
+    val factory : RunsDirectory.c -> c
+  end
+
+module OutputReport :
+  sig
+    val factory : RunsDirectory.c -> c
+  end

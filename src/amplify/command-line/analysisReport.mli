@@ -11,3 +11,33 @@ class type c =
   end
 
 val factory : string -> string -> string -> string -> c 
+
+module StatsReport :
+  sig
+    val factory : unit -> c
+  end
+
+module PredRankReport :
+  sig
+    val factory : unit -> c
+  end
+
+module TruthProbabilitiesInput :
+  sig
+    val factory : unit -> c
+  end
+
+module NotTruthProbabilitiesInput :
+  sig
+    val factory : unit -> c
+  end
+
+module TruthProbabilitiesOutput :
+  sig
+    val factory : unit -> c
+  end
+
+module NotTruthProbabilitiesOutput :
+  sig
+    val factory : unit -> c
+  end

@@ -1,3 +1,7 @@
+open Flag
+open PerRunReport
+open MultiReports
+
 type predicate = Predicate.p
 module PredicateSet = Predicate.Set 
 
@@ -6,9 +10,9 @@ let nr = new NumRuns.c rd
 let input = InputReport.factory rd
 let output = OutputReport.factory rd
 let lr = LogReport.factory rd
-let ir = ImplicationsReport.factory ()
-let sr = SitesReport.factory ()
-let dl = Logging.factory ()
+let ir = ImplicationsReports.factory ()
+let sr = SitesReports.factory ()
+let dl = Log.factory ()
 
 let parsers = [ 
   (ir :> CommandLine.argParser) ;  
@@ -81,7 +85,7 @@ let analyzeAll () =
 
   let sites = new PredicateTranslator.c (sites#getSiteInfos ()) in
 
-  let implications = new Implications.c in
+  let implications = new Implications.impliesRelationImpl in
     List.iter (fun (l,r) -> implications#add l r) (impls#getImplications ());
 
   for i = nr#getBeginRuns () to nr#getEndRuns () - 1 do

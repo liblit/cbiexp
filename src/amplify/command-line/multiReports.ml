@@ -10,7 +10,7 @@ class type c =
     method cleanup : unit -> unit
   end
 
-class c_impl (usage : string) (flag : string) description = 
+class c_impl (usage : string) (flag : string) (description : string) = 
   object (self)
     val names : string list ref = ref [] 
 
@@ -31,3 +31,19 @@ class c_impl (usage : string) (flag : string) description =
 
 let factory u f d = 
   let obj = new c_impl u f d in (obj :> c)  
+
+module ImplicationsReports =
+  struct
+    let factory () = factory 
+      "-implications-report <implications report>"
+      "-implications-report"
+      "implications report"
+  end
+
+module SitesReports =
+  struct
+    let factory () = factory 
+      "-sites-report <sites report>" 
+      "-sites-report"
+      "sites report"
+  end

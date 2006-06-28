@@ -25,16 +25,42 @@ class c =
       with
         Not_found -> false
 
-    method implicands (left : predicate) =
+    method private rights (left : predicate) =
       try
         PredicateTable.find table left 
       with
         Not_found -> PredicateSet.empty
 
-     method toList () =
+     method private toList () =
        PredicateTable.fold 
          (fun k v l -> (k, PredicateSet.fold (fun x l -> x::l) v [])::l) 
          table 
          []
 
+  end
+
+class type impliesRelation =
+  object
+    method add : predicate -> predicate -> unit
+    method holds : predicate -> predicate -> bool
+    method implicands : predicate -> PredicateSet.t
+  end
+
+class type isImpliedByRelation =
+  object
+    method add : predicate -> predicate -> unit
+    method holds : predicate -> predicate -> bool
+    method impliers : predicate -> PredicateSet.t
+  end
+
+class impliesRelationImpl : impliesRelation = 
+  object (self)
+    inherit c 
+    method implicands l = self#rights l
+  end
+
+class isImpliedByRelationImpl : isImpliedByRelation =
+  object (self)
+    inherit c
+    method impliers l = self#rights l
   end
