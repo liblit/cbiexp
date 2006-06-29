@@ -4,6 +4,10 @@ val make : string -> string -> int -> int -> p
 
 val string_of_p : p -> string
 
+val complement : p -> p 
+
+val synth_to_ground_disjunction : p -> p list
+
 module Set :
     sig
     type elt = p

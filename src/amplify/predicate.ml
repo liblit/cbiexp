@@ -8,6 +8,34 @@ let string_of_p p =
   "site = "^(string_of_int p.site)^"; "^
   "id = "^(string_of_int p.id)^"}"
 
+let complement p =
+  let compAux i = 
+    match i with
+      | 0 -> 1
+      | 1 -> 0
+      | 2 -> 3
+      | 3 -> 2
+      | 4 -> 5
+      | 5 -> 4
+      | _ -> failwith ("unknown relation id: "^(string_of_int i))
+  in
+    make p.compilationUnit p.scheme p.site (compAux p.id) 
+
+let synth_to_ground_disjunction s =
+  let compAux i =
+    match i with
+      | 0 -> [0]
+      | 1 -> [1; 2]
+      | 2 -> [1]
+      | 3 -> [0; 2]
+      | 4 -> [2]
+      | 5 -> [0; 1]
+      | _ -> failwith ("unknown synthesized relation index: "^(string_of_int i))
+  in
+    List.map 
+      (fun x -> make s.compilationUnit s.scheme s.site x)
+      (compAux s.id) 
+
 module Set = Set.Make (
   struct 
     type t = p

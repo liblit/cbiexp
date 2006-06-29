@@ -41,3 +41,8 @@ module NotTruthProbabilitiesOutput :
   sig
     val factory : unit -> c
   end
+
+module PredsReport :
+  sig
+    val factory : unit -> c
+  end

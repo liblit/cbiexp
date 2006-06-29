@@ -9,9 +9,12 @@ class type translator =
 
 class c : translator -> 
   object
-    method addEntry : int -> int -> int -> unit 
+    method addEntry : int -> int -> bool array -> unit 
+    method isTrue : Predicate.p -> bool
+    method getObservedTrue : unit -> Predicate.Set.t
     method addPredicate : Predicate.p -> unit
-    method getPredicates : unit -> Predicate.p list
     method getScheme : int -> string 
+    method getSortedEntries : unit -> entry list
+    method printSortedEntries : out_channel -> unit
   end
 

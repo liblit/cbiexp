@@ -17,7 +17,7 @@ amplify_others =				\
 	siteInfoAccumulator.ml			\
 	implicationAccumulator.ml		\
 	implications.ml				\
-	predicateAccumulator.ml			\
+	runResultsAccumulator.ml		\
 	reconstruct.ml				\
 	logger.ml				\
 	runner.ml
@@ -31,7 +31,7 @@ amplify_objects =				\
 	implicationAccumulator.$(cmo)		\
 	implLexer.$(cmo)			\
 	implications.$(cmo)			\
-	predicateAccumulator.$(cmo)		\
+	runResultsAccumulator.$(cmo)		\
 	passOneLexer.$(cmo)			\
 	reconstruct.$(cmo)			\
 	logger.$(cmo)				\
@@ -50,20 +50,57 @@ logreader_objects = predicate.$(cmo)		\
 	logImplLexer.$(cmo)			\
 	logReader.$(cmo)
 
-objects = $(amplify_objects) $(logreader_objects)
+amplify_truth_probs_lexers = predsLexer.mll	\
+	sitesLexer.mll				\
+	implLexer.mll
 
-mlis = $(amplify_others:=.mli) $(logreader_other:=.mli)
+amplify_truth_probs_others = predicate.ml	\
+	schemes.ml				\
+	implicationAccumulator.ml		\
+	siteInfoAccumulator.ml			\
+	predicateTranslator.ml			\
+	implications.ml				\
+	predicateAccumulator.ml			\
+	runResultsAccumulator.ml		\
+	passOneLexer.ml				\
+	amplifyTruthProbs.ml
+
+amplify_truth_probs_objects = predicate.$(cmo)	\
+	schemes.$(cmo)				\
+	implicationAccumulator.$(cmo)		\
+	implLexer.$(cmo)			\
+	siteInfoAccumulator.$(cmo)		\
+	sitesLexer.$(cmo)			\
+	predicateTranslator.$(cmo)		\
+	implications.$(cmo)			\
+	predicateAccumulator.$(cmo)		\
+	predsLexer.$(cmo)			\
+	runResultsAccumulator.$(cmo)		\
+	passOneLexer.$(cmo)			\
+	amplifyTruthProbs.$(cmo)
+		
+
+objects = $(amplify_objects) 			\
+	$(logreader_objects)			\
+	$(amplify_truth_probs_objects)
+
+mlis = $(amplify_others:=.mli) 			\
+	$(logreader_others:=.mli)     		\  
+	$(amplify_truth_probs_others:=.mli)
 
 depends = $(objects:.$(cmo)=.do) $(mlis:.mli=.di)
 
 libs = command-line/commandLine.$(cma)
 
-all-local: amplify logreader
+all-local: amplify logreader amplify-truth-probs
 
 amplify: $(amplify_objects) $(libs)
 	$(compiler) -o amplify $(libs) $(amplify_objects)
 
 logreader: $(logreader_objects) $(libs)
 	$(compiler) -o logreader $(libs) $(logreader_objects)
+
+amplify-truth-probs: $(amplify_truth_probs_objects) $(libs)
+	$(compiler) -o amplify-truth-probs $(libs) $(amplify_truth_probs_objects)
 
 -include $(depends)

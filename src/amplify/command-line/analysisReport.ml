@@ -83,3 +83,12 @@ module NotTruthProbabilitiesOutput =
       "-ntp-amplify"
       "amplified truth probabilities for predicate complements report name (default \"notX.amplify.dat\")"
   end
+
+module PredsReport =
+  struct
+    let factory () = factory 
+      "preds.txt"
+      "-preds-report <file containing interesting predicates>"
+      "-preds-report"
+      "file containing interesting predicates (default \"preds.txt\")"
+  end

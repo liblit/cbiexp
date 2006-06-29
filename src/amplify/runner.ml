@@ -30,7 +30,7 @@ let doAnalysis sites implications inputFileName outputFileName logFileName =
   let logchannel = open_out logFileName in
   let logger = (Logger.factory (dl#shouldDo()) logchannel) in
 
-  let preds = new PredicateAccumulator.c (sites :> PredicateAccumulator.translator) in 
+  let preds = new RunResultsAccumulator.c (sites :> RunResultsAccumulator.translator) in 
   let inchannel = open_in inputFileName in
   PassOneLexer.readPredicates 
     inchannel 
