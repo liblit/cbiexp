@@ -46,3 +46,8 @@ module PredsReport :
   sig
     val factory : unit -> c
   end
+
+module LogReport :
+  sig
+    val factory : unit -> c
+  end

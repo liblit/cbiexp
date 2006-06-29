@@ -92,3 +92,12 @@ module PredsReport =
       "-preds-report"
       "file containing interesting predicates (default \"preds.txt\")"
   end
+
+module LogReport =
+  struct
+    let factory () = factory 
+      "amps.log"
+      "-log-report <log of amplifications>"
+      "-log-report"
+      "log predicates amplified to this file (defulat \"amps.log\")"
+  end

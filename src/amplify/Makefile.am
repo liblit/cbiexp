@@ -56,6 +56,7 @@ amplify_truth_probs_lexers = predsLexer.mll	\
 
 amplify_truth_probs_others = predicate.ml	\
 	schemes.ml				\
+	logger.ml				\
 	implicationAccumulator.ml		\
 	siteInfoAccumulator.ml			\
 	predicateTranslator.ml			\
@@ -67,6 +68,7 @@ amplify_truth_probs_others = predicate.ml	\
 
 amplify_truth_probs_objects = predicate.$(cmo)	\
 	schemes.$(cmo)				\
+	logger.$(cmo)				\
 	implicationAccumulator.$(cmo)		\
 	implLexer.$(cmo)			\
 	siteInfoAccumulator.$(cmo)		\

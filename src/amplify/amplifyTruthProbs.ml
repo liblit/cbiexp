@@ -1,3 +1,4 @@
+open Flag
 open AnalysisReport
 open PerRunReport
 open MultiReports
@@ -15,6 +16,8 @@ let ntpi = NotTruthProbabilitiesInput.factory ()
 let tpo = TruthProbabilitiesOutput.factory ()
 let ntpo = NotTruthProbabilitiesOutput.factory ()
 let pr = PredsReport.factory () 
+let dl = Log.factory ()
+let lr = AnalysisReport.LogReport.factory ()
 
 let parsers = [ 
   (ir :> CommandLine.argParser) ;  
@@ -26,7 +29,9 @@ let parsers = [
   (ntpi :> CommandLine.argParser) ;
   (tpo :> CommandLine.argParser) ;
   (ntpo :> CommandLine.argParser) ;
-  (pr :> CommandLine.argParser) ]
+  (pr :> CommandLine.argParser) ;
+  (dl :> CommandLine.argParser) ;
+  (lr :> CommandLine.argParser) ]
 
 let parser = new CommandLine.parser parsers "amplify_truth_probs"
 
@@ -96,16 +101,6 @@ let rec writeTruthProbs l outstream =
         writeTruthProbs (List.tl l) outstream
       end
 
-let calcTruthProb results impls pred prob =
-  if prob = 1.0 then 1.0 else
-  let preds = Predicate.synth_to_ground_disjunction pred in
-  let impliers = 
-    List.fold_left 
-      (fun s x -> PredicateSet.union s (impls#impliers x)) 
-      PredicateSet.empty 
-      preds in
-  if (PredicateSet.exists (results#isTrue) impliers) then 1.0 else prob
-
 let analyzeAll () =
   let impls = readImplications () in
   let sites = readSites () in
@@ -120,21 +115,45 @@ let analyzeAll () =
   let notPreds = List.map (Predicate.complement) preds in
   let predCount = List.length preds in
 
-  let inX = open_in (tpi#getName()) in
-  let inNotX = open_in (ntpi#getName()) in
-  let outX = open_out (tpo#getName()) in
-  let outNotX = open_out (ntpo#getName()) in
+  let logchannel = open_out (lr#getName()) in
+  let logger = (Logger.factory (dl#shouldDo()) logchannel) in
+
+  let calcTruthProb results pred prob =
+    if prob = 1.0 then 1.0 else
+    let preds = Predicate.synth_to_ground_disjunction pred in
+    let impliers = 
+      List.fold_left 
+        (fun s x -> PredicateSet.union s (implications#impliers x)) 
+        PredicateSet.empty 
+        preds in
+    if (PredicateSet.exists (results#isTrue) impliers) then 
+      begin
+        if(dl#shouldDo()) then
+          let implier = 
+            PredicateSet.choose 
+              (PredicateSet.filter (results#isTrue) impliers) in
+         logger#logImplication implier pred else ();
+        1.0 
+      end  
+      else prob
+  in
 
   let analyze preds instream outstream results =
     let probs = readTruthProbs (input_line instream) predCount in
     let probs = List.rev
       (List.fold_left2 
-        (fun l a b -> (calcTruthProb results implications a b)::l) 
+        (fun l a b -> (calcTruthProb results a b)::l) 
         []
         preds 
         probs) in 
-    writeTruthProbs probs outstream
+    writeTruthProbs probs outstream;
+    logger#advance ()
   in
+
+  let inX = open_in (tpi#getName()) in
+  let inNotX = open_in (ntpi#getName()) in
+  let outX = open_out (tpo#getName()) in
+  let outNotX = open_out (ntpo#getName()) in
   
   for i = nr#getBeginRuns () to nr#getEndRuns () - 1 do
     let results = readRunResults sites i in
@@ -145,7 +164,8 @@ let analyzeAll () =
   close_in inX;
   close_in inNotX;
   close_out outX;
-  close_out outNotX
+  close_out outNotX;
+  close_out logchannel
 
 let main () =
   parser#parseCommandLine ();

@@ -7,6 +7,8 @@ module PredicateSet = Predicate.Set
 class type c = 
   object
     method logImplications : predicate -> PredicateSet.t -> unit
+    method logImplication : predicate -> predicate -> unit
+    method advance : unit -> unit
   end
 
 class c_impl out =
@@ -22,6 +24,12 @@ class c_impl out =
             (string_of_p left) 
             (string_of_p x))
         rights
+
+    method logImplication (left : predicate) (right : predicate) =
+      Printf.fprintf outchannel "%s %s\t" (string_of_p left) (string_of_p right)
+
+    method advance () = Printf.fprintf outchannel "\n"
+
   end
 
 class c_null out =
@@ -29,6 +37,8 @@ class c_null out =
     val outchannel : out_channel = out
 
     method logImplications (left : predicate) (rights : PredicateSet.t)  = ()
+    method logImplication (left : predicate) (right : predicate)  = ()
+    method advance () = () 
   end
 
 let factory loggingOn out = 
