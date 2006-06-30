@@ -207,6 +207,9 @@ $(stamp-decimate):
 	cp plan-$(report-series).txt $@
 endif
 
+site-args := $(foreach site,$(sites),-sites-report $(site))
+implication-args := $(foreach implication,$(implications),-implications-report $(implication))
+
 ifndef amplify
 stamp-amplify := $(stamp-decimate)
 report-series-amplify := $(report-series)
@@ -215,8 +218,6 @@ stamp-amplify := $(stamp-decimate)-amplify
 report-series-amplify := $(if $(report-series),$(report-series).amplify,amplify)
 input-report := $(if $(report-series),reports.sparse.$(report-series),reports.sparse)
 amplify-log := $(if $(report-series),amplify.$(report-series).log,amplify.log)
-site-args := $(foreach site,$(sites),-sites-report $(site))
-implication-args := $(foreach implication,$(implications),-implications-report $(implication))
 $(stamp-amplify): $(stamp-decimate) $(sites) $(implications)
 	test -w $@ -o ! -e $@
 	$(time) $(tooldir)/amplify/amplify $(implication-args) $(site-args) -runs-directory $(datadir) -begin-runs $(training-runs) -do-logging -input-report-name $(input-report) -output-report-name reports.sparse.$(report-series-amplify) -amplify-log-name $(amplify-log)
@@ -370,13 +371,26 @@ truthprobs: static-site-info.so $(call tool-deps, calc_truthprobs)
 X.dat: static-site-info.so $(call tool-deps, get_tp_weights)
 	$(time) $(tooldir)/get_tp_weights --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series-amplify)
 
+ifndef amplify-truth-probs
+truth-probs := X.dat
+not-truth-probs := notX.dat
+else
+truth-probs := X.amplify.dat
+not-truth-probs := notX.amplify.dat
+input-report := $(if $(report-series),reports.sparse.$(report-series),reports.sparse)
+X.amplify.dat: X.dat
+	test -w $@ -o ! -e $@
+	$(time) $(tooldir)/amplify/amplify-truth-probs $(site-args) $(implication-args) -runs-directory $(datadir) -begin-runs $(training-runs) -do-logging -input-report-name $(input-report)
+endif
+CLEANFILES += X.amplify.dat notX.amplify.dat
+
 WX: $(call tool-deps, mult_WX)
 	$(time) $(tooldir)/mult_WX --begin-runs=$(training-runs) --runs-directory=$(datadir)
 
 predscores: pred_scores.xml
-pred_scores.xml bicluster-preds.xml: preds.txt $(call tool-deps, compute_pred_scores)
+pred_scores.xml bicluster-preds.xml: preds.txt $(truth-probs) $(not-truth-probs) $(call tool-deps, compute_pred_scores)
 	$(build) links
-	$(time) $(tooldir)/compute_pred_scores --begin-runs=$(training-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name)
+	$(time) $(tooldir)/compute_pred_scores --begin-runs=$(training-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name) --truth-probability-weights=$(truth-probs) --not-truth-probability-weights=$(not-truth-probs)
 	xmllint --valid --noout pred_scores.xml
 CLEANFILES += pred_scores.xml bicluster-preds.xml
 

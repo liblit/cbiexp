@@ -8,6 +8,7 @@
 #include <sstream>
 #include "IndexedPredInfo.h"
 #include "NumRuns.h"
+#include "TpWeights.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
 #include "RunBugs.h"
@@ -176,8 +177,8 @@ read_weights()
   //memset(trurun_weights, 0, sizeof(double)*nruns);
 
   //FILE * wfp = fopenRead("W.first.dat");
-  FILE * xfp = fopenRead("X.dat");
-  FILE * notxfp = fopenRead("notX.dat");
+  FILE * xfp = fopenRead(TpWeights::tp_weights);
+  FILE * notxfp = fopenRead(TpWeights::not_tp_weights);
   //FILE * xfp = fopenRead("truFreq.dat");
   //FILE * notxfp = fopenRead("trunotFreq.dat");
   //FILE * truxfp = fopenRead("truX.dat");
@@ -696,6 +697,7 @@ static void process_cmdline(int argc, char **argv)
 	{ &NumRuns::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ &XMLTemplate::argp, 0, 0, 0},
+	{ &TpWeights::argp, 0, 0, 0},
 	{ 0, 0, 0, 0 }
     };
 
