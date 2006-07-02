@@ -480,7 +480,7 @@ void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
 	{ &CompactReport::argp, 0, 0, 0 },
-        { &AmplifyReport::argp, 0, 0, 0 },
+	{ &AmplifyReport::argp, 0, 0, 0 },
 	{ &Confidence::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
 	{ &ReportReader::argp, 0, 0, 0 },

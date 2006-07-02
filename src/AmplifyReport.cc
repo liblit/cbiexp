@@ -1,25 +1,17 @@
 #include <sstream>
+#include "CompactReport.h"
 #include "AmplifyReport.h"
 #include "RunsDirectory.h"
 
 using namespace std;
 
 
-string AmplifyReport::suffix;
 bool AmplifyReport::amplify;
 
 
 #ifdef HAVE_ARGP_H
 
 static const argp_option options[] = {
-  {
-    "report-suffix",
-    's',
-    "SUFFIX",
-    0,
-    "add \".SUFFIX\" to amplified report names (default no suffix)",
-    0
-  },
   {
     "amplify",
     'a',
@@ -33,15 +25,12 @@ static const argp_option options[] = {
 
 
 static int
-parseFlag(int key, char *arg, argp_state *)
+parseFlag(int key, char *, argp_state *)
 {
   using namespace AmplifyReport;
 
   switch (key)
     {
-    case 's':
-      AmplifyReport::suffix = arg;
-      return 0;
     case 'a':
       AmplifyReport::amplify = true;
       return 0;
@@ -62,6 +51,7 @@ AmplifyReport::format(unsigned runId)
 {
   ostringstream collect;
   RunsDirectory::format(collect, runId, "amplify");
+  string suffix = CompactReport::suffix;
   if (!suffix.empty())
     collect << '.' << suffix;
   collect << ".log"; 

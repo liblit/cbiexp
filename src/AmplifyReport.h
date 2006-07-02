@@ -9,7 +9,6 @@ namespace AmplifyReport
 {
   extern const argp argp;
 
-  extern std::string suffix;
   extern bool amplify;
   extern std::string format(unsigned runId);
 }
