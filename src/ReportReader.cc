@@ -51,6 +51,12 @@ const argp ReportReader::argp = {
 
 #endif // HAVE_ARGP_H
 
+const string 
+ReportReader::format(const unsigned runId) const
+{
+  return CompactReport::format(runId);
+}
+
 
 bool
 ReportReader::selected(const SiteCoords &coords)
@@ -68,7 +74,7 @@ ReportReader::selected(const SiteCoords &coords)
 void
 ReportReader::read(unsigned runId)
 {
-  const string filename(CompactReport::format(runId));
+  const string filename(format(runId));
   ifstream report;
   report.exceptions(ios::badbit);
   report.open(filename.c_str());

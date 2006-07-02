@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <numeric>
 #include <vector>
+#include "AmplifyReport.h"
 #include "CompactReport.h"
 #include "Confidence.h"
 #include "NumRuns.h"
@@ -24,15 +25,16 @@ enum { LT, GEQ, EQ, NEQ, GT, LEQ };
 
 struct site_info_t {
     int S[18], F[18];
-    int os, of;
+    int OS[18], OF[18]; 
     bool retain[18];
     int lb[18];
     site_info_t()
     {
-	os = of = 0;
 	for (int i = 0; i < 18; i++) {
 	    S[i] = 0;
 	    F[i] = 0;
+	    OS[i] = 0;
+	    OF[i] = 0;
 	    retain[i] = false;
 	    lb[i] = -1;
 	}
@@ -55,8 +57,8 @@ static void print_pred(FILE* fp, int u, int c, int p, int site)
 {
     int s  = site_info[u][c].S[p];
     int f  = site_info[u][c].F[p];
-    int os = site_info[u][c].os;
-    int of = site_info[u][c].of;
+    int os = site_info[u][c].OS[p];
+    int of = site_info[u][c].OF[p];
 
     pred_stat ps = compute_pred_stat(s, f, os, of, Confidence::level);
 
@@ -139,9 +141,18 @@ inline void inc(int r, const SiteCoords &coords, unsigned p)
 inline void obs(int r, const SiteCoords &coords)
 {
     if (is_srun[r])
-	site_info[coords.unitIndex][coords.siteOffset].os++;
+    	for (int i = 0; i < 18; i++)  
+	    site_info[coords.unitIndex][coords.siteOffset].OS[i]++;
     else if (is_frun[r])
-	site_info[coords.unitIndex][coords.siteOffset].of++;
+	for (int i = 0; i < 18; i++)
+	    site_info[coords.unitIndex][coords.siteOffset].OF[i]++;
+}
+
+inline void obs(int r, const SiteCoords &coords, unsigned p) {
+    if (is_srun[r])
+	site_info[coords.unitIndex][coords.siteOffset].OS[p]++;
+    else if (is_frun[r])
+	site_info[coords.unitIndex][coords.siteOffset].OF[p]++;
 }
 
 unsigned cur_run;
@@ -165,13 +176,13 @@ void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 
     const size_t size = counts.size();
     if (size == 2)
-	for (unsigned predicate = 0; predicate < counts.size(); ++predicate) {
+	for (unsigned predicate = 0; predicate < size; ++predicate) {
 	    if (counts[predicate])
 		inc(cur_run, coords, predicate);
 	}
     else {
 	const count_tp sum = accumulate(counts.begin(), counts.end(), (count_tp) 0);
-	for (unsigned predicate = 0; predicate < counts.size(); ++predicate) {
+	for (unsigned predicate = 0; predicate < size; ++predicate) {
 	    if (counts[predicate])
 		inc(cur_run, coords, 2 * predicate);
 	    if (sum - counts[predicate])
@@ -180,12 +191,67 @@ void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
     }
 }
 
+class AmplifyReader : public ReportReader
+{
+protected:
+    void handleSite(const SiteCoords &, vector<count_tp> &);
+    const std::string format(const unsigned) const;
+};
+
+void AmplifyReader::handleSite(const SiteCoords &coords, vector<count_tp> &counts) 
+{
+    assert(coords.unitIndex < staticSiteInfo.unitCount);
+    assert(coords.unitIndex < site_info.size());
+    assert(coords.siteOffset < staticSiteInfo.unit(coords.unitIndex).num_sites);
+    assert(coords.siteOffset < site_info[coords.unitIndex].size());
+
+    const size_t size = counts.size();
+    if (size == 2) 
+      for (unsigned predicate = 0; predicate < size; ++predicate) 
+          if (counts[predicate]) {
+	      inc(cur_run, coords, predicate);
+	      obs(cur_run, coords, predicate);
+          }
+    else {
+	for (unsigned predicate = 0; predicate < size; ++predicate) {
+	    if (counts[predicate]) {
+	        inc(cur_run, coords, 2 * predicate);
+		obs(cur_run, coords, 2 * predicate);
+	    	switch(predicate) {
+		    case 0:			//unsynthesized LT
+			inc(cur_run, coords, LEQ);      
+			obs(cur_run, coords, LEQ);
+			break;
+		    case 1:			//unsynthesized EQ
+		    	inc(cur_run, coords, LEQ);
+			obs(cur_run, coords, LEQ);
+		    	inc(cur_run, coords, GEQ);
+			obs(cur_run, coords, GEQ);
+			break;
+ 		    case 2:			//unsynthesized GT
+		    	inc(cur_run, coords, GEQ);
+		 	obs(cur_run, coords, GEQ);
+			break;
+	  	    default:		
+		        assert(0);
+		}
+            }
+	}
+    }
+}
+
+const string AmplifyReader::format(const unsigned runId) const 
+{
+  return AmplifyReport::format(runId); 
+}
 
 inline void cull(int u, int c, int p)
 {
     int s = site_info[u][c].S[p];
     int f = site_info[u][c].F[p];
-    pred_stat ps = compute_pred_stat(s, f, site_info[u][c].os, site_info[u][c].of, Confidence::level);
+    int os = site_info[u][c].OS[p];
+    int of = site_info[u][c].OF[p];
+    pred_stat ps = compute_pred_stat(s, f, os, of, Confidence::level);
 
     if (retain_pred(s, f, ps.lb)) {
 	site_info[u][c].retain[p] = true;
@@ -414,6 +480,7 @@ void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
 	{ &CompactReport::argp, 0, 0, 0 },
+        { &AmplifyReport::argp, 0, 0, 0 },
 	{ &Confidence::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
 	{ &ReportReader::argp, 0, 0, 0 },
@@ -449,6 +516,7 @@ int main(int argc, char** argv)
 	    continue;
 
 	Reader().read(cur_run);
+        if (AmplifyReport::amplify) AmplifyReader().read(cur_run);
     }
 
     cull_preds();

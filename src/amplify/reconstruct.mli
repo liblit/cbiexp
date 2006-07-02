@@ -5,9 +5,4 @@ class type implications =
     method implicands : predicate -> Predicate.Set.t 
   end
 
-class type logger =
-  object
-    method logImplications : predicate -> Predicate.Set.t -> unit 
-  end
-
-val doAnalysis : logger -> implications -> Predicate.Set.t -> Predicate.Set.t
+val doAnalysis : implications -> Predicate.Set.t -> Predicate.Set.t

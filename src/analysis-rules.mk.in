@@ -242,8 +242,9 @@ summary.xml: preds.txt s.runs f.runs static-site-info.so $(call tool-deps, gen-s
 	xmllint --valid --noout $@
 CLEANFILES += summary.xml
 
+amplify_flag := $(if $(amplify-pred-counts),--amplify,)
 preds.txt: s.runs f.runs $(stamp-amplify) static-site-info.so $(call tool-deps, compute-results)
-	$(time) $(tooldir)/compute-results --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series-amplify) $(confidence:%=--confidence=%)
+	$(time) $(tooldir)/compute-results --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series-amplify) $(confidence:%=--confidence=%) $(amplify_flag) 
 CLEANFILES += preds.txt
 
 $(datadir)/stamp-convert-reports: s.runs f.runs static-site-info.so $(call tool-deps, convert-reports)
