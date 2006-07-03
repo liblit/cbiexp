@@ -4,13 +4,13 @@ mls = \
 	multiReports 	\
 	perRunReport	\
 	analysisReport	\
-	flag		\	
+	flag		\
 	numRuns
 
 mlis = $(mls:=.mli)
 objects = $(mls:=.$(cmo))
 
-depends = $(objects:.$(cmo)=.do) $(mlis:.mli=.di)  
+depends = $(objects:.$(cmo)=.do) $(mlis:.mli=.di)
 
 all-local: commandLine.$(cma)
 
