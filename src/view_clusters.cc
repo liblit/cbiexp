@@ -12,7 +12,7 @@
 
 using namespace std;
 
-const unsigned K = 8;
+const unsigned K = 5;
 static vector<unsigned> group_sizes;
 static vector<RunList> clusters;
 

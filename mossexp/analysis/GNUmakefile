@@ -4,6 +4,8 @@ schemes := all branches returns scalar-pairs
 view_flags := --stylesheet=moss-view.xsl
 projected_view_flags := --stylesheet=projected-moss-view.xsl
 corrected_view_flags := --stylesheet=corrected-moss-view.xsl
+training-runs := 1000
+report-serires := inverse-100
 
 web_extras :=					\
 	corrected-moss-view.xsl			\

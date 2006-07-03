@@ -37,6 +37,7 @@ noinst_PROGRAMS =				\
 	sanity_check				\
 	sparsity-metrics			\
 	train_utillog				\
+	view_clusters				\
 	xmlify-results
 
 noinst_SCRIPTS =				\
@@ -146,6 +147,9 @@ sparsity_metrics_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
 
 train_utillog_SOURCES = train_utillog.cc
 train_utillog_LDADD = libanalyze.a -ldl $(GSL_LIBS)
+
+view_clusters_SOURCES = view_clusters.cc
+view_clusters_LDADD = libanalyze.a
 
 xmlify_results_SOURCES = xmlify-results.cc
 xmlify_results_LDADD = libanalyze.a -ldl

@@ -224,6 +224,8 @@ Reader::update(const SiteCoords &coords, unsigned p, count_tp obs, count_tp tru)
 	PredInfoPair &pp = found->second;
 	switch (mode) {
 	case READ_DS:
+	    (pp.*pptr).dst = tru;
+	    (pp.*pptr).dso = obs;
 	    (pp.*pptr).calc_prob2(tru, obs);
 	    break;
 	case READ_FULL:
