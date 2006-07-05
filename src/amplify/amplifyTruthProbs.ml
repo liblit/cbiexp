@@ -9,7 +9,6 @@ module PredicateSet = Predicate.Set
 let rd = new RunsDirectory.c
 let nr = new NumRuns.c rd
 let input = InputReport.factory rd
-let ir = ImplicationsReports.factory ()
 let sr = SitesReports.factory ()
 let tpi = TruthProbabilitiesInput.factory ()
 let ntpi = NotTruthProbabilitiesInput.factory ()
@@ -20,7 +19,6 @@ let dl = Log.factory ()
 let lr = AnalysisReport.LogReport.factory ()
 
 let parsers = [ 
-  (ir :> CommandLine.argParser) ;  
   (sr :> CommandLine.argParser) ;
   (rd :> CommandLine.argParser) ; 
   (nr :> CommandLine.argParser) ; 
@@ -34,18 +32,6 @@ let parsers = [
   (lr :> CommandLine.argParser) ]
 
 let parser = new CommandLine.parser parsers "amplify_truth_probs"
-
-let readImplications () =
-  let impls = new ImplicationAccumulator.c in
-
-  let readOne impls filename =
-    let inchannel = open_in filename in
-    ImplLexer.readImplications inchannel (impls :> ImplLexer.implications);
-    close_in inchannel;
-    impls
-  in
-
-  List.fold_left (readOne) impls (ir#getNames())
 
 let readSites () =
   let sites = new SiteInfoAccumulator.c in
@@ -102,13 +88,9 @@ let rec writeTruthProbs l outstream =
       end
 
 let analyzeAll () =
-  let impls = readImplications () in
   let sites = readSites () in
 
   let sites = new PredicateTranslator.c (sites#getSiteInfos ()) in
-
-  let implications = new Implications.isImpliedByRelationImpl in
-    List.iter (fun (l,r) -> implications#add r l) (impls#getImplications ());
   
   let preds = readPreds sites in
   let preds = preds#getPredicates () in
@@ -121,18 +103,10 @@ let analyzeAll () =
   let calcTruthProb results pred prob =
     if prob = 1.0 then 1.0 else
     let preds = Predicate.synth_to_ground_disjunction pred in
-    let impliers = 
-      List.fold_left 
-        (fun s x -> PredicateSet.union s (implications#impliers x)) 
-        PredicateSet.empty 
-        preds in
-    if (PredicateSet.exists (results#isTrue) impliers) then 
+    if (List.exists (results#isTrue) preds) then 
       begin
         if(dl#shouldDo()) then
-          let implier = 
-            PredicateSet.choose 
-              (PredicateSet.filter (results#isTrue) impliers) in
-         logger#logImplication implier pred else ();
+         logger#logPredicate pred else ();
         1.0 
       end  
       else prob

@@ -206,12 +206,13 @@ void AmplifyReader::handleSite(const SiteCoords &coords, vector<count_tp> &count
     assert(coords.siteOffset < site_info[coords.unitIndex].size());
 
     const size_t size = counts.size();
-    if (size == 2) 
+    if (size == 2) {
       for (unsigned predicate = 0; predicate < size; ++predicate) 
           if (counts[predicate]) {
 	      inc(cur_run, coords, predicate);
 	      obs(cur_run, coords, predicate);
           }
+    }
     else {
 	for (unsigned predicate = 0; predicate < size; ++predicate) {
 	    if (counts[predicate]) {

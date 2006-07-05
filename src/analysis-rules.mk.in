@@ -212,6 +212,7 @@ endif
 
 site-args := $(foreach site,$(sites),-sites-report $(site))
 
+amplify-log := $(if $(report-series),amplify.$(report-series).log,amplify.log)
 ifndef amplify
 stamp-amplify := $(stamp-decimate)
 report-series-amplify := $(report-series)
@@ -220,7 +221,6 @@ implication-args := $(foreach implication,$(implications),-implications-report $
 stamp-amplify := $(stamp-decimate)-amplify
 report-series-amplify := $(if $(report-series),$(report-series).amplify,amplify)
 input-report := $(if $(report-series),reports.sparse.$(report-series),reports.sparse)
-amplify-log := $(if $(report-series),amplify.$(report-series).log,amplify.log)
 $(stamp-amplify): $(stamp-decimate) $(sites) $(implications)
 	test -w $@ -o ! -e $@
 	$(time) $(tooldir)/amplify/amplify $(implication-args) $(site-args) -runs-directory $(datadir) -begin-runs $(training-runs) -do-logging -input-report-name $(input-report) -output-report-name reports.sparse.$(report-series-amplify) -amplify-log-name $(amplify-log)
@@ -384,7 +384,7 @@ not-truth-probs := notX.amplify.dat
 input-report := $(if $(report-series),reports.sparse.$(report-series),reports.sparse)
 X.amplify.dat: X.dat
 	test -w $@ -o ! -e $@
-	$(time) $(tooldir)/amplify/amplify-truth-probs $(site-args) $(implication-args) -runs-directory $(datadir) -begin-runs $(training-runs) -do-logging -input-report-name $(input-report)
+	$(time) $(tooldir)/amplify/amplify-truth-probs $(site-args) -runs-directory $(datadir) -begin-runs $(training-runs) -do-logging -input-report-name $(amplify-log)
 endif
 CLEANFILES += X.amplify.dat notX.amplify.dat
 
