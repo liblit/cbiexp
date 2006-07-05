@@ -15,10 +15,13 @@ sitesglob := $(sitesdir)/*.sites
 sites ?= $(wildcard $(sitesglob))
 sites := $(if $(sites), $(sites), $(error no sites files in $(sitesglob)))
 
+ifdef amplify
 implicationsdir ?= $(experiment)/share
 implicationsglob := $(implicationsdir)/*.implications
 implications ?= $(wildcard $(implicationsglob))
 implications := $(if $(implications), $(implications), $(error no implications files in $(implicationsglob)))
+endif
+
 xmlify-add-suffix := .html
 
 time := /usr/bin/time
@@ -208,12 +211,12 @@ $(stamp-decimate):
 endif
 
 site-args := $(foreach site,$(sites),-sites-report $(site))
-implication-args := $(foreach implication,$(implications),-implications-report $(implication))
 
 ifndef amplify
 stamp-amplify := $(stamp-decimate)
 report-series-amplify := $(report-series)
 else
+implication-args := $(foreach implication,$(implications),-implications-report $(implication))
 stamp-amplify := $(stamp-decimate)-amplify
 report-series-amplify := $(if $(report-series),$(report-series).amplify,amplify)
 input-report := $(if $(report-series),reports.sparse.$(report-series),reports.sparse)
