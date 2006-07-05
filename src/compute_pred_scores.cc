@@ -642,7 +642,7 @@ ttest_rank()
   check.resize(maxlen);
   for (Stats::iterator c = predList.begin(); c != predList.end(); ++c) {
     check[ctr] = c->index;
-    if (ctr++ >= maxlen)
+    if (++ctr >= maxlen)
       break;
   }
 
