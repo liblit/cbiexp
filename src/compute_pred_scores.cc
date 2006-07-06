@@ -590,15 +590,16 @@ collect_stats(double *m, double *v, unsigned npreds, const vector<bool> &collect
   return n;
 }
 
-void
+bool
 compute_tstats(double *tstat, double *m1, double *s1, 
                double *m2, double *s2, double n1,
                double n2, unsigned len)
 {
   cout << "n1: " << n1 << " n2: " << n2 << endl;
-  assert(n1 >= 1.0);
-  assert(n2 >= 1.0);
-  assert(n1+n2 >= 2.0);
+  if (n1 < 1.0 || n2 < 1.0 || n1+n2 < 2.0) {
+    return false;
+  }
+
   double c1;
   double c2;
   double sigma;
@@ -613,6 +614,7 @@ compute_tstats(double *tstat, double *m1, double *s1,
   }
   logfp << "T-test stats" << endl;
   logvalues(tstat, len);
+  return true;
 }
 
 void
@@ -651,10 +653,11 @@ ttest_rank()
   assert(ns == num_sruns);
   nf = collect_stats(fmean,fvar, npreds, is_frun);
   assert(nf == num_fruns);
-  compute_tstats(tstat, smean, svar, fmean, fvar, ns, nf, npreds);
-  for (Stats::iterator c = predList.begin(); c != predList.end(); ++c)
-    c->ps.imp = tstat[c->index];
-  print_scores("list0.xml");
+  if (compute_tstats(tstat, smean, svar, fmean, fvar, ns, nf, npreds)) {
+    for (Stats::iterator c = predList.begin(); c != predList.end(); ++c)
+      c->ps.imp = tstat[c->index];
+    print_scores("list0.xml");
+  }
 
   for (unsigned i = 0; i < maxlen; ++i) {
     unsigned pind = check[i];
@@ -667,11 +670,12 @@ ttest_rank()
       collect[(*c)] = 1;
     }
     nf = collect_stats(fmean, fvar, npreds, collect);
-    compute_tstats(tstat, smean, svar, fmean, fvar, ns, nf, npreds);
-    for (Stats::iterator c = predList.begin(); c != predList.end(); ++c) 
-      c->ps.imp = tstat[c->index];
-    sprintf(filename, "list%d.xml", i+1);
-    print_scores(filename); // this modified the ordering of predicates in predList
+    if (compute_tstats(tstat, smean, svar, fmean, fvar, ns, nf, npreds)) {
+      for (Stats::iterator c = predList.begin(); c != predList.end(); ++c) 
+        c->ps.imp = tstat[c->index];
+      sprintf(filename, "list%d.xml", i+1);
+      print_scores(filename); // this modified the ordering of predicates in predList
+    }
 
     // output the first ranked predicate to the final list
     bestfp << "<predictor index=\"" << predList.front().index+1
@@ -721,27 +725,29 @@ int main (int argc, char** argv)
 
   read_preds();
 
-  read_weights();
+  if (predList.size() > 0) {
+    read_weights();
 
-  compute_scores();
+    compute_scores();
 
-  // must print out histograms before the scores,
-  // because print_scores alters the ordering of predicates
-  // through sorting
-  if (XMLTemplate::prefix == "moss")
-    print_histograms();
-
-  print_scores("pred_scores.xml");
-
-  ttest_rank();
+    // must print out histograms before the scores,
+    // because print_scores alters the ordering of predicates
+    // through sorting
+    if (XMLTemplate::prefix == "moss")
+      print_histograms();
+  
+    print_scores("pred_scores.xml");
+  
+    ttest_rank();
+    delete[] W;
+    delete[] notW;
+    delete[] run_weights;
+    delete[] notrun_weights;
+    delete[] pred_weights[F];
+    delete[] pred_weights[S];
+  }
 
   logfp.close();
-  delete[] W;
-  delete[] notW;
-  delete[] run_weights;
-  delete[] notrun_weights;
-  delete[] pred_weights[F];
-  delete[] pred_weights[S];
   delete[] contribRuns;
   return 0;
 }
