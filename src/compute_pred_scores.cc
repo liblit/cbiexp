@@ -746,6 +746,9 @@ int main (int argc, char** argv)
     delete[] pred_weights[F];
     delete[] pred_weights[S];
   }
+  else {
+    print_scores("pred_scores.xml");  // print out skeleton pred_scores.xml file
+  }
 
   logfp.close();
   delete[] contribRuns;
