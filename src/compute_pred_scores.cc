@@ -33,12 +33,9 @@ static RunList * contribRuns;
 static int nselected = 0;
 
 static double * W;
-//static double * tsW;
 static double * run_weights;
 static double * notW;
 static double * notrun_weights;
-//static double * truW;
-//static double * trurun_weights;
 static double * pred_weights[2];
 //static double sign[] = {1.0, -1.0};
 //static double mask[2][2] = {{1.0, 0.0}, {0.0, -1.0}};
@@ -158,30 +155,19 @@ read_weights()
   unsigned nruns = num_sruns + num_fruns;
   unsigned type;
   double x, notx;
-  //double w;
-  //double trux;
 
   W = new double[nruns*npreds];
-  //tsW = new double[nruns*npreds];
   notW = new double[nruns*npreds];
   run_weights = new double[nruns];
   notrun_weights = new double[nruns];
-  //truW = new double[nruns*npreds];
-  //trurun_weights = new double[nruns];
 
   memset(W, 0, sizeof(double)*nruns*npreds);
-  //memset(tsW, 0, sizeof(double)*nruns*npreds);
   memset(notW, 0, sizeof(double)*nruns*npreds);
   memset(run_weights, 0, sizeof(double)*nruns);
   memset(notrun_weights, 0, sizeof(double)*nruns);
-  //memset(trurun_weights, 0, sizeof(double)*nruns);
 
-  //FILE * wfp = fopenRead("W.first.dat");
   FILE * xfp = fopenRead(TpWeights::tp_weights);
   FILE * notxfp = fopenRead(TpWeights::not_tp_weights);
-  //FILE * xfp = fopenRead("truFreq.dat");
-  //FILE * notxfp = fopenRead("trunotFreq.dat");
-  //FILE * truxfp = fopenRead("truX.dat");
   int ctr;
   unsigned i = 0;
   for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
@@ -190,49 +176,25 @@ read_weights()
     
     type = (is_srun[r]);
     for (unsigned j = 0; j < npreds; ++j) {
-      //ctr = fscanf(wfp, "%lg ", &w);
-      //assert(ctr == 1);
       ctr = fscanf(xfp, "%lg ", &x);
       assert(ctr == 1);
       ctr = fscanf(notxfp, "%lg ", &notx);
       assert(ctr == 1);
-      //ctr = fscanf(truxfp, "%lg ", &trux);
-      //assert(ctr == 1);
-      //assert(w >= 0.0);
-      //assert(w >= 0.0);
       assert(x >= 0.0);
       assert(notx >= 0.0);
-      //assert(trux >= 0.0);
-      //W[i*npreds+j] = w*x;
-      //tsW[i*npreds+j] = w;
       W[i*npreds+j] = x;
       notW[i*npreds+j] = notx;
-      //truW[i*npreds+j] = trux;
       run_weights[i] += W[i*npreds+j];
       notrun_weights[i] += notW[i*npreds+j];
-      //trurun_weights[i] += truW[i*npreds+j];
-      //      denom_weights[type][j] += W[i*npreds+j];
     }
-    //fscanf(wfp, "\n");
     fscanf(xfp, "\n");
     fscanf(notxfp, "\n");
-    //fscanf(truxfp, "\n");
 
     ++i;
   }
   
-  //fclose (wfp);
   fclose (xfp);
   fclose (notxfp);
-  //fclose (truxfp);
-
-//   for (unsigned j = 0; j < npreds; ++j) {
-//     if (denom_weights[F][j] < 0.0)
-//       cout << "F pred: " << j << endl;
-//     if (denom_weights[S][j] < 0.0)
-//       cout << "S pred: " << j << endl;
-//     //denom_weights[F][j] = (double) num_fruns;
-//   }
 }
 
 void
@@ -332,9 +294,6 @@ print_pred(ofstream &outfp, ofstream &runfp, double * v, double * notv,
   for (unsigned k = 0; k < npreds; ++k) 
     outfp << notW[j*npreds+k] << ' ';
   outfp << endl;
-  //for (unsigned k = 0; k < npreds; ++k) 
-    //outfp << tsW[j*npreds+k] << ' ';
-  outfp << endl;
 }
 
 void 
@@ -383,7 +342,6 @@ update_max(const unsigned j, const unsigned r, const unsigned npreds,
     notd = contrib(notW, k, j, r, notv, npreds);
     val = (d + smooth2) / (notd + smooth2)
           * (oldnotpscore[k][othertype]+ smooth)/(oldpscore[k][othertype]+ smooth);
-    //if (val > maxd || (val == maxd && tsW[j*npreds+k] > tsW[j*npreds+argmax])) {
     if (val > maxd) {
       maxd = val;
       argmax = k;
@@ -468,15 +426,15 @@ update_sum(const unsigned j, const unsigned r, const unsigned npreds,
   }
   for (unsigned i = 0; i < npreds; ++i) {
     if (discount != 0 && run_weights[j] != 0) {
-        Aij = W[j*npreds+i];
-        disci = (discount - contrib(W,i,j,r,v,npreds)) / discount / run_weights[j];
-        pscore[i][type] += Aij * ( 1.0 - disci);
+        Aij = W[j*npreds+i] / run_weights[j];
+        disci = contrib(W,i,j,r,v,npreds) / discount;
+        pscore[i][type] += Aij * disci;
     }
 
     if (notdiscount != 0 && notrun_weights[j] != 0) {
-    	notAij = notW[j*npreds+i];
-    	notdisci = (notdiscount - contrib(notW,i,j,r,notv,npreds)) / notdiscount / notrun_weights[j];
-    	notpscore[i][type] += notAij * ( 1.0 - notdisci);
+    	notAij = notW[j*npreds+i] / notrun_weights[j];
+    	notdisci = contrib(notW,i,j,r,notv,npreds) / notdiscount;
+    	notpscore[i][type] += notAij * notdisci;
     }
  }
 }
@@ -645,7 +603,7 @@ ttest_rank()
 	 << "<scores>" << endl;
   
   // do two-sample t-test for the failed runs accounted for by 
-  // the 10 most important predicates
+  // the MAXLEN most important predicates
   check.resize(maxlen);
   for (Stats::iterator c = predList.begin(); c != predList.end(); ++c) {
     check[ctr] = c->index;

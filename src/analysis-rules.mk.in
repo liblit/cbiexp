@@ -388,9 +388,6 @@ X.amplify.dat: X.dat
 endif
 CLEANFILES += X.amplify.dat notX.amplify.dat
 
-WX: $(call tool-deps, mult_WX)
-	$(time) $(tooldir)/mult_WX --begin-runs=$(training-runs) --runs-directory=$(datadir)
-
 predscores: pred_scores.xml
 pred_scores.xml bicluster-preds.xml: preds.txt $(truth-probs) $(not-truth-probs) $(call tool-deps, compute_pred_scores)
 	$(build) links
