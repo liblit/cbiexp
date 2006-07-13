@@ -467,14 +467,18 @@ update_sum(const unsigned j, const unsigned r, const unsigned npreds,
     notdiscount += contrib(notW, k, j, r, notv, npreds);
   }
   for (unsigned i = 0; i < npreds; ++i) {
-    Aij = W[j*npreds+i];
-    disci = (discount - contrib(W,i,j,r,v,npreds)) / discount / run_weights[j];
-    pscore[i][type] += Aij * ( 1.0 - disci);
+    if (discount != 0 && run_weights[j] != 0) {
+        Aij = W[j*npreds+i];
+        disci = (discount - contrib(W,i,j,r,v,npreds)) / discount / run_weights[j];
+        pscore[i][type] += Aij * ( 1.0 - disci);
+    }
 
-    notAij = notW[j*npreds+i];
-    notdisci = (notdiscount - contrib(notW,i,j,r,notv,npreds)) / notdiscount / notrun_weights[j];
-    notpscore[i][type] += notAij * ( 1.0 - notdisci);
-  }
+    if (notdiscount != 0 && notrun_weights[j] != 0) {
+    	notAij = notW[j*npreds+i];
+    	notdisci = (notdiscount - contrib(notW,i,j,r,notv,npreds)) / notdiscount / notrun_weights[j];
+    	notpscore[i][type] += notAij * ( 1.0 - notdisci);
+    }
+ }
 }
 
 void
@@ -512,6 +516,7 @@ iterate_sum(double * u, double * notu, double * v, double * notv,
       //u[i] = (pscore[i][F] + notpscore[i][S] + smooth)
         /// (pscore[i][S] + notpscore[i][F] + smooth);
       notu[i] = 1.0 / u[i];
+      logfp << "Predicate: " << i << " Q: " << u[i] << " notQ: " << notu[i] << endl;
     }
 
     normalize(u, npreds, MAX);
