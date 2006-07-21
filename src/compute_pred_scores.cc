@@ -572,8 +572,8 @@ compute_tstats(double *tstat, double *m1, double *s1,
     sigma = sqrt(s1[i]*(n1-1.0) + s2[i]*(n2-1.0));
     //tstat[i] = (m2[i]-m1[i])/c1;
     tstat[i] = m2[i] - m1[i];
-    if (sigma > 0.0)
-      tstat[i] = tstat[i] / sigma * c2;
+    if (tstat[i] != 0.0) 
+      tstat[i] = tstat[i] / sigma * c2 / c1;
   }
   logfp << "T-test stats" << endl;
   logvalues(tstat, len);
