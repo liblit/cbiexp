@@ -211,24 +211,8 @@ endif
 site-args := $(foreach site,$(sites),-sites-report $(site))
 implication-args := $(foreach implication,$(implications),-implications-report $(implication))
 
-amplify-log := $(if $(report-series),amplify.$(report-series).log,amplify.log)
-ifndef amplify
-stamp-amplify := $(stamp-decimate)
-report-series-amplify := $(report-series)
-else
-stamp-amplify := $(stamp-decimate)-amplify
-report-series-amplify := $(if $(report-series),$(report-series).amplify,amplify)
-input-report := $(if $(report-series),reports.sparse.$(report-series),reports.sparse)
-$(stamp-amplify): $(stamp-decimate) $(sites) $(implications)
-	test -w $@ -o ! -e $@
-	$(time) $(tooldir)/amplify/amplify $(implication-args) $(site-args) -runs-directory $(datadir) -begin-runs $(training-runs) -do-logging -input-report-name $(input-report) -output-report-name reports.sparse.$(report-series-amplify) -amplify-log-name $(amplify-log)
-	$(time) $(tooldir)/amplify/logreader -runs-directory $(datadir) -begin-runs $(training-runs) -amplify-log-name $(amplify-log)
-	touch $@
-endif
-CLEANFILES += amps.txt
-
-obs.txt tru.txt: $(stamp-amplify) preds.txt s.runs f.runs static-site-info.so $(call tool-deps, compute-obs-tru)
-	$(time) $(tooldir)/compute-obs-tru --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series-amplify)
+obs.txt tru.txt: $(stamp-decimate) preds.txt s.runs f.runs static-site-info.so $(call tool-deps, compute-obs-tru)
+	$(time) $(tooldir)/compute-obs-tru --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
 CLEANFILES += obs.txt tru.txt
 
 $(filter %_none.xml, $(views)): preds.txt static-site-info.so $(call tool-deps, gen-views)
@@ -243,9 +227,24 @@ summary.xml: preds.txt s.runs f.runs static-site-info.so $(call tool-deps, gen-s
 	xmllint --valid --noout $@
 CLEANFILES += summary.xml
 
-amplify_flag := $(if $(amplify-pred-counts),--amplify,)
+amplify-log := $(if $(report-series),amplify.$(report-series).log,amplify.log)
+stamp-amplify := $(stamp-decimate)-amplify
+ifdef amplify-pred-counts
+report-series-amplify := $(if $(report-series),$(report-series).amplify,amplify)
+input-report := $(if $(report-series),reports.sparse.$(report-series),reports.sparse)
+amplify_flag := --amplify  
+$(stamp-amplify): $(stamp-decimate) $(sites) $(implications)
+	test -w $@ -o ! -e $@
+	$(time) $(tooldir)/amplify/amplify $(implication-args) $(site-args) -runs-directory $(datadir) -begin-runs $(training-runs) -do-logging -input-report-name $(input-report) -output-report-name reports.sparse.$(report-series-amplify) -amplify-log-name $(amplify-log)
+	touch $@
+else
+$(stamp-amplify): $(stamp-decimate) $(sites) $(implications)
+	touch $@
+endif
+CLEANFILE += amps.txt
+  
 preds.txt: s.runs f.runs $(stamp-amplify) static-site-info.so $(call tool-deps, compute-results)
-	$(time) $(tooldir)/compute-results --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series-amplify) $(confidence:%=--confidence=%) $(amplify_flag) 
+	$(time) $(tooldir)/compute-results --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) $(confidence:%=--confidence=%) $(amplify_flag) 
 CLEANFILES += preds.txt
 
 $(datadir)/stamp-convert-reports: s.runs f.runs static-site-info.so $(call tool-deps, convert-reports)
@@ -272,17 +271,17 @@ prior-dist: s.runs f.runs preds.txt static-site-info.so $(call tool-deps, gather
 	$(time) $(tooldir)/gather_prior_dist --runs-directory=$(datadir)
 	mv fpriors.dat fpriors-full.dat
 	mv spriors.dat spriors-full.dat
-	$(time) $(tooldir)/gather_prior_dist --runs-directory=$(datadir) --report-suffix=$(report-series-amplify)
+	$(time) $(tooldir)/gather_prior_dist --runs-directory=$(datadir) --report-suffix=$(report-series)
 
 truth-dist: s.runs f.runs preds.txt static-site-info.so $(call tool-deps, gather_prior_truths)
 	$(time) $(tooldir)/gather_prior_truths --runs-directory=$(datadir)
 
 nonconst-preds: s.runs f.runs static-site-info.so $(call tool-deps, compute_nonconst_preds)
-	$(time) $(tooldir)/compute_nonconst_preds --runs-directory=$(datadir) --report-suffix=$(report-series-amplify) --begin-runs=$(training-runs)
+	$(time) $(tooldir)/compute_nonconst_preds --runs-directory=$(datadir) --report-suffix=$(report-series) --begin-runs=$(training-runs)
 CLEANFILES += train.runs val.runs nonconst_preds.txt
 
 theta: train.runs val.runs nonconst_preds.txt static-site-info.so $(call tool-deps, train_utillog)
-	$(time) $(tooldir)/train_utillog --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series-amplify) --delta1=10.0 --delta2=2.0 --delta3=1.0
+	$(time) $(tooldir)/train_utillog --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) --delta1=10.0 --delta2=2.0 --delta3=1.0
 CLEANFILES += theta.txt train_lls.txt val_lls.txt confmat.txt
 
 static-site-info.so: %.so: %.cc
@@ -354,8 +353,8 @@ CLEANFILES += ts_sites.last.txt
 W.dat: $(datadir)/stamp-extract-timestamps static-site-info.so $(call tool-deps, get_ts_ordering)
 	$(time) $(tooldir)/get_ts_ordering --begin-runs=$(training-runs) --runs-directory=$(datadir) --timestamp-when=first
 
-parmstats.txt: $(stamp-amplify) s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)
-	$(time) $(tooldir)/collect_parmstats --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series-amplify) --sample-rates=$(stamp-amplify)
+parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)
+	$(time) $(tooldir)/collect_parmstats --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) --sample-rates=$(stamp-decimate)
 CLEANFILES += parmstats.txt
 
 hyperparms.txt: parmstats.txt static-site-info.so $(call tool-deps, est_hyperparms)
@@ -368,10 +367,10 @@ endif
 
 #truthprobs: calc_truthprobs parmstats.txt preds.txt
 truthprobs: static-site-info.so $(call tool-deps, calc_truthprobs)
-	$(time) $(tooldir)/calc_truthprobs --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series-amplify)
+	$(time) $(tooldir)/calc_truthprobs --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
 
 X.dat: static-site-info.so $(call tool-deps, get_tp_weights)
-	$(time) $(tooldir)/get_tp_weights --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series-amplify)
+	$(time) $(tooldir)/get_tp_weights --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
 
 ifndef amplify-truth-probs
 truth-probs := X.dat
@@ -405,9 +404,9 @@ symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml
 	xmllint --valid --noout --catalogs $@
 CLEANFILES += symmetric.html
 
-symmetric.xml: %.xml: $(stamp-amplify) s.runs f.runs $(call tool-deps, symmetric/%)
+symmetric.xml: %.xml: $(stamp-decimate) s.runs f.runs $(call tool-deps, symmetric/%)
 	$(build) links
-	$(time) $(tooldir)/symmetric/$* --runs-directory=$(datadir) --begin-runs=$(training-runs) --report-suffix=$(report-series-amplify) $(confidence:%=--confidence=%)
+	$(time) $(tooldir)/symmetric/$* --runs-directory=$(datadir) --begin-runs=$(training-runs) --report-suffix=$(report-series) $(confidence:%=--confidence=%)
 	xmllint --valid --noout $@
 CLEANFILES += symmetric.xml debug.xml
 
@@ -423,7 +422,7 @@ CLEANFILES += failure-points
 
 never-kinds := reached false true
 nevers := $(never-kinds:%=never-%.txt)
-$(nevers): $(stamp-amplify) f.runs static-site-info.so $(call tool-deps, never-reached/never-reached)
+$(nevers): $(stamp-decimate) f.runs static-site-info.so $(call tool-deps, never-reached/never-reached)
 	$(tooldir)/never-reached/never-reached --begin-runs=$(training-runs) --runs-directory=$(datadir)
 	for goal in $(nevers); do test -r $$goal; done
 CLEANFILES += $(nevers)
