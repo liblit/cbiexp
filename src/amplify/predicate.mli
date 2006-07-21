@@ -4,7 +4,17 @@ val make : string -> string -> int -> int -> p
 
 val string_of_p : p -> string
 
+val core_to_synth_index : int -> int
+
+val core_to_synth_pred : p -> p
+
+val core_to_synth_array : float array -> float array
+
+val complement_index : int -> int
+
 val complement : p -> p 
+
+val invert_implication : (p * p) -> (p * p)
 
 val synth_to_ground_disjunction : p -> p list
 

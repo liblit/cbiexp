@@ -59,6 +59,20 @@ class impliesRelationImpl : impliesRelation =
     method implicands l = self#rights l
   end
 
+class impliesSynthRelationImpl : impliesRelation =
+  object (self)
+    inherit impliesRelationImpl as super
+
+    method add (l : predicate) (r : predicate) =
+      let sl = Predicate.core_to_synth_pred l in
+      let sr = Predicate.core_to_synth_pred r in
+      super#add sl sr; 
+
+      let (l, r) = Predicate.invert_implication (sl, sr) in 
+      super#add l r
+
+  end
+
 class isImpliedByRelationImpl : isImpliedByRelation =
   object (self)
     inherit c

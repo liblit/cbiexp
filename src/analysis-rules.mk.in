@@ -15,12 +15,10 @@ sitesglob := $(sitesdir)/*.sites
 sites ?= $(wildcard $(sitesglob))
 sites := $(if $(sites), $(sites), $(error no sites files in $(sitesglob)))
 
-ifdef amplify
 implicationsdir ?= $(experiment)/share
 implicationsglob := $(implicationsdir)/*.implications
 implications ?= $(wildcard $(implicationsglob))
 implications := $(if $(implications), $(implications), $(error no implications files in $(implicationsglob)))
-endif
 
 xmlify-add-suffix := .html
 
@@ -211,13 +209,13 @@ $(stamp-decimate):
 endif
 
 site-args := $(foreach site,$(sites),-sites-report $(site))
+implication-args := $(foreach implication,$(implications),-implications-report $(implication))
 
 amplify-log := $(if $(report-series),amplify.$(report-series).log,amplify.log)
 ifndef amplify
 stamp-amplify := $(stamp-decimate)
 report-series-amplify := $(report-series)
 else
-implication-args := $(foreach implication,$(implications),-implications-report $(implication))
 stamp-amplify := $(stamp-decimate)-amplify
 report-series-amplify := $(if $(report-series),$(report-series).amplify,amplify)
 input-report := $(if $(report-series),reports.sparse.$(report-series),reports.sparse)
@@ -382,11 +380,11 @@ else
 truth-probs := X.amplify.dat
 not-truth-probs := notX.amplify.dat
 input-report := $(if $(report-series),reports.sparse.$(report-series),reports.sparse)
-X.amplify.dat: X.dat
+X.amplify.dat notX.amplify.dat: X.dat notX.dat
 	test -w $@ -o ! -e $@
-	$(time) $(tooldir)/amplify/amplify-truth-probs $(site-args) -runs-directory $(datadir) -begin-runs $(training-runs) -do-logging -input-report-name $(amplify-log)
+	$(time) $(tooldir)/amplify/amplify-truth-probs $(site-args) $(implication-args) -runs-directory $(datadir) -begin-runs $(training-runs) -do-logging -input-report-name $(input-report)
 endif
-CLEANFILES += X.amplify.dat notX.amplify.dat
+CLEANFILES += X.amplify.dat notX.amplify.dat amps.log
 
 predscores: pred_scores.xml
 pred_scores.xml bicluster-preds.xml: preds.txt $(truth-probs) $(not-truth-probs) $(call tool-deps, compute_pred_scores)

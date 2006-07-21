@@ -29,7 +29,7 @@ let parser = new CommandLine.parser parsers "amplify"
 let doAnalysis sites implications inputFileName outputFileName logFileName = 
   let logchannel = open_out logFileName in
 
-  let preds = new RunResultsAccumulator.c (sites :> RunResultsAccumulator.translator) in 
+  let preds = new RunResultsAccumulator.core (sites :> RunResultsAccumulator.translator) in 
   let inchannel = open_in inputFileName in
   PassOneLexer.readPredicates 
     inchannel 
@@ -51,7 +51,7 @@ let doAnalysis sites implications inputFileName outputFileName logFileName =
   preds#printSortedEntries outchannel;
   close_out outchannel;
 
-  let ampPreds = new RunResultsAccumulator.c (sites :> RunResultsAccumulator.translator) in 
+  let ampPreds = new RunResultsAccumulator.core (sites :> RunResultsAccumulator.translator) in 
   PredicateSet.iter (ampPreds#addPredicate) areChanged;
   ampPreds#printSortedEntries logchannel;
   close_out logchannel

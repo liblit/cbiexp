@@ -1,4 +1,4 @@
-type entry = { index : int; siteId : int; values : bool array }
+type entry = { index : int; siteId : int; values : float array }
 
 class type translator =
   object 
@@ -7,14 +7,23 @@ class type translator =
     method getScheme : int -> string
   end
 
-class c : translator -> 
+class type accumulator = 
   object
-    method addEntry : int -> int -> bool array -> unit 
+    method addEntry : int -> int -> float array -> unit 
     method isTrue : Predicate.p -> bool
+    method truthProb : Predicate.p -> float
     method getObservedTrue : unit -> Predicate.Set.t
+    method getPositiveProbEntries : unit -> (Predicate.p * float) list
     method addPredicate : Predicate.p -> unit
+    method addPredicateProb : Predicate.p -> float -> unit
     method getScheme : int -> string 
     method getSortedEntries : unit -> entry list
     method printSortedEntries : out_channel -> unit
+    method xArray : float array -> float array
   end
+
+class core : translator -> accumulator
+
+class synth : translator -> accumulator
+
 

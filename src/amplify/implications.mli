@@ -9,6 +9,8 @@ class type impliesRelation =
 
 class impliesRelationImpl : impliesRelation
 
+class impliesSynthRelationImpl : impliesRelation
+
 class type isImpliedByRelation =
   object
     method add : predicate -> predicate -> unit
