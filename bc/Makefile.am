@@ -6,6 +6,10 @@ share/bc.sites: build/bc/bc
 	$(sampler_tooldir)/extract-section .debug_site_info $< >$@.
 	mv $@. $@
 
+share/bc.implications: build/bc/bc
+	$(sampler_tooldir)/extract-section .debug_sampler_implications $< >$@.
+	mv $@. $@
+
 build/bc/bc: build/Makefile force
 	$(MAKE) -C build/lib
 	$(MAKE) -C $(@D)

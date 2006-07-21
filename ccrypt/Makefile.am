@@ -10,6 +10,10 @@ share/ccrypt.sites: $(ccrypt)
 	$(sampler_tooldir)/extract-section .debug_site_info $< >$@.
 	mv $@. $@
 
+share/ccrypt.implications: $(ccrypt)
+	$(sampler_tooldir)/extract-section .debug_sampler_implications $< >$@.
+	mv $@. $@
+
 $(ccrypt): build/Makefile force
 	$(MAKE) -C $(<D) CFLAGS='-g -O3'
 

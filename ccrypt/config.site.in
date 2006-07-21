@@ -3,4 +3,7 @@
 CC="@sampler_cc@"
 CC="$CC --relative-paths"
 CC="$CC --no-sample"
-CC="$CC --sampler-scheme=returns"
+CC="$CC --sampler-scheme=scalar-pairs"
+CC="$CC --compare-constants"
+CC="$CC --timestamp-last"
+CC="$CC -save-temps"
