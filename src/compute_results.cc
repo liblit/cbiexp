@@ -125,61 +125,6 @@ static void print_retained_preds()
     fclose(fp);
 }
 
-static void print_all_preds()
-{
-    unsigned u, c;
-    int p, site = 0;
-
-    FILE* fp = fopenWrite("all_preds.txt");
-    assert(fp);
-
-    for (u = 0; u < staticSiteInfo.unitCount; u++) {
-	const unit_t &unit = staticSiteInfo.unit(u);
-	for (c = 0; c < unit.num_sites; c++, site++) {
-	    switch (unit.scheme_code) {
-	    case 'S':
-		for (p = 0; p < 6; p++)
-		    {
-			num_s_preds++;
-			print_pred(fp, u, c, p, site);
-		    }
-		break;
-	    case 'R':
-		for (p = 0; p < 6; p++)
-		    {
-			num_r_preds++;
-			print_pred(fp, u, c, p, site);
-		    }
-		break;
-	    case 'B':
-		for (p = 0; p < 2; p++)
-		    {
-			num_b_preds++;
-			print_pred(fp, u, c, p, site);
-		    }
-		break;
-	    case 'F':
-		for (p = 0; p < 18; p++)
-		    {
-			num_f_preds++;
-			print_pred(fp, u, c, p, site);
-		    }
-		break;
-	    case 'G':
-		for (p = 0; p < 8; p++)
-		    {
-			num_g_preds++;
-			print_pred(fp, u, c, p, site);
-		    }
-		break;
-	    default:
-		assert(0);
-	    }
-	}
-    }
-
-    fclose(fp);
-}
 
 /****************************************************************************
  * Procedures for deciding whether to retain/discard
