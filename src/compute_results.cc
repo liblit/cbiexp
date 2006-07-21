@@ -125,6 +125,62 @@ static void print_retained_preds()
     fclose(fp);
 }
 
+static void print_all_preds()
+{
+    unsigned u, c;
+    int p, site = 0;
+
+    FILE* fp = fopenWrite("all_preds.txt");
+    assert(fp);
+
+    for (u = 0; u < staticSiteInfo.unitCount; u++) {
+	const unit_t &unit = staticSiteInfo.unit(u);
+	for (c = 0; c < unit.num_sites; c++, site++) {
+	    switch (unit.scheme_code) {
+	    case 'S':
+		for (p = 0; p < 6; p++)
+		    {
+			num_s_preds++;
+			print_pred(fp, u, c, p, site);
+		    }
+		break;
+	    case 'R':
+		for (p = 0; p < 6; p++)
+		    {
+			num_r_preds++;
+			print_pred(fp, u, c, p, site);
+		    }
+		break;
+	    case 'B':
+		for (p = 0; p < 2; p++)
+		    {
+			num_b_preds++;
+			print_pred(fp, u, c, p, site);
+		    }
+		break;
+	    case 'F':
+		for (p = 0; p < 18; p++)
+		    {
+			num_f_preds++;
+			print_pred(fp, u, c, p, site);
+		    }
+		break;
+	    case 'G':
+		for (p = 0; p < 8; p++)
+		    {
+			num_g_preds++;
+			print_pred(fp, u, c, p, site);
+		    }
+		break;
+	    default:
+		assert(0);
+	    }
+	}
+    }
+
+    fclose(fp);
+}
+
 /****************************************************************************
  * Procedures for deciding whether to retain/discard
  * each instrumented predicate
@@ -210,28 +266,22 @@ void AmplifyReader::handleSite(const SiteCoords &coords, vector<count_tp> &count
       for (unsigned predicate = 0; predicate < size; ++predicate) 
           if (counts[predicate]) {
 	      inc(cur_run, coords, predicate);
-	      obs(cur_run, coords, predicate);
           }
     }
     else {
 	for (unsigned predicate = 0; predicate < size; ++predicate) {
 	    if (counts[predicate]) {
 	        inc(cur_run, coords, 2 * predicate);
-		obs(cur_run, coords, 2 * predicate);
 	    	switch(predicate) {
 		    case 0:			//unsynthesized LT
 			inc(cur_run, coords, LEQ);      
-			obs(cur_run, coords, LEQ);
 			break;
 		    case 1:			//unsynthesized EQ
 		    	inc(cur_run, coords, LEQ);
-			obs(cur_run, coords, LEQ);
 		    	inc(cur_run, coords, GEQ);
-			obs(cur_run, coords, GEQ);
 			break;
  		    case 2:			//unsynthesized GT
 		    	inc(cur_run, coords, GEQ);
-		 	obs(cur_run, coords, GEQ);
 			break;
 	  	    default:		
 		        assert(0);
