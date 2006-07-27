@@ -1,6 +1,7 @@
 #include <cassert>
 #include <cmath>
 #include <ctype.h>
+#include <memory>
 #include <numeric>
 #include <vector>
 #include "AmplifyReport.h"
@@ -19,7 +20,7 @@
 using namespace std;
 
 
-static StaticSiteInfo staticSiteInfo;
+static auto_ptr<StaticSiteInfo> staticSiteInfo;
 
 enum { LT, GEQ, EQ, NEQ, GT, LEQ };
 
@@ -63,7 +64,7 @@ static void print_pred(FILE* fp, int u, int c, int p, int site)
     pred_stat ps = compute_pred_stat(s, f, os, of, Confidence::level);
 
     fprintf(fp, "%c %d %d %d %d %g %g %g %g %d %d %d %d\n",
-	staticSiteInfo.unit(u).scheme_code,
+	staticSiteInfo->unit(u).scheme_code,
 	u, c, p, site,
 	ps.lb, ps.in, ps.fs, ps.co,
 	s, f, os, of);
@@ -77,8 +78,8 @@ static void print_retained_preds()
     FILE* fp = fopenWrite(PredStats::filename);
     assert(fp);
 
-    for (u = 0; u < staticSiteInfo.unitCount; u++) {
-	const unit_t &unit = staticSiteInfo.unit(u);
+    for (u = 0; u < staticSiteInfo->unitCount; u++) {
+	const unit_t &unit = staticSiteInfo->unit(u);
 	for (c = 0; c < unit.num_sites; c++, site++) {
 	    switch (unit.scheme_code) {
 	    case 'S':
@@ -168,9 +169,9 @@ protected:
 
 void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 {
-    assert(coords.unitIndex < staticSiteInfo.unitCount);
+    assert(coords.unitIndex < staticSiteInfo->unitCount);
     assert(coords.unitIndex < site_info.size());
-    assert(coords.siteOffset < staticSiteInfo.unit(coords.unitIndex).num_sites);
+    assert(coords.siteOffset < staticSiteInfo->unit(coords.unitIndex).num_sites);
     assert(coords.siteOffset < site_info[coords.unitIndex].size());
 
     obs(cur_run, coords);
@@ -201,9 +202,9 @@ protected:
 
 void AmplifyReader::handleSite(const SiteCoords &coords, vector<count_tp> &counts) 
 {
-    assert(coords.unitIndex < staticSiteInfo.unitCount);
+    assert(coords.unitIndex < staticSiteInfo->unitCount);
     assert(coords.unitIndex < site_info.size());
-    assert(coords.siteOffset < staticSiteInfo.unit(coords.unitIndex).num_sites);
+    assert(coords.siteOffset < staticSiteInfo->unit(coords.unitIndex).num_sites);
     assert(coords.siteOffset < site_info[coords.unitIndex].size());
 
     const size_t size = counts.size();
@@ -257,8 +258,8 @@ inline void cull(int u, int c, int p)
 
 void cull_preds()
 {
-    for (unsigned u = 0; u < staticSiteInfo.unitCount; u++) {
-	const unit_t &unit = staticSiteInfo.unit(u);
+    for (unsigned u = 0; u < staticSiteInfo->unitCount; u++) {
+	const unit_t &unit = staticSiteInfo->unit(u);
 	for (unsigned c = 0; c < unit.num_sites; c++) {
 	    int numPreds;
 	    switch (unit.scheme_code) {
@@ -293,8 +294,8 @@ void cull_preds_aggressively1()
 {
     unsigned u, c;
 
-    for (u = 0; u < staticSiteInfo.unitCount; u++) {
-	const unit_t &unit = staticSiteInfo.unit(u);
+    for (u = 0; u < staticSiteInfo->unitCount; u++) {
+	const unit_t &unit = staticSiteInfo->unit(u);
 	for (c = 0; c < unit.num_sites; c++) {
 	    switch (unit.scheme_code) {
 	    case 'S':
@@ -404,17 +405,17 @@ inline bool is_eligible(int u, int c, int p, int s)
     if (!site_info[u][c].retain[p])
 	return false;
 
-    const site_t site = staticSiteInfo.site(s + c);
+    const site_t site = staticSiteInfo->site(s + c);
     return isdigit(site.args[1][0]) || site.args[1][0] != '-';
 }
 
 void checkG(unsigned u, unsigned c, int p, int s)
 {
-    const unit_t &unit = staticSiteInfo.unit(u);
-    const site_t siteC = staticSiteInfo.site(s + c);
+    const unit_t &unit = staticSiteInfo->unit(u);
+    const site_t siteC = staticSiteInfo->site(s + c);
 
     for (unsigned d = 0; d < unit.num_sites; d++) {
-	const site_t siteD = staticSiteInfo.site(s + d);
+	const site_t siteD = staticSiteInfo->site(s + d);
 	if (c != d &&
 	    siteC.line == siteD.line &&
 	    strcmp(siteC.args[0], siteD.args[0]) == 0 &&
@@ -429,11 +430,11 @@ void checkG(unsigned u, unsigned c, int p, int s)
 
 void checkL(unsigned u, unsigned c, int p, int s)
 {
-    const unit_t &unit = staticSiteInfo.unit(u);
-    const site_t siteC = staticSiteInfo.site(s + c);
+    const unit_t &unit = staticSiteInfo->unit(u);
+    const site_t siteC = staticSiteInfo->site(s + c);
 
     for (unsigned d = 0; d < unit.num_sites; d++) {
-	const site_t siteD = staticSiteInfo.site(s + d);
+	const site_t siteD = staticSiteInfo->site(s + d);
 	if (c != d &&
 	    siteC.line == siteD.line &&
 	    strcmp(siteC.args[0], siteD.args[0]) == 0 &&
@@ -450,8 +451,8 @@ void cull_preds_aggressively2()
 {
     unsigned u, c, s;
 
-    for (s = 0, u = 0; u < staticSiteInfo.unitCount; s += staticSiteInfo.unit(u).num_sites, u++) {
-	const unit_t &unit = staticSiteInfo.unit(u);
+    for (s = 0, u = 0; u < staticSiteInfo->unitCount; s += staticSiteInfo->unit(u).num_sites, u++) {
+	const unit_t &unit = staticSiteInfo->unit(u);
 	if (unit.scheme_code == 'S') {
 	    for (c = 0; c < unit.num_sites; c++) {
 		if (is_eligible(u, c, GT , s))
@@ -501,9 +502,10 @@ int main(int argc, char** argv)
 
     classify_runs();
 
-    site_info.resize(staticSiteInfo.unitCount);
-    for (unsigned u = 0; u < staticSiteInfo.unitCount; u++)
-	site_info[u].resize(staticSiteInfo.unit(u).num_sites);
+    staticSiteInfo.reset(new StaticSiteInfo());
+    site_info.resize(staticSiteInfo->unitCount);
+    for (unsigned u = 0; u < staticSiteInfo->unitCount; u++)
+	site_info[u].resize(staticSiteInfo->unit(u).num_sites);
 
     Progress::Bounded progress("computing results", NumRuns::count());
     for (cur_run = NumRuns::begin; cur_run < NumRuns::end; cur_run++) {

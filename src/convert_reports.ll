@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstring>
 #include <iostream>
+#include <memory>
 #include <string>
 #include "StaticSiteInfo.h"
 
@@ -21,7 +22,7 @@ static unsigned unitIndex;
 static unsigned sitesActual;
 static unsigned sitesExpected;
 
-static StaticSiteInfo staticSiteInfo;
+static auto_ptr<StaticSiteInfo> staticSiteInfo;
 
 #define YY_DECL int yylex(unsigned runId, const string &infile)
  
@@ -91,7 +92,7 @@ uint 0|[1-9][0-9]*
     }
 
     unitIndex = get_unit_indx(schemeCode, signature, runId);
-    const unit_t &unit = staticSiteInfo.unit(unitIndex);
+    const unit_t &unit = staticSiteInfo->unit(unitIndex);
     assert(unit.scheme_code == schemeCode);
     sitesExpected = unit.num_sites;
     sitesActual = 0;
@@ -176,8 +177,8 @@ uint 0|[1-9][0-9]*
 
 static int get_unit_indx(char scheme_code, const string &signature, unsigned runId)
 {
-    for (unsigned i = 0; i < staticSiteInfo.unitCount; i++) {
-	const unit_t &unit = staticSiteInfo.unit(i);
+    for (unsigned i = 0; i < staticSiteInfo->unitCount; i++) {
+	const unit_t &unit = staticSiteInfo->unit(i);
 	if (scheme_code == unit.scheme_code && signature == unit.signature)
 	    return i;
     }
@@ -211,6 +212,7 @@ int main(int argc, char** argv)
     process_cmdline(argc, argv);
 
     classify_runs();
+    staticSiteInfo.reset(new StaticSiteInfo());
 
     bool failed = false;
     Progress::Bounded progress("converting reports", NumRuns::count());

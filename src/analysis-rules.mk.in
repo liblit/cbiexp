@@ -15,10 +15,12 @@ sitesglob := $(sitesdir)/*.sites
 sites ?= $(wildcard $(sitesglob))
 sites := $(if $(sites), $(sites), $(error no sites files in $(sitesglob)))
 
+ifdef amplify-pred-counts
 implicationsdir ?= $(experiment)/share
 implicationsglob := $(implicationsdir)/*.implications
 implications ?= $(wildcard $(implicationsglob))
 implications := $(if $(implications), $(implications), $(error no implications files in $(implicationsglob)))
+endif
 
 xmlify-add-suffix := .html
 
@@ -242,7 +244,7 @@ $(stamp-amplify): $(stamp-decimate) $(sites) $(implications)
 	touch $@
 endif
 CLEANFILE += amps.txt
-  
+
 preds.txt: s.runs f.runs $(stamp-amplify) static-site-info.so $(call tool-deps, compute-results)
 	$(time) $(tooldir)/compute-results --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) $(confidence:%=--confidence=%) $(amplify_flag) 
 CLEANFILES += preds.txt

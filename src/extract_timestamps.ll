@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstring>
 #include <iostream>
+#include <memory>
 #include <string>
 #include "StaticSiteInfo.h"
 
@@ -16,7 +17,7 @@ static FILE *ofp2 = NULL;
 
 static int get_unit_indx(char scheme_code, const string &signature);
 
-static StaticSiteInfo staticSiteInfo;
+static auto_ptr<StaticSiteInfo> staticSiteInfo;
  
 static string signature;
 static string scheme;
@@ -105,7 +106,7 @@ uint 0|[1-9][0-9]*
     }
 
     unitIndex = get_unit_indx(schemeCode, signature);
-    const unit_t &unit = staticSiteInfo.unit(unitIndex);
+    const unit_t &unit = staticSiteInfo->unit(unitIndex);
     assert(unit.scheme_code == schemeCode);
     sitesExpected = unit.num_sites;
     sitesActual = 0;
@@ -173,8 +174,8 @@ uint 0|[1-9][0-9]*
 
 static int get_unit_indx(char scheme_code, const string &signature)
 {
-    for (unsigned i = 0; i < staticSiteInfo.unitCount; i++) {
-	const unit_t &unit = staticSiteInfo.unit(i);
+    for (unsigned i = 0; i < staticSiteInfo->unitCount; i++) {
+	const unit_t &unit = staticSiteInfo->unit(i);
 	if (scheme_code == unit.scheme_code && signature == unit.signature)
 	    return i;
     }
@@ -205,6 +206,7 @@ int main(int argc, char** argv)
     process_cmdline(argc, argv);
 
     classify_runs();
+    staticSiteInfo.reset(new StaticSiteInfo());
 
     bool failed = false;
     Progress::Bounded progress("extracting timestamps", NumRuns::count());

@@ -1,6 +1,7 @@
 #include <argp.h>
 #include <iostream>
 #include <iterator>
+#include <memory>
 #include <set>
 #include "PredCoords.h"
 #include "StaticSiteInfo.h"
@@ -10,7 +11,7 @@
 using namespace std;
 
 
-static StaticSiteInfo staticSiteInfo;
+static auto_ptr<StaticSiteInfo> staticSiteInfo;
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -36,7 +37,7 @@ operator>>(istream &in, Predictor &predictor)
 static ostream &
 operator<<(ostream &out, const Predictor &predictor)
 {
-  const site_t &site = staticSiteInfo.site(predictor);
+  const site_t &site = staticSiteInfo->site(predictor);
 
   out << "<predictor "
       << "scheme=\"" << scheme_name(site.scheme_code)
@@ -102,6 +103,7 @@ main(int argc, char** argv)
   set_terminate_verbose();
   argp_parse(0, argc, argv, 0, 0, 0);
   ios::sync_with_stdio(false);
+  staticSiteInfo.reset(new StaticSiteInfo());
 
   cout << fixed
        << "<?xml version=\"1.0\"?>"

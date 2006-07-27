@@ -26,8 +26,6 @@ static unsigned num_val_runs = 0;
 static vector<bool> is_trainrun;
 static vector<bool> is_valrun;
 
-static StaticSiteInfo staticSiteInfo;
-
 /***********************
  * site_info
  **********************/
@@ -119,7 +117,7 @@ inline void cull(int u, int c, int p) {
     site_info[u][c].retain[p] = true;
 }
 
-static void cull_preds()
+static void cull_preds(const StaticSiteInfo &staticSiteInfo)
 {
     for (unsigned u = 0; u < staticSiteInfo.unitCount; u++) {
 	const unit_t &unit = staticSiteInfo.unit(u);
@@ -275,6 +273,7 @@ int main(int argc, char** argv)
     classify_runs();
     split_runs();
 
+    static StaticSiteInfo staticSiteInfo;
     site_info.resize(staticSiteInfo.unitCount);
     for (unsigned u = 0; u < staticSiteInfo.unitCount; u++)
 	site_info[u].resize(staticSiteInfo.unit(u).num_sites);
@@ -288,7 +287,7 @@ int main(int argc, char** argv)
 	Reader().read(cur_run);
     }
 
-    cull_preds();
+    cull_preds(staticSiteInfo);
 
     print_retained_preds();
     print_runsplit();
