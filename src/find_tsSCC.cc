@@ -383,8 +383,3 @@ int main(int argc, char** argv)
 
     return 0;
 }
-
-
-// Local variables:
-// c-file-style: "cc-mode"
-// End:
