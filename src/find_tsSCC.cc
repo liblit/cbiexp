@@ -54,6 +54,14 @@ class ts_hash_t : public hash_map<SiteCoords, unsigned>
 {
 };
 
+namespace std {
+  template <class T>
+  const T &get(const vector<T> &items, size_t slot)
+  {
+    return items[slot];
+  }
+}
+
 static Graph G;
 static SCCGraph SCCG;
 static SCCGraph2 SCCGbrev;
