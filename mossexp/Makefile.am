@@ -1,8 +1,16 @@
-noinst_DATA := share/mossbad.sites src/moss src/mossbad
+noinst_DATA := src/moss src/mossbad sites implications
+
+sites : share/mossbad.sites
+
+implications : share/mossbad.implications
 
 share/%.sites: src/%
 	$(sampler_tooldir)/extract-section .debug_site_info $< >$@.
 	mv $@. $@
+
+share/%.sites: src/%
+	-$(sampler_tooldir)/extract-section .debug_sampler_implications $< >$@.
+	-mv $@. $@
 
 src/moss: force
 	$(MAKE) -C $(@D) $(@F)

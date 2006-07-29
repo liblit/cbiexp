@@ -4,15 +4,19 @@ inputs := share/inputs
 cleartext := $(shell find $(inputs) -type f -maxdepth 1 ! -name '*.cpt' ! -name .cvsignore)
 cyphertext := $(cleartext:=.cpt)
 
-noinst_DATA := share/ccrypt.sites $(ccrypt) $(cyphertext)
+noinst_DATA := $(ccrypt) $(cyphertext) sites implications
+
+sites : share/ccrypt.sites
+
+implications : share/ccrypt.implications
 
 share/ccrypt.sites: $(ccrypt)
 	$(sampler_tooldir)/extract-section .debug_site_info $< >$@.
 	mv $@. $@
 
 share/ccrypt.implications: $(ccrypt)
-	$(sampler_tooldir)/extract-section .debug_sampler_implications $< >$@.
-	mv $@. $@
+	-$(sampler_tooldir)/extract-section .debug_sampler_implications $< >$@.
+	-mv $@. $@
 
 $(ccrypt): build/Makefile force
 	$(MAKE) -C $(<D) CFLAGS='-g -O3'
