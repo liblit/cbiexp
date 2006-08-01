@@ -15,12 +15,10 @@ sitesglob := $(sitesdir)/*.sites
 sites ?= $(wildcard $(sitesglob))
 sites := $(if $(sites), $(sites), $(error no sites files in $(sitesglob)))
 
-ifdef amplify-pred-counts
 implicationsdir ?= $(experiment)/share
 implicationsglob := $(implicationsdir)/*.implications
 implications ?= $(wildcard $(implicationsglob))
 implications := $(if $(implications), $(implications), $(error no implications files in $(implicationsglob)))
-endif
 
 xmlify-add-suffix := .html
 
