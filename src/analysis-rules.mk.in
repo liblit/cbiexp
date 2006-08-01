@@ -18,7 +18,6 @@ sites := $(if $(sites), $(sites), $(error no sites files in $(sitesglob)))
 implicationsdir ?= $(experiment)/share
 implicationsglob := $(implicationsdir)/*.implications
 implications ?= $(wildcard $(implicationsglob))
-implications := $(if $(implications), $(implications), $(error no implications files in $(implicationsglob)))
 
 xmlify-add-suffix := .html
 
