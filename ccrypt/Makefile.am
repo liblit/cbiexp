@@ -32,6 +32,6 @@ build/Makefile: config.site
 force:
 .PHONY: force
 
-CLEANFILES := $(inputs)/*.cpt
+CLEANFILES := $(inputs)/*.cpt share/*.sites share/*.implications
 clean-local:
 	rm -rf build

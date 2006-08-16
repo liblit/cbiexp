@@ -21,6 +21,6 @@ src/mossbad: force
 force:
 .PHONY: force
 
-CLEANFILES := share/*.sites
+CLEANFILES := share/*.sites share/*.implications
 clean-local:
 	$(MAKE) -C src clean

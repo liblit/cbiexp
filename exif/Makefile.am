@@ -41,6 +41,7 @@ force:
 
 .DELETE_ON_ERROR:
 
+CLEANFILES := share/*.sites share/*.implications
 clean-local:
 	rm -rf install
 	rm -rf build
