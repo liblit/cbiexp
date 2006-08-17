@@ -352,12 +352,13 @@ CLEANFILES += ts_sites.last.txt
 W.dat: $(datadir)/stamp-extract-timestamps static-site-info.so $(call tool-deps, get_ts_ordering)
 	$(time) $(tooldir)/get_ts_ordering --begin-runs=$(training-runs) --runs-directory=$(datadir) --timestamp-when=first
 
-parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)
+parmstats.txt notp-parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)
 	$(time) $(tooldir)/collect_parmstats --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) --sample-rates=$(stamp-decimate)
-CLEANFILES += parmstats.txt
+CLEANFILES += parmstats.txt notp-parmstats.txt
 
-hyperparms.txt: parmstats.txt static-site-info.so $(call tool-deps, est_hyperparms)
+hyperparms.txt notp-hyperparms.txt: parmstats.txt notp-parmstats.txt static-site-info.so $(call tool-deps, est_hyperparms)
 	$(time) $(tooldir)/est_hyperparms
+CLEANFILES += hyperparms.txt notp-hyperparms.txt est_hyperparms.log
 
 ifdef $(HAVE_GSL_CDF)
 chi2stats.txt: parmstats.txt fpriors.dat fpriors-full.dat spriors.dat spriors-full.dat $(call tool-deps, chi2test)
@@ -367,9 +368,11 @@ endif
 #truthprobs: calc_truthprobs parmstats.txt preds.txt
 truthprobs: static-site-info.so $(call tool-deps, calc_truthprobs)
 	$(time) $(tooldir)/calc_truthprobs --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
+CLEANFILES += truthprobs.txt
 
-X.dat: static-site-info.so $(call tool-deps, get_tp_weights)
+X.dat notX.dat : static-site-info.so $(call tool-deps, get_tp_weights)
 	$(time) $(tooldir)/get_tp_weights --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
+CLEANFILES += X.dat notX.dat truX.dat trunotX.dat truFreq.dat trunotFreq.dat
 
 ifndef amplify-truth-probs
 truth-probs := X.dat
@@ -389,7 +392,7 @@ pred_scores.xml bicluster-preds.xml: preds.txt $(truth-probs) $(not-truth-probs)
 	$(build) links
 	$(time) $(tooldir)/compute_pred_scores --begin-runs=$(training-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name) --truth-probability-weights=$(truth-probs) --not-truth-probability-weights=$(not-truth-probs)
 	xmllint --valid --noout pred_scores.xml
-CLEANFILES += pred_scores.xml bicluster-preds.xml
+CLEANFILES += pred_scores.xml bicluster-preds.xml pred_scores.log list*.xml
 
 sober.xml sober.txt: static-site-info.so preds.txt $(call tool-deps, calc_sober)
 	$(build) links
@@ -429,8 +432,6 @@ CLEANFILES += $(nevers)
 bicluster: $(biclustering)
 bicluster-full: $(biclustering-full)
 .PHONY: bicluster bicluster-full
-CLEANFILES += est_hyperparms.log hyperparms.txt list*.xml notp-hyperparms.txt notp-parmstats.txt notX.dat pred_scores.log truFreq.dat trunotFreq.dat trunotX.dat truthprobs.txt truX.dat X.dat
-
 
 ########################################################################
 
