@@ -27,6 +27,7 @@ noinst_PROGRAMS =				\
 	gen-summary				\
 	gen-views				\
 	get_tp_weights				\
+	get_truth_values			\
 	get_ts_ordering				\
 	logreg					\
 	max-observed				\
@@ -115,6 +116,9 @@ gen_views_LDADD = Score/libScore.a libanalyze.a -ldl
 
 get_tp_weights_SOURCES = get_tp_weights.cc
 get_tp_weights_LDADD = libanalyze.a -ldl
+
+get_truth_values_SOURCES = get_truth_values.cc
+get_truth_values_LDADD = libanalyze.a -ldl
 
 get_ts_ordering_SOURCES = get_ts_ordering.cc
 get_ts_ordering_LDADD = libanalyze.a -ldl
