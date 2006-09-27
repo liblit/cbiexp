@@ -30,6 +30,7 @@ noinst_PROGRAMS =				\
 	get_ts_ordering				\
 	logreg					\
 	max-observed				\
+	oracle					\
 	partial_order				\
 	process_run_labels			\
 	project					\
@@ -124,6 +125,9 @@ logreg_LDADD = libanalyze.a -ldl
 max_observed_SOURCES = max-observed.cc
 max_observed_LDADD = libanalyze.a -ldl
 
+oracle_SOURCES = oracle.cc
+oracle_LDADD = libanalyze.a -ldl
+
 partial_order_SOURCES = partial_order.cc
 partial_order_LDADD = libanalyze.a -ldl
 partial_order_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
@@ -163,6 +167,8 @@ libanalyze_a_SOURCES =				\
 	AmplifyReport.h				\
 	AutoFD.cc				\
 	AutoFD.h				\
+	Bugs.cc					\
+	Bugs.h					\
 	Candidate.cc				\
 	Candidate.h				\
 	ClassifyRuns.cc				\

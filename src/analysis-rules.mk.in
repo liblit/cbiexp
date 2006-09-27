@@ -99,8 +99,6 @@ corrected :=						\
 biclustering :=					\
 	preds.txt				\
 	s.runs f.runs				\
-	parmstats.txt				\
-	hyperparms.txt				\
 	X.dat					\
 	predscores
 
@@ -375,6 +373,9 @@ X.dat notX.dat : preds.txt hyperparms.txt notp-hyperparms.txt static-site-info.s
 	$(time) $(tooldir)/get_tp_weights --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
 CLEANFILES += X.dat notX.dat truX.dat trunotX.dat truFreq.dat trunotFreq.dat
 else
+X.dat notX.dat : preds.txt static-site-info.so
+	$(time) $(tooldir)/get_truth_values --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
+CLEANFILES += X.dat notX.dat
 endif
 
 ifndef amplify-truth-probs
@@ -395,7 +396,7 @@ pred_scores.xml bicluster-preds.xml: preds.txt $(truth-probs) $(not-truth-probs)
 	$(build) links
 	$(time) $(tooldir)/compute_pred_scores --begin-runs=$(training-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name) --truth-probability-weights=$(truth-probs) --not-truth-probability-weights=$(not-truth-probs)
 	xmllint --valid --noout pred_scores.xml
-CLEANFILES += pred_scores.xml bicluster-preds.xml pred_scores.log list*.xml
+CLEANFILES += pred_scores.xml bicluster-preds.xml pred_scores.log list*.xml qualities.log notQualities.log
 
 sober.xml sober.txt: static-site-info.so preds.txt $(call tool-deps, calc_sober)
 	$(build) links
