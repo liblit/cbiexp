@@ -12,9 +12,9 @@ class RunSet : public vector<bool>
 public:
     RunSet();
 
-    double count;
     void insert(unsigned);
     bool find(unsigned) const;
+    size_t setSize() const;
 
     void print(ostream &) const;
     size_t intersectionSize(const RunSet &);

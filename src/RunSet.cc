@@ -13,13 +13,14 @@ using namespace std;
 RunSet::RunSet()
     : vector<bool>(NumRuns::end)
 {
+    this->assign(NumRuns::end, false);
 }
 
 
 void
 RunSet::insert(unsigned runId)
 {
-    at(runId) = 1;
+    at(runId) = true;
 }
 
 
@@ -50,17 +51,24 @@ istream &
 operator>>(istream &in, RunSet &runs)
 {
     runs.assign(NumRuns::end, false);
-    runs.count = 0;
 
     unsigned runId;
     in.exceptions(ios::badbit);
     while(in >> runId)
     {
         runs[runId] = 1;
-        ++runs.count;
     }
 
     return in;
+}
+
+size_t
+RunSet::setSize() const
+{
+    size_t result = 0;
+    for (size_t runId = 0; runId < size(); ++runId)
+        if ((*this)[runId]) ++result;
+    return result;
 }
 
 size_t
