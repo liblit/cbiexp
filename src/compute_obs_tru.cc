@@ -13,6 +13,8 @@
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
 #include "RunsDirectory.h"
+#include "RunSet.h"
+#include "OutcomeRunSets.h"
 #include "SiteCoords.h"
 #include "classify_runs.h"
 #include "fopen.h"
@@ -21,95 +23,6 @@
 
 using namespace std;
 using __gnu_cxx::hash_map;
-
-
-////////////////////////////////////////////////////////////////////////
-//
-//  a set of run ids represented as a membership bit vector
-//
-
-
-class RunSet : private vector<bool>
-{
-public:
-    RunSet();
-    void insert(unsigned);
-    bool find(unsigned) const;
-
-    void print(ostream &) const;
-};
-
-
-inline
-RunSet::RunSet()
-    : vector<bool>(NumRuns::end)
-{
-}
-
-
-inline void
-RunSet::insert(unsigned runId)
-{
-    at(runId) = 1;
-}
-
-
-inline bool
-RunSet::find(unsigned runId) const
-{
-    return at(runId);
-}
-
-
-void
-RunSet::print(ostream &out) const
-{
-    for (unsigned runId = 0; runId < size(); ++runId)
-	if ((*this)[runId])
-	    out << ' ' << runId;
-}
-
-
-inline ostream &
-operator <<(ostream &out, const RunSet &runs)
-{
-    runs.print(out);
-    return out;
-}
-
-
-////////////////////////////////////////////////////////////////////////
-//
-//  a pair of run sets segregated by outcome
-//
-
-
-class OutcomeRunSets;
-typedef RunSet (OutcomeRunSets::* Outcome);
-
-class OutcomeRunSets {
-public:
-    RunSet failure;
-    RunSet success;
-
-    void insert(Outcome, unsigned);
-};
-
-
-inline void
-OutcomeRunSets::insert(Outcome outcome, unsigned runId)
-{
-    (this->*outcome).insert(runId);
-}
-
-
-ostream &
-operator<<(ostream &out, const OutcomeRunSets &predicate)
-{
-    return out << "F:" << predicate.failure << '\n'
-	       << "S:" << predicate.success << '\n';
-}
-
 
 ////////////////////////////////////////////////////////////////////////
 //

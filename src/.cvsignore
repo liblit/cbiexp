@@ -18,6 +18,7 @@ compiler.cc
 compute-obs-tru
 compute-results
 compute_nonconst_preds
+compute_pred_bug_counts
 compute_pred_scores
 convert-reports
 convert_reports.cc
@@ -34,14 +35,17 @@ gen-summary
 gen-views
 gen_views
 get_tp_weights
+get_truth_values
 get_ts_ordering
 logreg
 map_sites
 max-observed
+oracle
 partial_order
 process_run_labels
 project
 sanity_check
 sparsity-metrics
 train_utillog
+view_clusters
 xmlify-results

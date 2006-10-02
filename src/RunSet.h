@@ -1,0 +1,28 @@
+#ifndef INCLUDE_RunSet_h
+#define INCLUDE_RunSet_h
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+
+class RunSet : public vector<bool>
+{
+public:
+    RunSet();
+
+    double count;
+    void insert(unsigned);
+    bool find(unsigned) const;
+
+    void print(ostream &) const;
+    size_t intersectionSize(const RunSet &);
+
+};
+
+ostream & operator<<(ostream &, const RunSet &);
+istream & operator>>(istream &, RunSet &); 
+
+#endif // !INCLUDE_RunSet_h
+

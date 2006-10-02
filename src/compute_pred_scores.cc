@@ -41,6 +41,8 @@ static double * pred_weights[2];
 //static double mask[2][2] = {{1.0, 0.0}, {0.0, -1.0}};
 
 static ofstream logfp ("pred_scores.log", ios_base::trunc);
+static ofstream qualities_log ("qualities.log", ios_base::trunc);
+static ofstream not_qualities_log ("notQualities.log", ios_base::trunc);
 
 enum { F, S };
 
@@ -340,7 +342,7 @@ update_max(const unsigned j, const unsigned r, const unsigned npreds,
   for (unsigned k = 0; k < npreds; ++k) {
     d = contrib(W, k, j, r, v, npreds);
     notd = contrib(notW, k, j, r, notv, npreds);
-    val = (d + smooth2) / (notd + smooth2)
+    val = d == 0 ? 0 : (d + smooth2) / (notd + smooth2)
           * (oldnotpscore[k][othertype]+ smooth)/(oldpscore[k][othertype]+ smooth);
     if (val > maxd) {
       maxd = val;
@@ -474,8 +476,12 @@ iterate_sum(double * u, double * notu, double * v, double * notv,
       //u[i] = (pscore[i][F] + notpscore[i][S] + smooth)
         /// (pscore[i][S] + notpscore[i][F] + smooth);
       notu[i] = 1.0 / u[i];
+      qualities_log << u[i] << ' ';
+      not_qualities_log << notu [i] << ' '; 
       logfp << "Predicate: " << i << " Q: " << u[i] << " notQ: " << notu[i] << endl;
     }
+    qualities_log << endl;
+    not_qualities_log << endl;
 
     normalize(u, npreds, MAX);
     normalize(notu, npreds, MAX);
@@ -714,6 +720,8 @@ int main (int argc, char** argv)
   }
 
   logfp.close();
+  qualities_log.close();
+  not_qualities_log.close();
   delete[] contribRuns;
   return 0;
 }

@@ -15,6 +15,7 @@ noinst_PROGRAMS =				\
 	collect_parmstats			\
 	compute_nonconst_preds			\
 	compute-obs-tru				\
+	compute_pred_bug_counts			\
 	compute_pred_scores			\
 	compute-results				\
 	convert-reports				\
@@ -78,6 +79,9 @@ compute_obs_tru_LDADD = libanalyze.a -ldl
 
 compute_nonconst_preds_SOURCES = compute_nonconst_preds.cc
 compute_nonconst_preds_LDADD = libanalyze.a -ldl $(GSL_LIBS)
+
+compute_pred_bug_counts_SOURCES = compute_pred_bug_counts.cc
+compute_pred_bug_counts_LDADD = libanalyze.a
 
 compute_pred_scores_SOURCES = compute_pred_scores.cc
 compute_pred_scores_LDADD = libanalyze.a
@@ -194,6 +198,8 @@ libanalyze_a_SOURCES =				\
 	Nonconst_PredStats.h			\
 	NumRuns.cc				\
 	NumRuns.h				\
+	OutcomeRunSets.cc			\
+	OutcomeRunSets.h			\
 	PredCoords.cc				\
 	PredCoords.h				\
 	PredStats.cc				\
@@ -214,6 +220,8 @@ libanalyze_a_SOURCES =				\
 	RunBugs.h				\
 	RunsDirectory.cc			\
 	RunsDirectory.h				\
+	RunSet.cc				\
+	RunSet.h				\
 	RunsSplit.cc				\
 	RunsSplit.h				\
 	SiteCoords.cc				\
