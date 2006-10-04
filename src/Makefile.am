@@ -16,6 +16,7 @@ noinst_PROGRAMS =				\
 	compute_nonconst_preds			\
 	compute-obs-tru				\
 	compute_pred_bug_counts			\
+	compute_pred_bug_MI			\
 	compute_pred_scores			\
 	compute-results				\
 	convert-reports				\
@@ -82,6 +83,9 @@ compute_nonconst_preds_LDADD = libanalyze.a -ldl $(GSL_LIBS)
 
 compute_pred_bug_counts_SOURCES = compute_pred_bug_counts.cc
 compute_pred_bug_counts_LDADD = libanalyze.a
+
+compute_pred_bug_MI_SOURCES = compute_pred_bug_MI.cc
+compute_pred_bug_MI_LDADD = libanalyze.a
 
 compute_pred_scores_SOURCES = compute_pred_scores.cc
 compute_pred_scores_LDADD = libanalyze.a
@@ -190,6 +194,8 @@ libanalyze_a_SOURCES =				\
 	DynamicLibrary.h			\
 	DynamicLibrary-dl.cc			\
 	DynamicLibrary-dl.h			\
+	FailureUniverse.cc			\
+	FailureUniverse.h			\
 	IndexedPredInfo.cc			\
 	IndexedPredInfo.h			\
 	MappedArray.h				\
