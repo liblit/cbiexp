@@ -72,7 +72,7 @@ RunSet::setSize() const
 }
 
 size_t
-RunSet::intersectionSize(const RunSet &other)
+RunSet::intersectionSize(const RunSet &other) const
 {
     assert(size() == other.size());
 

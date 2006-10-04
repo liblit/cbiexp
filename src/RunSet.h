@@ -17,7 +17,7 @@ public:
     size_t setSize() const;
 
     void print(ostream &) const;
-    size_t intersectionSize(const RunSet &);
+    size_t intersectionSize(const RunSet &) const;
 
 };
 
