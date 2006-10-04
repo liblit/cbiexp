@@ -9,15 +9,17 @@ class FailureUniverse
 {
 public:
     FailureUniverse();
-    unsigned int cardinality;
-    double p_Xtrue_Ytrue(RunSet &, RunSet &);
-    double p_Xtrue_Yfalse(RunSet &, RunSet &);
-    double p_Xfalse_Yfalse(RunSet &, RunSet &);
-    double p_Xtrue(RunSet &);
-    double p_Xfalse(RunSet &);
+    double mean(RunSet &) const;
+    double covariance(RunSet &, RunSet &) const;
+    double p_Xtrue_Ytrue(RunSet &, RunSet &) const;
+    double p_Xtrue_Yfalse(RunSet &, RunSet &) const;
+    double p_Xfalse_Yfalse(RunSet &, RunSet &) const;
+    double p_Xtrue(RunSet &) const;
+    double p_Xfalse(RunSet &) const;
 
 private:
-    unsigned int universeSize();
+    unsigned int cardinality;
+    unsigned int universeSize() const;
 };
 
 #endif // !FAILURE_UNIVERSE_H

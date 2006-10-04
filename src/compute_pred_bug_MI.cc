@@ -99,6 +99,29 @@ hash_map <int, double> * getMIs(FailureUniverse & univ, RunSet & tru, hash_map <
     return mis;
 }
 
+double
+signedMI(FailureUniverse & univ, RunSet & X, RunSet & Y)
+{
+    double cov = univ.covariance(X, Y);
+    double mi = MI(univ, X, Y); 
+    return mi * (cov >= 0 ? 1.0 : -1.0);
+}
+
+/********************************************************************************
+* The value calculated for each RunSet pair is the mutual information times the
+* _sign_ of the correlation coefficient. Really, it's the sign of the
+* covariance, since the sign of the correlation coefficient is the same.
+********************************************************************************/
+hash_map <int, double> * getsignedMIs(FailureUniverse & univ, RunSet & tru, hash_map <int, RunSet *> & bugs) 
+{
+    hash_map<int, double> * mis = new hash_map<int, double> (bugs.size());
+    for (hash_map<int, RunSet *>::iterator i = bugs.begin(); i != bugs.end(); ++i) {
+        double mi = signedMI(univ, tru, *(i->second));
+        (*mis)[i->first] = mi; 
+    }
+    return mis;
+}
+
 int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
@@ -162,8 +185,8 @@ int main(int argc, char** argv)
         /*********************************************************************
         * Print predicate/count table
         *********************************************************************/
-        hash_map <int, double> * bug_MIs = getMIs(univ, current.failure, bug_run_map); 
-        double unknown_MI = MI(univ, current.failure, unknown_runs);
+        hash_map <int, double> * bug_MIs = getsignedMIs(univ, current.failure, bug_run_map); 
+        double unknown_MI = signedMI(univ, current.failure, unknown_runs);
         for(unsigned int i = 0; i < bugIds->size(); i++) {
             double MI = (*bug_MIs)[(*bugIds)[i]]; 
             fprintf(out, "%g\t", MI);
