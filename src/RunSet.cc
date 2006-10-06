@@ -50,13 +50,12 @@ operator <<(ostream &out, const RunSet &runs)
 istream &
 operator>>(istream &in, RunSet &runs)
 {
-    runs.assign(NumRuns::end, false);
 
     unsigned runId;
     in.exceptions(ios::badbit);
     while(in >> runId)
     {
-        runs[runId] = 1;
+        runs.insert(runId);
     }
 
     return in;

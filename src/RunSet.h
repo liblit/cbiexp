@@ -7,7 +7,7 @@
 using namespace std;
 
 
-class RunSet : public vector<bool>
+class RunSet : private vector<bool>
 {
 public:
     RunSet();
@@ -18,6 +18,7 @@ public:
 
     void print(ostream &) const;
     size_t intersectionSize(const RunSet &) const;
+
 
 };
 

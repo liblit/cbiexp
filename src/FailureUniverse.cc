@@ -31,7 +31,7 @@ FailureUniverse::mean(RunSet & X) const
 {
     unsigned result = 0;
     for(unsigned runId = NumRuns::begin; runId < NumRuns::end; ++runId) {
-        if(is_frun[runId] && X[runId]) ++result;
+        if(is_frun[runId] && X.find(runId)) ++result;
     }
     return ((double)result)/((double)cardinality);
 }
@@ -47,7 +47,7 @@ FailureUniverse::covariance(RunSet & X, RunSet & Y) const
     double result = 0.0;
     for(unsigned runId = NumRuns::begin; runId < NumRuns::end; ++runId) {
         if(is_frun[runId]) {
-            result += (X[runId] - Xmean) * (Y[runId] - Ymean);
+            result += (X.find(runId) - Xmean) * (Y.find(runId) - Ymean);
         }
     }
     return ((double)result)/((double)cardinality);
@@ -61,7 +61,7 @@ FailureUniverse::p_Xtrue_Ytrue(RunSet & X, RunSet & Y) const
 {
     int result = 0;
     for(unsigned runId = NumRuns::begin; runId < NumRuns::end; ++runId) {
-        if(is_frun[runId] && X[runId] && Y[runId]) ++result;
+        if(is_frun[runId] && X.find(runId) && Y.find(runId)) ++result;
     }
     return (double)result/(double)cardinality;
 }
@@ -75,7 +75,7 @@ FailureUniverse::p_Xtrue_Yfalse(RunSet & X, RunSet & Y) const
 {
     int result = 0;
     for(unsigned runId = NumRuns::begin; runId < NumRuns::end; ++runId) {
-        if(is_frun[runId] && X[runId] && !Y[runId]) ++result;
+        if(is_frun[runId] && X.find(runId) && !Y.find(runId)) ++result;
     }
     return (double)result/(double)cardinality;
 }
@@ -89,7 +89,7 @@ FailureUniverse::p_Xfalse_Yfalse(RunSet & X, RunSet & Y) const
 {
     int result = 0;
     for(unsigned runId = NumRuns::begin; runId < NumRuns::end; ++runId) {
-        if(is_frun[runId] && !X[runId] && !Y[runId]) ++result;
+        if(is_frun[runId] && !X.find(runId) && !Y.find(runId)) ++result;
     }
     return (double)result/(double)cardinality;
 }
@@ -102,7 +102,7 @@ FailureUniverse::p_Xtrue(RunSet & X) const
 {
     int result = 0;
     for(unsigned runId = NumRuns::begin; runId < NumRuns::end; ++runId) {
-        if(is_frun[runId] && X[runId]) ++result;
+        if(is_frun[runId] && X.find(runId)) ++result;
     }
     return (double)result/(double)cardinality;
 }
@@ -115,7 +115,7 @@ FailureUniverse::p_Xfalse(RunSet & X) const
 {
     int result = 0;
     for(unsigned runId = NumRuns::begin; runId < NumRuns::end; ++runId) {
-        if(is_frun[runId] && !X[runId]) ++result;
+        if(is_frun[runId] && !X.find(runId)) ++result;
     }
     return (double)result/(double)cardinality;
 }
