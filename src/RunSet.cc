@@ -1,4 +1,5 @@
 #include <iostream>
+#include <numeric>
 #include <vector>
 #include "NumRuns.h"
 #include "RunSet.h"
@@ -64,10 +65,7 @@ operator>>(istream &in, RunSet &runs)
 size_t
 RunSet::setSize() const
 {
-    size_t result = 0;
-    for (size_t runId = 0; runId < size(); ++runId)
-        if ((*this)[runId]) ++result;
-    return result;
+    return count(this->begin(), this->end(), true);
 }
 
 size_t
