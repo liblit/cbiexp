@@ -12,22 +12,14 @@ IsMember::IsMember()
 bool 
 IsMember::operator()(unsigned int runId) const
 {
-    return is_frun[runId] && runId >= NumRuns::begin && runId < NumRuns::end;
+    return is_frun[runId];
 }
 
 class IsIn : public unary_function <unsigned int, bool> {
 public:
     IsIn() { }
-    bool operator()(bool result) {
+    bool operator()(bool result) const {
         return result; 
-    }
-};
-
-class IsNotIn : public unary_function <unsigned int, bool> {
-public:
-    IsNotIn() { }
-    bool operator()(bool result) {
-        return !result; 
     }
 };
 
@@ -41,7 +33,7 @@ FailureUniverse::FailureUniverse()
 
 template <class Predicate>
 unsigned int
-FailureUniverse::count(RunSet & X, Predicate cond) const
+FailureUniverse::count(const RunSet & X, const Predicate cond) const
 {
     unsigned result = 0;
     for(unsigned int runId = begin; runId < end; ++runId) {
@@ -52,7 +44,7 @@ FailureUniverse::count(RunSet & X, Predicate cond) const
 
 template <class PredicateX, class PredicateY>
 unsigned int
-FailureUniverse::count(RunSet & X, PredicateX condX, RunSet & Y, PredicateY condY) const
+FailureUniverse::count(const RunSet & X, const PredicateX condX, const RunSet & Y, const PredicateY condY) const
 {
     unsigned result = 0;
     for(unsigned int runId = begin; runId < end; ++runId) {
@@ -79,7 +71,7 @@ FailureUniverse::count() const
 * Calculates mean of RunSet
 ******************************************************************************/
 double
-FailureUniverse::mean(RunSet & X) const
+FailureUniverse::mean(const RunSet & X) const
 {
     return ((double)count(X, IsIn()))/((double)cardinality); 
 }
@@ -88,7 +80,7 @@ FailureUniverse::mean(RunSet & X) const
 * Calculates covariance of two RunSets
 ******************************************************************************/
 double
-FailureUniverse::covariance(RunSet & X, RunSet & Y) const
+FailureUniverse::covariance(const RunSet & X, const RunSet & Y) const
 {
     double Xmean = mean(X);
     double Ymean = mean(Y);
@@ -101,13 +93,22 @@ FailureUniverse::covariance(RunSet & X, RunSet & Y) const
     return ((double)result)/((double)cardinality);
 }
 
+/*****************************************************************************
+* Number of times both are true at once
+*****************************************************************************/
+unsigned int
+FailureUniverse::c_Xtrue_Ytrue(const RunSet & X, const RunSet & Y) const
+{
+    return count(X, IsIn(), Y, IsIn());
+}
+
 /******************************************************************************
 * Joint probability that both are true. 
 ******************************************************************************/
 double
-FailureUniverse::p_Xtrue_Ytrue(RunSet & X, RunSet & Y) const 
+FailureUniverse::p_Xtrue_Ytrue(const RunSet & X, const RunSet & Y) const 
 {
-    return ((double)count(X, IsIn(), Y, IsIn()))/((double)cardinality);
+    return ((double)c_Xtrue_Ytrue(X, Y))/((double)cardinality);
 }
 
 
@@ -115,9 +116,9 @@ FailureUniverse::p_Xtrue_Ytrue(RunSet & X, RunSet & Y) const
 * Joint probability that X is true and Y false. 
 ******************************************************************************/
 double
-FailureUniverse::p_Xtrue_Yfalse(RunSet & X, RunSet & Y) const
+FailureUniverse::p_Xtrue_Yfalse(const RunSet & X, const RunSet & Y) const
 {
-    return ((double)count(X, IsIn(), Y, IsNotIn()))/((double)cardinality);
+    return ((double)count(X, IsIn(), Y, not1(IsIn())))/((double)cardinality);
 }
 
 /******************************************************************************
@@ -125,16 +126,16 @@ FailureUniverse::p_Xtrue_Yfalse(RunSet & X, RunSet & Y) const
 * failing runs in the test set is non-negative.
 ******************************************************************************/
 double
-FailureUniverse::p_Xfalse_Yfalse(RunSet & X, RunSet & Y) const
+FailureUniverse::p_Xfalse_Yfalse(const RunSet & X, const RunSet & Y) const
 {
-    return ((double)count(X, IsNotIn(), Y, IsNotIn()))/((double)cardinality);
+    return ((double)count(X, not1(IsIn()), Y, not1(IsIn())))/((double)cardinality);
 }
 
 /******************************************************************************
 * Marginal probability that X is true.
 ******************************************************************************/
 double
-FailureUniverse::p_Xtrue(RunSet & X) const
+FailureUniverse::p_Xtrue(const RunSet & X) const
 {
     return ((double)count(X, IsIn()))/((double)cardinality);
 }
@@ -143,7 +144,7 @@ FailureUniverse::p_Xtrue(RunSet & X) const
 * Marginal probability that X is false.
 ******************************************************************************/
 double
-FailureUniverse::p_Xfalse(RunSet & X) const
+FailureUniverse::p_Xfalse(const RunSet & X) const
 {
-    return ((double)count(X, IsNotIn()))/((double)cardinality);
+    return ((double)count(X, not1(IsIn())))/((double)cardinality);
 }
