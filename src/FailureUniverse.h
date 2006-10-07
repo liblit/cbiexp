@@ -5,6 +5,12 @@ class EmptyUniverseException
 {
 };
 
+class IsMember : public unary_function <unsigned int, bool> { 
+public:
+    IsMember();
+    bool operator()(unsigned int) const;
+};
+
 class FailureUniverse
 {
 public:
@@ -19,7 +25,12 @@ public:
 
 private:
     unsigned int cardinality;
-    unsigned int universeSize() const;
+    unsigned int begin;
+    unsigned int end;
+    IsMember test;
+    unsigned int count() const;
+    template <class Predicate> unsigned int count(RunSet &, Predicate) const;
+    template <class Predicate1, class Predicate2> unsigned int count(RunSet &, Predicate1, RunSet &, Predicate2) const;
 };
 
 #endif // !FAILURE_UNIVERSE_H
