@@ -63,7 +63,7 @@ operator>>(istream &in, RunSet &runs)
 }
 
 size_t
-RunSet::setSize() const
+RunSet::setSize()
 {
     return count(this->begin(), this->end(), true);
 }

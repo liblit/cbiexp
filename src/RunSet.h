@@ -6,7 +6,6 @@
 
 using namespace std;
 
-
 class RunSet : private vector<bool>
 {
 public:
@@ -14,11 +13,10 @@ public:
 
     void insert(unsigned);
     bool find(unsigned) const;
-    size_t setSize() const;
+    size_t setSize();
 
     void print(ostream &) const;
     size_t intersectionSize(const RunSet &) const;
-
 
 };
 
