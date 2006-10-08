@@ -112,9 +112,7 @@ int main(int argc, char** argv)
         /*********************************************************************
         * Print predicate/count table
         *********************************************************************/
-        vector <unsigned int> counts; 
-        transform(bug_runs.begin(), bug_runs.end(), back_inserter(counts), IntersectionSize(&univ, current.failure));
-        copy(counts.begin(), counts.end(), ostream_iterator<unsigned int> (out, "\t"));
+        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<unsigned int> (out, "\t"), IntersectionSize(&univ, current.failure));
         out << "\n";
     }
     assert(tru.peek() == EOF); 
