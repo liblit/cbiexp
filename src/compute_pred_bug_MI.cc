@@ -1,13 +1,11 @@
 #include <argp.h>
 #include <math.h>
 #include <iostream>
+#include <iterator>
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <ext/hash_map>
 #include <vector>
-#include "fopen.h" 
-#include "classify_runs.h"
 #include "RunsDirectory.h"
 #include "NumRuns.h"
 #include "Progress/Bounded.h"
@@ -18,7 +16,6 @@
 #include "FailureUniverse.h"
 
 using namespace std;
-using __gnu_cxx::hash_map;
 
 #ifdef HAVE_ARGP_H
 
@@ -52,7 +49,6 @@ log2(double val)
 double
 term(double joint, double margX, double margY)
 {
-    fprintf(stderr, "%g\t%g\t%g\n", joint, margX, margY); 
     return joint == 0.0 ? 0.0 :
                     joint * log2(joint / (margX * margY));
 }
@@ -62,7 +58,7 @@ term(double joint, double margX, double margY)
 * The joint probability distribution thus has only four possibilities.
 *******************************************************************************/
 double
-MI(FailureUniverse & univ, RunSet & X, RunSet & Y)
+MI(const FailureUniverse & univ, const RunSet & X, const RunSet & Y)
 {
     double Xtrue_Ytrue = univ.p_Xtrue_Ytrue(X,Y);
     double Xtrue_Yfalse = univ.p_Xtrue_Yfalse(X,Y);
@@ -73,101 +69,78 @@ MI(FailureUniverse & univ, RunSet & X, RunSet & Y)
     double Ytrue = univ.p_Xtrue(Y);
     double Yfalse = univ.p_Xfalse(Y);
 
-    double true_true = term(Xtrue_Ytrue, Xtrue, Ytrue);
-        fprintf(stderr, "%g\n", true_true);
-    double true_false = term(Xtrue_Yfalse, Xtrue, Yfalse);
-        fprintf(stderr, "%g\n", true_false);
-    double false_true = term(Xfalse_Ytrue, Xfalse, Ytrue);
-        fprintf(stderr, "%g\n", false_true);
-    double false_false = term(Xfalse_Yfalse, Xfalse, Yfalse);
-        fprintf(stderr, "%g\n", false_false);
-    fprintf(stderr, "Done one calc\n");
-
     return term(Xtrue_Ytrue, Xtrue, Ytrue) +
            term(Xtrue_Yfalse, Xtrue, Yfalse) +
            term(Xfalse_Ytrue, Xfalse, Ytrue) +
            term(Xfalse_Yfalse, Xfalse, Yfalse);
 }
 
-hash_map <int, double> * getMIs(FailureUniverse & univ, RunSet & tru, hash_map <int, RunSet *> & bugs) 
-{
-    hash_map<int, double> * mis = new hash_map<int, double> (bugs.size());
-    for (hash_map<int, RunSet *>::iterator i = bugs.begin(); i != bugs.end(); ++i) {
-        double mi = MI(univ, tru, *(i->second));
-        (*mis)[i->first] = mi; 
-    }
-    return mis;
-}
-
 double
-signedMI(FailureUniverse & univ, RunSet & X, RunSet & Y)
+signedMI(const FailureUniverse & univ, const RunSet & X, const RunSet & Y)
 {
     double cov = univ.covariance(X, Y);
     double mi = MI(univ, X, Y); 
     return mi * (cov >= 0 ? 1.0 : -1.0);
 }
 
-/********************************************************************************
-* The value calculated for each RunSet pair is the mutual information times the
-* _sign_ of the correlation coefficient. Really, it's the sign of the
-* covariance, since the sign of the correlation coefficient is the same.
-********************************************************************************/
-hash_map <int, double> * getsignedMIs(FailureUniverse & univ, RunSet & tru, hash_map <int, RunSet *> & bugs) 
-{
-    hash_map<int, double> * mis = new hash_map<int, double> (bugs.size());
-    for (hash_map<int, RunSet *>::iterator i = bugs.begin(); i != bugs.end(); ++i) {
-        double mi = signedMI(univ, tru, *(i->second));
-        (*mis)[i->first] = mi; 
-    }
-    return mis;
-}
+class SignedMutualInformation : public unary_function <RunSet *, double> {
+public:
+   SignedMutualInformation(const FailureUniverse * univ, const RunSet * X) {
+       this->univ = univ;
+       this->X = X;
+   }
+
+   double operator()(const RunSet * Y) const {
+       return signedMI(*univ, *X, *Y); 
+   }
+
+private:
+    const RunSet * X;
+    const FailureUniverse * univ;
+};
 
 int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
     ios::sync_with_stdio(false);
 
-    FailureUniverse univ;
+    const FailureUniverse univ;
 
     /***************************************************************************
     * Read bug ids
     ***************************************************************************/
     vector <int> * bugIds = (new Bugs())->bugIndex();
 
+    vector <RunSet *> bug_runs;
     /***************************************************************************
-    * build map from bug ids to runs. We expect the runs to be ordered. 
+    * We read the runs associated with each bug 
     ***************************************************************************/
-    hash_map <int, RunSet *> bug_run_map;
+    ifstream bug_runs_file("bug_runs.txt");
+    for(unsigned int i = 0; i < bugIds->size(); i++) {
+        RunSet* current = new RunSet();  
+        string line;
+        getline(bug_runs_file, line);
+        istringstream parse(line);
+        parse >> *current;
+        bug_runs.push_back(current);
+    }
+    bug_runs_file.close();
 
     /***************************************************************************
     * Some runs may be unknown
     ***************************************************************************/
-    RunSet unknown_runs;
-
-    /***************************************************************************
-    * We read the runs associated with each bug 
-    ***************************************************************************/
-    ifstream bug_runs("bug_runs.txt");
-    for(unsigned int i = 0; i < bugIds->size(); i++) {
-        RunSet* current = new RunSet();  
-        string line;
-        getline(bug_runs, line);
-        istringstream parse(line);
-        parse >> *current;
-        bug_run_map[(*bugIds)[i]] = current;
-    }
-    bug_runs.close();
+    RunSet * unknown_runs = new RunSet();
 
     /**************************************************************************
     * We read the runs that haven't been assigned to any bug.
     **************************************************************************/
-    bug_runs.open("unknown_runs.txt");
+    bug_runs_file.open("unknown_runs.txt");
     string line;
-    getline(bug_runs, line);
+    getline(bug_runs_file, line);
     istringstream parse(line);
-    parse >> unknown_runs;
-    bug_runs.close();
-
+    parse >> *unknown_runs;
+    bug_runs.push_back(unknown_runs);
+    bug_runs_file.close();
 
     /**************************************************************************
     * Calculate the mutual information between predicate and bug.
@@ -176,7 +149,7 @@ int main(int argc, char** argv)
 
     const unsigned numPreds = PredStats::count();
     Progress::Bounded progress("assigning predicates to runs", numPreds);
-    FILE* out = fopenWrite("pred_bug_MI.txt"); 
+    ofstream out("pred_bug_MI.txt"); 
     for (unsigned int count = 0; count < numPreds; ++count) { 
         progress.step();
         OutcomeRunSets current;
@@ -185,16 +158,11 @@ int main(int argc, char** argv)
         /*********************************************************************
         * Print predicate/count table
         *********************************************************************/
-        hash_map <int, double> * bug_MIs = getsignedMIs(univ, current.failure, bug_run_map); 
-        double unknown_MI = signedMI(univ, current.failure, unknown_runs);
-        for(unsigned int i = 0; i < bugIds->size(); i++) {
-            double MI = (*bug_MIs)[(*bugIds)[i]]; 
-            fprintf(out, "%g\t", MI);
-        }
-        fprintf(out, "%g\t", unknown_MI);
-        fprintf(out, "\n");
+        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<double> (out, "\t"), SignedMutualInformation(&univ, &current.failure));
+        out << "\n";
     }
-    fclose(out); 
+    assert(tru.peek() == EOF);
+    out.close();
     tru.close();
 
 }
