@@ -113,7 +113,7 @@ int main(int argc, char** argv)
         tru >> current; 
 
         /*********************************************************************
-        * Print predicate/count table
+        * Print predicate/MI table
         *********************************************************************/
         transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<double> (out, "\t"), SignedMutualInformation(&univ, &current.failure));
         out << "\n";
