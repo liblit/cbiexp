@@ -40,49 +40,6 @@ inline void process_cmdline(int, char *[]) { }
 
 #endif // HAVE_ARGP_H
 
-double
-log2(double val)
-{
-    return log(val)/M_LN2;
-}
-
-double
-term(double joint, double margX, double margY)
-{
-    return joint == 0.0 ? 0.0 :
-                    joint * log2(joint / (margX * margY));
-}
-
-/*******************************************************************************
-* Here we compute the mutual information between two binary values.
-* The joint probability distribution thus has only four possibilities.
-*******************************************************************************/
-double
-MI(const FailureUniverse & univ, const RunSet & X, const RunSet & Y)
-{
-    double Xtrue_Ytrue = univ.p_Xtrue_Ytrue(X,Y);
-    double Xtrue_Yfalse = univ.p_Xtrue_Yfalse(X,Y);
-    double Xfalse_Ytrue = univ.p_Xtrue_Yfalse(Y,X);
-    double Xfalse_Yfalse = univ.p_Xfalse_Yfalse(X,Y);
-    double Xtrue = univ.p_Xtrue(X);
-    double Xfalse = univ.p_Xfalse(X);
-    double Ytrue = univ.p_Xtrue(Y);
-    double Yfalse = univ.p_Xfalse(Y);
-
-    return term(Xtrue_Ytrue, Xtrue, Ytrue) +
-           term(Xtrue_Yfalse, Xtrue, Yfalse) +
-           term(Xfalse_Ytrue, Xfalse, Ytrue) +
-           term(Xfalse_Yfalse, Xfalse, Yfalse);
-}
-
-double
-signedMI(const FailureUniverse & univ, const RunSet & X, const RunSet & Y)
-{
-    double cov = univ.covariance(X, Y);
-    double mi = MI(univ, X, Y); 
-    return mi * (cov >= 0 ? 1.0 : -1.0);
-}
-
 class SignedMutualInformation : public unary_function <RunSet *, double> {
 public:
    SignedMutualInformation(const FailureUniverse * univ, const RunSet * X) {
@@ -91,7 +48,7 @@ public:
    }
 
    double operator()(const RunSet * Y) const {
-       return signedMI(*univ, *X, *Y); 
+       return univ->signedMI(*X, *Y); 
    }
 
 private:

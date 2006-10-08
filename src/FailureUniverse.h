@@ -23,6 +23,8 @@ public:
     double p_Xfalse_Yfalse(const RunSet &, const RunSet &) const;
     double p_Xtrue(const RunSet &) const;
     double p_Xfalse(const RunSet &) const;
+    double MI(const RunSet &, const RunSet &) const;
+    double signedMI(const RunSet &, const RunSet &) const;
 
 private:
     unsigned int cardinality;
@@ -32,6 +34,8 @@ private:
     unsigned int count() const;
     template <class Predicate> unsigned int count(const RunSet &, const Predicate) const;
     template <class Predicate1, class Predicate2> unsigned int count(const RunSet &, const Predicate1, const RunSet &, const Predicate2) const;
+    double MIterm(double, double, double) const;
+    double log2(double) const;
 };
 
 #endif // !FAILURE_UNIVERSE_H

@@ -1,4 +1,5 @@
-#include "functional"
+#include <math.h> 
+#include <functional>
 #include "NumRuns.h"
 #include "RunSet.h"
 #include "FailureUniverse.h"
@@ -91,6 +92,57 @@ FailureUniverse::covariance(const RunSet & X, const RunSet & Y) const
         }
     }
     return ((double)result)/((double)cardinality);
+}
+
+/*******************************************************************************
+* log base 2 not available in math header, so must define
+*******************************************************************************/
+double
+FailureUniverse::log2(double val) const
+{
+    return log(val)/M_LN2;
+}
+
+/******************************************************************************
+* Calculate a single mutual information term
+******************************************************************************/
+double
+FailureUniverse::MIterm(double joint, double margX, double margY) const
+{
+    return joint == 0.0 ? 0.0 : joint * log2(joint / (margX * margY));
+}
+
+/*****************************************************************************
+* Calculates mutual information between two RunSets
+*****************************************************************************/
+double
+FailureUniverse::MI(const RunSet & X, const RunSet & Y) const
+{
+    double Xtrue_Ytrue = p_Xtrue_Ytrue(X,Y);
+    double Xtrue_Yfalse = p_Xtrue_Yfalse(X,Y);
+    double Xfalse_Ytrue = p_Xtrue_Yfalse(Y,X);
+    double Xfalse_Yfalse = p_Xfalse_Yfalse(Y,X);
+    double Xtrue = p_Xtrue(X);
+    double Xfalse = p_Xfalse(X);
+    double Ytrue = p_Xtrue(Y);
+    double Yfalse = p_Xfalse(Y);
+
+    return MIterm(Xtrue_Ytrue, Xtrue, Ytrue) +
+           MIterm(Xtrue_Yfalse, Xtrue, Yfalse) +
+           MIterm(Xfalse_Ytrue, Xfalse, Ytrue) +
+           MIterm(Xfalse_Yfalse, Xfalse, Yfalse);
+}
+
+/******************************************************************************
+* Calculate mutual information but with a sign which is the same as the sign of
+* the correlation coefficient.
+*******************************************************************************/
+double
+FailureUniverse::signedMI(const RunSet & X, const RunSet & Y) const
+{
+    double cov = covariance(X,Y);
+    double mi = MI(X,Y);
+    return mi * (cov >= 0 ? 1.0 : -1.0); 
 }
 
 /*****************************************************************************
