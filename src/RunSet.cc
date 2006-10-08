@@ -12,9 +12,8 @@ using namespace std;
 //
 
 RunSet::RunSet()
-    : vector<bool>(NumRuns::end)
+    : vector<bool>(NumRuns::end, false)
 {
-    this->assign(NumRuns::end, false);
 }
 
 
