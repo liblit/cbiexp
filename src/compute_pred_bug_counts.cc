@@ -41,17 +41,17 @@ inline void process_cmdline(int, char *[]) { }
 
 class IntersectionSize : public unary_function <RunSet *, unsigned int> {
 public:
-    IntersectionSize(FailureUniverse * univ, RunSet & X) {
+    IntersectionSize(const FailureUniverse * univ, const RunSet * X) {
         this->univ = univ;
         this->X = X;    
     }
 
-    unsigned int operator()(RunSet * Y) const {
-        return univ->c_Xtrue_Ytrue(X,*Y);  
+    unsigned int operator()(const RunSet * Y) const {
+        return univ->c_Xtrue_Ytrue(*X,*Y);  
     }
 private:
-    RunSet X;
-    FailureUniverse * univ;
+    const RunSet * X;
+    const FailureUniverse * univ;
 };
 
 int main(int argc, char** argv)
@@ -61,7 +61,7 @@ int main(int argc, char** argv)
 
     vector <int> * bugIds = (new Bugs())->bugIndex();
 
-    FailureUniverse univ;
+    const FailureUniverse univ;
 
     vector <RunSet *> bug_runs;
     /***************************************************************************
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
         /*********************************************************************
         * Print predicate/count table
         *********************************************************************/
-        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<unsigned int> (out, "\t"), IntersectionSize(&univ, current.failure));
+        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<unsigned int> (out, "\t"), IntersectionSize(&univ, &current.failure));
         out << "\n";
     }
     assert(tru.peek() == EOF); 
