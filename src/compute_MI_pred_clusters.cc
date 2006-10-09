@@ -46,8 +46,8 @@ vector <bool> *
 set_union(const vector <bool> & first, const vector <bool> & second)
 {
     assert(first.size() == second.size());
-    vector<bool> * result = new vector<bool>();
-    transform(first.begin(), first.end(), second.begin(), back_inserter(*result), logical_or<bool>());
+    vector<bool> * result = new vector<bool>(first.size());
+    transform(first.begin(), first.end(), second.begin(), result->begin(), logical_or<bool>());
     return result;
 }
 
@@ -55,7 +55,10 @@ class Union : public binary_function <vector <bool> *, vector <bool> *, vector <
 public:
     Union() { }
     vector <bool> * operator()(const vector <bool> * first, const vector <bool> * second) const {
-        return set_union(*first, *second);
+        vector <bool> * theUnion = set_union(*first, *second);
+        delete first;
+        delete second;
+        return theUnion;
     }
 };
 
@@ -82,11 +85,6 @@ private:
     const vector <bool> * first;
 };
 
-struct delete_object
-{
-  template <typename T> void operator()(T *ptr){ delete ptr;}
-};
-
 /******************************************************************************
 * Take the head of the list. If any element in the tail of the list has a 
 * non-empty intersection with the head remove it from the tail. Return the
@@ -99,9 +97,6 @@ coalesce(list <vector <bool> *> & theList)
     theList.pop_front();
     list <vector <bool> *>::iterator keep = partition(theList.begin(), theList.end(), NonEmptyIntersection(head));
     vector <bool> * theUnion = accumulate(theList.begin(), keep, head, Union());
-    assert(theUnion->size() == head->size());
-    delete head;
-    for_each(theList.begin(), keep, delete_object());
     theList.erase(theList.begin(), keep);
     return theUnion;
 }
