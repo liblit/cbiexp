@@ -246,6 +246,8 @@ libanalyze_a_SOURCES =				\
 	RunSet.h				\
 	RunsSplit.cc				\
 	RunsSplit.h				\
+	SetVector.cc				\
+	SetVector.h				\
 	SiteCoords.cc				\
 	SiteCoords.h				\
 	SourceDirectory.cc			\

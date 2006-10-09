@@ -3,21 +3,13 @@
 
 #include <iostream>
 #include <vector>
+#include "SetVector.h"
 
 using namespace std;
 
-class RunSet : private vector<bool>
-{
+class RunSet : public SetVector {
 public:
     RunSet();
-
-    void insert(unsigned);
-    bool find(unsigned) const;
-    size_t setSize();
-
-    void print(ostream &) const;
-    size_t intersectionSize(const RunSet &) const;
-
 };
 
 ostream & operator<<(ostream &, const RunSet &);

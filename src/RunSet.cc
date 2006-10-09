@@ -2,6 +2,7 @@
 #include <numeric>
 #include <vector>
 #include "NumRuns.h"
+#include "SetVector.h"
 #include "RunSet.h"
 
 using namespace std;
@@ -12,33 +13,9 @@ using namespace std;
 //
 
 RunSet::RunSet()
-    : vector<bool>(NumRuns::end, false)
 {
+    initialize(NumRuns::end);
 }
-
-
-void
-RunSet::insert(unsigned runId)
-{
-    at(runId) = true;
-}
-
-
-bool
-RunSet::find(unsigned runId) const
-{
-    return at(runId);
-}
-
-
-void
-RunSet::print(ostream &out) const
-{
-    for (unsigned runId = 0; runId < size(); ++runId)
-	if ((*this)[runId])
-	    out << ' ' << runId;
-}
-
 
 ostream &
 operator <<(ostream &out, const RunSet &runs)
@@ -51,30 +28,6 @@ istream &
 operator>>(istream &in, RunSet &runs)
 {
 
-    unsigned runId;
-    in.exceptions(ios::badbit);
-    while(in >> runId)
-    {
-        runs.insert(runId);
-    }
-
+    runs.load(in);
     return in;
-}
-
-size_t
-RunSet::setSize()
-{
-    return count(this->begin(), this->end(), true);
-}
-
-size_t
-RunSet::intersectionSize(const RunSet &other) const
-{
-    assert(size() == other.size());
-
-    size_t result = 0;
-    for (size_t runId = 0; runId < size(); ++runId)
-        if ((*this)[runId] && other[runId])
-            ++result;
-    return result;
 }
