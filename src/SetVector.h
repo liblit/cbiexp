@@ -10,6 +10,7 @@ class SetVector : private vector<bool>
 {
 public:
     void initialize(unsigned int); 
+    void initialize(vector<bool> &);
     void insert(unsigned);
     bool find(unsigned) const;
     size_t setSize();
@@ -17,6 +18,8 @@ public:
     void print(ostream &) const;
     void load(istream &);
     size_t intersectionSize(const SetVector &) const;
+    bool nonEmptyIntersection(const SetVector &) const; 
+    void calc_union(const SetVector &, SetVector &) const; 
 
 };
 

@@ -224,6 +224,8 @@ libanalyze_a_SOURCES =				\
 	OutcomeRunSets.h			\
 	PredCoords.cc				\
 	PredCoords.h				\
+	PredSet.cc				\
+	PredSet.h				\
 	PredStats.cc				\
 	PredStats.h				\
 	Progress/Bounded.cc			\

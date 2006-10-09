@@ -9,8 +9,8 @@
 #include <list>
 #include <iterator>
 #include "RunsDirectory.h"
-#include "NumRuns.h"
 #include "Progress/Bounded.h"
+#include "PredSet.h"
 #include "PredStats.h"
 
 using namespace std;
@@ -21,7 +21,6 @@ static void process_cmdline(int argc, char **argv)
 {
     static const argp_child children[] = {
         { &RunsDirectory::argp, 0, 0, 0 }, 
-        { &NumRuns::argp, 0, 0, 0 }, 
         { 0, 0, 0, 0 }
     };
 
@@ -42,20 +41,12 @@ inline void process_cmdline(int, char *[]) { }
 * Set union, where set inclusion is represented by true at the 
 * appropriate index in a vector<bool>.
 ****************************************************************************/
-vector <bool> *
-set_union(const vector <bool> & first, const vector <bool> & second)
-{
-    assert(first.size() == second.size());
-    vector<bool> * result = new vector<bool>(first.size());
-    transform(first.begin(), first.end(), second.begin(), result->begin(), logical_or<bool>());
-    return result;
-}
-
-class Union : public binary_function <vector <bool> *, vector <bool> *, vector <bool> *> {
+class Union : public binary_function <PredSet *, PredSet *, PredSet *> {
 public:
     Union() { }
-    vector <bool> * operator()(const vector <bool> * first, const vector <bool> * second) const {
-        vector <bool> * theUnion = set_union(*first, *second);
+    PredSet * operator()(const PredSet * first, const PredSet * second) const {
+        PredSet * theUnion = new PredSet(); 
+        first->calc_union(*second, *theUnion);
         delete first;
         delete second;
         return theUnion;
@@ -66,23 +57,17 @@ public:
 * We don't need to find the set which is the intersection; we just need to know
 * whether it is non-empty.
 ******************************************************************************/
-bool
-nonEmptyIntersection(const vector <bool> & first, const vector <bool> & second)
-{
-    return inner_product(first.begin(), first.end(), second.begin(), false);
-}
-
-class NonEmptyIntersection : public unary_function <vector <bool> *, bool> {
+class NonEmptyIntersection : public unary_function <PredSet *, bool> {
 public:
-    NonEmptyIntersection(const vector <bool> * first) {
+    NonEmptyIntersection(const PredSet * first) {
         this->first = first;
     }
 
-    bool operator()(const vector <bool> * second) const {
-        return nonEmptyIntersection(*first, *second); 
+    bool operator()(const PredSet * second) const {
+        return first->nonEmptyIntersection(*second); 
     }
 private:
-    const vector <bool> * first;
+    const PredSet * first;
 };
 
 /******************************************************************************
@@ -90,13 +75,13 @@ private:
 * non-empty intersection with the head remove it from the tail. Return the
 * union of the head of the list and all removed elements. 
 ******************************************************************************/
-vector <bool> *
-coalesce(list <vector <bool> *> & theList) 
+PredSet *
+coalesce(list <PredSet *> & theList) 
 {
-    vector <bool> * head = theList.front();
+    PredSet * head = theList.front();
     theList.pop_front();
-    list <vector <bool> *>::iterator keep = partition(theList.begin(), theList.end(), NonEmptyIntersection(head));
-    vector <bool> * theUnion = accumulate(theList.begin(), keep, head, Union());
+    list <PredSet *>::iterator keep = partition(theList.begin(), theList.end(), NonEmptyIntersection(head));
+    PredSet * theUnion = accumulate(theList.begin(), keep, head, Union());
     theList.erase(theList.begin(), keep);
     return theUnion;
 }
@@ -127,7 +112,7 @@ int main(int argc, char** argv)
     * pred other than itself then we have found a set of closely associated 
     * predicates that is worth keeping. 
     **************************************************************************/
-    vector < vector <bool> * > sets; 
+    vector < PredSet * > sets; 
     const unsigned numPreds = PredStats::count();
     ifstream pred_MI("pred_pred_MI_normalized.txt");
     Progress::Bounded reading("calculating predicate sets", numPreds);
@@ -142,7 +127,7 @@ int main(int argc, char** argv)
         int cardinality = count(current.begin(), current.end(), true);
         assert(cardinality > 0);
         if(cardinality > 1) {
-            sets.push_back(new vector<bool>(current));
+            sets.push_back(new PredSet(current));
         }
     }
     assert(pred_MI.peek() == EOF);
@@ -155,14 +140,10 @@ int main(int argc, char** argv)
     **************************************************************************/
     ofstream out("pred_sets.txt");
     Progress::Bounded coalescing("coalescing sets", sets.size()); 
-    list <vector <bool> * > set_list(sets.begin(), sets.end()); 
+    list <PredSet * > set_list(sets.begin(), sets.end()); 
     while(!set_list.empty()) {
         coalescing.step();
-        vector <bool> * current = coalesce(set_list); 
-        assert(current->size() == numPreds); 
-        for(unsigned int j = 0; j < current->size(); j++) {
-            if((*current)[j]) out << j << "\t"; 
-        }
+        out << *coalesce(set_list);
         out << "\n";
     }
     out.close();

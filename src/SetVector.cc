@@ -12,6 +12,12 @@ SetVector::initialize(unsigned int length)
 }
 
 void
+SetVector::initialize(vector<bool> & other)
+{
+    swap(other); 
+}
+
+void
 SetVector::insert(unsigned runId)
 {
     at(runId) = true;
@@ -65,6 +71,13 @@ SetVector::setSize()
     return count(this->begin(), this->end(), true);
 }
 
+bool
+SetVector::nonEmptyIntersection(const SetVector & other) const
+{
+    assert(size() == other.size()); 
+    return inner_product(begin(), end(), other.begin(), false);
+}
+
 size_t
 SetVector::intersectionSize(const SetVector &other) const
 {
@@ -75,4 +88,11 @@ SetVector::intersectionSize(const SetVector &other) const
         if ((*this)[runId] && other[runId])
             ++result;
     return result;
+}
+
+void
+SetVector::calc_union(const SetVector & other, SetVector & result) const
+{
+    assert(size() == other.size() && size() == result.size());
+    transform(begin(), end(), other.begin(), result.begin(), logical_or<bool>());
 }
