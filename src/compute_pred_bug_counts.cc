@@ -39,18 +39,16 @@ inline void process_cmdline(int, char *[]) { }
 
 #endif // HAVE_ARGP_H
 
-class IntersectionSize : public unary_function <RunSet *, unsigned int> {
+class IntersectionSize : public binary_function <RunSet *, RunSet *, unsigned int> {
 public:
-    IntersectionSize(const FailureUniverse * univ, const RunSet * X) {
+    IntersectionSize(const FailureUniverse * univ) {
         this->univ = univ;
-        this->X = X;    
     }
 
-    unsigned int operator()(const RunSet * Y) const {
+    unsigned int operator()(const RunSet * X, const RunSet * Y) const {
         return univ->c_Xtrue_Ytrue(*X,*Y);  
     }
 private:
-    const RunSet * X;
     const FailureUniverse * univ;
 };
 
@@ -113,7 +111,7 @@ int main(int argc, char** argv)
         /*********************************************************************
         * Print predicate/count table
         *********************************************************************/
-        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<unsigned int> (out, "\t"), IntersectionSize(&univ, &current.failure));
+        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<unsigned int> (out, "\t"), bind2nd(IntersectionSize(&univ), &current.failure));
         out << "\n";
     }
     assert(tru.peek() == EOF); 

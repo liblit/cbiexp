@@ -37,19 +37,17 @@ inline void process_cmdline(int, char *[]) { }
 
 #endif // HAVE_ARGP_H
 
-class SignedMutualInformation : public unary_function <RunSet *, double> {
+class SignedMutualInformation : public binary_function <RunSet *, RunSet *, double> {
 public:
-   SignedMutualInformation(const FailureUniverse * univ, const RunSet * X) {
+   SignedMutualInformation(const FailureUniverse * univ) {
        this->univ = univ;
-       this->X = X;
    }
 
-   double operator()(const RunSet * Y) const {
+   double operator()(const RunSet * X, const RunSet * Y) const {
        return univ->signedMI(*X, *Y); 
    }
 
 private:
-    const RunSet * X;
     const FailureUniverse * univ;
 };
 
@@ -81,7 +79,7 @@ int main(int argc, char** argv)
     Progress::Bounded progress("calculating mutual information", numPreds);
     for(unsigned int i = 0; i < numPreds; i++) {
         progress.step();
-        transform(pred_tru_runs.begin(), pred_tru_runs.end(), ostream_iterator<double>(out, "\t"), SignedMutualInformation(&univ, (pred_tru_runs[i])));
+        transform(pred_tru_runs.begin(), pred_tru_runs.end(), ostream_iterator<double>(out, "\t"), bind2nd(SignedMutualInformation(&univ), (pred_tru_runs[i])));
         out << "\n";
     }
     out.close(); 

@@ -40,19 +40,17 @@ inline void process_cmdline(int, char *[]) { }
 
 #endif // HAVE_ARGP_H
 
-class SignedMutualInformation : public unary_function <RunSet *, double> {
+class SignedMutualInformation : public binary_function <RunSet *, RunSet *, double> {
 public:
-   SignedMutualInformation(const FailureUniverse * univ, const RunSet * X) {
+   SignedMutualInformation(const FailureUniverse * univ) {
        this->univ = univ;
-       this->X = X;
    }
 
-   double operator()(const RunSet * Y) const {
+   double operator()(const RunSet * X, const RunSet * Y) const {
        return univ->signedMI(*X, *Y); 
    }
 
 private:
-    const RunSet * X;
     const FailureUniverse * univ;
 };
 
@@ -115,7 +113,7 @@ int main(int argc, char** argv)
         /*********************************************************************
         * Print predicate/MI table
         *********************************************************************/
-        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<double> (out, "\t"), SignedMutualInformation(&univ, &current.failure));
+        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<double> (out, "\t"), bind2nd(SignedMutualInformation(&univ), &current.failure));
         out << "\n";
     }
     assert(tru.peek() == EOF);

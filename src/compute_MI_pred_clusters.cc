@@ -43,7 +43,6 @@ inline void process_cmdline(int, char *[]) { }
 ****************************************************************************/
 class Union : public binary_function <PredSet *, PredSet *, PredSet *> {
 public:
-    Union() { }
     PredSet * operator()(const PredSet * first, const PredSet * second) const {
         PredSet * theUnion = new PredSet(); 
         first->calc_union(*second, *theUnion);
@@ -57,17 +56,11 @@ public:
 * We don't need to find the set which is the intersection; we just need to know
 * whether it is non-empty.
 ******************************************************************************/
-class NonEmptyIntersection : public unary_function <PredSet *, bool> {
+class NonEmptyIntersection : public binary_function <PredSet *, PredSet *, bool> {
 public:
-    NonEmptyIntersection(const PredSet * first) {
-        this->first = first;
-    }
-
-    bool operator()(const PredSet * second) const {
+    bool operator()(const PredSet * first, const PredSet * second) const {
         return first->nonEmptyIntersection(*second); 
     }
-private:
-    const PredSet * first;
 };
 
 /******************************************************************************
@@ -80,25 +73,11 @@ coalesce(list <PredSet *> & theList)
 {
     PredSet * head = theList.front();
     theList.pop_front();
-    list <PredSet *>::iterator keep = partition(theList.begin(), theList.end(), NonEmptyIntersection(head));
+    list <PredSet *>::iterator keep = partition(theList.begin(), theList.end(), bind2nd(NonEmptyIntersection(), head));
     PredSet * theUnion = accumulate(theList.begin(), keep, head, Union());
     theList.erase(theList.begin(), keep);
     return theUnion;
 }
-
-class LowerBound : public unary_function <double, bool> {
-public:
-    LowerBound(double bound) {
-        this->bound = bound;
-    }
-
-    bool operator()(double val) const {
-        return val >= bound;
-    }
-
-private:
-    double bound;
-};
 
 int main(int argc, char** argv)
 {
@@ -108,7 +87,6 @@ int main(int argc, char** argv)
     /**************************************************************************
     * Read in the normalized mutual information between a pred and all other
     * preds. The normalized mutual information between a pred and itself is 1.
-    * If the predicate has a score that is at least 0.9 with at least one
     * pred other than itself then we have found a set of closely associated 
     * predicates that is worth keeping. 
     **************************************************************************/
@@ -122,7 +100,8 @@ int main(int argc, char** argv)
         getline(pred_MI, line);
         istringstream parse(line);
         vector <bool> current;
-        transform(istream_iterator<double>(parse), istream_iterator<double>(), back_inserter(current), LowerBound(0.9));
+        transform(istream_iterator<double>(parse), istream_iterator<double>(),
+        back_inserter(current), bind2nd(greater<double>(),0.9));
         assert(current.size() == numPreds);
         int cardinality = count(current.begin(), current.end(), true);
         assert(cardinality > 0);
