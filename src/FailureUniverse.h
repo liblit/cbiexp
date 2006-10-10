@@ -32,8 +32,8 @@ private:
     unsigned int end;
     IsMember test;
     unsigned int count() const;
-    template <class Predicate> unsigned int count(const RunSet &, const Predicate) const;
-    template <class Predicate1, class Predicate2> unsigned int count(const RunSet &, const Predicate1, const RunSet &, const Predicate2) const;
+    template<class Predicate> unsigned int count(const Predicate &) const;
+    template<class Predicate1, class Predicate2> unsigned int count(const Predicate1 &, const Predicate2 &) const;
     double MIterm(double, double, double) const;
     double log2(double) const;
 };

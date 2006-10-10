@@ -18,6 +18,12 @@ SetVector::initialize(vector<bool> & other)
 }
 
 void
+SetVector::set_swap(SetVector & other)
+{
+    swap(other);
+}
+
+void
 SetVector::insert(unsigned runId)
 {
     at(runId) = true;

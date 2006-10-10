@@ -18,10 +18,14 @@ IsMember::operator()(unsigned int runId) const
 
 class IsIn : public unary_function <unsigned int, bool> {
 public:
-    IsIn() { }
-    bool operator()(bool result) const {
-        return result; 
+    IsIn(const RunSet * X) {
+        this->X = X; 
     }
+    bool operator()(unsigned int runId) const {
+        return X->find(runId); 
+    }
+private:
+    const RunSet * X;
 };
 
 FailureUniverse::FailureUniverse()
@@ -32,24 +36,24 @@ FailureUniverse::FailureUniverse()
     if(cardinality == 0) throw EmptyUniverseException();
 }
 
-template <class Predicate>
+template<class Predicate>
 unsigned int
-FailureUniverse::count(const RunSet & X, const Predicate cond) const
+FailureUniverse::count(const Predicate & cond) const
 {
     unsigned result = 0;
     for(unsigned int runId = begin; runId < end; ++runId) {
-        if((test)(runId) && (cond)(X.find(runId))) result++;
+        if((test)(runId) && (cond)(runId)) result++;
     }
     return result;
 }
 
 template <class PredicateX, class PredicateY>
 unsigned int
-FailureUniverse::count(const RunSet & X, const PredicateX condX, const RunSet & Y, const PredicateY condY) const
+FailureUniverse::count(const PredicateX & condX, const PredicateY & condY) const
 {
     unsigned result = 0;
     for(unsigned int runId = begin; runId < end; ++runId) {
-        if((test)(runId) && (condX)(X.find(runId)) && (condY)(Y.find(runId))) result++;
+        if((test)(runId) && (condX)(runId) && (condY)(runId)) result++;
     }
     return result;
 }
@@ -74,7 +78,7 @@ FailureUniverse::count() const
 double
 FailureUniverse::mean(const RunSet & X) const
 {
-    return ((double)count(X, IsIn()))/((double)cardinality); 
+    return ((double)count(IsIn(&X)))/((double)cardinality); 
 }
 
 /******************************************************************************
@@ -151,7 +155,7 @@ FailureUniverse::signedMI(const RunSet & X, const RunSet & Y) const
 unsigned int
 FailureUniverse::c_Xtrue_Ytrue(const RunSet & X, const RunSet & Y) const
 {
-    return count(X, IsIn(), Y, IsIn());
+    return count(IsIn(&X), IsIn(&Y));
 }
 
 /******************************************************************************
@@ -170,7 +174,7 @@ FailureUniverse::p_Xtrue_Ytrue(const RunSet & X, const RunSet & Y) const
 double
 FailureUniverse::p_Xtrue_Yfalse(const RunSet & X, const RunSet & Y) const
 {
-    return ((double)count(X, IsIn(), Y, not1(IsIn())))/((double)cardinality);
+    return ((double)count(IsIn(&X), not1(IsIn(&Y))))/((double)cardinality);
 }
 
 /******************************************************************************
@@ -180,7 +184,7 @@ FailureUniverse::p_Xtrue_Yfalse(const RunSet & X, const RunSet & Y) const
 double
 FailureUniverse::p_Xfalse_Yfalse(const RunSet & X, const RunSet & Y) const
 {
-    return ((double)count(X, not1(IsIn()), Y, not1(IsIn())))/((double)cardinality);
+    return ((double)count(not1(IsIn(&X)), not1(IsIn(&Y))))/((double)cardinality);
 }
 
 /******************************************************************************
@@ -189,7 +193,7 @@ FailureUniverse::p_Xfalse_Yfalse(const RunSet & X, const RunSet & Y) const
 double
 FailureUniverse::p_Xtrue(const RunSet & X) const
 {
-    return ((double)count(X, IsIn()))/((double)cardinality);
+    return ((double)count(IsIn(&X)))/((double)cardinality);
 }
 
 /******************************************************************************
@@ -198,5 +202,5 @@ FailureUniverse::p_Xtrue(const RunSet & X) const
 double
 FailureUniverse::p_Xfalse(const RunSet & X) const
 {
-    return ((double)count(X, not1(IsIn())))/((double)cardinality);
+    return ((double)count(not1(IsIn(&X))))/((double)cardinality);
 }

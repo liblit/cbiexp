@@ -20,6 +20,7 @@ public:
     size_t intersectionSize(const SetVector &) const;
     bool nonEmptyIntersection(const SetVector &) const; 
     void calc_union(const SetVector &, SetVector &) const; 
+    void set_swap(SetVector &);
 
 };
 
