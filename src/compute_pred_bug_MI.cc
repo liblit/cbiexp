@@ -113,7 +113,7 @@ int main(int argc, char** argv)
         /*********************************************************************
         * Print predicate/MI table
         *********************************************************************/
-        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<double> (out, "\t"), bind2nd(SignedMutualInformation(&univ), &current.failure));
+        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<double> (out, "\t"), bind1st(SignedMutualInformation(&univ), &current.failure));
         out << "\n";
     }
     assert(tru.peek() == EOF);

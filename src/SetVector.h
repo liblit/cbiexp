@@ -13,7 +13,8 @@ public:
     void initialize(vector<bool> &);
     void insert(unsigned);
     bool find(unsigned) const;
-    size_t setSize();
+    size_t setSize() const;
+    size_t numEntries() const;
 
     void print(ostream &) const;
     void load(istream &);
@@ -21,6 +22,7 @@ public:
     bool nonEmptyIntersection(const SetVector &) const; 
     void calc_union(const SetVector &, SetVector &) const; 
     void set_swap(SetVector &);
+    template <typename T> void mask(const vector <T> &, vector <T> &) const;
 
 };
 

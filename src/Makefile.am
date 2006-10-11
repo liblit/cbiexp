@@ -7,6 +7,7 @@ chi2test = chi2test
 endif
 
 noinst_PROGRAMS =				\
+	assign_runs_to_pred_sets			\
 	build_tsgraph				\
 	calc_sober				\
 	calc_truthprobs				\
@@ -59,6 +60,9 @@ noinst_LIBRARIES = libanalyze.a
 
 all-local: analysis-rules.mk
 
+
+assign_runs_to_pred_sets_SOURCES = assign_runs_to_pred_sets.cc
+assign_runs_to_pred_sets_LDADD = libanalyze.a -ldl
 
 build_tsgraph_SOURCES = build_tsgraph.cc
 build_tsgraph_LDADD = libanalyze.a -ldl

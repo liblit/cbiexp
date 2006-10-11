@@ -25,6 +25,7 @@ public:
     double p_Xfalse(const RunSet &) const;
     double MI(const RunSet &, const RunSet &) const;
     double signedMI(const RunSet &, const RunSet &) const;
+    bool majority(vector <RunSet *> *, unsigned int) const;
 
 private:
     unsigned int cardinality;

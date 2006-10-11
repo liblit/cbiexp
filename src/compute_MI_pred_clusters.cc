@@ -73,7 +73,7 @@ coalesce(list <PredSet *> & theList)
 {
     PredSet * head = theList.front();
     theList.pop_front();
-    list <PredSet *>::iterator keep = partition(theList.begin(), theList.end(), bind2nd(NonEmptyIntersection(), head));
+    list <PredSet *>::iterator keep = partition(theList.begin(), theList.end(), bind1st(NonEmptyIntersection(), head));
     PredSet * theUnion = accumulate(theList.begin(), keep, head, Union());
     theList.erase(theList.begin(), keep);
     return theUnion;
@@ -100,8 +100,7 @@ int main(int argc, char** argv)
         getline(pred_MI, line);
         istringstream parse(line);
         vector <bool> current;
-        transform(istream_iterator<double>(parse), istream_iterator<double>(),
-        back_inserter(current), bind2nd(greater<double>(),0.9));
+        transform(istream_iterator<double>(parse), istream_iterator<double>(), back_inserter(current), bind2nd(greater<double>(),0.9));
         assert(current.size() == numPreds);
         int cardinality = count(current.begin(), current.end(), true);
         assert(cardinality > 0);

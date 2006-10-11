@@ -28,12 +28,78 @@ private:
     const RunSet * X;
 };
 
+class IsInBoth : public unary_function <unsigned int, bool> {
+public:
+    IsInBoth(const RunSet * X, const RunSet * Y) {
+        this->X = X;
+        this->Y = Y;
+    }
+    bool operator()(unsigned int runId) const {
+        return X->find(runId) && Y->find(runId);
+    }
+private:
+    const RunSet * X;
+    const RunSet * Y;
+};
+
+class IsInNeither : public unary_function <unsigned int, bool> {
+public:
+    IsInNeither(const RunSet * X, const RunSet * Y) {
+        this->X = X;
+        this->Y = Y;
+    }
+    bool operator()(unsigned int runId) const {
+        return !(X->find(runId)) && !(Y->find(runId));
+    }
+private:
+    const RunSet * X;
+    const RunSet * Y;
+};
+
+class IsInXNotInY : public unary_function <unsigned int, bool> {
+public:
+    IsInXNotInY(const RunSet * X, const RunSet * Y) {
+        this->X = X;
+        this->Y = Y;
+    }
+    bool operator()(unsigned int runId) const {
+        return X->find(runId) && !(Y->find(runId));
+    }
+private:
+    const RunSet * X;
+    const RunSet * Y;
+};
+
 FailureUniverse::FailureUniverse()
 {
     begin = NumRuns::begin;
     end = NumRuns::end;
     cardinality = count(); 
     if(cardinality == 0) throw EmptyUniverseException();
+}
+
+class Find : public unary_function <RunSet *, bool> {
+public:
+    Find(unsigned int runId) {
+        this->runId = runId;
+    }
+    bool operator()(RunSet * theSet) {
+        return theSet->find(runId);
+    }
+
+private:
+    unsigned int runId;
+};
+
+bool
+FailureUniverse::majority(vector <RunSet *> * sets, unsigned int runId) const
+{
+    if((test)(runId)) {
+        unsigned int count = count_if(sets->begin(), sets->end(), Find(runId));
+        return ((double)count)/((double)sets->size()) > 0.5 ? true : false;
+    } else {
+      return false;
+    }
 }
 
 template<class Predicate>
@@ -47,29 +113,13 @@ FailureUniverse::count(const Predicate & cond) const
     return result;
 }
 
-template <class PredicateX, class PredicateY>
-unsigned int
-FailureUniverse::count(const PredicateX & condX, const PredicateY & condY) const
-{
-    unsigned result = 0;
-    for(unsigned int runId = begin; runId < end; ++runId) {
-        if((test)(runId) && (condX)(runId) && (condY)(runId)) result++;
-    }
-    return result;
-}
-
-
 /******************************************************************************
 * Count the number of failing runs in the test set---but not in the train set.
 ******************************************************************************/
 unsigned int
 FailureUniverse::count() const
 {
-    unsigned result = 0;
-    for(unsigned runId = begin; runId < end; ++runId) {
-        if((test)(runId)) ++result;
-    }
-    return result;
+    return count(bind1st(logical_or<bool>(), true));
 }
 
 /******************************************************************************
@@ -155,7 +205,7 @@ FailureUniverse::signedMI(const RunSet & X, const RunSet & Y) const
 unsigned int
 FailureUniverse::c_Xtrue_Ytrue(const RunSet & X, const RunSet & Y) const
 {
-    return count(IsIn(&X), IsIn(&Y));
+    return count(IsInBoth(&X,&Y));
 }
 
 /******************************************************************************
@@ -174,7 +224,7 @@ FailureUniverse::p_Xtrue_Ytrue(const RunSet & X, const RunSet & Y) const
 double
 FailureUniverse::p_Xtrue_Yfalse(const RunSet & X, const RunSet & Y) const
 {
-    return ((double)count(IsIn(&X), not1(IsIn(&Y))))/((double)cardinality);
+    return ((double)count(IsInXNotInY(&X, &Y)))/((double)cardinality);
 }
 
 /******************************************************************************
@@ -184,7 +234,7 @@ FailureUniverse::p_Xtrue_Yfalse(const RunSet & X, const RunSet & Y) const
 double
 FailureUniverse::p_Xfalse_Yfalse(const RunSet & X, const RunSet & Y) const
 {
-    return ((double)count(not1(IsIn(&X)), not1(IsIn(&Y))))/((double)cardinality);
+    return ((double)count(IsInNeither(&X,&Y)))/((double)cardinality);
 }
 
 /******************************************************************************

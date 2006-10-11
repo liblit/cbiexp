@@ -111,7 +111,7 @@ int main(int argc, char** argv)
         /*********************************************************************
         * Print predicate/count table
         *********************************************************************/
-        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<unsigned int> (out, "\t"), bind2nd(IntersectionSize(&univ), &current.failure));
+        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<unsigned int> (out, "\t"), bind1st(IntersectionSize(&univ), &current.failure));
         out << "\n";
     }
     assert(tru.peek() == EOF); 

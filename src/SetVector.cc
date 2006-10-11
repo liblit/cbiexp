@@ -72,7 +72,13 @@ operator>>(istream &in, SetVector &runs)
 }
 
 size_t
-SetVector::setSize()
+SetVector::numEntries() const
+{
+    return size();
+}
+
+size_t
+SetVector::setSize() const
 {
     return count(this->begin(), this->end(), true);
 }
@@ -101,4 +107,14 @@ SetVector::calc_union(const SetVector & other, SetVector & result) const
 {
     assert(size() == other.size() && size() == result.size());
     transform(begin(), end(), other.begin(), result.begin(), logical_or<bool>());
+}
+
+template <typename T> 
+void
+SetVector::mask(const vector <T> & theVec, vector <T> & result) const
+{
+    assert(size() == theVec.size());
+    for(unsigned int i = 0; i < size(); i++) {
+        if(find(i)) result.push_back(theVec[i]);
+    }
 }
