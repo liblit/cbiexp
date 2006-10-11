@@ -39,31 +39,6 @@ inline void process_cmdline(int, char *[]) { }
 
 #endif // HAVE_ARGP_H
 
-double
-log2(double val)
-{
-    return log(val)/M_LN2;
-}
-
-double
-term(double prob)
-{
-    return prob == 0.0 ? 0.0 :
-                    prob * log2(1 / prob);
-}
-
-/*******************************************************************************
-* Here we compute the entropy of a binary value. 
-*******************************************************************************/
-double
-entropy(FailureUniverse & univ, RunSet & X)
-{
-    double Xtrue = univ.p_Xtrue(X);
-    double Xfalse = univ.p_Xfalse(X);
-
-    return term(Xtrue) + term(Xfalse); 
-}
-
 int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
@@ -87,8 +62,7 @@ int main(int argc, char** argv)
         /*********************************************************************
         * Print predicate entropy 
         *********************************************************************/
-        fprintf(out, "%g\t", entropy(univ, current.failure));
-        fprintf(out, "\n");
+        fprintf(out, "%g\n", univ.entropy(current.failure));
     }
     assert(tru.peek() == EOF);
     fclose(out); 

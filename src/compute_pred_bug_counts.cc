@@ -41,8 +41,8 @@ inline void process_cmdline(int, char *[]) { }
 
 class IntersectionSize : public binary_function <RunSet *, RunSet *, unsigned int> {
 public:
-    IntersectionSize(const FailureUniverse * univ) {
-        this->univ = univ;
+    IntersectionSize(const FailureUniverse & univ) {
+        this->univ = &univ;
     }
 
     unsigned int operator()(const RunSet * X, const RunSet * Y) const {
@@ -111,7 +111,7 @@ int main(int argc, char** argv)
         /*********************************************************************
         * Print predicate/count table
         *********************************************************************/
-        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<unsigned int> (out, "\t"), bind1st(IntersectionSize(&univ), &current.failure));
+        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<unsigned int> (out, "\t"), bind1st(IntersectionSize(univ), &current.failure));
         out << "\n";
     }
     assert(tru.peek() == EOF); 

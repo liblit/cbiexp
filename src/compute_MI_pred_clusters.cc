@@ -44,8 +44,8 @@ inline void process_cmdline(int, char *[]) { }
 class Union : public binary_function <PredSet *, PredSet *, PredSet *> {
 public:
     PredSet * operator()(const PredSet * first, const PredSet * second) const {
-        PredSet * theUnion = new PredSet(); 
-        first->calc_union(*second, *theUnion);
+        PredSet * theUnion = new PredSet();
+        calc_union(*first, *second, *theUnion);
         delete first;
         delete second;
         return theUnion;
@@ -59,7 +59,7 @@ public:
 class NonEmptyIntersection : public binary_function <PredSet *, PredSet *, bool> {
 public:
     bool operator()(const PredSet * first, const PredSet * second) const {
-        return first->nonEmptyIntersection(*second); 
+        return nonEmptyIntersection(*first, *second); 
     }
 };
 
@@ -68,7 +68,7 @@ public:
 * non-empty intersection with the head remove it from the tail. Return the
 * union of the head of the list and all removed elements. 
 ******************************************************************************/
-PredSet *
+PredSet
 coalesce(list <PredSet *> & theList) 
 {
     PredSet * head = theList.front();
@@ -76,7 +76,9 @@ coalesce(list <PredSet *> & theList)
     list <PredSet *>::iterator keep = partition(theList.begin(), theList.end(), bind1st(NonEmptyIntersection(), head));
     PredSet * theUnion = accumulate(theList.begin(), keep, head, Union());
     theList.erase(theList.begin(), keep);
-    return theUnion;
+    PredSet result(*theUnion);
+    delete theUnion;
+    return result;
 }
 
 int main(int argc, char** argv)
@@ -121,7 +123,7 @@ int main(int argc, char** argv)
     list <PredSet * > set_list(sets.begin(), sets.end()); 
     while(!set_list.empty()) {
         coalescing.step();
-        out << *coalesce(set_list);
+        out << coalesce(set_list);
         out << "\n";
     }
     out.close();

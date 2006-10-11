@@ -92,11 +92,11 @@ private:
 };
 
 bool
-FailureUniverse::majority(vector <RunSet *> * sets, unsigned int runId) const
+FailureUniverse::majority(vector <RunSet *> & sets, unsigned int runId) const
 {
     if((test)(runId)) {
-        unsigned int count = count_if(sets->begin(), sets->end(), Find(runId));
-        return ((double)count)/((double)sets->size()) > 0.5 ? true : false;
+        unsigned int count = count_if(sets.begin(), sets.end(), Find(runId));
+        return ((double)count)/((double)sets.size()) > 0.5 ? true : false;
     } else {
       return false;
     }
@@ -146,6 +146,21 @@ FailureUniverse::covariance(const RunSet & X, const RunSet & Y) const
         }
     }
     return ((double)result)/((double)cardinality);
+}
+
+/*******************************************************************************
+* Calculate entropy of a single run set
+*******************************************************************************/
+double
+FailureUniverse::entropyTerm(double prob) const
+{
+    return prob == 0.0 ? 0.0 : prob * log2(1.0/ prob); 
+}
+
+double
+FailureUniverse::entropy(const RunSet & X) const
+{
+    return entropyTerm(p_Xtrue(X)) + entropyTerm(p_Xfalse(X));
 }
 
 /*******************************************************************************

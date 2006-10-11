@@ -12,13 +12,16 @@ SetVector::initialize(unsigned int length)
 }
 
 void
-SetVector::initialize(vector<bool> & other)
+SetVector::initialize(const vector<bool> & other)
 {
-    swap(other); 
+    resize(other.size(), false);
+    for(unsigned int i = 0; i < size(); i++) {
+        at(i) = other[i];
+    }
 }
 
 void
-SetVector::set_swap(SetVector & other)
+SetVector::initialize(vector<bool> & other)
 {
     swap(other);
 }
@@ -84,10 +87,10 @@ SetVector::setSize() const
 }
 
 bool
-SetVector::nonEmptyIntersection(const SetVector & other) const
+nonEmptyIntersection(const SetVector & first, const SetVector & second)
 {
-    assert(size() == other.size()); 
-    return inner_product(begin(), end(), other.begin(), false);
+    assert(first.size() == second.size()); 
+    return inner_product(first.begin(), first.end(), second.begin(), false);
 }
 
 size_t
@@ -102,19 +105,23 @@ SetVector::intersectionSize(const SetVector &other) const
     return result;
 }
 
-void
-SetVector::calc_union(const SetVector & other, SetVector & result) const
+SetVector calc_union(const SetVector & first, const SetVector & snd)
 {
-    assert(size() == other.size() && size() == result.size());
-    transform(begin(), end(), other.begin(), result.begin(), logical_or<bool>());
+    assert(first.size() == snd.size());
+    SetVector result;
+    result.resize(first.size(), false);
+    for(unsigned int i = 0; i < result.size(); i++) {
+        result.at(i) = first.at(i) || snd.at(i);
+    }
+    return result;
 }
 
-template <typename T> 
 void
-SetVector::mask(const vector <T> & theVec, vector <T> & result) const
+calc_union(const SetVector & first, const SetVector & snd, SetVector & result)
 {
-    assert(size() == theVec.size());
-    for(unsigned int i = 0; i < size(); i++) {
-        if(find(i)) result.push_back(theVec[i]);
+    assert(first.size() == snd.size());
+    assert(first.size() == result.size());
+    for(unsigned int i = 0; i < result.size(); i++) {
+        result.at(i) = first.at(i) || snd.at(i);
     }
 }

@@ -17,6 +17,7 @@ public:
     FailureUniverse();
     double mean(const RunSet &) const;
     double covariance(const RunSet &, const RunSet &) const;
+    double entropy(const RunSet &) const;
     unsigned int c_Xtrue_Ytrue(const RunSet &, const RunSet &) const;
     double p_Xtrue_Ytrue(const RunSet &, const RunSet &) const;
     double p_Xtrue_Yfalse(const RunSet &, const RunSet &) const;
@@ -25,7 +26,7 @@ public:
     double p_Xfalse(const RunSet &) const;
     double MI(const RunSet &, const RunSet &) const;
     double signedMI(const RunSet &, const RunSet &) const;
-    bool majority(vector <RunSet *> *, unsigned int) const;
+    bool majority(vector <RunSet *> &, unsigned int) const;
 
 private:
     unsigned int cardinality;
@@ -34,8 +35,8 @@ private:
     IsMember test;
     unsigned int count() const;
     template<class Predicate> unsigned int count(const Predicate &) const;
-    template<class Predicate1, class Predicate2> unsigned int count(const Predicate1 &, const Predicate2 &) const;
     double MIterm(double, double, double) const;
+    double entropyTerm(double) const;
     double log2(double) const;
 };
 

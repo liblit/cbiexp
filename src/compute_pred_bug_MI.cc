@@ -42,8 +42,8 @@ inline void process_cmdline(int, char *[]) { }
 
 class SignedMutualInformation : public binary_function <RunSet *, RunSet *, double> {
 public:
-   SignedMutualInformation(const FailureUniverse * univ) {
-       this->univ = univ;
+   SignedMutualInformation(const FailureUniverse & univ) {
+       this->univ = &univ;
    }
 
    double operator()(const RunSet * X, const RunSet * Y) const {
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
         /*********************************************************************
         * Print predicate/MI table
         *********************************************************************/
-        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<double> (out, "\t"), bind1st(SignedMutualInformation(&univ), &current.failure));
+        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<double> (out, "\t"), bind1st(SignedMutualInformation(univ), &current.failure));
         out << "\n";
     }
     assert(tru.peek() == EOF);
