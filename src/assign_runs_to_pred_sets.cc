@@ -60,8 +60,8 @@ public:
         vector <RunSet *> run_sets; 
         transform(outcomes->begin(), outcomes->end(), back_inserter(run_sets), ExtractFailures());
         RunSet * result = new RunSet();
-        for(unsigned int i = 0; i < result->numEntries(); i++) {
-            if(univ->majority(run_sets, i)) result->insert(i);
+        for(unsigned int i = 0; i < result->size(); i++) {
+            if(univ->majority(run_sets, i)) result->set(i);
         }
         return result;
     } 
@@ -79,7 +79,7 @@ public:
         assert(numPreds == outcomes->size());
         vector <OutcomeRunSets *> * result = new vector<OutcomeRunSets *>();
         for(unsigned int i = 0; i < numPreds; i++) {
-            if(thePreds->find(i)) result->push_back((*outcomes)[i]);
+            if(thePreds->test(i)) result->push_back((*outcomes)[i]);
         }
         return result;
     }

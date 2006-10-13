@@ -6,14 +6,12 @@
 #include "SetVector.h"
 
 using namespace std;
+using namespace boost;
 
 class RunSet : public SetVector {
 public:
     RunSet();
 };
-
-ostream & operator<<(ostream &, const RunSet &);
-istream & operator>>(istream &, RunSet &); 
 
 #endif // !INCLUDE_RunSet_h
 

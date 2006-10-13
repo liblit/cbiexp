@@ -14,20 +14,5 @@ using namespace std;
 
 RunSet::RunSet()
 {
-    initialize(NumRuns::end);
-}
-
-ostream &
-operator <<(ostream &out, const RunSet &runs)
-{
-    runs.print(out);
-    return out;
-}
-
-istream &
-operator>>(istream &in, RunSet &runs)
-{
-
-    runs.load(in);
-    return in;
+    resize(NumRuns::end);
 }

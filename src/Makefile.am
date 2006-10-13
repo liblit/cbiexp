@@ -7,10 +7,11 @@ chi2test = chi2test
 endif
 
 noinst_PROGRAMS =				\
-	assign_runs_to_pred_sets			\
+	assign_runs_to_pred_sets		\
 	build_tsgraph				\
 	calc_sober				\
 	calc_truthprobs				\
+	calc_MI_oracle                          \
 	$(chi2test)				\
 	cluster_runs				\
 	collect_parmstats			\
@@ -73,6 +74,9 @@ calc_sober_LDADD = libanalyze.a $(GSL_LIBS) -ldl
 
 calc_truthprobs_SOURCES = calc_truthprobs.cc
 calc_truthprobs_LDADD = libanalyze.a -ldl
+
+calc_MI_oracle_SOURCES = calc_MI_oracle.cc
+calc_MI_oracle_LDADD = libanalyze.a -ldl
 
 chi2test_SOURCES = chi2test.cc
 chi2test_LDADD = libanalyze.a $(GSL_LIBS)

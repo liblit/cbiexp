@@ -10,11 +10,9 @@ using namespace std;
 class PredSet : public SetVector {
 public:
     PredSet();
-    PredSet(vector<bool> &);
+private:
+    PredSet& operator=(const PredSet &); 
 };
-
-ostream & operator<<(ostream &, const PredSet &);
-istream & operator>>(istream &, PredSet &); 
 
 #endif // !INCLUDE_RunSet_h
 

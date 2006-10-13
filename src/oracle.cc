@@ -99,10 +99,10 @@ int main(int argc, char** argv)
         FILE* fp = fopenRead(filename);
 	try {
             int bugId = getBug(fp);
-	    bug_run_map[bugId].insert(runId);
+	    bug_run_map[bugId].set(runId);
         }
 	catch(UnknownBugException & e) {
-	    unknown_runs.insert(runId);
+	    unknown_runs.set(runId);
 	}
         fclose(fp);
     }

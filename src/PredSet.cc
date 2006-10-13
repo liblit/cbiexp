@@ -9,25 +9,5 @@ using namespace std;
 
 PredSet::PredSet()
 {
-    initialize(PredStats::count());
-}
-
-PredSet::PredSet(vector<bool> & other)
-{
-    initialize(other);
-}
-
-ostream &
-operator <<(ostream &out, const PredSet &runs)
-{
-    runs.print(out);
-    return out;
-}
-
-istream &
-operator>>(istream &in, PredSet &runs)
-{
-
-    runs.load(in);
-    return in;
+    resize(PredStats::count());
 }

@@ -14,9 +14,9 @@ using namespace std;
 
 
 void
-OutcomeRunSets::insert(Outcome outcome, unsigned runId)
+OutcomeRunSets::insert(Outcome outcome, size_type runId)
 {
-    (this->*outcome).insert(runId);
+    (this->*outcome).set(runId);
 }
 
 void

@@ -45,7 +45,7 @@ class Union : public binary_function <PredSet *, PredSet *, PredSet *> {
 public:
     PredSet * operator()(const PredSet * first, const PredSet * second) const {
         PredSet * theUnion = new PredSet();
-        calc_union(*first, *second, *theUnion);
+        computeOR(*first, *second, *theUnion); 
         delete first;
         delete second;
         return theUnion;
@@ -59,7 +59,7 @@ public:
 class NonEmptyIntersection : public binary_function <PredSet *, PredSet *, bool> {
 public:
     bool operator()(const PredSet * first, const PredSet * second) const {
-        return nonEmptyIntersection(*first, *second); 
+        return nonEmptyIntersection(*first, *second);
     }
 };
 
@@ -107,7 +107,9 @@ int main(int argc, char** argv)
         int cardinality = count(current.begin(), current.end(), true);
         assert(cardinality > 0);
         if(cardinality > 1) {
-            sets.push_back(new PredSet(current));
+            PredSet * temp = new PredSet();
+            temp->load(current);
+            sets.push_back(temp);
         }
     }
     assert(pred_MI.peek() == EOF);

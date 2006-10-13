@@ -22,7 +22,7 @@ public:
         this->X = X; 
     }
     bool operator()(unsigned int runId) const {
-        return X->find(runId); 
+        return X->test(runId); 
     }
 private:
     const RunSet * X;
@@ -35,7 +35,7 @@ public:
         this->Y = Y;
     }
     bool operator()(unsigned int runId) const {
-        return X->find(runId) && Y->find(runId);
+        return X->test(runId) && Y->test(runId);
     }
 private:
     const RunSet * X;
@@ -49,7 +49,7 @@ public:
         this->Y = Y;
     }
     bool operator()(unsigned int runId) const {
-        return !(X->find(runId)) && !(Y->find(runId));
+        return !(X->test(runId)) && !(Y->test(runId));
     }
 private:
     const RunSet * X;
@@ -63,7 +63,7 @@ public:
         this->Y = Y;
     }
     bool operator()(unsigned int runId) const {
-        return X->find(runId) && !(Y->find(runId));
+        return X->test(runId) && !(Y->test(runId));
     }
 private:
     const RunSet * X;
@@ -84,7 +84,7 @@ public:
         this->runId = runId;
     }
     bool operator()(RunSet * theSet) {
-        return theSet->find(runId);
+        return theSet->test(runId);
     }
 
 private:
@@ -142,7 +142,7 @@ FailureUniverse::covariance(const RunSet & X, const RunSet & Y) const
     double result = 0.0;
     for(unsigned runId = begin; runId < end; ++runId) {
         if((test)(runId)) {
-            result += (X.find(runId) - Xmean) * (Y.find(runId) - Ymean);
+            result += (X.test(runId) - Xmean) * (Y.test(runId) - Ymean);
         }
     }
     return ((double)result)/((double)cardinality);

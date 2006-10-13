@@ -3,26 +3,27 @@
 
 #include <iostream>
 #include <vector>
+#include <set>
+#include <boost/dynamic_bitset.hpp>
 
 using namespace std;
 
-class SetVector : private vector<bool>
+typedef boost::dynamic_bitset<> imp;
+typedef imp::size_type size_type;
+
+class SetVector : private boost::dynamic_bitset<> 
 {
 public:
-    void initialize(unsigned int); 
-    void initialize(const vector<bool> &);
-    void initialize(vector<bool> &);
-    void insert(unsigned);
-    bool find(unsigned) const;
-    size_t setSize() const;
-    size_t numEntries() const;
-
+    void resize(size_type, bool val = false);
+    void set(size_type, bool val = true);
+    size_type size() const;
+    bool test(size_type) const;
     void print(ostream &) const;
     void load(istream &);
-    size_t intersectionSize(const SetVector &) const;
-    friend bool nonEmptyIntersection(const SetVector &, const SetVector &); 
-    friend SetVector calc_union(const SetVector &, const SetVector &); 
-    friend void calc_union(const SetVector &, const SetVector &, SetVector &); 
+    void load(vector <bool> &);
+    friend void computeOR(const SetVector &, const SetVector &, SetVector &);
+    friend void computeAnd(const SetVector &, const SetVector &, SetVector &);
+    friend bool nonEmptyIntersection(const SetVector &, const SetVector &);
 };
 
 
