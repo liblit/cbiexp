@@ -1,125 +1,64 @@
 #include <math.h> 
 #include <functional>
+#include <vector>
+#include <algorithm>
+#include <numeric>
+#include <boost/dynamic_bitset.hpp>
 #include "NumRuns.h"
 #include "RunSet.h"
 #include "FailureUniverse.h"
 #include "classify_runs.h"
 
-IsMember::IsMember()
-{
-    classify_runs();
-}
-
-bool 
-IsMember::operator()(unsigned int runId) const
-{
-    return is_frun[runId];
-}
-
-class IsIn : public unary_function <unsigned int, bool> {
-public:
-    IsIn(const RunSet * X) {
-        this->X = X; 
-    }
-    bool operator()(unsigned int runId) const {
-        return X->test(runId); 
-    }
-private:
-    const RunSet * X;
-};
-
-class IsInBoth : public unary_function <unsigned int, bool> {
-public:
-    IsInBoth(const RunSet * X, const RunSet * Y) {
-        this->X = X;
-        this->Y = Y;
-    }
-    bool operator()(unsigned int runId) const {
-        return X->test(runId) && Y->test(runId);
-    }
-private:
-    const RunSet * X;
-    const RunSet * Y;
-};
-
-class IsInNeither : public unary_function <unsigned int, bool> {
-public:
-    IsInNeither(const RunSet * X, const RunSet * Y) {
-        this->X = X;
-        this->Y = Y;
-    }
-    bool operator()(unsigned int runId) const {
-        return !(X->test(runId)) && !(Y->test(runId));
-    }
-private:
-    const RunSet * X;
-    const RunSet * Y;
-};
-
-class IsInXNotInY : public unary_function <unsigned int, bool> {
-public:
-    IsInXNotInY(const RunSet * X, const RunSet * Y) {
-        this->X = X;
-        this->Y = Y;
-    }
-    bool operator()(unsigned int runId) const {
-        return X->test(runId) && !(Y->test(runId));
-    }
-private:
-    const RunSet * X;
-    const RunSet * Y;
-};
-
 FailureUniverse::FailureUniverse()
 {
+    classify_runs();
     begin = NumRuns::begin;
     end = NumRuns::end;
-    cardinality = count(); 
+    mask.resize(end, false);
+    for(unsigned int i = begin; i < end; i++) {
+        if(is_frun[i]) mask.set(i);
+    }
+    cardinality = mask.count(); 
     if(cardinality == 0) throw EmptyUniverseException();
 }
 
-class Find : public unary_function <RunSet *, bool> {
+class Count : public binary_function <vector <unsigned int> *, vector <unsigned int> *, vector <unsigned int> *> {
 public:
-    Find(unsigned int runId) {
-        this->runId = runId;
-    }
-    bool operator()(RunSet * theSet) {
-        return theSet->test(runId);
-    }
+    vector <unsigned int> * operator()(vector<unsigned int> * left, vector<unsigned int> * right) {
+        vector <unsigned int> * result = new vector <unsigned int>();
 
-private:
-    unsigned int runId;
+        transform(left->begin(), 
+                  left->end(), 
+                  right->begin(),  
+                  back_inserter(*result),
+                  plus<unsigned int>());
+
+        delete left;
+        delete right;
+        return result;
+    }
 };
 
-bool
-FailureUniverse::majority(vector <RunSet *> & sets, unsigned int runId) const
-{
-    if((test)(runId)) {
-        unsigned int count = count_if(sets.begin(), sets.end(), Find(runId));
-        return ((double)count)/((double)sets.size()) > 0.5 ? true : false;
-    } else {
-      return false;
+class GetCounts : public unary_function <RunSet *, vector <unsigned int> * > {
+public:
+    vector <unsigned int> * operator()(RunSet * theSet) {
+        return new vector <unsigned int> (theSet->toCounts()); 
     }
-}
+};
 
-template<class Predicate>
-unsigned int
-FailureUniverse::count(const Predicate & cond) const
+void
+FailureUniverse::vote(const vector <RunSet *> & sets, const VotingRule & rule, RunSet & result) const
 {
-    unsigned result = 0;
-    for(unsigned int runId = begin; runId < end; ++runId) {
-        if((test)(runId) && (cond)(runId)) result++;
+    vector <vector <unsigned int> * > sets_counts; 
+    transform(sets.begin(), sets.end(), back_inserter(sets_counts), GetCounts());
+    vector <unsigned int> * vote_count = accumulate(sets_counts.begin(), 
+               sets_counts.end(), 
+               new vector<unsigned int>(mask.size(), 0), 
+               Count()); 
+    for(unsigned int i = 0; i < vote_count->size(); i++) {
+        result.set(i, (rule(mask[i] ? (*vote_count)[i] : 0)));
     }
-    return result;
-}
-
-/******************************************************************************
-* Count the number of failing runs in the test set---but not in the train set.
-******************************************************************************/
-unsigned int
-FailureUniverse::count() const
-{
-    return count(bind1st(logical_or<bool>(), true));
+    delete vote_count;
 }
 
 /******************************************************************************
@@ -128,7 +67,7 @@ FailureUniverse::count() const
 double
 FailureUniverse::mean(const RunSet & X) const
 {
-    return ((double)count(IsIn(&X)))/((double)cardinality); 
+    return ((double)((X.value() & mask).count()))/((double)cardinality); 
 }
 
 /******************************************************************************
@@ -139,12 +78,11 @@ FailureUniverse::covariance(const RunSet & X, const RunSet & Y) const
 {
     double Xmean = mean(X);
     double Ymean = mean(Y);
-    double result = 0.0;
-    for(unsigned runId = begin; runId < end; ++runId) {
-        if((test)(runId)) {
-            result += (X.test(runId) - Xmean) * (Y.test(runId) - Ymean);
-        }
-    }
+    double result = 
+      ((double)((getAND(X,Y) & mask).count()) * (1.0 - Xmean) * (1.0 - Ymean)) +
+      ((double)((getDIFF(X,Y) & mask).count()) * (1.0 - Xmean) * - Ymean) +
+      ((double)((getDIFF(Y,X) & mask).count()) * -Xmean * (1.0 - Ymean)) +
+      ((double)((getOR(X,Y).flip() & mask).count()) * -Xmean * -Ymean);
     return ((double)result)/((double)cardinality);
 }
 
@@ -220,7 +158,7 @@ FailureUniverse::signedMI(const RunSet & X, const RunSet & Y) const
 unsigned int
 FailureUniverse::c_Xtrue_Ytrue(const RunSet & X, const RunSet & Y) const
 {
-    return count(IsInBoth(&X,&Y));
+    return (getAND(X,Y) & mask).count();
 }
 
 /******************************************************************************
@@ -229,7 +167,7 @@ FailureUniverse::c_Xtrue_Ytrue(const RunSet & X, const RunSet & Y) const
 double
 FailureUniverse::p_Xtrue_Ytrue(const RunSet & X, const RunSet & Y) const 
 {
-    return ((double)c_Xtrue_Ytrue(X, Y))/((double)cardinality);
+    return ((double)c_Xtrue_Ytrue(X,Y))/((double)cardinality); 
 }
 
 
@@ -239,7 +177,7 @@ FailureUniverse::p_Xtrue_Ytrue(const RunSet & X, const RunSet & Y) const
 double
 FailureUniverse::p_Xtrue_Yfalse(const RunSet & X, const RunSet & Y) const
 {
-    return ((double)count(IsInXNotInY(&X, &Y)))/((double)cardinality);
+    return ((double)(getDIFF(X,Y) & mask).count())/((double)cardinality);
 }
 
 /******************************************************************************
@@ -249,7 +187,7 @@ FailureUniverse::p_Xtrue_Yfalse(const RunSet & X, const RunSet & Y) const
 double
 FailureUniverse::p_Xfalse_Yfalse(const RunSet & X, const RunSet & Y) const
 {
-    return ((double)count(IsInNeither(&X,&Y)))/((double)cardinality);
+    return ((getOR(X,Y).flip() & mask).count())/((double)cardinality);
 }
 
 /******************************************************************************
@@ -258,7 +196,7 @@ FailureUniverse::p_Xfalse_Yfalse(const RunSet & X, const RunSet & Y) const
 double
 FailureUniverse::p_Xtrue(const RunSet & X) const
 {
-    return ((double)count(IsIn(&X)))/((double)cardinality);
+    return ((double)(X.value() & mask).count()/(double)cardinality);  
 }
 
 /******************************************************************************
@@ -267,5 +205,5 @@ FailureUniverse::p_Xtrue(const RunSet & X) const
 double
 FailureUniverse::p_Xfalse(const RunSet & X) const
 {
-    return ((double)count(not1(IsIn(&X))))/((double)cardinality);
+    return ((double)((X.value().flip() & mask).count()))/ ((double)cardinality);
 }

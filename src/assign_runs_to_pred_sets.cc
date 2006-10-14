@@ -50,6 +50,18 @@ public:
     }
 };
 
+class Majority : public VotingRule {
+public:
+    Majority(unsigned int divisor) {
+        this->divisor = divisor;
+    }
+    bool operator()(unsigned int count) const {
+         return ((double)count/(double)divisor) > 0.5 ? true : false;     
+    }
+private:
+    unsigned int divisor;
+};
+
 class FindRunSets : public unary_function <vector <OutcomeRunSets *> *, RunSet *> {
 public:
     FindRunSets(const FailureUniverse & univ) {
@@ -60,9 +72,7 @@ public:
         vector <RunSet *> run_sets; 
         transform(outcomes->begin(), outcomes->end(), back_inserter(run_sets), ExtractFailures());
         RunSet * result = new RunSet();
-        for(unsigned int i = 0; i < result->size(); i++) {
-            if(univ->majority(run_sets, i)) result->set(i);
-        }
+        univ->vote(run_sets, Majority(run_sets.size()), *result);
         return result;
     } 
 private:

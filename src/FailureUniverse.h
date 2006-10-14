@@ -1,14 +1,17 @@
 #ifndef FAILURE_UNIVERSE_H
 #define FAILURE_UNIVERSE_H
 
+#include <vector>
+#include <boost/dynamic_bitset.hpp>
+#include "RunSet.h"
+
 class EmptyUniverseException
 {
 };
 
-class IsMember : public unary_function <unsigned int, bool> { 
+class VotingRule {
 public:
-    IsMember();
-    bool operator()(unsigned int) const;
+    virtual bool operator()(unsigned int count) const = 0;
 };
 
 class FailureUniverse
@@ -26,15 +29,13 @@ public:
     double p_Xfalse(const RunSet &) const;
     double MI(const RunSet &, const RunSet &) const;
     double signedMI(const RunSet &, const RunSet &) const;
-    bool majority(vector <RunSet *> &, unsigned int) const;
+    void vote(const vector <RunSet *> &, const VotingRule &, RunSet & result) const;
 
 private:
     unsigned int cardinality;
     unsigned int begin;
     unsigned int end;
-    IsMember test;
-    unsigned int count() const;
-    template<class Predicate> unsigned int count(const Predicate &) const;
+    dynamic_bitset<> mask;
     double MIterm(double, double, double) const;
     double entropyTerm(double) const;
     double log2(double) const;

@@ -12,53 +12,91 @@ using namespace boost;
 void
 SetVector::resize(size_type numbits, bool val)
 {
-    imp::resize(numbits, val);
+    theVector.resize(numbits, val);
 }
 
 void
 SetVector::set(size_type n, bool val)
 {
-    imp::set(n,val);
+    theVector.set(n,val);
 }
 
 size_type
 SetVector::size() const
 {
-    return imp::size();
+    return theVector.size();
+}
+
+size_type
+SetVector::count() const
+{
+    return theVector.count();
+}
+
+imp
+SetVector::value() const
+{
+    return imp(theVector);
+}
+
+vector<unsigned int> 
+SetVector::toCounts() const
+{
+    vector <unsigned int> result;
+    for(unsigned int i = 0; i < theVector.size(); i++) {
+        result.push_back(theVector[i] ? 1 : 0);   
+    }
+    return result;
 }
 
 bool
 SetVector::test(size_type n) const
 {
-    return imp::test(n); 
+    return theVector.test(n); 
 }
 
 void
 SetVector::print(ostream &out) const
 {
     for (unsigned runId = 0; runId < size(); ++runId)
-	if ((*this)[runId])
+	if ((theVector)[runId])
 	    out << ' ' << runId;
 }
 
-/******************************************************************************
-* Non-member friend procedure
-******************************************************************************/
 void
-computeOR(const SetVector & left, const SetVector & right, SetVector & result)
+SetVector::computeOR(const SetVector & other, SetVector & result) const
 {
-    ((left) | (right)).swap(result);
+    result.theVector = getOR(other);
 }
 
-void computeAnd(const SetVector & left, const SetVector & right, SetVector & result)
+void
+SetVector::computeAND(const SetVector & other, SetVector & result) const
 {
-    ((left) & (right)).swap(result); 
+    result.theVector= getAND(other); 
 }
 
 bool
-nonEmptyIntersection(const SetVector & left, const SetVector & right)
+SetVector::nonEmptyIntersection(const SetVector & other) const
 {
-    return ((left) & (right)).any();
+    return getAND(other).any(); 
+}
+
+imp
+SetVector::getOR(const SetVector & other) const
+{
+    return theVector | other.theVector;
+}
+
+imp
+SetVector::getAND(const SetVector & other) const
+{
+    return theVector & other.theVector;
+}
+
+imp
+SetVector::getDIFF(const SetVector & other) const
+{
+    return theVector - other.theVector;    
 }
 
 ostream &
