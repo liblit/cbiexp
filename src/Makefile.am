@@ -1,4 +1,4 @@
-SUBDIRS = amplify corrective-ranking never-reached Score symmetric
+SUBDIRS = amplify corrective-ranking mutual-information never-reached Score symmetric
 
 AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 $(BOOST_CPPFLAGS)
 
@@ -7,21 +7,14 @@ chi2test = chi2test
 endif
 
 noinst_PROGRAMS =				\
-	assign_runs_to_pred_sets		\
 	build_tsgraph				\
 	calc_sober				\
 	calc_truthprobs				\
-	calc_MI_oracle                          \
 	$(chi2test)				\
 	cluster_runs				\
 	collect_parmstats			\
-	compute_MI_pred_clusters		\
 	compute_nonconst_preds			\
 	compute-obs-tru				\
-	compute_pred_bug_counts			\
-	compute_pred_bug_MI			\
-	compute_pred_entropy			\
-	compute_pred_pred_MI			\
 	compute_pred_scores			\
 	compute-results				\
 	convert-reports				\
@@ -38,7 +31,6 @@ noinst_PROGRAMS =				\
 	get_ts_ordering				\
 	logreg					\
 	max-observed				\
-	normalize_pred_pred_MI			\
 	oracle					\
 	partial_order				\
 	process_run_labels			\
@@ -62,9 +54,6 @@ noinst_LIBRARIES = libanalyze.a
 all-local: analysis-rules.mk
 
 
-assign_runs_to_pred_sets_SOURCES = assign_runs_to_pred_sets.cc
-assign_runs_to_pred_sets_LDADD = libanalyze.a -ldl
-
 build_tsgraph_SOURCES = build_tsgraph.cc
 build_tsgraph_LDADD = libanalyze.a -ldl
 build_tsgraph_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
@@ -75,9 +64,6 @@ calc_sober_LDADD = libanalyze.a $(GSL_LIBS) -ldl
 calc_truthprobs_SOURCES = calc_truthprobs.cc
 calc_truthprobs_LDADD = libanalyze.a -ldl
 
-calc_MI_oracle_SOURCES = calc_MI_oracle.cc
-calc_MI_oracle_LDADD = libanalyze.a -ldl
-
 chi2test_SOURCES = chi2test.cc
 chi2test_LDADD = libanalyze.a $(GSL_LIBS)
 
@@ -87,26 +73,11 @@ cluster_runs_LDADD = libanalyze.a $(GSL_LIBS) -ldl
 collect_parmstats_SOURCES = collect_parmstats.cc
 collect_parmstats_LDADD = libanalyze.a -ldl
 
-compute_MI_pred_clusters_SOURCES = compute_MI_pred_clusters.cc
-compute_MI_pred_clusters_LDADD = libanalyze.a -ldl
-
 compute_obs_tru_SOURCES = compute_obs_tru.cc
 compute_obs_tru_LDADD = libanalyze.a -ldl
 
 compute_nonconst_preds_SOURCES = compute_nonconst_preds.cc
 compute_nonconst_preds_LDADD = libanalyze.a -ldl $(GSL_LIBS)
-
-compute_pred_bug_counts_SOURCES = compute_pred_bug_counts.cc
-compute_pred_bug_counts_LDADD = libanalyze.a
-
-compute_pred_bug_MI_SOURCES = compute_pred_bug_MI.cc
-compute_pred_bug_MI_LDADD = libanalyze.a
-
-compute_pred_entropy_SOURCES = compute_pred_entropy.cc
-compute_pred_entropy_LDADD = libanalyze.a
-
-compute_pred_pred_MI_SOURCES = compute_pred_pred_MI.cc
-compute_pred_pred_MI_LDADD = libanalyze.a
 
 compute_pred_scores_SOURCES = compute_pred_scores.cc
 compute_pred_scores_LDADD = libanalyze.a
@@ -157,9 +128,6 @@ logreg_LDADD = libanalyze.a -ldl
 
 max_observed_SOURCES = max-observed.cc
 max_observed_LDADD = libanalyze.a -ldl
-
-normalize_pred_pred_MI_SOURCES = normalize_pred_pred_MI.cc
-normalize_pred_pred_MI_LDADD = libanalyze.a -ldl
 
 oracle_SOURCES = oracle.cc
 oracle_LDADD = libanalyze.a -ldl

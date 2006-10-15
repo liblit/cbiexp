@@ -1,18 +1,19 @@
 #include <argp.h>
+#include <math.h>
 #include <iostream>
 #include <iterator>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
-#include "RunsDirectory.h"
-#include "NumRuns.h"
-#include "Progress/Bounded.h"
-#include "Bugs.h"
-#include "RunSet.h"
-#include "OutcomeRunSets.h"
-#include "FailureUniverse.h"
-#include "PredStats.h"
+#include "../RunsDirectory.h"
+#include "../NumRuns.h"
+#include "../Progress/Bounded.h"
+#include "../Bugs.h"
+#include "../RunSet.h"
+#include "../OutcomeRunSets.h"
+#include "../PredStats.h"
+#include "../FailureUniverse.h"
 
 using namespace std;
 
@@ -39,15 +40,16 @@ inline void process_cmdline(int, char *[]) { }
 
 #endif // HAVE_ARGP_H
 
-class IntersectionSize : public binary_function <RunSet *, RunSet *, unsigned int> {
+class SignedMutualInformation : public binary_function <RunSet *, RunSet *, double> {
 public:
-    IntersectionSize(const FailureUniverse & univ) {
-        this->univ = &univ;
-    }
+   SignedMutualInformation(const FailureUniverse & univ) {
+       this->univ = &univ;
+   }
 
-    unsigned int operator()(const RunSet * X, const RunSet * Y) const {
-        return univ->c_Xtrue_Ytrue(*X,*Y);  
-    }
+   double operator()(const RunSet * X, const RunSet * Y) const {
+       return univ->signedMI(*X, *Y); 
+   }
+
 private:
     const FailureUniverse * univ;
 };
@@ -57,9 +59,12 @@ int main(int argc, char** argv)
     process_cmdline(argc, argv);
     ios::sync_with_stdio(false);
 
-    vector <int> * bugIds = (new Bugs())->bugIndex();
-
     const FailureUniverse univ;
+
+    /***************************************************************************
+    * Read bug ids
+    ***************************************************************************/
+    vector <int> * bugIds = (new Bugs())->bugIndex();
 
     vector <RunSet *> bug_runs;
     /***************************************************************************
@@ -92,30 +97,27 @@ int main(int argc, char** argv)
     bug_runs.push_back(unknown_runs);
     bug_runs_file.close();
 
-
     /**************************************************************************
-    * For each predicate we find the number of runs corresponding to any 
-    * particular bug or to an unknown bug in which the predicate has been 
-    * observed true and print out the table of this data.
+    * Calculate the mutual information between predicate and bug.
     **************************************************************************/
     ifstream tru("tru.txt");
 
     const unsigned numPreds = PredStats::count();
     Progress::Bounded progress("assigning predicates to runs", numPreds);
-    ofstream out("pred_bug_counts.txt"); 
+    ofstream out("pred_bug_MI.txt"); 
     for (unsigned int count = 0; count < numPreds; ++count) { 
         progress.step();
         OutcomeRunSets current;
         tru >> current; 
 
         /*********************************************************************
-        * Print predicate/count table
+        * Print predicate/MI table
         *********************************************************************/
-        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<unsigned int> (out, "\t"), bind1st(IntersectionSize(univ), &current.failure));
+        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<double> (out, "\t"), bind1st(SignedMutualInformation(univ), &current.failure));
         out << "\n";
     }
-    assert(tru.peek() == EOF); 
-    out.close(); 
+    assert(tru.peek() == EOF);
+    out.close();
     tru.close();
 
 }

@@ -6,14 +6,13 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "RunsDirectory.h"
-#include "NumRuns.h"
-#include "Progress/Bounded.h"
-#include "Bugs.h"
-#include "RunSet.h"
-#include "OutcomeRunSets.h"
-#include "PredStats.h"
-#include "FailureUniverse.h"
+#include <functional>
+#include "../RunsDirectory.h"
+#include "../NumRuns.h"
+#include "../Progress/Unbounded.h"
+#include "../Bugs.h"
+#include "../RunSet.h"
+#include "../FailureUniverse.h"
 
 using namespace std;
 
@@ -39,6 +38,20 @@ static void process_cmdline(int argc, char **argv)
 inline void process_cmdline(int, char *[]) { }
 
 #endif // HAVE_ARGP_H
+
+class Entropy : public unary_function <RunSet *, double> {
+public:
+   Entropy(const FailureUniverse & univ) {
+       this->univ = &univ;
+   }
+
+   double operator()(const RunSet * X) const {
+       return univ->entropy(*X); 
+   }
+
+private:
+    const FailureUniverse * univ;
+};
 
 class SignedMutualInformation : public binary_function <RunSet *, RunSet *, double> {
 public:
@@ -67,15 +80,17 @@ int main(int argc, char** argv)
     vector <int> * bugIds = (new Bugs())->bugIndex();
 
     vector <RunSet *> bug_runs;
+    string line;
+    istringstream parse;
     /***************************************************************************
     * We read the runs associated with each bug 
     ***************************************************************************/
     ifstream bug_runs_file("bug_runs.txt");
     for(unsigned int i = 0; i < bugIds->size(); i++) {
         RunSet* current = new RunSet();  
-        string line;
         getline(bug_runs_file, line);
-        istringstream parse(line);
+        parse.clear();
+        parse.str(line);
         parse >> *current;
         bug_runs.push_back(current);
     }
@@ -90,34 +105,42 @@ int main(int argc, char** argv)
     * We read the runs that haven't been assigned to any bug.
     **************************************************************************/
     bug_runs_file.open("unknown_runs.txt");
-    string line;
     getline(bug_runs_file, line);
-    istringstream parse(line);
+    parse.clear();
+    parse.str(line);
     parse >> *unknown_runs;
     bug_runs.push_back(unknown_runs);
     bug_runs_file.close();
 
-    /**************************************************************************
-    * Calculate the mutual information between predicate and bug.
-    **************************************************************************/
-    ifstream tru("tru.txt");
+    /****************************************************************************
+    * We calculate the entropy for the runs
+    ****************************************************************************/
+    vector <double> bug_runs_entropy;
+    transform(bug_runs.begin(), bug_runs.end(), back_inserter(bug_runs_entropy), Entropy(univ));
 
-    const unsigned numPreds = PredStats::count();
-    Progress::Bounded progress("assigning predicates to runs", numPreds);
-    ofstream out("pred_bug_MI.txt"); 
-    for (unsigned int count = 0; count < numPreds; ++count) { 
+    /****************************************************************************
+    * We read the run sets decided by our predicate sets. We print out the
+    * mutual information between the ones and the others.
+    ****************************************************************************/
+    ifstream runs_file("pred_set_runs.txt");
+    Progress::Unbounded progress("reading run sets");
+    ofstream out("calc_oracle_MI.txt");
+    while(runs_file.peek() != EOF) {
         progress.step();
-        OutcomeRunSets current;
-        tru >> current; 
-
-        /*********************************************************************
-        * Print predicate/MI table
-        *********************************************************************/
-        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<double> (out, "\t"), bind1st(SignedMutualInformation(univ), &current.failure));
+        getline(runs_file, line);
+        parse.clear();
+        parse.str(line);
+        RunSet current;
+        parse >> current;
+        for(unsigned int i = 0; i < bug_runs.size(); i++) {
+            double signedMI = univ.signedMI(current, *bug_runs[i]);  
+            double entropy = univ.entropy(current);
+            entropy = entropy > bug_runs_entropy[i] ?  entropy : bug_runs_entropy[i]; 
+            signedMI = signedMI == 0.0 ? 0.0 : signedMI/entropy;
+            out << signedMI << "\t";
+        }
         out << "\n";
     }
-    assert(tru.peek() == EOF);
     out.close();
-    tru.close();
-
+    runs_file.close();
 }

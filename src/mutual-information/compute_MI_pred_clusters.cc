@@ -8,10 +8,10 @@
 #include <vector>
 #include <list>
 #include <iterator>
-#include "RunsDirectory.h"
-#include "Progress/Bounded.h"
-#include "PredSet.h"
-#include "PredStats.h"
+#include "../RunsDirectory.h"
+#include "../Progress/Bounded.h"
+#include "../PredSet.h"
+#include "../PredStats.h"
 
 using namespace std;
 

@@ -1,23 +1,17 @@
 #include <argp.h>
-#include <math.h>
 #include <iostream>
+#include <iterator>
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <ext/hash_map>
 #include <vector>
-#include "fopen.h" 
-#include "classify_runs.h"
-#include "RunsDirectory.h"
-#include "NumRuns.h"
-#include "Progress/Bounded.h"
-#include "Bugs.h"
-#include "RunSet.h"
-#include "OutcomeRunSets.h"
-#include "PredStats.h"
+#include "../fopen.h" 
+#include "../RunsDirectory.h"
+#include "../NumRuns.h"
+#include "../Progress/Bounded.h"
+#include "../PredStats.h"
 
 using namespace std;
-using __gnu_cxx::hash_map;
 
 #ifdef HAVE_ARGP_H
 

@@ -4,13 +4,13 @@
 #include <string>
 #include <vector>
 #include <iterator>
-#include "RunsDirectory.h"
-#include "NumRuns.h"
-#include "Progress/Bounded.h"
-#include "RunSet.h"
-#include "OutcomeRunSets.h"
-#include "PredStats.h"
-#include "FailureUniverse.h"
+#include "../RunsDirectory.h"
+#include "../NumRuns.h"
+#include "../Progress/Bounded.h"
+#include "../RunSet.h"
+#include "../OutcomeRunSets.h"
+#include "../PredStats.h"
+#include "../FailureUniverse.h"
 
 using namespace std;
 

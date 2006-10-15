@@ -8,15 +8,15 @@
 #include <vector>
 #include <list>
 #include <iterator>
-#include "RunsDirectory.h"
-#include "Progress/Bounded.h"
-#include "Progress/Unbounded.h"
-#include "OutcomeRunSets.h"
-#include "NumRuns.h"
-#include "RunSet.h"
-#include "FailureUniverse.h"
-#include "PredSet.h"
-#include "PredStats.h"
+#include "../RunsDirectory.h"
+#include "../Progress/Bounded.h"
+#include "../Progress/Unbounded.h"
+#include "../OutcomeRunSets.h"
+#include "../NumRuns.h"
+#include "../RunSet.h"
+#include "../FailureUniverse.h"
+#include "../PredSet.h"
+#include "../PredStats.h"
 
 using namespace std;
 

@@ -6,9 +6,7 @@ Makefile
 Makefile.in
 TAGS
 analysis-rules.mk
-assign_runs_to_pred_sets
 build_tsgraph
-calc_MI_oracle
 calc_sober
 calc_truthprobs
 cbi-to-sober
@@ -19,9 +17,7 @@ collect_parmstats
 compiler.cc
 compute-obs-tru
 compute-results
-compute_MI_pred_clusters
 compute_nonconst_preds
-compute_pred_bug_counts
 compute_pred_scores
 convert-reports
 convert_reports.cc
