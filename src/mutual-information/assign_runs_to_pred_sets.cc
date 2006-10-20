@@ -14,8 +14,8 @@
 #include "../OutcomeRunSets.h"
 #include "../NumRuns.h"
 #include "../RunSet.h"
-#include "../FailureUniverse.h"
-#include "../PredSet.h"
+#include "FailureUniverse.h"
+#include "PredUniverse.h"
 #include "../PredStats.h"
 
 using namespace std;
@@ -43,10 +43,12 @@ inline void process_cmdline(int, char *[]) { }
 
 #endif // HAVE_ARGP_H
 
-class ExtractFailures : public unary_function <OutcomeRunSets *, RunSet *> {
+class ExtractFailures : public unary_function <OutcomeRunSets *, FRunSet *> {
 public:
-    RunSet * operator()(OutcomeRunSets * outcomes) const {
-        return &(outcomes->failure);
+    FRunSet * operator()(OutcomeRunSets * outcomes) const {
+        FRunSet current = FailureUniverse::getUniverse().makeFRunSet();
+        current.load((outcomes->failure).value());
+        return new FRunSet(current);
     }
 };
 
@@ -62,29 +64,42 @@ private:
     unsigned int divisor;
 };
 
-class FindRunSets : public unary_function <vector <OutcomeRunSets *> *, RunSet *> {
+class Unanimous : public VotingRule {
 public:
-    FindRunSets(const FailureUniverse & univ) {
-        this->univ = &univ;
+    Unanimous(unsigned int num_voters) {
+        this->num_voters = num_voters;
     }
-
-    RunSet * operator()(vector <OutcomeRunSets *> * outcomes) const {
-        vector <RunSet *> run_sets; 
-        transform(outcomes->begin(), outcomes->end(), back_inserter(run_sets), ExtractFailures());
-        RunSet * result = new RunSet();
-        univ->vote(run_sets, Majority(run_sets.size()), *result);
-        return result;
-    } 
+    bool operator()(unsigned int count) const {
+        return count == num_voters; 
+    }
 private:
-    const FailureUniverse * univ;
+    unsigned int num_voters;
 };
 
-class FindOutcomeRunSets : public unary_function <PredSet *, vector <OutcomeRunSets *> * > {
+class AtLeastOne : public VotingRule {
+public:
+    bool operator()(unsigned int count) const {
+      return count > 0;
+    }
+};
+
+class FindRunSets : public unary_function <vector <OutcomeRunSets *> *, FRunSet *> {
+public:
+    FRunSet * operator()(vector <OutcomeRunSets *> * outcomes) const {
+        vector <FRunSet *> run_sets; 
+        transform(outcomes->begin(), outcomes->end(), back_inserter(run_sets), ExtractFailures());
+        FRunSet result = FailureUniverse::getUniverse().makeFRunSet();
+        FailureUniverse::getUniverse().vote(run_sets, Majority(run_sets.size()), result);
+        return new FRunSet(result); 
+    } 
+};
+
+class FindOutcomeRunSets : public unary_function <PSet *, vector <OutcomeRunSets *> * > {
 public:
     FindOutcomeRunSets (const vector <OutcomeRunSets *> & outcomes) {
         this->outcomes = &outcomes;
     }
-    vector <OutcomeRunSets * > * operator()(const PredSet * thePreds) const {
+    vector <OutcomeRunSets * > * operator()(const PSet * thePreds) const {
         unsigned int numPreds = PredStats::count();
         assert(numPreds == outcomes->size());
         vector <OutcomeRunSets *> * result = new vector<OutcomeRunSets *>();
@@ -102,12 +117,10 @@ int main(int argc, char** argv)
     process_cmdline(argc, argv);
     ios::sync_with_stdio(false);
 
-    FailureUniverse univ;
-
     /**************************************************************************
     * Read in each pred set.
     **************************************************************************/
-    vector < PredSet * > sets; 
+    vector < PSet * > sets; 
     ifstream pred_sets("pred_sets.txt");
     Progress::Unbounded reading("reading predicate sets");
     while(pred_sets.peek() != EOF) {
@@ -115,9 +128,9 @@ int main(int argc, char** argv)
         string line;
         getline(pred_sets, line);
         istringstream parse(line);
-        PredSet * current = new PredSet();
-        parse >> *current;
-        sets.push_back(current);
+        PSet current = PredUniverse::getUniverse().makePredSet(); 
+        parse >> current;
+        sets.push_back(new PSet(current));
     }
     pred_sets.close();
 
@@ -142,8 +155,8 @@ int main(int argc, char** argv)
     *************************************************************************/
     vector <vector <OutcomeRunSets *> * > outcomes_sets; 
     transform(sets.begin(), sets.end(), back_inserter(outcomes_sets), FindOutcomeRunSets(outcomes));  
-    vector <RunSet *> results;
-    transform(outcomes_sets.begin(), outcomes_sets.end(), back_inserter(results), FindRunSets(univ));
+    vector <FRunSet *> results;
+    transform(outcomes_sets.begin(), outcomes_sets.end(), back_inserter(results), FindRunSets());
     ofstream out("pred_set_runs.txt");
     for(unsigned int i = 0; i < results.size(); i++) {
         out << *results[i];

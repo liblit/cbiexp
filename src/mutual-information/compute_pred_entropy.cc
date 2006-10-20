@@ -1,5 +1,4 @@
 #include <argp.h>
-#include <math.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -9,10 +8,9 @@
 #include "../RunsDirectory.h"
 #include "../NumRuns.h"
 #include "../Progress/Bounded.h"
-#include "../RunSet.h"
 #include "../OutcomeRunSets.h"
 #include "../PredStats.h"
-#include "../FailureUniverse.h"
+#include "FailureUniverse.h"
 
 using namespace std;
 
@@ -44,8 +42,6 @@ int main(int argc, char** argv)
     process_cmdline(argc, argv);
     ios::sync_with_stdio(false);
 
-    FailureUniverse univ;
-
     /**************************************************************************
     * Calculate the mutual information between predicate and bug.
     **************************************************************************/
@@ -62,7 +58,9 @@ int main(int argc, char** argv)
         /*********************************************************************
         * Print predicate entropy 
         *********************************************************************/
-        fprintf(out, "%g\n", univ.entropy(current.failure));
+        FRunSet failures = FailureUniverse::getUniverse().makeFRunSet();
+        failures.load(current.failure.value());
+        fprintf(out, "%g\n", FailureUniverse::getUniverse().entropy(failures));
     }
     assert(tru.peek() == EOF);
     fclose(out); 

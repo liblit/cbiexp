@@ -4,10 +4,10 @@
 #include <algorithm>
 #include <numeric>
 #include <boost/dynamic_bitset.hpp>
-#include "NumRuns.h"
-#include "SetVector.h"
+#include "../NumRuns.h"
+#include "../SetVector.h"
 #include "FailureUniverse.h"
-#include "classify_runs.h"
+#include "../classify_runs.h"
 
 
 FRunSet::FRunSet(const dynamic_bitset<> & m)

@@ -4,7 +4,7 @@
 #include <vector>
 #include <boost/dynamic_bitset.hpp>
 #include "MIUniverse.h"
-#include "PredSet.h"
+#include "../PredSet.h"
 
 class PSet : public PredSet
 {

@@ -1,7 +1,5 @@
 #include <argp.h>
-#include <math.h>
 #include <iostream>
-#include <iterator>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -11,8 +9,7 @@
 #include "../NumRuns.h"
 #include "../Progress/Unbounded.h"
 #include "../Bugs.h"
-#include "../RunSet.h"
-#include "../FailureUniverse.h"
+#include "FailureUniverse.h"
 
 using namespace std;
 
@@ -39,27 +36,20 @@ inline void process_cmdline(int, char *[]) { }
 
 #endif // HAVE_ARGP_H
 
-class Entropy : public unary_function <RunSet *, double> {
+class Entropy : public unary_function <FRunSet *, double> {
 public:
-   Entropy(const FailureUniverse & univ) {
-       this->univ = &univ;
+   double operator()(const FRunSet * X) const {
+       return FailureUniverse::getUniverse().entropy(*X); 
    }
-
-   double operator()(const RunSet * X) const {
-       return univ->entropy(*X); 
-   }
-
-private:
-    const FailureUniverse * univ;
 };
 
-class SignedMutualInformation : public binary_function <RunSet *, RunSet *, double> {
+class SignedMutualInformation : public binary_function <FRunSet *, FRunSet *, double> {
 public:
    SignedMutualInformation(const FailureUniverse & univ) {
        this->univ = &univ;
    }
 
-   double operator()(const RunSet * X, const RunSet * Y) const {
+   double operator()(const FRunSet * X, const FRunSet * Y) const {
        return univ->signedMI(*X, *Y); 
    }
 
@@ -72,14 +62,12 @@ int main(int argc, char** argv)
     process_cmdline(argc, argv);
     ios::sync_with_stdio(false);
 
-    const FailureUniverse univ;
-
     /***************************************************************************
     * Read bug ids
     ***************************************************************************/
     vector <int> * bugIds = (new Bugs())->bugIndex();
 
-    vector <RunSet *> bug_runs;
+    vector <FRunSet *> bug_runs;
     string line;
     istringstream parse;
     /***************************************************************************
@@ -87,19 +75,19 @@ int main(int argc, char** argv)
     ***************************************************************************/
     ifstream bug_runs_file("bug_runs.txt");
     for(unsigned int i = 0; i < bugIds->size(); i++) {
-        RunSet* current = new RunSet();  
+        FRunSet current = FailureUniverse::getUniverse().makeFRunSet(); 
         getline(bug_runs_file, line);
         parse.clear();
         parse.str(line);
-        parse >> *current;
-        bug_runs.push_back(current);
+        parse >> current;
+        bug_runs.push_back(new FRunSet(current));
     }
     bug_runs_file.close();
 
     /***************************************************************************
     * Some runs may be unknown
     ***************************************************************************/
-    RunSet * unknown_runs = new RunSet();
+    FRunSet unknown_runs = FailureUniverse::getUniverse().makeFRunSet(); 
 
     /**************************************************************************
     * We read the runs that haven't been assigned to any bug.
@@ -108,20 +96,20 @@ int main(int argc, char** argv)
     getline(bug_runs_file, line);
     parse.clear();
     parse.str(line);
-    parse >> *unknown_runs;
-    bug_runs.push_back(unknown_runs);
+    parse >> unknown_runs;
+    bug_runs.push_back(new FRunSet(unknown_runs));
     bug_runs_file.close();
 
-    /****************************************************************************
+    /***************************************************************************
     * We calculate the entropy for the runs
-    ****************************************************************************/
+    ***************************************************************************/
     vector <double> bug_runs_entropy;
-    transform(bug_runs.begin(), bug_runs.end(), back_inserter(bug_runs_entropy), Entropy(univ));
+    transform(bug_runs.begin(), bug_runs.end(), back_inserter(bug_runs_entropy), Entropy());
 
-    /****************************************************************************
+    /***************************************************************************
     * We read the run sets decided by our predicate sets. We print out the
     * mutual information between the ones and the others.
-    ****************************************************************************/
+    ***************************************************************************/
     ifstream runs_file("pred_set_runs.txt");
     Progress::Unbounded progress("reading run sets");
     ofstream out("calc_oracle_MI.txt");
@@ -130,11 +118,11 @@ int main(int argc, char** argv)
         getline(runs_file, line);
         parse.clear();
         parse.str(line);
-        RunSet current;
+        FRunSet current = FailureUniverse::getUniverse().makeFRunSet(); 
         parse >> current;
         for(unsigned int i = 0; i < bug_runs.size(); i++) {
-            double signedMI = univ.signedMI(current, *bug_runs[i]);  
-            double entropy = univ.entropy(current);
+            double signedMI = FailureUniverse::getUniverse().signedMI(current, *bug_runs[i]);  
+            double entropy = FailureUniverse::getUniverse().entropy(current);
             entropy = entropy > bug_runs_entropy[i] ?  entropy : bug_runs_entropy[i]; 
             signedMI = signedMI == 0.0 ? 0.0 : signedMI/entropy;
             out << signedMI << "\t";

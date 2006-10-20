@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <boost/dynamic_bitset.hpp>
-#include "SetVector.h"
+#include "../SetVector.h"
 
 class EmptyUniverseException
 {

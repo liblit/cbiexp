@@ -9,9 +9,8 @@
 #include "../NumRuns.h"
 #include "../Progress/Bounded.h"
 #include "../Bugs.h"
-#include "../RunSet.h"
 #include "../OutcomeRunSets.h"
-#include "../FailureUniverse.h"
+#include "FailureUniverse.h"
 #include "../PredStats.h"
 
 using namespace std;
@@ -39,17 +38,11 @@ inline void process_cmdline(int, char *[]) { }
 
 #endif // HAVE_ARGP_H
 
-class IntersectionSize : public binary_function <RunSet *, RunSet *, unsigned int> {
+class IntersectionSize : public binary_function <FRunSet *, FRunSet *, unsigned int> {
 public:
-    IntersectionSize(const FailureUniverse & univ) {
-        this->univ = &univ;
+    unsigned int operator()(const FRunSet * X, const FRunSet * Y) const {
+        return FailureUniverse::getUniverse().intersectionSize(*X,*Y);  
     }
-
-    unsigned int operator()(const RunSet * X, const RunSet * Y) const {
-        return univ->c_Xtrue_Ytrue(*X,*Y);  
-    }
-private:
-    const FailureUniverse * univ;
 };
 
 int main(int argc, char** argv)
@@ -59,27 +52,25 @@ int main(int argc, char** argv)
 
     vector <int> * bugIds = (new Bugs())->bugIndex();
 
-    const FailureUniverse univ;
-
-    vector <RunSet *> bug_runs;
+    vector <FRunSet *> bug_runs;
     /***************************************************************************
     * We read the runs associated with each bug 
     ***************************************************************************/
     ifstream bug_runs_file("bug_runs.txt");
     for(unsigned int i = 0; i < bugIds->size(); i++) {
-        RunSet* current = new RunSet();  
+        FRunSet current = FailureUniverse::getUniverse().makeFRunSet(); 
         string line;
         getline(bug_runs_file, line);
         istringstream parse(line);
-        parse >> *current;
-        bug_runs.push_back(current);
+        parse >> current;
+        bug_runs.push_back(new FRunSet(current));
     }
     bug_runs_file.close();
 
     /***************************************************************************
     * Some runs may be unknown
     ***************************************************************************/
-    RunSet * unknown_runs = new RunSet();
+    FRunSet unknown_runs = FailureUniverse::getUniverse().makeFRunSet(); 
 
     /**************************************************************************
     * We read the runs that haven't been assigned to any bug.
@@ -88,8 +79,8 @@ int main(int argc, char** argv)
     string line;
     getline(bug_runs_file, line);
     istringstream parse(line);
-    parse >> *unknown_runs;
-    bug_runs.push_back(unknown_runs);
+    parse >> unknown_runs;
+    bug_runs.push_back(new FRunSet(unknown_runs));
     bug_runs_file.close();
 
 
@@ -111,7 +102,9 @@ int main(int argc, char** argv)
         /*********************************************************************
         * Print predicate/count table
         *********************************************************************/
-        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<unsigned int> (out, "\t"), bind1st(IntersectionSize(univ), &current.failure));
+        FRunSet failures = FailureUniverse::getUniverse().makeFRunSet(); 
+        failures.load(current.failure.value());
+        transform(bug_runs.begin(), bug_runs.end(), ostream_iterator<unsigned int> (out, "\t"), bind1st(IntersectionSize(), new FRunSet(failures)));
         out << "\n";
     }
     assert(tru.peek() == EOF); 

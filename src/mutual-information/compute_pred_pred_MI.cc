@@ -7,10 +7,9 @@
 #include "../RunsDirectory.h"
 #include "../NumRuns.h"
 #include "../Progress/Bounded.h"
-#include "../RunSet.h"
 #include "../OutcomeRunSets.h"
 #include "../PredStats.h"
-#include "../FailureUniverse.h"
+#include "FailureUniverse.h"
 
 using namespace std;
 
@@ -37,26 +36,17 @@ inline void process_cmdline(int, char *[]) { }
 
 #endif // HAVE_ARGP_H
 
-class SignedMutualInformation : public binary_function <RunSet *, RunSet *, double> {
+class SignedMutualInformation : public binary_function <FRunSet *, FRunSet *, double> {
 public:
-   SignedMutualInformation(const FailureUniverse & univ) {
-       this->univ = &univ;
+   double operator()(const FRunSet * X, const FRunSet * Y) const {
+       return FailureUniverse::getUniverse().signedMI(*X, *Y); 
    }
-
-   double operator()(const RunSet * X, const RunSet * Y) const {
-       return univ->signedMI(*X, *Y); 
-   }
-
-private:
-    const FailureUniverse * univ;
 };
 
 int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
     ios::sync_with_stdio(false);
-
-    const FailureUniverse univ;
 
     /**************************************************************************
     * Calculate the mutual information between predicates. 
@@ -65,12 +55,14 @@ int main(int argc, char** argv)
 
     const unsigned numPreds = PredStats::count();
     Progress::Bounded reading("reading predicate info", numPreds);
-    vector <RunSet *> pred_tru_runs;
+    vector <FRunSet *> pred_tru_runs;
     for (unsigned int count = 0; count < numPreds; ++count) { 
         reading.step();
         OutcomeRunSets current;
         tru >> current; 
-        pred_tru_runs.push_back(new RunSet(current.failure));
+        FRunSet failures = FailureUniverse::getUniverse().makeFRunSet(); 
+        failures.load(current.failure.value());
+        pred_tru_runs.push_back(new FRunSet(failures));
     }
     assert(tru.peek() == EOF);
     tru.close(); 
@@ -79,7 +71,7 @@ int main(int argc, char** argv)
     Progress::Bounded progress("calculating mutual information", numPreds);
     for(unsigned int i = 0; i < numPreds; i++) {
         progress.step();
-        transform(pred_tru_runs.begin(), pred_tru_runs.end(), ostream_iterator<double>(out, "\t"), bind1st(SignedMutualInformation(univ), (pred_tru_runs[i])));
+        transform(pred_tru_runs.begin(), pred_tru_runs.end(), ostream_iterator<double>(out, "\t"), bind1st(SignedMutualInformation(), (pred_tru_runs[i])));
         out << "\n";
     }
     out.close(); 

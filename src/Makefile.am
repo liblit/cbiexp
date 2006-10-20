@@ -186,14 +186,10 @@ libanalyze_a_SOURCES =				\
 	DynamicLibrary.h			\
 	DynamicLibrary-dl.cc			\
 	DynamicLibrary-dl.h			\
-	FailureUniverse.cc			\
-	FailureUniverse.h			\
 	IndexedPredInfo.cc			\
 	IndexedPredInfo.h			\
 	MappedArray.h				\
 	Matrix.h				\
-	MIUniverse.cc				\
-	MIUniverse.h				\
 	Nonconst_PredStats.cc			\
 	Nonconst_PredStats.h			\
 	NumRuns.cc				\
@@ -206,8 +202,6 @@ libanalyze_a_SOURCES =				\
 	PredSet.h				\
 	PredStats.cc				\
 	PredStats.h				\
-	PredUniverse.cc				\
-	PredUniverse.h				\
 	Progress/Bounded.cc			\
 	Progress/Bounded.h			\
 	Progress/Unbounded.cc			\

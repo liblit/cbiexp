@@ -10,7 +10,7 @@
 #include <iterator>
 #include "../RunsDirectory.h"
 #include "../Progress/Bounded.h"
-#include "../PredSet.h"
+#include "PredUniverse.h"
 #include "../PredStats.h"
 
 using namespace std;
@@ -41,14 +41,14 @@ inline void process_cmdline(int, char *[]) { }
 * Set union, where set inclusion is represented by true at the 
 * appropriate index in a vector<bool>.
 ****************************************************************************/
-class Union : public binary_function <PredSet *, PredSet *, PredSet *> {
+class Union : public binary_function <PSet *, PSet *, PSet *> {
 public:
-    PredSet * operator()(const PredSet * first, const PredSet * second) const {
-        PredSet * theUnion = new PredSet();
-        computeOR(*first, *second, *theUnion); 
+    PSet * operator()(const PSet * first, const PSet * second) const {
+        PSet theUnion = PredUniverse::getUniverse().makePredSet(); 
+        PredUniverse::getUniverse().computeUnion(*first, *second, theUnion); 
         delete first;
         delete second;
-        return theUnion;
+        return new PSet(theUnion);
     }
 };
 
@@ -56,10 +56,10 @@ public:
 * We don't need to find the set which is the intersection; we just need to know
 * whether it is non-empty.
 ******************************************************************************/
-class NonEmptyIntersection : public binary_function <PredSet *, PredSet *, bool> {
+class NonEmptyIntersection : public binary_function <PSet *, PSet *, bool> {
 public:
-    bool operator()(const PredSet * first, const PredSet * second) const {
-        return nonEmptyIntersection(*first, *second);
+    bool operator()(const PSet * first, const PSet * second) const {
+        return PredUniverse::getUniverse().nonEmptyIntersection(*first, *second);
     }
 };
 
@@ -68,15 +68,15 @@ public:
 * non-empty intersection with the head remove it from the tail. Return the
 * union of the head of the list and all removed elements. 
 ******************************************************************************/
-PredSet
-coalesce(list <PredSet *> & theList) 
+PSet
+coalesce(list <PSet *> & theList) 
 {
-    PredSet * head = theList.front();
+    PSet * head = theList.front();
     theList.pop_front();
-    list <PredSet *>::iterator keep = partition(theList.begin(), theList.end(), bind1st(NonEmptyIntersection(), head));
-    PredSet * theUnion = accumulate(theList.begin(), keep, head, Union());
+    list <PSet *>::iterator keep = partition(theList.begin(), theList.end(), bind1st(NonEmptyIntersection(), head));
+    PSet * theUnion = accumulate(theList.begin(), keep, head, Union());
     theList.erase(theList.begin(), keep);
-    PredSet result(*theUnion);
+    PSet result(*theUnion);
     delete theUnion;
     return result;
 }
@@ -92,7 +92,7 @@ int main(int argc, char** argv)
     * pred other than itself then we have found a set of closely associated 
     * predicates that is worth keeping. 
     **************************************************************************/
-    vector < PredSet * > sets; 
+    vector < PSet * > sets; 
     const unsigned numPreds = PredStats::count();
     ifstream pred_MI("pred_pred_MI_normalized.txt");
     Progress::Bounded reading("calculating predicate sets", numPreds);
@@ -107,9 +107,9 @@ int main(int argc, char** argv)
         int cardinality = count(current.begin(), current.end(), true);
         assert(cardinality > 0);
         if(cardinality > 1) {
-            PredSet * temp = new PredSet();
-            temp->load(current);
-            sets.push_back(temp);
+            PSet temp = PredUniverse::getUniverse().makePredSet();
+            temp.load(current);
+            sets.push_back(new PSet(temp));
         }
     }
     assert(pred_MI.peek() == EOF);
@@ -122,7 +122,7 @@ int main(int argc, char** argv)
     **************************************************************************/
     ofstream out("pred_sets.txt");
     Progress::Bounded coalescing("coalescing sets", sets.size()); 
-    list <PredSet * > set_list(sets.begin(), sets.end()); 
+    list <PSet * > set_list(sets.begin(), sets.end()); 
     while(!set_list.empty()) {
         coalescing.step();
         out << coalesce(set_list);

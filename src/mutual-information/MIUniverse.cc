@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <numeric>
 #include <boost/dynamic_bitset.hpp>
-#include "SetVector.h"
+#include "../SetVector.h"
 #include "MIUniverse.h"
 
 class Count : public binary_function <vector <unsigned int> *, vector <unsigned int> *, vector <unsigned int> *> {

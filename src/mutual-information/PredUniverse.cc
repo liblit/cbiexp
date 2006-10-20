@@ -1,5 +1,5 @@
 #include "PredUniverse.h"
-#include "PredStats.h"
+#include "../PredStats.h"
 
 PSet::PSet()
 {

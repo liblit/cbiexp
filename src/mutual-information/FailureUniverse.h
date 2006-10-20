@@ -4,8 +4,8 @@
 #include <vector>
 #include <boost/dynamic_bitset.hpp>
 #include "MIUniverse.h"
-#include "SetVector.h"
-#include "RunSet.h"
+#include "../SetVector.h"
+#include "../RunSet.h"
 
 class FRunSet : public RunSet {
 public:
