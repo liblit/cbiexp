@@ -3,42 +3,63 @@
 
 #include <vector>
 #include <boost/dynamic_bitset.hpp>
+#include "MIUniverse.h"
+#include "SetVector.h"
 #include "RunSet.h"
 
-class EmptyUniverseException
-{
+class FRunSet : public RunSet {
+public:
+    virtual void set(size_t, bool val = true);
+    virtual void load(istream &);
+    virtual void load(const imp &);
+    virtual void load(const vector <bool> &); 
+
+private:
+    FRunSet();
+    FRunSet(const dynamic_bitset<> &);
+    const dynamic_bitset<> & mask;
+    friend class FailureUniverse;
 };
 
-class VotingRule {
+class FUniverse : public MIUniverse
+{
 public:
-    virtual bool operator()(unsigned int count) const = 0;
+    virtual vector <unsigned int> getIndices() const;
+
+protected:
+    /***************************************************************************
+    * virtual methods
+    ***************************************************************************/
+    virtual unsigned int c_Xtrue_Ytrue(const SetVector &, const SetVector &) const;
+    virtual unsigned int c_Xtrue_Yfalse(const SetVector &, const SetVector &) const;
+    virtual unsigned int c_Xfalse_Yfalse(const SetVector &, const SetVector &) const;
+    virtual unsigned int c_Xtrue(const SetVector &) const;
+    virtual unsigned int c_Xfalse(const SetVector &) const;
+
+private:
+    FUniverse();
+    FUniverse(const FUniverse &);
+    unsigned int begin;
+    unsigned int end;
+    dynamic_bitset<> mask;
+    friend class FailureUniverse;
 };
 
 class FailureUniverse
 {
 public:
-    FailureUniverse();
-    double mean(const RunSet &) const;
-    double covariance(const RunSet &, const RunSet &) const;
-    double entropy(const RunSet &) const;
-    unsigned int c_Xtrue_Ytrue(const RunSet &, const RunSet &) const;
-    double p_Xtrue_Ytrue(const RunSet &, const RunSet &) const;
-    double p_Xtrue_Yfalse(const RunSet &, const RunSet &) const;
-    double p_Xfalse_Yfalse(const RunSet &, const RunSet &) const;
-    double p_Xtrue(const RunSet &) const;
-    double p_Xfalse(const RunSet &) const;
-    double MI(const RunSet &, const RunSet &) const;
-    double signedMI(const RunSet &, const RunSet &) const;
-    void vote(const vector <RunSet *> &, const VotingRule &, RunSet & result) const;
+    static const FailureUniverse & getUniverse();  
+    FRunSet makeFRunSet() const;
+    void vote(const vector <FRunSet*> &, const VotingRule &, FRunSet & result) const;
+    double entropy(const FRunSet &) const;
+    double signedMI(const FRunSet &, const FRunSet &) const; 
+    unsigned int intersectionSize(const FRunSet &, const FRunSet &) const; 
+    vector <unsigned int> getIndices() const;
 
 private:
-    unsigned int cardinality;
-    unsigned int begin;
-    unsigned int end;
-    dynamic_bitset<> mask;
-    double MIterm(double, double, double) const;
-    double entropyTerm(double) const;
-    double log2(double) const;
-};
+    FailureUniverse();
+    FailureUniverse(const FailureUniverse &);
+    FUniverse univ;
 
+};
 #endif // !FAILURE_UNIVERSE_H

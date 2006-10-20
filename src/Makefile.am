@@ -192,6 +192,8 @@ libanalyze_a_SOURCES =				\
 	IndexedPredInfo.h			\
 	MappedArray.h				\
 	Matrix.h				\
+	MIUniverse.cc				\
+	MIUniverse.h				\
 	Nonconst_PredStats.cc			\
 	Nonconst_PredStats.h			\
 	NumRuns.cc				\
@@ -204,6 +206,8 @@ libanalyze_a_SOURCES =				\
 	PredSet.h				\
 	PredStats.cc				\
 	PredStats.h				\
+	PredUniverse.cc				\
+	PredUniverse.h				\
 	Progress/Bounded.cc			\
 	Progress/Bounded.h			\
 	Progress/Unbounded.cc			\

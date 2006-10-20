@@ -9,32 +9,25 @@
 using namespace std;
 
 typedef boost::dynamic_bitset<> imp;
-typedef imp::size_type size_type;
 
 class SetVector
 {
 public:
-    void resize(size_type, bool val = false);
-    void set(size_type, bool val = true);
-    size_type size() const;
-    size_type count() const;
-    imp value() const; 
-    bool test(size_type) const;
+    virtual ~SetVector();
+    void resize(size_t, bool val = false);
+    virtual void set(size_t, bool val = true);
+    size_t count() const;
+    const imp & value() const; 
+    imp copy() const;
+    bool test(size_t) const;
     void print(ostream &) const;
-    void load(istream &);
-    void load(vector <bool> &);
+    virtual void load(istream &);
+    virtual void load(const imp &);
+    virtual void load(const vector <bool> &);
     vector <unsigned int> toCounts() const;
 protected:
-    void computeOR(const SetVector &, SetVector &) const; 
-    void computeAND(const SetVector &, SetVector &) const; 
-    bool nonEmptyIntersection(const SetVector &) const; 
-    imp getOR(const SetVector &) const;
-    imp getAND(const SetVector &) const;
-    imp getDIFF(const SetVector &) const;
-private:
     imp theVector; 
 };
-
 
 ostream & operator<<(ostream &, const SetVector &);
 istream & operator>>(istream &, SetVector &); 

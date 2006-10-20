@@ -6,35 +6,39 @@
 using namespace std;
 using namespace boost;
 
+SetVector::~SetVector()
+{
+}
+
 /******************************************************************************
 * Member functions
 ******************************************************************************/
 void
-SetVector::resize(size_type numbits, bool val)
+SetVector::resize(size_t numbits, bool val)
 {
     theVector.resize(numbits, val);
 }
 
 void
-SetVector::set(size_type n, bool val)
+SetVector::set(size_t n, bool val)
 {
     theVector.set(n,val);
 }
 
-size_type
-SetVector::size() const
-{
-    return theVector.size();
-}
-
-size_type
+size_t
 SetVector::count() const
 {
     return theVector.count();
 }
 
-imp
+const imp &
 SetVector::value() const
+{
+    return theVector;
+}
+
+imp
+SetVector::copy() const
 {
     return imp(theVector);
 }
@@ -50,7 +54,7 @@ SetVector::toCounts() const
 }
 
 bool
-SetVector::test(size_type n) const
+SetVector::test(size_t n) const
 {
     return theVector.test(n); 
 }
@@ -58,45 +62,9 @@ SetVector::test(size_type n) const
 void
 SetVector::print(ostream &out) const
 {
-    for (unsigned runId = 0; runId < size(); ++runId)
+    for (unsigned runId = 0; runId < theVector.size(); ++runId)
 	if ((theVector)[runId])
 	    out << ' ' << runId;
-}
-
-void
-SetVector::computeOR(const SetVector & other, SetVector & result) const
-{
-    result.theVector = getOR(other);
-}
-
-void
-SetVector::computeAND(const SetVector & other, SetVector & result) const
-{
-    result.theVector= getAND(other); 
-}
-
-bool
-SetVector::nonEmptyIntersection(const SetVector & other) const
-{
-    return getAND(other).any(); 
-}
-
-imp
-SetVector::getOR(const SetVector & other) const
-{
-    return theVector | other.theVector;
-}
-
-imp
-SetVector::getAND(const SetVector & other) const
-{
-    return theVector & other.theVector;
-}
-
-imp
-SetVector::getDIFF(const SetVector & other) const
-{
-    return theVector - other.theVector;    
 }
 
 ostream &
@@ -117,12 +85,18 @@ SetVector::load(istream & in)
 }
 
 void
-SetVector::load(vector <bool> & other)
+SetVector::load(const vector <bool> & other)
 {
-    assert(size() == other.size());
-    for(unsigned int i = 0; i < other.size(); i++) {
+    assert(theVector.size() == other.size());
+    for(unsigned int i = 0; i < theVector.size(); i++) {
         if(other[i]) set(i);
     }
+}
+
+void
+SetVector::load(const imp & other)
+{
+    theVector = other;
 }
 
 istream &
