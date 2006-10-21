@@ -33,12 +33,6 @@ PredUniverse::nonEmptyIntersection(const PSet & left, const PSet & right) const
     return univ.nonEmptyIntersection(left,right);
 }
 
-void
-PredUniverse::computeUnion(const PSet & left, const PSet & right, PSet & result) const
-{
-    return univ.computeUnion(left, right, result);
-}
-
 unsigned int
 PredUniverse::cardinality() const
 {
@@ -55,4 +49,33 @@ double
 PredUniverse::entropy(const PSet & theSet) const
 {
     return univ.entropy(theSet);
+}
+
+class CastToPred : public unary_function <SetVector *, PSet *> {
+public:
+    CastToPred(const PredUniverse & u) 
+    :univ(u)
+    {
+    }
+    PSet * operator()(SetVector * theVec) {
+        PSet temp = univ.makePredSet();
+        temp.load(theVec->value());
+        return new PSet(temp);
+    }
+private:
+    const PredUniverse & univ;
+};
+
+void
+PredUniverse::coalesce(const list <PSet *> & src, vector <PSet *> & result) const
+{
+    list <SetVector *> temp_src;
+    copy(src.begin(), src.end(), back_inserter(temp_src)); 
+    vector <SetVector *> temp_result;
+    univ.coalesce(temp_src, temp_result); 
+    result.clear();
+    transform(temp_result.begin(), 
+              temp_result.end(), 
+              back_inserter(result),
+              CastToPred(*this)); 
 }

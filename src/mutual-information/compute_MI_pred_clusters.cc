@@ -37,50 +37,6 @@ inline void process_cmdline(int, char *[]) { }
 
 #endif // HAVE_ARGP_H
 
-/*****************************************************************************
-* Set union, where set inclusion is represented by true at the 
-* appropriate index in a vector<bool>.
-****************************************************************************/
-class Union : public binary_function <PSet *, PSet *, PSet *> {
-public:
-    PSet * operator()(const PSet * first, const PSet * second) const {
-        PSet theUnion = PredUniverse::getUniverse().makePredSet(); 
-        PredUniverse::getUniverse().computeUnion(*first, *second, theUnion); 
-        delete first;
-        delete second;
-        return new PSet(theUnion);
-    }
-};
-
-/***************************************** *************************************
-* We don't need to find the set which is the intersection; we just need to know
-* whether it is non-empty.
-******************************************************************************/
-class NonEmptyIntersection : public binary_function <PSet *, PSet *, bool> {
-public:
-    bool operator()(const PSet * first, const PSet * second) const {
-        return PredUniverse::getUniverse().nonEmptyIntersection(*first, *second);
-    }
-};
-
-/******************************************************************************
-* Take the head of the list. If any element in the tail of the list has a 
-* non-empty intersection with the head remove it from the tail. Return the
-* union of the head of the list and all removed elements. 
-******************************************************************************/
-PSet
-coalesce(list <PSet *> & theList) 
-{
-    PSet * head = theList.front();
-    theList.pop_front();
-    list <PSet *>::iterator keep = partition(theList.begin(), theList.end(), bind1st(NonEmptyIntersection(), head));
-    PSet * theUnion = accumulate(theList.begin(), keep, head, Union());
-    theList.erase(theList.begin(), keep);
-    PSet result(*theUnion);
-    delete theUnion;
-    return result;
-}
-
 int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
@@ -123,10 +79,10 @@ int main(int argc, char** argv)
     ofstream out("pred_sets.txt");
     Progress::Bounded coalescing("coalescing sets", sets.size()); 
     list <PSet * > set_list(sets.begin(), sets.end()); 
-    while(!set_list.empty()) {
-        coalescing.step();
-        out << coalesce(set_list);
-        out << "\n";
+    vector <PSet *> coalesced; 
+    PredUniverse::getUniverse().coalesce(set_list, coalesced);
+    for(unsigned int i = 0; i < coalesced.size(); i++) {
+        out << *(coalesced[i]) << "\n";
     }
     out.close();
 

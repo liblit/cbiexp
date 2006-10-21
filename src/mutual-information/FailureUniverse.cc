@@ -111,15 +111,6 @@ FUniverse::c_Xfalse(const SetVector & X) const
     return (X.copy().flip() & mask).count();
 }
 
-class UpCast : public unary_function <FRunSet *, SetVector *> {
-public:
-    SetVector * operator()(FRunSet * theSet){
-        SetVector * theVec = new SetVector();
-        theVec->load(theSet->value());  
-        return theVec;
-    }
-};
-
 FailureUniverse::FailureUniverse()
 {
 }
@@ -141,7 +132,7 @@ void
 FailureUniverse::vote(const vector <FRunSet *> & voters, const VotingRule & rule, FRunSet & result) const
 {
     vector <SetVector *> set_voters; 
-    transform(voters.begin(), voters.end(), back_inserter(set_voters), UpCast());
+    copy(voters.begin(), voters.end(), back_inserter(set_voters));
     univ.vote(set_voters, rule, result);
 }
 
@@ -175,14 +166,37 @@ FailureUniverse::cardinality() const
     return univ.cardinality;
 }
 
-void
-FailureUniverse::computeUnion(const FRunSet & left, const FRunSet & right, FRunSet & result) const
-{
-    univ.computeUnion(left, right, result);
-}
-
 bool
 FailureUniverse::nonEmptyIntersection(const FRunSet & left, const FRunSet & right) const
 {
     return univ.nonEmptyIntersection(left, right);
+}
+
+class CastToRun : public unary_function <SetVector *, FRunSet *> {
+public:
+    CastToRun(const FailureUniverse & u) 
+    :univ(u)
+    {
+    }
+    FRunSet * operator()(SetVector * theVec) {
+        FRunSet temp = univ.makeFRunSet();
+        temp.load(theVec->value());
+        return new FRunSet(temp);
+    }
+private:
+    const FailureUniverse & univ;
+};
+
+void
+FailureUniverse::coalesce(const list <FRunSet *> & src, vector <FRunSet *> & result) const
+{
+    list <SetVector *> temp_src;
+    copy(src.begin(), src.end(), back_inserter(temp_src)); 
+    vector <SetVector *> temp_result;
+    univ.coalesce(temp_src, temp_result); 
+    result.clear();
+    transform(temp_result.begin(), 
+              temp_result.end(), 
+              back_inserter(result),
+              CastToRun(*this)); 
 }

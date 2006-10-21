@@ -69,6 +69,76 @@ SetVector & result) const
     result.load(left.value() | right.value());
 }
 
+
+/*****************************************************************************
+* Set union, where set inclusion is represented by true at the 
+* appropriate index in a vector<bool>.
+****************************************************************************/
+class Union : public binary_function <SetVector *, SetVector *, SetVector *> {
+public:
+    Union(const MIUniverse & u) 
+    : univ(u)
+    {
+    }
+    SetVector * operator()(const SetVector * first, const SetVector * second) const {
+        SetVector * theUnion = new SetVector();
+        univ.computeUnion(*first, *second, *theUnion); 
+        delete first;
+        delete second;
+        return theUnion;
+    }
+private:
+    const MIUniverse & univ;
+};
+
+/***************************************** *************************************
+* We don't need to find the set which is the intersection; we just need to know
+* whether it is non-empty.
+******************************************************************************/
+class NonEmptyIntersection : public binary_function <SetVector *, SetVector *, bool> {
+public:
+    NonEmptyIntersection(const MIUniverse & u)
+    : univ(u)
+    {
+    }
+
+    bool operator()(const SetVector * first, const SetVector * second) const {
+        return univ.nonEmptyIntersection(*first, *second);
+    }
+private:
+    const MIUniverse & univ;
+};
+
+/******************************************************************************
+* Take the head of the list. If any element in the tail of the list has a 
+* non-empty intersection with the head remove it from the tail. Return the
+* union of the head of the list and all removed elements. 
+******************************************************************************/
+void
+MIUniverse::coalesceStep(list <SetVector *> & theList, SetVector & result) const
+{
+    SetVector * head = theList.front();
+    theList.pop_front();
+    list <SetVector *>::iterator keep = 
+        partition(theList.begin(),
+                  theList.end(),
+                  bind1st(NonEmptyIntersection(*this), head));
+    SetVector * theUnion = accumulate(theList.begin(), keep, head, Union(*this));
+    theList.erase(theList.begin(), keep);
+    result.load(theUnion->value());
+    delete theUnion;
+}
+
+void
+MIUniverse::coalesce(list <SetVector *> & theList, vector <SetVector *> & result) const
+{
+    while(!theList.empty()) {
+        SetVector * target = new SetVector();
+        coalesceStep(theList, *target);
+        result.push_back(target);
+    }
+}
+
 /******************************************************************************
 * Calculates mean of SetVector
 ******************************************************************************/

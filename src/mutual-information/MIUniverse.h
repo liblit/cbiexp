@@ -2,6 +2,7 @@
 #define MI_UNIVERSE_H
 
 #include <vector>
+#include <list>
 #include <boost/dynamic_bitset.hpp>
 #include "../SetVector.h"
 
@@ -28,6 +29,7 @@ public:
     double signedMI(const SetVector &, const SetVector &) const;
     void vote(const vector <SetVector *> &, const VotingRule &, SetVector &) const;
     void computeUnion(const SetVector &, const SetVector &, SetVector &) const; 
+    void coalesce(list <SetVector *> &, vector <SetVector *> &) const;
 
 protected:
     double p_Xtrue_Ytrue(const SetVector &, const SetVector &) const;
@@ -59,6 +61,7 @@ private:
     double MIterm(double, double, double) const;
     double entropyTerm(double) const;
     double log2(double) const;
+    void coalesceStep(list <SetVector *> &, SetVector &) const;
 };
 
 #endif // !MI_UNIVERSE_H

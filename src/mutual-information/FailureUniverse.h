@@ -56,8 +56,8 @@ public:
     unsigned int intersectionSize(const FRunSet &, const FRunSet &) const; 
     vector <unsigned int> getIndices() const;
     unsigned int cardinality() const;
-    void computeUnion(const FRunSet &, const FRunSet &, FRunSet &) const;
     bool nonEmptyIntersection(const FRunSet &, const FRunSet &) const;
+    void coalesce(const list <FRunSet *> &, vector <FRunSet *> &) const;
 
 private:
     FailureUniverse();
