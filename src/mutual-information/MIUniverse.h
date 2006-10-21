@@ -30,6 +30,7 @@ public:
     void vote(const vector <SetVector *> &, const VotingRule &, SetVector &) const;
     void computeUnion(const SetVector &, const SetVector &, SetVector &) const; 
     void coalesce(list <SetVector *> &, vector <SetVector *> &) const;
+    void accumulateUnion(const list <SetVector *> &, SetVector &) const;
 
 protected:
     double p_Xtrue_Ytrue(const SetVector &, const SetVector &) const;

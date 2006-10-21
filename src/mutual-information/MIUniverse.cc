@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <numeric>
 #include <boost/dynamic_bitset.hpp>
+#include <boost/checked_delete.hpp>
 #include "../SetVector.h"
 #include "MIUniverse.h"
 
@@ -70,25 +71,18 @@ SetVector & result) const
 }
 
 
-/*****************************************************************************
-* Set union, where set inclusion is represented by true at the 
-* appropriate index in a vector<bool>.
-****************************************************************************/
-class Union : public binary_function <SetVector *, SetVector *, SetVector *> {
+class AccUnion : public unary_function <SetVector *, void> {
 public:
-    Union(const MIUniverse & u) 
-    : univ(u)
+    AccUnion(const MIUniverse & u, SetVector & s)
+    : univ(u), accum(s)
     {
     }
-    SetVector * operator()(const SetVector * first, const SetVector * second) const {
-        SetVector * theUnion = new SetVector();
-        univ.computeUnion(*first, *second, *theUnion); 
-        delete first;
-        delete second;
-        return theUnion;
+    void operator()(SetVector * other) {
+        univ.computeUnion(accum, *other, accum);
     }
 private:
     const MIUniverse & univ;
+    SetVector & accum; 
 };
 
 /***************************************** *************************************
@@ -123,10 +117,10 @@ MIUniverse::coalesceStep(list <SetVector *> & theList, SetVector & result) const
         partition(theList.begin(),
                   theList.end(),
                   bind1st(NonEmptyIntersection(*this), head));
-    SetVector * theUnion = accumulate(theList.begin(), keep, head, Union(*this));
+    for_each(theList.begin(), keep, AccUnion(*this, *head));
+    for_each(theList.begin(), keep, boost::checked_deleter<SetVector>());
     theList.erase(theList.begin(), keep);
-    result.load(theUnion->value());
-    delete theUnion;
+    result.load(head->value());
 }
 
 void
@@ -137,6 +131,13 @@ MIUniverse::coalesce(list <SetVector *> & theList, vector <SetVector *> & result
         coalesceStep(theList, *target);
         result.push_back(target);
     }
+}
+
+void
+MIUniverse::accumulateUnion(const list <SetVector *> & theList, SetVector & result) const
+{
+    for_each(theList.begin(), theList.end(), AccUnion(*this, result));
+    
 }
 
 /******************************************************************************
