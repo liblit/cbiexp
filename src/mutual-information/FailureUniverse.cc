@@ -168,3 +168,21 @@ FailureUniverse::getIndices() const
 {
     return univ.getIndices();
 }
+
+unsigned int
+FailureUniverse::cardinality() const
+{
+    return univ.cardinality;
+}
+
+void
+FailureUniverse::computeUnion(const FRunSet & left, const FRunSet & right, FRunSet & result) const
+{
+    univ.computeUnion(left, right, result);
+}
+
+bool
+FailureUniverse::nonEmptyIntersection(const FRunSet & left, const FRunSet & right) const
+{
+    return univ.nonEmptyIntersection(left, right);
+}

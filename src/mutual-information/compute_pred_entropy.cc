@@ -42,9 +42,6 @@ int main(int argc, char** argv)
     process_cmdline(argc, argv);
     ios::sync_with_stdio(false);
 
-    /**************************************************************************
-    * Calculate the mutual information between predicate and bug.
-    **************************************************************************/
     ifstream tru("tru.txt");
 
     const unsigned numPreds = PredStats::count();

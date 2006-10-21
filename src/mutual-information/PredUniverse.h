@@ -28,6 +28,9 @@ public:
     PSet makePredSet() const;
     bool nonEmptyIntersection(const PSet &, const PSet &) const;
     void computeUnion(const PSet &, const PSet &, PSet &) const;
+    unsigned int cardinality() const;
+    double signedMI(const PSet &, const PSet &) const;
+    double entropy(const PSet &) const;
 
 private:
     PredUniverse();

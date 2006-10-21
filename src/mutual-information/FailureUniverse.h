@@ -55,6 +55,9 @@ public:
     double signedMI(const FRunSet &, const FRunSet &) const; 
     unsigned int intersectionSize(const FRunSet &, const FRunSet &) const; 
     vector <unsigned int> getIndices() const;
+    unsigned int cardinality() const;
+    void computeUnion(const FRunSet &, const FRunSet &, FRunSet &) const;
+    bool nonEmptyIntersection(const FRunSet &, const FRunSet &) const;
 
 private:
     FailureUniverse();

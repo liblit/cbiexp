@@ -38,3 +38,21 @@ PredUniverse::computeUnion(const PSet & left, const PSet & right, PSet & result)
 {
     return univ.computeUnion(left, right, result);
 }
+
+unsigned int
+PredUniverse::cardinality() const
+{
+    return univ.cardinality;
+}
+
+double
+PredUniverse::signedMI(const PSet & left, const PSet & right) const
+{
+    return univ.signedMI(left, right); 
+}
+
+double
+PredUniverse::entropy(const PSet & theSet) const
+{
+    return univ.entropy(theSet);
+}
