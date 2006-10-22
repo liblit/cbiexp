@@ -200,3 +200,17 @@ FailureUniverse::coalesce(const list <FRunSet *> & src, vector <FRunSet *> & res
               back_inserter(result),
               CastToRun(*this)); 
 }
+
+unsigned int
+FailureUniverse::cardinality(const FRunSet & theSet) const
+{
+    return univ.c_Xtrue(theSet);
+}
+
+void
+FailureUniverse::accumulateUnion(list<FRunSet*>::iterator begin, list<FRunSet*>::iterator end, FRunSet & result) const
+{
+    list <SetVector *> temp; 
+    copy(begin, end, back_inserter(temp)); 
+    univ.accumulateUnion(temp.begin(), temp.end(), result);
+}

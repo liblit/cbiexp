@@ -54,7 +54,7 @@ int main(int argc, char** argv)
     * We read the run sets decided by our predicate sets. We print out the
     * run sets in csv format 
     ***************************************************************************/
-    ifstream runs_file("pred_set_runs.txt");
+    ifstream runs_file("pred_set_run_sets.txt");
     Progress::Unbounded progress("reading run sets");
     unsigned int set_index = 0;
     while(runs_file.peek() != EOF) {

@@ -4,6 +4,7 @@ noinst_LIBRARIES =				\
 	libmutualinformation.a
 
 noinst_PROGRAMS =				\
+	assign-run-sets-to-pred-sets		\
 	assign-runs-to-pred-sets		\
 	calc-MI-oracle				\
 	compute-MI-pred-clusters		\
@@ -24,6 +25,9 @@ libmutualinformation_a_SOURCES =		\
 	MIUniverse.h				\
 	PredUniverse.cc				\
 	PredUniverse.h
+
+assign_run_sets_to_pred_sets_SOURCES = assign_run_sets_to_pred_sets.cc
+assign_run_sets_to_pred_sets_LDADD = libmutualinformation.a ../libanalyze.a -ldl
 
 assign_runs_to_pred_sets_SOURCES = assign_runs_to_pred_sets.cc
 assign_runs_to_pred_sets_LDADD = libmutualinformation.a ../libanalyze.a -ldl

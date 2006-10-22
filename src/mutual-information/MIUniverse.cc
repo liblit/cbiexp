@@ -117,7 +117,7 @@ MIUniverse::coalesceStep(list <SetVector *> & theList, SetVector & result) const
         partition(theList.begin(),
                   theList.end(),
                   bind1st(NonEmptyIntersection(*this), head));
-    for_each(theList.begin(), keep, AccUnion(*this, *head));
+    accumulateUnion(theList.begin(), keep, *head);
     for_each(theList.begin(), keep, boost::checked_deleter<SetVector>());
     theList.erase(theList.begin(), keep);
     result.load(head->value());
@@ -134,9 +134,9 @@ MIUniverse::coalesce(list <SetVector *> & theList, vector <SetVector *> & result
 }
 
 void
-MIUniverse::accumulateUnion(const list <SetVector *> & theList, SetVector & result) const
+MIUniverse::accumulateUnion(list<SetVector*>::iterator begin, list<SetVector*>::iterator end, SetVector & result) const
 {
-    for_each(theList.begin(), theList.end(), AccUnion(*this, result));
+    for_each(begin, end, AccUnion(*this, result));
     
 }
 

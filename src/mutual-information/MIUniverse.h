@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <list>
+#include <iterator>
 #include <boost/dynamic_bitset.hpp>
 #include "../SetVector.h"
 
@@ -30,7 +31,7 @@ public:
     void vote(const vector <SetVector *> &, const VotingRule &, SetVector &) const;
     void computeUnion(const SetVector &, const SetVector &, SetVector &) const; 
     void coalesce(list <SetVector *> &, vector <SetVector *> &) const;
-    void accumulateUnion(const list <SetVector *> &, SetVector &) const;
+    void accumulateUnion(list <SetVector*>::iterator, list <SetVector *>::iterator, SetVector &) const;
 
 protected:
     double p_Xtrue_Ytrue(const SetVector &, const SetVector &) const;

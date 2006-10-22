@@ -58,6 +58,8 @@ public:
     unsigned int cardinality() const;
     bool nonEmptyIntersection(const FRunSet &, const FRunSet &) const;
     void coalesce(const list <FRunSet *> &, vector <FRunSet *> &) const;
+    unsigned int cardinality(const FRunSet &) const;
+    void accumulateUnion(list<FRunSet*>::iterator, list<FRunSet*>::iterator, FRunSet &) const;
 
 private:
     FailureUniverse();

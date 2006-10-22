@@ -12,7 +12,6 @@
 #include "../NumRuns.h"
 #include "../Progress/Bounded.h"
 #include "FailureUniverse.h"
-#include "../PredStats.h"
 
 using namespace std;
 
