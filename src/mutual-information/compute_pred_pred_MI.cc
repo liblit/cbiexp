@@ -36,13 +36,6 @@ inline void process_cmdline(int, char *[]) { }
 
 #endif // HAVE_ARGP_H
 
-class SignedMutualInformation : public binary_function <FRunSet *, FRunSet *, double> {
-public:
-   double operator()(const FRunSet * X, const FRunSet * Y) const {
-       return FailureUniverse::getUniverse().signedMI(*X, *Y); 
-   }
-};
-
 int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
@@ -67,13 +60,37 @@ int main(int argc, char** argv)
     assert(tru.peek() == EOF);
     tru.close(); 
 
-    ofstream out("pred_pred_MI.txt");
+    /**************************************************************************
+    * Calculating predicate entropy
+    **************************************************************************/
+    vector <double> pred_entropy; 
+    FailureUniverse::getUniverse().entropy(pred_tru_runs, pred_entropy);
+
+    /*************************************************************************
+    * Printing out the entropy
+    *************************************************************************/
+    ofstream out("pred_entropy.txt");
+    copy(pred_entropy.begin(), pred_entropy.end(), ostream_iterator<double>(out, "\n"));
+    out.close();
+
+    /**************************************************************************
+    * Calculating signed mutual information and normalized signed mi
+    **************************************************************************/
+    out.open("pred_pred_MI.txt");
+    ofstream nout("pred_pred_MI_normalized.txt"); 
     Progress::Bounded progress("calculating mutual information", numPreds);
     for(unsigned int i = 0; i < numPreds; i++) {
         progress.step();
-        transform(pred_tru_runs.begin(), pred_tru_runs.end(), ostream_iterator<double>(out, "\t"), bind1st(SignedMutualInformation(), (pred_tru_runs[i])));
+        vector <double> mi;
+        FailureUniverse::getUniverse().signedMI(*pred_tru_runs[i], pred_tru_runs, mi);
+        copy(mi.begin(), mi.end(), ostream_iterator<double>(out, "\t"));
         out << "\n";
+        for(unsigned int j = 0; j < numPreds; j++) {
+            nout << (mi[j] == 0.0 ? 0.0 : mi[j] / max(pred_entropy[i], pred_entropy[j])) << "\t";
+        }
+        nout << "\n";
     }
     out.close(); 
+    nout.close();
 
 }

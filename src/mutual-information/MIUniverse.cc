@@ -180,6 +180,26 @@ MIUniverse::entropy(const SetVector & X) const
     return entropyTerm(p_Xtrue(X)) + entropyTerm(p_Xfalse(X));
 }
 
+class Entropy : public unary_function <SetVector *, double> {
+public:
+    Entropy(const MIUniverse & u)
+    : univ(u)
+    {
+    }
+    double operator()(const SetVector * X) const {
+         return univ.entropy(*X);
+    }
+private:
+    const MIUniverse & univ;
+};
+
+void
+MIUniverse::entropy(const vector <SetVector *> & theVec, vector <double> & entropies) const
+{
+    transform(theVec.begin(), theVec.end(), back_inserter(entropies), Entropy(*this));
+    
+}
+
 /*******************************************************************************
 * log base 2 not available in math header, so must define
 *******************************************************************************/
@@ -229,6 +249,26 @@ MIUniverse::signedMI(const SetVector & X, const SetVector & Y) const
     double cov = covariance(X,Y);
     double mi = MI(X,Y);
     return mi * (cov >= 0 ? 1.0 : -1.0); 
+}
+
+class SignedMI : public binary_function <SetVector *, SetVector *, double> {
+public:
+    SignedMI(const MIUniverse & u)
+    : univ(u)
+    {
+    }
+    double operator()(const SetVector * X, const SetVector * Y) const {
+        return univ.signedMI(*X, *Y);
+    }
+private:
+    const MIUniverse & univ;
+};
+
+void
+MIUniverse::signedMI(const SetVector & theSet, const vector <SetVector *> & them, vector <double> & mis) const
+{
+    transform(them.begin(), them.end(), back_inserter(mis), 
+        bind1st(SignedMI(*this), &theSet));
 }
 
 /******************************************************************************

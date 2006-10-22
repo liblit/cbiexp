@@ -26,8 +26,10 @@ public:
     double mean(const SetVector &) const;
     double covariance(const SetVector &, const SetVector &) const;
     double entropy(const SetVector &) const;
+    void entropy(const vector <SetVector *> &, vector <double> &) const;
     double MI(const SetVector &, const SetVector &) const;
     double signedMI(const SetVector &, const SetVector &) const;
+    void signedMI(const SetVector &, const vector <SetVector *> &, vector <double> &) const;
     void vote(const vector <SetVector *> &, const VotingRule &, SetVector &) const;
     void computeUnion(const SetVector &, const SetVector &, SetVector &) const; 
     void coalesce(list <SetVector *> &, vector <SetVector *> &) const;

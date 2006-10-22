@@ -38,21 +38,6 @@ inline void process_cmdline(int, char *[]) { }
 
 #endif // HAVE_ARGP_H
 
-class Entropy : public unary_function <PSet *, double>
-{
-public:
-    double operator()(const PSet * X) const {
-        return PredUniverse::getUniverse().entropy(*X);
-    }
-};
-
-class SignedMutualInformation : public binary_function <PSet *, PSet *, double> {
-public:
-   double operator()(const PSet * X, const PSet * Y) const {
-       return PredUniverse::getUniverse().signedMI(*X, *Y); 
-   }
-};
-
 class MakePredSet : public unary_function <unsigned int, PSet *> {
 public:
     MakePredSet(const vector <RunSet *> & oc) 
@@ -110,10 +95,7 @@ int main(int argc, char** argv)
     * Now we calculate the entropy for each run
     **************************************************************************/
     vector <double> run_entropy;
-    transform(pred_sets.begin(),
-              pred_sets.end(),
-              back_inserter(run_entropy),
-              Entropy());
+    PredUniverse::getUniverse().entropy(pred_sets, run_entropy);
     
     /**************************************************************************
     * We print out the entropy for each run for future reference
@@ -128,13 +110,20 @@ int main(int argc, char** argv)
     * Now we calculate the mutual information
     **************************************************************************/
     out.open("run_run_MI.txt");
+    ofstream nout("run+run_MI_normalized.txt");
     Progress::Bounded progress("calculating mutual information", pred_sets.size());
     for(unsigned int i = 0; i < pred_sets.size(); i++) {
         progress.step();
-        transform(pred_sets.begin(), pred_sets.end(),
-        ostream_iterator<double>(out, "\t"), bind1st(SignedMutualInformation(), (pred_sets[i])));
+        vector <double> mi;
+        PredUniverse::getUniverse().signedMI(*pred_sets[i], pred_sets, mi); 
+        copy(mi.begin(), mi.end(), ostream_iterator<double>(out, "\t"));
         out << "\n";
+        for(unsigned int j = 0; j < mi.size(); j++) {
+            nout << (mi[j] == 0.0 ? 0.0 : mi[j] / max(run_entropy[i], run_entropy[j])) << "\t";
+        }
+        nout << "\n";
     }
     out.close(); 
+    nout.close();
 
 }

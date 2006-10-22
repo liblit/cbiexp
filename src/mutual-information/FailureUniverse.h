@@ -52,7 +52,9 @@ public:
     FRunSet makeFRunSet() const;
     void vote(const vector <FRunSet*> &, const VotingRule &, FRunSet & result) const;
     double entropy(const FRunSet &) const;
+    void entropy(const vector <FRunSet *> &, vector <double> &) const;
     double signedMI(const FRunSet &, const FRunSet &) const; 
+    void signedMI(const FRunSet &, const vector <FRunSet *> &, vector <double> &) const;
     unsigned int intersectionSize(const FRunSet &, const FRunSet &) const; 
     vector <unsigned int> getIndices() const;
     unsigned int cardinality() const;

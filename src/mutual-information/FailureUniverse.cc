@@ -142,10 +142,26 @@ FailureUniverse::entropy(const FRunSet & theSet) const
     return univ.entropy(theSet);
 }
 
+void
+FailureUniverse::entropy(const vector <FRunSet *> & theSets, vector <double> & entropies) const
+{
+    vector <SetVector*> temp;
+    copy(theSets.begin(), theSets.end(), back_inserter(temp));
+    univ.entropy(temp, entropies);
+}
+
 double
 FailureUniverse::signedMI(const FRunSet & left, const FRunSet & right) const
 {
     return univ.signedMI(left, right);
+}
+
+void
+FailureUniverse::signedMI(const FRunSet & that, const vector <FRunSet *> & others, vector <double> & mis) const
+{
+    vector <SetVector *> temp;
+    copy(others.begin(), others.end(), back_inserter(temp));
+    return univ.signedMI(that, temp, mis);
 }
 
 unsigned int

@@ -45,10 +45,26 @@ PredUniverse::signedMI(const PSet & left, const PSet & right) const
     return univ.signedMI(left, right); 
 }
 
+void
+PredUniverse::signedMI(const PSet & that, const vector <PSet *> & others, vector <double> & mis) const
+{
+    vector <SetVector *> temp;
+    copy(others.begin(), others.end(), back_inserter(temp)); 
+    univ.signedMI(that, temp, mis);
+}
+
 double
 PredUniverse::entropy(const PSet & theSet) const
 {
     return univ.entropy(theSet);
+}
+
+void
+PredUniverse::entropy(const vector <PSet *> & sets, vector <double> & entropies) const
+{
+    vector <SetVector *> temp;
+    copy(sets.begin(), sets.end(), back_inserter(temp));
+    univ.entropy(temp, entropies);
 }
 
 class CastToPred : public unary_function <SetVector *, PSet *> {

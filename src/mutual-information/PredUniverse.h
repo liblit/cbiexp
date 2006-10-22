@@ -29,7 +29,9 @@ public:
     bool nonEmptyIntersection(const PSet &, const PSet &) const;
     unsigned int cardinality() const;
     double signedMI(const PSet &, const PSet &) const;
+    void signedMI(const PSet &, const vector <PSet *> &, vector <double> &) const; 
     double entropy(const PSet &) const;
+    void entropy(const vector <PSet *> &, vector <double> &) const; 
     void coalesce(const list <PSet *> &, vector <PSet *> &) const;
 
 private:
