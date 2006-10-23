@@ -36,25 +36,11 @@ inline void process_cmdline(int, char *[]) { }
 
 #endif // HAVE_ARGP_H
 
-class Entropy : public unary_function <FRunSet *, double> {
+class IntersectionSize : public binary_function <FRunSet *, FRunSet *, unsigned int> {
 public:
-   double operator()(const FRunSet * X) const {
-       return FailureUniverse::getUniverse().entropy(*X); 
-   }
-};
-
-class SignedMutualInformation : public binary_function <FRunSet *, FRunSet *, double> {
-public:
-   SignedMutualInformation(const FailureUniverse & univ) {
-       this->univ = &univ;
-   }
-
-   double operator()(const FRunSet * X, const FRunSet * Y) const {
-       return univ->signedMI(*X, *Y); 
-   }
-
-private:
-    const FailureUniverse * univ;
+    unsigned int operator()(const FRunSet * left, const FRunSet * right) const {
+        return FailureUniverse::getUniverse().intersectionSize(*left, *right);
+    }
 };
 
 int main(int argc, char** argv)
@@ -104,31 +90,25 @@ int main(int argc, char** argv)
     * We calculate the entropy for the runs
     ***************************************************************************/
     vector <double> bug_runs_entropy;
-    transform(bug_runs.begin(), bug_runs.end(), back_inserter(bug_runs_entropy), Entropy());
+    FailureUniverse::getUniverse().entropy(bug_runs, bug_runs_entropy);
 
     /***************************************************************************
-    * We read the run sets decided by our predicate sets. We print out the
-    * mutual information between the ones and the others.
+    * We read the run sets decided by our predicate sets. 
+    * We print out intersection counts. 
     ***************************************************************************/
-    ifstream runs_file("pred_set_runs.txt");
     Progress::Unbounded progress("reading run sets");
-    ofstream out("calc_oracle_MI.txt");
-    while(runs_file.peek() != EOF) {
+    while(cin.peek() != EOF) {
         progress.step();
-        getline(runs_file, line);
+        getline(cin, line);
         parse.clear();
         parse.str(line);
         FRunSet current = FailureUniverse::getUniverse().makeFRunSet(); 
         parse >> current;
-        for(unsigned int i = 0; i < bug_runs.size(); i++) {
-            double signedMI = FailureUniverse::getUniverse().signedMI(current, *bug_runs[i]);  
-            double entropy = FailureUniverse::getUniverse().entropy(current);
-            entropy = entropy > bug_runs_entropy[i] ?  entropy : bug_runs_entropy[i]; 
-            signedMI = signedMI == 0.0 ? 0.0 : signedMI/entropy;
-            out << signedMI << "\t";
-        }
-        out << "\n";
+        vector <unsigned int> counts;
+        transform(bug_runs.begin(), 
+                  bug_runs.end(), 
+                  ostream_iterator<unsigned int>(cout, "\t"),
+                  bind1st(IntersectionSize(), &current));
+        cout << "\n";
     }
-    out.close();
-    runs_file.close();
 }
