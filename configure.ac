@@ -149,6 +149,7 @@ src/amplify/Makefile
 src/amplify/command-line/Makefile
 src/corrective-ranking/Makefile
 src/mutual-information/Makefile
+src/mutual-information/analysis-rules.mk
 src/never-reached/Makefile
 src/symmetric/Makefile
 src/Score/Makefile

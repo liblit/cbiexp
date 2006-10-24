@@ -1,5 +1,6 @@
 Makefile
 Makefile.in
+analysis-rules.mk
 assign-runs-to-pred-sets
 calc-MI-oracle
 compute-MI-pred-clusters

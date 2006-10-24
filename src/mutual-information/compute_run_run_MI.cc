@@ -110,7 +110,7 @@ int main(int argc, char** argv)
     * Now we calculate the mutual information
     **************************************************************************/
     out.open("run_run_MI.txt");
-    ofstream nout("run+run_MI_normalized.txt");
+    ofstream nout("run_run_MI_normalized.txt");
     Progress::Bounded progress("calculating mutual information", pred_sets.size());
     for(unsigned int i = 0; i < pred_sets.size(); i++) {
         progress.step();
