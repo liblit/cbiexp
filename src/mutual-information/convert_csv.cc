@@ -39,37 +39,33 @@ int main(int argc, char** argv)
     process_cmdline(argc, argv);
     ios::sync_with_stdio(false);
 
-    ofstream out("pred_set_runs.csv");
     /***************************************************************************
     * We construct the vector of runIds in the failure universe and print out
     * the header column.
     ***************************************************************************/
     vector <unsigned int> runIds = FailureUniverse::getUniverse().getIndices();
     for(unsigned int i = 0; i < runIds.size(); i++) {
-        out << ";" << runIds[i];
+        cout << ";" << runIds[i];
     }
-    out << "\n";
+    cout << "\n";
 
     /***************************************************************************
     * We read the run sets decided by our predicate sets. We print out the
     * run sets in csv format 
     ***************************************************************************/
-    ifstream runs_file("pred_set_run_sets.txt");
     Progress::Unbounded progress("reading run sets");
     unsigned int set_index = 0;
-    while(runs_file.peek() != EOF) {
+    while(cin.peek() != EOF) {
         progress.step();
-        out << set_index++;
+        cout << set_index++;
         string line;
-        getline(runs_file, line);
+        getline(cin, line);
         istringstream parse(line);
         FRunSet current = FailureUniverse::getUniverse().makeFRunSet();
         parse >> current;
         for(unsigned int i = 0; i < runIds.size(); i++) {
-            out << ";" << (current.test(runIds[i]) ? 1 : 0);
+            cout << ";" << (current.test(runIds[i]) ? 1 : 0);
         }
-        out << "\n";
+        cout << "\n";
     }
-    out.close();
-    runs_file.close();
 }
