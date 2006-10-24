@@ -78,6 +78,7 @@ int main(int argc, char** argv)
     **************************************************************************/
     out.open("pred_pred_MI.txt");
     ofstream nout("pred_pred_MI_normalized.txt"); 
+    ofstream rout("pred_pred_redundancy.txt");
     Progress::Bounded progress("calculating mutual information", numPreds);
     for(unsigned int i = 0; i < numPreds; i++) {
         progress.step();
@@ -87,10 +88,13 @@ int main(int argc, char** argv)
         out << "\n";
         for(unsigned int j = 0; j < numPreds; j++) {
             nout << (mi[j] == 0.0 ? 0.0 : mi[j] / max(pred_entropy[i], pred_entropy[j])) << "\t";
+            rout << (mi[j] == 0.0 ? 0.0 : mi[j] / (pred_entropy[i] + pred_entropy[j])) << "\t";
         }
         nout << "\n";
+        rout << "\n";
     }
     out.close(); 
     nout.close();
+    rout.close();
 
 }

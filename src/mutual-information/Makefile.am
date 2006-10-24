@@ -12,6 +12,8 @@ noinst_PROGRAMS =				\
 	compute-pred-bug-counts			\
 	compute-pred-bug-MI			\
 	compute-pred-pred-MI			\
+	compute-redundancy-run-clusters		\
+	compute-redundancy-pred-clusters	\
 	compute-run-run-MI			\
 	convert-csv
 
@@ -46,6 +48,12 @@ compute_pred_bug_MI_LDADD = libmutualinformation.a ../libanalyze.a -ldl
 
 compute_pred_pred_MI_SOURCES = compute_pred_pred_MI.cc
 compute_pred_pred_MI_LDADD = libmutualinformation.a ../libanalyze.a -ldl 
+
+compute_redundancy_pred_clusters_SOURCES = compute_redundancy_pred_clusters.cc 
+compute_redundancy_pred_clusters_LDADD = libmutualinformation.a ../libanalyze.a -ldl 
+
+compute_redundancy_run_clusters_SOURCES = compute_redundancy_run_clusters.cc 
+compute_redundancy_run_clusters_LDADD = libmutualinformation.a ../libanalyze.a -ldl 
 
 compute_run_run_MI_SOURCES = compute_run_run_MI.cc
 compute_run_run_MI_LDADD = libmutualinformation.a ../libanalyze.a -ldl 

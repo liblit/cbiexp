@@ -11,17 +11,23 @@ mutual-information :			\
 
 mutual-information-tooldir := $(tooldir)/mutual-information
 
-run_run_MI.txt run_entropy.txt normalized_run_run_MI.txt: f.runs preds.txt tru.txt
+run_run_MI.txt run_entropy.txt normalized_run_run_MI.txt run_run_redundancy.txt : f.runs preds.txt tru.txt
 	$(mutual-information-tooldir)/compute-run-run-MI --runs-directory=$(datadir) --begin-runs=$(training-runs) 
 
-pred_pred_MI.txt pred_entropy.txt normalized_pred_pred_MI.txt: f.runs preds.txt tru.txt
+pred_pred_MI.txt pred_entropy.txt normalized_pred_pred_MI.txt pred_pred_redundancy.txt : f.runs preds.txt tru.txt
 	$(mutual-information-tooldir)/compute-pred-pred-MI --runs-directory=$(datadir) --begin-runs=$(training-runs) 
 
-pred_sets.txt: f.runs preds.txt normalized_pred_pred_MI.txt 
-	$(mutual-information-tooldir)/compute-MI-pred-clusters --runs-directory=$(datadir)
+#pred_sets.txt: f.runs preds.txt normalized_pred_pred_MI.txt 
+	#$(mutual-information-tooldir)/compute-MI-pred-clusters --runs-directory=$(datadir)
 
-run_sets.txt : f.runs normalized_run_run_MI.txt
-	$(mutual-information-tooldir)/compute-MI-run-clusters --runs-directory=$(datadir) --begin-runs=$(training-runs)
+pred_sets.txt: f.runs preds.txt pred_pred_redundancy.txt pred_entropy.txt
+	$(mutual-information-tooldir)/compute-redundancy-pred-clusters --runs-directory=$(datadir)
+
+#run_sets.txt : f.runs normalized_run_run_MI.txt
+	#$(mutual-information-tooldir)/compute-MI-run-clusters --runs-directory=$(datadir) --begin-runs=$(training-runs)
+
+run_sets.txt : f.runs run_run_redundancy.txt run_entropy.txt
+	$(mutual-information-tooldir)/compute-redundancy-run-clusters --runs-directory=$(datadir) --begin-runs=$(training-runs)
 
 pred_set_runs.txt : f.runs preds.txt tru.txt pred_sets.txt
 	$(mutual-information-tooldir)/assign-runs-to-pred-sets --runs-directory=$(datadir) --begin-runs=$(training-runs)

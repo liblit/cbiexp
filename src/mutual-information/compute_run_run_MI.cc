@@ -111,6 +111,7 @@ int main(int argc, char** argv)
     **************************************************************************/
     out.open("run_run_MI.txt");
     ofstream nout("run_run_MI_normalized.txt");
+    ofstream rout("run_run_redundancy.txt");
     Progress::Bounded progress("calculating mutual information", pred_sets.size());
     for(unsigned int i = 0; i < pred_sets.size(); i++) {
         progress.step();
@@ -120,10 +121,13 @@ int main(int argc, char** argv)
         out << "\n";
         for(unsigned int j = 0; j < mi.size(); j++) {
             nout << (mi[j] == 0.0 ? 0.0 : mi[j] / max(run_entropy[i], run_entropy[j])) << "\t";
+            rout << (mi[j] == 0.0 ? 0.0 : mi[j] /(run_entropy[i] + run_entropy[j])) << "\t";
         }
         nout << "\n";
+        rout << "\n";
     }
     out.close(); 
     nout.close();
+    rout.close();
 
 }

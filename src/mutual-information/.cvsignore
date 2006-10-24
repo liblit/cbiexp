@@ -2,10 +2,13 @@ Makefile
 Makefile.in
 analysis-rules.mk
 assign-runs-to-pred-sets
+assign-run-sets-to-pred-sets
 calc-MI-oracle
 compute-MI-pred-clusters
+compute-MI-run-clusters
 compute-pred-bug-MI
 compute-pred-bug-counts
 compute-pred-entropy
 compute-pred-pred-MI
-normalize-pred-pred-MI
+compute-redundancy-pred-clusters
+compute-redundancy-run-clusters
