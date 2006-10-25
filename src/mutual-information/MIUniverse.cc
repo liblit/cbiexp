@@ -111,16 +111,23 @@ private:
 void
 MIUniverse::coalesceStep(list <SetVector *> & theList, SetVector & result) const
 {
-    SetVector * head = theList.front();
+    result.load(theList.front()->value());
     theList.pop_front();
-    list <SetVector *>::iterator keep = 
-        partition(theList.begin(),
-                  theList.end(),
-                  bind1st(NonEmptyIntersection(*this), head));
-    accumulateUnion(theList.begin(), keep, *head);
-    for_each(theList.begin(), keep, boost::checked_deleter<SetVector>());
-    theList.erase(theList.begin(), keep);
-    result.load(head->value());
+    vector <SetVector *> temp; 
+    while(!theList.empty()) {
+        SetVector * item = theList.front();
+        theList.pop_front();
+        if(nonEmptyIntersection(result, *item)) {
+            computeUnion(result, *item, result);
+            delete item; 
+            copy(temp.begin(), temp.end(), back_inserter(theList));
+            temp.clear();
+        }
+        else {
+            temp.push_back(item);
+        }
+    }
+    copy(temp.begin(), temp.end(), back_inserter(theList));
 }
 
 void
