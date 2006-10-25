@@ -15,7 +15,8 @@ noinst_PROGRAMS =				\
 	compute-redundancy-run-clusters		\
 	compute-redundancy-pred-clusters	\
 	compute-run-run-MI			\
-	convert-csv
+	convert-csv				\
+	xmlify-pred-sets
 
 libmutualinformation_a_SOURCES =		\
 	FailureUniverse.cc			\
@@ -60,6 +61,9 @@ compute_run_run_MI_LDADD = libmutualinformation.a ../libanalyze.a -ldl
 
 convert_csv_SOURCES = convert_csv.cc
 convert_csv_LDADD = libmutualinformation.a ../libanalyze.a -ldl 
+
+xmlify_pred_sets_SOURCES = xmlify_pred_sets.cc
+xmlify_pred_sets_LDADD = libmutualinformation.a ../libanalyze.a -ldl 
 
 ../libanalyze.a: force
 	$(MAKE) -C $(@D) $(@F)

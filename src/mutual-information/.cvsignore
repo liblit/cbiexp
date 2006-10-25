@@ -12,3 +12,4 @@ compute-pred-entropy
 compute-pred-pred-MI
 compute-redundancy-pred-clusters
 compute-redundancy-run-clusters
+xmlify-pred-sets
