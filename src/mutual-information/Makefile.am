@@ -8,7 +8,7 @@ noinst_PROGRAMS =				\
 	assign-runs-to-pred-sets		\
 	calc-MI-oracle				\
 	compute-MI-pred-clusters		\
-	compute-MI-run-clusters			\	
+	compute-MI-run-clusters			\
 	compute-pred-bug-counts			\
 	compute-pred-bug-MI			\
 	compute-pred-pred-MI			\
