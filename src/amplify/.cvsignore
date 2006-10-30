@@ -7,4 +7,5 @@
 Makefile
 Makefile.in
 amplify
+amplify-truth-probs
 logreader
