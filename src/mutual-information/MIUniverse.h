@@ -13,7 +13,9 @@ class EmptyUniverseException
 
 class VotingRule {
 public:
-    virtual bool operator()(unsigned int count) const = 0;
+  virtual bool operator()(unsigned int count) const = 0;
+protected:
+  virtual ~VotingRule() { }
 };
 
 class MIUniverse
