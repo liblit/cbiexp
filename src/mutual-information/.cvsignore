@@ -1,8 +1,9 @@
+.deps
 Makefile
 Makefile.in
 analysis-rules.mk
-assign-runs-to-pred-sets
 assign-run-sets-to-pred-sets
+assign-runs-to-pred-sets
 calc-MI-oracle
 compute-MI-pred-clusters
 compute-MI-run-clusters
@@ -12,4 +13,6 @@ compute-pred-entropy
 compute-pred-pred-MI
 compute-redundancy-pred-clusters
 compute-redundancy-run-clusters
+compute-run-run-MI
+convert-csv
 xmlify-pred-sets
