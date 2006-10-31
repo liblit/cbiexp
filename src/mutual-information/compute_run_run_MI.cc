@@ -120,8 +120,8 @@ int main(int argc, char** argv)
         copy(mi.begin(), mi.end(), ostream_iterator<double>(out, "\t"));
         out << "\n";
         for(unsigned int j = 0; j < mi.size(); j++) {
-            nout << (mi[j] == 0.0 ? 0.0 : mi[j] / max(run_entropy[i], run_entropy[j])) << "\t";
-            rout << (mi[j] == 0.0 ? 0.0 : mi[j] /(run_entropy[i] + run_entropy[j])) << "\t";
+            nout << (mi[j] == 0.0 ? 0.0 : (mi[j] / min(run_entropy[i], run_entropy[j]))) << "\t";
+            rout << (mi[j] == 0.0 ? 0.0 : (mi[j] /(run_entropy[i] + run_entropy[j]))) << "\t";
         }
         nout << "\n";
         rout << "\n";

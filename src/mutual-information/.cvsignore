@@ -5,14 +5,12 @@ analysis-rules.mk
 assign-run-sets-to-pred-sets
 assign-runs-to-pred-sets
 calc-MI-oracle
-compute-MI-pred-clusters
 compute-MI-run-clusters
 compute-pred-bug-MI
 compute-pred-bug-counts
-compute-pred-entropy
 compute-pred-pred-MI
-compute-redundancy-pred-clusters
-compute-redundancy-run-clusters
+compute-pred-sets
+compute-predset-predset-MI
 compute-run-run-MI
 convert-csv
 xmlify-pred-sets
