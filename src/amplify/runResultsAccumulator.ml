@@ -34,6 +34,7 @@ class type accumulator =
     method getSortedEntries : unit -> entry list
     method printSortedEntries : out_channel -> unit
     method xArray : float array -> float array
+    method makeSitesArray : unit -> float array
   end
 
 
@@ -43,11 +44,14 @@ class virtual base t =
     val trans : translator = t 
 
     method virtual xArray : float array -> float array 
+    method virtual makeSitesArray : unit -> float array
 
     method getScheme index =
       trans#getScheme index 
 
     method addEntry index siteId values =
+
+      let values = self#xArray values in
 
       let rec addValueAux index siteId values =
         try
@@ -58,7 +62,7 @@ class virtual base t =
             IntHash.add table index (IntHash.create 17);
             addValueAux index siteId values 
       in
-        addValueAux index siteId (self#xArray values) 
+        addValueAux index siteId values 
 
     method isTrue pred = self#truthProb pred = 1.0
 
@@ -112,7 +116,7 @@ class virtual base t =
             Array.set site pred.id prob
           with
             Not_found -> 
-              let site = Array.make (Schemes.getNumValues pred.scheme) 0.0 in
+              let site = (self#makeSitesArray ()) in
               IntHash.add sites pred.site site;
               addPredicateAux pred 
         with
@@ -159,10 +163,12 @@ class core t =
   object (self)
     inherit base t
     method xArray arr = arr
+    method makeSitesArray () = Array.make 3 0.0 
   end 
 
 class synth t =
   object (self)
     inherit base t
     method xArray arr = Predicate.core_to_synth_array arr 
+    method makeSitesArray () = Array.make 6 0.0
   end 

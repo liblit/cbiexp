@@ -1,4 +1,5 @@
 SUBDIRS = command-line
+ENABLE_AMPLIFY_NATIVE=1
 
 includes = -I command-line
 

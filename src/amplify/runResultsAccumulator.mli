@@ -20,6 +20,7 @@ class type accumulator =
     method getSortedEntries : unit -> entry list
     method printSortedEntries : out_channel -> unit
     method xArray : float array -> float array
+    method makeSitesArray : unit -> float array 
   end
 
 class core : translator -> accumulator
