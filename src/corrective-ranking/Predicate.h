@@ -12,8 +12,9 @@
 //
 
 
-struct Predicate
+class Predicate
 {
+public:
   Predicate(unsigned);
   const unsigned index;
   double initial, effective;
