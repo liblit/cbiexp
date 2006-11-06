@@ -20,6 +20,15 @@ struct RunSuite
   RunSet successes;
 
   RunSuite();
+  
+  //Creates a new RunSuite which holds the intersection
+  //of the two parameters.  In other words, its failures and
+  //successes will represent the runs where both rs1 and rs2
+  //failed or both succeeded.
+  //Don't use this for RunSuites with two different outcomes
+  //or two different sizes (why would you?)
+  RunSuite( RunSuite rs1, RunSuite rs2 );
+
   void load(std::istream &);
 
   double count() const;
