@@ -112,7 +112,7 @@ gen_summary_SOURCES = gen_summary.cc
 gen_summary_LDADD = libanalyze.a -ldl
 
 gen_views_SOURCES = gen_views.cc
-gen_views_LDADD = Score/libScore.a libanalyze.a -ldl
+gen_views_LDADD = Score/libScore.a libanalyze.a corrective-ranking/libcorrective.a -ldl
 
 get_tp_weights_SOURCES = get_tp_weights.cc
 get_tp_weights_LDADD = libanalyze.a -ldl
@@ -249,6 +249,8 @@ libanalyze_a_SOURCES =				\
 	arguments.h				\
 	classify_runs.cc			\
 	classify_runs.h				\
+	conjoin.cc				\
+	conjoin.h				\
 	fopen.cc				\
 	fopen.h					\
 	preds.h					\

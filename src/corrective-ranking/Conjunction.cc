@@ -23,3 +23,10 @@ Conjunction::Conjunction(Predicate *pred1_t, Predicate *pred2_t) : Predicate(0) 
 bool Conjunction::isInteresting() {
     return initial > pred1->initial && initial > pred2->initial;
 }
+
+std::ostream &
+operator<<(std::ostream &out, const Conjunction &conjunction)
+{
+    return
+        out << *(conjunction.pred1) << "\n" << *(conjunction.pred2);
+}
