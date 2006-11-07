@@ -77,4 +77,15 @@ int main(int argc, char** argv)
     }
     tru.close(); 
     matrix.close(); 
+
+    ofstream ffile("f.m");
+    ofstream sfile("s.m");
+     
+    for(unsigned int i = NumRuns::begin; i < NumRuns::end; i++) {
+        if(is_frun[i]) ffile << i - NumRuns::begin << "\n";   
+        if(is_srun[i]) sfile << i - NumRuns::begin << "\n"; 
+    }
+    ffile.close();
+    sfile.close();
+
 }
