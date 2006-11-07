@@ -4,6 +4,7 @@
 #include <boost/dynamic_bitset.hpp>
 #include "../RunsDirectory.h"
 #include "../NumRuns.h"
+#include "../classify_runs.h"
 #include "../Progress/Bounded.h"
 #include "../PredStats.h"
 #include "../RunSet.h"
@@ -38,8 +39,11 @@ int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
     ios::sync_with_stdio(false);
+
+    classify_runs();
+
     ifstream tru("tru.txt");
-    ofstream matrix("X.txt"); 
+    ofstream matrix("X.m"); 
 
     const unsigned numPreds = PredStats::count();
     Progress::Bounded reading("reading predicate info", numPreds);
@@ -48,9 +52,28 @@ int main(int argc, char** argv)
         OutcomeRunSets current;
         tru >> current;
         boost::dynamic_bitset<> combined = current.failure.value() | current.success.value();
-        RunSet temp;
-        temp.load(combined);
-        matrix << temp << "\n";
+
+        vector<bool> temp;
+        /**********************************************************************
+        * We set the vector bit to false or true appropriately unless its a 
+        * run we don't count; either because it was unclassified or else
+        * because it was a run that was used to train the sampler.
+        * We don't want any of the columns of the matrix we read in to
+        * correspond to runs we have chosen to ignore. 
+        **********************************************************************/
+        for(unsigned int index = NumRuns::begin; index < combined.size(); index++) {
+            if(is_srun[index] || is_frun[index])
+            temp.push_back(combined.test(index));
+        }
+
+        /**********************************************************************
+        * We output the matrix _sparsely_, as a set of column indices.
+        * Matlab column indices start at 1, not 0.
+        **********************************************************************/
+        for(unsigned int index = 0; index < temp.size(); index++) {
+            if(temp.at(index)) matrix << index + 1 << " "; 
+        }
+        matrix << "\n";
     }
     tru.close(); 
     matrix.close(); 
