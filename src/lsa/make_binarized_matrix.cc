@@ -67,13 +67,14 @@ int main(int argc, char** argv)
         }
 
         /**********************************************************************
-        * We output the matrix _sparsely_, as a set of column indices.
-        * Matlab column indices start at 1, not 0.
+        * We output the matrix _sparsely_, in matlab sparsely loaded input
+        * format. 
+        * Matlab column and row indices start at 1, not 0.
         **********************************************************************/
         for(unsigned int index = 0; index < temp.size(); index++) {
-            if(temp.at(index)) matrix << index + 1 << " "; 
+            if(temp.at(index)) 
+                matrix << count + 1 << " " << index + 1 << " " << 1 << "\n"; 
         }
-        matrix << "\n";
     }
     tru.close(); 
     matrix.close(); 
