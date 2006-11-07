@@ -13,12 +13,22 @@ RunSuite::RunSuite()
 }
 
 
+
+  //Creates RunSets of the specified size,
+  //initialized to false.
+RunSuite::RunSuite(int size)
+  : failures( Failure, size ),
+    successes( Success, size )
+{  
+}
+
+
   //Creates a new RunSuite which holds the intersection
   //of the two parameters.  In other words, its failures and
   //successes will represent the runs where both rs1 and rs2
   //failed or both succeeded.
-  //Don't use this for RunSuites representing two different sets of
-  //runs (why would you?)
+  //Don't use this for RunSuites representing two different
+  //supersets of runs (why would you?)
 RunSuite::RunSuite( RunSuite rs1, RunSuite rs2 )
   : failures(Failure),
     successes(Success)
@@ -31,7 +41,6 @@ RunSuite::RunSuite( RunSuite rs1, RunSuite rs2 )
   assert( rs1.successes.size() == rs2.successes.size() );
 
   //Perform the intersection.
-  //Assumption: rs1.failures.size
   for( unsigned i = 0; i < rs1.failures.size(); i++ ) {
     if ( rs1.failures.at(i) && rs2.failures.at(i) ) {
       failures.push_back(1);
@@ -80,6 +89,44 @@ RunSuite::errorPart() const
     ? failures.count * successes.count / pow(population, 3)
     : 0;
 }
+
+
+
+RunValue
+RunSuite::get( int index )
+{
+  //Returns the RunValue of the specified run.
+
+  if ( successes.at( index ) )
+    return Succeed;
+  else if ( failures.at( index ) )
+    return Fail;
+  else
+    return Neither;
+}
+
+
+
+void
+RunSuite::set( int index, RunValue value )
+{
+  //Sets the specified run to the specified value.
+  //Throws "out_of_range" if out of range.
+  //            failures[int]     successes[int]
+  // Succeed        0                  1
+  // Fail           1                  0
+  // Neither        0                  0
+
+  // Set both, correct one (maybe)
+  successes.at( index ) = false;
+  failures.at( index ) = false;
+
+  if( value == Succeed )
+    successes.at( index ) = true;
+  else if ( value == Fail )
+    failures.at( index ) = true;
+}
+
 
 
 void

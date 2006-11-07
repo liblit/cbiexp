@@ -12,6 +12,9 @@
 //
 
 
+// Made into a class (rather than a struct) so that Conjunction
+// can subclass off of it.
+// --rosin
 class Predicate
 {
 public:

@@ -47,6 +47,15 @@ RunSet::RunSet(Outcome outcome)
 }
 
 
+RunSet::RunSet(Outcome outcome, int size)
+  : outcome(outcome),
+    count(0)
+{
+  assign(size, false);
+}
+
+
+
 void
 RunSet::load(istream &in)
 {
