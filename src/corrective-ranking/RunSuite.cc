@@ -118,13 +118,14 @@ RunSuite::set( int index, RunValue value )
   // Neither        0                  0
 
   // Set both, correct one (maybe)
-  successes.at( index ) = false;
-  failures.at( index ) = false;
-
-  if( value == Succeed )
-    successes.at( index ) = true;
-  else if ( value == Fail )
-    failures.at( index ) = true;
+  if(value == Succeed) {
+    successes.set(index, true);
+    failures.set(index, false);
+  }
+  else {
+    successes.set(index, false);
+    failures.set(index, true);
+  }
 }
 
 

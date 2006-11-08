@@ -4,28 +4,35 @@
 
 #include <stdio.h>
 
-#include "../Confidence.h"
+#include "../NumRuns.h"
 
 #include "Conjunction.h"
 #include "Predicate.h"
+#include "RunSuite.h"
 #include "allFailures.h"
 
 using namespace std;
 
 Conjunction::Conjunction(Predicate *pred1_t, Predicate *pred2_t) : Predicate(0) {
-    tru = RunSuite(pred1_t->tru, pred2_t->tru);
-    obs = RunSuite(pred1_t->obs, pred2_t->obs);
-    
     pred1 = pred1_t;
-    pred2 = pred2_t;
+    pred2 = pred2_t;    
+    tru = RunSuite(pred1->tru, pred2->tru);
     
-//     initial = effective = score();
+    obs = RunSuite(NumRuns::end);
+    for(unsigned r = NumRuns::begin; r < NumRuns::end; r ++) {        
+        if(pred1->obs.get(r) != Neither && pred1->tru.get(r) == Neither)
+            obs.set(r, pred1->obs.get(r));
+        else if (pred2->obs.get(r) != Neither  && pred2->tru.get(r) == Neither)
+            obs.set(r, pred2->obs.get(r));
+        else
+            obs.set(r, Neither);
+    }
 }
 
 bool Conjunction::isInteresting() {
     if(tru.failures.count == 0)
         return false;
-    if(harmonic() < 0)
+    if(increase() < 0 || lowerBound() < 0 || harmonic() < 0)
         return false;
         
     initial = effective = score();
