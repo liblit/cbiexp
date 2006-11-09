@@ -36,6 +36,22 @@ public:
   double score() const;
 
   void dilute(const Predicate &winner);
+
+
+  virtual std::vector<int> getPredicateList() const {
+    //Returns a vector containing all the indices for the
+    //predicates being conjoined to form this one.  For a
+    //primitive predicate (not a conjunction) this vector has
+    //one element.  If printing to an XML file, add one to each
+    //element.
+
+    std::vector<int> vect;
+    vect.push_back(index);
+    return vect;
+  }
+
+    //Destructor is needed because virtual methods are used.
+  virtual ~Predicate() { }
 };
 
 

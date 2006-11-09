@@ -92,10 +92,10 @@ RunSuite::errorPart() const
 
 
 
-RunValue
+RunOutcome
 RunSuite::get( int index )
 {
-  //Returns the RunValue of the specified run.
+  //Returns the RunOutcome of the specified run.
 
   if ( successes.at( index ) )
     return Succeed;
@@ -108,7 +108,7 @@ RunSuite::get( int index )
 
 
 void
-RunSuite::set( int index, RunValue value )
+RunSuite::set( int index, RunOutcome value )
 {
   //Sets the specified run to the specified value.
   //Throws "out_of_range" if out of range.

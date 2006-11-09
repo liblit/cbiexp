@@ -39,6 +39,32 @@ bool Conjunction::isInteresting() {
     return initial > pred1->initial && initial > pred2->initial;
 }
 
+
+
+std::vector<int>
+Conjunction::getPredicateList() const
+{
+  //Returns a vector containing all the indices for the
+  //predicates being conjoined to form this one.  For a
+  //primitive predicate (not a conjunction) this vector has
+  //one element.  If printing to an XML file, add one to each
+  //element.
+
+  std::vector<int> vect1 = pred1->getPredicateList();
+  std::vector<int> vect2 = pred2->getPredicateList();
+  std::vector<int> conjVect;
+
+  //Copy the elements into the conjoined array
+  for ( unsigned i = 0; i < vect1.size(); i++ ) 
+    conjVect.push_back( vect1.at(i) );
+  for ( unsigned i = 0; i < vect2.size(); i++ )
+    conjVect.push_back( vect2.at(i) );
+
+  return conjVect;
+}
+
+
+
 std::ostream &
 operator<<(std::ostream &out, const Conjunction &conjunction)
 {

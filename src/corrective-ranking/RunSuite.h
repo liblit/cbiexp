@@ -10,7 +10,7 @@ class Predicate;
 
 
 
-enum RunValue { Succeed, Fail, Neither };
+enum RunOutcome { Succeed, Fail, Neither };
   //A three valued enumeration, for use with RunSuite's
   //get() and set() methods.
 
@@ -50,9 +50,9 @@ struct RunSuite
   double errorPart() const;
 
 
-  RunValue get( int );
-    //Returns the RunValue of the specified run.
-  void set( int, RunValue );
+  RunOutcome get( int );
+    //Returns the RunOutcome of the specified run.
+  void set( int, RunOutcome );
     //Sets the specified run to the specified value.  Throws
     //"out_of_range" if out of range. 
     //            failures[int]     successes[int]

@@ -71,6 +71,8 @@ Predicate::harmonic() const
 }
 
 
+
+
 void
 Predicate::dilute(const Predicate &winner)
 {
@@ -101,3 +103,4 @@ operator<<(std::ostream &out, const Predicate &predicate)
 
 	<< "</predictor>";
 }
+
