@@ -29,16 +29,16 @@ void initialize() {
 
 void conjoin() {
     initialize();
-    
+
     Candidates candidates;
     list<Conjunction> all;
     candidates.load();
     
    Candidates::iterator i, j;
     for(i = candidates.begin(); i != candidates.end(); i ++)
-        for(j = candidates.begin(); j != candidates.end(); j ++) {
-            if(i == j)
-                continue;
+        for(j = i; j != candidates.end(); j ++) {
+	    if ( i == j )
+	      continue;
             Conjunction c(&*i, &*j);
             if(c.isInteresting()) {
                 all.push_back(c);
