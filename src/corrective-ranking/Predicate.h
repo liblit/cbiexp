@@ -19,7 +19,7 @@ class Predicate
 {
 public:
   Predicate(unsigned);
-  const unsigned index;
+  /*const*/ unsigned index;
   double initial, effective;
 
   RunSuite tru;
@@ -34,7 +34,7 @@ public:
   double recall() const;
   double harmonic() const;
   double score() const;
-
+  
   void dilute(const Predicate &winner);
 
 
@@ -49,7 +49,12 @@ public:
     vect.push_back(index);
     return vect;
   }
-
+  
+  //Upperbound on the score of a conjunction
+  //formed using this predicate
+  double conjUB() const;
+    
+  
     //Destructor is needed because virtual methods are used.
   virtual ~Predicate() { }
 };

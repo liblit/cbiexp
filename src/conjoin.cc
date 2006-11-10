@@ -14,8 +14,7 @@ using namespace std;
 
 void
 RunSet::dilute(const Predicate &, const RunSet &winner) {
-    assert(size() == winner.size());
-    
+    assert(size() == winner.size());    
     // Nothing
 }
 
@@ -27,25 +26,15 @@ void initialize() {
     Confidence::level = 0;
 }
 
-void conjoin() {
+void gen_conjunctions() {
     initialize();
 
     Candidates candidates;
-    list<Conjunction> all;
     candidates.load();
     
-   Candidates::iterator i, j;
-    for(i = candidates.begin(); i != candidates.end(); i ++)
-        for(j = i; j != candidates.end(); j ++) {
-	    if ( i == j )
-	      continue;
-            Conjunction c(&*i, &*j);
-            if(c.isInteresting()) {
-                all.push_back(c);
-            }
-        }
-    list<Conjunction>::iterator winner = max_element(all.begin(), all.end());
-    cout << "Number of interesting conjunctions: " << all.size() << endl;
+    std::list<Conjunction> result = conjoin(candidates, 1);
+    std::list<Conjunction>::iterator winner = max_element(result.begin(), result.end());
+    cout << "Number of interesting conjunctions: " << result.size() << endl;
     cout << "(Max possible: " << candidates.size() * candidates.size() << ")\n";
     
     cout << "Best conjunction: Score " << (*winner).score() << endl;

@@ -143,7 +143,7 @@ main(int argc, char** argv)
 	statsMap[scheme].push_back(indexed);
     }
 
-    conjoin();
+    gen_conjunctions();
     // generate sorted views for each individual scheme
     for (StatsMap::iterator scheme = statsMap.begin(); scheme != statsMap.end(); ++scheme)
 	gen_views(scheme->first, scheme->second);

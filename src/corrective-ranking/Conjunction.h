@@ -4,6 +4,8 @@
 #include <iosfwd>
 
 #include "Predicate.h"
+#include "Candidates.h"
+#include <list>
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -30,6 +32,10 @@ public:
 
 std::ostream &operator<<(std::ostream &, const Conjunction &);
 
+// Computes conjunctions of predicates from input list.  The length of
+// the resulting candidate list is bound by the second parameter.
+std::list<Conjunction> conjoin(Candidates, unsigned);
+  
 ////////////////////////////////////////////////////////////////////////
 
 

@@ -8,6 +8,7 @@
 
 #include "Conjunction.h"
 #include "Predicate.h"
+#include "Candidates.h"
 #include "RunSuite.h"
 #include "allFailures.h"
 
@@ -70,4 +71,36 @@ operator<<(std::ostream &out, const Conjunction &conjunction)
 {
     return
         out << *(conjunction.pred1) << " " << (conjunction.pred1)->score() << "\n" << *(conjunction.pred2) << " " << (conjunction.pred1)->score();
+}
+
+
+// Computes conjunctions of predicates from input list.  The length of
+// the resulting candidate list is bound by the second parameter.
+std::list<Conjunction> conjoin(Candidates candidates, unsigned limit) {  
+  std::list<Conjunction> result;
+  double minMax = 0;
+  
+  Candidates::iterator i, j;
+  for(i = candidates.begin(); i != candidates.end(); i ++)
+    for(j = i; j != candidates.end(); j ++) {
+      
+      if (i == j)
+        continue;
+      if(result.size() == limit) {
+        if(i->conjUB() < minMax || j->conjUB() < minMax) {
+          continue;
+        }
+      }
+        
+      Conjunction c(&*i, &*j);
+      if(c.isInteresting()) {
+        result.push_back(c);
+          
+        if(result.size() > limit) {
+          result.erase(min_element(result.begin(), result.end()));
+          minMax = min_element(result.begin(), result.end())->score();
+        }
+      }
+    }
+  return result;
 }
