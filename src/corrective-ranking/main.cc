@@ -10,6 +10,7 @@
 #include "../termination.h"
 
 #include "Candidates.h"
+#include "Conjunction.h"
 #include "allFailures.h"
 #include "zoom.h"
 
@@ -32,6 +33,12 @@ static string zoomAttr;
 static void
 buildView(Candidates candidates, const char projection[], Foci *foci = 0)
 {
+  // Keeps track of the current best score, and current best
+  // Conjunction.
+  double bestScore;
+  Conjunction * bestConj;
+  Conjunction * newConj;
+
   // create XML output file and write initial header
   ViewPrinter view(Stylesheet::filename, "corrected-view", "all", "hl", projection);
 
@@ -42,25 +49,104 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
 
   const AllFailuresSnapshot snapshot;
 
+  cout << "Entering conjunction-enabled buildView.  This might take a while..." << endl;
+
   // pluck out predicates one by one, printing as we go
   while (!candidates.empty())
     {
+      candidates.sort();
+      candidates.reverse();
       const Candidates::iterator winner = max_element(candidates.begin(), candidates.end());
-      view << *winner;
-      if (foci)
-	foci->insert(winner->index);
 
-      allFailures.dilute(*winner, winner->tru.failures);
-      if (allFailures.count <= 0)
-	break;
+      //'winner' is the best Predicate.  We now try to find a conjunction with a better score...
+      //if there is more than one such Conjunction, we keep only the best.
+      bestScore = winner->score();
+      bestConj = NULL;
+      newConj = NULL;
 
-      for (Candidates::iterator loser = candidates.begin(); loser != candidates.end(); ++loser)
-	if (loser != winner)
-	  loser->dilute(*winner);
+      for ( Candidates::iterator i = candidates.begin(); i != candidates.end(); i++ ) {
+	for ( Candidates::iterator j = i; j != candidates.end(); j++ ) {
+	  if ( i == j )
+	    continue;
 
-      progress.step();
-      candidates.erase(winner);
-      candidates.rescore(progress);
+	  //Estimate the conjunction score...
+	  newConj = new Conjunction( &*i, &*j, true );
+	  if ( newConj->isInteresting() && bestScore < newConj->score() ) {
+	    // Overestimation seems good enough.  New actually generate
+	    // the conjunction and evaluate it.
+	    delete newConj;
+	    newConj = new Conjunction( &*i, &*j );
+	    if ( newConj->isInteresting() && bestScore < newConj->score() ) {
+	      if ( bestConj != NULL )
+		delete bestConj;
+	      bestConj = newConj;
+	      bestScore = bestConj->score();
+	      newConj = NULL;
+	      // cout << "X";      // A neat visualization.
+	    }
+	    else {
+	      delete newConj;
+	      // cout << "1";         // A neat visualization.
+	    }
+	  }
+	  else {
+	    delete newConj;
+	    // cout << "0";        // A neat visualization.
+	  }
+	}
+      }
+      
+      // If bestConj != NULL, it is the best one to use here.
+      if ( bestConj != NULL ) {
+
+	// Once XML output works uncomment...
+	// view << *bestConj;
+
+	cout << endl << endl;
+	cout << "Conjunction is best predictor." << endl;
+	cout << *bestConj << endl;
+	cout << "Conjunction scored a " << bestConj->score() << endl;
+	cout << "True in " << bestConj->tru.failures.count
+	     << " out of " << allFailures.count << " failures."
+	     << endl << "True in " << bestConj->tru.successes.count 
+	     << " successes." << endl;
+	cout << "Seen in " << bestConj->obs.failures.count
+	     << " failures, " << bestConj->obs.successes.count
+	     << " successes." << endl << endl;
+
+	// Can't put it in foci, since it doesn't share an indexing style...
+	// Maybe someone more familiar with the code can fix this.
+
+	allFailures.dilute( *bestConj, bestConj->tru.failures );
+	if ( allFailures.count <= 0 ) {
+	  delete bestConj;
+	  break;
+	}
+
+	for ( Candidates::iterator loser = candidates.begin(); loser != candidates.end(); ++loser )
+	  loser->dilute(*bestConj);
+
+	progress.step();
+	candidates.rescore(progress);
+	delete bestConj;
+      }
+      else {
+	view << *winner;
+	if (foci)
+	  foci->insert(winner->index);
+	
+	allFailures.dilute(*winner, winner->tru.failures);
+	if (allFailures.count <= 0)
+	  break;
+	
+	for (Candidates::iterator loser = candidates.begin(); loser != candidates.end(); ++loser)
+	  if (loser != winner)
+	    loser->dilute(*winner);
+	
+	progress.step();
+	candidates.erase(winner);
+	candidates.rescore(progress);
+      }
     }
 }
 
