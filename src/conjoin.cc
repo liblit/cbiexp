@@ -31,6 +31,11 @@ void gen_conjunctions() {
 
     Candidates candidates;
     candidates.load();
+    candidates.sort();
+    candidates.reverse();
+    
+    Candidates::iterator i = candidates.begin();
+    cout << (*i).score() << endl;
     
     std::list<Conjunction> result = conjoin(candidates, 1);
     std::list<Conjunction>::iterator winner = max_element(result.begin(), result.end());

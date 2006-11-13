@@ -50,12 +50,7 @@ public:
     return vect;
   }
   
-  //Upperbound on the score of a conjunction
-  //formed using this predicate
-  double conjUB() const;
-    
-  
-    //Destructor is needed because virtual methods are used.
+  //Destructor is needed because virtual methods are used.
   virtual ~Predicate() { }
 };
 

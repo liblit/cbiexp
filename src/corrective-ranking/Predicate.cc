@@ -70,9 +70,6 @@ Predicate::harmonic() const
   return 2 / (1 / lowerBound() + 1 / recall());
 }
 
-
-
-
 void
 Predicate::dilute(const Predicate &winner)
 {
@@ -80,21 +77,6 @@ Predicate::dilute(const Predicate &winner)
   obs.dilute(winner, winner.tru);
 }
 
-//Upperbound on the score of a conjunction
-//that can be formed using this predicate
-double
-Predicate::conjUB() const {
-  Predicate best(1);
-  best.tru.successes.count = 0;
-  best.tru.failures.count = tru.failures.count;
-  
-  best.obs.successes.count = obs.successes.count;
-  best.obs.failures.count = tru.failures.count;
-  
-  return best.score();
-}
-  
-  
 std::ostream &
 operator<<(std::ostream &out, const Predicate &predicate)
 {

@@ -18,8 +18,16 @@ class Conjunction: public Predicate
 {
 public:
   Predicate *pred1, *pred2;
+   
   Conjunction(Predicate *pred1_t, Predicate *pred2_t);
-  bool isInteresting(); 
+  
+  // If onlyEstimate is true, the actual conjunction is not computed.  Instead,
+  // the count fields of obs.{successes|failures} and tru.{successes|failrues}
+  // are initialized with conservative estimates.
+  Conjunction(Predicate *pred1_t, Predicate *pred2_t, bool onlyEstimate);
+  
+  bool isInteresting();
+  double score();
 
   std::vector<int> getPredicateList() const;
     //Returns a vector containing all the indices for the
