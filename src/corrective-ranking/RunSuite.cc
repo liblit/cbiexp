@@ -117,14 +117,17 @@ RunSuite::set( int index, RunOutcome value )
   // Fail           1                  0
   // Neither        0                  0
 
-  // Set both, correct one (maybe)
   if(value == Succeed) {
     successes.set(index, true);
     failures.set(index, false);
   }
-  else {
+  else if ( value == Fail ){
     successes.set(index, false);
     failures.set(index, true);
+  }
+  else {
+    successes.set( index, false );
+    failures.set( index, false );
   }
 }
 
