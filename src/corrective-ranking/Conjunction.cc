@@ -1,6 +1,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <sstream>
 
 #include <stdio.h>
 
@@ -93,7 +94,30 @@ double Conjunction::score() {
   return Predicate::score();
 }  
 
-std::vector<int>
+
+
+
+std::string
+Conjunction::bugometerXML() {
+  //Returns a string representing a bug-o-meter XML tag.
+
+  ostringstream oss( ostringstream::out );
+  oss << "<bug-o-meter true-success=\"" << tru.successes.count
+      << "\" true-failure=\"" << tru.failures.count
+      << "\" seen-success=\"" << obs.successes.count
+      << "\" seen-failure=\"" << obs.failures.count
+      << "\" fail=\"" << badness()
+      << "\" context=\"" << context()
+      << "\" increase=\"" << increase()
+      << "\" lower-bound=\"" << lowerBound()
+      << "\" log10-true=\"" << log10(double(tru.count()))
+      << "\"/>";
+  return oss.str();
+}
+
+
+
+std::vector<unsigned>
 Conjunction::getPredicateList() const
 {
   //Returns a vector containing all the indices for the
@@ -102,9 +126,9 @@ Conjunction::getPredicateList() const
   //one element.  If printing to an XML file, add one to each
   //element.
 
-  std::vector<int> vect1 = pred1->getPredicateList();
-  std::vector<int> vect2 = pred2->getPredicateList();
-  std::vector<int> conjVect;
+  std::vector<unsigned> vect1 = pred1->getPredicateList();
+  std::vector<unsigned> vect2 = pred2->getPredicateList();
+  std::vector<unsigned> conjVect;
 
   //Copy the elements into the conjoined array
   for ( unsigned i = 0; i < vect1.size(); i++ ) 
@@ -114,6 +138,7 @@ Conjunction::getPredicateList() const
 
   return conjVect;
 }
+
 
 
 // Computes conjunctions of predicates from input list.  The length of

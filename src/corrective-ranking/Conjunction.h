@@ -25,11 +25,14 @@ public:
   // the count fields of obs.{successes|failures} and tru.{successes|failrues}
   // are initialized with conservative estimates.
   Conjunction(Predicate *pred1_t, Predicate *pred2_t, bool onlyEstimate);
-  
+
   bool isInteresting();
   double score();
+  
+  std::string bugometerXML();
+    //Returns a string representing a bug-o-meter XML tag.
 
-  std::vector<int> getPredicateList() const;
+  std::vector<unsigned> getPredicateList() const;
     //Returns a vector containing all the indices for the
     //predicates being conjoined to form this one.  For a
     //primitive predicate (not a conjunction) this vector has

@@ -33,11 +33,13 @@ static string zoomAttr;
 static void
 buildView(Candidates candidates, const char projection[], Foci *foci = 0)
 {
-  // Keeps track of the current best score, and current best
-  // Conjunction.
+  // Keeps track of the current best score.
   double bestScore;
-  Conjunction * bestConj;
-  Conjunction * newConj;
+
+  // Keeps a list of the original candidates, undiluted.  That way
+  // the original score of any predictor conjunctions can be calculated.
+  Candidates origCandidates;
+  origCandidates.load();  //here's where we cheat a little.
 
   // create XML output file and write initial header
   ViewPrinter view(Stylesheet::filename, "corrected-view", "all", "hl", projection);
@@ -61,74 +63,52 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
       //'winner' is the best Predicate.  We now try to find a conjunction with a better score...
       //if there is more than one such Conjunction, we keep only the best.
       bestScore = winner->score();
-      bestConj = NULL;
-      newConj = NULL;
-
-      for ( Candidates::iterator i = candidates.begin(); i != candidates.end(); i++ ) {
-	for ( Candidates::iterator j = i; j != candidates.end(); j++ ) {
-	  if ( i == j )
-	    continue;
-
-	  //Estimate the conjunction score...
-	  newConj = new Conjunction( &*i, &*j, true );
-	  if ( newConj->isInteresting() && bestScore < newConj->score() ) {
-	    // Overestimation seems good enough.  New actually generate
-	    // the conjunction and evaluate it.
-	    delete newConj;
-	    newConj = new Conjunction( &*i, &*j );
-	    if ( newConj->isInteresting() && bestScore < newConj->score() ) {
-	      if ( bestConj != NULL )
-		delete bestConj;
-	      bestConj = newConj;
-	      bestScore = bestConj->score();
-	      newConj = NULL;
-	      // cout << "X";      // A neat visualization.
-	    }
-	    else {
-	      delete newConj;
-	      // cout << "1";         // A neat visualization.
-	    }
-	  }
-	  else {
-	    delete newConj;
-	    // cout << "0";        // A neat visualization.
-	  }
-	}
-      }
+      std::list<Conjunction> bestConj = conjoin( candidates, 1 );
       
-      // If bestConj != NULL, it is the best one to use here.
-      if ( bestConj != NULL ) {
+      // If the list has an item, and its score beats bestScore, it's what
+      // we use.
+      if ( bestConj.size() == 1 && bestConj.front().score() > bestScore ) {
+	
+	// We need to form a conjunction of the same predicates, with their
+	// original RunSets, to get the original score of this one.
+	
+	std::vector<unsigned> preds = bestConj.front().getPredicateList();
+	Candidates::iterator i = origCandidates.begin();
+	Candidates::iterator j = origCandidates.begin();
+	while ( i != origCandidates.end() && j != origCandidates.end() ) {
+	  if ( i->index != preds[0] )
+	    i++;
+	  if ( j->index != preds[1] )
+	    j++;
+	  if ( i->index == preds[0] && j->index == preds[1] )
+	    break;
+	}
+	assert( i != origCandidates.end() && j != origCandidates.end() );
+	Conjunction c( &*i, &*j );
+	
+	// XML it up!  (replace "cout" with "view" to output to the file)
+	cout << "<conjunction initial=\"" << c.score() << "\" effective=\""
+	     << bestConj.front().score() << "\">";
+	for ( unsigned i = 0; i < preds.size(); i++ )
+	  cout << "<pred index=\"" << preds.at(i) +1 << "\"/>";
+	cout << c.bugometerXML() << bestConj.front().bugometerXML()
+	     << "</conjuction>";
 
-	// Once XML output works uncomment...
-	// view << *bestConj;
-
-	cout << endl << endl;
-	cout << "Conjunction is best predictor." << endl;
-	cout << *bestConj << endl;
-	cout << "Conjunction scored a " << bestConj->score() << endl;
-	cout << "True in " << bestConj->tru.failures.count
-	     << " out of " << allFailures.count << " failures."
-	     << endl << "True in " << bestConj->tru.successes.count 
-	     << " successes." << endl;
-	cout << "Seen in " << bestConj->obs.failures.count
-	     << " failures, " << bestConj->obs.successes.count
-	     << " successes." << endl << endl;
+	cout << endl;      //remove when using "view <<"
 
 	// Can't put it in foci, since it doesn't share an indexing style...
 	// Maybe someone more familiar with the code can fix this.
-
-	allFailures.dilute( *bestConj, bestConj->tru.failures );
+	
+	allFailures.dilute( bestConj.front(), bestConj.front().tru.failures );
 	if ( allFailures.count <= 0 ) {
-	  delete bestConj;
 	  break;
 	}
-
+	
 	for ( Candidates::iterator loser = candidates.begin(); loser != candidates.end(); ++loser )
-	  loser->dilute(*bestConj);
-
+	  loser->dilute( bestConj.front() );
+	
 	progress.step();
 	candidates.rescore(progress);
-	delete bestConj;
       }
       else {
 	view << *winner;
