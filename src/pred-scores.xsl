@@ -39,7 +39,8 @@
     <xsl:variable name="index" select="number(@index)"/>
     <xsl:variable name="num" 
 	    select="count(document('conjunction-info.xml', /)/conjunction-info/info[@index= $index]/pred)"/>
-    <td rowspan="{$num}" class="meter">
+         <td rowspan= "{$num}"><xsl:value-of select="@score"/></td>
+	<td rowspan="{$num}" class="meter">
    	 <xsl:apply-templates 
 		 select="document('conjunction-info.xml')/conjunction-info/info[@index= $index]/bug-o-meter"/>
  	 </td> 

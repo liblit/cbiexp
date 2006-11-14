@@ -92,7 +92,6 @@
       <xsl:variable name="num" 
 	      select="count(document('conjunction-info.xml', /)/conjunction-info/info[@index= $index]/pred)"/>
     <tr>
-      <td rowspan= "{$num}"><xsl:value-of select="@score"/></td>
       <xsl:apply-templates select="." mode="dynamic-cells"/>
       <xsl:for-each
 	      select="document('conjunction-info.xml', /)/conjunction-info/info[@index= $index]/pred[1]">
