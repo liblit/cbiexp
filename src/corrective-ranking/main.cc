@@ -87,14 +87,12 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
 	Conjunction c( &*i, &*j );
 	
 	// XML it up!  (replace "cout" with "view" to output to the file)
-	cout << "<conjunction initial=\"" << c.score() << "\" effective=\""
+	view << "<conjunction initial=\"" << c.score() << "\" effective=\""
 	     << bestConj.front().score() << "\">";
 	for ( unsigned i = 0; i < preds.size(); i++ )
-	  cout << "<pred index=\"" << preds.at(i) +1 << "\"/>";
-	cout << c.bugometerXML() << bestConj.front().bugometerXML()
-	     << "</conjuction>";
-
-	cout << endl;      //remove when using "view <<"
+	  view << "<pred index=\"" << preds.at(i) +1 << "\"/>";
+	view << c.bugometerXML() << bestConj.front().bugometerXML()
+	     << "</conjunction>";
 
 	// Can't put it in foci, since it doesn't share an indexing style...
 	// Maybe someone more familiar with the code can fix this.
