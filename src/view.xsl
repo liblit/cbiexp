@@ -127,7 +127,9 @@
   <!-- custom data cells for each predictor row in the big table -->
   <xsl:template match="predictor" mode="dynamic-cells">
     <xsl:variable name="index" select="number(@index)"/>
+    <td class="meter">
     <xsl:apply-templates select="document('predictor-info.xml', /)/predictor-info/info[$index]/bug-o-meter"/>
+    </td>
   </xsl:template>
 
 

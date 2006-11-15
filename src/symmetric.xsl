@@ -41,7 +41,9 @@
 
   <xsl:template match="predictor" mode="dynamic-cells">
     <xsl:apply-imports/>
+    <td class="meter">
     <xsl:apply-templates select="bug-o-meter"/>
+    </td>	
   </xsl:template>
 
 
