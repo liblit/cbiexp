@@ -15,37 +15,57 @@
 
 using namespace std;
 
-Conjunction::Conjunction(Predicate *pred1_t, Predicate *pred2_t) : Predicate(0) {
-    pred1 = pred1_t;
-    pred2 = pred2_t;
-    tru = RunSuite(pred1->tru, pred2->tru);
+int Conjunction::nextIndex = 0;
+
+Conjunction::Conjunction(Predicate *pred1_t, Predicate *pred2_t) : Predicate(nextIndex) {
+
+  nextIndex ++;
+  if(nextIndex == 0)
+    cout << "Warning: Conjunction index overflow\n";
     
+  pred1 = pred1_t;
+  pred2 = pred2_t;
+  tru = RunSuite(pred1->tru, pred2->tru);
+    
+  obs = RunSuite(NumRuns::end);
+  for(unsigned r = NumRuns::begin; r < NumRuns::end; r ++) {        
+    if(pred1->obs.get(r) != Neither && pred1->tru.get(r) == Neither)
+      obs.set(r, pred1->obs.get(r));
+    else if (pred2->obs.get(r) != Neither  && pred2->tru.get(r) == Neither)
+      obs.set(r, pred2->obs.get(r));
+    else if (pred1->obs.get(r) != Neither && pred2->obs.get(r) != Neither)
+      obs.set(r, pred1->obs.get(r));
+    else
+      obs.set(r, Neither);
+  }
 
-
-    obs = RunSuite(NumRuns::end);
-
-    for(unsigned r = NumRuns::begin; r < NumRuns::end; r ++) {        
-        if(pred1->obs.get(r) != Neither && pred1->tru.get(r) == Neither)
-            obs.set(r, pred1->obs.get(r));
-        else if (pred2->obs.get(r) != Neither  && pred2->tru.get(r) == Neither)
-            obs.set(r, pred2->obs.get(r));
-	else if (pred1->obs.get(r) != Neither && pred2->obs.get(r) != Neither)
-	    obs.set(r, pred1->obs.get(r));
-        else
-            obs.set(r, Neither);
-    }
-
-    initial = effective = score();
+  initial = effective = score();
 }
 
 Conjunction::Conjunction(Predicate *pred1_t, Predicate *pred2_t, bool onlyEstimate)
-  : Predicate(0)
+  : Predicate(nextIndex)
 {
+  // If we have to compute the entire conjunction, i.e. if onlyEstimate == False,
+  // call the other constructor.
   if(! onlyEstimate) {
     Conjunction(pred1_t, pred2_t);
     return;
   }
   
+  // We have a static nextIndex that is incremented during each call to the
+  // constructor.  It is passed to the constructor to super class Predicate.
+  // The increment is placed in such a way that it happens only once
+  // irrespective of the value of onlyEstimate.  It may happen twice if
+  // you remove the return in the previous if(! onlyEstimate) block
+  
+  // NOTE: The Predicate's constructor itself may be called twice, but the
+  // parameter is the same
+  nextIndex ++;
+  if(nextIndex == 0)
+    cout << "Warning: Conjunction index overflow\n";
+  
+
+  // Otherwise, just estimate.  This will eliminate O(numRuns) worth of runtime.
   pred1 = pred1_t;
   pred2 = pred2_t;
   
@@ -143,9 +163,9 @@ Conjunction::getPredicateList() const
 
 // Computes conjunctions of predicates from input list.  The length of
 // the resulting candidate list is bound by the second parameter.
-std::list<Conjunction> conjoin(Candidates candidates, unsigned limit) {  
+std::list<Conjunction> conjoin(Candidates &candidates, unsigned limit, double begin) {  
   std::list<Conjunction> result;
-  double minMax = 0;
+  double minMax = begin;
   
   int skipped = 0;
   Candidates::iterator i, j;
@@ -163,13 +183,14 @@ std::list<Conjunction> conjoin(Candidates candidates, unsigned limit) {
       Conjunction c(&*i, &*j);
       if(c.isInteresting()) {
         result.push_back(c);
-          
+        
         if(result.size() > limit) {
           result.erase(min_element(result.begin(), result.end()));
           minMax = min_element(result.begin(), result.end())->score();
         }
       }
     }
+
   printf("CONJOIN:: was able to prune %d conjunctions\n", skipped);
   return result;
 }

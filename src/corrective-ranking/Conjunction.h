@@ -16,6 +16,8 @@
 
 class Conjunction: public Predicate
 {
+private:
+  static int nextIndex;
 public:
   Predicate *pred1, *pred2;
    
@@ -45,7 +47,7 @@ std::ostream &operator<<(std::ostream &, const Conjunction &);
 
 // Computes conjunctions of predicates from input list.  The length of
 // the resulting candidate list is bound by the second parameter.
-std::list<Conjunction> conjoin(Candidates, unsigned);
+std::list<Conjunction> conjoin(Candidates &, unsigned, double begin = 0);
   
 ////////////////////////////////////////////////////////////////////////
 

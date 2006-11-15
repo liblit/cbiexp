@@ -19,7 +19,7 @@ class Predicate
 {
 public:
   Predicate(unsigned);
-  /*const*/ unsigned index;
+  const unsigned index;
   double initial, effective;
 
   RunSuite tru;
