@@ -66,7 +66,7 @@ void xml_conj_view(list<Conjunction> c, char *fname) {
         << "<scores>" << endl;
     
     for(iter = c.begin(); iter != c.end(); iter ++) {
-        out << "<conjunction index=\"" << (*iter).index << "\" score=\"" << (*iter).score() << "\" stat1=\"1\" stat2=\"0\"/>" << endl;
+        out << "<conjunction index=\"" << (*iter).index << "\" score=\"" << (*iter).what() << (*iter).score() << "\" stat1=\"1\" stat2=\"0\"/>" << endl;
     }
     
     out << "</scores>" << endl;
@@ -80,7 +80,7 @@ void gen_conjunctions() {
     candidates.sort();
     candidates.reverse();
     
-    std::list<Conjunction> result = conjoin(candidates, 100);
+    std::list<Conjunction> result = conjoin(candidates, 1000);
     
     xml_conj_info(result, "conjunction-info.xml");
     

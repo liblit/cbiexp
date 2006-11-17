@@ -13,6 +13,8 @@ libcorrective_a_SOURCES =			\
 	Candidates.h				\
 	Conjunction.cc				\
 	Conjunction.h				\
+	Disjunction.cc				\
+	Disjunction.h				\
 	Foci.h					\
 	Outcome.cc				\
 	Outcome.h				\

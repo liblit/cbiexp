@@ -1,13 +1,16 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 
 #include <stdio.h>
 
 #include "../NumRuns.h"
+#include "../Confidence.h"
 
 #include "Conjunction.h"
+#include "Disjunction.h"
 #include "Predicate.h"
 #include "Candidates.h"
 #include "RunSuite.h"
@@ -18,15 +21,15 @@ using namespace std;
 int Conjunction::nextIndex = 0;
 
 Conjunction::Conjunction(Predicate *pred1_t, Predicate *pred2_t) : Predicate(nextIndex) {
-
+  mych = 'C';
   nextIndex ++;
   if(nextIndex == 0)
     cout << "Warning: Conjunction index overflow\n";
     
   pred1 = pred1_t;
   pred2 = pred2_t;
+
   tru = RunSuite(pred1->tru, pred2->tru);
-    
   obs = RunSuite(NumRuns::end);
   for(unsigned r = NumRuns::begin; r < NumRuns::end; r ++) {        
     if(pred1->obs.get(r) != Neither && pred1->tru.get(r) == Neither)
@@ -51,7 +54,8 @@ Conjunction::Conjunction(Predicate *pred1_t, Predicate *pred2_t, bool onlyEstima
     Conjunction(pred1_t, pred2_t);
     return;
   }
-  
+ 
+  mych = 'C'; 
   // We have a static nextIndex that is incremented during each call to the
   // constructor.  It is passed to the constructor to super class Predicate.
   // The increment is placed in such a way that it happens only once
@@ -114,7 +118,12 @@ double Conjunction::score() {
   return Predicate::score();
 }  
 
-
+double
+Conjunction::lowerBound() const
+{
+  const double standardError = sqrt(tru.errorPart() + obs.errorPart());
+  return increase() - Confidence::critical(99) * standardError;
+}
 
 
 std::string
@@ -168,6 +177,7 @@ std::list<Conjunction> conjoin(Candidates &candidates, unsigned limit, double be
   double minMax = begin;
   
   int skipped = 0;
+  unsigned intr = 0;
   Candidates::iterator i, j;
   for(i = candidates.begin(); i != candidates.end(); i ++)
     for(j = candidates.begin(); j != i; j ++) {
@@ -176,14 +186,27 @@ std::list<Conjunction> conjoin(Candidates &candidates, unsigned limit, double be
         Conjunction dummy(&*i, &*j, true);
         if(dummy.score() < minMax) {
           skipped ++;
-          continue;
+//           continue;
         }
       }
-
+      
       Conjunction c(&*i, &*j);
       if(c.isInteresting()) {
         result.push_back(c);
         
+        intr ++;
+        if(result.size() > limit) {
+          result.erase(min_element(result.begin(), result.end()));
+          minMax = min_element(result.begin(), result.end())->score();
+        }
+      }
+
+      Disjunction d(&*i, &*j);
+      if(d.isInteresting()) {
+//         printf("Found an interesting disjunction\n");
+        result.push_back(d);
+        
+        intr ++;
         if(result.size() > limit) {
           result.erase(min_element(result.begin(), result.end()));
           minMax = min_element(result.begin(), result.end())->score();
@@ -192,6 +215,7 @@ std::list<Conjunction> conjoin(Candidates &candidates, unsigned limit, double be
     }
 
   printf("CONJOIN:: was able to prune %d conjunctions\n", skipped);
+  printf("CONJOIN:: In all, %d conjunctions were interesting\n", intr);
   return result;
 }
 
@@ -201,3 +225,5 @@ operator<<(std::ostream &out, const Conjunction &conjunction)
     return
         out << *(conjunction.pred1) << " " << (conjunction.pred1)->score() << "\n" << *(conjunction.pred2) << " " << (conjunction.pred1)->score();
 }
+
+

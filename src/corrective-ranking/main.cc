@@ -63,7 +63,7 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
       //'winner' is the best Predicate.  We now try to find a conjunction with a better score...
       //if there is more than one such Conjunction, we keep only the best.
       bestScore = winner->score();
-      std::list<Conjunction> bestConj = conjoin( candidates, 1 );
+      std::list<Conjunction> bestConj = conjoin(candidates, 1, bestScore);
       
       // If the list has an item, and its score beats bestScore, it's what
       // we use.
@@ -87,13 +87,19 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
 	Conjunction c( &*i, &*j );
 	
 	// XML it up!  (replace "cout" with "view" to output to the file)
-	view << "<conjunction initial=\"" << c.score() << "\" effective=\""
+	view << "<conjunction initial=\"" << c.what() << c.score() << "\" effective=\""
 	     << bestConj.front().score() << "\">";
 	for ( unsigned i = 0; i < preds.size(); i++ )
 	  view << "<pred index=\"" << preds.at(i) +1 << "\"/>";
 	view << c.bugometerXML() << bestConj.front().bugometerXML()
 	     << "</conjunction>";
 
+    cout << "<conjunction initial=\"" << c.what() << c.score() << "\" effective=\""
+	     << bestConj.front().score() << "\">";
+	for ( unsigned i = 0; i < preds.size(); i++ )
+	  cout << "<pred index=\"" << preds.at(i) +1 << "\"/>";
+	cout << c.bugometerXML() << bestConj.front().bugometerXML()
+	     << "</conjunction>";
 	// Can't put it in foci, since it doesn't share an indexing style...
 	// Maybe someone more familiar with the code can fix this.
 	
@@ -110,6 +116,7 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
       }
       else {
 	view << *winner;
+    cout << *winner;
 	if (foci)
 	  foci->insert(winner->index);
 	

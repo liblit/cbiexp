@@ -16,11 +16,13 @@
 
 class Conjunction: public Predicate
 {
-private:
+protected:
   static int nextIndex;
 public:
   Predicate *pred1, *pred2;
-   
+
+  Conjunction(unsigned x): Predicate(x) {mych = 'C';} // to enable disjunction
+     
   Conjunction(Predicate *pred1_t, Predicate *pred2_t);
   
   // If onlyEstimate is true, the actual conjunction is not computed.  Instead,
@@ -30,6 +32,7 @@ public:
 
   bool isInteresting();
   double score();
+  double lowerBound() const;
   
   std::string bugometerXML();
     //Returns a string representing a bug-o-meter XML tag.
@@ -41,6 +44,9 @@ public:
     //one element.  If printing to an XML file, add one to each
     //element.
   
+  // Temporary hack to distinguish between a disjunction and a conjunction
+  char mych;
+  char what() { return mych; }
 };
 
 std::ostream &operator<<(std::ostream &, const Conjunction &);
@@ -50,7 +56,5 @@ std::ostream &operator<<(std::ostream &, const Conjunction &);
 std::list<Conjunction> conjoin(Candidates &, unsigned, double begin = 0);
   
 ////////////////////////////////////////////////////////////////////////
-
-
 
 #endif // !INCLUDE_corrective_ranking_Conjunction_h
