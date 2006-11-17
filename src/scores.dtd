@@ -1,4 +1,4 @@
-<!ELEMENT scores (predictor*)>
+<!ELEMENT scores ((predictor|conjunction)*)>
 
 <!ENTITY % predictor.content "EMPTY">
 <!ENTITY % predictor.coordinates "index NMTOKEN #REQUIRED">
