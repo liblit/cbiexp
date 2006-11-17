@@ -20,35 +20,53 @@ for k = 2:10
     outputfile = ['feature_probabilities', int2str(k)];
     print(gcf, '-djpeg', outputfile);
 
+    %build legend
+    for i = 1:k
+        leg{i} = ['z = ', int2str(i)]; 
+    end
+
     % graph concept | run
-    imagesc(Pz_d'); colormap(gray); colorbar;
-    set(gca, 'XTick', [1:k]);
-    xlabel('Topic'); ylabel('Run'); title('Pz|d density');
+    colormap('default');
+    [N,X] = hist(Pz_d');
+    bar(repmat(X,1,size(N,2)),N);
+    legend(leg, 'Location', 'BestOutside');
+    title('Probability of aspect in all runs');
+    xlabel('Probability increment');
+    ylabel('Number of runs');
     outputfile = ['aspect_probabilities', int2str(k)];
     print(gcf, '-djpeg', outputfile);
 
-    %graph concept | failing run
-    imagesc(Pz_d(:, Findices)'); colormap(gray); colorbar;
-    set(gca, 'XTick', [1:k]);
-    xlabel('Topic'); ylabel('Failing Run'); title('Pz|d density');
-    outputfile = ['aspect_probabilitiesF', int2str(k)];
+
+    %graph concept | run for failures
+    [N,X] = hist(Pz_d(:, Findices)');
+    bar(repmat(X,1,size(N,2)),N);
+    legend(leg, 'Location', 'BestOutside');
+    title('Probability of aspect in failing runs');
+    xlabel('Probability increment');
+    ylabel('Number of runs');
+    outputfile = ['aspect_probabilities_F', int2str(k)];
     print(gcf, '-djpeg', outputfile);
 
-    %graph concept | succeeding runs
-    imagesc(Pz_d(:, Sindices)'); colormap(gray); colorbar;
-    set(gca, 'XTick', [1:k]);
-    xlabel('Topic'); ylabel('Succeeding Run'); title('Pz|d density');
-    outputfile = ['aspect_probabilitiesS', int2str(k)];
+    %graph concept | run for successes
+    [N,X] = hist(Pz_d(:, Sindices)');
+    bar(repmat(X,1,size(N,2)),N);
+    legend(leg, 'Location', 'BestOutside');
+    title('Probability of aspect in succeeding runs');
+    xlabel('Probability increment');
+    ylabel('Number of runs');
+    outputfile = ['aspect_probabilities_S', int2str(k)];
     print(gcf, '-djpeg', outputfile);
 
+    %graph concept | run for bugs 
     for run_index = 1:size(Bugs,1)
-
-        imagesc(Pz_d(:, find(Bugs(run_index,:)))'); colormap(gray); colorbar;
-        set(gca, 'XTick', [1:k]);
-        xlabel('Topic'); ylabel(['Bug Run', int2str(run_index)]); title('Pz|d density');
-        outputfile = ['aspect_probabilities', int2str(run_index), '_', int2str(k)];
+        [N,X] = hist(Pz_d(:, find(Bugs(run_index,:)))');
+        bar(repmat(X,1,size(N,2)),N);
+        legend(leg, 'Location', 'BestOutside');
+        title(['Probability of aspect in runs attributed to bug', int2str(run_index)]);
+        xlabel('Probability increment');
+        ylabel('Number of runs');
+        outputfile = ['aspect_probabilities_', int2str(run_index), '_', int2str(k)];
         print(gcf, '-djpeg', outputfile);
-        
     end
 end
 

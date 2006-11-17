@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <argp.h>
 #include <boost/dynamic_bitset.hpp>
 #include "../RunsDirectory.h"
@@ -8,6 +9,7 @@
 #include "../Progress/Bounded.h"
 #include "../PredStats.h"
 #include "../RunSet.h"
+#include "../Bugs.h"
 
 using namespace std;
 
@@ -44,11 +46,49 @@ int main(int argc, char** argv)
     ofstream ffile("f.m");
     ofstream sfile("s.m");
      
-    for(unsigned int i = NumRuns::begin; i < NumRuns::end; i++) {
-        if(is_frun[i]) ffile << i - NumRuns::begin + 1 << "\n";   
-        if(is_srun[i]) sfile << i - NumRuns::begin + 1 << "\n"; 
+    for(unsigned int i = NumRuns::begin, index = 0; i < NumRuns::end; i++) {
+        if(is_frun[i]) ffile << ++index << "\n";   
+        else if(is_srun[i]) sfile << ++index << "\n"; 
     }
     ffile.close();
     sfile.close();
+
+    ofstream out("bug_runs.m");
+    vector <int> * bugIds = (new Bugs())->bugIndex(); 
+    {
+        ifstream in("bug_runs.txt");
+        for(unsigned int i = 0; i < bugIds->size(); i++) {
+            string line;
+            getline(in, line);
+            istringstream parse(line);
+            RunSet current;
+            parse >> current;
+            for(unsigned int j = NumRuns::begin, index = 0; j < NumRuns::end; j++) {
+                if(is_frun[j] || is_srun[j]) {
+                    index++;
+                    if(current.test(j)) out << i + 1 << " " << index << " 1\n";
+                }
+            }
+        }
+        in.close();
+    }
+
+    {
+        ifstream in("unknown_runs.txt");
+        string line;
+        getline(in,line);
+        istringstream parse(line);
+        RunSet current;
+        parse >> current;
+        for(unsigned int j = NumRuns::begin, index = 0; j < NumRuns::end; j++) {
+            if(is_frun[j] || is_srun[j]) {
+                index++;
+                if(current.test(j)) out << bugIds->size() + 1 << " " << index << " 1\n";
+            }
+        }
+        in.close();
+    }
+    out.close();
+
 
 }
