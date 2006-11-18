@@ -59,6 +59,8 @@ end;
 m  = size(X,1); % vocabulary size
 nd = size(X,2); % # of documents
 
+[I,J,V] = find(X);
+
 % initialize Pz, Pd_z,Pw_z
 [Pz,Pd_z,Pw_z] = pLSA_init(m,nd,K);
 
@@ -80,10 +82,6 @@ else
     end 
 end
 
-
-% allocate memory for the posterior
-Pz_dw = zeros(m,nd,K); 
-
 Li    = [];
 maxit = Learn.Max_Iterations;
 
@@ -92,10 +90,10 @@ for it = 1:maxit
    fprintf('Iteration %d ',it);
    
    % E-step
-   Pz_dw = pLSA_Estep(Pw_z,Pd_z,Pz);
+   Pz_dw = pLSA_Estep(Pw_z,Pd_z,Pz,I,J,K);
    
    % M-step
-   [Pw_z,Pd_z,Pz] = pLSA_Mstep(X,Pz_dw);
+   [Pw_z,Pd_z,Pz] = pLSA_Mstep(I,J,V,Pz_dw,K);
 
    % if in recognition mode, reset Pw_z to fixed density
    if (FIXED_PW_Z)
@@ -107,7 +105,7 @@ for it = 1:maxit
    end;  
     
    % Evaluate data log-likelihood
-   Li(it) = pLSA_logL(X,Pw_z,Pz,Pd_z);   
+   Li(it) = pLSA_logL(I,J,V,Pw_z,Pz,Pd_z);   
         
    % plot loglikelihood
    if Learn.Verbosity>=3
@@ -160,47 +158,47 @@ return;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % (1) E step compute posterior on z,  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function Pz_dw = pLSA_Estep(Pw_z,Pd_z,Pz)
-   K = size(Pw_z,2);
+function Pz_dw = pLSA_Estep(Pw_z,Pd_z,Pz,I,J,K)
 
+   C = spalloc(size(Pw_z,1), size(Pd_z,1), prod(size(I)));
    for k = 1:K
-      Pz_dw(:,:,k) = Pw_z(:,k) * Pd_z(:,k)' * Pz(k);
+      Pz_dw{k} = sparse(I, J, Pw_z(I,k).*Pd_z(J,k) * Pz(k));
+      C = C + Pz_dw{k};
    end;   
-   C = sum(Pz_dw,3);
 
    % normalize posterior
    for k = 1:K
-      Pz_dw(:,:,k) = Pz_dw(:,:,k) .* (1./C);
+      Pz_dw{k} = Pz_dw{k} .* spfun(inline('1./x'), C); 
    end;   
 return;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  (2) M step, maximazize log-likelihood
+%  (2) M step, maximize log-likelihood
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [Pw_z,Pd_z,Pz] = pLSA_Mstep(X,Pz_dw)
-   K = size(Pz_dw,3);
+function [Pw_z,Pd_z,Pz] = pLSA_Mstep(X,I,J,V,Pz_dw,K)
    
    for k = 1:K
-      Pw_z(:,k) = sum(X .* Pz_dw(:,:,k),2);
-   end;
-   
-   for k = 1:K
-      Pd_z(:,k) = sum(X.* Pz_dw(:,:,k),1)';
+      [I,J,Z] = find(Pz_dw{k}); 
+      T = sparse(I, J, V.*Z); 
+      Pw_z(:,k) = sum(T,2);
+      Pd_z(:,k) = sum(T,1)';  
    end;
    
    Pz = sum(Pd_z,1);
    
    % normalize to sum to 1
    C = sum(Pw_z,1);
-   Pw_z = Pw_z * diag(1./C);
+   Pw_z = Pw_z * diag(full(spfun(inline('1./x'), C)));
 
    C = sum(Pd_z,1);
-   Pd_z = Pd_z * diag(1./C);
+   Pd_z = Pd_z * diag(full(spfun(inline('1./x'), C)));
    
    C = sum(Pz,2);
+   if C == 0 
+       error('Sum of probabilities of topics should be greater than 0.\n');
+   end;
    Pz = Pz .* 1./C;
-   Pz;
 
 return;
 
@@ -208,8 +206,17 @@ return;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % data log-likelihood
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function L = pLSA_logL(X,Pw_z,Pz,Pd_z)
-   L = sum(sum(X .* log(Pw_z * diag(Pz) * Pd_z' + eps)));
+function L = pLSA_logL(I,J,V,Pw_z,Pz,Pd_z)
+   L = spalloc(size(Pw_z,1), size(Pd_z,1), numel(V));   
+   for i = 1:numel(V))
+       L(i) = Pw_z(I(i), :) * diag(Pz) * Pd_z(J(i),:)'; 
+   end;
+   if nnz(L) ~= numel(L))
+       L = -Inf;   
+       warning('Probability of word and document co-occurring was zero, but actual count was not.');
+   else
+       L = sum(V .* log(L)');
+   end;
 
 return; 
 

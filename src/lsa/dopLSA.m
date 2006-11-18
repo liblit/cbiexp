@@ -5,9 +5,13 @@ path (path, '/scratch/mulhern/cbiexp/src/lsa/plsa')
 cd '/scratch/mulhern/cbiexp_cvs/exif/analysis'
 
 %Load values for predicate * run matrix 
-Xsparse = load('X.m');
+Xsparse = load('X.dat');
 X = spconvert(Xsparse);
 clear Xsparse;
+
+%density calculation, useful for deciding whether our formulas should 
+%operate on full or sparse matrices. 
+density = nnz(X)/prod(size(X))
 
 %Do a series of runs for different K and write the results to a file
 
@@ -22,7 +26,10 @@ Learn.TEM = 0; %not tempered
 
 for k = 2:10
     outputfile = ['probabilities', int2str(k)] 
+    profile on;
     [Pw_z,Pd_z,Pz,Li] = pLSA_EM(X,[],k,Learn);
+    profile off;
+    profsave(profile('info'), ['profile_results' int2str(k)]); 
     eval(['save ', outputfile, ' Pw_z Pd_z Pz Li']) 
 end
 
