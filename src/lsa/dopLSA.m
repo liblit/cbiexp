@@ -24,12 +24,11 @@ Learn.Min_Likelihood_Change = 1;
 Learn.Folding_Iterations = 20; 
 Learn.TEM = 0; %not tempered
 
-for k = 2:10
+for k = 2:3
     outputfile = ['probabilities', int2str(k)] 
     profile on;
-    [Pw_z,Pd_z,Pz,Li] = pLSA_EM(X,[],k,Learn);
+    [Pw_z,Pd_z,Pz,Pz_d, Li] = pLSA_EM(X,[],k,Learn);
     profile off;
     profsave(profile('info'), ['profile_results' int2str(k)]); 
-    eval(['save ', outputfile, ' Pw_z Pd_z Pz Li']) 
+    eval(['save ', outputfile, ' Pw_z Pd_z Pz Pz_d Li']) 
 end
-

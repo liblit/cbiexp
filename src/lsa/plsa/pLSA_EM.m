@@ -38,10 +38,7 @@
 % fergus@csail.mit.edu
 % 03/10/05
 
-function [Pw_z,Pd_z,Pz,Li] = pLSA_EM(X,Fixed_Pw_z,K,Learn)
-
-%% small offset to avoid numerical problems  
-ZERO_OFFSET = 1e-7;
+function [Pw_z,Pd_z,Pz,Pz_d,Li] = pLSA_EM(X,Fixed_Pw_z,K,Learn)
 
 %%% Default settings
 if nargin<3
@@ -49,12 +46,6 @@ if nargin<3
    Learn.Min_Likelihood_Change   = 1;   
    Learn.Verbosity = 0;
 end;   
-
-if Learn.Verbosity
-   figure(1); clf;
-   title('Log-likelihood');
-   xlabel('Iteration'); ylabel('Log-likelihood');
-end;
 
 m  = size(X,1); % vocabulary size
 nd = size(X,2); % # of documents
@@ -101,22 +92,9 @@ for it = 1:maxit
        Pw_z = Fixed_Pw_z;
    end  
    
-   if Learn.Verbosity>=2
-     Pw_z
-   end;  
-    
    % Evaluate data log-likelihood
    Li(it) = pLSA_logL(I,J,V,Pw_z,Pz,Pd_z,m,nd,e);   
-        
-   % plot loglikelihood
-   if Learn.Verbosity>=3
-      figure(ff(1));
-      plot(Li,'b.-');
-   end;
       
-   %%% avoid numerical problems.
-   Pw_z = Pw_z + ZERO_OFFSET;
-   
    % convergence?
    dLi = 0;
    if it > 1
@@ -126,7 +104,11 @@ for it = 1:maxit
    fprintf('dLi=%f \n',dLi);
 end;
 
+Pz_d = invertProbs(Pd_z,Pz);
+
 fprintf('\n');
+
+return;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % initialize conditional probabilities for EM 
@@ -232,7 +214,12 @@ function L = pLSA_logL(I,J,V,Pw_z,Pz,Pd_z,M,N,E)
 
 return; 
 
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% use bayes rule to invert probabilities
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function Px_y = invertProbs(Py_x, Px)
+    Px_y = Py_x * diag(Px);
+    Sx_y = sum(Px_y,2); 
+    Sx_y = spfun(inline('1./x'),Sx_y); 
+    Px_y = Px_y' * diag(Sx_y);
 return;
-
