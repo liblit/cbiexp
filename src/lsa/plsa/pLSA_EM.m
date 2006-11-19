@@ -58,6 +58,7 @@ end;
 
 m  = size(X,1); % vocabulary size
 nd = size(X,2); % # of documents
+e = nnz(X);     % # of non zero entries in this matrix
 
 [I,J,V] = find(X);
 
@@ -90,10 +91,10 @@ for it = 1:maxit
    fprintf('Iteration %d ',it);
    
    % E-step
-   Pz_dw = pLSA_Estep(Pw_z,Pd_z,Pz,I,J,K);
+   Pz_dw = pLSA_Estep(Pw_z,Pd_z,Pz,I,J,K,m,nd,e);
    
    % M-step
-   [Pw_z,Pd_z,Pz] = pLSA_Mstep(I,J,V,Pz_dw,K);
+   [Pw_z,Pd_z,Pz] = pLSA_Mstep(X,Pz_dw,K);
 
    % if in recognition mode, reset Pw_z to fixed density
    if (FIXED_PW_Z)
@@ -105,7 +106,7 @@ for it = 1:maxit
    end;  
     
    % Evaluate data log-likelihood
-   Li(it) = pLSA_logL(I,J,V,Pw_z,Pz,Pd_z);   
+   Li(it) = pLSA_logL(I,J,V,Pw_z,Pz,Pd_z,m,nd,e);   
         
    % plot loglikelihood
    if Learn.Verbosity>=3
@@ -157,10 +158,19 @@ return;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % (1) E step compute posterior on z,  
+% Pw_z - # words by # aspects matrix
+% Pd_z - # documents by # aspects matrix
+% Pz - # aspects matrix
+% I - from [I,J,V] = sparse(X)
+% J - from [I,J,V] = sparse(X)
+% K - number of aspects
+% M - number of rows of X
+% N - number of columns of X
+% E - number of nonzero entries of X
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function Pz_dw = pLSA_Estep(Pw_z,Pd_z,Pz,I,J,K)
+function Pz_dw = pLSA_Estep(Pw_z,Pd_z,Pz,I,J,K,M,N,E)
 
-   C = spalloc(size(Pw_z,1), size(Pd_z,1), prod(size(I)));
+   C = spalloc(M,N,E);
    for k = 1:K
       Pz_dw{k} = sparse(I, J, Pw_z(I,k).*Pd_z(J,k) * Pz(k));
       C = C + Pz_dw{k};
@@ -176,14 +186,15 @@ return;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  (2) M step, maximize log-likelihood
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [Pw_z,Pd_z,Pz] = pLSA_Mstep(X,I,J,V,Pz_dw,K)
+function [Pw_z,Pd_z,Pz] = pLSA_Mstep(X,Pz_dw,K)
    
    for k = 1:K
-      [I,J,Z] = find(Pz_dw{k}); 
-      T = sparse(I, J, V.*Z); 
+      T = X .* Pz_dw{k};
       Pw_z(:,k) = sum(T,2);
       Pd_z(:,k) = sum(T,1)';  
    end;
+   Pw_z = full(Pw_z);
+   Pd_z = full(Pd_z);
    
    Pz = sum(Pd_z,1);
    
@@ -206,16 +217,17 @@ return;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % data log-likelihood
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function L = pLSA_logL(I,J,V,Pw_z,Pz,Pd_z)
-   L = spalloc(size(Pw_z,1), size(Pd_z,1), numel(V));   
-   for i = 1:numel(V))
-       L(i) = Pw_z(I(i), :) * diag(Pz) * Pd_z(J(i),:)'; 
+function L = pLSA_logL(I,J,V,Pw_z,Pz,Pd_z,M,N,E)
+   L = spalloc(M,N,E);   
+   for i = 1:E
+       L(I(i),J(i)) = Pw_z(I(i), :) * diag(Pz) * Pd_z(J(i),:)'; 
    end;
-   if nnz(L) ~= numel(L))
+   if nnz(L) ~= E 
        L = -Inf;   
        warning('Probability of word and document co-occurring was zero, but actual count was not.');
    else
-       L = sum(V .* log(L)');
+       [IL,JL,L] = find(L); 
+       L = sum(V .* log(L));
    end;
 
 return; 
