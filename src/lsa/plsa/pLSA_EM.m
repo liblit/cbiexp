@@ -56,24 +56,6 @@ e = nnz(X);     % # of non zero entries in this matrix
 % initialize Pz, Pd_z,Pw_z
 [Pz,Pd_z,Pw_z] = pLSA_init(m,nd,K);
 
-% if in recognition, reset Pw_z to fixed distribution
-% from learning phase....
-if isempty(Fixed_Pw_z)
-    %% learning mode
-    FIXED_PW_Z = 0;
-else
-    %% recognition mode
-    FIXED_PW_Z = 1;
-    
-    %%% check that the size is compatible
-    if ((size(Pw_z,1)==size(Fixed_Pw_z,1)) & (size(Pw_z,2)==size(Fixed_Pw_z,2)))
-        %% overwrite random Pw_z
-        Pw_z = Fixed_Pw_z;
-    else
-        error('Dimensions of fixed Pw_z density do not match VQ.Codebook_Size and Learn.Num_Topics');
-    end 
-end
-
 Li    = [];
 maxit = Learn.Max_Iterations;
 
@@ -87,11 +69,6 @@ for it = 1:maxit
    % M-step
    [Pw_z,Pd_z,Pz] = pLSA_Mstep(X,Pz_dw,K);
 
-   % if in recognition mode, reset Pw_z to fixed density
-   if (FIXED_PW_Z)
-       Pw_z = Fixed_Pw_z;
-   end  
-   
    % Evaluate data log-likelihood
    Li(it) = pLSA_logL(I,J,V,Pw_z,Pz,Pd_z,m,nd,e);   
       
