@@ -1,4 +1,4 @@
-function stemsForEachAspect(Pz_d, Findices, Sindices, Bugs, K)
+function stemsForEachAspect(Pz_d, Findices, Sindices, Bugs, K, curdir)
 
     numbugs = size(Bugs,1);
 
@@ -44,7 +44,7 @@ function stemsForEachAspect(Pz_d, Findices, Sindices, Bugs, K)
         ylabel('Probability this aspect is in this run'); 
         ylim([0 1]);
         xlim([0 numel(Findices)]);
-        print(gcf, '-djpeg', ['aspect_probability_F_' int2str(i) '_' int2str(K)]);
+        print(gcf, '-djpeg', [curdir '/aspect_probability_F_' int2str(i)]);
 
         %plot successes
         Ss = sort(S(i,:),'descend'); 
@@ -53,7 +53,7 @@ function stemsForEachAspect(Pz_d, Findices, Sindices, Bugs, K)
         ylabel('Probability this aspect is in this run'); 
         ylim([0 1]);
         xlim([0 numel(Sindices)]);
-        print(gcf, '-djpeg', ['aspect_probability_S_' int2str(i) '_' int2str(K)]);
+        print(gcf, '-djpeg', [curdir '/aspect_probability_S_' int2str(i)]);
     end;
 
 return;
