@@ -249,8 +249,8 @@ libanalyze_a_SOURCES =				\
 	arguments.h				\
 	classify_runs.cc			\
 	classify_runs.h				\
-	conjoin.cc				\
-	conjoin.h				\
+	combine.cc				\
+	combine.h				\
 	fopen.cc				\
 	fopen.h					\
 	preds.h					\

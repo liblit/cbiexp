@@ -38,11 +38,11 @@
    <xsl:template match="conjunction" mode="dynamic-cells">
     <xsl:variable name="index" select="number(@index)"/>
     <xsl:variable name="num" 
-	    select="count(document('conjunction-info.xml', /)/conjunction-info/info[@index= $index]/pred)"/>
+	    select="count(document('complex-info.xml', /)/conjunction-info/info[@index= $index]/pred)"/>
          <td rowspan= "{$num}"><xsl:value-of select="@score"/></td>
 	<td rowspan="{$num}" class="meter">
    	 <xsl:apply-templates 
-		 select="document('conjunction-info.xml')/conjunction-info/info[@index= $index]/bug-o-meter"/>
+		 select="document('complex-info.xml')/conjunction-info/info[@index= $index]/bug-o-meter"/>
  	 </td> 
 	 <td rowspan="{$num}"><xsl:value-of select="@stat1"/></td>
 	 <td rowspan="{$num}"><xsl:value-of select="@stat2"/></td>

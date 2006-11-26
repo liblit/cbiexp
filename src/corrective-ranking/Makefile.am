@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -W -Wall -Werror -Wformat
+_CPPFLAGS = -W -Wall -Werror -Wformat
 
 noinst_LIBRARIES =				\
 	libcorrective.a
@@ -9,6 +9,8 @@ noinst_PROGRAMS =				\
 	exact-complete
 
 libcorrective_a_SOURCES =			\
+	Complex.cc				\
+	Complex.h				\
 	Candidates.cc				\
 	Candidates.h				\
 	Conjunction.cc				\

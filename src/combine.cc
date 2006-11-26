@@ -4,11 +4,11 @@
 
 #include <list>
 
-#include "conjoin.h"
+#include "combine.h"
 
 #include "Confidence.h"
 #include "corrective-ranking/allFailures.h"
-#include "corrective-ranking/Conjunction.h"
+#include "corrective-ranking/Complex.h"
 
 using namespace std;
 
@@ -27,9 +27,9 @@ void initialize() {
     Confidence::level = 0;
 }
 
-void xml_conj_info(list<Conjunction> &c, char *fname) {
+void xml_conj_info(list<Complex> &c, char *fname) {
     ofstream out(fname);
-    list<Conjunction>::iterator iter;
+    list<Complex>::iterator iter;
     
     // Write a DTD
     out << "<?xml version=\"1.0\"?>"
@@ -39,7 +39,7 @@ void xml_conj_info(list<Conjunction> &c, char *fname) {
     for(iter = c.begin(); iter != c.end(); iter ++) {
         out << "<info index=\"" << (*iter).index << "\">" << endl;
         
-        Conjunction conj = *iter;
+        Complex conj = *iter;
 //         (*iter).index = i;
         
         vector<unsigned> preds = conj.getPredicateList();
@@ -56,9 +56,9 @@ void xml_conj_info(list<Conjunction> &c, char *fname) {
     out.close();
 }
 
-void xml_conj_view(list<Conjunction> c, char *fname) {
+void xml_conj_view(list<Complex> c, char *fname) {
     ofstream out(fname);
-    list<Conjunction>::iterator iter;
+    list<Complex>::iterator iter;
     
     // Write a DTD
     out << "<?xml version=\"1.0\"?>"
@@ -66,13 +66,13 @@ void xml_conj_view(list<Conjunction> c, char *fname) {
         << "<scores>" << endl;
     
     for(iter = c.begin(); iter != c.end(); iter ++) {
-        out << "<conjunction index=\"" << (*iter).index << "\" score=\"" << (*iter).what() << (*iter).score() << "\" stat1=\"1\" stat2=\"0\"/>" << endl;
+        out << "<conjunction index=\"" << (*iter).index << "\" score=\"" << (*iter).getType() << (*iter).score() << "\" stat1=\"1\" stat2=\"0\"/>" << endl;
     }
     
     out << "</scores>" << endl;
 }
 
-void gen_conjunctions() {
+void gen_complex() {
     initialize();
 
     Candidates candidates;
@@ -80,15 +80,15 @@ void gen_conjunctions() {
     candidates.sort();
     candidates.reverse();
     
-    std::list<Conjunction> result = conjoin(candidates, 1000);
+    std::list<Complex> result = combine(candidates, 1000);
     
-    xml_conj_info(result, "conjunction-info.xml");
+    xml_conj_info(result, "complex-info.xml");
     
     result.sort();
     result.reverse();
-    xml_conj_view(result, "conjunction_hl_none.xml");
+    xml_conj_view(result, "complex_hl_none.xml");
     
-    cout << "Number of interesting conjunctions: " << result.size() << endl;
-    cout << "(Max possible: " << candidates.size() * candidates.size() / 2 << ")\n";
+    cout << "Number of interesting complex predicates: " << result.size() << endl;
+    cout << "(Max possible: " << candidates.size() * candidates.size() << ")\n";
 }
 

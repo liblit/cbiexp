@@ -1,13 +1,8 @@
 #ifndef INCLUDE_corrective_ranking_Disjunction_h
 #define INCLUDE_corrective_ranking_Disjunction_h
 
-#include <iosfwd>
-
+#include "Complex.h"
 #include "Predicate.h"
-#include "Candidates.h"
-#include "Conjunction.h"
-#include <list>
-
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -15,18 +10,17 @@
 //
 
 
-class Disjunction: public Conjunction
+class Disjunction: public Complex
 {
-public:
-  Disjunction(Predicate *pred1_t, Predicate *pred2_t);
-  
-  // If onlyEstimate is true, the actual Disjunction is not computed.  Instead,
-  // the count fields of obs.{successes|failures} and tru.{successes|failrues}
-  // are initialized with conservative estimates.
-  Disjunction(Predicate *pred1_t, Predicate *pred2_t, bool onlyEstimate);
+private:
+  void estimate();
+  void initialize();
 
-  // Temporary hack to distinguish between a disjunction and a conjunction
-  char what() { return 'D'; }
+public:
+  // If onlyEstimate is true, the actual conjunction is not computed.  Instead,
+  // the count fields of obs.{successes|failures} and tru.{successes|failures}
+  // are initialized with conservative estimates.
+  Disjunction(Predicate *pred1_t, Predicate *pred2_t, bool onlyEstimate = false);
 };
   
 ////////////////////////////////////////////////////////////////////////

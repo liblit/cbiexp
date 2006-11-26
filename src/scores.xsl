@@ -90,11 +90,11 @@
    
       <xsl:variable name="index" select="number(@index)"/>
       <xsl:variable name="num" 
-	      select="count(document('conjunction-info.xml', /)/conjunction-info/info[@index= $index]/pred)"/>
+	      select="count(document('complex-info.xml', /)/conjunction-info/info[@index= $index]/pred)"/>
     <tr>
       <xsl:apply-templates select="." mode="dynamic-cells"/>
       <xsl:for-each
-	      select="document('conjunction-info.xml', /)/conjunction-info/info[@index= $index]/pred[1]">
+	      select="document('complex-info.xml', /)/conjunction-info/info[@index= $index]/pred[1]">
 	      <xsl:variable name="i" select="number(@index)"/>
 	      <xsl:variable name="info" select="document('predictor-info.xml', /)/predictor-info/info[$i]"/>
 	      <xsl:apply-templates select="$info" mode="static-cells"/>
@@ -102,7 +102,7 @@
     </tr>
       
 	      <xsl:for-each
-		      select="document('conjunction-info.xml', /)/conjunction-info/info[@index= $index]/pred[position() > 1]">
+		      select="document('complex-info.xml', /)/conjunction-info/info[@index= $index]/pred[position() > 1]">
 	      <xsl:variable name="i" select="number(@index)"/>
 	      <xsl:variable name="info" select="document('predictor-info.xml', /)/predictor-info/info[$i]"/>
 	      <tr> <xsl:apply-templates select="$info" mode="static-cells"/> </tr>

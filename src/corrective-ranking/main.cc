@@ -10,6 +10,7 @@
 #include "../termination.h"
 
 #include "Candidates.h"
+#include "Complex.h"
 #include "Conjunction.h"
 #include "Disjunction.h"
 #include "allFailures.h"
@@ -64,16 +65,16 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
       //'winner' is the best Predicate.  We now try to find a conjunction with a better score...
       //if there is more than one such Conjunction, we keep only the best.
       bestScore = winner->score();
-      std::list<Conjunction> bestConj = conjoin(candidates, 1, bestScore);
+      std::list<Complex> best = combine(candidates, 1, bestScore);
       
       // If the list has an item, and its score beats bestScore, it's what
       // we use.
-      if ( bestConj.size() == 1 && bestConj.front().score() > bestScore ) {
+      if ( best.size() == 1 && best.front().score() > bestScore ) {
 	
 	// We need to form a conjunction of the same predicates, with their
 	// original RunSets, to get the original score of this one.
 	
-	std::vector<unsigned> preds = bestConj.front().getPredicateList();
+	std::vector<unsigned> preds = best.front().getPredicateList();
 	Candidates::iterator i = origCandidates.begin();
 	Candidates::iterator j = origCandidates.begin();
 	while ( i != origCandidates.end() && j != origCandidates.end() ) {
@@ -85,48 +86,28 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
 	    break;
 	}
 	assert( i != origCandidates.end() && j != origCandidates.end() );
-	if ( bestConj.front().what() == 'C' ) {
-	  Conjunction c( &*i, &*j );
-	  // XML it up!  (replace "cout" with "view" to output to the file)
-	  view << "<conjunction initial=\"" << c.what() << c.score() << "\" effective=\""
-	       << bestConj.front().score() << "\">";
-	  for ( unsigned i = 0; i < preds.size(); i++ )
-	    view << "<pred index=\"" << preds.at(i) +1 << "\"/>";
-	  view << c.bugometerXML() << bestConj.front().bugometerXML()
-	       << "</conjunction>";
-
-	  cout << "<conjunction initial=\"" << c.what() << c.score() << "\" effective=\""
-	       << bestConj.front().score() << "\">";
-	  for ( unsigned i = 0; i < preds.size(); i++ )
-	    cout << "<pred index=\"" << preds.at(i) +1 << "\"/>";
-	  cout << c.bugometerXML() << bestConj.front().bugometerXML()
-	       << "</conjunction>";
-	}
-	else {
-	  Disjunction c( &*i, &*j );
-	  // XML it up!  (replace "cout" with "view" to output to the file)
-          view << "<conjunction initial=\"" << c.what() << c.score() << "\" effective=\""
-               << bestConj.front().score() << "\">";
-          for ( unsigned i = 0; i < preds.size(); i++ )
-            view << "<pred index=\"" << preds.at(i) +1 << "\"/>";
-          view << c.bugometerXML() << bestConj.front().bugometerXML()
-               << "</conjunction>";
-
-          cout << "<conjunction initial=\"" << c.what() << c.score() << "\" effective=\""
-               << bestConj.front().score() << "\">";
-          for ( unsigned i = 0; i < preds.size(); i++ )
-            cout << "<pred index=\"" << preds.at(i) +1 << "\"/>";
-          cout << c.bugometerXML() << bestConj.front().bugometerXML()
-               << "</conjunction>";
-	}	
-
-	allFailures.dilute( bestConj.front(), bestConj.front().tru.failures );
+	
+	Complex *initial;
+	if(best.front().getType() == 'C')
+	  initial = new Conjunction(&*i, &*j);
+	else
+	  initial = new Disjunction(&*i, &*j);
+	
+	// XML it up!  (replace "cout" with "view" to output to the file)
+	view << "<conjunction initial=\"" << initial->getType() << initial->score() << "\" effective=\""
+	     << best.front().score() << "\">";
+	for ( unsigned i = 0; i < preds.size(); i++ )
+	  view << "<pred index=\"" << preds.at(i) +1 << "\"/>";
+	view << initial->bugometerXML() << best.front().bugometerXML()
+	     << "</conjunction>";
+	
+	allFailures.dilute( best.front(), best.front().tru.failures );
 	if ( allFailures.count <= 0 ) {
 	  break;
 	}
 	
 	for ( Candidates::iterator loser = candidates.begin(); loser != candidates.end(); ++loser )
-	  loser->dilute( bestConj.front() );
+	  loser->dilute( best.front() );
 	
 	progress.step();
 	candidates.rescore(progress);

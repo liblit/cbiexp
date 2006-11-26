@@ -22,7 +22,7 @@
 #include "sorts.h"
 #include "utils.h"
 
-#include "conjoin.h"
+#include "combine.h"
 
 using namespace std;
 
@@ -143,7 +143,7 @@ main(int argc, char** argv)
 	statsMap[scheme].push_back(indexed);
     }
 
-    gen_conjunctions();
+    gen_complex();
     // generate sorted views for each individual scheme
     for (StatsMap::iterator scheme = statsMap.begin(); scheme != statsMap.end(); ++scheme)
 	gen_views(scheme->first, scheme->second);
