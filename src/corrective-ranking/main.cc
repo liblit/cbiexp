@@ -11,6 +11,7 @@
 
 #include "Candidates.h"
 #include "Conjunction.h"
+#include "Disjunction.h"
 #include "allFailures.h"
 #include "zoom.h"
 
@@ -84,25 +85,41 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
 	    break;
 	}
 	assert( i != origCandidates.end() && j != origCandidates.end() );
-	Conjunction c( &*i, &*j );
-	
-	// XML it up!  (replace "cout" with "view" to output to the file)
-	view << "<conjunction initial=\"" << c.what() << c.score() << "\" effective=\""
-	     << bestConj.front().score() << "\">";
-	for ( unsigned i = 0; i < preds.size(); i++ )
-	  view << "<pred index=\"" << preds.at(i) +1 << "\"/>";
-	view << c.bugometerXML() << bestConj.front().bugometerXML()
-	     << "</conjunction>";
+	if ( bestConj.front().what() == 'C' ) {
+	  Conjunction c( &*i, &*j );
+	  // XML it up!  (replace "cout" with "view" to output to the file)
+	  view << "<conjunction initial=\"" << c.what() << c.score() << "\" effective=\""
+	       << bestConj.front().score() << "\">";
+	  for ( unsigned i = 0; i < preds.size(); i++ )
+	    view << "<pred index=\"" << preds.at(i) +1 << "\"/>";
+	  view << c.bugometerXML() << bestConj.front().bugometerXML()
+	       << "</conjunction>";
 
-    cout << "<conjunction initial=\"" << c.what() << c.score() << "\" effective=\""
-	     << bestConj.front().score() << "\">";
-	for ( unsigned i = 0; i < preds.size(); i++ )
-	  cout << "<pred index=\"" << preds.at(i) +1 << "\"/>";
-	cout << c.bugometerXML() << bestConj.front().bugometerXML()
-	     << "</conjunction>";
-	// Can't put it in foci, since it doesn't share an indexing style...
-	// Maybe someone more familiar with the code can fix this.
-	
+	  cout << "<conjunction initial=\"" << c.what() << c.score() << "\" effective=\""
+	       << bestConj.front().score() << "\">";
+	  for ( unsigned i = 0; i < preds.size(); i++ )
+	    cout << "<pred index=\"" << preds.at(i) +1 << "\"/>";
+	  cout << c.bugometerXML() << bestConj.front().bugometerXML()
+	       << "</conjunction>";
+	}
+	else {
+	  Disjunction c( &*i, &*j );
+	  // XML it up!  (replace "cout" with "view" to output to the file)
+          view << "<conjunction initial=\"" << c.what() << c.score() << "\" effective=\""
+               << bestConj.front().score() << "\">";
+          for ( unsigned i = 0; i < preds.size(); i++ )
+            view << "<pred index=\"" << preds.at(i) +1 << "\"/>";
+          view << c.bugometerXML() << bestConj.front().bugometerXML()
+               << "</conjunction>";
+
+          cout << "<conjunction initial=\"" << c.what() << c.score() << "\" effective=\""
+               << bestConj.front().score() << "\">";
+          for ( unsigned i = 0; i < preds.size(); i++ )
+            cout << "<pred index=\"" << preds.at(i) +1 << "\"/>";
+          cout << c.bugometerXML() << bestConj.front().bugometerXML()
+               << "</conjunction>";
+	}	
+
 	allFailures.dilute( bestConj.front(), bestConj.front().tru.failures );
 	if ( allFailures.count <= 0 ) {
 	  break;
