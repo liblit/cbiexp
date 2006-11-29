@@ -24,6 +24,11 @@ Complex::Complex(char type_t, Predicate *pred1_t, Predicate *pred2_t)
 
   pred1 = pred1_t;
   pred2 = pred2_t;
+
+  if(site2line[pred1->index] > site2line[pred2->index])
+    delta = site2line[pred1->index] - site2line[pred2->index];
+  else
+    delta = site2line[pred2->index] - site2line[pred1->index];
 }
 
 bool
@@ -144,4 +149,19 @@ combine(Candidates &candidates, unsigned limit, double lb) {
   printf("COMBINE:: was able to prune %u conjunctions\n", skipped);
   printf("COMBINE:: In all, %u complex predicates were interesting\n", intr);
   return result;
+}
+
+vector<int> Complex::site2line;
+ // Read the static site information
+void Complex::readSiteInfo(){
+  const StaticSiteInfo staticSiteInfo;
+  FILE * const raw = fopenRead(PredStats::filename);
+  pred_info stats;
+  int counter = 0; 
+  while (read_pred_full(raw, stats))
+  {
+    const site_t &site = staticSiteInfo.site(stats.siteIndex);
+    site2line.push_back(site.line);
+  }
+
 }

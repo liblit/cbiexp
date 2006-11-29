@@ -21,6 +21,7 @@ public:
   Predicate(unsigned);
   const unsigned index;
   double initial, effective;
+  int delta;
 
   RunSuite tru;
   RunSuite obs;
@@ -52,10 +53,11 @@ public:
   
   //Destructor is needed because virtual methods are used.
   virtual ~Predicate() { }
+  virtual int getDelta() { return 0; }
 };
 
 
-bool operator<(const Predicate &, const Predicate &);
+bool operator<(Predicate &,Predicate &);
 
 std::ostream &operator<<(std::ostream &, const Predicate &);
 
@@ -90,9 +92,22 @@ Predicate::score() const
 
 
 inline bool
-operator<(const Predicate &a, const Predicate &b)
+operator<(Predicate &a, Predicate &b)
 {
-  return a.effective < b.effective;
+  if (a.effective == b.effective){
+    if(a.getPredicateList().size() == 1 && b.getPredicateList().size() == 1)
+      return a.effective < b.effective;
+    else if(a.getPredicateList().size() == 1){
+      return 1;
+    } else if(b.getPredicateList().size() == 1){
+      return 0;
+    } else {
+      return a.getDelta() > b.getDelta();
+    }
+     
+  } else
+    return a.effective < b.effective;
+  
 }
 
 

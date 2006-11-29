@@ -7,6 +7,15 @@
 #include "Candidates.h"
 #include <list>
 
+#include "../StaticSiteInfo.h"
+#include "../PredStats.h"
+#include "../SiteCoords.h"
+#include "../arguments.h"
+#include "../fopen.h"
+#include "../termination.h"
+#include "../utils.h"
+#include <vector>
+
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -18,7 +27,8 @@ class Complex: public Predicate
 private:
   char type;
   static int nextIndex;
-
+  int delta;
+  static std::vector<int> site2line;
 protected:
   Predicate *pred1, *pred2;
   virtual void estimate() {}
@@ -26,7 +36,7 @@ protected:
 
 public:
   Complex(char, Predicate *, Predicate *);
-     
+  static void readSiteInfo();   
   bool isInteresting();
   double score();
   double lowerBound() const;
@@ -43,7 +53,8 @@ public:
   
   // Temporary hack to distinguish between a disjunction and a conjunction  
   char getType() {return type;}
-  
+  virtual void setDelta(int d) { delta = d; }  
+  virtual int getDelta() { return delta; }
   friend std::ostream &operator<<(std::ostream &, const Complex &);
 };
 

@@ -35,13 +35,13 @@ libcorrective_a_SOURCES =			\
 	zoom.h
 
 exact_complete_SOURCES = exact-complete.cc
-exact_complete_LDADD = libcorrective.a ../libanalyze.a
+exact_complete_LDADD = libcorrective.a ../libanalyze.a -ldl
 
 approximate_complete_SOURCES = approximate-complete.cc
-approximate_complete_LDADD = libcorrective.a ../libanalyze.a
+approximate_complete_LDADD = libcorrective.a ../libanalyze.a -ldl
 
 adaptive_sampled_SOURCES = adaptive-sampled.cc
-adaptive_sampled_LDADD = libcorrective.a ../libanalyze.a
+adaptive_sampled_LDADD = libcorrective.a ../libanalyze.a -ldl
 
 
 ../libanalyze.a: force

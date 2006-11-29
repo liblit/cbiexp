@@ -25,6 +25,7 @@ void initialize() {
     failuresFile >> allFailures;
     
     Confidence::level = 0;
+    Complex::readSiteInfo();
 }
 
 void xml_conj_info(list<Complex> &c, char *fname) {

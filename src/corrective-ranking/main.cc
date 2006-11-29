@@ -8,6 +8,14 @@
 #include "../Stylesheet.h"
 #include "../ViewPrinter.h"
 #include "../termination.h"
+#include "../StaticSiteInfo.h"
+#include "../PredStats.h"
+#include "../SiteCoords.h"
+#include "../arguments.h"
+#include "../fopen.h"
+#include "../termination.h"
+#include "../utils.h"
+
 
 #include "Candidates.h"
 #include "Complex.h"
@@ -45,7 +53,8 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
 
   // create XML output file and write initial header
   ViewPrinter view(Stylesheet::filename, "corrected-view", "all", "hl", projection);
-
+  
+ 
   Progress::Bounded progress("ranking predicates", candidates.count);
 
   if (allFailures.count <= 0)
@@ -66,7 +75,7 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
       //if there is more than one such Conjunction, we keep only the best.
       bestScore = winner->score();
       std::list<Complex> best = combine(candidates, 1, bestScore);
-      
+
       // If the list has an item, and its score beats bestScore, it's what
       // we use.
       if ( best.size() == 1 && best.front().score() > bestScore ) {
@@ -207,6 +216,7 @@ initialize(int argc, char *argv[])
   set_terminate_verbose();
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
+  Complex::readSiteInfo();
   // feenableexcept(FE_DIVBYZERO | FE_INVALID);
 }
 
@@ -220,6 +230,16 @@ rankMain(const char projection[])
 
   Candidates candidates;
   candidates.load();
+
+  /*const StaticSiteInfo staticSiteInfo;  
+  FILE * const raw = fopenRead(PredStats::filename);
+  pred_info stats;
+  while (read_pred_full(raw, stats))
+  {
+    const site_t &site = staticSiteInfo.site(stats.siteIndex);
+    cout << site.line;
+  }*/
+
 
   switch (zoomsWanted)
     {
