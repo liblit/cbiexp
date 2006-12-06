@@ -62,7 +62,7 @@ std::ostream &operator<<(std::ostream &, const Complex &);
 
 // Computes conjunctions of predicates from input list.  The length of
 // the resulting candidate list is bound by the second parameter.
-std::list<Complex> combine(Candidates &, unsigned, double = 0);
+std::list<Complex> combine(Candidates &, unsigned, double = 0, FILE * = NULL );
   
 ////////////////////////////////////////////////////////////////////////
 

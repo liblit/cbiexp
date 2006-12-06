@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <stdio.h>
 
 #include "../Confidence.h"
 #include "../NumRuns.h"
@@ -54,11 +55,21 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
   // create XML output file and write initial header
   ViewPrinter view(Stylesheet::filename, "corrected-view", "all", "hl", projection);
   
- 
   Progress::Bounded progress("ranking predicates", candidates.count);
 
   if (allFailures.count <= 0)
     return;
+
+
+  // Make a FILE pointer...
+  FILE * fout;
+  char * fname = new char[strlen(projection) + strlen("complex_.txt") + 1];
+  strcpy( fname, "complex_" );
+  strcat( fname, projection );
+  strcat( fname, ".txt" );
+  // fname is either complex_corrective_exact.txt, or
+  // complex_corrective_approximate.txt
+  fout = fopen(fname,"w");
 
   const AllFailuresSnapshot snapshot;
 
@@ -74,7 +85,7 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
       //'winner' is the best Predicate.  We now try to find a conjunction with a better score...
       //if there is more than one such Conjunction, we keep only the best.
       bestScore = winner->score();
-      std::list<Complex> best = combine(candidates, 1, bestScore);
+      std::list<Complex> best = combine(candidates, 1, bestScore, fout);
 
       // If the list has an item, and its score beats bestScore, it's what
       // we use.
@@ -140,6 +151,8 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
 	candidates.rescore(progress);
       }
     }
+  // Close the file...
+  fclose( fout );
 }
 
 

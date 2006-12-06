@@ -105,7 +105,7 @@ operator<<(std::ostream &out, const Complex &c)
 // the resulting candidate list is bound by the second parameter.
 // Only complex predicates with estimates higher than 'lb' are considered
 std::list<Complex>
-combine(Candidates &candidates, unsigned limit, double lb) {
+combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   std::list<Complex> result;
   double minMax = lb;
   
@@ -120,20 +120,22 @@ combine(Candidates &candidates, unsigned limit, double lb) {
         Conjunction dummy(&*i, &*j, true);
         if(dummy.score() < minMax) {
           skipped ++;
-        }
+	}
+	else {
+	  Conjunction c(&*i, &*j);
+	  if(c.isInteresting()) {
+	    result.push_back(c);
+
+	    intr ++;
+	    if(result.size() > limit) {
+	      result.erase(min_element(result.begin(), result.end()));
+	      minMax = min_element(result.begin(), result.end())->score();
+	    }
+	  }
+	}
       }
       
-      Conjunction c(&*i, &*j);
-      if(c.isInteresting()) {
-        result.push_back(c);
-        
-        intr ++;
-        if(result.size() > limit) {
-          result.erase(min_element(result.begin(), result.end()));
-          minMax = min_element(result.begin(), result.end())->score();
-        }
-      }
-
+      
       Disjunction d(&*i, &*j);
       if(d.isInteresting()) {
         result.push_back(d);
@@ -146,9 +148,21 @@ combine(Candidates &candidates, unsigned limit, double lb) {
       }
     }
 
-  printf("COMBINE:: was able to prune %u conjunctions\n", skipped);
-  printf("COMBINE:: In all, %u complex predicates were interesting\n", intr);
-  return result;
+    printf("COMBINE:: was able to prune %u conjunctions\n", skipped);
+    printf("COMBINE:: In all, %u complex predicates were interesting\n", intr);
+    
+    if ( fout != NULL ) { 
+      fprintf(fout, "COMBINE:: %u complex predicates possible\n",
+	      ( candidates.size() * candidates.size() ) - 2 * candidates.size() );
+      fprintf(fout, "COMBINE:: was able to prune %u conjunctions\n", skipped);
+      fprintf(fout, "COMBINE:: In all, %u complex predicates were interesting\n", intr);
+      if ( result.size() > 0 ) {
+	fprintf(fout, "COMBINE:: %u complex predicates returned; scored from %f to %f\n",
+		result.size(), result.front().score(), result.back().score() );
+      }
+      fprintf(fout, "------------------------------------------------------------\n");
+    }
+    return result;
 }
 
 vector<int> Complex::site2line;

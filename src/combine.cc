@@ -1,6 +1,7 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
+#include <stdio.h>
 
 #include <list>
 
@@ -80,9 +81,13 @@ void gen_complex() {
     candidates.load();
     candidates.sort();
     candidates.reverse();
+
+    FILE * fout = fopen( "complex_all.txt", "w" );
     
-    std::list<Complex> result = combine(candidates, 1000);
+    std::list<Complex> result = combine(candidates, 1000, 0, fout);
     
+    fclose(fout);
+
     xml_conj_info(result, "complex-info.xml");
     
     result.sort();
