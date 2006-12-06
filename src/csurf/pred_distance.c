@@ -10,13 +10,13 @@
  * void cs_plug_main(void) is defined and acts as the entry point to the
  * plugin.
  */
-void tutorial_example();
+void pred_distance();
 void cs_plug_main(void);
 
 #ifdef _MSC_VER
 __declspec(dllexport)
 #endif
-CS_DEFINE_PLUGIN(tutorial_example);
+CS_DEFINE_PLUGIN(pred_distance);
 
 
 /* The main function of the plugin. */
@@ -34,7 +34,7 @@ void cs_plug_main(void)
     exit(1);
   }
   
-  tutorial_example();
+  pred_distance();
 
   /* cs_cleanup() must be called after all C API functions have been 
    * called.
@@ -45,7 +45,7 @@ void cs_plug_main(void)
   }
 }
 
-void tutorial_example()
+void pred_distance()
 {
   cs_pdg *allPdgs;
   cs_integer nPdgs, size;

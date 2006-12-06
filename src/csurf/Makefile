@@ -46,10 +46,10 @@ stk-load-file:
 ifeq ($(OS),Windows_NT) # change: arumuga.  Moved the ifeq from after the command
 	@echo "(set! *load-path* (cons \"$(DIR_WIN)\" *load-path*))" > \
 		$(PLUGIN)_load.stk
-	@echo "(load \"$(PLUGIN).dll\")" >> \
+	@echo "(load \"$(DIR)/$(PLUGIN).dll\")" >> \
 		$(PLUGIN)_load.stk
 else
-	@echo "(load \"$(PLUGIN).so\")" >> \
+	@echo "(load \"$(DIR)/$(PLUGIN).so\")" >> \
 		$(PLUGIN)_load.stk
 endif
 	@echo "(quit)" >> $(PLUGIN)_load.stk
