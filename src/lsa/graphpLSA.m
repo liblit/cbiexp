@@ -5,9 +5,9 @@ cd(analysis_dir);
 path(path, '/scratch/mulhern/cbiexp/src/lsa/plsa');
 
 %load failure and success vectors
-Findices = load('f.m');
-Sindices = load('s.m');
-Bugs = load('bug_runs.m');
+Findices = load('f.indices');
+Sindices = load('s.indices');
+Bugs = load('bug_runs.sparse');
 Bugs = spconvert(Bugs);
 
 graph_dir = [analysis_dir '/graphs'];
@@ -28,8 +28,6 @@ for k = 2:9
 
         probabilityDensity(Pw_z, mode_dir);
 
-        % for each concept, graph probabilities for each run  
-        stemsForEachAspect(Pz_d, Findices, Sindices, Bugs,k, mode_dir);
     end;
 
     %graph unconstrained runs
@@ -38,8 +36,6 @@ for k = 2:9
     inputfile = ['probabilities_' int2str(k)];
     eval(['load ', inputfile]); 
     probabilityDensity(Pw_z, mode_dir);
-
-    stemsForEachAspect(Pz_d, Findices, Sindices, Bugs, k, mode_dir); 
 
     if k == 2
         graphsFor2Aspects(Pw_z, Pz, Pd_z, Pz_d, Findices, Sindices, Bugs,mode_dir);
