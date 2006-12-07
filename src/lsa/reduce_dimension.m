@@ -6,12 +6,12 @@ Sk = S(1:2,1:2);
 Vk = V(:,1:2);
 
 % Load failure and success vectors
-Findices = load([curdir '/f.m']);
-Sindices = load([curdir '/s.m']);
+Findices = load([curdir '/f.indices']);
+Sindices = load([curdir '/s.indices']);
 
 % Load data from oracle
 % Pad resulting matrix with additional zeros so same size as base matrix 
-Bsparse = load([curdir '/bug_runs.m']);
+Bsparse = load([curdir '/bug_runs.sparse']);
 B = spconvert(Bsparse); clear Bsparse; B = full(B);
 sB = size(B); sX = size(X); B = [B, zeros(sB(1,1), sX(1,2) - sB(1,2))];
 clear sB; clear sX; 

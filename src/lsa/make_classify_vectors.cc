@@ -43,8 +43,8 @@ int main(int argc, char** argv)
 
     classify_runs();
 
-    ofstream ffile("f.m");
-    ofstream sfile("s.m");
+    ofstream ffile("f.indices");
+    ofstream sfile("s.indices");
      
     for(unsigned int i = NumRuns::begin, index = 0; i < NumRuns::end; i++) {
         if(is_frun[i]) ffile << ++index << "\n";   
@@ -53,7 +53,7 @@ int main(int argc, char** argv)
     ffile.close();
     sfile.close();
 
-    ofstream out("bug_runs.m");
+    ofstream out("bug_runs.sparse");
     vector <int> * bugIds = (new Bugs())->bugIndex(); 
     {
         ifstream in("bug_runs.txt");

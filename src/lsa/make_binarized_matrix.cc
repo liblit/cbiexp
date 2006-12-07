@@ -43,7 +43,7 @@ int main(int argc, char** argv)
     classify_runs();
 
     ifstream tru("tru.txt");
-    ofstream matrix("X.m"); 
+    ofstream matrix("X.sparse"); 
 
     const unsigned numPreds = PredStats::count();
     Progress::Bounded reading("reading predicate info", numPreds);

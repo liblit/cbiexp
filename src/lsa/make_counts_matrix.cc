@@ -120,8 +120,6 @@ int main(int argc, char** argv)
 
     classify_runs();
 
-    ofstream out("X.m");
-
     // interesting predicates in "preds.txt" order
     typedef queue<const PredInfo *> InterestingPreds;
     InterestingPreds interesting;
@@ -152,6 +150,7 @@ int main(int argc, char** argv)
     }
 
     {
+        ofstream out("X.sparse");
 	Progress::Bounded progress("printing matrix", predInfos.size());
         unsigned int row = 0;
 	while (!interesting.empty()) {
@@ -160,6 +159,7 @@ int main(int argc, char** argv)
             print_sparse(out, ++row, info->tru);
 	    interesting.pop();
 	}
+        out.close();
     }
 
     return 0;

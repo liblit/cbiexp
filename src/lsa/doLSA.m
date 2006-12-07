@@ -2,7 +2,7 @@
 cd '/scratch/mulhern/cbiexp_cvs/exif/analysis'
 
 %Load values for predicate * run matrix 
-Xsparse = load('X.m');
+Xsparse = load('X.sparse');
 X = spconvert(Xsparse);
 clear Xsparse;
 
