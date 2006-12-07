@@ -114,10 +114,12 @@ function [Pz,Pd_z,Pw_z] = pLSA_init(m,nd,K,Sindices,KbIndices)
 % Pd_z ... P(d|z)
 % Pw_z ... P(w|z)
 
-Pz   = ones(K,1)/K; % uniform prior on topics
+Pz = principled_randomize(K,1); 
+C = sum(Pz);
+Pz = Pz / C; 
 
 % random assignment
-Pd_z = rand(nd,K);   % word probabilities conditioned on topic
+Pd_z = principled_randomize(nd,K);   % word probabilities conditioned on topic
 %zeros entries corresponding to succeeding runs and bug aspects
 %if not doing constrained pLSA pass empty KbIndices
 Pd_z(Sindices, KbIndices) = 0; 
@@ -125,11 +127,23 @@ C    = sum(Pd_z,1);
 Pd_z = Pd_z * diag(spfun(inline('1./x'), C));
 
 % random assignment
-Pw_z = rand(m,K);
+Pw_z = principled_randomize(m,K);
 C    = sum(Pw_z,1); 
 Pw_z = Pw_z * diag(spfun(inline('1./x'), C));
 
 
+return;
+
+% This function generates a random matrix such that all entries are non-zero
+function P = principled_randomize(m,n)
+    while 1
+        P = rand(m,n);
+        if nnz(P) == prod(size(P)) 
+            break;
+        else
+            warning('Needed to regenerate matrix');
+        end;
+    end;
 return;
 
 
