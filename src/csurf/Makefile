@@ -8,7 +8,7 @@
 ifeq ($(OS),Windows_NT)
 CC = cl
 else
-CC = gcc
+CC = g++
 endif
 CFLAGS = 
 
@@ -60,7 +60,7 @@ build-dll:
 
 build-so:
 	@$(CC) -shared -I$(H_INCLUDE) \
-		$(PLUGIN).c -o $(PLUGIN).so
+		$(PLUGIN).cc -o $(PLUGIN).so
 
 clean:
 	rm - f *.o
