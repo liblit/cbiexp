@@ -455,3 +455,7 @@ force:
 .PHONY: force
 
 .DELETE_ON_ERROR:
+
+########################################################################
+pairs.txt: preds.txt
+	csurf -nogui ../tcas.exe.prj -l $(tooldir)/csurf/pred_distance_load.stk
