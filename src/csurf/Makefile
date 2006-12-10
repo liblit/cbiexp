@@ -58,12 +58,13 @@ build-dll:
 	@$(CC) /LD $(CFLAGS) /I$(H_INCLUDE) \
 		$(PLUGIN).c $(CODESURFER_LIB)
 
+LIBS = ../libanalyze.a
 build-so:
-	@$(CC) -shared -I$(H_INCLUDE) \
-		$(PLUGIN).cc -o $(PLUGIN).so
+	@$(CC) -shared -I$(H_INCLUDE) -I../..\
+		$(PLUGIN).cc $(LIBS) -o $(PLUGIN).so
 
 clean:
-	rm - f *.o
+	rm -f *.o
 
 .PHONY: FORCE
 

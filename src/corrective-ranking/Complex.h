@@ -28,7 +28,6 @@ private:
   char type;
   static int nextIndex;
   int delta;
-  static std::vector<int> site2line;
 protected:
   Predicate *pred1, *pred2;
   virtual void estimate() {}
@@ -36,7 +35,6 @@ protected:
 
 public:
   Complex(char, Predicate *, Predicate *);
-  static void readSiteInfo();   
   bool isInteresting();
   double score();
   double lowerBound() const;
@@ -59,6 +57,8 @@ public:
 };
 
 std::ostream &operator<<(std::ostream &, const Complex &);
+
+void read_pairs();
 
 // Computes conjunctions of predicates from input list.  The length of
 // the resulting candidate list is bound by the second parameter.

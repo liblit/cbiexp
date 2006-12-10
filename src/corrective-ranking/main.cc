@@ -229,8 +229,9 @@ initialize(int argc, char *argv[])
   set_terminate_verbose();
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
-  Complex::readSiteInfo();
   // feenableexcept(FE_DIVBYZERO | FE_INVALID);
+
+  read_pairs();
 }
 
 

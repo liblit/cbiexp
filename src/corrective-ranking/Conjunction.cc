@@ -44,6 +44,10 @@ void Conjunction::estimate() {
   // os' = p1.os + (p2.os - p2.s)  the second term is the runs in which p2 was observed false
   // of' = p1.f
   
+  if(pred1->tru.failures.count == 0 || pred2->tru.failures.count == 0) {
+    initial = effective = 0;
+    return;
+  }
   // get upper bound based on pred1
   opt1.tru.successes.count = 0;
   opt1.tru.failures.count = pred1->tru.failures.count;

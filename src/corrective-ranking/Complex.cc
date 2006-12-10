@@ -1,6 +1,9 @@
 #include <cmath>
 #include <iostream>
+#include <fstream>
 #include <sstream>
+#include <map>
+#include <set>
 
 #include "../Confidence.h"
 
@@ -24,11 +27,6 @@ Complex::Complex(char type_t, Predicate *pred1_t, Predicate *pred2_t)
 
   pred1 = pred1_t;
   pred2 = pred2_t;
-
-  if(site2line[pred1->index] > site2line[pred2->index])
-    delta = site2line[pred1->index] - site2line[pred2->index];
-  else
-    delta = site2line[pred2->index] - site2line[pred1->index];
 }
 
 bool
@@ -101,6 +99,33 @@ operator<<(std::ostream &out, const Complex &c)
         << *(c.pred2) << " " << (c.pred1)->score();
 }
 
+
+// These members are not members of class Complex
+map<int, set<int> > pairs;
+void read_pairs() {
+  ifstream in("pairs.txt");
+  int a, b;
+  
+  int tmp = 0;
+  while(!in.eof()) {
+    in >> a >> b;
+    pairs[a].insert(b);
+    tmp ++;
+  }
+  in.close();
+}
+
+// Read the static site information
+bool isValidPair(int p1, int p2) {
+  int small = (p1 < p2) ? p1: p2;
+  int big = (p1 < p2) ? p2: p1;
+  
+  if(pairs[small].count(big) > 0)
+    return true;
+  else
+    return false;
+}
+
 // Computes complex of predicates of size 2 from input list.  The length of
 // the resulting candidate list is bound by the second parameter.
 // Only complex predicates with estimates higher than 'lb' are considered
@@ -111,71 +136,78 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   
   unsigned skipped = 0;
   unsigned intr = 0;
-  
+  unsigned computed = 0;
+
   Candidates::iterator i, j;
-  for(i = candidates.begin(); i != candidates.end(); i ++)
+  for(i = candidates.begin(); i != candidates.end(); i ++) {
     for(j = candidates.begin(); j != i; j ++) {
       
+      if(! isValidPair(i->index, j->index))
+        continue;
+      
+      bool skip_conj = false;
       if(result.size() == limit) {
         Conjunction dummy(&*i, &*j, true);
         if(dummy.score() < minMax) {
           skipped ++;
-	}
-	else {
-	  Conjunction c(&*i, &*j);
-	  if(c.isInteresting()) {
-	    result.push_back(c);
-
-	    intr ++;
-	    if(result.size() > limit) {
-	      result.erase(min_element(result.begin(), result.end()));
-	      minMax = min_element(result.begin(), result.end())->score();
-	    }
-	  }
-	}
-      }
-      
-      
-      Disjunction d(&*i, &*j);
-      if(d.isInteresting()) {
-        result.push_back(d);
-        
-        intr ++;
-        if(result.size() > limit) {
-          result.erase(min_element(result.begin(), result.end()));
-          minMax = min_element(result.begin(), result.end())->score();
+          skip_conj = true;
         }
       }
-    }
-
-    printf("COMBINE:: was able to prune %u conjunctions\n", skipped);
-    printf("COMBINE:: In all, %u complex predicates were interesting\n", intr);
-    
-    if ( fout != NULL ) { 
-      fprintf(fout, "COMBINE:: %u complex predicates possible\n",
-	      ( candidates.size() * candidates.size() ) - 2 * candidates.size() );
-      fprintf(fout, "COMBINE:: was able to prune %u conjunctions\n", skipped);
-      fprintf(fout, "COMBINE:: In all, %u complex predicates were interesting\n", intr);
-      if ( result.size() > 0 ) {
-	fprintf(fout, "COMBINE:: %u complex predicates returned; scored from %f to %f\n",
-		result.size(), result.front().score(), result.back().score() );
+      
+      if(!skip_conj) {
+        computed ++;
+        Conjunction c(&*i, &*j);
+        if(c.isInteresting()) {
+          result.push_back(c);
+          intr ++;
+          
+          if(result.size() > limit) {
+            result.erase(min_element(result.begin(), result.end()));
+            minMax = min_element(result.begin(), result.end())->score();
+          }
+        }
       }
-      fprintf(fout, "------------------------------------------------------------\n");
+      
+      bool skip_disj = false;
+      if(result.size() == limit) {
+        Disjunction dummy(&*i, &*j, true);
+        if(dummy.score() < minMax) {
+          skipped ++;
+          skip_disj = true;
+        }
+      }
+      
+      if(!skip_disj) {
+        computed ++;
+        Disjunction d(&*i, &*j);
+        if(d.isInteresting()) {
+            result.push_back(d);
+            
+            intr ++;
+            if(result.size() > limit) {
+            result.erase(min_element(result.begin(), result.end()));
+            minMax = min_element(result.begin(), result.end())->score();
+            }
+        } 
+      }
     }
-    return result;
-}
-
-vector<int> Complex::site2line;
- // Read the static site information
-void Complex::readSiteInfo(){
-  const StaticSiteInfo staticSiteInfo;
-  FILE * const raw = fopenRead(PredStats::filename);
-  pred_info stats;
-  int counter = 0; 
-  while (read_pred_full(raw, stats))
-  {
-    const site_t &site = staticSiteInfo.site(stats.siteIndex);
-    site2line.push_back(site.line);
   }
-
+  
+  printf("COMBINE:: was able to prune %u conjunctions\n", skipped);
+  printf("COMBINE:: In all, %u complex predicates were interesting\n", intr);
+  printf("COMBINE:: :( Had to compute %u complex predicates\n", computed);
+  
+  if ( fout != NULL ) { 
+    fprintf(fout, "COMBINE:: %u complex predicates possible\n",
+           ( candidates.size() * candidates.size() ) - 2 * candidates.size() );
+    fprintf(fout, "COMBINE:: was able to prune %u conjunctions\n", skipped);
+    fprintf(fout, "COMBINE:: In all, %u complex predicates were interesting\n", intr);
+    if ( result.size() > 0 ) {
+      fprintf(fout, "COMBINE:: %u complex predicates returned; scored from %f to %f\n",
+      result.size(), result.front().score(), result.back().score() );
+    }
+    fprintf(fout, "------------------------------------------------------------\n");
+  }
+  return result;
 }
+

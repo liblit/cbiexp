@@ -1,4 +1,4 @@
-SUBDIRS = amplify corrective-ranking mutual-information never-reached Score symmetric
+SUBDIRS = amplify corrective-ranking mutual-information never-reached Score symmetric csurf
 
 AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 $(BOOST_CPPFLAGS)
 
