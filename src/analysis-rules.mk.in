@@ -458,4 +458,5 @@ force:
 
 ########################################################################
 pairs.txt: preds.txt
+	(cd .. && ln -sf analysis/static-site-info.so analysis/preds.txt .)
 	csurf -nogui ../tcas.exe.prj -l $(tooldir)/csurf/pred_distance_load.stk
