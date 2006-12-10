@@ -46,7 +46,7 @@ void Disjunction::initialize() {
        p2obs != Neither && p2tru == Neither) {
       assert(p1obs == p2obs);
       obs.set(r, p1obs);
-      obs.set(r, Neither);
+      tru.set(r, Neither);
     }    
     // If either one of them was not observed, p1 v p2 was not observed
     else if(p1obs == Neither || p2obs == Neither) {
