@@ -32,6 +32,8 @@ void Conjunction::initialize() {
   }
 
   initial = effective = score();
+  if(isPerfect())
+    perfectCount ++;
 }
 
 void Conjunction::estimate() {  

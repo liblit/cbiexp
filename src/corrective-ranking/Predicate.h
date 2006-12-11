@@ -4,6 +4,7 @@
 #include <iosfwd>
 
 #include "RunSuite.h"
+#include "allFailures.h"
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -36,6 +37,7 @@ public:
   double harmonic() const;
   double score() const;
   
+  bool isPerfect() const;
   void dilute(const Predicate &winner);
 
 
@@ -90,6 +92,11 @@ Predicate::score() const
   return result;
 }
 
+inline bool
+Predicate::isPerfect() const
+{
+  return tru.successes.count == 0 && tru.failures.count == allFailures.count;
+}
 
 inline bool
 operator<(Predicate &a, Predicate &b)

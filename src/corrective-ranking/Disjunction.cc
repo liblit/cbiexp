@@ -59,6 +59,8 @@ void Disjunction::initialize() {
   }
 
   initial = effective = score();
+  if(isPerfect())
+    perfectCount ++;
 }
 
 void Disjunction::estimate() {

@@ -15,6 +15,7 @@
 using namespace std;
 
 int Complex::nextIndex = 0;
+int Complex::perfectCount = 0;
 
 Complex::Complex(char type_t, Predicate *pred1_t, Predicate *pred2_t)
   :Predicate(nextIndex)
@@ -102,6 +103,8 @@ operator<<(std::ostream &out, const Complex &c)
 
 // These members are not members of class Complex
 map<int, set<int> > pairs;
+bool atleast_one = false;
+
 void read_pairs() {
   ifstream in("pairs.txt");
   int a, b;
@@ -109,14 +112,21 @@ void read_pairs() {
   int tmp = 0;
   while(!in.eof()) {
     in >> a >> b;
+    
+    if(in.eof())
+      break;
     pairs[a].insert(b);
     tmp ++;
+    atleast_one = true;
   }
   in.close();
 }
 
 // Read the static site information
 bool isValidPair(int p1, int p2) {
+  if(!atleast_one)
+    return true;
+
   int small = (p1 < p2) ? p1: p2;
   int big = (p1 < p2) ? p2: p1;
   
@@ -198,15 +208,8 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   printf("COMBINE:: :( Had to compute %u complex predicates\n", computed);
   
   if ( fout != NULL ) { 
-    fprintf(fout, "COMBINE:: %u complex predicates possible\n",
-           ( candidates.size() * candidates.size() ) - 2 * candidates.size() );
-    fprintf(fout, "COMBINE:: was able to prune %u conjunctions\n", skipped);
-    fprintf(fout, "COMBINE:: In all, %u complex predicates were interesting\n", intr);
-    if ( result.size() > 0 ) {
-      fprintf(fout, "COMBINE:: %u complex predicates returned; scored from %f to %f\n",
-      result.size(), result.front().score(), result.back().score() );
-    }
-    fprintf(fout, "------------------------------------------------------------\n");
+    unsigned total = candidates.size() * candidates.size() - candidates.size();
+    fprintf(fout, "%u %u %u %u %lf %lf\n", total, skipped, computed, intr, result.front().score(), result.back().score());
   }
   return result;
 }

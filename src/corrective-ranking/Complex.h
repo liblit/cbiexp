@@ -39,6 +39,8 @@ public:
   double score();
   double lowerBound() const;
   
+  static int perfectCount;
+  
   std::string bugometerXML();
     //Returns a string representing a bug-o-meter XML tag.
 

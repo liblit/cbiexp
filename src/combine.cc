@@ -82,10 +82,18 @@ void gen_complex() {
     candidates.sort();
     candidates.reverse();
 
+    unsigned perfPredCount = 0;
+    Candidates::iterator iter;
+    for(iter = candidates.begin(); iter != candidates.end(); iter ++)
+      if(iter->isPerfect())
+        perfPredCount ++;
+    
     FILE * fout = fopen( "complex_all.txt", "w" );
     
     std::list<Complex> result = combine(candidates, 1000, 0, fout);
     
+    fprintf(fout, "Number of perfect complex predicates: %u\n", Complex::perfectCount);
+    fprintf(fout, "Number of perfect single predicates: %u\n", perfPredCount);
     fclose(fout);
 
     xml_conj_info(result, "complex-info.xml");
