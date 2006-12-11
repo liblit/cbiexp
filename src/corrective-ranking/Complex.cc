@@ -147,7 +147,12 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   unsigned skipped = 0;
   unsigned intr = 0;
   unsigned computed = 0;
+  unsigned total = candidates.size() * candidates.size() - candidates.size();
 
+  if(limit == 0) {
+    return result;
+  }
+  
   Candidates::iterator i, j;
   for(i = candidates.begin(); i != candidates.end(); i ++) {
     for(j = candidates.begin(); j != i; j ++) {
@@ -208,7 +213,6 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   printf("COMBINE:: :( Had to compute %u complex predicates\n", computed);
   
   if ( fout != NULL ) { 
-    unsigned total = candidates.size() * candidates.size() - candidates.size();
     fprintf(fout, "%u %u %u %u %lf %lf\n", total, skipped, computed, intr, result.front().score(), result.back().score());
   }
   return result;

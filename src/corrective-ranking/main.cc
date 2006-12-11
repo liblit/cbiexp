@@ -34,6 +34,7 @@ enum ZoomsWanted { ZoomNone, ZoomWinners, ZoomAll };
 static ZoomsWanted zoomsWanted;
 static string zoomAttr;
 
+bool considerComplex = false;
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -59,17 +60,18 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
 
   if (allFailures.count <= 0)
     return;
-
-
+  
   // Make a FILE pointer...
   FILE * fout;
-  char * fname = new char[strlen(projection) + strlen("complex_.txt") + 1];
-  strcpy( fname, "complex_" );
-  strcat( fname, projection );
-  strcat( fname, ".txt" );
-  // fname is either complex_corrective_exact.txt, or
-  // complex_corrective_approximate.txt
-  fout = fopen(fname,"w");
+  // combine checks for NULL before writing to fout
+  if(considerComplex) {
+    char * fname = new char[strlen(projection) + strlen(".txt") + 1];
+    strcpy( fname, projection );
+    strcat( fname, ".txt" );
+    fout = fopen(fname,"w");
+  }
+  else
+    fout = NULL;
 
   const AllFailuresSnapshot snapshot;
 
@@ -85,7 +87,9 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
       //'winner' is the best Predicate.  We now try to find a conjunction with a better score...
       //if there is more than one such Conjunction, we keep only the best.
       bestScore = winner->score();
-      std::list<Complex> best = combine(candidates, 1, bestScore, fout);
+      
+      unsigned limit = (considerComplex)? 1: 0;
+      std::list<Complex> best = combine(candidates, limit, bestScore, fout);
 
       // If the list has an item, and its score beats bestScore, it's what
       // we use.
@@ -151,8 +155,9 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
 	candidates.rescore(progress);
       }
     }
-  // Close the file...
-  fclose( fout );
+  // Close the file...only if it is open
+  if(fout)
+    fclose( fout );
 }
 
 
@@ -179,6 +184,9 @@ parseFlag(int key, char *arg, argp_state *state)
     else
       argp_error(state, "argument to --zoom must be one of \"all\", \"winners\", or \"none\"");
     return 0;
+  case 'c':
+    considerComplex = true;
+    return 0;
   default:
     return ARGP_ERR_UNKNOWN;
   }
@@ -195,6 +203,14 @@ processCommandLine(int argc, char *argv[])
       "PREDS",
       0,
       "generate zoom views for selected predicates: \"all\", \"winners\", or \"none\" (default: none)",
+      0
+    },
+    {
+      "complex-preds",
+      'c',
+      0,
+      0,
+      "includes complex predicates for corrective-ranking",
       0
     },
     { 0, 0, 0, 0, 0, 0 }
@@ -231,7 +247,8 @@ initialize(int argc, char *argv[])
   ios::sync_with_stdio(false);
   // feenableexcept(FE_DIVBYZERO | FE_INVALID);
 
-  read_pairs();
+  if(considerComplex)
+    read_pairs();
 }
 
 
@@ -245,29 +262,32 @@ rankMain(const char projection[])
   Candidates candidates;
   candidates.load();
 
-  /*const StaticSiteInfo staticSiteInfo;  
-  FILE * const raw = fopenRead(PredStats::filename);
-  pred_info stats;
-  while (read_pred_full(raw, stats))
-  {
-    const site_t &site = staticSiteInfo.site(stats.siteIndex);
-    cout << site.line;
-  }*/
-
-
+  char *name;
+  char suffix[] = "_complex";
+  
+  unsigned size = strlen(projection) + strlen(suffix) + 1;
+  name = (char *) malloc(sizeof(char) * size);
+  assert(name != NULL);
+  
+  strcpy(name, projection);
+  if(considerComplex)
+    strcat(name, suffix);
+    
   switch (zoomsWanted)
     {
     case ZoomNone:
-      buildView(candidates, projection);
+      buildView(candidates, name);
       break;
     case ZoomAll:
-      buildView(candidates, projection);
-      buildZooms(candidates, projection);
+      buildView(candidates, name);
+      buildZooms(candidates, name);
       break;
     case ZoomWinners:
       Foci foci;
-      buildView(candidates, projection, &foci);
-      buildZooms(candidates, projection, foci);
+      buildView(candidates, name, &foci);
+      buildZooms(candidates, name, foci);
       break;
     }
+  
+  free(name);
 }
