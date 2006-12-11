@@ -53,42 +53,4 @@ int main(int argc, char** argv)
     ffile.close();
     sfile.close();
 
-    ofstream out("bug_runs.sparse");
-    vector <int> * bugIds = (new Bugs())->bugIndex(); 
-    {
-        ifstream in("bug_runs.txt");
-        for(unsigned int i = 0; i < bugIds->size(); i++) {
-            string line;
-            getline(in, line);
-            istringstream parse(line);
-            RunSet current;
-            parse >> current;
-            for(unsigned int j = NumRuns::begin, index = 0; j < NumRuns::end; j++) {
-                if(is_frun[j] || is_srun[j]) {
-                    index++;
-                    if(current.test(j)) out << i + 1 << " " << index << " 1\n";
-                }
-            }
-        }
-        in.close();
-    }
-
-    {
-        ifstream in("unknown_runs.txt");
-        string line;
-        getline(in,line);
-        istringstream parse(line);
-        RunSet current;
-        parse >> current;
-        for(unsigned int j = NumRuns::begin, index = 0; j < NumRuns::end; j++) {
-            if(is_frun[j] || is_srun[j]) {
-                index++;
-                if(current.test(j)) out << bugIds->size() + 1 << " " << index << " 1\n";
-            }
-        }
-        in.close();
-    }
-    out.close();
-
-
 }
