@@ -64,18 +64,18 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
   // Make a FILE pointer...
   FILE * fout;
   // combine checks for NULL before writing to fout
-  if(considerComplex) {
-    char * fname = new char[strlen(projection) + strlen(".txt") + 1];
-    strcpy( fname, projection );
-    strcat( fname, ".txt" );
-    fout = fopen(fname,"w");
-  }
-  else
-    fout = NULL;
+  char * fname = new char[strlen(projection) + strlen(".txt") + 1];
+  strcpy( fname, projection );
+  strcat( fname, ".txt" );
+  fout = fopen(fname,"w");
 
+  // Identify the type of the winner for first iteration
+  bool firstIteration = true;
+  
   const AllFailuresSnapshot snapshot;
 
-  cout << "Entering conjunction-enabled buildView.  This might take a while..." << endl;
+  if(considerComplex)
+    cout << "Entering complex-preds-enabled buildView.  This might take a while..." << endl;
 
   // pluck out predicates one by one, printing as we go
   while (!candidates.empty())
@@ -94,6 +94,10 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
       // If the list has an item, and its score beats bestScore, it's what
       // we use.
       if ( best.size() == 1 && best.front().score() > bestScore ) {
+        if(firstIteration) {
+          fprintf(fout, "$$$$ %s %d\n", best.front().getType() == 'C'? "Conjunction": "Disjunction", best.front().isPerfect());
+          firstIteration = false;
+        }
 	
 	// We need to form a conjunction of the same predicates, with their
 	// original RunSets, to get the original score of this one.
@@ -137,6 +141,10 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
 	candidates.rescore(progress);
       }
       else {
+        if(firstIteration) {
+          fprintf(fout, "$$$$ Simple %d\n", winner->isPerfect());
+          firstIteration = false;
+        }
 	view << *winner;
     cout << *winner;
 	if (foci)
