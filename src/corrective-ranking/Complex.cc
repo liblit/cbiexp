@@ -213,7 +213,10 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   printf("COMBINE:: :( Had to compute %u complex predicates\n", computed);
   
   if ( fout != NULL ) { 
-    fprintf(fout, "%u %u %u %u %lf %lf\n", total, skipped, computed, intr, result.front().score(), result.back().score());
+    if(result.size() > 0)
+      fprintf(fout, "%u %u %u %u %lf %lf\n", total, skipped, computed, intr, result.front().score(), result.back().score());
+    else
+      fprintf(fout, "%u %u %u %u -1 -1\n", total, skipped, computed, intr);
   }
   return result;
 }

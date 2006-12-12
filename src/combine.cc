@@ -37,12 +37,10 @@ void xml_conj_info(list<Complex> &c, char *fname) {
     out << "<?xml version=\"1.0\"?>"
         << "<conjunction-info>" << endl;
     
-//     unsigned i;
     for(iter = c.begin(); iter != c.end(); iter ++) {
         out << "<info index=\"" << (*iter).index << "\">" << endl;
         
         Complex conj = *iter;
-//         (*iter).index = i;
         
         vector<unsigned> preds = conj.getPredicateList();
         for(vector<unsigned>::iterator p = preds.begin(); p != preds.end(); p ++) {
