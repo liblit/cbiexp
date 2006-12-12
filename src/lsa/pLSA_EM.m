@@ -1,4 +1,4 @@
-% function [Pw_z,Pd_z,Pz,Li] = pLSA_EM(X,K,Learn,Sindices)
+% function [Pw_z,Pd_z,Pz,Li] = pLSA_EM(X,Learn,Sindices)
 %
 % Probabilistic Latent semantic alalysis (pLSA)
 %
@@ -33,22 +33,27 @@
 % http://people.csail.mit.edu/fergus/iccv2005/bagwords.html 
 % as part of a short course on recognizing and learning object categories.
 
-function [Pw_z,Pd_z,Pz,Pz_d,Li] = pLSA_EM(X,K,Learn,Sindices)
+function [Pw_z,Pd_z,Pz,Pz_d,Li] = pLSA_EM(X,Learn,Sindices)
 
-if nargin < 3
+if nargin < 2
     error('pLSA_EM called with incomplete specification.');
 end;
 
-if Learn.Constrained 
-    if nargin < 4
-        error('Learn flag calls for constrained analysis but indices of failing runs not passed to pLSA_EM');
+if Learn.Kb > 0
+    if nargin < 3
+        error('Learn calls for constrained analysis but indices of failing runs not passed to pLSA_EM');
     end;
 
-    if Learn.Kb >= K 
+    if Learn.K < 1
+        error('Can not have 0 or negative number of aspects');
+    end
+
+    if Learn.Kb >= Learn.K 
         error('Can not have the same or more bug aspects than there are total aspects'); 
     end;
 
     Kb = Learn.Kb;
+    K = Learn.K;
     Knb = K - Kb;
     KbIndices = find([diag(zeros(Knb))' diag(ones(Kb))']);  
 else
@@ -56,13 +61,15 @@ else
     Sindices = [];
 end
 
-if K < 1
-    error('Can not have 0 or negative number of aspects');
-end
 
 m  = size(X,1); % vocabulary size
 nd = size(X,2); % # of documents
-e = nnz(X);     % # of non zero entries in this matrix
+e = numel(find(X ~= 0));
+
+if Learn.Normalized;
+    C = sum(X,1); 
+    X = X * diag(invertNonZeros(C));
+end; 
 
 [I,J,V] = find(X);
 
@@ -124,12 +131,12 @@ Pd_z = principled_randomize(nd,K);   % word probabilities conditioned on topic
 %if not doing constrained pLSA pass empty KbIndices
 Pd_z(Sindices, KbIndices) = 0; 
 C    = sum(Pd_z,1);  
-Pd_z = Pd_z * diag(spfun(inline('1./x'), C));
+Pd_z = Pd_z * diag(invertNonZeros(C));
 
 % random assignment
 Pw_z = principled_randomize(m,K);
 C    = sum(Pw_z,1); 
-Pw_z = Pw_z * diag(spfun(inline('1./x'), C));
+Pw_z = Pw_z * diag(invertNonZeros(C));
 
 
 return;
@@ -138,7 +145,7 @@ return;
 function P = principled_randomize(m,n)
     while 1
         P = rand(m,n);
-        if nnz(P) == prod(size(P)) 
+        if numel(find(P ~= 0)) == numel(P)
             break;
         else
             warning('Needed to regenerate matrix');
@@ -161,15 +168,19 @@ return;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function Pz_dw = pLSA_Estep(Pw_z,Pd_z,Pz,I,J,K,M,N,E)
 
-   C = spalloc(M,N,E);
+   C = zeros(M,N);
    for k = 1:K
-      Pz_dw{k} = sparse(I, J, Pw_z(I,k).*Pd_z(J,k) * Pz(k));
+      T = Pw_z(I,k).*Pd_z(J,k) * Pz(k);
+      Pz_dw{k} = zeros(M,N);
+      for i = 1:E;
+          Pz_dw{k}(I(i),J(i)) = T(i);
+      end;
       C = C + Pz_dw{k};
    end;   
 
    % normalize posterior
    for k = 1:K
-      Pz_dw{k} = Pz_dw{k} .* spfun(inline('1./x'), C); 
+      Pz_dw{k} = Pz_dw{k} .* invertNonZeros(C);
    end;   
 return;
 
@@ -235,4 +246,10 @@ function Px_y = invertProbs(Py_x, Px)
     Sx_y = sum(Px_y,2); 
     Sx_y = spfun(inline('1./x'),Sx_y); 
     Px_y = Px_y' * diag(Sx_y);
+return;
+
+function Z = invertNonZeros(V)
+    Z = V;
+    N = find(Z ~= 0);        
+    Z(N) = 1./Z(N);
 return;
