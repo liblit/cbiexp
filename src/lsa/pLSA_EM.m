@@ -139,6 +139,7 @@ return;
 
 % This function generates a random matrix such that all entries are non-zero
 function P = principled_randomize(m,n)
+    rand('state',sum(100*clock))
     while 1
         P = rand(m,n);
         if nnz(P) == numel(P)
