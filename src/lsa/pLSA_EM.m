@@ -64,7 +64,7 @@ end
 
 m  = size(X,1); % vocabulary size
 nd = size(X,2); % # of documents
-e = numel(find(X ~= 0));
+e = nnz(X); 
 
 if Learn.Normalized;
     C = sum(X,1); 
@@ -141,7 +141,7 @@ return;
 function P = principled_randomize(m,n)
     while 1
         P = rand(m,n);
-        if numel(find(P ~= 0)) == numel(P)
+        if nnz(P) == numel(P)
             break;
         else
             warning('Needed to regenerate matrix');
@@ -164,18 +164,15 @@ return;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function Pz_dw = pLSA_Estep(Pw_z,Pd_z,Pz,I,J,K,M,N,E)
 
-   C = zeros(M,N);
-   for k = 1:K
+   C = spalloc(M,N,E);
+   for k = 1:K;
       T = Pw_z(I,k).*Pd_z(J,k) * Pz(k);
-      Pz_dw{k} = zeros(M,N);
-      for i = 1:E;
-          Pz_dw{k}(I(i),J(i)) = T(i);
-      end;
+      Pz_dw{k} = sparse(I,J,T,M,N,E); 
       C = C + Pz_dw{k};
    end;   
 
    % normalize posterior
-   for k = 1:K
+   for k = 1:K;
       Pz_dw{k} = Pz_dw{k} .* invertNonZeros(C);
    end;   
 return;
@@ -186,7 +183,7 @@ return;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [Pw_z,Pd_z,Pz] = pLSA_Mstep(X,Pz_dw,K,Sindices,KbIndices)
    
-   for k = 1:K
+   for k = 1:K;
       T = X .* Pz_dw{k};
       Pw_z(:,k) = sum(T,2);
       Pd_z(:,k) = sum(T,1)';  
@@ -202,10 +199,10 @@ function [Pw_z,Pd_z,Pz] = pLSA_Mstep(X,Pz_dw,K,Sindices,KbIndices)
    
    % normalize to sum to 1
    C = sum(Pw_z,1);
-   Pw_z = Pw_z * diag(full(spfun(inline('1./x'), C)));
+   Pw_z = Pw_z * diag(full(invertNonZeros(C)));
 
    C = sum(Pd_z,1);
-   Pd_z = Pd_z * diag(full(spfun(inline('1./x'), C)));
+   Pd_z = Pd_z * diag(full(invertNonZeros(C)));
    
    C = sum(Pz,2);
    if C == 0 
@@ -240,12 +237,10 @@ return;
 function Px_y = invertProbs(Py_x, Px)
     Px_y = Py_x * diag(Px);
     Sx_y = sum(Px_y,2); 
-    Sx_y = spfun(inline('1./x'),Sx_y); 
+    Sx_y = invertNonZeros(Sx_y); 
     Px_y = Px_y' * diag(Sx_y);
 return;
 
 function Z = invertNonZeros(V)
-    Z = V;
-    N = find(Z ~= 0);        
-    Z(N) = 1./Z(N);
+    Z = spfun(inline('1./x'),V);
 return;
