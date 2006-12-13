@@ -81,7 +81,6 @@ maxit = Learn.Max_Iterations;
 
 % EM algorithm
 for it = 1:maxit   
-   fprintf('Iteration %d ',it);
    
    % E-step
    Pz_dw = pLSA_Estep(Pw_z,Pd_z,Pz,I,J,K,m,nd,e);
@@ -98,12 +97,9 @@ for it = 1:maxit
        dLi = Li(it) - Li(it-1);
        if dLi < Learn.Min_Likelihood_Change, break; end;   
    end;
-   fprintf('dLi=%f \n',dLi);
 end;
 
 Pz_d = invertProbs(Pd_z,Pz);
-
-fprintf('\n');
 
 return;
 
