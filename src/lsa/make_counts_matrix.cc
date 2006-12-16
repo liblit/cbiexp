@@ -139,13 +139,9 @@ int main(int argc, char** argv)
 
     {
 	Progress::Bounded progress("finding counts", NumRuns::count());
-	for (unsigned runId = NumRuns::begin, index = 0; runId < NumRuns::end; ++runId) {
+	for (unsigned runId = NumRuns::begin; runId < NumRuns::end; ++runId) {
 	    progress.step();
-
-            if (is_srun[runId] || is_frun[runId]) {
-                Reader(++index).read(runId);
-            } 
-
+            Reader(runId+1).read(runId);
 	}
     }
 
