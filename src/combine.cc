@@ -88,7 +88,7 @@ void gen_complex() {
     
     FILE * fout = fopen( "complex_all.txt", "w" );
     
-    std::list<Complex> result = combine(candidates, 1000, 0, fout);
+    std::list<Complex> result = combine(candidates, 100, 0, fout);
     
     fprintf(fout, "Number of perfect complex predicates: %u\n", Complex::perfectCount);
     fprintf(fout, "Number of perfect single predicates: %u\n", perfPredCount);

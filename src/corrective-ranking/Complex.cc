@@ -6,6 +6,7 @@
 #include <set>
 
 #include "../Confidence.h"
+#include "../Progress/Bounded.h"
 
 #include "Complex.h"
 #include "Conjunction.h"
@@ -144,19 +145,21 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   std::list<Complex> result;
   double minMax = lb;
   
-  unsigned skipped = 0;
-  unsigned intr = 0;
-  unsigned computed = 0;
   unsigned total = candidates.size() * candidates.size() - candidates.size();
-
+  unsigned prunedC = 0, computedC = 0, interestingC = 0;
+  unsigned prunedD = 0, computedD = 0, interestingD = 0;
+  
   if(limit == 0) {
     return result;
   }
+
+  Progress::Bounded progress("Finding conjunctions and disjunctions", total / 2);
   
   Candidates::iterator i, j;
   for(i = candidates.begin(); i != candidates.end(); i ++) {
     for(j = candidates.begin(); j != i; j ++) {
       
+      progress.step();        
       if(! isValidPair(i->index, j->index))
         continue;
       
@@ -164,18 +167,18 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
       if(result.size() == limit) {
         Conjunction dummy(&*i, &*j, true);
         if(dummy.score() < minMax) {
-          skipped ++;
+          prunedC ++;
           skip_conj = true;
         }
       }
       
       if(!skip_conj) {
-        computed ++;
+        computedC ++;
         Conjunction c(&*i, &*j);
         if(c.isInteresting()) {
           result.push_back(c);
-          intr ++;
           
+          interestingC ++;          
           if(result.size() > limit) {
             result.erase(min_element(result.begin(), result.end()));
             minMax = min_element(result.begin(), result.end())->score();
@@ -187,18 +190,18 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
       if(result.size() == limit) {
         Disjunction dummy(&*i, &*j, true);
         if(dummy.score() < minMax) {
-          skipped ++;
+          prunedD ++;
           skip_disj = true;
         }
       }
       
       if(!skip_disj) {
-        computed ++;
+        computedD ++;
         Disjunction d(&*i, &*j);
         if(d.isInteresting()) {
             result.push_back(d);
             
-            intr ++;
+            interestingD ++;
             if(result.size() > limit) {
             result.erase(min_element(result.begin(), result.end()));
             minMax = min_element(result.begin(), result.end())->score();
@@ -208,15 +211,19 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
     }
   }
   
-  printf("COMBINE:: was able to prune %u conjunctions\n", skipped);
-  printf("COMBINE:: In all, %u complex predicates were interesting\n", intr);
-  printf("COMBINE:: :( Had to compute %u complex predicates\n", computed);
+  printf("COMBINE:: was able to prune %u conjunctions, %u disjunctions\n", prunedC, prunedD);
+  printf("COMBINE:: In all, %u %u complex predicates were interesting\n", interestingC, interestingD);
+  printf("COMBINE:: :( Had to compute %u %u complex predicates\n", computedC, computedD);
   
-  if ( fout != NULL ) { 
+  if ( fout != NULL ) {
+    fprintf(fout, "%u\n", total); // Total possible complex predicates
+    fprintf(fout, "%u %u %u\n", prunedC, computedC, interestingC);
+    fprintf(fout, "%u %u %u\n", prunedD, computedD, interestingD);
+    
     if(result.size() > 0)
-      fprintf(fout, "%u %u %u %u %lf %lf\n", total, skipped, computed, intr, result.front().score(), result.back().score());
+      fprintf(fout, "%lf %lf\n", result.front().score(), result.back().score());
     else
-      fprintf(fout, "%u %u %u %u -1 -1\n", total, skipped, computed, intr);
+      fprintf(fout, "-1 -1\n");
   }
   return result;
 }
