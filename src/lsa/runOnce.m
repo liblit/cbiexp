@@ -1,5 +1,11 @@
 function runOnce()
     load('runsinfo.mat');
+
+    if numel(X) == 0;
+        warning('I can not compute results without data');
+        quit;
+    end;
+
     Learn = configure();
     seed = sum(100*clock);
     rand('state',seed);
