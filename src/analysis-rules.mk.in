@@ -437,6 +437,27 @@ bicluster: $(biclustering)
 bicluster-full: $(biclustering-full)
 .PHONY: bicluster bicluster-full
 
+plsa/s.indices plsa/f.indices: s.runs f.runs plsa
+	$(time) $(tooldir)/make-classify-vectors --runs-directory=$(datadir) --begin-runs=$(training-runs)  
+	mv s.indices plsa/s.indices
+	mv f.indices plsa/f.indices
+
+plsa/X.sparse: $(datadir)/stamp-labels plsa
+	$(time) $(tooldir)/make-counts-matrix --runs-directory=$(datadir) --begin-runs=$(training-runs)
+	mv X.sparse plsa/X.sparse
+
+plsa/GNUmakefile plsa/site-rules.mk: plsa
+	echo '-include site-rules.mk' > plsa/GNUmakefile
+	echo 'include $(tooldir)/lsa/analysis-rules.mk' >> plsa/GNUmakefile
+	echo '#numaspects=' > plsa/site-rules.mk
+	echo '#numbugaspects=' >> plsa/site-rules.mk
+	echo '#numrestarts=' >> plsa/site-rules.mk
+
+plsa: 
+	mkdir plsa
+
+plsa_prepare: plsa/f.indices plsa/s.indices plsa/X.sparse plsa/GNUmakefile plsa/site-rules.mk
+
 ########################################################################
 
 
