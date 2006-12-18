@@ -19,7 +19,7 @@ prepare_experiment: runsinfo.mat
 	echo 'numaspects = $(numaspects)' > $(expdir)/GNUmakefile
 	echo 'numbugaspects = $(numbugaspects)' >> $(expdir)/GNUmakefile
 	echo 'numrestarts = $(numrestarts)' >> $(expdir)/GNUmakefile
-	echo 'include $(tooldir)/plsa/analysis-rules.mk' >> $(expdir)/GNUmakefile
+	echo 'include $(tooldir)/analysis-rules.mk' >> $(expdir)/GNUmakefile
 
 	echo 'function Learn = configure()' > $(expdir)/configure.m
 	echo '	Learn.K = $(numaspects);' >> $(expdir)/configure.m
