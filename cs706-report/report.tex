@@ -1,52 +1,81 @@
-\documentclass[10pt,twocolumn]{article}
+%% -*- TeX-master: t -*-
 
-\usepackage{setspace}
-\usepackage{float}
-\usepackage{amsopn}
+\documentclass[final,nocopyrightspace]{sigplanconf}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% standard texmf packages
+%%
+
 \usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{fancyvrb}
+\usepackage{flushend}
 \usepackage{graphicx}
+\usepackage{ifthen}
+\usepackage{nicefrac}
+\usepackage[TABTOPCAP, tight]{subfigure}
+\usepackage{url}
+\usepackage{xspace}
 
+\def\UrlLeft{<}
+\def\UrlRight{>}
 
-\topmargin=-0.45in      %
-\evensidemargin=0in     %
-\oddsidemargin=0in      %
-\textwidth=6.5in        %
-\textheight=9.0in       %
-\headsep=0.25in         %
-\itemsep=0ex
+\setlength{\abovetopsep}{1ex}
 
-\title { Propositional Combination of CBI Predicates \\
-CS 706 – Fall '06 }
+\usepackage{mathptmx}
+\usepackage{times}
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
 
-\author { 	Piramanayagam \\ Arumuga Nainar \\ arumuga@cs.wisc.edu \and Ting Chen \\ tchen@cs.wisc.edu \and Jake Rosin \\ rosin@cs.wisc.edu
-	}        
-           
-\date {}        
+\usepackage[
+bookmarks,
+breaklinks,
+draft=false,
+pdftitle={Propositional Combination of CBI Predicates},
+pdfauthor={Piramanayagam Arumuga Nainar, Ting Chen, Jake Rosin},
+% pdfsubject={D.2.4 [Software Engineering]: Software/Program Verification -- statistical methods; D.2.5 [Software Engineering]: Testing and Debugging -- debugging aids, distributed debugging, monitors, tracing; I.5.2 [Pattern Recognition]: Design Methodology -- feature evaluation and selection},
+% pdfkeywords={bug isolation, random sampling, invariants, feature selection, statistical debugging},
+pdfpagemode=UseOutlines
+]{hyperref}
 
-% -------end of preamble-------
+\ifthenelse{\isundefined{\pdfoutput}}{}{\usepackage{thumbpdf}}
 
-\begin{spacing}{1.0}
+%% \VerbatimFootnotes
 
-\input{macros}
-\input{cheats}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% unique to this report
+%%
+
+\usepackage{mailto}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% front matter
+%%
+
+\title{Propositional Combination of CBI Predicates
+  %%
+%   \renewcommand{\ast}[0]{}
+  }
+
+\authorinfo{Piramanayagam Arumuga Nainar}{Computer Sciences Department \\ University of Wisconsin-Madison}{\mailto{arumuga@cs.wisc.edu}}
+\authorinfo{Ting Chen}{Computer Science Department \\  University of Wisconsin-Madison}{\mailto{tchen@cs.wisc.edu}}
+\authorinfo{Jake Rosin}{Computer Science Department \\  University of Wisconsin-Madison}{\mailto{rosin@cs.wisc.edu}}
+
+\bibliographystyle{abbrv}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  document body
+%%
+
 
 \begin{document}
 
-
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
-
-%\DeclareMathOperator*{\Max}{max}
- \newcommand{\R}{{\sf R\hspace*{-0.9ex}%
-    \rule{0.15ex}{1.5ex}\hspace*{0.9ex}}}
-  \newcommand{\N}{{\sf N\hspace*{-1.0ex}%
-    \rule{0.15ex}{1.3ex}\hspace*{1.0ex}}}
-  \newcommand{\Q}{{\sf Q\hspace*{-1.1ex}%
-    \rule{0.15ex}{1.5ex}\hspace*{1.1ex}}}
-  \newcommand{\C}{{\sf C\hspace*{-0.9ex}%
-    \rule{0.15ex}{1.3ex}\hspace*{0.9ex}}}
-
 \maketitle
+
 \input{abstract}
 \input{intro}
 \input{benefits}
@@ -57,7 +86,8 @@ CS 706 – Fall '06 }
 \input{sampling}
 \input{rw}
 \input{conc}
-\input{bib}
+% \input{bib}
 
-\end{spacing}
+\bibliography{local}
+% \end{spacing}
 \end{document}
