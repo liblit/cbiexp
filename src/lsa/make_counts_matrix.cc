@@ -141,7 +141,9 @@ int main(int argc, char** argv)
 	Progress::Bounded progress("finding counts", NumRuns::count());
 	for (unsigned runId = NumRuns::begin; runId < NumRuns::end; ++runId) {
 	    progress.step();
-            Reader(runId+1).read(runId);
+            if (is_srun[runId] || is_frun[runId]) { 
+                Reader(runId+1).read(runId);
+            }
 	}
     }
 
@@ -155,6 +157,12 @@ int main(int argc, char** argv)
             print_sparse(out, ++row, info->tru);
 	    interesting.pop();
 	}
+        out.close();
+    }
+
+    {
+        ofstream out("X.dimensions");
+        out <<  PredStats::count() << " " << NumRuns::count() << "\n";  
         out.close();
     }
 

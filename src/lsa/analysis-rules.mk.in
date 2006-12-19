@@ -10,6 +10,7 @@ runsinfo.mat: X.sparse f.indices s.indices
 initialize : runsinfo.mat
 
 numbugaspects := $(if $(numbugaspects),$(numbugaspects),0)
+numaspects := $(if $(numaspects),$(numaspects),0)
 expdir := $(numaspects)t_$(numbugaspects)b
 
 numrestarts := $(if $(numrestarts),$(numrestarts),0)

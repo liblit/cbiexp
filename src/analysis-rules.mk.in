@@ -442,13 +442,14 @@ plsa/s.indices plsa/f.indices: s.runs f.runs plsa
 	mv s.indices plsa/s.indices
 	mv f.indices plsa/f.indices
 
-plsa/X.sparse: $(datadir)/stamp-labels plsa
+plsa/X.sparse plsa/X.dimensions: $(datadir)/stamp-labels plsa
 	$(time) $(tooldir)/lsa/make-counts-matrix --runs-directory=$(datadir) --begin-runs=$(training-runs)
 	mv X.sparse plsa/X.sparse
+	mv X.dimensions plsa/X.dimensions
 
 plsa/GNUmakefile plsa/site-rules.mk: plsa
 	echo '-include site-rules.mk' > plsa/GNUmakefile
-	echo 'include $(tooldir)/lsa/analysis-rules.mk' >> plsa/GNUmakefile
+	echo 'include ../$(tooldir)/lsa/analysis-rules.mk' >> plsa/GNUmakefile
 	echo '#numaspects=' > plsa/site-rules.mk
 	echo '#numbugaspects=' >> plsa/site-rules.mk
 	echo '#numrestarts=' >> plsa/site-rules.mk
@@ -456,7 +457,7 @@ plsa/GNUmakefile plsa/site-rules.mk: plsa
 plsa: 
 	mkdir plsa
 
-plsa_prepare: plsa/f.indices plsa/s.indices plsa/X.sparse plsa/GNUmakefile plsa/site-rules.mk
+plsa_prepare: plsa/f.indices plsa/s.indices plsa/X.sparse plsa/GNUmakefile plsa/site-rules.mk plsa/X.dimensions
 
 ########################################################################
 
