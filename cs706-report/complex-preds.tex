@@ -1,2 +1,21 @@
 \section{Complex Predicates}
 \label{sec-complex-preds}
+This section gives a precise definition of complex predicates and discusses the trade-offs in our implementation.
+
+A complex predicate $C$ is defined as $C = \phi(p_1, p_2, \ldots p_k)$ where $p_1, p_2, \ldots p_k$ are simple predicates and $\phi$ is a function that can be computed using only the logical operators $and$ and $or$.  The operator $not$ is not required because any propositional formula can be written in conjunctive normal form (CNF) in which the $not$ operator appears only before the literals.  And by design, the negation of every simple predicate $P$ is also a predicate.
+
+For a predicate $P$ and a run $R$, $R(P)$ is true if $P$ was observed to be true atleast once during run $R$.  Similarly we could define $R(C)$ as follows:
+\begin{defn}
+\label{dfn1}
+For a complex predicate $C = \phi(p_1, p_2, \ldots p_k)$, $R(C)$ = 1 iff at some point during the execution of the program, $C$ was observed to be true.
+\end{defn}
+
+The difficulty with this notion of the complex predicate is that $C$ must be explicitly monitored during the program execution.  For example, if $C_1 = p_1 \wedge p_2$ then $R(p_1)$ = 1 and $R(p_2)$ = 1 does not imply that $R(C)$ = 1.  $p_1$ and $p_2$ may be true at different stages of execution but never true at the same time.  However, as discussed earlier, explicitly monitoring $C$ requires significant changes to existing infrastructure.  In order to be able to estimate the value of $C$ from its components, we adapt a less precise definition as follows:
+\begin{defn}
+\label{dfn1}
+For a complex predicate $C = \phi(p_1, p_2, \ldots p_k)$, $R(C)$ = 1 iff $\phi(R(p_1), R(p_2), \ldots R(p_k))$ = $true$
+\end{defn}
+
+In other words, we consider that $R$ as distributive over $\phi$.  This can lead to false positives, because $R(C)$ may be computed to 1 when it is actually 0, but no false negatives.  The impact of this assumption on the score of $C$ may be either positive or negative depending on whether $R$ succeeded or failed.
+
+There are $2^{2^N}$ boolean functions of $N$ predicates.  This is a prohibitively large number considering that there can be hundreds of simple predicates.  To reduce the complexity, we consider only functions of two predicates.  There are $2^{2^2}$ = 16 such functions and their arguments can be chosen from $N$ predicates in $^NC_2 = \frac{N(N-1)}{2}$ ways.  Out of the 16 boolean functions of two variables, we restrict only to conjunction ($and$) and disjunction ($or$) since other functions are more complex and cannot be used effectively by the programmer.  Other functions can be easily included in our implementation once their truth table (discussed later) are derived correctly.  Thus, we evaluate only $2. ^NC_2 = N(N-1)$ functions for building complex predicates.  If $R$ is the set of runs being analysed then the time complexity required to build complex predicates is $|R|N(N-1) = O(|R|N^2)$
