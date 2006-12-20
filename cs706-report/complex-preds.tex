@@ -19,3 +19,29 @@ For a complex predicate $C = \phi(p_1, p_2, \ldots p_k)$, $R(C)$ = 1 iff $\phi(R
 In other words, we consider that $R$ as distributive over $\phi$.  This can lead to false positives, because $R(C)$ may be computed to 1 when it is actually 0, but no false negatives.  The impact of this assumption on the score of $C$ may be either positive or negative depending on whether $R$ succeeded or failed.
 
 There are $2^{2^N}$ boolean functions of $N$ predicates.  This is a prohibitively large number considering that there can be hundreds of simple predicates.  To reduce the complexity, we consider only functions of two predicates.  There are $2^{2^2}$ = 16 such functions and their arguments can be chosen from $N$ predicates in $^NC_2 = \frac{N(N-1)}{2}$ ways.  Out of the 16 boolean functions of two variables, we restrict only to conjunction ($and$) and disjunction ($or$) since other functions are more complex and cannot be used effectively by the programmer.  Other functions can be easily included in our implementation once their truth table (discussed later) are derived correctly.  Thus, we evaluate only $2. ^NC_2 = N(N-1)$ functions for building complex predicates.  If $R$ is the set of runs being analysed then the time complexity required to build complex predicates is $|R|N(N-1) = O(|R|N^2)$
+
+--stuff about pruning.  New subsection heading?--
+
+A large number of complex predicates formed by this procedure are likely to be useless in the analysis of the program.  Naively combining predicates results in pairs of completely unrelated components, which provide no new information and would be ignored when presented to a programmer.  Keeping only interesting combinations of predicates reduces the memory burden of storing them, and helps ensure the utility of a combination which passes inspection.  We define an ``interesting'' complex predicate as one with a score exceeding those of both of its components.  The rationale for this definition is that a component predicate with a higher score is a better predictor of failure, and so the combined predicate adds nothing to the analysis.  In the case where two predictors share the same score the simpler one is preferable.
+
+Forming a complex predicate from two components is a nontrivial task, requiring a conjunction or disjunction for each program run.  After this computation is complete the score of the newly formed predicate can be calculated, potentially labeling it uninteresting.  In such a case the effort to form the predicate has been wasted.  This provides the motivation to prune combinations early based on an estimate of their resulting scores.  An upper bound for a predicate's score can be determined by maximizing $F(P)$ and $Increase$ under constraints based on the propositional operation.  The score of the predicate, being a harmonic mean based on these two terms, will likewise be maximized.
+
+--figure of Increase--
+
+--subsection: pruning disjunctions--
+
+--figure of the terms for a disjunction--
+
+Disjunction in this context can be considered the union of the set where $P1$ and that where $P2$.  The size of the resulting set is maximized when the two do not overlap, and that is the assumption made when calculating an upper bound on $F(P)$.  $S(P)$ is minimized by making the opposite assumption - that one is a subset of the other.  The size of the union is thus the size of the superset.
+
+The second term in $Increase$ can only reduce the result, and so it is ignored in calculating an upper bound.
+
+--subsection: pruning conjunctions--
+
+--figure of the terms for a conjunction--
+
+Conjunction can be regarded as set intersection.  Maximizing $F(P)$ requires that one of the intersecting sets is a subset of the other, making the size of the intersection the size of the smaller operand.  A minimal $S(P)$ is found when the component sets are nonoverlapping; the union of two such sets is empty.
+
+If the second term is ignored, as with disjunctions, the upper bound of a conjoined predicate's $Increase$ score is 1.  This is the maximum $Increase$ possible, reducing the likelihood of a conjoined predicate being pruned to almost zero.  The second term is therefore used for conjunctions to drop the upper bound to a more useful level.
+
+$F(P Observed)$ is minimized by assuming that $P$ was observed only in the (failed) runs where it was true.  Maximizing $S(P Observed)$ is a more difficult prospect.  Recall that a conjunction can be considered \textit{Observed} if either component is \textit{Observed False}, or both are \textit{Observed True}.  The intersection of successful runs where a predicate is \textit{Observed False} is maximized if the sets are nonoverlapping, while the intersection where they are \textit{Observed True} is maximized if one is a subset of the other.  By assuming both cases meet that criteria $S(P Observed)$ can be maximized.  Its value is the sum of successful runs where $P1 Observed$ and those where $P2 Observed False$, formed as the difference between $S(P2 Observed)$ and $S(P2)$.  Since the result may differ depending on which predicate is chosen as $P1$ the larger result is chosen.
