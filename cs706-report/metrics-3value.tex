@@ -1,0 +1,162 @@
+
+\documentclass{article}
+\usepackage{graphicx}
+\begin{document}
+
+\title{CBI }
+\maketitle
+\begin{abstract}
+
+
+
+\end{abstract}
+
+
+\section{Introduction}
+
+\subsection{Three valued logic}
+
+Three-valued logic is applicable in the situation where some
+predicate value is uncertain (i.e. neither true or false). Under
+CBI's sampling framework, the two branches of a complex predicate
+may not be sampled at one program run in general. If we model the
+value of a un-sampled predicate as unknown, the three-value logic
+truth tables (Table \ref{and} and Table \ref{or}) are readily
+applicable for both conjunctions and disjunctions. The truth value
+tables are easy to understand: when we evaluate a conjunction and
+find one of its branch is $false$, the final value must be $false$
+regardless the value of the other branch. A similar short-circuit
+evaluation can be used for disjunctions when we find one of each
+branches is true.
+
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|c|ccc|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  $P_1$$\backslash$$P_2$ & T & F & $?$ \\
+  \hline
+  T & T & F & ? \\
+  F & F & F & F \\
+  ? & ? & F & ? \\
+  \hline
+\end{tabular}
+  \caption{3-valued Truth Table for $P_1$$\wedge$$P_2$}\label{and}
+\end{table}
+
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|c|ccc|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  $P_1$$\backslash$$P_2$ & T & F & $?$ \\
+  \hline
+  T & T & T & T \\
+  F & T & F & ? \\
+  ? & T & ? & ? \\
+  \hline
+\end{tabular}
+  \caption{3-valued Truth Table for $P_1$$\vee$$P_2$}\label{or}
+\end{table}
+
+
+
+
+
+\subsection{Increase}
+
+\begin{equation}\label{increase}
+    Increase(P)' = \frac{F(P)'}{S(P)'+F(P)'} - \frac{F(P\;\;Observed)'}{S(P\;\;Observed)'+F(P\;\;Observed)'}
+\end{equation}
+
+where for a conjunction, we have
+
+%\begin{equation}\label{conjunction}
+%    F(P)' = Min(F(P_1),F(P_2)) \\
+%    S(P)' = 0
+%\end{equation}
+
+\begin{eqnarray}
+ \nonumber %to remove numbering (before each equation)
+  F(P)' &=&  Min(F(P_1),F(P_2)) \\
+ \nonumber
+  S(P)' &=& 0 \\
+ \nonumber
+  F(P\;Observed)' &=& F(P)' \\
+ \nonumber
+  S(P\;Obs)' &=&
+  Max(S(P_1\;Obs)+S(P_2\;Obs)-S(P_2),S(P_2\;Obs)+S(P_1\;Obs)-S(P_1))
+\end{eqnarray}
+
+and for a disjunction,
+
+\begin{eqnarray}
+ \nonumber %to remove numbering (before each equation)
+  F(P)' &=&  F(P_1) + F(P_2) \\
+ \nonumber
+  S(P)' &=&  Max(S(P_1),S(P_2)) \\
+ \nonumber
+  F(P\;Observed)' &=& 0 \\
+ \nonumber
+  S(P\;Obs) &=& 1
+\end{eqnarray}
+
+
+
+\section{Measuring Usefulness of Complex Predicates}
+
+While complex predicates could help to better predict bugs, in the
+worst case, we will see quadratic increase in the number of
+possible combinations of two single predicates. In our
+experiments, we often observe hundreds of complex predicates with
+similar or even identical high scores. The overwhelming number of
+predicates makes it extremely laborious for users to find the true
+problem cause and then debug. In this section, we several metrics
+to reduce the number of complex predicates.
+
+Our basic idea is to model programmer debugging efforts as a
+filtering metric. We assume that when a CBI user tries to find the
+cause of a bug given a complex predicate, he or she has to browser
+through (e.g. doing a BFS like search) all the statements executed
+between the two branches. Therefore, the further apart the two
+branches is, the more efforts a user has to devote. Suppose the
+two predicates of a complex predicate are associated with two
+nodes in a Control Flow Graph (CFG). We define the distance
+between two branches of a complex as the graph distance of the two
+nodes in the CFG.
+
+Another idea to break the ties of complex predicates is to
+consider the correlation between their branches. Intuitively a
+conjunction (or a disjunction) with two relative independent
+branches is less interesting because it doesn't help users much to
+find anything extra besides the two individual predicates. Here we
+define the correlation of two predicates based on the notion of
+program dependency graph. Given a single predicate $P$, we define
+its $predecessor set$ as the set of vertices in the CFG which can
+influence the outcome of $P$. The correlation between two
+predicates of a complex predicate is thus defined as the number of
+vertices in the intersection of the two predecessor sets. A
+complex predicate with a higher correlation will be ranker higher.
+
+We use CodeSurfer to build the program CFG and dependency graph.
+CodeSurfer APIs are also used in computing the vertex distance and
+intersections of predecessor sets.
+
+The above two metrics could be applied both $proactively$ and
+$reactively$. A proactive use of the metrics will prune away
+complex predicates whose metric values fall below a certain
+threshold and thus eliminate them from consideration in forming
+larger complex predicates. A reactive use of the metrics will
+retain all the predicates but break ties by giving higher ranks to
+those with higher metric values. This is desirable if neither
+computing time or space is a concern.
+
+
+
+
+
+
+
+\end{document}
