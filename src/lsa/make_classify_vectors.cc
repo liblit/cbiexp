@@ -46,9 +46,9 @@ int main(int argc, char** argv)
     ofstream ffile("f.indices");
     ofstream sfile("s.indices");
      
-    for(unsigned int i = NumRuns::begin, index = 0; i < NumRuns::end; i++) {
-        if(is_frun[i]) ffile << ++index << "\n";   
-        else if(is_srun[i]) sfile << ++index << "\n"; 
+    for(unsigned int i = NumRuns::begin; i < NumRuns::end; i++) {
+        if(is_frun[i]) ffile << i + 1 - NumRuns::begin << "\n";   
+        else if(is_srun[i]) sfile << i + 1 - NumRuns::begin << "\n"; 
     }
     ffile.close();
     sfile.close();

@@ -142,7 +142,7 @@ int main(int argc, char** argv)
 	for (unsigned runId = NumRuns::begin; runId < NumRuns::end; ++runId) {
 	    progress.step();
             if (is_srun[runId] || is_frun[runId]) { 
-                Reader(runId+1).read(runId);
+                Reader(runId + 1 - NumRuns::begin).read(runId);
             }
 	}
     }
