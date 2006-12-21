@@ -2,7 +2,7 @@
 
 root ?= /scratch/mulhern/cbiexp
 tooldir ?= $(root)/src/lsa
-MATLAB = matlab 
+MATLAB = matlab -nodisplay
 
 runsinfo.mat: X.sparse f.indices s.indices
 	$(MATLAB) -r "path(path, '$(tooldir)'); convertData()" > /dev/null
