@@ -2,9 +2,9 @@
 \label{sec-complex-preds}
 This section gives a precise definition of complex predicates and discusses the trade-offs in our implementation.
 
-A complex predicate $C$ is defined as $C = \phi(p_1, p_2, \ldots p_k)$ where $p_1, p_2, \ldots p_k$ are simple predicates and $\phi$ is a function that can be computed using only the logical operators $and$ and $or$.  The operator $not$ is not required because any propositional formula can be written in conjunctive normal form (CNF) in which the $not$ operator appears only before the literals.  And by design, the negation of every simple predicate $P$ is also a predicate.
+A complex predicate $C$ is defined as $C = \phi(p_1, p_2, \ldots p_k)$ where $p_1, p_2, \ldots p_k$ are simple predicates and $\phi$ is a function that can be computed using only the logical operators $and$ and $or$.  The operator $not$ is not required because any propositional formula can be written in conjunctive normal form (CNF) in which the $not$ operator appears only before the literals.  By design, the negation of every simple predicate $P$ is also a predicate.
 
-For a predicate $P$ and a run $R$, $R(P)$ is true if $P$ was observed to be true atleast once during run $R$.  Similarly we could define $R(C)$ as follows:
+For a predicate $P$ and a run $R$, $R(P)$ is true if $P$ was observed to be true at least once during run $R$.  Similarly we could define $R(C)$ as follows:
 \begin{defn}
 \label{dfn1}
 For a complex predicate $C = \phi(p_1, p_2, \ldots p_k)$, $R(C)$ = 1 iff at some point during the execution of the program, $C$ was observed to be true.
@@ -54,7 +54,7 @@ Similarly, for a complex predicate $C = p_1 \vee p_2$, if either $p_1$ or $p_2$ 
 
 \begin{table*}
 \nocaptionrule
-\caption{3-valued Truth Table for $C = p_1 \vee p_2$}
+\caption{3-valued Truth Table for $D = p_1 \vee p_2$}
 \label{tab:or}
 \centering
 \scriptsize
@@ -84,7 +84,7 @@ In the case where the complex predicate has the same score as the component pred
 \subsection{Pruning}
 Forming a complex predicate from its components is a nontrivial task, requiring a conjunction or disjunction for each program run.  After this computation is complete the score of the newly formed predicate can be calculated, potentially labeling it uninteresting.  In such a case the effort to form the predicate has been wasted.  This provides the motivation to prune combinations early based on an estimate of their resulting scores.  An upper bound for a predicate's score can be determined by maximizing $F(P)$ and $Increase$ under constraints based on the propositional operation.  The score of the predicate (Eqn. ~\ref{eqn2}), being a harmonic mean of these two terms, will likewise be maximized.
 
-In this context, the disjunction $D = p_1 \vee p_2$ can be considered as the union of the set of runs in which $p_1$ was $true$ and $p_2$ was $true$.  The size of the resulting set is maximized when the two do not overlap, and that is the assumption made when calculating an upper bound on $F(D)$.  $S(D)$ is minimized by making the opposite assumption - that one is a subset of the other.  The size of the union is thus the size of the superset.  The best disjunction that can be formed using $p_1$ and $p_2$ will have the following parameters:
+In this context, the disjunction $D = p_1 \vee p_2$ can be considered as the union of the sets of runs where $p_1$ was $true$ and where $p_2$ was $true$.  The size of the resulting set is maximized when the two do not overlap, and that is the assumption made when calculating an upper bound on $F(D)$.  $S(D)$ is minimized by making the opposite assumption - that one is a subset of the other.  The size of the union is thus the size of the superset.  The best disjunction that can be formed using $p_1$ and $p_2$ will have the following parameters:
 
 \begin{eqnarray}
  \nonumber %to remove numbering (before each equation)
@@ -99,7 +99,7 @@ In this context, the disjunction $D = p_1 \vee p_2$ can be considered as the uni
 
 The second term in $Increase$ (Eqn. ~\ref{eqn1})can only reduce the result, and so it is ignored in calculating an upper bound.  For completeness, $S$($D$ observed) is assigned the same value as $S(D)$ even though it does not affect $Increase(D)$.  The $F(D)$ component of $Importance$ is maximised while maximising $Increase$.  Thus the $Importance$ score calculated with the above values is an upperbound on the score of the disjunction of $p_1$ and $p_2$.
 
-The conjunction $C = p_1 \wedge p_2$ can be regarded as the intersection of the set of runs in which $p_1$ was $true$ and $p_2$ was true.  Maximizing $F(C)$ requires that one of the intersecting sets is a subset of the other, making the size of the intersection the size of the smaller set.  A minimal $S(C)$ is found when the component sets are nonoverlapping; the intersection of two such sets is empty.
+The conjunction $C = p_1 \wedge p_2$ can be regarded as the intersection of the sets of runs in where $p_1$ and where $p_2$.  Maximizing $F(C)$ requires that one of the intersecting sets is a subset of the other, making the size of the intersection the size of the smaller set.  A minimal $S(C)$ is found when the component sets are nonoverlapping; the intersection of two such sets is empty.
 
 \begin{eqnarray}
  \nonumber %to remove numbering (before each equation)
@@ -110,7 +110,7 @@ The conjunction $C = p_1 \wedge p_2$ can be regarded as the intersection of the 
 
 If the second term in $Increase$ is ignored, as with disjunctions, the upper bound of a conjoined predicate's $Increase$ score is 1.  This is the maximum $Increase$ possible, reducing the likelihood of a conjoined predicate being pruned to almost zero.  The second term is therefore used for conjunctions to drop the upper bound to a more useful level.
 
-$F(C$ observed) is minimized by assuming that $C$ was \textit{observed} only in the (failed) runs where it was true.  Maximizing $S(C$ observed) is more difficult.  Recall that a conjunction can be considered \textit{observed} if either component is \textit{observed false}, or both are \textit{observed true}.  The intersection of successful runs where a predicate is \textit{observed false} is maximized if the sets are nonoverlapping, while the intersection where they are \textit{observed true} is maximized if one is a subset of the other.  By assuming both cases meet that criteria $S(C$ observed) can be maximized.  Its value is the sum of successful runs where $p_1$ was \textit{observed} and those where $p_2$ was \textit{observed false}, formed as the difference between $S(p_2$  Observed) and $S(p_2)$.  Since the result may differ depending on which predicate is chosen as $p_1$ the larger result is used.  The best conjunction that can be formed using $p_1$ and $p_2$ will have the following parameters:
+$F(C$ observed) is minimized by assuming that $C$ was \textit{observed} only in the (failed) runs where it was true.  Maximizing $S(C$ observed) is more difficult.  Recall that a conjunction can be considered \textit{observed} if either component is \textit{observed false}, or both are \textit{observed true}.  The combinations of successful runs where a predicate is \textit{observed false} (union) is maximized if the sets are nonoverlapping, while the combination where they are \textit{observed true} (intersection) is maximized if one is a subset of the other.  By assuming both cases meet that criteria $S(C$ observed) can be maximized.  Its value is the sum of successful runs where $p_1$ was \textit{observed} and those where $p_2$ was \textit{observed false}, formed as the difference between $S(p_2$  Observed) and $S(p_2)$.  Since the result may differ depending on which predicate is chosen as $p_1$ the larger result is used.  The best conjunction that can be formed using $p_1$ and $p_2$ will have the following parameters:
 
 \begin{eqnarray}
  \nonumber
@@ -125,6 +125,8 @@ $F(C$ observed) is minimized by assuming that $C$ was \textit{observed} only in 
 Pruning is useful when a computed complex predicate, $C = \phi(p_1, p_2)$, will be thrown away if its score falls below a threshold.  Such a threshold can be found in two ways:
 \begin{enumerate}
 \item The scores of $p_1$ and $p_2$ that determine whether $C$ is interesting or not.
-\item During the redundancy elimination, the lowest % just thought about it... our implementation does not do this
+% Changed 'lowest' to 'highest', because a complex pred must beat the
+% best known pred to be considered, not the worst known.
+\item During the redundancy elimination, the highest % just thought about it... our implementation does not do this
 score among simple predicates can be used as the threshold because if the score is below this value, computing $C$ is useless for this iteration.
 \end{enumerate}
