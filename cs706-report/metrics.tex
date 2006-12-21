@@ -39,6 +39,6 @@ The correlation between two predicates of a complex predicate is defined as the 
 
 The idea behind this metric is that a larger intersection between the $predecessor\ sets$ means that it is possible that they are closely related.  We use CodeSurfer[] to build the PDG of a program and compute these two metrics.
 
-The above two metrics could be applied both $proactively$ and $reactively$.  A proactive use of the metrics will prune away complex predicates whose metric values fall below a certain threshold of usefulness.  This will eliminate them from being computed and hence a performance optimization.  A reactive use of the metrics will retain all the predicates but break ties by giving higher ranks to those with higher values of the metrics. This is desirable if neither computing time or space is a concern.
+The above two metrics could be applied both $proactively$ and $reactively$.  A proactive use of the metrics will prune away complex predicates whose metric values fall below a certain threshold of usefulness.  This will eliminate them from being computed and hence a performance improvement.  A reactive use of the metrics will retain all the predicates but break ties by giving higher ranks to those with higher values of the metrics. This is desirable if neither computing time or space is a concern.
 
 

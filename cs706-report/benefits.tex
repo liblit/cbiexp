@@ -14,35 +14,39 @@ Using these values, two scores of bug relevance are calculated.  They are:
 \item $F$($P$).  A good predictor must predict a large number of failed runs.
 \item $Increase(P)$, a measure of the amount by which $P$ being true increases the probability of failure over simply reaching the line where P is defined.  It is computed as follows:
 
-\begin{equation*}
+\begin{equation}
+\label{eqn1}
 Increase(P) \equiv 
 \frac{F(P)}{S(P) + F(P)}
 -
 \frac{F(\text{$P$ observed})}{S(\text{$P$ observed}) +
   F(\text{$P$ observed})}
-\end{equation*}
+\end{equation}
 \end{enumerate}
 
 Both of these scores are independent but good dimensions of a bug predictor.  These dimensions are combined into a single value by taking their harmonic mean.  Since $Increase(P)$ is bounded by 1, the $F(P)$ component is normalized over the total number of failed runs $NumF$ after a logarithmic transformation.  The overall metric is:
-\[
+\begin{equation}
+\label{eqn2}
 Importance(P) =
 \frac{2}{
   \frac{1}{Increase(P)}
   +
   \frac{1}{log(F(P)) / log(NumF)}}
-\]
+\end{equation}
 
-Finally, to eliminate different predicates that predicate the same bug, only the top ranked predictor is presented to the user.  To handle the case where multiple bugs are present, all the failed runs in which the top predicate is $true$ are eliminated and the remaining predicates are ranked by recomputing their scores in the remaining set of runs.  This process of eliminating runs continues until there are no remaining failed runs or no remaining predicates.  
+To eliminate different predicates that predicate the same bug, only the top ranked predictor is presented to the user.  To handle the case where multiple bugs are present, all the failed runs in which the top predicate is $true$ are eliminated and the remaining predicates are ranked by recomputing their scores in the remaining set of runs.  This process of eliminating runs continues until there are no remaining failed runs or no remaining predicates.  
 
-The output of the analysis will contain the list of predicates that had the highest score during any iteration of the redundancy elimination algorithm.  This list can be used by the programmer to track down bugs, or as input to other automated analysis tools.  Complex predicates can be improve the analysis described above in three ways: high scoring predicates, better bug predictors and as a better complement to automated tools.
+The output of the analysis will contain the list of predicates that had the highest score during any iteration of the redundancy elimination algorithm.  This list can be used by the programmer to track down bugs, or as input to other automated analysis tools.
+ 
+Complex predicates can improve the analysis described above in three ways: high scoring predicates, better bug predictors and as a better complement to automated tools.
 
 \vspace{4pt} \noindent
-{\bf Predicates with High Scores:} A statistical analysis with a larger input set will find more predicates with high scores.  Complex predicates can track deep properties about program executions.  So they are more likely to differentiate faulty runs from successful ones and thus have higher scores.  Predicates with high scores are useful because they capture a program behavior that is highly correlated with failure.  Even if they do not point at the faulty location directly, they can help identify use cases or modules in which the failure occurs.  A high scoring predicate that has no relation to the bug can be a hindrance to the user.  But a programmer with sufficient knowledge about the software can easily filter out such predicates.
+{\bf Predicates with High Scores:} A statistical analysis with a larger input set will find more predicates with high scores.  Moreover, complex predicates can track deep properties about program behavior.  So they are more likely to differentiate faulty runs from successful ones and thus have higher scores.  Predicates with high scores are useful because they capture a program behavior that is highly correlated with failure.  Even if they do not directly point at the faulty location, they can help identify use cases or modules in which the failure occurs.  A high scoring predicate that has no relation to the bug can be a hindrance to the user.  But a programmer with sufficient knowledge about the software can easily filter out such predicates.
 
 \vspace{4pt} \noindent
-{\bf Better Bug Predictors:} A predicate obtained by combining simple predicates with logical operators can yield better bug predictors.  These predicates can improve the handling of $super$ and $sub$ bug predictors.  A $super$ bug predictor is one that is true in a large number of failures but also true in a large number of successful runs.  In other words, it is not a {\em specific} enough predictor of failure.  A possible (but not the only) cause for $super$ predictors is a non-deterministic bug that does not necessarily cause a failure when it is triggered.  A $super$ predictor is complete (i.e. predicts all failures) but it is not sound (predicts some successes also).  False positives could be eliminated by taking a conjunction of this predictor with another predicate that captures another trigger of failure.
+{\bf Better Bug Predictors:} A predicate obtained by combining simple predicates with logical operators can yield better bug predictors.  These predicates can improve the analysis of $super$ and $sub$ bug predictors.  A $super$ bug predictor is one that is true in a large number of failures but also true in a large number of successful runs.  In other words, it is not a {\em specific} enough predictor of failure.  A possible (but not the only) cause for $super$ predictors is a non-deterministic bug that does not necessarily cause a failure when it is triggered.  A $super$ predictor is complete (i.e. predicts all failures) but it is not sound (predicts some successes also).  False positives could be eliminated by taking a conjunction of this predictor with another predicate that captures another trigger of failure.
 
 A $sub$ bug predictor is one that is true in a small number of failed executions.  In other words, it is not {\em sensitive} enough to predict this failure.  A $sub$ bug predictor is sound (predicts only failures) but is not complete (false negatives).  It means that this predicate is not the only cause of failures.  False negatives could be eliminated by taking a disjunction with another predictor.  It is important to note that in a software with multiple bugs, the analysis may find a disjunction of predictors of individual bugs as a predictor for the whole set of failures.  The user should keep this in mind while using a disjunction predictor to track down a bug.
 
 \vspace{4pt} \noindent
-{\bf Automated Tools:}  Unlike programmers, automated tools are scaleable and can benefit from more data points.  BTRACE [] is one such tool that finds the shortest feasible path in the program, that passes through a given set of predicates.  Since complex predicates increase the input to BTRACE, BTRACE can making precise decisions at branch-merge points, where previously it did not have enough information to choose the right branch direction to include in its output.
+{\bf Automated Tools:}  Unlike programmers, automated tools are scaleable and can benefit from more data points.  BTRACE~\cite{Lal:2006:POPAD} is one such tool that finds the shortest feasible path in the program that passes through a given set of predicates.  Since complex predicates increase the input to BTRACE, BTRACE can making precise decisions at branch-merge points, where previously it did not have enough information to choose the right branch direction to include in its output.
