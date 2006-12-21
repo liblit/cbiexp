@@ -30,7 +30,7 @@ We generated 1000 runs of the program using randomly generated command line argu
 \scriptsize
 \begin{tabular}{lllll}
 \toprule
-initial & effective & Predicate & Function & File\:line \\
+initial & effective & Predicate & Function & File:line \\
 \midrule
 0.704974 & 0.704974 & new value of len == old value of len & jpeg\_data\_load\_data() & exif-0.6.9/libjpeg/jpeg-data.c:224 \\
 0.395001 & 0.589484 & i == s & exif\_mnote\_data\_canon\_save() & libexif-0.6.10/libexif/canon/exif-mnote-data-canon.c:176 \\
@@ -38,7 +38,7 @@ initial & effective & Predicate & Function & File\:line \\
 \end{tabular}
 \end{table*}
 
-The analysis had assigned a very low score of 0.0191528 to the predicate $P$: \texttt{o + s > buf\_size} despite the fact that it captures the exact source of the uninitialized pointer.  Because the bug was non-deterministic, $P$ was also $true$ in 335 runs that succeeded.  Including complex predicates in the analysis resulted produced one complex predicate shown in ~\autoref{tab:tbl2}{\footnote{the second row is the second component of a complex predicate, which is a conjunction as indicated by the term $and$ at the start of the second row}}  Conjunction with the second predicate $P'$: \texttt{offset < len} eliminated all the false positives and thereby assigning a very high score.  This is an example of how a conjunction can improve the score of a $super$ bug predictor.  $P'$ is in function \texttt{exif\_data\_load\_data} that calls exif\_mnote\_data\_canon\_load indirectly.  It is possible that it captures another condition that drives the bug to cause a crash.  If it does, it has to be a deep relationship as we could not find such a relation even after spending a couple of hours trying to understand the source.  However this does not reduce the importance of this result as the conjunction has a very high score than $P$ or $P'$.
+The analysis had assigned a very low score of 0.0191528 to the predicate $P$: \texttt{o + s > buf\_size} despite the fact that it captures the exact source of the uninitialized pointer.  Because the bug was non-deterministic, $P$ was also $true$ in 335 runs that succeeded.  Including complex predicates in the analysis resulted produced one complex predicate shown in ~\autoref{tab:tbl2}{\footnote{the second row is the second component of a complex predicate, which is a conjunction as indicated by the keyword $and$ at the start}}.  Conjunction of $P$ with the second predicate $P'$: \texttt{offset < len} eliminated all the false positives and thereby assigning a very high score.  This is an example of how a conjunction can improve the score of a $super$ bug predictor.  $P'$ is in function \texttt{exif\_data\_load\_data} that calls exif\_mnote\_data\_canon\_load indirectly.  It is possible that it captures another condition that drives the bug to cause a crash.  If it does, it has to be a deep relationship as we could not find such a relation even after spending a couple of hours trying to understand the source.  However this does not reduce the importance of this result as the conjunction has a very high score than $P$ or $P'$.
 
 \begin{table*}
 \nocaptionrule
@@ -48,7 +48,7 @@ The analysis had assigned a very low score of 0.0191528 to the predicate $P$: \t
 \scriptsize
 \begin{tabular}{lllll}
 \toprule
-initial & effective & Predicate & Function & File\:line \\
+initial & effective & Predicate & Function & File:line \\
 \midrule
 0.941385 & 0.941385 & o + s $>$ buf\_size is TRUE & exif\_mnote\_data\_canon\_load &
  libexif-0.6.10/libexif/canon/exif-mnote-data-canon.c:237 \\
@@ -62,4 +62,4 @@ A good predictor that could be found using a CBI style analysis is $Q$: \texttt{
 
 \vspace{4pt} \noindent
 % If there are threats in other places, put this in a separate section
-{\bf Threats to validity:}  There are some internal threats to the validity of the above experiment.  Firstly, Exif 0.6.9 had two other bugs and we had to manually remove command line arguments that trigger those bugs.  Secondly, the bug studied here was very rare.  In order to get sufficient failed executions, we downscaled the input images by selecting many Canon images (that cause the bug) and few images of other kinds.  These two reasons introduced some bias into the scores of some predicates.  For example, our analysis found \texttt{remove\_thumbnail} in function \texttt{main} as a good bug predictor due to the bias introduced by our test suite.  However a subjective evaluation of the predicates in ~\autoref{tab:tbl1} and ~\autoref{tab:tbl2} showed that their scores were not affected by any bias introduced by the test suite.  Another threat is that the analysis with complex predicates produced a lot of other predicates with the highest score (0.941385) and we had to scan this list to identify the predicate listed in ~\autoref{tab:tbl2}.  This is not a real threat but is an instance of the numerous complex predicates problem discussed in section ~\ref{sec-metrics}.
+{\bf Threats to validity:}  There are some internal threats to the validity of the above experiment.  Firstly, Exif 0.6.9 had two other bugs and we had to manually remove command line arguments that trigger those bugs.  Secondly, the bug studied here was very rare.  In order to get sufficient failed executions, we downscaled the input images by selecting many Canon images (that cause the bug) and few images (both Canon and non-Canon) that do not trigger the bug.  These two changes introduced some bias into the scores of some predicates.  For example, our analysis found \texttt{remove\_thumbnail} in function \texttt{main} as a good bug predictor due to the bias introduced by our test suite.  However a subjective evaluation of the predicates in ~\autoref{tab:tbl1} and ~\autoref{tab:tbl2} showed that their scores were not affected by any bias introduced by the test suite.  Another threat is that the analysis with complex predicates produced a lot of other predicates with the highest score (0.941385) and we had to scan this list to identify the predicate listed in ~\autoref{tab:tbl2}.  This is not a real threat but is an instance of the numerous complex predicates problem discussed in section ~\ref{sec-metrics}.

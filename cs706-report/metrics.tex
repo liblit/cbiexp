@@ -1,43 +1,25 @@
 \section{Usefulness Metrics for Complex Predicates}
 \label{sec-metrics}
-While complex predicates could help to better predict bugs, in the
-worst case, there will be a quadratic increase in the number of
-possible combinations of two single predicates. In our
-experiments, we often observe hundreds of complex predicates with
-similar or even identical high scores. The overwhelming number of
-predicates makes it extremely laborious for users to find the true
-cause of the problem and then debug. In this section, we propose two metrics
-to reduce the number of complex predicates.
+While complex predicates could help to better predict bugs, in the worst case, the upper bound on the number of interesting complex predicates is still quadratic in the number of simple predicates.  In our experiments, we often observe hundreds of complex predicates with similar or even identical high scores.  The overwhelming number of predicates makes it laborious for users to find a complex predicate with which they can start debugging.  In this section, we propose two metrics to reduce the number of complex predicates.
 
-The first metric is to model the debugging effort required 
-from the programmer as a filtering metric.  We use the metric defined
-in ~\cite{1062522} for this purpose.  In this metric, the score of a predicate
-as the fraction of code that can be ignored while searching for the bug.
-We use a similar metric called $effort$ for a complex predicate.
+The first metric models the debugging effort required from the programmer as a filtering metric.  We use the metric defined in ~\cite{1062522} for this purpose.  In this metric, the score of a predicate is the fraction of code that can be ignored while searching for the bug.  We use a similar metric called $effort$ for a complex predicate.
 
 \begin{defn}
 \label{dfn4}
-The effort required by a programmer while using a complex predicate 
-$C = \phi(p_1, p_2)$ as inversely proportional to the fraction 
-of code that can be ignored while searching for $p_1$ from $p_2$ or
-vice versa.
+The effort required by a programmer while using a complex predicate $C = \phi(p_1, p_2)$ is inversely proportional to the smaller of the fractions of code that can be ignored while searching for $p_1$ from $p_2$ and vice versa.
 \end{defn}
 
-The idea behind this metric is that the larger the distance between
-the two predicates, the greater the effort requried.  Also, if a 
-large number of other branches seen during the search, the programmer
-should keep track of these dependencies too.  Like ~\cite{1062522}, 
-we use the program dependence graph (PDG) of to model the program rather
-than the source code.
+The idea behind this metric is that the larger the distance between the two predicates, the greater the effort requried.  Also, if a 
+large number of other branches are seen during the search, the programmer should keep track of these dependencies too.  Like ~\cite{1062522}, we use the program dependence graph (PDG) to model the program rather than the source code.
 
-The second metric is to consider the correlation between the two predicates.  Intuitively a complex predicate with two relatively independent predicates is less interesting because it doesn't provide much help to the users in finding anything new, besides the two individual predicates.  The correlation between two predicates is defined based on the program dependency graph.  Given a single predicate $P$, we define its $predecessor\ set$ as the set of vertices in the PDG that can influence the outcome of $P$.
+The second metric is to consider the correlation between the two predicates.  Intuitively a complex predicate with two relatively independent predicates is less interesting because it doesn't provide much help to the users in finding anything new, besides the two individual predicates.  The correlation between two predicates is defined based on the program dependency graph.  Given a single predicate $P$, we define its $predecessor\ set$ as the set of vertices in the PDG that can influence $P$.
 
 \begin{defn}
 \label{dfn5}
 The correlation between two predicates of a complex predicate is defined as the number of vertices in the intersection of the two predecessor sets.
 \end{defn}
 
-The idea behind this metric is that a larger intersection between the $predecessor\ sets$ means that it is possible that they are closely related.  We use CodeSurfer[] to build the PDG of a program and compute these two metrics.
+The idea behind this metric is that a larger intersection between the $predecessor\ sets$ means it is possible that they are closely related.  We use CodeSurfer to build the PDG of a program and compute these two metrics.
 
 The above two metrics could be applied both $proactively$ and $reactively$.  A proactive use of the metrics will prune away complex predicates whose metric values fall below a certain threshold of usefulness.  This will eliminate them from being computed and hence a performance improvement.  A reactive use of the metrics will retain all the predicates but break ties by giving higher ranks to those with higher values of the metrics. This is desirable if neither computing time or space is a concern.
 

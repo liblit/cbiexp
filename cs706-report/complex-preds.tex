@@ -105,8 +105,7 @@ The conjunction $C = p_1 \wedge p_2$ can be regarded as the intersection of the 
  \nonumber %to remove numbering (before each equation)
   F(C)' &=&  \min(F(p_1),F(p_2)) \\
  \nonumber
-  S(C)' &=& 0 \\
- \nonumber
+  S(C)' &=& 0
 \end{eqnarray}
 
 If the second term in $Increase$ is ignored, as with disjunctions, the upper bound of a conjoined predicate's $Increase$ score is 1.  This is the maximum $Increase$ possible, reducing the likelihood of a conjoined predicate being pruned to almost zero.  The second term is therefore used for conjunctions to drop the upper bound to a more useful level.
@@ -114,6 +113,7 @@ If the second term in $Increase$ is ignored, as with disjunctions, the upper bou
 $F(C$ observed) is minimized by assuming that $C$ was \textit{observed} only in the (failed) runs where it was true.  Maximizing $S(C$ observed) is more difficult.  Recall that a conjunction can be considered \textit{observed} if either component is \textit{observed false}, or both are \textit{observed true}.  The intersection of successful runs where a predicate is \textit{observed false} is maximized if the sets are nonoverlapping, while the intersection where they are \textit{observed true} is maximized if one is a subset of the other.  By assuming both cases meet that criteria $S(C$ observed) can be maximized.  Its value is the sum of successful runs where $p_1$ was \textit{observed} and those where $p_2$ was \textit{observed false}, formed as the difference between $S(p_2$  Observed) and $S(p_2)$.  Since the result may differ depending on which predicate is chosen as $p_1$ the larger result is used.  The best conjunction that can be formed using $p_1$ and $p_2$ will have the following parameters:
 
 \begin{eqnarray}
+ \nonumber
   F(C\;obs)' &=& F(p)' \\
  \nonumber
   S(C\;obs)' &=&
