@@ -27,9 +27,10 @@ Even after imposing many constraints, the number of complex predicates is quadra
 A complex predicate $C = \phi(p_1, p_2, \ldots p_k)$ is ``interesting'' if $Importance(C) > Importance(p_i)$ for $i \in \{1, 2, \ldots k\}$
 \end{defn}
 
-In the case where the complex predicate has the same score as the component predictor with higher score, the simpler one is preferable.  Definition ~\ref{dfn3} is for the general case and as explained earlier, we explore only for $k = 2$ and $\phi \in \{\vee, \wedge\}$.  Keeping only interesting combinations of predicates reduces the memory burden of storing them, and helps ensure the utility of a complex predicate passes inspection.
+In the case where the complex predicate has the same score as the component predictor with higher score, the simpler one is preferable.  Definition ~\ref{dfn3} is for the general case and as explained earlier, we explore only for $k = 2$ and $\phi \in \{\vee, \wedge\}$.  Keeping only interesting combinations of predicates reduces the memory burden of storing them, and helps ensure the utility of a complex predicate that passes inspection.
 
-Forming a complex predicate from two components is a nontrivial task, requiring a conjunction or disjunction for each program run.  After this computation is complete the score of the newly formed predicate can be calculated, potentially labeling it uninteresting.  In such a case the effort to form the predicate has been wasted.  This provides the motivation to prune combinations early based on an estimate of their resulting scores.  An upper bound for a predicate's score can be determined by maximizing $F(P)$ and $Increase$ under constraints based on the propositional operation.  The score of the predicate, being a harmonic mean based on these two terms, will likewise be maximized.
+\subsection{Pruning}
+Forming a complex predicate from two components is a nontrivial task, requiring a conjunction or disjunction for each program run.  After this computation is complete the score of the newly formed predicate can be calculated, potentially labeling it uninteresting.  In such a case the effort to form the predicate has been wasted.  This provides the motivation to prune combinations early based on an estimate of their resulting scores.  An upper bound for a predicate's score can be determined by maximizing $F(P)$ and $Increase$ under constraints based on the propositional operation.  The score of the predicate, being a harmonic mean of these two terms, will likewise be maximized.
 
 --figure of Increase--
 

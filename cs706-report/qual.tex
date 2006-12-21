@@ -1,2 +1,65 @@
 \section{Case Studies}
 \label{sec-qual}
+This section discusses two cases where complex predicates prove to be useful.  The first study is about a memory access bug in Exif 0.6.9, an open source image manipulation program.  A complex predicate was useful in increasing the score of an extremely useful bug predictor.  The second study uses an input validation bug in Ccrypt 1.2 to explain how complex predicates can be used to detect $super$ bug predictors automatically.
+
+\subsection{Exif}
+Exif 0.6.9 crashes while manipulating a thumbnail in a Canon image.  The bug is in function \texttt{exif\_mnote\_data\_canon\_load} in the module handling Canon images.  The following is a snippet from the said function:
+\begin{quote}
+\begin{verbatim}
+for (i = 0; i < c; i++) {
+    ...
+    n->count = i + 1;
+    ...
+    if (o + s > buf_size) return;    (a)
+    ...
+    n->entries[i].data = malloc(s);  (b)
+    ...
+}
+\end{verbatim}
+\end{quote}
+
+The function skips the call to \texttt{malloc} that allocates memory to the pointer \texttt{n->entries[i].data} when \texttt{o + s > buf\_size}.  The program crashes when another function \texttt{exif\_\-mnote\_\-canon\_save} reads from \texttt{n->entries[i].data} without checking if the pointer is valid.  This is an example of a non-deterministic bug as the program succeeds as long as the uninitialized pointer is not accesed somewhere else.
+
+We generated 1000 runs of the program using randomly generated command line arguments and input images randomly selected from a set of Canon and non-Canon images.  There were 934 successful executions and 66 crashes.  Applying the redundancy elimination algorithm with only simple predicates produced two predicates that account for all failed runs as shown in ~\autoref{tab:tbl1}.  Studying the source code of the program did not show any obvious relation between the two predictors and the cause of failure.  Even though the second predicate is present in the same function that crashes was a comparison between two unrelated variables: the loop iterator, \texttt{i} and the size of the data stored in the traversed array \texttt{s}.  Also it was $true$ in only 31 of the 66 failures.
+
+\begin{table*}
+\nocaptionrule
+\caption{Results for Exif with only simple predicates}
+\label{tab:tbl1}
+\centering
+\scriptsize
+\begin{tabular}{lllll}
+\toprule
+initial & effective & Predicate & Function & File\:line \\
+\midrule
+0.704974 & 0.704974 & new value of len == old value of len & jpeg\_data\_load\_data() & exif-0.6.9/libjpeg/jpeg-data.c:224 \\
+0.395001 & 0.589484 & i == s & exif\_mnote\_data\_canon\_save() & libexif-0.6.10/libexif/canon/exif-mnote-data-canon.c:176 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The analysis had assigned a very low score of 0.0191528 to the predicate $P$: \texttt{o + s > buf\_size} despite the fact that it captures the exact source of the uninitialized pointer.  Because the bug was non-deterministic, $P$ was also $true$ in 335 runs that succeeded.  Including complex predicates in the analysis resulted produced one complex predicate shown in ~\autoref{tab:tbl2}{\footnote{the second row is the second component of a complex predicate, which is a conjunction as indicated by the term $and$ at the start of the second row}}  Conjunction with the second predicate $P'$: \texttt{offset < len} eliminated all the false positives and thereby assigning a very high score.  This is an example of how a conjunction can improve the score of a $super$ bug predictor.  $P'$ is in function \texttt{exif\_data\_load\_data} that calls exif\_mnote\_data\_canon\_load indirectly.  It is possible that it captures another condition that drives the bug to cause a crash.  If it does, it has to be a deep relationship as we could not find such a relation even after spending a couple of hours trying to understand the source.  However this does not reduce the importance of this result as the conjunction has a very high score than $P$ or $P'$.
+
+\begin{table*}
+\nocaptionrule
+\caption{Results for Exif with complex predicates}
+\label{tab:tbl2}
+\centering
+\scriptsize
+\begin{tabular}{lllll}
+\toprule
+initial & effective & Predicate & Function & File\:line \\
+\midrule
+0.941385 & 0.941385 & o + s $>$ buf\_size is TRUE & exif\_mnote\_data\_canon\_load &
+ libexif-0.6.10/libexif/canon/exif-mnote-data-canon.c:237 \\
+ 
+         &          & $and$ offset $<$ len & exif\_data\_load\_data & libexif-0.6.10/libexif/exif-data.c:644 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+A good predictor that could be found using a CBI style analysis is $Q$: \texttt{n->entries[i].data == 0} or some predicate equivalent to it.  Scanning the source file shows that there is no such predicate that is currently instrumented by CBI.  If a future instrumentation scheme{\footnote{one suggestion is a predicate on scalar parameters to function calls}} instruments $Q$, then even an analysis with simple predicates will find $Q$ as the top bug predictor.  However, $P$ is still more useful than $Q$ in identifying the actual source of the $null$ pointer.  In fact, $P \wedge Q$ will be the perfect result as it captures the bug (skipping the \texttt{malloc}) and the trigger (the point where the illegal memory access is performed).  Thus, this bug in Exif presents a compelling evidence that complex predicates can be better bug predictors.
+
+\vspace{4pt} \noindent
+% If there are threats in other places, put this in a separate section
+{\bf Threats to validity:}  There are some internal threats to the validity of the above experiment.  Firstly, Exif 0.6.9 had two other bugs and we had to manually remove command line arguments that trigger those bugs.  Secondly, the bug studied here was very rare.  In order to get sufficient failed executions, we downscaled the input images by selecting many Canon images (that cause the bug) and few images of other kinds.  These two reasons introduced some bias into the scores of some predicates.  For example, our analysis found \texttt{remove\_thumbnail} in function \texttt{main} as a good bug predictor due to the bias introduced by our test suite.  However a subjective evaluation of the predicates in ~\autoref{tab:tbl1} and ~\autoref{tab:tbl2} showed that there was no bias introduced by the test suite.  Another threat is that the analysis with complex predicates produced a lot of other predicates with the highest score (0.941385) and we had to scan this list to identify the predicate listed in ~\autoref{tab:tbl2}.  This is not a real threat but is an instance of the numerous complex predicates problem discussed in section ~\ref{sec-metrics}.
