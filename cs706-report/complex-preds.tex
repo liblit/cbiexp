@@ -20,6 +20,58 @@ In other words, we consider that $R$ as distributive over $\phi$.  This can lead
 
 There are $2^{2^N}$ boolean functions of $N$ predicates ~\cite{MathWorld:BoolFuncs}.  This is a prohibitively large number considering that there can be hundreds of simple predicates.  To reduce the complexity, we consider only functions of two predicates.  There are $2^{2^2}$ = 16 such functions and their arguments can be chosen from $N$ predicates in $^NC_2 = \frac{N(N-1)}{2}$ ways.  Out of the 16 boolean functions of two variables, we restrict only to conjunction ($and$) and disjunction ($or$) since other functions are more complex and cannot be used effectively by the programmer.  Other functions can be easily included in our implementation once their truth table (discussed later) are derived correctly.  Thus, we evaluate only $2. ^NC_2 = N(N-1)$ functions for building complex predicates.  If $R$ is the set of runs being analysed then the time complexity required to build complex predicates is $|R|N(N-1) = O(|R|N^2)$
 
+\subsection{Three valued logic}
+
+This section explains how conjunctions and disjunctions are actually computed.  Three-valued logic is used because the value of a predicate in a run may not be conclusive. This can arise in two situations:
+\begin{enumerate}
+\item The predicate was not observed in a run because the run did not reach the particular program point in which it was inserted.
+\item The program reached the program point but was not observed because of sampling.
+\end{enumerate}
+
+In such a case, the value of a predicate $P$ is considered as $unknown$.  For the analysis introduced in ~\ref{sec-bground}, it is enough to consider whether $R(P)$ was $true$ or $not\ true$ (both $false$ and $unknown$).  As we explain in this section, the two conditions of the $not\ true$ case must be considered separately while combining simple predicates.
+
+Consider a complex predicate $C = p_1 \wedge p_2$.  If either $p_1$ or $p_2$ was observed $false$ then $R(C) = false${\footnote{For sake of clarity, we use 1, 0 and $true, false$ interchangeably for the value of $R(C)$.}}.  If both $p_1$ and $p_2$ were observed $true$, then $C$ was observed to be true.  Otherwise, the value of $R(C)$ is $unknown$.  This is shown using a three-valued truth table in ~\autoref{tab:and}.
+
+Similarly, for a complex predicate $C = p_1 \vee p_2$, if either $p_1$ or $p_2$ was observed $true$ then $R(C) = true$.  If both $p_1$ and $p_2$ were observed $false$, then $C$ was observed to be false.  Otherwise, the value of $R(C)$ is $unknown$.  This is shown using a three-valued truth table in ~\autoref{tab:or}.
+ 
+\begin{table*}
+\nocaptionrule
+\caption{3-valued Truth Table for $C = p_1 \wedge p_2$}
+\label{tab:and}
+\centering
+\scriptsize
+  
+\begin{tabular}{c|ccc}
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  $P_1$$\backslash$$P_2$ & T & F & $?$ \\
+  \hline
+  T & T & F & ? \\
+  F & F & F & F \\
+  ? & ? & F & ? \\
+\end{tabular}
+\end{table*}
+
+
+\begin{table*}
+\nocaptionrule
+\caption{3-valued Truth Table for $C = p_1 \vee p_2$}
+\label{tab:or}
+\centering
+\scriptsize
+  
+  \centering
+  \begin{tabular}{c|ccc}
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  $P_1$$\backslash$$P_2$ & T & F & $?$ \\
+  \hline
+  T & T & T & T \\
+  F & T & F & ? \\
+  ? & T & ? & ? \\
+\end{tabular}
+\end{table*}
+
+\subsection{Interesting Complex Predicate}
+
 Even after imposing many constraints, the number of complex predicates is quadratic in the number of simple predicates.  A large number of complex predicates formed by this procedure are likely to be useless in the analysis of the program.  A complex predicate that has a lower score than its components is useless.  The component (simple) predicate with a higher score is a better predictor of failure, and so the complex predicate adds nothing to the analysis.
 
 \begin{defn}
@@ -32,23 +84,44 @@ In the case where the complex predicate has the same score as the component pred
 \subsection{Pruning}
 Forming a complex predicate from two components is a nontrivial task, requiring a conjunction or disjunction for each program run.  After this computation is complete the score of the newly formed predicate can be calculated, potentially labeling it uninteresting.  In such a case the effort to form the predicate has been wasted.  This provides the motivation to prune combinations early based on an estimate of their resulting scores.  An upper bound for a predicate's score can be determined by maximizing $F(P)$ and $Increase$ under constraints based on the propositional operation.  The score of the predicate, being a harmonic mean of these two terms, will likewise be maximized.
 
---figure of Increase--
+--figure of Increase-- try and cite previous eqn
 
---subsection: pruning disjunctions--
+Disjunction in this context can be considered as the union of the set of runs in which $P1$ was $true$ and $P2$ was $true$.  The size of the resulting set is maximized when the two do not overlap, and that is the assumption made when calculating an upper bound on $F(P)$.  $S(P)$ is minimized by making the opposite assumption - that one is a subset of the other.  The size of the union is thus the size of the superset.
 
---figure of the terms for a disjunction--
+\begin{eqnarray}
+ \nonumber %to remove numbering (before each equation)
+  F(P)' &=&  F(P_1) + F(P_2) \\
+ \nonumber
+  S(P)' &=&  Max(S(P_1),S(P_2)) \\
+ \nonumber
+  F(P\;Observed)' &=& 0 \\
+ \nonumber
+  S(P\;Obs)' &=& S(P)
+\end{eqnarray}
 
-Disjunction in this context can be considered the union of the set where $P1$ and that where $P2$.  The size of the resulting set is maximized when the two do not overlap, and that is the assumption made when calculating an upper bound on $F(P)$.  $S(P)$ is minimized by making the opposite assumption - that one is a subset of the other.  The size of the union is thus the size of the superset.
+The second term in $Increase$ can only reduce the result, and so it is ignored in calculating an upper bound.  For completeness, $S$($P$ observed) is assigned the same value as $S(P)$ even though it does not affect $Increase(P)$.  The $F(P)$ component of $Importance$ is maximised while maximising $Increase$.  Thus the $Importance$ score calculated with the above values is an upperbound on the score of the disjunction of $p_1$ and $p_2$.
 
-The second term in $Increase$ can only reduce the result, and so it is ignored in calculating an upper bound.
-
---subsection: pruning conjunctions--
-
---figure of the terms for a conjunction--
-
-Conjunction can be regarded as set intersection.  Maximizing $F(P)$ requires that one of the intersecting sets is a subset of the other, making the size of the intersection the size of the smaller operand.  A minimal $S(P)$ is found when the component sets are nonoverlapping; the union of two such sets is empty.
+Conjunction can be regarded as set intersection of the set of runs in which $P1$ was $true$ and $P2$ was true.  Maximizing $F(P)$ requires that one of the intersecting sets is a subset of the other, making the size of the intersection the size of the smaller set.  A minimal $S(P)$ is found when the component sets are nonoverlapping; the intersection of two such sets is empty.
 
 If the second term is ignored, as with disjunctions, the upper bound of a conjoined predicate's $Increase$ score is 1.  This is the maximum $Increase$ possible, reducing the likelihood of a conjoined predicate being pruned to almost zero.  The second term is therefore used for conjunctions to drop the upper bound to a more useful level.
 
 $F(P Observed)$ is minimized by assuming that $P$ was observed only in the (failed) runs where it was true.  Maximizing $S(P Observed)$ is more difficult.  Recall that a conjunction can be considered \textit{Observed} if either component is \textit{Observed False}, or both are \textit{Observed True}.  The intersection of successful runs where a predicate is \textit{Observed False} is maximized if the sets are nonoverlapping, while the intersection where they are \textit{Observed True} is maximized if one is a subset of the other.  By assuming both cases meet that criteria $S(P Observed)$ can be maximized.  Its value is the sum of successful runs where $P1 Observed$ and those where $P2 Observed False$, formed as the difference between $S(P2 Observed)$ and $S(P2)$.  Since the result may differ depending on which predicate is chosen as $P1$ the larger result is used.
 
+\begin{eqnarray}
+ \nonumber %to remove numbering (before each equation)
+  F(P)' &=&  Min(F(P_1),F(P_2)) \\
+ \nonumber
+  S(P)' &=& 0 \\
+ \nonumber
+  F(P\;Observed)' &=& F(P)' \\
+ \nonumber
+  S(P\;Obs)' &=&
+  Max(S(P_1\;Obs)+S(P_2\;Obs)-S(P_2),S(P_2\;Obs)+S(P_1\;Obs)-S(P_1))
+\end{eqnarray}
+
+Pruning is useful when a computed complex predicate, $C = \phi(p_1, p_2)$ will be thrown away if its score falls below a threshold.  Such a threshold can be found in two ways:
+\begin{enumerate}
+\item The scores of $p_1$ and $p_2$ that determine whether $C$ is interesting or not.
+\item During the redundancy elimination, the lowest % just thought about it... our implementation does not do this
+score among simple predicates can be used as a lower bound because if the score is below this value, computing $C$ is useless during this iteration.
+\end{enumerate}
