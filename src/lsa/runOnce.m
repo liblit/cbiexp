@@ -12,7 +12,7 @@ function runOnce()
 
     [Pw_z,Pd_z,Pz,Pz_d, Li] = pLSA_EM(pLSAwrapper(X,Findices,Sindices), Learn,Sindices);
 
-    save -mat results.mat Pw_z Pd_z Pz Pz_d Li seed
+    save -mat results.mat Pw_z Pd_z Pz Pz_d Li seed Learn
 
     out = fopen('loglikelihood.txt', 'w');
     fprintf(out, '%.0f\n', Li(end));
