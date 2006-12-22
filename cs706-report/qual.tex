@@ -1,6 +1,6 @@
 \section{Case Studies}
 \label{sec-qual}
-This section discusses two cases where complex predicates prove to be useful.  The first study is about a memory access bug in Exif 0.6.9, an open source image manipulation program.  A complex predicate was useful in increasing the score of an extremely useful bug predictor.  The second study uses an input validation bug in Ccrypt 1.2 to explain how complex predicates can be used to detect $super$ bug predictors automatically.
+This section discusses two cases where complex predicates prove to be useful.  The first study is about a memory access bug in Exif 0.6.9, an open source image manipulation program.  A complex predicate was useful in increasing the score of an extremely useful bug predictor.  The second study uses an input validation bug in \texttt{ccrypt} 1.2 to explain how complex predicates can be used to detect $super$ bug predictors automatically.
 
 \subsection{Exif}
 Exif 0.6.9 crashes while manipulating a thumbnail in a Canon image.  The bug is in function \texttt{exif\_mnote\_data\_canon\_load} in the module handling Canon images.  The following is a snippet from said function:
@@ -63,3 +63,75 @@ A good predictor that could be found using a CBI style analysis is $Q$: \texttt{
 \vspace{4pt} \noindent
 % If there are threats in other places, put this in a separate section
 {\bf Threats to validity:}  There are some internal threats to the validity of the above experiment.  Firstly, Exif 0.6.9 had two other bugs and we had to manually remove command line arguments that trigger those bugs.  Secondly, the bug studied here was very rare.  In order to get sufficient failed executions, we downscaled the input images by selecting many Canon images (that cause the bug) and few images (both Canon and non-Canon) that do not trigger the bug.  These two changes introduced some bias into the scores of some predicates.  For example, our analysis found \texttt{remove\_thumbnail} in function \texttt{main} as a good bug predictor due to the bias introduced by our test suite.  However a subjective evaluation of the predicates in ~\autoref{tab:tbl1} and ~\autoref{tab:tbl2} showed that their scores were not affected by any bias introduced by the test suite.  Another threat is that the analysis with complex predicates produced a lot of other predicates with the highest score (0.941385) and we had to scan this list to identify the predicate listed in ~\autoref{tab:tbl2}.  This is not a real threat but is an instance of the numerous complex predicates problem discussed in section ~\ref{sec-metrics}.
+
+\subsection{ccrypt}
+\texttt{ccrypt} 1.2 contains a known bug which can cause a crash on certain user-input - specifically, an \texttt{EOF} entered at the confirmation prompt when overwriting an existing file.  Entering \texttt{EOF} in other contexts does not cause failure, however, and an examination of the source code can quickly reveal why:
+\begin{quote}
+\begin{verbatim}
+/* read a yes/no response from the user */
+int prompt(void) {
+  ...
+  line = xreadline(fin, cmd.name);    (a)
+  return (!strcmp(line, "y") ||
+     !strcmp(line, "yes"));
+}
+
+char *xreadline(FILE *fin, char *myname) {
+  ...
+  res = fgets(buf, INITSIZE, fin);
+  if (res==NULL) {                    (b)
+    free(buf);
+    return NULL;
+  }
+  ...
+  return buf;
+}
+
+\end{verbatim}
+\end{quote}
+Calls to \texttt{xreadline()}, the function used to get user-input, can return \texttt{NULL} under some circumstances.  In most cases the value is checked before being derefenced; in \texttt{prompt()} however it is used immediately.  \texttt{xreadline()} returning \texttt{NULL} in \texttt{prompt()} should thus be a perfect predictor of failure, occurring in no successful runs and in every failure related to this bug.  The branch taken in \texttt{xreadline()} is important as well, serving as the moment failure in \texttt{prompt()} becomes inevitable.  This branch is only taken when the user enters \texttt{EOF} on the command line.  In mapping the cause of failure, a programmer without a clear understanding of the code is likely to spend time tracking the user-entered \texttt{EOF} through \texttt{xreadline()} to the \texttt{NULL} dereference in \texttt{prompt()}, requiring either a visual inspection of the source or use of an interactive debugger.  Knowledge of the connection between program events such as these is necessary to make good debugging decisions, e.g. adding a \texttt{NULL} check to \texttt{prompt()} versus ensuring \texttt{xreadline()} always returns a valid pointer.  Automated bug analysis should ideally reveal as much of this chain of causation to the programmer as possible.
+
+We generated 1000 runs of \texttt{ccrypt}, again using randomly selected command line arguments.  Input files included images and text archived from the online documentation of a remote desktop display system.  There were 658 successful executions and 342 crashes.  All failed runs crashed due to the \texttt{NULL} dereference described above - no other bugs were visible to our test suite.
+
+\begin{table*}
+\nocaptionrule
+\caption{Results for \texttt{ccrypt} with only simple predicates}
+\label{tab:tbl3}
+\centering
+\scriptsize
+\begin{tabular}{lllllll}
+\toprule
+initial & effective & true successes & false successes & Predicate & Function & File\:line \\
+\midrule
+0.431678 & 0.431678 & 0 & 342 & xreadline == 0 & prompt() & src/traverse.c:122 \\
+0.385597 & 0 & 200 & 342 & res == (char *)0 & xreadline() & src/xalloc.c:43 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+An initial analysis involving only simple predicates found $P:$\texttt{xreadline() == 0} as the top predictor of failure: true in no successes and all 342 failed runs, verifying our assumptions.  The related predicate $Q$:\texttt{res == (char *)0} scored substantially lower, appearing in all failures but a large number of successes.  $Q$'s reported score was low enough that without knowledge of the nature of the bug a programmer would be likely to overlook its significance, and because of its relationship to $P$ it is removed by the redundancy elimination algorithm (see ~\autoref{tab:tbl3}).  More importantly, traditional CBI analysis reveals no connection between the two predictors to the programmer, despite the fact that $Q$, a necessary but not sufficient condition for failure, is subordinate to $P$ in predicting a crash.
+
+\begin{table*}
+\nocaptionrule
+\caption{Results for \texttt{ccrypt} with complex predicates}
+\label{tab:tbl4}
+\centering
+\scriptsize
+\begin{tabular}{lllllll}
+\toprule
+initial & effective & true successes & false successes & Predicate & Function & File\:line \\
+\midrule
+0.72814 & 0 & 0 & 342 & xreadline == 0 & prompt() & src/traverse.c:12 \\
+ 
+        &   &   &     & $and$ res == (char *)0 & xreadline() & src/xalloc.c:43 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+When complex predicates are included in the analysis, a conjunction of $P$ and $Q$ is among the top predictors.  This provides little help in finding the bug, which is easily identified by traditional CBI analysis, but it does reveal the nature of $Q$ as a \textit{super} bug predictor.  The conjunction $P \wedge Q$ was observed in more successful runs than $P$ alone, but was true in the same number of successes and failures.  That $P$ can be conjoined with $Q$ without affecting $P$'s predictive power demonstrates a connection between the two predicates - in this case suggesting that $P \implies Q$.
+
+This result provides evidence that complex predicate analysis can automatically group related predicates in ways traditional CBI analysis does not, including the discovery of \textit{super}, \textit{sub} and \textit{perfect} predictor heirarchies.  Grouping related predictors statistically generates information very similar to an execution trace, which can be used in the same way.  Cooperative Bug Isolation can therefore utilize techniques which previously required detailed execution information by generating a facsimile from statistical data.
+
+\vspace{4pt} \noindent
+{\bf Threats to validity:}
+The version of \texttt{ccrypt} used in this experiment had only one bug visible to our test suite.  The statistically demonstrated relationship between $P$ and $Q$ was discovered in the absence of predictors for other bugs, which may have affected the results.  Intuitively an unrelated bug would have caused faults in different program runs, allowing conjunctive analysis to distinguish between unrelated sets of predictors, but we have not demonstrated this.  Further experimentation is needed to determine if conjunctive analysis retains this power in the face of multiple bugs.  Additionally the predictor $P \wedge Q$, though it scored highly, was not top-ranked, and was in fact discarded by the redundancy elimination algorithm (see ~\autoref{tab:tbl4}).  Knowledge of the code and the component predicates was necessary to distinguish it as important.  This once again demonstrates the need for techniques to effectively filter through the large numbers of complex predicates, as discussed in section ~\ref{sec-metrics}.
