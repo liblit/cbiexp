@@ -1,34 +1,41 @@
 function clusterByMaxAspect()
     load runsinfo.mat
     load results.mat
-    load oracle.mat
     Learn = configure();
+    numaspects = Learn.K;
+
+    if numaspects ~= size(Pz_d,1);
+       error('number of aspects and size of probability matrix disagree');
+    end;
+
+    numruns = size(Pz_d,2);
+
     numbugaspects = Learn.Kb;
-    Pz_d_Bug = Pz_d(end - numbugaspects + 1:end, :);
-    [M,I] = max(Pz_d_Bug(:,Findices));
-    for i = 1:numbugaspects;
-        Clusters(i,Findices(find(I == i))) = 1;
-    end;
-    C = Clusters(:, Findices);
-    c = size(C,1);
-    B = Bugs(:, Findices);
-    b = size(B,1);
+    numusageaspects = numaspects - numbugaspects; 
 
-    % pad matrices as necessary
-    if b > c;
-        C(size(C,1) + 1 : b, :) = 0; 
-    elseif c > b;
-        B(size(B,1) + 1 : c, :) = 0; 
-    end;
+    % for failures, find buggy aspect with maximum probability 
+    Rows = numusageaspects + 1:numaspects;
+    BugClusters = findBestAspect(Pz_d,Rows, Findices);
+    BugClusters = padColumns(BugClusters, numruns);
 
-    for i = 1:numbugaspects;
-        Right = C(i,:) * B';
-        Wrong = C(i,:) * not(B');
-        Scores = Right - Wrong; 
-        [m,index] = max(Scores);
-        ClusterMap(i,1:3) = [index Right(index) Wrong(index)];  
-    end;
-    save clusters.mat Clusters ClusterMap
+    % for all runs, find usage aspects with maximum probability
+    Rows = 1:numusageaspects;
+    UsageClusters = findBestAspect(Pz_d, Rows, [1:numruns]);
+
+    BugByUsage = spones(BugClusters) * spones(UsageClusters)'; 
+
+    save clusters.mat BugClusters UsageClusters BugByUsage
     quit
-        
 
+function Res = findBestAspect(X,Rows,Cols)
+    P = X(Rows,:);  
+    [M,I] = max(P(:,Cols));
+    for i = 1:size(P,1);
+        v = find(I == i); 
+        Res(i,Cols(v)) = M(v);
+    end;
+
+function O = padColumns(O,n)
+    if size(O,2) < n;
+        O(size(O,1),n) = 0;
+    end;
