@@ -1,6 +1,6 @@
 \section{Background}
 \label{sec-bground}
-CBI uses lightweight instrumentation to collect feedback reports that contain truth values of predicates in an execution as well as the outcome{\footnote{crash and non-crash or some other binary classification}} of the execution.  A large number of these reports are collected and analysed using statistical debugging techinuqes.  The analysis described in~\cite{Liblit:2005:SSBI} computes a numeric score corresponding to each predicate.  The score is called $Importance$ and is computed as follows:
+CBI uses lightweight instrumentation to collect feedback reports that contain truth values of predicates in an execution as well as the outcome{\footnote{crash and non-crash or some other binary classification}} of the execution.  A large number of these reports are collected and analyzed using statistical debugging techniques.  The analysis described in~\cite{Liblit:2005:SSBI} computes a numeric score corresponding to each predicate.  The score is called $Importance$ and is computed as follows:
 
 The truth values of a predicate $P$ from all the runs can be aggregated into four values:
 
@@ -51,4 +51,4 @@ A $sub$ bug predictor is one that is true in a small number of failed executions
 A $perfect$ bug predictor is one that is true in all failed executions and false in all successful ones - in other words, it is both sound and complete.  Such predictors indicate a bug which is completely deterministic given the involved predicates.  Generally speaking the closer a predictor is to $perfect$ the more useful it to a programmer.  By eliminating false positives and negatives conjunctions and disjunctions can move $super$ and $sub$ predictors closer to $perfect$ ones.
 
 \vspace{4pt} \noindent
-{\bf Automated Tools:}  Unlike programmers, automated tools are scaleable and can benefit from more data points.  BTRACE~\cite{Lal:2006:POPAD} is one such tool that finds the shortest feasible path in the program that passes through a given set of predicates.  Since complex predicates increase the input to BTRACE, BTRACE can making precise decisions at branch-merge points, where previously it did not have enough information to choose the right branch direction to include in its output.
+{\bf Automated Tools:}  Unlike programmers, automated tools are scalable and can benefit from more data points.  BTRACE~\cite{Lal:2006:POPAD} is one such tool that finds the shortest feasible path in the program that passes through a given set of predicates.  Since complex predicates increase the input to BTRACE, BTRACE can making precise decisions at branch-merge points, where previously it did not have enough information to choose the right branch direction to include in its output.
