@@ -4,7 +4,7 @@ This section gives a precise definition of complex predicates and discusses the 
 
 A complex predicate $C$ is defined as $C = \phi(p_1, p_2, \ldots p_k)$ where $p_1, p_2, \ldots p_k$ are simple predicates and $\phi$ is a function that can be computed using only the logical operators $and$ and $or$.  The operator $not$ is not required because any propositional formula can be written in conjunctive normal form (CNF) in which the $not$ operator appears only before the literals.  By design, the negation of every simple predicate $P$ is also a predicate.
 
-For a predicate $P$ and a run $R$, $R(P)$ is true if $P$ was observed to be true at least once during run $R$.  Similarly we could define $R(C)$ as follows:
+For a predicate $P$ and a run $R$, $R(P)$ = 1{\footnote{For sake of clarity, we use 1, 0 and $true, false$ interchangeably for the value of $R(C)$.}} if $P$ was observed to be true at least once during run $R$.  Similarly we could define $R(C)$ as follows:
 \begin{defn}
 \label{dfn1}
 For a complex predicate $C = \phi(p_1, p_2, \ldots p_k)$, $R(C)$ = 1 iff at some point during the execution of the program, $C$ was observed to be true.
@@ -30,9 +30,9 @@ This section explains how conjunctions and disjunctions are actually computed.  
 
 In such a case, the value of a predicate $P$ is considered as $unknown$.  For the analysis introduced in ~\ref{sec-bground}, it is enough to consider whether $R(P)$ was $true$ or $not\ true$ (both $false$ and $unknown$).  But for complex predicates, the two sub cases of the $not\ true$ case must be considered separately.
 
-Consider a complex predicate $C = p_1 \wedge p_2$.  If either $p_1$ or $p_2$ was observed $false$ then $R(C) = false${\footnote{For sake of clarity, we use 1, 0 and $true, false$ interchangeably for the value of $R(C)$.}}.  If both $p_1$ and $p_2$ were observed $true$, then $C$ was observed to be true.  Otherwise, the value of $R(C)$ is $unknown$.  This is shown using a three-valued truth table in ~\autoref{tab:and}.
+Consider a complex predicate $C = p_1 \wedge p_2$.  If either $p_1$ or $p_2$ was observed $false$ then $R(C) = false$.  If both $p_1$ and $p_2$ were observed $true$, then $C$ was observed to be true.  Otherwise, the value of $R(C)$ is $unknown$.  This is shown using a three-valued truth table in ~\autoref{tab:and}.
 
-Similarly, for a complex predicate $C = p_1 \vee p_2$, if either $p_1$ or $p_2$ was observed $true$ then $R(C) = true$.  If both $p_1$ and $p_2$ were observed $false$, then $C$ was observed to be false.  Otherwise, the value of $R(C)$ is $unknown$.  This is shown using a three-valued truth table in ~\autoref{tab:or}.
+Similarly, for a complex predicate $D = p_1 \vee p_2$, if either $p_1$ or $p_2$ was observed $true$ then $R(D) = true$.  If both $p_1$ and $p_2$ were observed $false$, then $D$ was observed to be false.  Otherwise, the value of $R(D)$ is $unknown$.  This is shown using a three-valued truth table in ~\autoref{tab:or}.
  
 \begin{table*}
 \nocaptionrule
@@ -79,13 +79,13 @@ Even after imposing many constraints, the number of complex predicates is quadra
 A complex predicate $C = \phi(p_1, p_2, \ldots p_k)$ is ``interesting'' iff $Importance(C) \geq Importance(p_i)$ for $i \in \{1, 2, \ldots k\}$
 \end{defn}
 
-In the case where the complex predicate has the same score as the component predictor with higher score, the simpler one is preferable.  Definition ~\ref{dfn3} is for the general case and as explained earlier, we explore only the case where $k = 2$ and $\phi \in \{\vee, \wedge\}$.  Keeping only interesting combinations of predicates reduces the memory burden of storing them, and helps ensure the utility of a complex predicate that is presented to the user.
+In the case where the complex predicate has the same score as the component predictor with higher score, the simpler one is preferable.  Keeping only interesting combinations of predicates reduces the memory burden of storing them, and helps ensure the utility of a complex predicate that is presented to the user.  Definition ~\ref{dfn3} is for the general case and as explained earlier, we explore only the case where $k = 2$ and $\phi \in \{\vee, \wedge\}$.
 
 \subsection{Pruning}
 \label{sec-pruning}
 Forming a complex predicate from its components is a nontrivial task, requiring a conjunction or disjunction for each program run.  After this computation is complete the score of the newly formed predicate can be calculated, potentially labeling it uninteresting.  In such a case the effort to form the predicate has been wasted.  This provides the motivation to prune combinations early based on an estimate of their resulting scores.  An upper bound for a predicate's score can be determined by maximizing $F(P)$ and $Increase$ under constraints based on the propositional operation.  The score of the predicate (Eqn. ~\ref{eqn2}), being a harmonic mean of these two terms, will likewise be maximized.
 
-In this context, the disjunction $D = p_1 \vee p_2$ can be considered as the union of the sets of runs where $p_1$ was $true$ and where $p_2$ was $true$.  The size of the resulting set is maximized when the two do not overlap, and that is the assumption made when calculating an upper bound on $F(D)$.  $S(D)$ is minimized by making the opposite assumption - that one is a subset of the other.  The size of the union is thus the size of the superset.  The best disjunction that can be formed using $p_1$ and $p_2$ will have the following parameters:
+In this context, the disjunction $D = p_1 \vee p_2$ can be considered as the union of the sets of runs where $p_1$ was $true$ and the set where $p_2$ was $true$.  The size of the resulting set is maximized when the two do not overlap, and that is the assumption made when calculating an upper bound on $F(D)$.  $S(D)$ is minimized by making the opposite assumption - that one is a subset of the other.  The size of the union is thus the size of the superset.  The best disjunction that can be formed using $p_1$ and $p_2$ will have the following parameters:
 
 \begin{eqnarray}
  \nonumber %to remove numbering (before each equation)
@@ -95,12 +95,12 @@ In this context, the disjunction $D = p_1 \vee p_2$ can be considered as the uni
  \nonumber
   F(D\;observed)' &=& 0 \\
  \nonumber
-  S(D\;observed)' &=& S(p)
+  S(D\;observed)' &=& S(D)'
 \end{eqnarray}
 
-The second term in $Increase$ (Eqn. ~\ref{eqn1})can only reduce the result, and so it is ignored in calculating an upper bound.  For completeness, $S$($D$ observed) is assigned the same value as $S(D)$ even though it does not affect $Increase(D)$.  The $F(D)$ component of $Importance$ is maximised while maximising $Increase$.  Thus the $Importance$ score calculated with the above values is an upperbound on the score of the disjunction of $p_1$ and $p_2$.
+The second term in $Increase$ (Eqn. ~\ref{eqn1}) can only reduce the result, and so it is ignored in calculating an upper bound.  For completeness, $S$($D$ observed)' is assigned the same value as $S(D)$' even though it does not affect $Increase(D)$.  The $F(D)$ component of $Importance$ is maximised while maximising $Increase$.  Thus the $Importance$ score calculated with the above values is an upperbound on the score of the disjunction of $p_1$ and $p_2$.
 
-The conjunction $C = p_1 \wedge p_2$ can be regarded as the intersection of the sets of runs in where $p_1$ and where $p_2$.  Maximizing $F(C)$ requires that one of the intersecting sets is a subset of the other, making the size of the intersection the size of the smaller set.  A minimal $S(C)$ is found when the component sets are nonoverlapping; the intersection of two such sets is empty.
+The conjunction $C = p_1 \wedge p_2$ can be regarded as the intersection of the sets of runs where $p_1$ was $true$ and the set where $p_2$ was $true$.  Maximizing $F(C)$ requires that one of the intersecting sets is a subset of the other, making the size of the intersection the size of the smaller set.  A minimal $S(C)$ is found when the component sets are nonoverlapping; the intersection of two such sets is empty.
 
 \begin{eqnarray}
  \nonumber %to remove numbering (before each equation)
@@ -111,8 +111,7 @@ The conjunction $C = p_1 \wedge p_2$ can be regarded as the intersection of the 
 
 If the second term in $Increase$ is ignored, as with disjunctions, the upper bound of a conjoined predicate's $Increase$ score is 1.  This is the maximum $Increase$ possible, reducing the likelihood of a conjoined predicate being pruned to almost zero.  The second term is therefore used for conjunctions to drop the upper bound to a more useful level.
 
-$F(C$ observed) is minimized by assuming that $C$ was \textit{observed} only in the (failed) runs where it was true.  Maximizing $S(C$ observed) is more difficult.  Recall that a conjunction can be considered \textit{observed} if either component is \textit{observed false}, or both are \textit{observed true}.  The combination of successful runs where a predicate is \textit{observed false} (union) is maximized if the sets are nonoverlapping, while the combination where they are \textit{observed true} (intersection) is maximized if one is a subset of the other.  By assuming both cases meet that criteria $S(C$ observed) can be maximized.  Its value is the sum of successful runs where $p_1$ was \textit{observed} and those where $p_2$ was \textit{observed false}, formed as the difference between $S(p_2$  Observed) and $S(p_2)$.  Since the result may differ depending on which predicate is chosen as $p_1$ the larger result is used.  The best conjunction that can be formed using $p_1$ and $p_2$ will have the following parameters:
-
+$F(C$ observed) is minimized by assuming that $C$ was \textit{observed} only in the (failed) runs where it was true.  Maximizing $S(C$ observed) is more difficult.  Recall that a conjunction can be considered \textit{observed} if either component is \textit{observed false}, or both are \textit{observed true}.  The combination of successful runs where a predicate is \textit{observed false} (union) is maximized if the sets are nonoverlapping, while the combination where they are \textit{observed true} (intersection) is maximized if one is a subset of the other.  By assuming both cases meet that criteria $S(C$ observed) can be maximized.  Its value is the sum of successful runs where $p_1$ was \textit{observed} and those where $p_2$ was \textit{observed false}, formed as the difference between $S(p_2$  Observed) and $S(p_2)$.  Since the result may differ depending on which predicate is chosen as $p_1$ the larger result is used.
 \begin{eqnarray}
  \nonumber
   F(C\;obs)' &=& F(p)' \\
