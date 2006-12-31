@@ -19,12 +19,14 @@ function clusterByMaxAspect()
     BugClusters = padColumns(BugClusters, numruns);
 
     % for all runs, find usage aspects with maximum probability
-    Rows = 1:numusageaspects;
-    UsageClusters = findBestAspect(Pz_d, Rows, [1:numruns]);
+    UsageClusters = findBestAspect(Pz_d, [1:numusageaspects], [1:numruns]);
 
     BugByUsage = spones(BugClusters) * spones(UsageClusters)'; 
 
-    save clusters.mat BugClusters UsageClusters BugByUsage
+    %for all runs, find aspect with maximum probability
+    Clusters = findBestAspect(Pz_d, [1:numaspects], [1:numruns]);
+
+    save clusters.mat BugClusters UsageClusters BugByUsage Clusters
     quit
 
 function Res = findBestAspect(X,Rows,Cols)
