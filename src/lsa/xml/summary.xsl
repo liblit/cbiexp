@@ -9,74 +9,160 @@
   xmlns="http://www.w3.org/1999/xhtml"
 >
 
+<xsl:import href="logo.xsl"/>
+
 <xsl:output method="html"/>
 
   <xsl:template match="/">
+    <xsl:variable name="title">pLSA Results</xsl:variable>  
     <html>
       <head>
+        <title><xsl:value-of select="$title"/></title>
       </head>
       <body>
-        <h2>Aspects:</h2>
-        <h3>Usage:</h3>
-        <table class="aspecttable">
-          <xsl:call-template name="aspectheader"/>
-          <xsl:for-each select="plsa/aspect[@kind='usage']">
-            <xsl:call-template name="aspectrow"/>
-          </xsl:for-each>
-        </table>
-        <h3>Buggy:</h3>
-        <table class="aspecttable">
-          <xsl:call-template name="aspectheader"/>
-          <xsl:for-each select="plsa/aspect[@kind='bug']">
-            <xsl:call-template name="aspectrow"/>
-          </xsl:for-each>
-        </table>
-        <h3>Failing Runs:</h3>
-        <xsl:variable name="failing" select="/plsa/run[@outcome='failure']"/>
-        <table class="failingruns">
-        <tr>
-        <td>Total:</td>
-        <td><xsl:value-of select="count($failing)"/></td>
-        </tr>
-        <tr>
-        <td>Claimed by some buggy aspect:</td>
-        <td><xsl:value-of select="count(/plsa/aspect[@kind='bug']/runid)"/></td>
-        </tr>
-        </table>
-        <table class="cotable">
-          <xsl:call-template name="cotableheader"/>  
-          <xsl:for-each select="plsa/aspect[@kind='bug']">
-            <xsl:call-template name="cotablerow"/>
-          </xsl:for-each>
-        </table> 
+        <div id="frontmatter">
+            <h1><xsl:copy-of select="$logo-icon"/><xsl:value-of select="$title"/></h1>
+        </div>
+        <div id="rest">
+          <xsl:call-template name="summary"/>
+          <xsl:call-template name="aspects"/>
+          <xsl:call-template name="failingruns"/>  
+        </div>
       </body>
     </html>
   </xsl:template>
 
+  <xsl:template name="summary">
+    <div id="summary">
+      <xsl:variable name="runs" select="/plsa/run"/>
+      <h2>Summary:</h2>
+      <table>
+        <tbody>
+        <tr>
+          <th style="text-align:left">Total Runs:</th>
+          <td><xsl:value-of select="count($runs)"/></td>
+        </tr>
+        <tr>
+          <th style="text-align:left">Successes:</th>
+          <td><xsl:value-of select="count($runs[@outcome='success'])"/></td>
+        </tr>
+        <tr>
+          <th style="text-align:left">Failures:</th>
+          <td><xsl:value-of select="count($runs[@outcome='failure'])"/></td>
+        </tr>
+        <tr>
+          <th style="text-align:left">Discards:</th>
+          <td><xsl:value-of select="count($runs[@outcome='ignore'])"/></td>
+         </tr>
+         </tbody>
+      </table>
+    </div>
+  </xsl:template>
+
+  <xsl:template name="aspects">
+    <div class="aspects">
+    <h2>Aspects:</h2>
+    <h3>Usage:</h3>
+    <table class="aspecttable">
+      <xsl:call-template name="aspectheader"/>
+      <tbody>
+      <xsl:for-each select="plsa/aspect[@kind='usage']">
+        <xsl:call-template name="aspectrow"/>
+      </xsl:for-each>
+      </tbody>
+      <xsl:call-template name="aspectfooter">
+        <xsl:with-param name="runs" select="id(plsa/aspect[@kind='usage']/runid/@idref)"/>
+      </xsl:call-template>
+    </table>
+    <h3>Buggy:</h3>
+    <table class="aspecttable">
+      <xsl:call-template name="aspectheader"/>
+      <tbody>
+      <xsl:for-each select="plsa/aspect[@kind='bug']">
+        <xsl:call-template name="aspectrow"/>
+      </xsl:for-each>
+      </tbody>
+      <xsl:call-template name="aspectfooter">
+        <xsl:with-param name="runs" select="id(plsa/aspect[@kind='bug']/runid/@idref)"/>
+      </xsl:call-template>
+    </table>
+    </div>
+  </xsl:template>
+
+  <xsl:template name="failingruns">
+    <div class="failingruns">
+    <h3>Failing Runs:</h3>
+    <xsl:variable name="failing" select="/plsa/run[@outcome='failure']"/>
+    <table class="failingruns">
+    <tbody>
+    <tr>
+    <th style="text-align:left">Total:</th>
+    <td><xsl:value-of select="count($failing)"/></td>
+    </tr>
+    <tr>
+    <th style="text-align:left">Claimed by some buggy aspect:</th>
+    <td><xsl:value-of select="count(/plsa/aspect[@kind='bug']/runid)"/></td>
+    </tr>
+    </tbody>
+    </table>
+    <table class="cotable">
+      <xsl:call-template name="cotableheader"/>  
+      <tbody>
+      <xsl:for-each select="plsa/aspect[@kind='bug']">
+        <xsl:call-template name="cotablerow"/>
+      </xsl:for-each>
+      </tbody>
+    </table> 
+    </div>
+  </xsl:template>
+
   <xsl:template name="aspectheader">
+    <thead>
     <tr>
       <th>Aspect Number</th>
-      <th>Num Runs(Total/Succeeding/Failing)</th>
+      <th>Total Runs</th>
+      <th>Successes</th>
+      <th>Failures</th>
       <th>Runs</th>
       <th>Features</th>
     </tr>
+    </thead>
   </xsl:template>
 
   <xsl:template name="aspectrow">
     <xsl:variable name="runs" select="id(runid/@idref)"/>
     <xsl:variable name="succeeding" select="count($runs[@outcome='success'])"/>
     <xsl:variable name="failing" select="count($runs[@outcome='failure'])"/>
+    <xsl:variable name="runslink">
+      <xsl:text>./aspect</xsl:text> <xsl:value-of select="@index"/> <xsl:text>-runs.html</xsl:text>
+    </xsl:variable>
+    <xsl:variable name="featureslink">
+      <xsl:text>./aspect</xsl:text> <xsl:value-of select="@index"/> <xsl:text>-features.html</xsl:text>
+    </xsl:variable>
     <tr>
-      <td><xsl:value-of select="@index"/></td>
-      <td>
-        (<xsl:value-of select="count($runs)"/>/<xsl:value-of select="$succeeding"/>/<xsl:value-of select="$failing"/>)
-      </td>
-      <td></td>
-      <td></td>
+      <th><xsl:value-of select="@index"/></th>
+      <td><xsl:value-of select="count($runs)"/></td>
+      <td><xsl:value-of select="$succeeding"/></td>
+      <td><xsl:value-of select="$failing"/></td>
+      <td><a href="{$runslink}">aspect</a></td>
+      <td><a href="{$featureslink}">feature</a></td>
     </tr>
   </xsl:template>
 
+  <xsl:template name="aspectfooter">
+    <xsl:param name="runs"/>
+    <tfoot>
+      <tr>
+        <th>Totals</th>
+        <td><xsl:value-of select="count($runs)"/></td>
+        <td><xsl:value-of select="count($runs[@outcome='success'])"/></td>
+        <td><xsl:value-of select="count($runs[@outcome='failure'])"/></td>
+      </tr>
+    </tfoot>
+  </xsl:template>
+
   <xsl:template name="cotableheader">
+    <thead>
     <tr>
       <th>Aspect</th>
       <xsl:for-each select="plsa/aspect[@kind='usage']">
@@ -84,12 +170,13 @@
       </xsl:for-each>
       <th>Total</th>
     </tr>
+    </thead>
   </xsl:template>
 
   <xsl:template name="cotablerow">
     <xsl:variable name="runs" select="id(runid/@idref)"/>
     <tr>
-      <td><xsl:value-of select="@index"/></td>
+      <th><xsl:value-of select="@index"/></th>
       <xsl:for-each select="/plsa/aspect[@kind='usage']">
         <xsl:call-template name="cotableentry">
           <xsl:with-param name="runs" select="$runs"/>
