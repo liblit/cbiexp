@@ -7,9 +7,12 @@
   version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:exsl="http://exslt.org/common"
+  extension-element-prefixes="exsl"
 >
 
 <xsl:import href="logo.xsl"/>
+<xsl:import href="feature.xsl"/>
 
 <xsl:output method="html"/>
 
@@ -91,7 +94,7 @@
 
   <xsl:template name="failingruns">
     <div class="failingruns">
-    <h3>Failing Runs:</h3>
+    <h2>Failing Runs:</h2>
     <xsl:variable name="failing" select="/plsa/run[@outcome='failure']"/>
     <table class="failingruns">
     <tbody>
@@ -134,18 +137,23 @@
     <xsl:variable name="succeeding" select="count($runs[@outcome='success'])"/>
     <xsl:variable name="failing" select="count($runs[@outcome='failure'])"/>
     <xsl:variable name="runslink">
-      <xsl:text>./aspect</xsl:text> <xsl:value-of select="@index"/> <xsl:text>-runs.html</xsl:text>
+      <xsl:text>./aspect</xsl:text><xsl:value-of select="@index"/><xsl:text>-runs.html</xsl:text>
     </xsl:variable>
     <xsl:variable name="featureslink">
-      <xsl:text>./aspect</xsl:text> <xsl:value-of select="@index"/> <xsl:text>-features.html</xsl:text>
+      <xsl:text>./aspect</xsl:text><xsl:value-of select="@index"/><xsl:text>-features.html</xsl:text>
     </xsl:variable>
     <tr>
       <th><xsl:value-of select="@index"/></th>
       <td><xsl:value-of select="count($runs)"/></td>
       <td><xsl:value-of select="$succeeding"/></td>
       <td><xsl:value-of select="$failing"/></td>
-      <td><a href="{$runslink}">aspect</a></td>
-      <td><a href="{$featureslink}">feature</a></td>
+      <td><a href="{$runslink}">&link;</a></td>
+      <td><a href="{$featureslink}">&link;</a></td>
+      <exsl:document href="{$featureslink}" method="html">
+        <xsl:call-template name="feature">
+          <xsl:with-param name="num" select="@index"/>
+        </xsl:call-template>
+      </exsl:document>
     </tr>
   </xsl:template>
 
