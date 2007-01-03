@@ -2,6 +2,7 @@
 
 root ?= /scratch/mulhern/cbiexp
 tooldir ?= $(root)/src/lsa
+xmldir ?= $(tooldir)/xml
 MATLAB = matlab -nodisplay
 
 runsinfo.mat: X.sparse f.indices s.indices
@@ -44,4 +45,16 @@ results.mat loglikelihood.txt:
 	touch results.mat
 	touch loglikelihood.txt
 
-run: results.mat loglikelihood.txt
+html/rawsummary.xml: results.mat runsinfo.mat clusters.mat configure.m
+	$(MATLAB) -r "path(path, '$(xmldir)'); summarize()" > /dev/null
+	mv rawsummary.xml html/rawsummary.xml
+
+run: results.mat loglikelihood.txt html/rawsummary.xml
+
+summary.xml: rawsummary.xml
+	xsltproc --path $(xmldir) --output summary.xml idify.xsl rawsummary.xml
+
+summary.html: summary.xml
+	xsltproc --path $(xmldir) --path $(root)/src --path ../../../.. --stringparam source-dir ../../../../src --output summary.html summary.xsl summary.xml
+
+html: summary.html

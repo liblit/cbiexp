@@ -19,6 +19,8 @@ def main():
 
     for restart in range(int(numrestarts)):
         curdir = str(restart)
+        makeexpdir(curdir)
+        makehtmldir(curdir)
         mkdir(curdir)
         makefile = open(join(curdir, 'GNUmakefile'), 'w')
         print >>makefile, 'numaspects = %s' % numaspects
@@ -29,6 +31,20 @@ def main():
 
 ########################################################################
 
+def makeexpdir(curdir):
+    mkdir(curdir)
+    makefile = open(join(curdir, 'GNUmakefile'), 'w')
+    print >>makefile, 'numaspects = %s' % numaspects
+    print >>makefile, 'numbugaspects = %s' % numbugaspects
+    print >>makefile, 'include %s/analysis-rules.mk' % sys.path[0] 
+    makefile.close()
+
+def makehtmldir(curdir):
+    htmldir = join(curdir,html)
+    mkdir(htmldir)
+    makefile=open(join(htmldir, 'GNUmakefile'), 'w')
+    print >>makefile, 'include %s/analysis-rules.mk' % sys.path[0]
+    makefile.close()
 
 if __name__ == '__main__':
     main()
