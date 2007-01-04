@@ -1,3 +1,5 @@
+% -*- TeX-master: "report" -*-
+
 \section{Introduction}
 
 The Cooperative Bug Isolation (CBI) Project~\cite{Liblit:2004:CBI} finds bugs in programs by analyzing reports collected from software executing in the hands of end users.  To use CBI, the software must be compiled with an instrumenting compiler that inserts snippets that evaluate boolean expressions (called predicates) at various program points.  Predicates are designed to capture program behaviors such as results of function calls, directions of branches or values of variables.  At the end of each execution, the instrumented program generates a report that contains the number of times each predicate was measured, and the number of times each was found to be true.  Statistical debugging (~\cite{Liblit:2005:SSBI} and ~\cite{Zheng:2006:SDSIMB}) is used to analyze these reports and find predicates that are predictive of failure.  These predicates are then ranked and presented to the developer.
