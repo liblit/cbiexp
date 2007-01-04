@@ -21,11 +21,11 @@ function printaspects(fid, Learn, Clusters,Pw_z)
        else
            kind = 'bug';
        end;
-       fprintf(fid, '<aspect kind=\"%s\">\n', kind);
+       [S,I] = sort(Pw_z(:,i), 1, 'descend');
+       fprintf(fid, '<aspect kind=\"%s\" ratio=\"%s\">\n', kind, sum(S(1:10)));
        for j = find(Clusters(i,:) > 0);
            fprintf(fid, '<runid index=\"%u\"/>', j); 
        end;
-       [S,I] = sort(Pw_z(:,i), 1, 'descend');
        for j = 1:10;
            fprintf(fid, '<featureclaimed index=\"%u\" probability=\"%0.4f\"/>', I(j), S(j));
        end;

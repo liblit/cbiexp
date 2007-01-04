@@ -148,7 +148,7 @@
       <td><xsl:value-of select="$succeeding"/></td>
       <td><xsl:value-of select="$failing"/></td>
       <td><a href="{$runslink}">&link;</a></td>
-      <td><a href="{$featureslink}">&link;</a></td>
+      <td><a href="{$featureslink}"><xsl:value-of select="@ratio"/></a></td>
       <exsl:document href="{$featureslink}" method="html">
         <xsl:call-template name="feature">
           <xsl:with-param name="num" select="@index"/>

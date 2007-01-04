@@ -15,6 +15,7 @@
 <!-- it can be a usage aspect or a buggy aspect. -->
 <!ELEMENT aspect (runid*, featureclaimed*)>
 <!ATTLIST aspect kind (usage | bug) #REQUIRED>
+<!ATTLIST aspect ratio NMTOKEN #REQUIRED>
 
 <!-- usage aspect -->
 <!ELEMENT usageaspect EMPTY>

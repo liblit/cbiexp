@@ -31,6 +31,9 @@
       <xsl:attribute name="kind">
         <xsl:value-of select="@kind"/>
       </xsl:attribute> 
+      <xsl:attribute name="ratio">
+        <xsl:value-of select="@ratio"/>
+      </xsl:attribute>
       <xsl:attribute name="index">
         <xsl:value-of select="position()"/>
       </xsl:attribute>
