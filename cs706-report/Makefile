@@ -1,28 +1,37 @@
 MAIN      = report
-SRCS      = *.tex 
+SRCS      = $(wildcard *.tex *.bib *.sty *.cls)
 PS        = $(MAIN).ps
 PDF       = $(MAIN).pdf
 DVI       = $(MAIN).dvi
-TARG      = $(MAIN).done
+BBL       = $(MAIN).bbl
+FIGS      = $(wildcard charts/*.eps)
 
-all: $(TARG) ps pdf
+latex := latex -interaction=batchmode -file-line-error
+pdflatex := pdf$(latex)
 
-$(TARG): $(SRCS) bib
-	latex $(MAIN)
-	latex $(MAIN)
-	touch $(TARG)
+all: $(PDF) $(PS)
 
-bib: 
-	bibtex -min-crossrefs=100 $(MAIN)
+$(PDF): %.pdf: $(SRCS) $(BBL) $(FIGS:.eps=.pdf)
+	$(pdflatex) $*
+	$(pdflatex) $*
+	thumbpdf $*
+	$(pdflatex) $*
 
-ps: $(DVI)
-	dvips -o $(PS) $(MAIN)
+$(BBL): %.bbl: $(SRCS) $(FIGS)
+	$(latex) $*
+	bibtex $*
 
-pdf: $(PS) $(DVI)
-	ps2pdf14 $(PS)
+$(DVI): %.dvi: $(SRCS) $(BBL) $(FIGS)
+	$(latex) $*
+	$(latex) $*
 
-fig: fig.gnu fig.data fig2.data
-	gnuplot fig.gnu
+$(PS): %.ps: %.dvi $(FIGS)
+	dvips -o $@ -P generic $<
+
+$(FIGS:.eps=.pdf): %.pdf: %.eps
+	epstopdf --outfile=$@ $<
 
 clean:
-	rm -f $(PS) $(PDF) $(DVI) $(MAIN).bbl $(TARG)
+	rm -f $(PS) $(PDF) $(DVI) $(BBL)
+
+.DELETE_ON_ERROR:
