@@ -1,0 +1,144 @@
+Put name markers in brackets after items in the to-do list:
+
+  +Foo: things Foo is best suited to work on or plans to work on
+  -Foo: things Foo is definitely not able to work on
+  *Foo: things Foo is working on right now
+
+If you see a problem but either cannot fix it or don't want to work on
+it now, add it to the list below so that it will not be overlooked or
+forgotten.  Try to keep to-do items roughly organized by section,
+except for whole-paper issues which are listed first.
+
+As you fix outstanding items, remove them from the list and check in
+this updated to-do list along with your changes.  When this list is
+empty, that basically means we're done!
+
+
+------------------------------------------------------------------------
+--
+--  overall
+--
+
+Reformat the paper using ISSTA style, and see how our page count
+looks.  [*Ben]
+
+Notational inconsistency throughout the paper: P, P' versus p_1, p_2
+for predicates.
+
+
+------------------------------------------------------------------------
+--
+--  Section 2
+--
+
+The second half of Section 2, which motivates the search for complex
+predicates, needs work.  The way it refers to soundness and
+completeness is muddled.  I understand what you were getting at here,
+but this needs revision.  There are also some odd claims about the
+abilities of humans and automated tools.
+
+
+------------------------------------------------------------------------
+--
+--  Section 3
+--
+
+Section 3 overlooks the fact that a compound predicate might not even
+be well defined at any single program point, but that just further
+motivates the simplifications.
+
+Section 3.1 needs to better define what it means for a predicate to be
+true or false.  If I observe a predicate true once and false once in a
+single run, is that predicate considered true, false, or both for
+purposes of your three-valued logic?
+
+Definition 3.3 is ambiguous but fixable by universally or
+existentially quantifying i.
+
+Section 3.3 is fairly technical and not easy to follow.  An example
+with concrete numbers might help here, but I'm not sure.  This may
+just be inherently tricky stuff.
+
+
+------------------------------------------------------------------------
+--
+--  Section 4
+--
+
+Section 4 offers some interesting ideas, though they aren't explored
+or justified as fully as they could be.  I'm not convinced that
+Definition 4.2 is working in the right direction.  If two predicates
+are highly correlated according to this definition, doesn't that mean
+they are nearly identical and therefore not especially interesting as
+a pair?  I would have thought that an interesting pair predicates
+would be ones with very little apparent connection in the PDG, but
+which nonetheless are tightly connected in how they predict failures.
+
+
+------------------------------------------------------------------------
+--
+--  Section 5
+--
+
+Section 5: I'm not sure that these are properly considered as
+*internal* threats to validity, but I don't really know that taxonomy
+of threat types very well.
+
+A third case study would be nice here, but is probably not essential.
+
+
+------------------------------------------------------------------------
+--
+--  Section 6
+--
+
+Section 6 presents some results with conjunctions and disjunctions
+broken out, but not all.  I'd like to see that done with the rest,
+such as for Figure 2, to see if there's anything interesting going on.
+[-Ben]
+
+Several of the figures need layout or color-selection work, especially
+for monochrome printing.
+
+However, I don't buy *either* explanation for the weird conjunction
+behavior.  Offline downsampling is supposed to be applied before
+binarization, not after.  Assuming you did that correctly, offline
+downsampling gives numbers which are completely indistinguishable from
+online sampling.  And just getting a weird run of numbers from your
+random number generator is unlikely to show the same conjunction hump
+in six different applications.
+
+It's not clear in Section 6 whether you used a single variant of each
+Siemens application or are presenting averages across all variants of
+each.
+
+You also don't say anything about how long it takes to perform this
+analysis.  Seconds?  Hours?  Weeks?  Readers will want to know.
+
+
+------------------------------------------------------------------------
+--
+--  Section 7
+--
+
+Section 7's discussion of related work is awfully brief.  This was a
+rush job and needs to be expanded.
+
+
+------------------------------------------------------------------------
+--
+--  Section 8
+--
+
+Section 8 concludes on a weak note.  We ought to be able to make this
+a bit sexier while still being honest about the technique's
+limitations.
+
+Regarding those limitations ... do you have further ideas in mind for
+pulling the interesting predictors out from the big (quadratic) pool
+of complex predicates?  Is it just a matter of implementation time to
+try out something you think might work?  Or are we essentially out of
+ideas at this point?  If you have ideas, then that's where I could see
+more revisions to the implementation.  Otherwise, no, I don't think
+more implementation work is needed.  Rather, it's a matter of revising
+what's already here to get it really polished.
