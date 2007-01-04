@@ -39,6 +39,9 @@ loglikelihoods.txt best:
 rank: loglikelihoods.txt best
 
 results.mat loglikelihood.txt:
+	ln ../../X.sparse
+	ln ../../f.indices
+	ln ../../s.indices
 	ln ../../runsinfo.mat
 	ln ../configure.m
 	$(MATLAB) -r "path(path, '$(tooldir)'); runOnce()" > /dev/null
