@@ -23,7 +23,6 @@ The function skips the call to \texttt{malloc} that allocates memory to the poin
 We generated 1000 runs of the program using randomly generated command line arguments and input images randomly selected from a set of Canon and non-Canon images.  There were 934 successful executions and 66 crashes.  Applying the redundancy elimination algorithm with only simple predicates produced two predicates that account for all failed runs as shown in ~\autoref{tab:tbl1}.  Studying the source code of the program did not show any obvious relation between the two predictors and the cause of failure.  Even though the second predictor is present in the crashing function it was a comparison between two unrelated variables: the loop iterator \texttt{i} and the size of the data stored in the traversed array \texttt{s}.  Also it was $true$ in only 31 of the 66 failures.
 
 \begin{table*}
-\nocaptionrule
 \caption{Results for Exif with only simple predicates}
 \label{tab:tbl1}
 \centering
@@ -41,7 +40,6 @@ initial & effective & Predicate & Function & File:line \\
 The analysis had assigned a very low score of 0.0191528 to the predicate $P$: \texttt{o + s > buf\_size} despite the fact that it captures the exact source of the uninitialized pointer.  Because the bug was non-deterministic, $P$ was also $true$ in 335 runs that succeeded.  Including complex predicates in the analysis produced one complex predicate shown in ~\autoref{tab:tbl2}{\footnote{the second row is the second component of a complex predicate, which is a conjunction as indicated by the keyword $and$ at the start}}.  Conjunction of $P$ with the second predicate $P'$: \texttt{offset < len} eliminated all the false positives and thereby earned a very high score.  This is an example of how a conjunction can improve the score of a $super$ bug predictor.  $P'$ is in function \texttt{exif\_data\_load\_data} that calls \texttt{exif\_mnote\_data\_canon\_load} indirectly.  It is possible that it captures another condition that drives the bug to cause a crash.  If it does, it has to be a deep relationship as we could not find such a relation even after spending a couple of hours trying to understand the source code.  However this does not reduce the importance of this result as the conjunction has a very high score compared to $P$ and $P'$.
 
 \begin{table*}
-\nocaptionrule
 \caption{Results for Exif with complex predicates}
 \label{tab:tbl2}
 \centering
@@ -94,7 +92,6 @@ Calls to \texttt{xreadline()}, the function used to get user-input, can return \
 We generated 1000 runs of \texttt{ccrypt}, again using randomly selected command line arguments.  Input files included images and text archived from the online documentation of a remote desktop display system.  There were 658 successful executions and 342 crashes.  All failed runs crashed due to the \texttt{NULL} dereference described above - no other bugs were visible to our test suite.
 
 \begin{table*}
-\nocaptionrule
 \caption{Results for \texttt{ccrypt} with only simple predicates}
 \label{tab:tbl3}
 \centering
@@ -112,7 +109,6 @@ initial & effective & true successes & false successes & Predicate & Function & 
 An initial analysis involving only simple predicates found $P:$\texttt{xreadline == 0} as the top predictor of failure: true in no successes and all 342 failed runs, verifying our assumptions.  The related predicate $Q$:\texttt{res == (char *)0} scored substantially lower, appearing in all failures but a large number of successes.  $Q$'s reported score was low enough that without knowledge of the nature of the bug a programmer would be likely to overlook its significance, and because of its relationship to $P$ it is removed by the redundancy elimination algorithm (see ~\autoref{tab:tbl3}).  More importantly, traditional CBI analysis reveals no connection between the two predictors to the programmer, despite the fact that $Q$, a necessary but not sufficient condition for failure, is subordinate to $P$ in predicting a crash.
 
 \begin{table*}
-\nocaptionrule
 \caption{Results for \texttt{ccrypt} with complex predicates}
 \label{tab:tbl4}
 \centering

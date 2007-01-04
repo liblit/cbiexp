@@ -1,45 +1,30 @@
 %% -*- TeX-master: t -*-
 
-\documentclass[final,nocopyrightspace]{sigplanconf}
+\documentclass[draft]{acm_proc_article-sp}
 
+\newcommand{\thetitle}[0]{Propositional Combination of CBI Predicates}
+
+\pagenumbering{arabic}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %% standard texmf packages
 %%
 
-\usepackage{amsmath}
 \usepackage{booktabs}
-\usepackage{fancyvrb}
 \usepackage{flushend}
-\usepackage{graphicx}
-\usepackage{ifthen}
-\usepackage{nicefrac}
-\usepackage[TABTOPCAP, tight]{subfigure}
-\usepackage{url}
-\usepackage{xspace}
-
-\def\UrlLeft{<}
-\def\UrlRight{>}
-
-\setlength{\abovetopsep}{1ex}
-
-\usepackage{mathptmx}
-\usepackage{times}
-\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+\usepackage[final]{graphicx}
+\usepackage[dvips]{thumbpdf}
 
 \usepackage[
 bookmarks,
 breaklinks,
 draft=false,
-pdftitle={Propositional Combination of CBI Predicates},
-pdfauthor={Piramanayagam Arumuga Nainar, Ting Chen, Jake Rosin},
+pdftitle={\thetitle},
+pdfauthor={Piramanayagam Arumuga Nainar, Ting Chen, Jake Rosin, and Ben Liblit},
 % pdfsubject={D.2.4 [Software Engineering]: Software/Program Verification -- statistical methods; D.2.5 [Software Engineering]: Testing and Debugging -- debugging aids, distributed debugging, monitors, tracing; I.5.2 [Pattern Recognition]: Design Methodology -- feature evaluation and selection},
 % pdfkeywords={bug isolation, random sampling, invariants, feature selection, statistical debugging},
-pdfpagemode=UseOutlines
 ]{hyperref}
-
-\ifthenelse{\isundefined{\pdfoutput}}{}{\usepackage{thumbpdf}}
 
 %% \VerbatimFootnotes
 
@@ -48,9 +33,7 @@ pdfpagemode=UseOutlines
 %% unique to this report
 %%
 
-\usepackage{mailto}
-
-\newtheorem{defn}{Definition}[section]
+\newdef{defn}{Definition}
 \newcommand{\defnautorefname}[0]{Definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,16 +41,16 @@ pdfpagemode=UseOutlines
 %% front matter
 %%
 
-\title{Propositional Combination of CBI Predicates
-  %%
-%   \renewcommand{\ast}[0]{}
-  }
+\title{\thetitle}
 
-\authorinfo{Piramanayagam Arumuga Nainar}{Computer Sciences Department \\ University of Wisconsin-Madison}{\mailto{arumuga@cs.wisc.edu}}
-\authorinfo{Ting Chen}{Computer Science Department \\  University of Wisconsin-Madison}{\mailto{tchen@cs.wisc.edu}}
-\authorinfo{Jake Rosin}{Computer Science Department \\  University of Wisconsin-Madison}{\mailto{rosin@cs.wisc.edu}}
+\newcommand{\mailto}[1]{\href{mailto:#1@cs.wisc.edu}{#1}}
 
-\bibliographystyle{abbrv}
+\numberofauthors{1}
+\author{\alignauthor
+  Piramanayagam Arumuga Nainar \qquad Ting Chen \qquad Jake Rosin \qquad Ben Liblit \\
+  \affaddr{Computer Sciences Department} \\
+  \affaddr{University of Wisconsin--Madison} \\
+  \email{\{\mailto{arumuga},\mailto{tchen},\mailto{rosin},\mailto{liblit}\}@cs.wisc.edu}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -88,8 +71,8 @@ pdfpagemode=UseOutlines
 \input{quant}
 \input{rw}
 \input{conc}
-% \input{bib}
 
+\bibliographystyle{abbrv}
 \bibliography{local}
-% \end{spacing}
+
 \end{document}

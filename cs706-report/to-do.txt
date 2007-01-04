@@ -19,9 +19,6 @@ empty, that basically means we're done!
 --  overall
 --
 
-Reformat the paper using ISSTA style, and see how our page count
-looks.  [*Ben]
-
 Notational inconsistency throughout the paper: P, P' versus p_1, p_2
 for predicates.
 
