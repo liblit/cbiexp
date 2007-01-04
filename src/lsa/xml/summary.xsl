@@ -37,8 +37,16 @@
 
   <xsl:template name="summary">
     <div id="summary">
-      <xsl:variable name="runs" select="/plsa/run"/>
       <h2>Summary:</h2>
+      <xsl:call-template name="runs"/>
+      <xsl:call-template name="features"/>
+    </div>
+  </xsl:template>
+
+  <xsl:template name="runs">
+    <xsl:variable name="runs" select="/plsa/run"/>
+    <div id="runs">
+      <h3>Runs:</h3>
       <table>
         <tbody>
         <tr>
@@ -58,6 +66,18 @@
           <td><xsl:value-of select="count($runs[@outcome='ignore'])"/></td>
          </tr>
          </tbody>
+      </table>
+    </div>
+  </xsl:template>
+
+  <xsl:template name="features">
+    <div id="features"> 
+      <h3>Features:</h3>
+      <table>
+        <tr>
+          <th>Total Features:</th>
+          <td><xsl:value-of select="count(/plsa/feature)"/></td>
+        </tr>
       </table>
     </div>
   </xsl:template>
