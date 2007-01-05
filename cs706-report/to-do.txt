@@ -89,7 +89,7 @@ A third case study would be nice here, but is probably not essential.
 Section 6 presents some results with conjunctions and disjunctions
 broken out, but not all.  I'd like to see that done with the rest,
 such as for Figure 2, to see if there's anything interesting going on.
-[-Ben]
+[-Ben] [+arumuga]
 
 Several of the figures need layout or color-selection work, especially
 for monochrome printing.  [-Ben]
