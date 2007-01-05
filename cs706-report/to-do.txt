@@ -22,17 +22,20 @@ empty, that basically means we're done!
 Notational inconsistency throughout the paper: P, P' versus p_1, p_2
 for predicates.
 
+Notational inconsistency throughout the paper: "P obs" versus "P
+observed" in mathematical formulae.  I prefer "observed" if it fits,
+but some formulae might just be too wide.  In either case, we must be
+consistent.
+
 
 ------------------------------------------------------------------------
 --
 --  Section 2
 --
 
-The second half of Section 2, which motivates the search for complex
-predicates, needs work.  The way it refers to soundness and
-completeness is muddled.  I understand what you were getting at here,
-but this needs revision.  There are also some odd claims about the
-abilities of humans and automated tools.  [*Ben]
+Within Section 2.1 [Expected Benefits], there may be too much
+conceptual overlap between "Richer Diagnostic Language for Complex
+Bugs" and "Improved Precision and Recall".
 
 
 ------------------------------------------------------------------------

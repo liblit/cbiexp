@@ -30,7 +30,7 @@ This section explains how conjunctions and disjunctions are actually computed.  
 \item The program reached the line where the predicate was defined but was not observed because of sampling.
 \end{enumerate}
 
-In such a case, the value of a predicate $P$ is considered unknown.  For the analysis introduced in ~\autoref{sec-bground}, it is enough to consider whether $R(P)$ was $\true$ or $\neg \true$ (either $\false$ or $\unknown$).  But while computing complex predicates, the two sub cases of the $\neg \true$ case must be considered separately.
+In such a case, the value of a predicate $P$ is considered unknown.  For the analysis introduced in ~\autoref{sec-bground}, it is enough to consider whether $R(P)$ was $\true$ or $\neg \true$ (either $\false$ or $\unknown$).  But while computing complex predicates, the two sub-cases of the $\neg \true$ case must be considered separately.
 
 Consider a complex predicate $C = p_1 \wedge p_2$.  If either $p_1$ or $p_2$ was observed $\false$ then $R(C) = \false$.  If both $p_1$ and $p_2$ were observed $\true$, then $C$ was observed to be true.  Otherwise, the value of $R(C)$ is $\unknown$.  This is shown using a three-valued truth table in ~\autoref{tab:and}.
 
