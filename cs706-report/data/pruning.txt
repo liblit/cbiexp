@@ -1,0 +1,6 @@
+tcas 0.27
+tot_info 0.35
+schedule 0.00
+replace 0.20
+print_tokens2 0.38
+schedule2 0.09
