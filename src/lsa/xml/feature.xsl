@@ -13,7 +13,7 @@
   <xsl:import href="scores.xsl"/>
 
   <xsl:variable name="preds" select="document('predictor-info.xml')/predictor-info/info"/>
-  <xsl:variable name="features" select="document('features.xml')/featureinfos/info"/>
+  <xsl:variable name="features" select="document('features.xml')/featureinfos/feature"/>
 
   <xsl:output method="html"/>
 
@@ -49,16 +49,16 @@
     <xsl:variable name="index" select="@index"/>
     <xsl:variable name="feature" select="$features[number($index)]"/>
     <xsl:variable name="aspectindex" select="../@index"/>
-    <xsl:variable name="aspectentry" select="$feature/aspectprob[number($aspectindex)]"/>
+    <xsl:variable name="aspectentry" select="$feature/aspectentry[number($aspectindex)]"/>
     <tr>
       <th><xsl:value-of select="$index"/></th>
-      <xsl:apply-templates select="$aspectentry"/>
+      <xsl:apply-templates select="$aspectentry" mode="feature"/>
       <xsl:apply-templates select="$preds[number($index)]" mode="static-cells"/>
     </tr>
   </xsl:template>
 
-  <xsl:template match="aspectprob" mode="feature">
-    <td><xsl:value-of select="@prob"/></td>
+  <xsl:template match="aspectentry" mode="feature">
+    <td><xsl:value-of select="@probability"/></td>
   </xsl:template>
 
   <xsl:template name="featureheader" mode="feature">

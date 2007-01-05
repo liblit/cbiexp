@@ -42,15 +42,15 @@ function printfeatures(Pw_z)
     fprintf(fid, '<featureinfos>\n');
     for i = 1:size(Pw_z,1);
       fprintf(fid, '<feature>\n');
-      printaspectvalues(fid, Pw_z(i,:), J(i,:));
+      printaspectentrys(fid, Pw_z(i,:), J(i,:));
       fprintf(fid, '</feature>\n');
     end;
     fprintf(fid, '</featureinfos>\n');
     fclose(fid);
 
-function printaspectvalues(fid, probs, rank)
+function printaspectentrys(fid, probs, rank)
     for i = 1:numel(probs);
-      fprintf(fid, '<aspectvalue aspectindex=\"%u\" rank=\"%u\" probability=\"%0.4f\"/>\n', i, probs(i), rank(i));
+      fprintf(fid, '<aspectentry aspectindex=\"%u\" rank=\"%u\" probability=\"%0.4f\"/>\n', i, rank(i), probs(i));
     end;
 
 function printruns(fid, Learn, Findices, Sindices, UsageClusters, BugClusters) 

@@ -2,10 +2,10 @@
 <!ELEMENT featureinfos (info*)> 
 
 <!--each info is essentially a row in the Pw_z matrix -->
-<!ELEMENT feature (aspectprob*)> 
+<!ELEMENT feature (aspectentry*)> 
 
 <!-- single entry in Pw_z matrix -->
-<!ELEMENT aspectprob EMPTY>
-<!ATTLIST aspectprob index NMTOKEN #REQUIRED>
-<!ATTLIST aspectprob rank NMTOKEN #REQUIRED>
-<!ATTLIST aspectprob prob NMTOKEN #REQUIRED>
+<!ELEMENT aspectentry EMPTY>
+<!ATTLIST aspectentry aspectindex NMTOKEN #REQUIRED>
+<!ATTLIST aspectentry rank NMTOKEN #REQUIRED>
+<!ATTLIST aspectentry probability NMTOKEN #REQUIRED>
