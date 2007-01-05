@@ -32,7 +32,7 @@ The second half of Section 2, which motivates the search for complex
 predicates, needs work.  The way it refers to soundness and
 completeness is muddled.  I understand what you were getting at here,
 but this needs revision.  There are also some odd claims about the
-abilities of humans and automated tools.
+abilities of humans and automated tools.  [*Ben]
 
 
 ------------------------------------------------------------------------
