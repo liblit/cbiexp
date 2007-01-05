@@ -71,9 +71,6 @@
       <xsl:attribute name="index">
         <xsl:value-of select="@index"/>
       </xsl:attribute>
-      <xsl:attribute name="probability">
-        <xsl:value-of select="@probability"/>
-      </xsl:attribute>
       <xsl:apply-templates/>
     </xsl:copy>
   </xsl:template>

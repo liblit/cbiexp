@@ -7,8 +7,7 @@
 
 <!-- a wrapper for feature id refs -->
 <!ELEMENT featureclaimed EMPTY>
-<!ATTLIST featureclaimed idref IDREF #REQUIRED>
-<!ATTLIST featureclaimed probability NMTOKEN #REQUIRED> 
+<!ATTLIST featureclaimed index NMTOKEN #REQUIRED> 
 
 <!-- an aspect has a set of runs and a set of features. -->
 <!-- it has an internal id and an external number. --> 
@@ -16,6 +15,7 @@
 <!ELEMENT aspect (runid*, featureclaimed*)>
 <!ATTLIST aspect id ID #REQUIRED>
 <!ATTLIST aspect index NMTOKEN #REQUIRED>
+<!ATTLIST aspect ratio NMTOKEN #REQUIRED>
 <!ATTLIST aspect kind (usage | bug) #REQUIRED>
 
 <!-- usage aspect -->
