@@ -8,7 +8,6 @@
 <!-- a wrapper for feature id refs -->
 <!ELEMENT featureclaimed EMPTY>
 <!ATTLIST featureclaimed index NMTOKEN #REQUIRED>
-<!ATTLIST featureclaimed probability NMTOKEN #REQUIRED> 
 
 <!-- an aspect has a set of runs and a set of features. -->
 <!-- it has an internal id and an external number. --> 
@@ -34,8 +33,3 @@
 <!-- a failing run may, in some cases, have only a buggy aspect. --> 
 <!ELEMENT run (usageaspect?, buggyaspect?)> 
 <!ATTLIST run outcome (success | failure | ignore) #REQUIRED>
-
-<!-- a features infoindex is an index into a predictor-info structure --> 
-<!-- this index will give us the coordinates of the site, the scheme, etc. -->
-<!ELEMENT feature EMPTY>
-<!ATTLIST feature infoindex NMTOKEN #REQUIRED> 

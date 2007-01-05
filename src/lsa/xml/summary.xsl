@@ -71,12 +71,13 @@
   </xsl:template>
 
   <xsl:template name="features">
+    <xsl:variable name="features" select="document('predictor-info.xml')/predictor-info/info"/>
     <div id="features"> 
       <h3>Features:</h3>
       <table>
         <tr>
           <th>Total Features:</th>
-          <td><xsl:value-of select="count(/plsa/feature)"/></td>
+          <td><xsl:value-of select="count($features)"/></td>
         </tr>
       </table>
     </div>

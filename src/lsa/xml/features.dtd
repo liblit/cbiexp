@@ -1,0 +1,11 @@
+<!-- information about features, i.e., predicates, from plsa analysis -->
+<!ELEMENT featureinfos (info*)> 
+
+<!--each info is essentially a row in the Pw_z matrix -->
+<!ELEMENT feature (aspectprob*)> 
+
+<!-- single entry in Pw_z matrix -->
+<!ELEMENT aspectprob EMPTY>
+<!ATTLIST aspectprob index NMTOKEN #REQUIRED>
+<!ATTLIST aspectprob rank NMTOKEN #REQUIRED>
+<!ATTLIST aspectprob prob NMTOKEN #REQUIRED>

@@ -48,9 +48,10 @@ results.mat loglikelihood.txt:
 	touch results.mat
 	touch loglikelihood.txt
 
-html/rawsummary.xml: results.mat runsinfo.mat clusters.mat configure.m
+html/rawsummary.xml html/features.xml: results.mat runsinfo.mat clusters.mat configure.m
 	$(MATLAB) -r "path(path, '$(xmldir)'); summarize()" > /dev/null
 	mv rawsummary.xml html/rawsummary.xml
+	mv features.xml html/features.xml
 
 run: results.mat loglikelihood.txt html/rawsummary.xml
 
@@ -58,6 +59,6 @@ summary.xml: rawsummary.xml
 	xsltproc --path $(xmldir) --output summary.xml idify.xsl rawsummary.xml
 
 summary.html: summary.xml
-	xsltproc --path $(xmldir) --path $(root)/src --path ../../../.. --stringparam source-dir ../../../../src --output summary.html summary.xsl summary.xml
+	xsltproc --path $(xmldir) --path $(root)/src --path ../../../.. --path . --stringparam source-dir ../../../../src --output summary.html summary.xsl summary.xml
 
 html: summary.html

@@ -12,7 +12,8 @@
   <xsl:import href="logo.xsl"/>
   <xsl:import href="scores.xsl"/>
 
-  <xsl:variable name="features" select="document('predictor-info.xml')/predictor-info/info"/>
+  <xsl:variable name="preds" select="document('predictor-info.xml')/predictor-info/info"/>
+  <xsl:variable name="features" select="document('features.xml')/featureinfos/info"/>
 
   <xsl:output method="html"/>
 
@@ -37,6 +38,7 @@
             <tbody>
               <xsl:apply-templates select="featureclaimed" mode="feature"/>
             </tbody> 
+            <xsl:call-template name="featurefooter" mode="feature"/>
           </table>
         </div>
       </body>
@@ -44,13 +46,19 @@
   </xsl:template>
 
   <xsl:template match="featureclaimed" mode="feature">
-    <xsl:variable name="feature" select="id(@idref)"/>
-    <xsl:variable name="index" select="$feature/@infoindex"/>
+    <xsl:variable name="index" select="@index"/>
+    <xsl:variable name="feature" select="$features[number($index)]"/>
+    <xsl:variable name="aspectindex" select="../@index"/>
+    <xsl:variable name="aspectentry" select="$feature/aspectprob[number($aspectindex)]"/>
     <tr>
       <th><xsl:value-of select="$index"/></th>
-      <td><xsl:value-of select="@probability"/></td>
-      <xsl:apply-templates select="$features[number($index)]" mode="static-cells"/> 
+      <xsl:apply-templates select="$aspectentry"/>
+      <xsl:apply-templates select="$preds[number($index)]" mode="static-cells"/>
     </tr>
+  </xsl:template>
+
+  <xsl:template match="aspectprob" mode="feature">
+    <td><xsl:value-of select="@prob"/></td>
   </xsl:template>
 
   <xsl:template name="featureheader" mode="feature">
@@ -63,6 +71,15 @@
         <th>File:Line</th>
       </tr>
     </thead>
+  </xsl:template>
+
+  <xsl:template name="featurefooter" mode="feature">
+    <tfoot>
+      <tr> 
+        <th>Totals</th>
+        <td><xsl:value-of select="@ratio"/></td>
+      </tr>
+    </tfoot>
   </xsl:template>
 
 </xsl:stylesheet>
