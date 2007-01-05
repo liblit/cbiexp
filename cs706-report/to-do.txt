@@ -48,11 +48,12 @@ Section 3.1 needs to better define what it means for a predicate to be
 true or false.  If I observe a predicate true once and false once in a
 single run, is that predicate considered true, false, or both for
 purposes of your three-valued logic?
+[+tchen]
 
 Section 3.3 is fairly technical and not easy to follow.  An example
 with concrete numbers might help here, but I'm not sure.  This may
 just be inherently tricky stuff.
-
+[+tchen]
 
 ------------------------------------------------------------------------
 --
@@ -67,7 +68,7 @@ they are nearly identical and therefore not especially interesting as
 a pair?  I would have thought that an interesting pair predicates
 would be ones with very little apparent connection in the PDG, but
 which nonetheless are tightly connected in how they predict failures.
-
+[+chen]
 
 ------------------------------------------------------------------------
 --
@@ -79,7 +80,7 @@ Section 5: I'm not sure that these are properly considered as
 of threat types very well.
 
 A third case study would be nice here, but is probably not essential.
-
+[-tchen]
 
 ------------------------------------------------------------------------
 --
@@ -101,6 +102,7 @@ downsampling gives numbers which are completely indistinguishable from
 online sampling.  And just getting a weird run of numbers from your
 random number generator is unlikely to show the same conjunction hump
 in six different applications.
+[-tchen]
 
 It's not clear in Section 6 whether you used a single variant of each
 Siemens application or are presenting averages across all variants of
