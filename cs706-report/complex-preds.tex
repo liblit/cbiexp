@@ -6,7 +6,7 @@ This section gives a precise definition of complex predicates and discusses the 
 
 A complex predicate $C$ is defined as $C = \phi(p_1, p_2, \ldots p_k)$ where $p_1, p_2, \ldots p_k$ are simple predicates and $\phi$ is a function that can be computed using only the logical operators $\wedge$ (``and'') and $\vee$ (``or'').  A negation operator is not required because any propositional formula can be written in conjunctive normal form (CNF) in which the negation appears only before the literals.  By design, the negation of every simple predicate $P$ is also a predicate.
 
-For a predicate $P$ and a run $R$, $R(P)$ = 1 if $P$ was observed to be true at least once during run $R$.  Similarly we could define $R(C)${\footnote{For sake of clarity, we use 1, 0 and $true, false$ interchangeably for the values of $R(C)$ and $R(P)$.}} as follows:
+For a predicate $P$ and a run $R$, $R(P)$ = 1 if $P$ was observed to be true at least once during run $R$.  Similarly we could define $R(C)${\footnote{For sake of clarity, we use 1, 0 and $\true$, $\false$, $\effort$ interchangeably for the values of $R(C)$ and $R(P)$.}} as follows:
 \begin{defn}
 \label{dfn1}
 For a complex predicate $C = \phi(p_1, p_2, \ldots p_k)$, $R(C)$ = 1 iff at some point during the execution of the program, $C$ was observed to be true.
@@ -34,7 +34,7 @@ In such a case, the value of a predicate $P$ is considered unknown.  For the ana
 
 Consider a complex predicate $C = p_1 \wedge p_2$.  If either $p_1$ or $p_2$ was observed $\false$ then $R(C) = \false$.  If both $p_1$ and $p_2$ were observed $\true$, then $C$ was observed to be true.  Otherwise, the value of $R(C)$ is $\unknown$.  This is shown using a three-valued truth table in ~\autoref{tab:and}.
 
-Similarly, for a complex predicate $D = p_1 \vee p_2$, if either $p_1$ or $p_2$ was observed $\true$ then $R(D) = true$.  If both $p_1$ and $p_2$ were observed $\false$, then $D$ was observed to be false.  Otherwise, the value of $R(D)$ is $\unknown$.  This is shown using a three-valued truth table in ~\autoref{tab:or}.
+Similarly, for a complex predicate $D = p_1 \vee p_2$, if either $p_1$ or $p_2$ was observed $\true$ then $R(D) = \true$.  If both $p_1$ and $p_2$ were observed $\false$, then $D$ was observed to be false.  Otherwise, the value of $R(D)$ is $\unknown$.  This is shown using a three-valued truth table in ~\autoref{tab:or}.
  
 \begin{table*}
 \caption{3-valued Truth Table for $C = p_1 \wedge p_2$}
