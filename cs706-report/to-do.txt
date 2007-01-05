@@ -21,12 +21,13 @@ empty, that basically means we're done!
 
 Notational inconsistency throughout the paper: P, P' versus p_1, p_2
 for predicates.
+[*Jake]
 
 Notational inconsistency throughout the paper: "P obs" versus "P
 observed" in mathematical formulae.  I prefer "observed" if it fits,
 but some formulae might just be too wide.  In either case, we must be
 consistent.
-
+[+Jake]
 
 ------------------------------------------------------------------------
 --
