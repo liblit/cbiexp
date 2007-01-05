@@ -19,7 +19,7 @@
 \begin{figure}
   \centering
   \includegraphics[width=\columnwidth]{charts/effort}
-  \caption{Variation of number of interesting predicates with $effort$}
+  \caption{Variation of number of interesting predicates with $\effort$}
   \label{fig-effort}
 \end{figure}
 
@@ -34,7 +34,7 @@
   \label{fig-sampling}
 \end{figure*}
 
-This section presents quantitative data about the ideas presented in previous sections.  This data was collected using the Siemens test suite~\cite{257766}.  There are two configurable parameters for the experiments: the rate of sampling and $effort$ (described in ~\autoref{sec-metrics}).  Unless specified, the default sampling rate is 1 (i.e. complete data collection) and the default $effort$ is 5\% (only predicates that are reachable from each other by exploring less than 5\% of the program are considered).
+This section presents quantitative data about the ideas presented in previous sections.  This data was collected using the Siemens test suite~\cite{257766}.  There are two configurable parameters for the experiments: the rate of sampling and $\effort$ (described in ~\autoref{sec-metrics}).  Unless specified, the default sampling rate is 1 (i.e. complete data collection) and the default $\effort$ is 5\% (only predicates that are reachable from each other by exploring less than 5\% of the program are considered).
 
 \subsection{Top Scoring Predicates}
 ~\autoref{fig-top-pred} plots the percentage of variants within each program for which a complex predicate had the highest score among all predicates.  The value is 100\% for \texttt{print\_tokens2, replace} and \texttt{schedule} and is close to 100\% for the other programs.  The results shown in ~\autoref{fig-top-pred} combined with the case studies in ~\autoref{sec-qual} demonstrates the usefulness of complex predicates.
@@ -42,8 +42,8 @@ This section presents quantitative data about the ideas presented in previous se
 \subsection{Improvement from Pruning}
 ~\autoref{fig-pruning} shows the percentage of complex predicates that are pruned by the optimizations discussed in ~\autoref{sec-pruning} and the metrics in ~\autoref{sec-metrics}.  For each program, the y-axis shows the contribution of the two kinds of pruning.  On average, the usefulness metrics prune 54\% of complex predicates and the optimizations in ~\autoref{sec-pruning} prune 15\% of complex predicates.  Only 31\% of the complex predicates are actually computed.
 
-\subsection{Effect of the $Effort$ Parameter}
-~\autoref{fig-effort} has one curve for each program showing how the number of interesting predicates (~\autoref{dfn3}) varies at four different values - 1, 2, 5, 10 for $effort$.  As expected, as $effort$ increases more predicates are evaluated and so more interesting predicates are found.  This experiment serves as a sanity check for the implementation.
+\subsection{Effect of the $\effort$ Parameter}
+~\autoref{fig-effort} has one curve for each program showing how the number of interesting predicates (~\autoref{dfn3}) varies at four different values - 1, 2, 5, 10 for $\effort$.  As expected, as $\effort$ increases more predicates are evaluated and so more interesting predicates are found.  This experiment serves as a sanity check for the implementation.
 
 \subsection{Effect of Sampling Rate}
 \label{sec-sampling}
@@ -51,6 +51,6 @@ The dependence between sampling rate and the number of interesting predicates (b
 
 A puzzling trend in ~\autoref{fig-sampling} is that the number of interesting conjunctions increases for a brief interval before dropping off.  This trend is consistent across all programs.  This can be due to two reasons:
 \begin{enumerate}
-\item Consider the $Increase$ score (Eqn ~\ref{eqn1}).  Sampling may be reducing the number of $observed$ runs in which a conjunction was true without affecting the $true$ runs.  This could happen because we do not collect sampled data directly but use scripts to downsample a data set collected with no sampling.  Because of binarization of counts, downsampling of a count from 100 to 99 does not affect the score whereas downsampling from 1 to 0 affects the score. 
+\item Consider the $\Increase$ score (Eqn ~\ref{eqn1}).  Sampling may be reducing the number of \emph{observed} runs in which a conjunction was true without affecting the \emph{true} runs.  This could happen because we do not collect sampled data directly but use scripts to downsample a data set collected with no sampling.  Because of binarization of counts, downsampling of a count from 100 to 99 does not affect the score whereas downsampling from 1 to 0 affects the score. 
 \item The script that does downsampling uses the standard pseudo random number generator.  Usually for experiments that use such random data, the values are averaged over multiple trials to get a confident estimate of the results.  We weren't able to conduct multiple trials because of time constraints.
 \end{enumerate}
