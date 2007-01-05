@@ -20,6 +20,7 @@ $(PDF): %.pdf: $(SRCS) $(BBL) $(FIGS:.eps=.pdf)
 $(BBL): %.bbl: $(SRCS) $(FIGS)
 	$(latex) $*
 	bibtex $*
+	rm $*.dvi
 
 $(DVI): %.dvi: $(SRCS) $(BBL) $(FIGS)
 	$(latex) $*
