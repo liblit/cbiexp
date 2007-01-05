@@ -72,11 +72,11 @@ Similarly, for a complex predicate $D = p_1 \vee p_2$, if either $p_1$ or $p_2$ 
 
 \subsection{Interesting Complex Predicate}
 
-Even after imposing many constraints, the number of complex predicates is still quadratic in the number of simple predicates.  A large number of complex predicates formed by this procedure are likely to be useless in the analysis of the program.  A complex predicate that has a lower score than its components is useless.  The component (simple) predicate with a higher score is a better predictor of failure, and so the complex predicate adds nothing to the analysis.
+Even after imposing many constraints, the number of complex predicates is still quadratic in the number of simple predicates.  A large number of complex predicates formed by this procedure are likely to be useless in the analysis of the program.  A complex predicate that has a lower score than one of its components is useless.  The component (simple) predicate with a higher score is a better predictor of failure, and so the complex predicate adds nothing to the analysis.
 
 \begin{defn}
 \label{dfn3}
-A complex predicate $C = \phi(p_1, p_2, \ldots p_k)$ is ``interesting'' iff $Importance(C) > Importance(p_i)$ for $i \in \{1, 2, \ldots k\}$
+A complex predicate $C = \phi(p_1, p_2, \ldots p_k)$ is ``interesting'' iff $Importance(C) > Importance(p_i)$ for all $i \in \{1, 2, \ldots k\}$
 \end{defn}
 
 In the case where the complex predicate has the same score as the component predictor with higher score, the simpler one is preferable.  Keeping only interesting combinations of predicates reduces the memory burden of storing them, and helps ensure the utility of a complex predicate that is presented to the user.  Definition ~\ref{dfn3} is for the general case and as explained earlier, we explore only the case where $k = 2$ and $\phi \in \{\vee, \wedge\}$.
