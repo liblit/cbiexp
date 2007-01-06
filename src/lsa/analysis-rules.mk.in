@@ -57,8 +57,31 @@ run: results.mat loglikelihood.txt html/rawsummary.xml
 
 summary.xml: rawsummary.xml
 	xsltproc --path $(xmldir) --output summary.xml idify.xsl rawsummary.xml
+CLEANFILES += summary.xml
 
 summary.html: summary.xml
-	xsltproc --path $(xmldir) --path $(root)/src --path ../../../.. --path . --stringparam source-dir ../../../../src --output summary.html summary.xsl summary.xml
+	xsltproc --path $(xmldir) --path ../../../.. --path . --stringparam source-dir ../../../../src --output summary.html summary.xsl summary.xml
+CLEANFILES += summary.html
+
+aspect%.xml : aspect%.xml.raw
+	xsltproc --path $(xmldir) --path . --output $@ accum.xsl $<
+
+aspect%.html : aspect%.xml
+	xsltproc --path $(xmldir) --path ../../../.. --path . --output $@ feature.xsl $<
+
+aspectsxml: $(basename $(wildcard aspect*.xml.raw))
+.PHONY: aspectsxml 
+
+aspectshtml: $(addsuffix .html, $(basename $(wildcard aspect*.xml)))
+.PHONY: aspectshtml
 
 html: summary.html
+	$(MAKE) aspectsxml
+	$(MAKE) aspectshtml
+.PHONY: html
+
+clean::
+	find . -name 'aspect*.xml.raw' -exec rm '{}' ';'
+	find . -name 'aspect*.xml' -exec rm '{}' ';'
+	rm -rf $(CLEANFILES)
+.PHONY: clean

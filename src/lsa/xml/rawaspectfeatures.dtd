@@ -1,0 +1,10 @@
+<!-- features organized for a particular aspect --> 
+<!ELEMENT aspectfeatures (aspect, feature*)>
+<!ATTLIST aspectfeatures xmlns CDATA #REQUIRED>
+
+<!ELEMENT aspect EMPTY>
+<!ATTLIST aspect index NMTOKEN #REQUIRED> 
+
+<!ELEMENT feature EMPTY>
+<!ATTLIST feature index NMTOKEN #REQUIRED>
+<!ATTLIST feature probability NMTOKEN #REQUIRED>

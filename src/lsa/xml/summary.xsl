@@ -12,6 +12,7 @@
 >
 
 <xsl:import href="logo.xsl"/>
+<xsl:import href="rawfeature.xsl"/>
 <xsl:import href="feature.xsl"/>
 
 <xsl:output method="html"/>
@@ -160,8 +161,14 @@
     <xsl:variable name="runslink">
       <xsl:text>./aspect</xsl:text><xsl:value-of select="@index"/><xsl:text>-runs.html</xsl:text>
     </xsl:variable>
+    <xsl:variable name="featuresprefix">
+      <xsl:text>./aspect</xsl:text><xsl:value-of select="@index"/><xsl:text>-features</xsl:text>
+    </xsl:variable>
     <xsl:variable name="featureslink">
-      <xsl:text>./aspect</xsl:text><xsl:value-of select="@index"/><xsl:text>-features.html</xsl:text>
+      <xsl:value-of select="$featuresprefix"/><xsl:text>.html</xsl:text>
+    </xsl:variable>
+    <xsl:variable name="featuresfile">
+      <xsl:value-of select="$featuresprefix"/><xsl:text>.xml.raw</xsl:text>
     </xsl:variable>
     <tr>
       <th><xsl:value-of select="@index"/></th>
@@ -170,8 +177,8 @@
       <td><xsl:value-of select="$failing"/></td>
       <td><a href="{$runslink}">&link;</a></td>
       <td><a href="{$featureslink}"><xsl:value-of select="@ratio"/></a></td>
-      <exsl:document href="{$featureslink}" method="html">
-        <xsl:call-template name="feature">
+      <exsl:document href="{$featuresfile}" method="xml">
+        <xsl:call-template name="rawfeature">
           <xsl:with-param name="num" select="@index"/>
         </xsl:call-template>
       </exsl:document>
