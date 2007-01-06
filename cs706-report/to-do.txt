@@ -18,6 +18,21 @@ empty, that basically means we're done!
 --
 --  overall
 
+All footnotes must (1) be grammatically complete sentences, (2) start
+with a capital letter, and (3) end with a period.  [*Ben]
+
+Many footnotes are placed so that the footnote marker number appears
+right after a mathematical formula.  The footnote marker number can
+easily be mistaken for mathematical exponent.  Rephrase, reposition,
+"inline" the footnote into the main body text ... whatever it takes to
+prevent footnote marker numbers from appearing adjacent to math.  (And
+besides, we have too many footnotes anyway.)  [*Ben]
+
+Bracketed citation numbers (such as "[2]") should be treated as
+grammatically invisible.  Text should still read correctly if all
+bracketed citations are removed.  [+Ben]
+
+
 ------------------------------------------------------------------------
 --
 --  Section 2
@@ -35,7 +50,7 @@ Bugs" and "Improved Precision and Recall".
 
 Section 3 overlooks the fact that a compound predicate might not even
 be well defined at any single program point, but that just further
-motivates the simplifications.
+motivates the simplifications.  [+Ben]
 
 Section 3.1 needs to better define what it means for a predicate to be
 true or false.  If I observe a predicate true once and false once in a
@@ -86,7 +101,7 @@ such as for Figure 2, to see if there's anything interesting going on.
 [-Ben] [+arumuga]
 
 Several of the figures need layout or color-selection work, especially
-for monochrome printing.  [-Ben]
+for monochrome printing.  [+Ben]
 
 However, I don't buy *either* explanation for the weird conjunction
 behavior.  Offline downsampling is supposed to be applied before
@@ -122,7 +137,7 @@ rush job and needs to be expanded.
 
 Section 8 concludes on a weak note.  We ought to be able to make this
 a bit sexier while still being honest about the technique's
-limitations.
+limitations. [+Ben]
 
 Regarding those limitations ... do you have further ideas in mind for
 pulling the interesting predictors out from the big (quadratic) pool
