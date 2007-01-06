@@ -4,36 +4,36 @@
 \label{sec-bground}
 CBI uses lightweight instrumentation to collect feedback reports that contain truth values of predicates in an execution as well as the outcome{\footnote{crash and non-crash or some other binary classification}} of the execution.  A large number of these reports are collected and analyzed using statistical debugging techniques.  The analysis described in~\cite{Liblit:2005:SSBI} computes a numeric score corresponding to each predicate.  The score is called $\Importance$ and is computed as follows:
 
-The truth values of a predicate $P$ from all the runs can be aggregated into four values:
+The truth values of a predicate $p$ from all the runs can be aggregated into four values:
 
 \begin{enumerate}
-\item $S$($P$ observed) and $F$($P$ observed), the number of successful and failed runs respectively, in which the value of $P$ was evaluated.
-\item $S$($P$) and $F$($P$), the number of successful and failed runs respectively, in which the value of $P$ was evaluated and was found to be true.
+\item $S$($p$ observed) and $F$($p$ observed), the number of successful and failed runs respectively, in which the value of $p$ was evaluated.
+\item $S$($p$) and $F$($p$), the number of successful and failed runs respectively, in which the value of $p$ was evaluated and was found to be true.
 \end{enumerate}
 
 Using these values, two scores of bug relevance are calculated.  They are:
 \begin{enumerate}
-\item $F$($P$).  A good predictor must predict a large number of failed runs.
-\item $\Increase(P)$, the amount by which $P$ being true increases the probability of failure over simply reaching the line where P is defined.  It is computed as follows:
+\item $F$($p$).  A good predictor must predict a large number of failed runs.
+\item $\Increase(p)$, the amount by which $p$ being true increases the probability of failure over simply reaching the line where p is defined.  It is computed as follows:
 
 \begin{equation}
 \label{eqn1}
-\Increase(P) \equiv
-\frac{F(P)}{S(P) + F(P)}
+\Increase(p) \equiv
+\frac{F(p)}{S(p) + F(p)}
 -
-\frac{F(\text{$P$ observed})}{S(\text{$P$ observed}) +
-  F(\text{$P$ observed})}
+\frac{F(\text{$p$ observed})}{S(\text{$p$ observed}) +
+  F(\text{$p$ observed})}
 \end{equation}
 \end{enumerate}
 
-Both of these scores are independent but good dimensions of a bug predictor.  These dimensions are combined into a single value by taking their harmonic mean.  Since $\Increase(P)$ is bounded by 1, the $F(P)$ component in $\Importance$ is normalized over the total number of failed runs $\NumF$ after a logarithmic transformation.  The overall metric is:
+Both of these scores are independent but good dimensions of a bug predictor.  These dimensions are combined into a single value by taking their harmonic mean.  Since $\Increase(p)$ is bounded by 1, the $F(p)$ component in $\Importance$ is normalized over the total number of failed runs $\NumF$ after a logarithmic transformation.  The overall metric is:
 \begin{equation}
 \label{eqn2}
-\Importance(P) \equiv
+\Importance(p) \equiv
 \frac{2}{
-  \frac{1}{\Increase(P)}
+  \frac{1}{\Increase(p)}
   +
-  \frac{1}{log(F(P)) / log(\NumF)}}
+  \frac{1}{log(F(p)) / log(\NumF)}}
 \end{equation}
 
 To eliminate different predicates that predict the same bug, only the top ranked predictor is presented to the user.  To handle the case where multiple bugs are present, all the failed runs in which the top predicate is true are eliminated and the remaining predicates are ranked by recomputing their scores in the remaining set of runs.  This process of eliminating runs continues until there are no remaining failed runs or no remaining predicates.
