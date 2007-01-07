@@ -49,26 +49,59 @@
     <div id="runs">
       <h3>Runs:</h3>
       <table>
+        <thead>
+          <th></th>
+          <th>Count</th>
+          <th>Mean Length</th>
+        </thead>
         <tbody>
-        <tr>
-          <th style="text-align:left">Total Runs:</th>
-          <td><xsl:value-of select="count($runs)"/></td>
-        </tr>
-        <tr>
-          <th style="text-align:left">Successes:</th>
-          <td><xsl:value-of select="count($runs[@outcome='success'])"/></td>
-        </tr>
-        <tr>
-          <th style="text-align:left">Failures:</th>
-          <td><xsl:value-of select="count($runs[@outcome='failure'])"/></td>
-        </tr>
-        <tr>
-          <th style="text-align:left">Discards:</th>
-          <td><xsl:value-of select="count($runs[@outcome='ignore'])"/></td>
-         </tr>
-         </tbody>
+          <tr>
+            <th style="text-align:left">Successes</th>
+            <xsl:call-template name="rungroup">
+              <xsl:with-param name="group" select="$runs[@outcome='success']"/>
+            </xsl:call-template>
+          </tr>
+          <tr>
+            <th style="text-align:left">Failures</th>
+            <xsl:call-template name="rungroup">
+              <xsl:with-param name="group" select="$runs[@outcome='failure']"/>
+            </xsl:call-template>
+          </tr>
+          <tr>
+            <th style="text-align:left">Discards</th>
+            <xsl:call-template name="rungroup">
+              <xsl:with-param name="group" select="$runs[@outcome='ignore']"/>
+            </xsl:call-template>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th style="text-align:left">Total</th>
+            <xsl:call-template name="rungroup">
+              <xsl:with-param name="group" select="$runs"/>
+            </xsl:call-template>
+          </tr>
+        </tfoot>
       </table>
     </div>
+  </xsl:template>
+
+  <xsl:template name="rungroup">
+    <xsl:param name="group"/>
+    <xsl:variable name="count" select="count($group)"/>
+    <td style="text-align:right"><xsl:value-of select="$count"/></td>
+    <xsl:variable name="total" select="sum($group/@totalcount)"/>
+    <xsl:variable name="mean">
+      <xsl:choose>
+        <xsl:when test="$total=0">
+          <xsl:value-of select="number(0)"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="round($total div $count)"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <td style="text-align:right"><xsl:value-of select="$mean"/></td>
   </xsl:template>
 
   <xsl:template name="features">

@@ -8,7 +8,7 @@ function summarize()
     fprintf(fid, '<!DOCTYPE plsa SYSTEM "rawsummary.dtd">\n'); 
     fprintf(fid, '<plsa>\n');
     printaspects(fid, Learn, Clusters, Pw_z);
-    printruns(fid, Learn, Findices, Sindices, UsageClusters, BugClusters);
+    printruns(fid, Learn, Findices, Sindices, UsageClusters, BugClusters,X);
     fprintf(fid, '</plsa>\n');
     fclose(fid);
     printfeatures(Pw_z);
@@ -53,7 +53,7 @@ function printaspectentrys(fid, probs, rank)
       fprintf(fid, '<aspectentry aspectindex=\"%u\" rank=\"%u\" probability=\"%0.4f\"/>\n', i, rank(i), probs(i));
     end;
 
-function printruns(fid, Learn, Findices, Sindices, UsageClusters, BugClusters) 
+function printruns(fid, Learn, Findices, Sindices, UsageClusters, BugClusters,X) 
     numruns = size(UsageClusters, 2);
     Fs(1, numruns) = 0;
     Fs(Findices) = 1;
@@ -67,7 +67,7 @@ function printruns(fid, Learn, Findices, Sindices, UsageClusters, BugClusters)
         else
             outcome='ignore'; 
         end;
-        fprintf(fid, '<run outcome=\"%s\">\n', outcome);
+        fprintf(fid, '<run outcome=\"%s\" totalcount=\"%u\">\n', outcome, sum(full(X(:,i)),1));
         usageaspect = find(UsageClusters(:,i));
         usageprob = UsageClusters(usageaspect,i);
         if not(isempty(usageaspect)) & usageprob > 0;

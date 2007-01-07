@@ -37,6 +37,7 @@
 <!ATTLIST run id ID #REQUIRED>
 <!ATTLIST run index NMTOKEN #REQUIRED>
 <!ATTLIST run outcome (success | failure | ignore) #REQUIRED>
+<!ATTLIST run totalcount NMTOKEN #REQUIRED>  
 
 <!-- a features infoindex is an index into a predictor-info structure --> 
 <!-- this index will give us the coordinates of the site, the scheme, etc. -->

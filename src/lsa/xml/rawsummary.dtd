@@ -33,3 +33,4 @@
 <!-- a failing run may, in some cases, have only a buggy aspect. --> 
 <!ELEMENT run (usageaspect?, buggyaspect?)> 
 <!ATTLIST run outcome (success | failure | ignore) #REQUIRED>
+<!ATTLIST run totalcount NMTOKEN #REQUIRED>  

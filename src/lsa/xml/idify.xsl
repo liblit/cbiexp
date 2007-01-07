@@ -48,6 +48,9 @@
       <xsl:attribute name="outcome">
         <xsl:value-of select="@outcome"/>
       </xsl:attribute>
+      <xsl:attribute name="totalcount">
+        <xsl:value-of select="@totalcount"/>
+      </xsl:attribute>
       <xsl:attribute name="index">
         <xsl:value-of select="position()"/>
       </xsl:attribute>
