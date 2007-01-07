@@ -20,7 +20,7 @@ For a complex predicate $C = \phi(p_1, p_2, \ldots p_k)$, $R(C) = \true$ iff $\p
 
 In other words, we assume that $R$ is distributive over $\phi$, effectively removing the requirement that all $p_i$ be observed simultaneously.  This can lead to false positives, because $R(C)$ may be computed to $\true$ when it is actually $\false$ at all moments in time.  False negatives, however, cannot arise.  The impact of this assumption on the score of $C$ may be either positive or negative depending on whether $R$ failed or succeeded.
 
-There are $2^{2^N}$ Boolean functions of $N$ predicates ~\cite{MathWorld:BoolFuncs}.  This is a prohibitively large number considering that there can be hundreds of simple predicates.  To reduce the complexity, we consider only functions of two predicates.  There are $2^{2^2}$ = 16 such functions and their arguments can be chosen from $N$ predicates in $N^2$ ways.  Out of the 16 Boolean functions of two variables, we consider only conjunction and disjunction since they are likely to be most easily understood by programmers.  Conjunction and disjunction are commutative, and the reflexive cases ($p_1 \wedge p_1$ and $p_1 \vee p_1$) are uninteresting.  Thus further reduces the search space to just ${N \choose 2} = \frac{N (N-1)}{2}$ binary conjunctions and an equal number of binary disjunctions.  (Other functions can be easily included in our implementation once their truth tables (discussed in \autoref{sec-tvl}) are derived correctly.)  All complex predicates under consideration may be evaluated for a set of $R$ runs in $O(R N^2)$ time.
+There are $2^{2^N}$ Boolean functions of $N$ predicates \cite{MathWorld:BoolFuncs}.  This is a prohibitively large number considering that there can be hundreds of simple predicates.  To reduce the complexity, we consider only functions of two predicates.  There are $2^{2^2}$ = 16 such functions and their arguments can be chosen from $N$ predicates in $N^2$ ways.  Out of the 16 Boolean functions of two variables, we consider only conjunction and disjunction since they are likely to be most easily understood by programmers.  Conjunction and disjunction are commutative, and the reflexive cases ($p_1 \wedge p_1$ and $p_1 \vee p_1$) are uninteresting.  Thus further reduces the search space to just ${N \choose 2} = \frac{N (N-1)}{2}$ binary conjunctions and an equal number of binary disjunctions.  (Other functions can be easily included in our implementation once their truth tables (discussed in \autoref{sec-tvl}) are derived correctly.)  All complex predicates under consideration may be evaluated for a set of $R$ runs in $O(R N^2)$ time.
 
 \subsection{Three valued logic}
 \label{sec-tvl}
@@ -36,39 +36,34 @@ Consider a complex predicate $C = p_1 \wedge p_2$.  If either $p_1$ or $p_2$ was
 
 Similarly, for a complex predicate $D = p_1 \vee p_2$, if either $p_1$ or $p_2$ was observed $\true$ then $R(D) = \true$.  If both $p_1$ and $p_2$ were observed $\false$, then $D$ was observed to be false.  Otherwise, the value of $R(D)$ is $\unknown$.  This is shown using a three-valued truth table in \autoref{tab:or}.
 
-\begin{table*}
-\caption{3-valued Truth Table for $C = p_1 \wedge p_2$}
-\label{tab:and}
-\centering
-\scriptsize
-
-\begin{tabular}{c|ccc}
-  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-  $p_1$$\backslash$$p_2$ & T & F & $?$ \\
-  \hline
-  T & T & F & ? \\
-  F & F & F & F \\
-  ? & ? & F & ? \\
-\end{tabular}
-\end{table*}
-
-
-\begin{table*}
-\caption{3-valued Truth Table for $D = p_1 \vee p_2$}
-\label{tab:or}
-\centering
-\scriptsize
-
+\begin{table}
+  \caption{3-valued Truth Table for $C = p_1 \wedge p_2$}
+  \label{tab:and}
   \centering
   \begin{tabular}{c|ccc}
-  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-  $p_1$$\backslash$$p_2$ & T & F & $?$ \\
-  \hline
-  T & T & T & T \\
-  F & T & F & ? \\
-  ? & T & ? & ? \\
-\end{tabular}
-\end{table*}
+    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+    $p_1 \diagdown p_2$ & T & F & ? \\
+    \hline
+    T & T & F & ? \\
+    F & F & F & F \\
+    ? & ? & F & ? \\
+  \end{tabular}
+\end{table}
+
+
+\begin{table}
+  \caption{3-valued Truth Table for $D = p_1 \vee p_2$}
+  \label{tab:or}
+  \centering
+  \begin{tabular}{c|ccc}
+    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+    $p_1 \diagdown p_2$ & T & F & ? \\
+    \hline
+    T & T & T & T \\
+    F & T & F & ? \\
+    ? & T & ? & ? \\
+  \end{tabular}
+\end{table}
 
 \subsection{Interesting Complex Predicate}
 

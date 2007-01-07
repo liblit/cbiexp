@@ -2,7 +2,7 @@
 
 \section{Background}
 \label{sec-bground}
-CBI uses lightweight instrumentation to collect feedback reports that contain truth values of predicates in an execution as well as the outcome (e.g., crash or non-crash) of the execution.  A large number of these reports are collected and analyzed using statistical debugging techniques.  The analysis described in~\cite{Liblit:2005:SSBI} computes a numeric score corresponding to each predicate.  The score is called $\Importance$ and is computed as follows:
+CBI uses lightweight instrumentation to collect feedback reports that contain truth values of predicates in an execution as well as the outcome (e.g., crash or non-crash) of the execution.  A large number of these reports are collected and analyzed using statistical debugging techniques.  Liblit et al. \cite{Liblit:2005:SSBI} compute a numeric $\Importance$ score corresponding to each predicate, define as follows.
 
 The truth values of a predicate $p$ from all the runs can be aggregated into four values:
 
@@ -29,7 +29,7 @@ Both of these scores are independent but good dimensions of a bug predictor.  Th
 \begin{equation}
 \label{eqn2}
 \Importance(p) \equiv
-\frac{2}{
+\frac{2}{%
   \frac{1}{\Increase(p)}
   +
   \frac{1}{log(F(p)) / log(\NumF)}}
@@ -66,4 +66,4 @@ A \emph{perfect bug predictor} is one that is true in all failed executions and 
 
 \paragraph{Enhanced Support of Automated Tools}
 
-Bug predictors identified by statistical debugging can be useful to humans directly, or can serve as input to other automated tools and analyses.  In the later case, it may be feasible to use even richer, more complex, or more numerous predictors that a human would find overwhelming if examined directly.  \textsc{BTrace}~\cite{Lal:2006:POPAD} is one such tool. \textsc{BTrace} finds the shortest control- and dataflow-feasible path in the program that visits a given set of bug predictors.  More predictors, and predictors drawn from a more expressive language, can better guide \textsc{BTrace}'s path exploration toward paths which accurately reflect the sequence of events leading to failure.
+Bug predictors identified by statistical debugging can be useful to humans directly, or can serve as input to other automated tools and analyses.  In the later case, it may be feasible to use even richer, more complex, or more numerous predictors that a human would find overwhelming if examined directly.  \textsc{BTrace} \cite{Lal:2006:POPAD} is one such tool. \textsc{BTrace} finds the shortest control- and dataflow-feasible path in the program that visits a given set of bug predictors.  More predictors, and predictors drawn from a more expressive language, can better guide \textsc{BTrace}'s path exploration toward paths which accurately reflect the sequence of events leading to failure.

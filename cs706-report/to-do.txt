@@ -18,10 +18,6 @@ empty, that basically means we're done!
 --
 --  overall
 
-Bracketed citation numbers (such as "[2]") should be treated as
-grammatically invisible.  Text should still read correctly if all
-bracketed citations are removed.  [+Ben]
-
 There may be some inconsistency about the use of "rate" or "sampling
 rate".  A sampling rate should always be a fraction between 0 and 1,
 such as 1/10 or 1/100.  The inverse of a sampling rate is a sampling

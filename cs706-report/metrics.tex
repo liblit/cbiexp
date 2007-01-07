@@ -4,14 +4,14 @@
 \label{sec-metrics}
 While complex predicates could help to better predict bugs, in the worst case, the upper bound on the number of interesting complex predicates is still quadratic in the number of simple predicates.  In our experiments, we often observe hundreds of complex predicates with similar or even identical high scores.  The overwhelming number of predicates makes it laborious for users to find a complex predicate with which they can start debugging.  In this section, we propose two metrics to reduce the number of complex predicates.
 
-The first metric models the debugging effort required from the programmer as a filtering metric.  We use the metric defined in ~\cite{1062522} for this purpose.  In this metric, the score of a predicate is the fraction of code that can be ignored while searching for the bug.  We use a similar metric called \emph{effort} for a complex predicate.
+The first metric models the debugging effort required from the programmer as a filtering metric.  We adapt the distance metric of Cleve and Zeller \cite{1062522} for this purpose.  In this metric, the score of a predicate is the fraction of code that can be ignored while searching for the bug.  We use a similar metric called \emph{effort} for a complex predicate.
 
 \begin{defn}
 \label{dfn4}
 The effort required by a programmer while using a complex predicate $C = \phi(p_1, p_2)$ is inversely proportional to the smaller fraction of code ignored in a breadth-first bidirectional search for $p_1$ from $p_2$ and vice-versa.
 \end{defn}
 
-The idea behind this metric is that the larger the distance between the two predicates, the greater the effort required.  Also, if a large number of other branches are seen during the search, the programmer should keep track of these dependencies too.  Like ~\cite{1062522}, we use the program dependence graph (PDG) to model the program rather than the source code. We perform a BFS starting from $p_1$ until $p_2$ is reached and count the total number of vertices visited during the search. The fraction of code covered is the ratio of the number of visited vertices to the total number of PDG vertices. 
+The idea behind this metric is that the larger the distance between the two predicates, the greater the effort required to understand their relationship.  Also, if a large number of other branches are seen during the search, the programmer should keep track of these dependencies too.  Per Cleve and Zeller \cite{1062522}, we use the program dependence graph (PDG) to model the program rather than the source code. We perform a BFS starting from $p_1$ until $p_2$ is reached and count the total number of vertices visited during the search. The fraction of code covered is the ratio of the number of visited vertices to the total number of PDG vertices. 
 
 The second metric is to consider the correlation between the two predicates.  Intuitively a complex predicate with two relatively independent predicates is less interesting because it doesn't provide much help to the users in finding anything new, besides the two individual predicates.  The correlation between two predicates is defined based on the program dependency graph.  Given a single predicate $p$, we define its \textit{predecessor set} as the set of vertices in the PDG that can influence $p$.
 
