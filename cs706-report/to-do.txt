@@ -44,10 +44,6 @@ Bugs" and "Improved Precision and Recall".
 --  Section 3
 --
 
-Section 3 overlooks the fact that a compound predicate might not even
-be well defined at any single program point, but that just further
-motivates the simplifications.  [*Ben]
-
 Section 3.1 needs to better define what it means for a predicate to be
 true or false.  If I observe a predicate true once and false once in a
 single run, is that predicate considered true, false, or both for
