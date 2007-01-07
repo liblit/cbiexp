@@ -99,8 +99,5 @@ void gen_complex() {
     result.sort();
     result.reverse();
     xml_conj_view(result, "complex_hl_none.xml");
-    
-    cout << "Number of interesting complex predicates: " << result.size() << endl;
-    cout << "(Max possible: " << candidates.size() * candidates.size() << ")\n";
 }
 

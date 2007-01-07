@@ -102,29 +102,30 @@ operator<<(std::ostream &out, const Complex &c)
 }
 
 
-// These members are not members of class Complex
+// These methods are not members of class Complex
 map<int, set<int> > pairs;
+unsigned afterCSURF = 0;
 bool atleast_one = false;
 
 void read_pairs() {
   ifstream in("pairs.txt");
   int a, b;
   
-  int tmp = 0;
   while(!in.eof()) {
     in >> a >> b;
     
     if(in.eof())
       break;
     pairs[a].insert(b);
-    tmp ++;
+    afterCSURF ++;
     atleast_one = true;
   }
   in.close();
 }
 
-// Read the static site information
 bool isValidPair(int p1, int p2) {
+  // If we haven't used csurf
+  // Assuming that there will be atleast one pair after CSURF pruning
   if(!atleast_one)
     return true;
 
@@ -149,6 +150,9 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   unsigned prunedC = 0, computedC = 0, interestingC = 0;
   unsigned prunedD = 0, computedD = 0, interestingD = 0;
   
+  if(afterCSURF == 0)
+    afterCSURF = total;
+
   if(limit == 0) {
     return result;
   }
@@ -216,7 +220,10 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   printf("COMBINE:: :( Had to compute %u %u complex predicates\n", computedC, computedD);
   
   if ( fout != NULL ) {
-    fprintf(fout, "%u\n", total); // Total possible complex predicates
+    // sanity check
+    assert(afterCSURF == prunedC + computedC + prunedD + computedD);
+
+    fprintf(fout, "%u %u\n", total, afterCSURF); // Total possible complex predicates
     fprintf(fout, "%u %u %u\n", prunedC, computedC, interestingC);
     fprintf(fout, "%u %u %u\n", prunedD, computedD, interestingD);
     
