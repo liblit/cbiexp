@@ -7,13 +7,13 @@ CBI uses lightweight instrumentation to collect feedback reports that contain tr
 The truth values of a predicate $p$ from all the runs can be aggregated into four values:
 
 \begin{enumerate}
-\item $S$($p$ observed) and $F$($p$ observed), the number of successful and failed runs respectively, in which the value of $p$ was evaluated.
-\item $S$($p$) and $F$($p$), the number of successful and failed runs respectively, in which the value of $p$ was evaluated and was found to be true.
+\item $\obs{S}{p}$ and $\obs{F}{p}$, the number of successful and failed runs respectively, in which the value of $p$ was evaluated.
+\item $S(p)$ and $F(p)$, the number of successful and failed runs respectively, in which the value of $p$ was evaluated and was found to be true.
 \end{enumerate}
 
 Using these values, two scores of bug relevance are calculated.  They are:
 \begin{enumerate}
-\item $F$($p$).  A good predictor must predict a large number of failed runs.
+\item $F(p)$.  A good predictor must predict a large number of failed runs.
 \item $\Increase(p)$, the amount by which $p$ being true increases the probability of failure over simply reaching the line where p is defined.  It is computed as follows:
 \end{enumerate}
 
@@ -22,8 +22,7 @@ Using these values, two scores of bug relevance are calculated.  They are:
 \Increase(p) \equiv
 \frac{F(p)}{S(p) + F(p)}
 -
-\frac{F(\text{$p$ observed})}{S(\text{$p$ observed}) +
-  F(\text{$p$ observed})}
+\frac{\obs{F}{p}}{\obs{S}{p} + \obs{F}{p}}
 \end{equation}
 
 Both of these scores are independent but good dimensions of a bug predictor.  These dimensions are combined into a single value by taking their harmonic mean.  Since $\Increase(p)$ is bounded by 1, the $F(p)$ component in $\Importance$ is normalized over the total number of failed runs $\NumF$ after a logarithmic transformation.  The overall metric is:

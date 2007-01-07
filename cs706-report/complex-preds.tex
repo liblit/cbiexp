@@ -90,11 +90,11 @@ In this context, the disjunction $D = p_1 \vee p_2$ can be considered as the uni
 \begin{eqnarray*}
   F(D)' &=&  F(p_1) + F(p_2) \\
   S(D)' &=&  \max(S(p_1),S(p_2)) \\
-  F(D\;observed)' &=& 0 \\
-  S(D\;observed)' &=& S(D)'
+  \obs{F}{D}' &=& 0 \\
+  \obs{S}{D}' &=& S(D)'
 \end{eqnarray*}
 
-The second term in $\Increase$ (\autoref{eqn1}) can only reduce the result, and so it is ignored in calculating an upper bound.  For completeness, $S$($D$ observed)$'$ is assigned the same value as $S(D)'$ even though it does not affect $\Increase(D)$.  The $F(D)$ component of $\Importance$ is maximized while maximizing $\Increase$.  Thus the $\Importance$ score calculated with the above values is an upper bound on the score of the disjunction of $p_1$ and $p_2$.
+The second term in $\Increase$ (\autoref{eqn1}) can only reduce the result, and so it is ignored in calculating an upper bound.  For completeness, $\obs{S}{D}'$ is assigned the same value as $S(D)'$ even though it does not affect $\Increase(D)$.  The $F(D)$ component of $\Importance$ is maximized while maximizing $\Increase$.  Thus the $\Importance$ score calculated with the above values is an upper bound on the score of the disjunction of $p_1$ and $p_2$.
 
 The conjunction $C = p_1 \wedge p_2$ can be regarded as the intersection of the set of runs where $p_1$ was $\true$ and the set where $p_2$ was $\true$.  Maximizing $F(C)$ requires that one of the intersecting sets is a subset of the other, making the size of the intersection the size of the smaller set.  A minimal $S(C)$ is found when the component sets are non overlapping; the intersection of two such sets is empty.
 
@@ -105,18 +105,18 @@ The conjunction $C = p_1 \wedge p_2$ can be regarded as the intersection of the 
 
 If the second term in $\Increase$ is ignored, as with disjunctions, the upper bound of a conjoined predicate's $\Increase$ score is 1.  This is the maximum $\Increase$ possible, reducing the likelihood of a conjoined predicate being pruned to almost zero.  The second term is therefore used for conjunctions to drop the upper bound to a more useful level.
 
-$F(C$ observed) is minimized by assuming that $C$ was \textit{observed} only in the (failed) runs where it was true.  Maximizing $S(C$ observed) is more difficult.  Recall that a conjunction can be considered \textit{observed} if either component is \textit{observed false}, or both are \textit{observed true}.  The combination of successful runs where a predicate is \textit{observed false} (union) is maximized if the sets are non overlapping, while the combination where they are \textit{observed true} (intersection) is maximized if one is a subset of the other.  By assuming both cases meet that criteria $S(C$ observed) can be maximized.  Its value is the sum of successful runs where $p_1$ was \textit{observed} and those where $p_2$ was \textit{observed false}, formed as the difference between $S(p_2$  Observed) and $S(p_2)$.  \autoref{maxsuccess} depicts the above scenario: notice that the sets $S(\neg p_1)$ and $S(\neg p_2)$ are disjoint and $s(p_1)$ is a subset of $s(p_2)$.  Since the result may differ depending on which predicate is chosen as $p_1$ the larger result is used.
+$\obs{F}{C}$ is minimized by assuming that $C$ was \textit{observed} only in the (failed) runs where it was true.  Maximizing $\obs{S}{C}$ is more difficult.  Recall that a conjunction can be considered \textit{observed} if either component is \textit{observed false}, or both are \textit{observed true}.  The combination of successful runs where a predicate is \textit{observed false} (union) is maximized if the sets are non overlapping, while the combination where they are \textit{observed true} (intersection) is maximized if one is a subset of the other.  By assuming both cases meet that criteria $\obs{S}{C}$ can be maximized.  Its value is the sum of successful runs where $p_1$ was \textit{observed} and those where $p_2$ was \textit{observed false}, formed as the difference between $\obs{S}{p_2}$ and $S(p_2)$.  \autoref{maxsuccess} depicts the above scenario: notice that the sets $S(\neg p_1)$ and $S(\neg p_2)$ are disjoint and $s(p_1)$ is a subset of $s(p_2)$.  Since the result may differ depending on which predicate is chosen as $p_1$ the larger result is used.
 \begin{eqnarray*}
-  F(C\;observed)' &=& F(C)' \\
-  S(C\;observed)' &=&
-  \max(S(p_1\;observed)+S(p_2\;observed)-S(p_2),\\
-  & &\ \ \ \ S(p_2\;observed)+S(p_1\;observed)-S(p_1))
+  \obs{F}{C}' &=& F(C)' \\
+  \obs{S}{C}' &=&
+  \max(\obs{S}{p_1} + \obs{S}{p_2} - S(p_2),\\
+  & &\ \ \ \ \obs{S}{p_2} + \obs{S}{p_1} - S(p_1))
 \end{eqnarray*}
 
 \begin{figure}[h]
   \centering
   \includegraphics[scale = 0.6]{charts/maxsuccess}
-  \caption{Maximizing S(C observed)}
+  \caption{Maximizing \obs{S}{C}}
   \label{maxsuccess}
 \end{figure}
 
