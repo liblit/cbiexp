@@ -15,6 +15,7 @@ Using these values, two scores of bug relevance are calculated.  They are:
 \begin{enumerate}
 \item $F$($p$).  A good predictor must predict a large number of failed runs.
 \item $\Increase(p)$, the amount by which $p$ being true increases the probability of failure over simply reaching the line where p is defined.  It is computed as follows:
+\end{enumerate}
 
 \begin{equation}
 \label{eqn1}
@@ -24,7 +25,6 @@ Using these values, two scores of bug relevance are calculated.  They are:
 \frac{F(\text{$p$ observed})}{S(\text{$p$ observed}) +
   F(\text{$p$ observed})}
 \end{equation}
-\end{enumerate}
 
 Both of these scores are independent but good dimensions of a bug predictor.  These dimensions are combined into a single value by taking their harmonic mean.  Since $\Increase(p)$ is bounded by 1, the $F(p)$ component in $\Importance$ is normalized over the total number of failed runs $\NumF$ after a logarithmic transformation.  The overall metric is:
 \begin{equation}
