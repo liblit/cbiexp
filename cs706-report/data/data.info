@@ -1,0 +1,37 @@
+Date: Fri, 5 Jan 2007 09:02:21 -0600 (CST)
+Subject: Re: [svn: cbiexp] r1478 - in branches/conjunctions/cs706-report: . 
+     data
+From: arumuga@cs.wisc.edu
+To: liblit@cs.wisc.edu
+Cc: rosin@cs.wisc.edu, tchen@cs.wisc.edu, arumuga@cs.wisc.edu
+
+Oh.. I forgot to mention the format of data.txt.  The columns headings are
+not very informative...
+
+Parameters: Application Version SamplingRate Effort
+
+Total: Total complex predicates possible - (n^2 - n) where n is number of
+interesting predicates
+Skipped: No. of complex preds. removed by pruning
+Computed: No. of complex preds. not removed by pruning
+Interesting: No. of computed complex preds. that are interesting
+
+(As I said, this file belongs to the pre-presentation era.. It has the
+data used for all but the sampling charts.. the new analysis produces the
+above info for conj.s and disj.s separately... And this data was generated
+by a script that aggregates condor job results... It is very much
+customized to my root and has a lot of hard-wired paths.. I don't think
+anybody can use it without much effort.. I will commit it later)
+
+Top, Bottom: Scores of first and 1000-th complex predicate
+PredTop: Score of top simple predicate
+Complex_Perf: Number of perfect complex predicates
+Simple_Perf: Number of perfect simple predicates
+Preds: `wc -l preds.txt`
+
+
+Complex: Type of top predicate of corrective ranking with complex preds...
+simple, conj, disj = 0, 1, 2
+PerfComplex: Was that perfect?
+Base: corrective ranking without complex-preds... always simple
+PerfBase: Was that perfect?
