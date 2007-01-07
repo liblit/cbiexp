@@ -18,19 +18,15 @@ empty, that basically means we're done!
 --
 --  overall
 
-All footnotes must (1) be grammatically complete sentences, (2) start
-with a capital letter, and (3) end with a period.  [*Ben]
-
-Many footnotes are placed so that the footnote marker number appears
-right after a mathematical formula.  The footnote marker number can
-easily be mistaken for mathematical exponent.  Rephrase, reposition,
-"inline" the footnote into the main body text ... whatever it takes to
-prevent footnote marker numbers from appearing adjacent to math.  (And
-besides, we have too many footnotes anyway.)  [*Ben]
-
 Bracketed citation numbers (such as "[2]") should be treated as
 grammatically invisible.  Text should still read correctly if all
 bracketed citations are removed.  [+Ben]
+
+There may be some inconsistency about the use of "rate" or "sampling
+rate".  A sampling rate should always be a fraction between 0 and 1,
+such as 1/10 or 1/100.  The inverse of a sampling rate is a sampling
+density, such as 10 or 100.  Higher sampling density is equivalent to
+lower sampling rate.
 
 
 ------------------------------------------------------------------------
@@ -50,7 +46,7 @@ Bugs" and "Improved Precision and Recall".
 
 Section 3 overlooks the fact that a compound predicate might not even
 be well defined at any single program point, but that just further
-motivates the simplifications.  [+Ben]
+motivates the simplifications.  [*Ben]
 
 Section 3.1 needs to better define what it means for a predicate to be
 true or false.  If I observe a predicate true once and false once in a
@@ -99,6 +95,12 @@ Section 6 presents some results with conjunctions and disjunctions
 broken out, but not all.  I'd like to see that done with the rest,
 such as for Figure 2, to see if there's anything interesting going on.
 [-Ben] [+arumuga]
+
+The first paragraph of Section 6.4 [Effect of Sampling Rate] claims
+that the number of interesting conjunctions is comparable to the
+number of interesting simple predicates even at 1/1000 sampling.  Is
+that really true?  You can't tell by squinting at the plots, and I
+cannot find these raw numbers anywhere in the "data/*.txt" files.
 
 Several of the figures need layout or color-selection work, especially
 for monochrome printing.  [+Ben]

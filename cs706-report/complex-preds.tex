@@ -6,19 +6,19 @@ This section gives a precise definition of complex predicates and discusses the 
 
 A complex predicate $C$ is defined as $C = \phi(p_1, p_2, \ldots p_k)$ where $p_1, p_2, \ldots p_k$ are simple predicates and $\phi$ is a function that can be computed using only the logical operators $\wedge$ (``and'') and $\vee$ (``or'').  A negation operator is not required because any propositional formula can be written in conjunctive normal form (CNF) in which the negation appears only before the literals.  By design, the negation of every simple predicate $p$ is also a predicate.
 
-For a predicate $p$ and a run $R$, $R(p)$ = 1 if $p$ was observed to be true at least once during run $R$.  Similarly we could define $R(C)${\footnote{For sake of clarity, we use 1, 0 and $\true$, $\false$, $\effort$ interchangeably for the values of $R(C)$ and $R(P)$.}} as follows:
+For a predicate $p$ and a run $R$, $R(p) = \true$ if and only if $p$ was observed to be true at least once during run $R$.  Similarly we could define $R(C)$ as follows:
 \begin{defn}
 \label{dfn1}
-For a complex predicate $C = \phi(p_1, p_2, \ldots p_k)$, $R(C)$ = 1 iff at some point during the execution of the program, $C$ was observed to be true.
+For a complex predicate $C = \phi(p_1, p_2, \ldots p_k)$, $R(C) \equiv \true$ iff at some point during the execution of the program, $C$ was observed to be true.
 \end{defn}
 
-The difficulty with this notion of complex predicates is that $C$ must be explicitly monitored during the program execution.  For example, if $C_1 = p_1 \wedge p_2$ then $R(p_1)$ = 1 and $R(p_2)$ = 1 does not imply that $R(C)$ = 1.  $p_1$ and $p_2$ may be true at different stages of execution but never true at the same time.  However, as discussed earlier, explicitly monitoring $C$ requires significant changes to existing infrastructure.  In order to be able to estimate the value of $C$ from its components, we adapt a less precise definition as follows:
+The difficulty with this notion of complex predicates is that $C$ must be explicitly monitored during the program execution.  For example, if $C_1 = p_1 \wedge p_2$ then $R(p_1) = \true$ and $R(p_2) = \true$ does not imply that $R(C) = \true$.  $p_1$ and $p_2$ may be true at different stages of execution but never true at the same time.  However, as discussed earlier, explicitly monitoring $C$ requires significant changes to existing infrastructure.  In order to be able to estimate the value of $C$ from its components, we adapt a less precise definition as follows:
 \begin{defn}
 \label{dfn2}
-For a complex predicate $C = \phi(p_1, p_2, \ldots p_k)$, $R(C)$ = 1 iff $\phi(R(p_1), R(p_2), \ldots R(p_k)) = \true$
+For a complex predicate $C = \phi(p_1, p_2, \ldots p_k)$, $R(C) = \true$ iff $\phi(R(p_1), R(p_2), \ldots R(p_k)) = \true$
 \end{defn}
 
-In other words, we assume that $R$ is distributive over $\phi$.  This can lead to false positives, because $R(C)$ may be computed to 1 when it is actually 0, but no false negatives.  The impact of this assumption on the score of $C$ may be either positive or negative depending on whether $R$ failed or succeeded.
+In other words, we assume that $R$ is distributive over $\phi$.  This can lead to false positives, because $R(C)$ may be computed to $\true$ when it is actually $\false$, but no false negatives.  The impact of this assumption on the score of $C$ may be either positive or negative depending on whether $R$ failed or succeeded.
 
 There are $2^{2^N}$ boolean functions of $N$ predicates ~\cite{MathWorld:BoolFuncs}.  This is a prohibitively large number considering that there can be hundreds of simple predicates.  To reduce the complexity, we consider only functions of two predicates.  There are $2^{2^2}$ = 16 such functions and their arguments can be chosen from $N$ predicates in $C^N_2 = \frac{N(N-1)}{2}$ ways.  Out of the 16 boolean functions of two variables, we consider only conjunction and disjunction since other functions are more complex and cannot be used effectively by the programmer.  Other functions can be easily included in our implementation once their truth tables (discussed in ~\autoref{sec-tvl}) are derived correctly.  To summarize, we evaluate only $2 \times C^N_2 = N(N-1)$ complex predicates.  If $R$ is the set of runs being analyzed then the time complexity required to build complex predicates is $|R|N(N-1) = O(|R|N^2)$
 
@@ -35,13 +35,13 @@ In such a case, the value of a predicate $p$ is considered unknown.  For the ana
 Consider a complex predicate $C = p_1 \wedge p_2$.  If either $p_1$ or $p_2$ was observed $\false$ then $R(C) = \false$.  If both $p_1$ and $p_2$ were observed $\true$, then $C$ was observed to be true.  Otherwise, the value of $R(C)$ is $\unknown$.  This is shown using a three-valued truth table in ~\autoref{tab:and}.
 
 Similarly, for a complex predicate $D = p_1 \vee p_2$, if either $p_1$ or $p_2$ was observed $\true$ then $R(D) = \true$.  If both $p_1$ and $p_2$ were observed $\false$, then $D$ was observed to be false.  Otherwise, the value of $R(D)$ is $\unknown$.  This is shown using a three-valued truth table in ~\autoref{tab:or}.
- 
+
 \begin{table*}
 \caption{3-valued Truth Table for $C = p_1 \wedge p_2$}
 \label{tab:and}
 \centering
 \scriptsize
-  
+
 \begin{tabular}{c|ccc}
   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
   $p_1$$\backslash$$p_2$ & T & F & $?$ \\
@@ -58,7 +58,7 @@ Similarly, for a complex predicate $D = p_1 \vee p_2$, if either $p_1$ or $p_2$ 
 \label{tab:or}
 \centering
 \scriptsize
-  
+
   \centering
   \begin{tabular}{c|ccc}
   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
@@ -115,7 +115,7 @@ $F(C$ observed) is minimized by assuming that $C$ was \textit{observed} only in 
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale = 0.6]{charts/maxsuccess}  
+  \includegraphics[scale = 0.6]{charts/maxsuccess}
   \caption{Maximizing S(C observed)}
   \label{maxsuccess}
 \end{figure}

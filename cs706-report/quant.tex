@@ -4,7 +4,7 @@
 \label{sec-quant}
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{charts/top-pred}  
+  \includegraphics[width=\columnwidth]{charts/top-pred}
   \caption{Complex predicates having the highest score}
   \label{fig-top-pred}
 \end{figure}
@@ -42,15 +42,15 @@ This section presents quantitative data about the ideas presented in previous se
 \subsection{Improvement from Pruning}
 ~\autoref{fig-pruning} shows the percentage of complex predicates that are pruned by the optimizations discussed in ~\autoref{sec-pruning} and the metrics in ~\autoref{sec-metrics}.  For each program, the y-axis shows the contribution of the two kinds of pruning.  On average, the usefulness metrics prune 54\% of complex predicates and the optimizations in ~\autoref{sec-pruning} prune 15\% of complex predicates.  Only 31\% of the complex predicates are actually computed.
 
-\subsection{Effect of the $\effort$ Parameter}
+\subsection{Effect of Effort}
 ~\autoref{fig-effort} has one curve for each program showing how the number of interesting predicates (~\autoref{dfn3}) varies at four different values - 1, 2, 5, 10 for $\effort$.  As expected, as $\effort$ increases more predicates are evaluated and so more interesting predicates are found.  This experiment serves as a sanity check for the implementation.
 
 \subsection{Effect of Sampling Rate}
 \label{sec-sampling}
-The dependence between sampling rate and the number of interesting predicates (both complex and simple) is plotted in ~\autoref{fig-sampling}.  ~\autoref{fig-sampling} has one chart per program with sampling rates in the $x-$axis and the average number of interesting conjunctions, disjunctions and simple predicates in the $y-$axis.  The number of interesting disjunctions is always very low (order of tens) compared to interesting conjunctions.  So the plot for interesting complex predicates closely follows the plot for conjunctions.  At sampling rates higher than 10, there is a sharp drop in the number of interesting conjunctions.  This is because with a sampling rate of $N$, the chance of observing a complex predicate is close to $\frac{1}{N^2}$ {\footnote{it is not exactly $\frac{1}{N^2}$ because of short circuiting boolean operations}}.  Despite the sharp drop, the number of interesting conjunctions is still comparable to the number of interesting simple predicates.  This shows that sparse random sampling is not a significant detriment in finding interesting complex predicates.
+The dependence between sampling rate and the number of interesting predicates (both complex and simple) is plotted in ~\autoref{fig-sampling}.  ~\autoref{fig-sampling} has one chart per program with sampling rates in the $x-$axis and the average number of interesting conjunctions, disjunctions and simple predicates in the $y-$axis.  The number of interesting disjunctions is always very low (order of tens) compared to interesting conjunctions.  So the plot for interesting complex predicates closely follows the plot for conjunctions.  At sampling rates lower than \nicefrac{1}{10}, there is a sharp drop in the number of interesting conjunctions.  This is because the chance of observing both components of a conjunction within a single run falls with the square of the sampling rate.  Despite the sharp drop, the number of interesting conjunctions is still comparable to the number of interesting simple predicates even at \nicefrac{1}{1000} sampling.  This shows interesting complex predicates can still be found at sparse but realistic sampling rates.
 
 A puzzling trend in ~\autoref{fig-sampling} is that the number of interesting conjunctions increases for a brief interval before dropping off.  This trend is consistent across all programs.  This can be due to two reasons:
 \begin{enumerate}
-\item Consider the $\Increase$ score (Eqn ~\ref{eqn1}).  Sampling may be reducing the number of \emph{observed} runs in which a conjunction was true without affecting the \emph{true} runs.  This could happen because we do not collect sampled data directly but use scripts to downsample a data set collected with no sampling.  Because of binarization of counts, downsampling of a count from 100 to 99 does not affect the score whereas downsampling from 1 to 0 affects the score. 
+\item Consider the $\Increase$ score (Eqn ~\ref{eqn1}).  Sampling may be reducing the number of \emph{observed} runs in which a conjunction was true without affecting the \emph{true} runs.  This could happen because we do not collect sampled data directly but use scripts to downsample a data set collected with no sampling.  Because of binarization of counts, downsampling of a count from 100 to 99 does not affect the score whereas downsampling from 1 to 0 affects the score.
 \item The script that does downsampling uses the standard pseudo random number generator.  Usually for experiments that use such random data, the values are averaged over multiple trials to get a confident estimate of the results.  We weren't able to conduct multiple trials because of time constraints.
 \end{enumerate}
