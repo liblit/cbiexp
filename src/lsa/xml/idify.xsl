@@ -42,7 +42,7 @@
       <xsl:attribute name="index">
         <xsl:value-of select="position()"/>
       </xsl:attribute>
-      <xsl:apply-templates select="@outcome | @totalcount"/>
+      <xsl:apply-templates select="@outcome | @totalcount | node()"/>
     </xsl:copy>
   </xsl:template>
 
