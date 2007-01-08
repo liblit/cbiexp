@@ -221,7 +221,8 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   
   if ( fout != NULL ) {
     // sanity check
-    assert(afterCSURF == prunedC + computedC + prunedD + computedD);
+    // Actually, this assertion is false in the second and future iterations of corrective-ranking
+    // assert(afterCSURF == prunedC + computedC + prunedD + computedD);
 
     fprintf(fout, "%u %u\n", total, total - afterCSURF); // Total possible complex predicates
     fprintf(fout, "%u %u %u\n", prunedC, computedC, interestingC);
