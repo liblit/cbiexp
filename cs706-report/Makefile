@@ -4,35 +4,44 @@ PS        = $(MAIN).ps
 PDF       = $(MAIN).pdf
 DVI       = $(MAIN).dvi
 BBL       = $(MAIN).bbl
-FIGS      = $(wildcard charts/*.eps)
+
+siemens := print_tokens2 replace schedule schedule2 tcas tot_info
+pycharts := effort top-pred
+others := maxsuccess pruning
+figs := $(siemens) $(pycharts) $(others)
+epss := $(figs:%=charts/%.eps)
+pdfs := $(figs:%=charts/%.pdf)
 
 latex := latex -interaction=batchmode -file-line-error
 pdflatex := pdf$(latex)
 
 all: $(PDF) $(PS)
 
-$(PDF): %.pdf: $(SRCS) $(BBL) $(FIGS:.eps=.pdf)
+$(PDF): %.pdf: $(SRCS) $(BBL) $(pdfs)
 	$(pdflatex) $*
 	$(pdflatex) $*
 	thumbpdf $*
 	$(pdflatex) $*
 
-$(BBL): %.bbl: $(SRCS) $(FIGS)
+$(BBL): %.bbl: $(SRCS) $(epss)
 	$(latex) $*
 	bibtex $*
 	rm $*.dvi
 
-$(DVI): %.dvi: $(SRCS) $(BBL) $(FIGS)
+$(DVI): %.dvi: $(SRCS) $(BBL) $(epss)
 	$(latex) $*
 	$(latex) $*
 
-$(PS): %.ps: %.dvi $(FIGS)
+$(PS): %.ps: %.dvi $(epss)
 	dvips -o $@ -P generic $<
 
-$(FIGS:.eps=.pdf): %.pdf: %.eps
+%.pdf: %.eps
 	epstopdf --outfile=$@ $<
 
+$(pycharts:%=charts/%.eps): charts/%.eps: charts/%.py charts/common.py data/data.txt
+	$< $@
+
 clean:
-	rm -f $(PS) $(PDF) $(DVI) $(BBL)
+	rm -f $(PS) $(PDF) $(DVI) $(BBL) $(pdfs) $(pycharts:%=charts/%.eps)
 
 .DELETE_ON_ERROR:
