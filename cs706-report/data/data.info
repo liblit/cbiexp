@@ -11,7 +11,7 @@ not very informative...
 Parameters: Application Version SamplingRate Effort
 
 Total: Total complex predicates possible - (n^2 - n) where n is number of
-interesting predicates
+interesting simple predicates i.e. those found in preds.txt
 Skipped: No. of complex preds. removed by pruning
 Computed: No. of complex preds. not removed by pruning
 Interesting: No. of computed complex preds. that are interesting
