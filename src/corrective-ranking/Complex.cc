@@ -117,7 +117,7 @@ void read_pairs() {
     if(in.eof())
       break;
     pairs[a].insert(b);
-    afterCSURF ++;
+    afterCSURF += 2;
     atleast_one = true;
   }
   in.close();
@@ -223,7 +223,7 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
     // sanity check
     assert(afterCSURF == prunedC + computedC + prunedD + computedD);
 
-    fprintf(fout, "%u %u\n", total, afterCSURF); // Total possible complex predicates
+    fprintf(fout, "%u %u\n", total, total - afterCSURF); // Total possible complex predicates
     fprintf(fout, "%u %u %u\n", prunedC, computedC, interestingC);
     fprintf(fout, "%u %u %u\n", prunedD, computedD, interestingD);
     
