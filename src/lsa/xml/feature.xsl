@@ -22,7 +22,20 @@
   </xsl:template>
 
   <xsl:template match="cbi:aspectfeatures">
-    <xsl:variable name="title">Aspect <xsl:value-of select="cbi:aspect/@index"/> Features</xsl:variable>
+    <xsl:variable name="kind">
+      <xsl:choose> 
+        <xsl:when test="cbi:aspect/@kind = 'usage'">
+          <xsl:text>Usage</xsl:text>
+        </xsl:when>
+        <xsl:when test="cbi:aspect/@kind = 'bug'">
+          <xsl:text>Bug</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:message terminate="yes">Unrecognized kind of aspect.</xsl:message>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="title">Aspect <xsl:value-of select="cbi:aspect/@index"/> (<xsl:value-of select="$kind"/>)</xsl:variable>
     <html>
       <head>
         <title><xsl:value-of select="$title"/></title>
@@ -32,6 +45,9 @@
           <h1><xsl:copy-of select="$logo-icon"/><xsl:value-of select="$title"/></h1>
         </div>
         <div id="rest">
+          <h2>Runs</h2>
+          <xsl:apply-templates select="cbi:runstats"/>
+          <h2>Features</h2> 
           <table>
             <xsl:call-template name="featureheader"/>
             <tbody>
@@ -41,6 +57,43 @@
         </div>
       </body>
     </html> 
+  </xsl:template>
+
+  <xsl:template match="cbi:runstats">
+    <table>
+      <tbody>
+        <tr>
+          <th style="text-align:left">Runs Claimed</th>
+          <td style="text-align:right">
+            <xsl:value-of select="@numruns"/>
+          </td>
+        </tr>
+        <tr>
+          <th style="text-align:left">Max Run Length</th>
+          <td style="text-align:right">
+            <xsl:value-of select="@maxrunlength"/>
+          </td>
+        </tr>
+        <tr>
+          <th style="text-align:left">Min Run Length</th>
+          <td style="text-align:right">
+            <xsl:value-of select="@minrunlength"/>
+          </td>
+        </tr>
+        <tr>
+          <th style="text-align:left">Mean Run Length</th>
+          <td style="text-align:right">
+            <xsl:value-of select="@meanrunlength"/>
+          </td>
+        </tr>
+        <tr>
+          <th style="text-align:left">Run Length Standard Deviation</th>
+          <td style="text-align:right">
+            <xsl:value-of select="@runlengthstd"/>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </xsl:template>
 
   <xsl:template match="cbi:feature">

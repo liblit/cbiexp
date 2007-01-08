@@ -17,6 +17,10 @@
 <!ATTLIST aspect index NMTOKEN #REQUIRED>
 <!ATTLIST aspect ratio NMTOKEN #REQUIRED>
 <!ATTLIST aspect kind (usage | bug) #REQUIRED>
+<!ATTLIST aspect maxrunlength NMTOKEN #REQUIRED>
+<!ATTLIST aspect minrunlength NMTOKEN #REQUIRED>
+<!ATTLIST aspect meanrunlength NMTOKEN #REQUIRED>
+<!ATTLIST aspect runlengthstd NMTOKEN #REQUIRED>
 
 <!-- usage aspect -->
 <!ELEMENT usageaspect EMPTY>
@@ -38,10 +42,3 @@
 <!ATTLIST run index NMTOKEN #REQUIRED>
 <!ATTLIST run outcome (success | failure | ignore) #REQUIRED>
 <!ATTLIST run totalcount NMTOKEN #REQUIRED>  
-
-<!-- a features infoindex is an index into a predictor-info structure --> 
-<!-- this index will give us the coordinates of the site, the scheme, etc. -->
-<!ELEMENT feature EMPTY>
-<!ATTLIST feature id ID #REQUIRED>
-<!ATTLIST feature index NMTOKEN #REQUIRED>
-<!ATTLIST feature infoindex NMTOKEN #REQUIRED> 

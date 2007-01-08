@@ -24,26 +24,24 @@
 
   <xsl:template match="cbi:aspect">
     <xsl:copy>
-      <xsl:attribute name="index">
-        <xsl:value-of select="@index"/>
-      </xsl:attribute>
+      <xsl:apply-templates select="@*"/>
     </xsl:copy>
   </xsl:template>  
 
   <xsl:template match="cbi:feature">
     <xsl:copy>
-      <xsl:attribute name="index">
-        <xsl:value-of select="@index"/>
-      </xsl:attribute>
-      <xsl:attribute name="probability">
-        <xsl:value-of select="@probability"/>
-      </xsl:attribute>
       <xsl:attribute name="cumulative">
         <xsl:variable name="previous" select="preceding-sibling::cbi:feature"/> 
         <xsl:variable name="sump" select="sum($previous/@probability)"/>
         <xsl:value-of select="$sump + @probability"/>
       </xsl:attribute>
-      <xsl:apply-templates/>
+      <xsl:apply-templates select="@*"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="@* | node()">
+    <xsl:copy>
+      <xsl:apply-templates select="@* | node()"/> 
     </xsl:copy>
   </xsl:template>
 

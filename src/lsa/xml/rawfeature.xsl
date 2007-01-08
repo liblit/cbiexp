@@ -26,8 +26,29 @@
         <xsl:attribute name="index">
           <xsl:value-of select="@index"/>
         </xsl:attribute>
+        <xsl:attribute name="kind">
+          <xsl:value-of select="@kind"/>
+        </xsl:attribute>
       </xsl:element>
       <xsl:apply-templates select="featureclaimed" mode="rawfeature"/>
+      <xsl:apply-templates select="runid" mode="rawfeature"/>
+      <xsl:element name="runstats" namespace="http://www.cs.wisc.edu/cbi">
+        <xsl:attribute name="numruns">
+          <xsl:value-of select="count(runid)"/>
+        </xsl:attribute>
+        <xsl:attribute name="maxrunlength">
+          <xsl:value-of select="@maxrunlength"/>
+        </xsl:attribute>
+        <xsl:attribute name="minrunlength">
+          <xsl:value-of select="@minrunlength"/>
+        </xsl:attribute>
+        <xsl:attribute name="meanrunlength">
+          <xsl:value-of select="@meanrunlength"/>
+        </xsl:attribute> 
+        <xsl:attribute name="runlengthstd">
+          <xsl:value-of select="@runlengthstd"/>
+        </xsl:attribute> 
+      </xsl:element>
     </xsl:element>
   </xsl:template>
 
@@ -48,6 +69,21 @@
 
   <xsl:template match="aspectentry" mode="rawfeature">
     <xsl:value-of select="@probability"/>
+  </xsl:template>
+
+  <xsl:template match="runid" mode="rawfeature">
+    <xsl:variable name="run" select="id(@idref)"/>
+    <xsl:element name="run" namespace="http://www.cs.wisc.edu/cbi">
+      <xsl:attribute name="index">
+        <xsl:value-of select="$run/@index"/>
+      </xsl:attribute>
+      <xsl:attribute name="outcome">
+        <xsl:value-of select="$run/@outcome"/>
+      </xsl:attribute>
+      <xsl:attribute name="totalcount">
+        <xsl:value-of select="$run/@totalcount"/>
+      </xsl:attribute>
+    </xsl:element>
   </xsl:template>
 
 </xsl:stylesheet>

@@ -7,15 +7,16 @@ function summarize()
     fprintf(fid, '<?xml version=\"1.0\"?>\n');
     fprintf(fid, '<!DOCTYPE plsa SYSTEM "rawsummary.dtd">\n'); 
     fprintf(fid, '<plsa>\n');
-    printaspects(fid, Learn, Clusters, Pw_z);
+    printaspects(fid, Learn, Clusters, Pw_z,X);
     printruns(fid, Learn, Findices, Sindices, UsageClusters, BugClusters,X);
     fprintf(fid, '</plsa>\n');
     fclose(fid);
     printfeatures(Pw_z);
     quit;
 
-function printaspects(fid, Learn, Clusters,Pw_z)  
+function printaspects(fid, Learn, Clusters,Pw_z,X)  
    topnum = 25;
+   Sum = sum(X,1);
    for i = 1:Learn.K; 
        if i <= Learn.K - Learn.Kb; 
            kind = 'usage';
@@ -23,7 +24,8 @@ function printaspects(fid, Learn, Clusters,Pw_z)
            kind = 'bug';
        end;
        [S,I] = sort(Pw_z(:,i), 1, 'descend');
-       fprintf(fid, '<aspect kind=\"%s\" ratio=\"%s\">\n', kind, sum(S(1:topnum)));
+       counts = full(Sum(find(Clusters(i,:))));
+       fprintf(fid, '<aspect kind=\"%s\" ratio=\"%s\" maxrunlength=\"%u\" minrunlength=\"%u\" meanrunlength=\"%u\" runlengthstd=\"%u\">\n', kind, sum(S(1:topnum)),max(counts),min(counts),round(mean(counts)),round(std(counts)));
        for j = find(Clusters(i,:) > 0);
            fprintf(fid, '<runid index=\"%u\"/>', j); 
        end;

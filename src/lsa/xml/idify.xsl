@@ -27,16 +27,10 @@
       <xsl:attribute name="id">
         <xsl:value-of select="generate-id(.)"/>
       </xsl:attribute>
-      <xsl:attribute name="kind">
-        <xsl:value-of select="@kind"/>
-      </xsl:attribute> 
-      <xsl:attribute name="ratio">
-        <xsl:value-of select="@ratio"/>
-      </xsl:attribute>
       <xsl:attribute name="index">
         <xsl:value-of select="position()"/>
       </xsl:attribute>
-      <xsl:apply-templates/>
+      <xsl:apply-templates select="@kind | @ratio | @maxrunlength | @minrunlength | @meanrunlength | @runlengthstd | node()"/> 
     </xsl:copy>
   </xsl:template>  
 
@@ -45,16 +39,10 @@
       <xsl:attribute name="id">
         <xsl:value-of select="generate-id(.)"/>
       </xsl:attribute>
-      <xsl:attribute name="outcome">
-        <xsl:value-of select="@outcome"/>
-      </xsl:attribute>
-      <xsl:attribute name="totalcount">
-        <xsl:value-of select="@totalcount"/>
-      </xsl:attribute>
       <xsl:attribute name="index">
         <xsl:value-of select="position()"/>
       </xsl:attribute>
-      <xsl:apply-templates/>
+      <xsl:apply-templates select="@outcome | @totalcount"/>
     </xsl:copy>
   </xsl:template>
 
@@ -64,17 +52,12 @@
       <xsl:attribute name="idref">
         <xsl:value-of select="generate-id(//run[number($runindex)])"/>
       </xsl:attribute>
-      <xsl:apply-templates/>
     </xsl:copy>
   </xsl:template>
 
   <xsl:template match="featureclaimed">
-    <xsl:variable name="featureindex" select="@index"/>
     <xsl:copy>
-      <xsl:attribute name="index">
-        <xsl:value-of select="@index"/>
-      </xsl:attribute>
-      <xsl:apply-templates/>
+      <xsl:apply-templates select="@* | node()" />
     </xsl:copy>
   </xsl:template>
 
@@ -84,11 +67,12 @@
       <xsl:attribute name="idref">
         <xsl:value-of select="generate-id(//aspect[number($aspectindex)])"/>
       </xsl:attribute>
-      <xsl:attribute name="probability">
-        <xsl:value-of select="@probability"/>
-      </xsl:attribute>
-      <xsl:apply-templates/>
+      <xsl:apply-templates select="@probability | node()"/>
     </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="@*">
+    <xsl:copy/>
   </xsl:template>
 
 </xsl:stylesheet>

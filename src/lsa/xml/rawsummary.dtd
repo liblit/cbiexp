@@ -15,6 +15,10 @@
 <!ELEMENT aspect (runid*, featureclaimed*)>
 <!ATTLIST aspect kind (usage | bug) #REQUIRED>
 <!ATTLIST aspect ratio NMTOKEN #REQUIRED>
+<!ATTLIST aspect maxrunlength NMTOKEN #REQUIRED>
+<!ATTLIST aspect minrunlength NMTOKEN #REQUIRED>
+<!ATTLIST aspect meanrunlength NMTOKEN #REQUIRED>
+<!ATTLIST aspect runlengthstd NMTOKEN #REQUIRED>
 
 <!-- usage aspect -->
 <!ELEMENT usageaspect EMPTY>
