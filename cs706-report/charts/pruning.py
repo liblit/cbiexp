@@ -1,12 +1,11 @@
-#!/usr/bin/python
+#!/s/std/bin/python
 
-from csv import DictReader
+import common
+
 from pychart import *
 
-import sys
 
-
-def main(raw, out):
+def main():
     # match fonts used in body of paper
     theme.default_font_family = 'Times'
     theme.reinitialize()
@@ -68,4 +67,4 @@ def main(raw, out):
 
 
 if __name__ == '__main__':
-    main(*sys.argv[1:])
+    main()

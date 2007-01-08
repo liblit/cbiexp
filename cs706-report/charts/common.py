@@ -1,8 +1,9 @@
+import sys
+sys.path.insert(1, '/unsup/pychart/lib/python')
+
 from csv import DictReader
 from os.path import dirname
 from pychart import *
-
-import sys
 
 
 def rawData():

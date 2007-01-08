@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/s/std/bin/python
+
+import common
 
 from itertools import imap
 from pychart import *
-
-import common
 
 
 def format_x(app):
