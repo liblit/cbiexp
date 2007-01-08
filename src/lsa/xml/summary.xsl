@@ -25,7 +25,7 @@
       </head>
       <body>
         <div id="frontmatter">
-            <h1><xsl:copy-of select="$logo-icon"/><xsl:value-of select="$title"/></h1>
+          <h1><xsl:copy-of select="$logo-icon"/><xsl:value-of select="$title"/></h1>
         </div>
         <div id="rest">
           <xsl:call-template name="summary"/>
