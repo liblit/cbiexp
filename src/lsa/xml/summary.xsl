@@ -166,7 +166,7 @@
     <table class="cotable">
       <xsl:call-template name="cotableheader"/>  
       <tbody>
-      <xsl:for-each select="plsa/aspect[@kind='bug']">
+      <xsl:for-each select="/plsa/aspect[@kind='bug']">
         <xsl:call-template name="cotablerow"/>
       </xsl:for-each>
       </tbody>
