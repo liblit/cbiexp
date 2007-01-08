@@ -181,6 +181,7 @@
       <th>Total Runs</th>
       <th>Successes</th>
       <th>Failures</th>
+      <th>Mean Run Length</th>
       <th>Runs</th>
       <th>Features</th>
     </tr>
@@ -208,6 +209,7 @@
       <td><xsl:value-of select="count($runs)"/></td>
       <td><xsl:value-of select="$succeeding"/></td>
       <td><xsl:value-of select="$failing"/></td>
+      <td><xsl:value-of select="@meanrunlength"/></td>
       <td><a href="{$runslink}">&link;</a></td>
       <td><a href="{$featureslink}"><xsl:value-of select="@ratio"/></a></td>
       <exsl:document href="{$featuresfile}" method="xml">
