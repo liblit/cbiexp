@@ -41,6 +41,9 @@ $(PS): %.ps: %.dvi $(epss)
 $(pycharts:%=charts/%.eps): charts/%.eps: charts/%.py charts/common.py data/data.txt
 	python $< $@
 
+$(pycharts:%=charts/%.pdf): charts/%.pdf: charts/%.py charts/common.py data/data.txt
+	python $< $@
+
 clean:
 	rm -f $(PS) $(PDF) $(DVI) $(BBL) $(pdfs) $(pycharts:%=charts/%.eps)
 
