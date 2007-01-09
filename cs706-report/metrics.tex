@@ -7,7 +7,7 @@ While complex predicates could help to better predict bugs, in the worst case, t
 The first metric models the debugging effort required from the programmer as a filtering metric.  We adapt the distance metric of Cleve and Zeller \cite{1062522} for this purpose.  In this metric, the score of a predicate is the fraction of code that can be ignored while searching for the bug.  We use a similar metric called \emph{effort} for a complex predicate.
 
 \begin{defn}
-\label{dfn4}
+\label{def-effort}
 The effort required by a programmer while using a complex predicate $C = \phi(p_1, p_2)$ is inversely proportional to the smaller fraction of code ignored in a breadth-first bidirectional search for $p_1$ from $p_2$ and vice-versa.
 \end{defn}
 

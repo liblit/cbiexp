@@ -45,6 +45,7 @@ def rawData():
 
 def setTheme():
     chart_object.set_defaults(bar_plot.T, width=10)
+    chart_object.set_defaults(area.T, size=(180, 140))
     theme.default_font_family = 'Times'
     [outfile] = sys.argv[1:]
     theme.output_file = outfile

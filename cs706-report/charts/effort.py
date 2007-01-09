@@ -41,10 +41,10 @@ def main():
     x_coord = category_coord.T(categories, 0)
     x_axis = axis.X(label='/ieffort', format='%d%%')
     y_axis = axis.Y(label='Number of interesting predicates', format=format_y, tic_interval=10000)
-    size = (110, 100)
+    leg = legend.T(loc=(20, 100), shadow=(1, -1, fill_style.gray50))
     ar = area.T(x_axis=x_axis, x_coord=x_coord,
                 y_axis=y_axis, y_grid_interval=5000,
-                size=size)
+                legend=leg)
 
     # add one line plot for each application
     for (app, tick) in izip(common.apps, ticks):

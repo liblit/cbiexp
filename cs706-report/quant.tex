@@ -1,6 +1,11 @@
 % -*- TeX-master: "report" -*-
 
 \section{Experiments}
+
+This section presents quantitative data about the ideas presented in previous sections.  This data was collected using the Siemens test suite \cite{257766} as maintained by the Galileo Software-artifact Infrastructure Repository (SIR) \cite{Do05,SAI}.  There are two configurable parameters for the experiments: the rate of sampling and $\effort$ (described in \autoref{sec-metrics}).  Unless specified, the default sampling rate is 1 (i.e., complete data collection) and the default $\effort$ is 5\% (only predicates that are reachable from each other by exploring less than 5\% of the program are considered).
+
+\subsection{Top Scoring Predicates}
+
 \label{sec-quant}
 \begin{figure}
   \centering
@@ -9,12 +14,20 @@
   \label{fig-top-pred}
 \end{figure}
 
+\autoref{fig-top-pred} plots the percentage of variants within each program for which a complex predicate had the highest score among all predicates.  The value is 100\% for \texttt{print\_tokens2, replace} and \texttt{schedule} and is close to 100\% for the other programs.  The results shown in \autoref{fig-top-pred} combined with the case studies in \autoref{sec-qual} demonstrates the usefulness of complex predicates.
+
+\subsection{Effectiveness of Pruning}
+
 \begin{figure}
   \centering
   \includegraphics{charts/pruning}
-  \caption{Improvement from pruning}
+  \caption{Avoiding computing exact scores by pruning complex predicates.  Reported percentages are averaged across all variants of each application; ``Overall'' summarizes the entire Siemens suite.}
   \label{fig-pruning}
 \end{figure}
+
+Even when restricted to binary conjunction and disjunction, complex predicates could substantially increase the analysis workload if na\"ively implemented.  \autoref{sec-metrics} suggests heuristics for pruning complex predicates which are unlikely to be useful or understandable to a programmer, while \autoref{sec-pruning} describes how to compute an upper bound on a predicate's score.  \autoref{fig-pruning} shows that these measures are highly effective in practice.  On average, 57\% of candidate complex predicates are discarded because the $\effort$ as defined in \autoref{def-effort} would require traversing more than 5\% of the application code.  A further 14\% of complex predicates are pruned because the upper bounds of their $\Importance$ scores, computed per \autoref{sec-pruning}, are lower than the scores of their constituent simple predicates.  Only 29\% of complex predicates remain.  Thus, exact scores need be computed for less than a third of the initial pool of complex predicates.
+
+\subsection{Effect of Effort}
 
 \begin{figure}
   \centering
@@ -22,6 +35,11 @@
   \caption{Variation of number of interesting predicates with $\effort$}
   \label{fig-effort}
 \end{figure}
+
+\autoref{fig-effort} has one curve for each program showing how the number of interesting predicates (\autoref{dfn3}) varies at four different values - 1, 2, 5, 10 for $\effort$.  As expected, as $\effort$ increases more predicates are evaluated and so more interesting predicates are found.  This experiment serves as a sanity check for the implementation.
+
+\subsection{Effect of Sampling Rate}
+\label{sec-sampling}
 
 \begin{figure*}
   \centering
@@ -34,19 +52,6 @@
   \label{fig-sampling}
 \end{figure*}
 
-This section presents quantitative data about the ideas presented in previous sections.  This data was collected using the Siemens test suite \cite{257766} as maintained by the Galileo Software-artifact Infrastructure Repository (SIR) \cite{Do05,SAI}.  There are two configurable parameters for the experiments: the rate of sampling and $\effort$ (described in \autoref{sec-metrics}).  Unless specified, the default sampling rate is 1 (i.e., complete data collection) and the default $\effort$ is 5\% (only predicates that are reachable from each other by exploring less than 5\% of the program are considered).
-
-\subsection{Top Scoring Predicates}
-\autoref{fig-top-pred} plots the percentage of variants within each program for which a complex predicate had the highest score among all predicates.  The value is 100\% for \texttt{print\_tokens2, replace} and \texttt{schedule} and is close to 100\% for the other programs.  The results shown in \autoref{fig-top-pred} combined with the case studies in \autoref{sec-qual} demonstrates the usefulness of complex predicates.
-
-\subsection{Improvement from Pruning}
-\autoref{fig-pruning} shows the percentage of complex predicates that are pruned by the optimizations discussed in \autoref{sec-pruning} and the metrics in \autoref{sec-metrics}.  For each program, the y-axis shows the contribution of the two kinds of pruning.  On average, the usefulness metrics prune 54\% of complex predicates and the optimizations in \autoref{sec-pruning} prune 15\% of complex predicates.  Only 31\% of the complex predicates are actually computed.
-
-\subsection{Effect of Effort}
-\autoref{fig-effort} has one curve for each program showing how the number of interesting predicates (\autoref{dfn3}) varies at four different values - 1, 2, 5, 10 for $\effort$.  As expected, as $\effort$ increases more predicates are evaluated and so more interesting predicates are found.  This experiment serves as a sanity check for the implementation.
-
-\subsection{Effect of Sampling Rate}
-\label{sec-sampling}
 The dependence between sampling rate and the number of interesting predicates (both complex and simple) is plotted in \autoref{fig-sampling}.  \autoref{fig-sampling} has one chart per program with sampling rates in the $x-$axis and the average number of interesting conjunctions, disjunctions and simple predicates in the $y-$axis.  The number of interesting disjunctions is always very low (order of tens) compared to interesting conjunctions.  So the plot for interesting complex predicates closely follows the plot for conjunctions.  At sampling rates lower than \nicefrac{1}{10}, there is a sharp drop in the number of interesting conjunctions.  This is because the chance of observing both components of a conjunction within a single run falls with the square of the sampling rate.  Despite the sharp drop, the number of interesting conjunctions is still comparable to the number of interesting simple predicates even at \nicefrac{1}{1000} sampling.  This shows interesting complex predicates can still be found at sparse but realistic sampling rates.
 
 A puzzling trend in \autoref{fig-sampling} is that the number of interesting conjunctions increases for a brief interval before dropping off.  This trend is consistent across all programs.  This can be due to two reasons:

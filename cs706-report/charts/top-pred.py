@@ -36,10 +36,9 @@ def main():
     x_coord = common.appsCoord()
     x_axis = common.appsAxisX()
     y_axis = axis.Y(label='Variants with Complex\nTop Predictor', format=common.format_percent)
-    size = (180, 140)
     ar = area.T(x_axis=x_axis, x_coord=x_coord,
                 y_axis=y_axis, y_range=(0, 1), y_grid_interval=0.1,
-                legend=None, size=size)
+                legend=None)
 
     # add bars and save the rendered result
     bars = bar_plot.T(data=data, fill_style=fill_style.gray50)

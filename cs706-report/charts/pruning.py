@@ -16,7 +16,10 @@ def addBars(label, series):
     return plot
 
 
-fates = ['Pruned by\nusefulness metric', 'Pruned by\noptimizations', 'Computed']
+pruneEffort = 'Prune: {/ieffort} > 5%'
+pruneBound = 'Prune: score upper bound too low'
+computeExact = 'Compute exact score'
+fates = [computeExact, pruneBound, pruneEffort]
 
 
 def main():
@@ -31,13 +34,13 @@ def main():
         app = row['Application']
         total = float(row['Total'])
 
-        computed = row['Computed'] / total
-        optimized = row['Skipped'] / total
-        metric = 1 - (computed + optimized)
+        exactFrac = row['Computed'] / total
+        boundFrac = row['Skipped'] / total
+        effortFrac = 1 - (exactFrac + boundFrac)
 
-        data['Computed'].setdefault(app, []).append(computed)
-        data['Pruned by\noptimizations'].setdefault(app, []).append(optimized)
-        data['Pruned by\nusefulness metric'].setdefault(app, []).append(metric)
+        data[computeExact].setdefault(app, []).append(exactFrac)
+        data[pruneBound].setdefault(app, []).append(boundFrac)
+        data[pruneEffort].setdefault(app, []).append(effortFrac)
 
     # summarize by averaging at each data point
     for fate, series in data.iteritems():
@@ -45,16 +48,17 @@ def main():
             series[app] = sum(values) / len(values)
         values = list(series.itervalues())
         series['Overall'] = sum(values) / len(values)
+        print 'Overall: %.0f%%: %s' % (series['Overall'] * 100, fate)
 
     # create plot area
     common.setTheme()
     x_coord = common.appsCoord(overall=True)
     x_axis = common.appsAxisX()
     y_axis = axis.Y(label='Fraction of complex predicates', format=common.format_percent)
-    size = (110, 100)
+    leg = legend.T(loc=(20, 100), shadow=(1, -1, fill_style.gray50))
     ar = area.T(x_axis=x_axis, x_coord=x_coord,
                 y_axis=y_axis, y_range=(0, 1), y_grid_interval=0.1,
-                size=size)
+                legend=leg)
 
     # add stacked bars in reverse order so legend looks right
     plots = [ addBars(fate, data[fate]) for fate in fates ]
