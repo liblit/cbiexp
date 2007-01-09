@@ -2,6 +2,7 @@ import sys
 sys.path.insert(1, '/unsup/pychart/lib/python')
 
 from csv import DictReader
+from itertools import chain
 from os.path import dirname
 from pychart import *
 
@@ -43,6 +44,7 @@ def rawData():
 
 
 def setTheme():
+    chart_object.set_defaults(bar_plot.T, width=10)
     theme.default_font_family = 'Times'
     [outfile] = sys.argv[1:]
     theme.output_file = outfile
@@ -50,3 +52,24 @@ def setTheme():
 
 
 apps = ['print_tokens2', 'replace', 'schedule', 'schedule2', 'tcas', 'tot_info']
+
+
+def appsCoord(overall=False):
+    labels = apps
+    if overall: labels = chain(labels, ['Overall'])
+    categories = [ (label,) for label in labels ]
+    return category_coord.T(categories, 0)
+
+
+def __format_app(app):
+    if app == 'print_tokens2': app = 'print_\ntokens2'
+    if app != 'Overall': app = '/C' + app
+    return '/a90/6' + app
+
+
+def appsAxisX():
+    return axis.X(label='Application', format=__format_app)
+
+
+def format_percent(value):
+    return '/6{}%.0f%%' % round(value * 100)

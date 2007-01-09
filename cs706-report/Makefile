@@ -6,8 +6,8 @@ DVI       = $(MAIN).dvi
 BBL       = $(MAIN).bbl
 
 siemens := print_tokens2 replace schedule schedule2 tcas tot_info
-pycharts := effort top-pred
-others := maxsuccess pruning
+pycharts := effort pruning top-pred
+others := maxsuccess
 figs := $(siemens) $(pycharts) $(others)
 epss := $(figs:%=charts/%.eps)
 pdfs := $(figs:%=charts/%.pdf)
@@ -39,7 +39,7 @@ $(PS): %.ps: %.dvi $(epss)
 	epstopdf --outfile=$@ $<
 
 $(pycharts:%=charts/%.eps): charts/%.eps: charts/%.py charts/common.py data/data.txt
-	$< $@
+	python $< $@
 
 clean:
 	rm -f $(PS) $(PDF) $(DVI) $(BBL) $(pdfs) $(pycharts:%=charts/%.eps)

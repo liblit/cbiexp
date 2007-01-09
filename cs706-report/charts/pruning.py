@@ -5,65 +5,64 @@ import common
 from pychart import *
 
 
-def main():
-    # match fonts used in body of paper
-    theme.default_font_family = 'Times'
-    theme.reinitialize()
+lastBarPlot = None
 
+
+def addBars(label, series):
+    global lastBarPlot
+    data = list(series.iteritems())
+    plot = bar_plot.T(label=label, data=data, stack_on=lastBarPlot)
+    lastBarPlot = plot
+    return plot
+
+
+fates = ['Pruned by\nusefulness metric', 'Pruned by\noptimizations', 'Computed']
+
+
+def main():
     # prepare to read data and apply basic filtering
-    raw = file(raw)
-    rows = DictReader(raw, delimiter=' ')
-    rows = ( row for row in rows if row['SamplingRate'] == '1' )
-    rows = ( row for row in rows if row['Effort'] == '5' )
+    rows = common.rawData()
+    rows = ( row for row in rows if row['SamplingRate'] == 1 )
+    rows = ( row for row in rows if row['Effort'] == 5 )
 
     # collect and index individual data points of interest
-    data = {}
+    data = dict((fate, {}) for fate in fates)
     for row in rows:
         app = row['Application']
-        total = int(row['Total'])
-        pruned = int(row['Skipped'])
-        computed = int(row['Computed'])
-        interesting = int(row['Interesting'])
-        print app, total, pruned + computed
+        total = float(row['Total'])
 
-    # summarize by averaging values at each (app, effort) coordinate
-    for coord, counts in data.iteritems():
-        data[coord] = float(sum(counts)) / len(counts)
+        computed = row['Computed'] / total
+        optimized = row['Skipped'] / total
+        metric = 1 - (computed + optimized)
 
-    # extract effort levels to serve as X axis category labels
-    efforts = ( coord[1] for coord in data.iterkeys() )
-    efforts = set(efforts)
-    efforts = sorted(efforts)
-    categories = [ (effort,) for effort in efforts ]
+        data['Computed'].setdefault(app, []).append(computed)
+        data['Pruned by\noptimizations'].setdefault(app, []).append(optimized)
+        data['Pruned by\nusefulness metric'].setdefault(app, []).append(metric)
+
+    # summarize by averaging at each data point
+    for fate, series in data.iteritems():
+        for app, values in series.iteritems():
+            series[app] = sum(values) / len(values)
+        values = list(series.itervalues())
+        series['Overall'] = sum(values) / len(values)
 
     # create plot area
-    x_coord = category_coord.T(categories, 0)
-    x_axis = axis.X(label='/ieffort', format='%d%%')
-    y_axis = axis.Y(label='Number of interesting predicates', format=format_y, tic_interval=10000)
+    common.setTheme()
+    x_coord = common.appsCoord(overall=True)
+    x_axis = common.appsAxisX()
+    y_axis = axis.Y(label='Fraction of complex predicates', format=common.format_percent)
     size = (110, 100)
-    ar = area.T(x_axis=x_axis, y_axis=y_axis,
-                x_coord=x_coord,
-                y_grid_interval=5000,
+    ar = area.T(x_axis=x_axis, x_coord=x_coord,
+                y_axis=y_axis, y_range=(0, 1), y_grid_interval=0.1,
                 size=size)
 
-    # applications and tick marks; line styles rotate automatically
-    apps = [
-        ('print_tokens2', tick_mark.blackcircle3),
-        ('replace', tick_mark.blacksquare3),
-        ('schedule', tick_mark.blacktri3),
-        ('schedule2', tick_mark.blackdtri3),
-        ('tcas', tick_mark.plus3),
-        ('tot_info', tick_mark.x3),
-        ]
-
-    # add one line plot for each application
-    for (app, tick) in apps:
-        slice = [ (effort, data[app, effort]) for effort in efforts ]
-        line = line_plot.T(label=app, data=slice, tick_mark=tick)
-        ar.add_plot(line)
+    # add stacked bars in reverse order so legend looks right
+    plots = [ addBars(fate, data[fate]) for fate in fates ]
+    plots.reverse()
+    ar.add_plot(*plots)
 
     # save rendered plot
-    ar.draw(canvas.init(out))
+    ar.draw()
 
 
 if __name__ == '__main__':
