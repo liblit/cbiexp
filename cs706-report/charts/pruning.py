@@ -18,8 +18,9 @@ def addBars(label, series):
 
 pruneEffort = 'Prune: {/ieffort} > 5%'
 pruneBound = 'Prune: score upper bound too low'
-computeExact = 'Compute exact score'
-fates = [computeExact, pruneBound, pruneEffort]
+computeDiscard = 'Compute exact score, but too low'
+computeRetain = 'Compute exact score and retain'
+fates = [computeRetain, computeDiscard, pruneBound, pruneEffort]
 
 
 def main():
@@ -32,18 +33,24 @@ def main():
     data = dict((fate, {}) for fate in fates)
     for row in rows:
         app = row['Application']
+
+        compute = row['Computed']
+        retain = row['Interesting']
+        waste = compute - retain
+        bound = row['Skipped']
+        total = row['Total']
+        effort = total - (compute + bound)
+        assert retain + waste + bound + effort == total
+
         total = float(row['Total'])
-
-        exactFrac = row['Computed'] / total
-        boundFrac = row['Skipped'] / total
-        effortFrac = 1 - (exactFrac + boundFrac)
-
-        data[computeExact].setdefault(app, []).append(exactFrac)
-        data[pruneBound].setdefault(app, []).append(boundFrac)
-        data[pruneEffort].setdefault(app, []).append(effortFrac)
+        data[computeRetain].setdefault(app, []).append(retain / total)
+        data[computeDiscard].setdefault(app, []).append(waste / total)
+        data[pruneBound].setdefault(app, []).append(bound / total)
+        data[pruneEffort].setdefault(app, []).append(effort / total)
 
     # summarize by averaging at each data point
-    for fate, series in data.iteritems():
+    for fate in fates:
+        series = data[fate]
         for app, values in series.iteritems():
             series[app] = sum(values) / len(values)
         values = list(series.itervalues())
@@ -62,8 +69,7 @@ def main():
 
     # add stacked bars in reverse order so legend looks right
     plots = [ addBars(fate, data[fate]) for fate in fates ]
-    plots.reverse()
-    ar.add_plot(*plots)
+    ar.add_plot(*reversed(plots))
 
     # save rendered plot
     ar.draw()
