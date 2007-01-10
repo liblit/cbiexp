@@ -33,6 +33,7 @@ lower sampling rate.
 Within Section 2.1 [Expected Benefits], there may be too much
 conceptual overlap between "Richer Diagnostic Language for Complex
 Bugs" and "Improved Precision and Recall".
+[*Jake]
 
 
 ------------------------------------------------------------------------
@@ -124,11 +125,6 @@ prose discussion with no table or figure at all.
 --
 --  Section 7
 --
-
-Section 7's discussion of related work is awfully brief.  This was a
-rush job and needs to be expanded.
-[*Jake]
-
 
 ------------------------------------------------------------------------
 --

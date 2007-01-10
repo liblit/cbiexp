@@ -5,6 +5,7 @@
 This section discusses two cases where complex predicates prove to be useful.  The first study is about a memory access bug in Exif 0.6.9, an open source image manipulation program.  A complex predicate was useful in increasing the score of an extremely useful bug predictor.  The second study uses an input validation bug in \texttt{ccrypt} 1.2 to explain how complex predicates can be used to identify super-bug predictors automatically.
 
 \subsection{exif}
+\label{sec-exif}
 \texttt{exif} 0.6.9 crashes while manipulating a thumbnail in a Canon image.  The bug is in function \texttt{exif\_mnote\_data\_canon\_load} in the module handling Canon images.  The following is a snippet from said function:
 \begin{quote}
 \begin{verbatim}
@@ -66,6 +67,7 @@ One might expect that a hypothetical predicate $p_3$: \texttt{n->entries[i].data
 There are some internal threats to the validity of the above experiment.  Firstly, \texttt{exif} 0.6.9 had two other bugs and we had to manually remove command line arguments that trigger those bugs.  Secondly, the bug studied here was very rare.  In order to get sufficient failed executions, we downscaled the input images by selecting many Canon images (that cause the bug) and some other images (both Canon and non-Canon) that do not trigger the bug.  These two changes introduced some bias into the scores of some predicates.  For example, our analysis found \texttt{remove\_thumbnail} in function \texttt{main} as a good bug predictor due to the bias introduced by our test suite.  However a subjective evaluation of the predicates in \autoref{tab:tbl1} and \autoref{tab:tbl2} showed that their scores were not affected by any bias introduced by the test suite.  Another threat is that the analysis with complex predicates produced a lot of other predicates with the highest score (0.941385) and we had to scan this list to identify the predicate listed in \autoref{tab:tbl2}.  This is not a real threat but is an instance of the numerous complex predicates problem discussed in \autoref{sec-metrics}.
 
 \subsection{ccrypt}
+\label{sec-ccrypt}
 \texttt{ccrypt} 1.2 contains a known bug which can cause a crash on certain user-input - when an \texttt{EOF} is entered at the confirmation prompt when overwriting an existing file.  Entering \texttt{EOF} in other contexts does not cause failure, however, and an examination of the source code can quickly reveal why:
 \begin{quote}
 \begin{verbatim}
