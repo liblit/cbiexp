@@ -70,7 +70,7 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
   fout = fopen(fname,"w");
 
   // Identify the type of the winner for first iteration
-  bool firstIteration = true;
+  unsigned iteration = 0;
   
   const AllFailuresSnapshot snapshot;
 
@@ -80,6 +80,9 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
   // pluck out predicates one by one, printing as we go
   while (!candidates.empty())
     {
+      iteration ++;
+      fprintf(fout, "Iteration %u\n", iteration);
+
       candidates.sort();
       candidates.reverse();
       const Candidates::iterator winner = max_element(candidates.begin(), candidates.end());
@@ -94,9 +97,8 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
       // If the list has an item, and its score beats bestScore, it's what
       // we use.
       if ( best.size() == 1 && best.front().score() > bestScore ) {
-        if(firstIteration) {
+        if(iteration == 1) {
           fprintf(fout, "$$$$ %s %d\n", best.front().getType() == 'C'? "Conjunction": "Disjunction", best.front().isPerfect());
-          firstIteration = false;
         }
 	
 	// We need to form a conjunction of the same predicates, with their
@@ -141,9 +143,8 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
 	candidates.rescore(progress);
       }
       else {
-        if(firstIteration) {
+        if(iteration == 1) {
           fprintf(fout, "$$$$ Simple %d\n", winner->isPerfect());
-          firstIteration = false;
         }
 	view << *winner;
     cout << *winner;

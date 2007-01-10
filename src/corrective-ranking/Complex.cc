@@ -4,6 +4,7 @@
 #include <sstream>
 #include <map>
 #include <set>
+#include <time.h>
 
 #include "../Confidence.h"
 #include "../Progress/Bounded.h"
@@ -143,6 +144,9 @@ bool isValidPair(int p1, int p2) {
 // Only complex predicates with estimates higher than 'lb' are considered
 std::list<Complex>
 combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
+
+  time_t begin, finish; 
+
   std::list<Complex> result;
   double minMax = lb;
   
@@ -158,6 +162,7 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   }
 
   Progress::Bounded progress("Finding conjunctions and disjunctions", total / 2);
+  time(&begin);
   
   Candidates::iterator i, j;
   for(i = candidates.begin(); i != candidates.end(); i ++) {
@@ -215,6 +220,9 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
     }
   }
   
+  time(&finish);
+  time_t exec_time = finish - begin;
+
   printf("COMBINE:: was able to prune %u conjunctions, %u disjunctions\n", prunedC, prunedD);
   printf("COMBINE:: In all, %u %u complex predicates were interesting\n", interestingC, interestingD);
   printf("COMBINE:: :( Had to compute %u %u complex predicates\n", computedC, computedD);
@@ -227,6 +235,7 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
     fprintf(fout, "%u %u\n", total, total - afterCSURF); // Total possible complex predicates
     fprintf(fout, "%u %u %u\n", prunedC, computedC, interestingC);
     fprintf(fout, "%u %u %u\n", prunedD, computedD, interestingD);
+    fprintf(fout, "%u\n", exec_time);
     
     if(result.size() > 0)
       fprintf(fout, "%lf %lf\n", result.front().score(), result.back().score());
