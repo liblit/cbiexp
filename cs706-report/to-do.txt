@@ -35,6 +35,18 @@ conceptual overlap between "Richer Diagnostic Language for Complex
 Bugs" and "Improved Precision and Recall".
 [*Jake]
 
+From Mulhern, reading revision 1518: Several times you mention other automated analysis tools. Page 2 left column is one instance but it certainly occurs more than once. You suggest that the results of your tool can be input to some other tool. Unless you are more specific this leaves the reader hanging, thinking, "How? What tools? What would the other tools do? Does this mean their tool has some obvious flaw that other tools redress? What are they not telling me?" You should be more specific or leave this suggestion out altogether.
+
+From Mulhern, reading revision 1518: In Section 2.1 (Richer Diagnostic Language for Complex Bugs) Sentence: Bugs with easily-described causes partition cleanly using a single bug predictor, with (all or most) successes in one subspace and (all or most) failures in the other. My comment: We're trying to identify bugs but in this sentence you suddenly start talking about failures and successes instead of bug causes. If you're only dealing with a single bug you should make that explicit. If you're dealing with multiple bugs then you need to revise this statement.
+
+From Mulhern, reading revision 1518: In Section 2.1 (Richer Diagnostic Language for Complex Bugs) Sentence: However, the success/failure boundary may be considerably more irregular. Comment: This sentence seems like filler and may also be incorrect (See point 2).
+
+From Mulhern, reading revision 1518: In Section 2.1 (Richer Diagnostic Language for Complex Bugs) Sentence: A richer language of candidate bug predictors describes more complex shapes within the space of runs, and thereby diagnoses the causes of more complex failures. Suggested rewording: A richer language of candidate bug predictors can describe more complex shapes within the space of runs.
+
+From Mulhern, reading revision 1518: In Section 2.1 (Richer Diagnostic Language for Complex Bugs) Sentence: Of course, a fiendishly convoluted (but hopefully rare) bug may require a predicate as complex as the entire original program to describe its behavior. Comment: Does this sentence really make sense? It asks the reader to do a lot. I am happy to view a program as a predicate; but I tend to think of it as dividing the inputs into ones that it succeeds on and ones that it fails on.
+
+From Mulhern, reading revision 1518: Section 2.1 (Richer Diagnostic Language for Complex Bugs). Overall comment: I think the basic point is that complex predicates have an advantage in that they can be used to partition the run space more precisely but that the computational cost of analyzing arbitrarily complex predicates is high and that very complex predicates may be too precise to be useful. There may be a much clearer and more succinct way of getting this point across.
+
 
 ------------------------------------------------------------------------
 --
