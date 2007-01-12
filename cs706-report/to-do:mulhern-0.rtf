@@ -1,0 +1,85 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;\f2\fswiss\fcharset77 Helvetica-Oblique;
+}
+{\colortbl;\red255\green255\blue255;\red84\green84\blue84;}
+\pard\tx3840\tx9820\ql\qnatural\pardirnatural
+
+\f0\b\fs24 \cf0 \up0 \nosupersub \ul \ulc0 \obliqueness0 \expansion0 Location
+\f1\b0 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	
+\f0\b \cf0 \up0 \nosupersub \ul \ulc0 \obliqueness0 \expansion0 Suggested Wording
+\f1\b0 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	
+\f0\b \cf0 \up0 \nosupersub \ul \ulc0 \obliqueness0 \expansion0 Comment\
+\
+\pard\tx280\tx3840\tx9820\ql\qnatural\pardirnatural
+
+\f1\b0\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
+\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	Abstract 1st paragraph	Cooperative Bug Isolation (CBI) is a technique for 	\
+\pard\tx3840\tx9820\ql\qnatural\pardirnatural
+	identifying the causes of program failure. The CBI  	\
+	instrumentation evaluates and records the truth or 	\
+	falsehood of a relational  formula, e.g., x < 0, at a 	\
+	given point in a program. The values recorded during 	\
+	a single execution of a program form the program's 	\
+	record. Multiple records of program execution, 	\
+	including runs that terminated correctly as well as 	\
+	runs that did not, are collected. The set of records is 	\
+	then analyzed using a variety of statistical and 	\
+	machine learning techniques to determine the 	\
+	causes of the failing executions.	\
+\pard\tx280\tx3840\tx9820\ql\qnatural\pardirnatural
+
+\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
+\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	Abstract 2nd paragraph	Previously, CBI analyses have considered each 	\
+\pard\tx3840\tx9820\ql\qnatural\pardirnatural
+	atomic formula separately. Intuition suggest that 	\
+	forming more complex Boolean formulae from the 	\
+	simple instrumentation formulae might yield more 	\
+	useful bug predictors. We show that such complex 	\
+	Boolean formulae can be more informative and more 	\
+	readily identified by statistical analyses as significant 	\
+	bug predictors than the atomic formulae of which they 	\
+	are composed.	\
+\pard\tx280\tx3840\tx9820\ql\qnatural\pardirnatural
+
+\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
+\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	Abstract 3rd paragraph	Forming all possible binary combinations of atomic 	\
+\pard\tx3840\tx9820\ql\qnatural\pardirnatural
+	formulae clearly causes an exponential increase in 	\
+	the number of formulae that must be analyzed. We 	\
+	have developed a low cost technique based on 	\
+	program structure for eliminating formulae that would 	\
+	in any case be eliminated by the more costly 	\
+	statistical or machine learning analyses.	\
+\pard\tx280\tx3840\tx9820\ql\qnatural\pardirnatural
+
+\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
+\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	Abstract 4th paragraph	A particular strength of CBI is that it employs sparse 	\
+\pard\tx3840\tx9820\ql\qnatural\pardirnatural
+	random sampling. This technique reduces the 	\
+	overhead of instrumentation so that regular users are 	\
+	willing to run the instrumented programs. At the same 	\
+	time, the sampling is random in a formal statistical 	\
+	sense and thus the generated reports are appropriate 	\
+	subjects for the CBI statistical analyses. We discuss 	\
+	the interactions of sparse random sampling and our 	\
+	analysis.	\
+\pard\tx1347\tx1907\tx2467\tx3027\tx3587\tx4147\tx4707\tx5267\tx5827\tx6387\tx6947\tx7507\li787\ql\qnatural\pardirnatural
+
+\f2\i\fs22 \cf2 This topic is discussed in the existing abstract but it might be that it is a detail that should be left out entirely since one has to introduce a whole  new subject for it to make sense.\
+\pard\tx280\tx3840\tx9820\ql\qnatural\pardirnatural
+
+\f1\i0\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
+\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	Page 2 right column		In several \
+\pard\tx3840\tx9820\ql\qnatural\pardirnatural
+		paragraphs a \
+		_predictor_ is \
+		described as \
+		being or not being \
+		"sound" or  \
+		"complete". I think \
+		this is incorrect \
+		usage and that \
+		only the analysis \
+		can be "sound" or \
+		"complete". \
+}
