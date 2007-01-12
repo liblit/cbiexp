@@ -227,6 +227,9 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   printf("COMBINE:: In all, %u %u complex predicates were interesting\n", interestingC, interestingD);
   printf("COMBINE:: :( Had to compute %u %u complex predicates\n", computedC, computedD);
   
+  result.sort();
+  result.reverse();
+
   if ( fout != NULL ) {
     // sanity check
     // Actually, this assertion is false in the second and future iterations of corrective-ranking
