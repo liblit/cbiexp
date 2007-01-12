@@ -1,5 +1,8 @@
 % -*- TeX-master: "report" -*-
 
+\newcommand{\rhythmbox}{\textsc{Rhythmbox}\xspace}
+% Copied from Ben's PLDI-2004 paper.  --Jake
+
 \section{Background}
 \label{sec-bground}
 CBI uses lightweight instrumentation to collect feedback reports that contain truth values of predicates in an execution as well as the outcome (e.g., crash or non-crash) of the execution.  A large number of these reports are collected and analyzed using statistical debugging techniques.  Liblit et al. \cite{Liblit:2005:SSBI} compute a numeric $\Importance$ score corresponding to each predicate, define as follows.
@@ -37,33 +40,17 @@ Both of these scores are independent but good dimensions of a bug predictor.  Th
 
 To eliminate different predicates that predict the same bug, only the top ranked predictor is presented to the user.  To handle the case where multiple bugs are present, all the failed runs in which the top predicate is true are eliminated and the remaining predicates are ranked by recomputing their scores in the remaining set of runs.  This process of eliminating runs continues until there are no remaining failed runs or no remaining predicates.
 
-The output of the analysis will contain the list of predicates that had the highest score during any iteration of the redundancy elimination algorithm.  This list can be used by the programmer to track down bugs, or as input to other automated analysis tools.
+The output of the analysis will contain the list of predicates that had the highest score during any iteration of the redundancy elimination algorithm.  This list may be used by a programmer to identify areas of the program related to faulty behavior.  Liblit et al. discovered previously unknown bugs in \texttt{bc} \cite{Liblit:2003:BIRPS}, \texttt{exif} \cite{Liblit:2005:SSBI} and \rhythmbox \cite{Liblit:2005:SSBI} by employing this method.
+
+The list of bug predictors can alternately be used as input to an automated analysis tool, such as \textsc{BTrace} \cite{Lal:2006:POPAD}. \textsc{BTrace} finds the shortest control- and dataflow-feasible path in the program that visits a given set of bug predictors.  This analysis allows a programmer to examine the fault-predicting behavior even if the connection to a bug is not easily identifiable, or if the predictors are numerous or complex enough to overwhelm a programmer examining them directly.
 
 \subsection{Expected Benefits}
+A single predicate can be thought of as partitioning the space of all runs into two subspaces: those satisfying the predicate and those not.  The more closely these partitions match the subspaces where the bug is expressed or not, the better the predicate is as a bug predictor.  A \emph{perfect bug predictor} divides the space of runs into these subspaces exactly.  Generally speaking, the closer a predictor is to perfect the more informative it is to a programmer.  If a bug has a simple cause, and this cause corresponds well to a simple predicate, then a simple analysis is sufficient.
 
-Complex predicates can improve the analysis described above in three ways:
-\begin{inparaenum}[(1)]
-  \item provide a richer diagnostic language for complex bugs,
-  \item better recall and precision for both complex and simple bugs, and
-  \item enhanced support of automated tools that further process CBI output.
-  \end{inparaenum}
+A richer language of candidate bug predictors can describe more complex shapes within the set of runs.  This allows predictors for bugs with more complicated causes.  When predicates do not adequately match the complexity of the bugs they predict the results are \emph{super-} and \emph{sub-bug predictors}, an aspect of statistical debugging first identified by Liblit et al. \cite{Liblit:2005:SSBI}.
 
-\paragraph{Richer Diagnostic Language for Complex Bugs}
+A \emph{super-bug predictor} is one which correctly partitions all (or most) expressions of the bug, but also predicts the bug in a large number of runs where it did not occur.  In other words, it is not a specific enough predictor of the bug.  In information-retrieval terms, a super-bug predictor has high recall but low precision.  A possible (but not the only) cause for super-bug predictors is a non-deterministic bug that does not necessarily cause a failure when it is triggered.  False positives could be reduced or eliminated by taking a conjunction of this predictor with another predicate that captures another aspect of the bug; the resulting partitioning would more closely match the bug's behavior.
 
-A single predicate can be thought of as partitioning the space of all runs into two subspaces: those satisfying the predicate and those not. Bugs with easily-described causes partition cleanly using a single bug predictor, with (all or most) successes in one subspace and (all or most) failures in the other.  If a bug has a simple cause, and this cause corresponds well to a simple predicate, then a simple analysis is sufficient.
+A \emph{sub-bug predictor} is one that correctly partitions some (but not all) expressions of the bug.  In other words, it is not sensitive enough to predict all instances of the bug.  In information-retrieval terms, a sub-bug predictor has high precision but low recall.  False negatives could be reduced or eliminated by taking a disjunction with another predictor which captures other instances of the bug; as before the resulting predicate would serve as a more accurate predictor.  It is important to note that in software with multiple bugs, the analysis may find a disjunction of predictors of individual bugs as a predictor for the whole set of failures.  The user should keep this in mind while using a disjunction predictor to track down a bug.
 
-However, the success/failure boundary may be considerably more irregular.  A richer language of candidate bug predictors describes more complex shapes within the space of runs, and thereby diagnoses the causes of more complex failures.  Of course, a fiendishly convoluted (but hopefully rare) bug may require a predicate as complex as the entire original program to describe its behavior.  Thus, there is a balance to be struck: the language of complex predicates should be expressive enough to describe important bugs, but not so expressive as to become unwieldy in practice.  The present research explores one possible point on this complexity spectrum.
-
-\paragraph{Improved Precision and Recall}
-
-We hypothesize that complex predicates will be especially helpful in coping with \emph{super-} and \emph{sub-bug predictors}, a challenging aspect of statistical debugging first identified by Liblit et al. \cite{Liblit:2005:SSBI}.
-
-A \emph{super-bug predictor} is one that is true in a large number of failures but also true in a large number of successful runs.  In other words, it is not a specific enough predictor of failure.  In information-retrieval terms, a super-bug predictor has high recall but low precision.  A possible (but not the only) cause for super-bug predictors is a non-deterministic bug that does not necessarily cause a failure when it is triggered.  In the most extreme case, a super-bug predictor may be complete (predicts all failures) but not sound (predicts some successes also).  False positives could be reduced or eliminated by taking a conjunction of this predictor with another predicate that captures another aspect of the bug.
-
-A \emph{sub-bug predictor} is one that is true in a small number of failed executions.  In other words, it is not sensitive enough to predict all instances this failure.  In information-retrieval terms, a sub-bug predictor has high precision but low recall.  In the most extreme case, a sub-bug predictor may be sound (predicts only failures) but not complete (does not predict all failures).  False negatives could be reduced or eliminated by taking a disjunction with another predictor can captures other instances of the bug.  It is important to note that in software with multiple bugs, the analysis may find a disjunction of predictors of individual bugs as a predictor for the whole set of failures.  The user should keep this in mind while using a disjunction predictor to track down a bug.
-
-A \emph{perfect bug predictor} is one that is true in all failed executions and false in all successful ones: in other words, it is both sound and complete.  Such predictors indicate a bug which is completely deterministic given the involved predicates.  Generally speaking, the closer a predictor is to perfect the more informative it is to a programmer.  By eliminating false positives and negatives conjunctions and disjunctions can move super- and sub-bug predictors closer to perfection.
-
-\paragraph{Enhanced Support of Automated Tools}
-
-Bug predictors identified by statistical debugging can be useful to humans directly, or can serve as input to other automated tools and analyses.  In the later case, it may be feasible to use even richer, more complex, or more numerous predictors that a human would find overwhelming if examined directly.  \textsc{BTrace} \cite{Lal:2006:POPAD} is one such tool. \textsc{BTrace} finds the shortest control- and dataflow-feasible path in the program that visits a given set of bug predictors.  More predictors, and predictors drawn from a more expressive language, can better guide \textsc{BTrace}'s path exploration toward paths which accurately reflect the sequence of events leading to failure.
+The bug predictors which result from combining simple predicates can be conjoined or disjoined again, eliminating false positives and false negatives to approach a perfect predictor.  Finding a predicate which perfectly predicts the expression of a complex bug may be infeasible, but statistical bug isolation does not require one, and a complex predicate which predicts a bug more accurately than any simple predicate is useful even if imperfect.
