@@ -15,7 +15,7 @@ function summarize()
     quit;
 
 function printaspects(fid, Learn, Clusters,Pw_z,X)  
-   topnum = 25;
+   topnum = 400;
    Sum = sum(X,1);
    for i = 1:Learn.K; 
        if i <= Learn.K - Learn.Kb; 
@@ -25,7 +25,7 @@ function printaspects(fid, Learn, Clusters,Pw_z,X)
        end;
        [S,I] = sort(Pw_z(:,i), 1, 'descend');
        counts = full(Sum(find(Clusters(i,:))));
-       fprintf(fid, '<aspect kind=\"%s\" ratio=\"%s\" maxrunlength=\"%u\" minrunlength=\"%u\" meanrunlength=\"%u\" runlengthstd=\"%u\">\n', kind, sum(S(1:topnum)),max(counts),min(counts),round(mean(counts)),round(std(counts)));
+       fprintf(fid, '<aspect kind=\"%s\" ratio=\"%1.4f\" maxrunlength=\"%u\" minrunlength=\"%u\" meanrunlength=\"%u\" runlengthstd=\"%u\">\n', kind, sum(S(1:topnum)),max(counts),min(counts),round(mean(counts)),round(std(counts)));
        for j = find(Clusters(i,:) > 0);
            fprintf(fid, '<runid index=\"%u\"/>', j); 
        end;
