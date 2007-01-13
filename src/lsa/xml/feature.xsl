@@ -98,10 +98,12 @@
 
   <xsl:template match="cbi:feature">
     <xsl:variable name="index" select="@index"/>
+    <xsl:variable name="mean" select="/cbi:aspectfeatures/cbi:runstats/@meanrunlength"/>
     <tr>
       <th><xsl:value-of select="@index"/></th>
       <td><xsl:value-of select="@probability"/></td>
       <td><xsl:value-of select="@cumulative"/></td>
+      <td><xsl:value-of select="round(@probability * $mean)"/></td> 
       <xsl:apply-templates select="$preds[number($index)]" mode="static-cells"/>
     </tr>
   </xsl:template>
@@ -112,6 +114,7 @@
         <th>Index</th>
         <th>Probability</th>
         <th>Cumulative</th>
+        <th>Expected Count</th>
         <th>Predicate</th>
         <th>Function</th>
         <th>File:Line</th>
