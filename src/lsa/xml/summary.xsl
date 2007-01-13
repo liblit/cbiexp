@@ -13,9 +13,10 @@
 
 <xsl:import href="logo.xsl"/>
 <xsl:import href="rawfeature.xsl"/>
-<xsl:import href="feature.xsl"/>
 
 <xsl:output method="html"/>
+
+<xsl:variable name="runs" select="document('runs.xml')/runinfos/run"/>
 
   <xsl:template match="/">
     <xsl:variable name="title">pLSA Results</xsl:variable>  
@@ -45,7 +46,6 @@
   </xsl:template>
 
   <xsl:template name="runs">
-    <xsl:variable name="runs" select="/plsa/run"/>
     <div id="runs">
       <h3>Runs:</h3>
       <table>
@@ -140,8 +140,9 @@
         <xsl:call-template name="aspectrow"/>
       </xsl:for-each>
       </tbody>
+      <xsl:variable name="runindices" select="plsa/aspect[@kind='bug']/runid/@index"/>
       <xsl:call-template name="aspectfooter">
-        <xsl:with-param name="runs" select="id(plsa/aspect[@kind='bug']/runid/@idref)"/>
+        <xsl:with-param name="runs" select="$runs[$runindices]"/>
       </xsl:call-template>
     </table>
     </div>
@@ -150,7 +151,7 @@
   <xsl:template name="failingruns">
     <div class="failingruns">
     <h2>Failing Runs:</h2>
-    <xsl:variable name="failing" select="/plsa/run[@outcome='failure']"/>
+    <xsl:variable name="failing" select="$runs[@outcome='failure']"/>
     <table class="failingruns">
     <tbody>
     <tr>
@@ -189,7 +190,8 @@
   </xsl:template>
 
   <xsl:template name="aspectrow">
-    <xsl:variable name="runs" select="id(runid/@idref)"/>
+    <xsl:variable name="runindices" select="runid/@index"/>
+    <xsl:variable name="runs" select="$runs[position() = $runindices]"/>
     <xsl:variable name="succeeding" select="count($runs[@outcome='success'])"/>
     <xsl:variable name="failing" select="count($runs[@outcome='failure'])"/>
     <xsl:variable name="runslink">
@@ -245,7 +247,8 @@
   </xsl:template>
 
   <xsl:template name="cotablerow">
-    <xsl:variable name="runs" select="id(runid/@idref)"/>
+    <xsl:variable name="runindices" select="runid/@index"/>
+    <xsl:variable name="runs" select="$runs[position() = $runindices]"/>
     <tr>
       <th><xsl:value-of select="@index"/></th>
       <xsl:for-each select="/plsa/aspect[@kind='usage']">
@@ -259,9 +262,9 @@
 
   <xsl:template name="cotableentry">
     <xsl:param name="runs"/>
-    <xsl:variable name="usageid" select="@id"/>
+    <xsl:variable name="usageindex" select="@index"/>
     <td>
-      <xsl:value-of select="count($runs/usageaspect[@idref = $usageid])"/>
+      <xsl:value-of select="count($runs/usageaspect[@index = $usageindex])"/>
     </td>
   </xsl:template>
 

@@ -12,6 +12,7 @@
   <xsl:output method="xml"/>
 
   <xsl:variable name="features" select="document('features.xml')/featureinfos/feature"/>
+  <xsl:variable name="runs" select="document('runs.xml')/runinfos/run"/>
 
   <xsl:template name="rawfeature">
     <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE aspectfeatures SYSTEM "rawaspectfeatures.dtd"&gt;
@@ -72,10 +73,11 @@
   </xsl:template>
 
   <xsl:template match="runid" mode="rawfeature">
-    <xsl:variable name="run" select="id(@idref)"/>
+    <xsl:variable name="index" select="@index"/>
+    <xsl:variable name="run" select="$runs[position() = $index]"/>
     <xsl:element name="run" namespace="http://www.cs.wisc.edu/cbi">
       <xsl:attribute name="index">
-        <xsl:value-of select="$run/@index"/>
+        <xsl:value-of select="@index"/>
       </xsl:attribute>
       <xsl:attribute name="outcome">
         <xsl:value-of select="$run/@outcome"/>

@@ -48,16 +48,13 @@ results.mat loglikelihood.txt:
 	touch results.mat
 	touch loglikelihood.txt
 
-html/rawsummary.xml html/features.xml: results.mat runsinfo.mat clusters.mat configure.m
+html/summary.xml html/features.xml html/runs.xml: results.mat runsinfo.mat clusters.mat configure.m
 	$(MATLAB) -r "path(path, '$(xmldir)'); summarize()" > /dev/null
-	mv rawsummary.xml html/rawsummary.xml
+	mv summary.xml html/summary.xml
 	mv features.xml html/features.xml
+	mv runs.xml html/runs.xml
 
-run: results.mat loglikelihood.txt html/rawsummary.xml
-
-summary.xml: rawsummary.xml
-	xsltproc --path $(xmldir) --output summary.xml idify.xsl rawsummary.xml
-CLEANFILES += summary.xml
+run: results.mat loglikelihood.txt html/summary.xml
 
 summary.html: summary.xml
 	xsltproc --path $(xmldir) --path ../../../.. --path . --stringparam source-dir ../../../../src --output summary.html summary.xsl summary.xml
@@ -83,5 +80,6 @@ html: summary.html
 clean::
 	find . -name 'aspect*.xml.raw' -exec rm '{}' ';'
 	find . -name 'aspect*.xml' -exec rm '{}' ';'
+	find . -name 'aspect*.html' -exec rm '{}' ';'
 	rm -rf $(CLEANFILES)
 .PHONY: clean

@@ -3,15 +3,15 @@ function summarize()
     load runsinfo.mat;
     load clusters.mat;
     Learn = configure();
-    fid = fopen('rawsummary.xml', 'wt');
+    fid = fopen('summary.xml', 'wt');
     fprintf(fid, '<?xml version=\"1.0\"?>\n');
-    fprintf(fid, '<!DOCTYPE plsa SYSTEM "rawsummary.dtd">\n'); 
+    fprintf(fid, '<!DOCTYPE plsa SYSTEM "summary.dtd">\n'); 
     fprintf(fid, '<plsa>\n');
     printaspects(fid, Learn, Clusters, Pw_z,X);
-    printruns(fid, Learn, Findices, Sindices, UsageClusters, BugClusters,X);
     fprintf(fid, '</plsa>\n');
     fclose(fid);
     printfeatures(Pw_z);
+    printruns(Learn, Findices, Sindices, UsageClusters, BugClusters, X);
     quit;
 
 function printaspects(fid, Learn, Clusters,Pw_z,X)  
@@ -25,7 +25,7 @@ function printaspects(fid, Learn, Clusters,Pw_z,X)
        end;
        [S,I] = sort(Pw_z(:,i), 1, 'descend');
        counts = full(Sum(find(Clusters(i,:))));
-       fprintf(fid, '<aspect kind=\"%s\" ratio=\"%1.4f\" maxrunlength=\"%u\" minrunlength=\"%u\" meanrunlength=\"%u\" runlengthstd=\"%u\">\n', kind, sum(S(1:topnum)),max(counts),min(counts),round(mean(counts)),round(std(counts)));
+       fprintf(fid, '<aspect index=\"%u\" kind=\"%s\" ratio=\"%1.4f\" maxrunlength=\"%u\" minrunlength=\"%u\" meanrunlength=\"%u\" runlengthstd=\"%u\">\n', i, kind, sum(S(1:topnum)),max(counts),min(counts),round(mean(counts)),round(std(counts)));
        for j = find(Clusters(i,:) > 0);
            fprintf(fid, '<runid index=\"%u\"/>', j); 
        end;
@@ -55,7 +55,11 @@ function printaspectentrys(fid, probs, rank)
       fprintf(fid, '<aspectentry aspectindex=\"%u\" rank=\"%u\" probability=\"%0.4f\"/>\n', i, rank(i), probs(i));
     end;
 
-function printruns(fid, Learn, Findices, Sindices, UsageClusters, BugClusters,X) 
+function printruns(Learn, Findices, Sindices, UsageClusters, BugClusters,X)
+    fid = fopen('runs.xml', 'wt'); 
+    fprintf(fid, '<?xml version=\"1.0\"?>\n');
+    fprintf(fid, '<!DOCTYPE runinfos SYSTEM "runs.dtd">\n'); 
+    fprintf(fid, '<runinfos>\n');
     numruns = size(UsageClusters, 2);
     Fs(1, numruns) = 0;
     Fs(Findices) = 1;
@@ -84,3 +88,5 @@ function printruns(fid, Learn, Findices, Sindices, UsageClusters, BugClusters,X)
         end;
         fprintf(fid, '</run>\n');
     end;
+    fprintf(fid, '</runinfos>\n'); 
+    fclose(fid);
