@@ -94,6 +94,15 @@
         </tr>
       </tbody>
     </table>
+    <h3>Aspect Probabilities</h3> 
+    <table>
+      <thead>
+        <xsl:call-template name="aspectprobabilityheader"/>
+      </thead>
+      <tbody>
+        <xsl:apply-templates select="cbi:aspectprobability"/>
+      </tbody>
+    </table> 
   </xsl:template>
 
   <xsl:template match="cbi:feature">
@@ -120,6 +129,28 @@
         <th>File:Line</th>
       </tr>
     </thead>
+  </xsl:template>
+
+  <xsl:template name="aspectprobabilityheader">
+    <tr>
+      <th>Aspect</th>
+      <th>Mean</th>
+      <th>Standard Deviation</th>
+      <th>Median</th>
+      <th>Maximum</th>
+      <th>Minimum</th>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="cbi:aspectprobability">
+    <tr>
+      <th><xsl:value-of select="@aspectindex"/></th>
+      <td><xsl:value-of select="@mean"/></td>
+      <td><xsl:value-of select="@std"/></td>
+      <td><xsl:value-of select="@median"/></td>
+      <td><xsl:value-of select="@max"/></td>
+      <td><xsl:value-of select="@min"/></td>
+    </tr>
   </xsl:template>
 
 </xsl:stylesheet>

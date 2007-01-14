@@ -16,7 +16,15 @@
 <!ATTLIST run outcome (success | failure | ignore) #REQUIRED>
 <!ATTLIST run totalcount NMTOKEN #REQUIRED>
 
-<!ELEMENT runstats EMPTY>
+<!ELEMENT aspectprobability EMPTY>
+<!ATTLIST aspectprobability aspectindex NMTOKEN #REQUIRED>
+<!ATTLIST aspectprobability mean NMTOKEN #REQUIRED>
+<!ATTLIST aspectprobability std NMTOKEN #REQUIRED>
+<!ATTLIST aspectprobability median NMTOKEN #REQUIRED>
+<!ATTLIST aspectprobability max NMTOKEN #REQUIRED>
+<!ATTLIST aspectprobability min NMTOKEN #REQUIRED>
+
+<!ELEMENT runstats (aspectprobability*)>
 <!ATTLIST runstats numruns NMTOKEN #REQUIRED>
 <!ATTLIST runstats maxrunlength NMTOKEN #REQUIRED>
 <!ATTLIST runstats minrunlength NMTOKEN #REQUIRED>

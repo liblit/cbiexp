@@ -49,6 +49,7 @@
         <xsl:attribute name="runlengthstd">
           <xsl:value-of select="@runlengthstd"/>
         </xsl:attribute> 
+        <xsl:apply-templates select="aspectprobability" mode="rawfeature"/>
       </xsl:element>
     </xsl:element>
   </xsl:template>
@@ -87,5 +88,11 @@
       </xsl:attribute>
     </xsl:element>
   </xsl:template>
+
+  <xsl:template match="aspectprobability" mode="rawfeature">
+    <xsl:element name="aspectprobability" namespace="http://www.cs.wisc.edu/cbi">
+      <xsl:copy-of select="@*"/>
+    </xsl:element>
+  </xsl:template> 
 
 </xsl:stylesheet>

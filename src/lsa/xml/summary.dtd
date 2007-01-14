@@ -9,10 +9,19 @@
 <!ELEMENT featureclaimed EMPTY>
 <!ATTLIST featureclaimed index NMTOKEN #REQUIRED> 
 
+<!ELEMENT aspectprobability EMPTY>
+<!ATTLIST aspectprobability aspectindex NMTOKEN #REQUIRED>
+<!ATTLIST aspectprobability mean NMTOKEN #REQUIRED>
+<!ATTLIST aspectprobability std NMTOKEN #REQUIRED>
+<!ATTLIST aspectprobability median NMTOKEN #REQUIRED>
+<!ATTLIST aspectprobability max NMTOKEN #REQUIRED>
+<!ATTLIST aspectprobability min NMTOKEN #REQUIRED>
+
+
 <!-- an aspect has a set of runs and a set of features. -->
 <!-- it has an internal id and an external number. --> 
 <!-- it can be a usage aspect or a buggy aspect. -->
-<!ELEMENT aspect (runid*, featureclaimed*)>
+<!ELEMENT aspect (runid*, featureclaimed*,aspectprobability*)>
 <!ATTLIST aspect index NMTOKEN #REQUIRED>
 <!ATTLIST aspect ratio NMTOKEN #REQUIRED>
 <!ATTLIST aspect kind (usage | bug) #REQUIRED>

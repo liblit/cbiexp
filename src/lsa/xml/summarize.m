@@ -7,30 +7,37 @@ function summarize()
     fprintf(fid, '<?xml version=\"1.0\"?>\n');
     fprintf(fid, '<!DOCTYPE plsa SYSTEM "summary.dtd">\n'); 
     fprintf(fid, '<plsa>\n');
-    printaspects(fid, Learn, Clusters, Pw_z,X);
+    printaspects(fid, Learn, Clusters, Pw_z,X,Pz_d);
     fprintf(fid, '</plsa>\n');
     fclose(fid);
     printfeatures(Pw_z);
     printruns(Learn, Findices, Sindices, UsageClusters, BugClusters, X);
     quit;
 
-function printaspects(fid, Learn, Clusters,Pw_z,X)  
+function printaspects(fid, Learn, Clusters,Pw_z,X,Pz_d)  
    topnum = 400;
    Sum = sum(X,1);
-   for i = 1:Learn.K; 
-       if i <= Learn.K - Learn.Kb; 
+   numaspects = Learn.K;
+   numbugaspects = Learn.Kb;
+   for i = 1:numaspects;
+       runindices = find(Clusters(i,:));
+       if i <= numaspects - numbugaspects; 
            kind = 'usage';
        else
            kind = 'bug';
        end;
        [S,I] = sort(Pw_z(:,i), 1, 'descend');
-       counts = full(Sum(find(Clusters(i,:))));
+       counts = full(Sum(runindices));
        fprintf(fid, '<aspect index=\"%u\" kind=\"%s\" ratio=\"%1.4f\" maxrunlength=\"%u\" minrunlength=\"%u\" meanrunlength=\"%u\" runlengthstd=\"%u\">\n', i, kind, sum(S(1:topnum)),max(counts),min(counts),round(mean(counts)),round(std(counts)));
-       for j = find(Clusters(i,:) > 0);
+       for j = runindices; 
            fprintf(fid, '<runid index=\"%u\"/>', j); 
        end;
        for j = 1:topnum;
            fprintf(fid, '<featureclaimed index=\"%u\"/>', I(j));
+       end;
+       for k = 1:numaspects;
+           vals = Pz_d(k,runindices); 
+           fprintf(fid, '<aspectprobability aspectindex=\"%u\" mean=\"%0.4f\" std=\"%0.4f\" median=\"%0.4f" max=\"%0.4f\" min=\"%0.4f\"/>', k, mean(vals), std(vals), median(vals), max(vals), min(vals)); 
        end;
        fprintf(fid, '</aspect>\n');
    end;

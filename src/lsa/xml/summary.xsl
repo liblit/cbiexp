@@ -31,7 +31,6 @@
         <div id="rest">
           <xsl:call-template name="summary"/>
           <xsl:call-template name="aspects"/>
-          <xsl:call-template name="failingruns"/>  
         </div>
       </body>
     </html>
@@ -148,33 +147,6 @@
     </div>
   </xsl:template>
 
-  <xsl:template name="failingruns">
-    <div class="failingruns">
-    <h2>Failing Runs:</h2>
-    <xsl:variable name="failing" select="$runs[@outcome='failure']"/>
-    <table class="failingruns">
-    <tbody>
-    <tr>
-    <th style="text-align:left">Total:</th>
-    <td><xsl:value-of select="count($failing)"/></td>
-    </tr>
-    <tr>
-    <th style="text-align:left">Claimed by some buggy aspect:</th>
-    <td><xsl:value-of select="count(/plsa/aspect[@kind='bug']/runid)"/></td>
-    </tr>
-    </tbody>
-    </table>
-    <table class="cotable">
-      <xsl:call-template name="cotableheader"/>  
-      <tbody>
-      <xsl:for-each select="/plsa/aspect[@kind='bug']">
-        <xsl:call-template name="cotablerow"/>
-      </xsl:for-each>
-      </tbody>
-    </table> 
-    </div>
-  </xsl:template>
-
   <xsl:template name="aspectheader">
     <thead>
     <tr>
@@ -232,40 +204,6 @@
         <td><xsl:value-of select="count($runs[@outcome='failure'])"/></td>
       </tr>
     </tfoot>
-  </xsl:template>
-
-  <xsl:template name="cotableheader">
-    <thead>
-    <tr>
-      <th>Aspect</th>
-      <xsl:for-each select="plsa/aspect[@kind='usage']">
-        <th><xsl:value-of select="@index"/></th>
-      </xsl:for-each>
-      <th>Total</th>
-    </tr>
-    </thead>
-  </xsl:template>
-
-  <xsl:template name="cotablerow">
-    <xsl:variable name="runindices" select="runid/@index"/>
-    <xsl:variable name="runs" select="$runs[position() = $runindices]"/>
-    <tr>
-      <th><xsl:value-of select="@index"/></th>
-      <xsl:for-each select="/plsa/aspect[@kind='usage']">
-        <xsl:call-template name="cotableentry">
-          <xsl:with-param name="runs" select="$runs"/>
-        </xsl:call-template>
-      </xsl:for-each>
-      <td><xsl:value-of select="count($runs)"/></td> 
-    </tr>
-  </xsl:template> 
-
-  <xsl:template name="cotableentry">
-    <xsl:param name="runs"/>
-    <xsl:variable name="usageindex" select="@index"/>
-    <td>
-      <xsl:value-of select="count($runs/usageaspect[@index = $usageindex])"/>
-    </td>
   </xsl:template>
 
 </xsl:stylesheet>
