@@ -1,123 +1,67 @@
-{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
-{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-\pard\ql\qnatural\pardirnatural
-
-\f0\b\fs24 \cf0 \up0 \nosupersub \ul \ulc0 \obliqueness0 \expansion0 General Comments\
-\
-\pard\tx280\tx460\li460\fi-460\ql\qnatural\pardirnatural
-
-\f1\b0\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	1	Overall comment about introductory part of Section 2: I think you need to state up front the overall goal of the CBI analysis. Before you talk about the scoring system describe the top level algorithm and the elimination step. Point out that this has the effect of designating  a particular predicate as the cause of the bug in a particular set of runs. In fact you get a mapping between predicates and sets of runs. Ideally, each predicate corresponds to a distinct bug although, given the nature of the study, statistical and so forth, the algorithm may produce a list containing multiple predicates for the same bug or may not find any predicate for some (likely less prevalent) bug. _Then_ explain the details of how the scoring of the predicates is done. It wouldn't be wrong to divide the discussion into two sections, one for the overall elimination algorithm and one for the scoring formulas. Giving more weight to the elimination algorithm helps set you up for the discussion of "Improved Precision and Recall" in the next section.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	2	In Section 2.1 (Improved Precision and Recall) Sentence: We hypothesize that complex predicates will be especially helpful in coping with super- and sub-bug predictors, a challenging aspect of statistical debugging first identified by Liblit et al. My comment: Unfortunately, the reader doesn't know here what it means to "cope with" super- and sub- bug predictors because they don't know what problems they cause. \
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	3	In Section 2.1 (Improved Precision and Recall) Sentence: A super-bug predictor is one that is true in a large number of failures but also true in a large number of successful runs. My comment: This is _not_ the definition of super-bug predictor given in the PLDI 2005 paper which you reference.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	4	In Section 2.1 (Improved Precision and Recall) Sentence: A sub-bug predictor is one that is true in a small number of failed executions. My comment: Again, this is _not_ the definition of a sub-bug predictor given in the PLDI 2005 paper.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	5	In Section 2.1 (Improved Precision and Recall) Sentence: By eliminating false positives and negatives conjunctions and disjunctions can move super- and sub-bug predictors closer to perfection. My comment: This sentence seems vague and a bit garbled.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	6	In Section 2.1 (Improved Precision and Recall) Overall Comments: In 2.1 you clearly expect their may be multiple bugs but in this section you seem to always assume a single bug. If you really are assuming only one bug then the notion of super-bug predictor as defined in the PLDI2005 paper doesn't make any sense. If you are assuming multiple bugs then the the failure/success boundary is an overly general notion. Moreover, concrete examples would really help here, even if they need to be drawn from some case study described later in the paper.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	7	In Section 2.1 (Enhanced Support of Automated Tools.) The example of BTRACE helps make sense of the earlier remarks about other automated tools.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	8	In Section 3(Last paragraph of introductory section). My comment: It might be better to state that you are only dealing with conjuctive and disjunctive formulas on two simple predicates and derive the more specific formulas for the size of the set of resulting predicates rather than first deriving the more general formulas. Also, a better term for "search space" might just be number of predicates. Also, it's not clear what the last sentence of the paragraph refers to; the smaller set of formulas obtained using just conjunction and disjunction or the larger set discussed earlier in the paragraph. One has to look at the formula, figure out how it would be derived and conclude that you were discussing the more specific case. You might want to leave out the parenthetical sentence.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	9	In Section 3.1 Sentence: Three-valued logic is used because the value of a\
-predicate in a run may not be conclusive. Suggested rewording: Use "certain" instead of "conclusive".\
-\pard\tx280\tx600\li600\fi-600\ql\qnatural\pardirnatural
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	10	In Section 3.1. The last paragraph could probably be left out. Just observing that a disjunction behaves much like a conjunction but differently is probably enough.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	11	In Section 3.1 Sentence: But while computing complex predicates, the two sub-cases of the \'c2true case must be considered separately. My comment: I don't see at this point why three valued logic is useful. What do you lose by collapsing false and unknown?\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	12	Section 3.2 Sentence: Definition 3 is for the general case and as explained earlier, we explore only the case where k = 2 and f 2 \{_,^\}. My comment: it might be better to settle on one case or the other and just stick to it.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	13	Section 3.3 Sentence: Forming a complex predicate from its components is a nontrivial task, requiring a conjunction or disjunction for each program run. My comment: I don't know what this means.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	14	Section 3.3. (First paragraph) General comment: I think the point is that constructing the binary formula and then calculating its Importance is more costly than the pruning step you discuss later. There might be a better way to present this fact.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	15	Section 3.3. I think you should reverse the order in which you present things. First, explain that you compute an upper bound for the Importance using various approximations that make your calculation far less computationally intensive than the more precise calculation would. Then explain how the threshold is calculated. Then discuss how the approximations are calculated. Then show the gain in computations saved by doing the approximation first; taking into account how likely the maximum calculated would be above the threshold.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	16	Section 3.3 Sentence: The scores of p1 and p2 that determine whether C is interesting or not. My comment: I don't know what this means.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	17	Section 3.3 Sentence: During the redundancy elimination, the highest score among\
-simple predicates can be used as the threshold because if the score is below this value, computing C is useless for this iteration. My comment: I don't see exactly how this threshold value can be calculated during the execution of the redundancy elimination algorithm.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	18	Section 3.3 and 4. One should emphasize that Pruning is merely an optimization used to avoid having to do the more precise calculation but that the calculation of Usefulness is a different sort of thing. I think it was mentioned in the talk that Pruning and eliminating complex predicates based on a usefulness metric were orthogonal. It should probably be emphasized here as well.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	19	Section 4. Sentence: While complex predicates could help to better predict bugs, in the worst case, the upper bound on the number of interesting complex predicates is still quadratic in the number of simple predicates. My comment: You can eliminate this sentence entirely. The problem you're really dealing with here is the one described in the subsequent sentence: In our experiments, we often observe hundreds of complex predicates with similar or even identical high scores.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	20	Section 4. Sentence: In this section, we propose two metrics to reduce the number of complex predicates. My comment: Is that what you're really doing? Or are you selecting the most useful out of a large set of highly scored predicates to present to the user.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	21	Section 4. I'm not clear why the metrics are considered to measure utility. It seem that there is an inherent assumption about the types of bugs encountered which drives the assumption that a shorter distance is better. Maybe an example would help here.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	22	Section 4. Sentence: Intuitively a complex predicate with two relatively independent\
-predicates is less interesting because it doesn\'d5t provide much help to the users in finding anything new, besides the two individual predicates. My comment: It's not clear what is being said here.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	23	Section 5.2. The notion of "super-bugs" is used in the sense defined earlier in this paper rather than as defined in the PLDI2005 paper (see points 3 and 4).\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	24	Section 6.1. Sentence: The results shown in Figure 2 combined with the case studies in Section 5 demonstrates the usefulness of complex predicates. My comment: This seems like it might be overstating the case.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	25	Section 6.2: Sentence: Thus we find that the techniques proposed earlier significantly reduce the computational load required to identify a useful, high-scoring\
-subset of complex predicates. My comment: This would be more compelling if I understood how costly it was to compute the Importance of compound predicates precisely.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	26	Section 6.3: Sentence: This experiment serves as a sanity check for the implementation. My comment: This last sentence might be redundant given that the previous sentence starts with "As expected".\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	27	Section 6.4:Sentences: The script that does downsampling uses the standard pseudo random number generator. Usually for experiments that use such random data, the values are averaged over multiple trials to get a confident estimate of the results. We weren\'d5t able to conduct multiple trials because of time constraints. My comments: Presumably this is an artifact of the class project version of the paper and will go away in this version.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	28	Section 7: Sentence: This additional information results in better identification of bug predictors than traditional CBI analysis [11]. My comment: This must be qualified somewhat in the cited paper. They can't really compare themselves directly to CBI as they didn't do their experiments on the same programs.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	29	Section 7: Overall comment: I'm not really qualified to make many statements about the related work since I"m not sufficiently familiar with it.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	30	Section 8: Sentences: We describe two optimizations that make the task of computing complex predicates feasible. First is a numeric estimate on the upper bound of the score of a complex predicate. The second is a metric that quantifies the usefulness of a complex predicate. My comments: A "numeric estimate" is not an optimization. A "metric" is not an optimization. An optimization is a _transformation_ of an original algorithm.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	31	Section 8: Sentence: Our experiments show qualitative and quantitative evidence\
-that complex predicates can improve the current statistical analysis used by CBI. My comment: The statistical analysis remains the same. The _results_ of the statistical analysis are improved by introducing complex predicates.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	32	Section 8: Sentence: Even after these, the computational complexity is still\
-high and requires further optimizations. My comment: I don't think the results section has given much data on the time or space it takes to do the analysis.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	33	Section 8: Sentence: But the metrics are not perfect as good bug predictors are still swamped by less useful ones. My comment: I haven't seen evidence of this in the results or case studies.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	34	Section 8: Sentence: The metrics described in Section 4 help reduce the number of spurious predicates. My comment: In Section 4 itself the predicates are not described as spurious but rather as more or less useful to someone debugging. The conclusion should be consistent.\
-
-\fs26 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 \'a5
-\fs24 \cf0 \up0 \nosupersub \ulnone \obliqueness0 \expansion0 	35	Section 8: Sentence: The bi-clustering algorithm of Zheng et al. [14]\
-may solve this problem as it was designed with the goal of handling\
-multiple predictors for the same bug. My comment: I don't see how this addresses the previously stated problem.\
+{\rtf1\ansi\deff1\adeflang1025
+{\fonttbl{\f0\froman\fprq2\fcharset0 Times New Roman;}{\f1\fswiss\fprq0\fcharset77 Helvetica-Bold;}{\f2\fswiss\fprq2\fcharset0 Arial;}{\f3\fswiss\fprq0\fcharset77 Helvetica-Bold;}{\f4\fswiss\fprq0\fcharset77 Helvetica;}{\f5\fnil\fprq2\fcharset0 DejaVu Sans;}{\f6\fnil\fprq2\fcharset0 Tahoma;}{\f7\fnil\fprq0\fcharset0 Tahoma;}}
+{\colortbl;\red0\green0\blue0;\red128\green128\blue128;}
+{\stylesheet{\s1\cf0{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033\snext1 Normal;}
+{\s2\sb240\sa120\keepn\cf0{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\rtlch\af6\afs28\lang255\ltrch\dbch\af5\langfe255\hich\f2\fs28\lang1033\loch\f2\fs28\lang1033\sbasedon1\snext3 Heading;}
+{\s3\sa120\cf0{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033\sbasedon1\snext3 Body Text;}
+{\s4\sa120\cf0{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\rtlch\af7\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033\sbasedon3\snext4 List;}
+{\s5\sb120\sa120\cf0{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\rtlch\af7\afs24\lang255\ai\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\i\loch\f1\fs24\lang1033\i\sbasedon1\snext5 caption;}
+{\s6\cf0{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\rtlch\af7\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033\sbasedon1\snext6 Index;}
 }
+{\info{\creatim\yr2007\mo1\dy14\hr14\min8}{\revtim\yr1601\mo1\dy1\hr0\min0}{\printim\yr1601\mo1\dy1\hr0\min0}{\comment StarWriter}{\vern6800}}\deftab720
+{\*\pgdsctbl
+{\pgdsc0\pgdscuse195\pgwsxn12240\pghsxn15840\marglsxn1134\margrsxn1134\margtsxn1134\margbsxn1134\pgdscnxt0 Standard;}}
+\paperh15840\paperw12240\margl1134\margr1134\margt1134\margb1134\sectd\sbknone\pgwsxn12240\pghsxn15840\marglsxn1134\margrsxn1134\margtsxn1134\margbsxn1134\ftnbj\ftnstart1\ftnrstcont\ftnnar\aenddoc\aftnrstcont\aftnstart1\aftnnrlc
+\pard\plain \ltrpar\s1\cf0\ul\ulc0{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\rtlch\af1\afs24\lang255\ab\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\b\loch\f1\fs24\lang1033\b {\rtlch \ltrch\loch\f1\fs24\lang1033\i0\b General Comments}
+\par \pard\plain \ltrpar\s1\cf0\ul\ulc0{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\rtlch\af1\afs24\lang255\ab\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\b\loch\f1\fs24\lang1033\b 
+\par \pard\plain \ltrpar\s1\cf0\tx-180\tx0{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 8\tab In Section 3(Last paragraph of introductory section). My comment: It might be better to state that you are only dealing with conjuctive and disjunctive formulas on two simple predicates and derive the more specific formulas for the size of the set of r
+esulting predicates rather than first deriving the more general formulas. Also, a better term for "search space" might just be number of predicates. Also, it's not clear what the last sentence of the paragraph refers to; the smaller set of formulas obtaine
+d using just conjunction and disjunction or the larger set discussed earlier in the paragraph. One has to look at the formula, figure out how it would be derived and conclude that you were discussing the more specific case. You might want to leave out the 
+parenthetical sentence.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx460{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li460\ri0\lin460\rin0\fi-460\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 9\tab In Section 3.1 Sentence: Three-valued logic is used because the value of a}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx460{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li460\ri0\lin460\rin0\fi-460\rtlch\af4\afs24\lang255\ltrch\dbch\af4\langfe255\hich\f4\fs24\lang1033\loch\f4\fs24\lang1033 {\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 predicate in a run may not be conclusive. Suggested rewording: Use "certain" instead of "conclusive".}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 10\tab In Section 3.1. The last paragraph could probably be left out. Just observing that a disjunction behaves much like a conjunction but differently is probably enough.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 11\tab In Section 3.1 Sentence: But while computing complex predicates, the two sub-cases of the \'c2true case must be considered separately. My comment: I don't see at this point why three valued logic is useful. What do you lose by collapsing false and unknow
+n?}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 12\tab Section 3.2 Sentence: Definition 3 is for the general case and as explained earlier, we explore only the case where k = 2 and f 2 \{_,^\}. My comment: it might be better to settle on one case or the other and just stick to it.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 13\tab Section 3.3 Sentence: Forming a complex predicate from its components is a nontrivial task, requiring a conjunction or disjunction for each program run. My comment: I don't know what this means.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 14\tab Section 3.3. (First paragraph) General comment: I think the point is that constructing the binary formula and then calculating its Importance is more costly than the pruning step you discuss later. There might be a better way to present this fact.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 15\tab Section 3.3. I think you should reverse the order in which you present things. First, explain that you compute an upper bound for the Importance using various approximations that make your calculation far less computationally intensive than the more p
+recise calculation would. Then explain how the threshold is calculated. Then discuss how the approximations are calculated. Then show the gain in computations saved by doing the approximation first; taking into account how likely the maximum calculated wou
+ld be above the threshold.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 16\tab Section 3.3 Sentence: The scores of p1 and p2 that determine whether C is interesting or not. My comment: I don't know what this means.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 17\tab Section 3.3 Sentence: During the redundancy elimination, the highest score among}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af4\afs24\lang255\ltrch\dbch\af4\langfe255\hich\f4\fs24\lang1033\loch\f4\fs24\lang1033 {\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 simple predicates can be used as the threshold because if the score is below this value, computing C is useless for this iteration. My comment: I don't see exactly how this threshold value can be calculated during the execution of the redundancy eliminatio
+n algorithm.}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 18\tab Section 3.3 and 4. One should emphasize that Pruning is merely an optimization used to avoid having to do the more precise calculation but that the calculation of Usefulness is a different sort of thing. I think it was mentioned in the talk that Pruni
+ng and eliminating complex predicates based on a usefulness metric were orthogonal. It should probably be emphasized here as well.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 19\tab Section 4. Sentence: While complex predicates could help to better predict bugs, in the worst case, the upper bound on the number of interesting complex predicates is still quadratic in the number of simple predicates. My comment: You can eliminate th
+is sentence entirely. The problem you're really dealing with here is the one described in the subsequent sentence: In our experiments, we often observe hundreds of complex predicates with similar or even identical high scores.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 20\tab Section 4. Sentence: In this section, we propose two metrics to reduce the number of complex predicates. My comment: Is that what you're really doing? Or are you selecting the most useful out of a large set of highly scored predicates to present to th
+e user.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 21\tab Section 4. I'm not clear why the metrics are considered to measure utility. It seem that there is an inherent assumption about the types of bugs encountered which drives the assumption that a shorter distance is better. Maybe an example would help her
+e.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 22\tab Section 4. Sentence: Intuitively a complex predicate with two relatively independent}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0\f4 predicates is less interesting because it doesn\'d5t provide much help to the users in finding anything new, besides the two individual predicates. My comment: It's not clear what is being said here.}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 24\tab Section 6.1. Sentence: The results shown in Figure 2 combined with the case studies in Section 5 demonstrates the usefulness of complex predicates. My comment: This seems like it might be overstating the case.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 25\tab Section 6.2: Sentence: Thus we find that the techniques proposed earlier significantly reduce the computational load required to identify a useful, high-scoring}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af4\afs24\lang255\ltrch\dbch\af4\langfe255\hich\f4\fs24\lang1033\loch\f4\fs24\lang1033 {\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 subset of complex predicates. My comment: This would be more compelling if I understood how costly it was to compute the Importance of compound predicates precisely.}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 26\tab Section 6.3: Sentence: This experiment serves as a sanity check for the implementation. My comment: This last sentence might be redundant given that the previous sentence starts with "As expected".}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 27\tab Section 6.4:Sentences: The script that does downsampling uses the standard pseudo random number generator. Usually for experiments that use such random data, the values are averaged over multiple trials to get a confident estimate of the results. We w
+eren\'d5t able to conduct multiple trials because of time constraints. My comments: Presumably this is an artifact of the class project version of the paper and will go away in this version.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 28\tab Section 7: Sentence: This additional information results in better identification of bug predictors than traditional CBI analysis [11]. My comment: This must be qualified somewhat in the cited paper. They can't really compare themselves directly to CB
+I as they didn't do their experiments on the same programs.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 29\tab Section 7: Overall comment: I'm not really qualified to make many statements about the related work since I"m not sufficiently familiar with it.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 30\tab Section 8: Sentences: We describe two optimizations that make the task of computing complex predicates feasible. First is a numeric estimate on the upper bound of the score of a complex predicate. The second is a metric that quantifies the usefulness 
+of a complex predicate. My comments: A "numeric estimate" is not an optimization. A "metric" is not an optimization. An optimization is a _transformation_ of an original algorithm.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 31\tab Section 8: Sentence: Our experiments show qualitative and quantitative evidence}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af4\afs24\lang255\ltrch\dbch\af4\langfe255\hich\f4\fs24\lang1033\loch\f4\fs24\lang1033 {\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 that complex predicates can improve the current statistical analysis used by CBI. My comment: The statistical analysis remains the same. The _results_ of the statistical analysis are improved by introducing complex predicates.}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 32\tab Section 8: Sentence: Even after these, the computational complexity is still}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af4\afs24\lang255\ltrch\dbch\af4\langfe255\hich\f4\fs24\lang1033\loch\f4\fs24\lang1033 {\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 high and requires further optimizations. My comment: I don't think the results section has given much data on the time or space it takes to do the analysis.}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 33\tab Section 8: Sentence: But the metrics are not perfect as good bug predictors are still swamped by less useful ones. My comment: I haven't seen evidence of this in the results or case studies.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 34\tab Section 8: Sentence: The metrics described in Section 4 help reduce the number of spurious predicates. My comment: In Section 4 itself the predicates are not described as spurious but rather as more or less useful to someone debugging. The conclusion 
+should be consistent.}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af1\afs24\lang255\ltrch\dbch\af1\langfe255\hich\f1\fs24\lang1033\loch\f1\fs24\lang1033{{\rtlch \ltrch\loch \'a5}}{{\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 \tab 35\tab Section 8: Sentence: The bi-clustering algorithm of Zheng et al. [14]}}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af4\afs24\lang255\ltrch\dbch\af4\langfe255\hich\f4\fs24\lang1033\loch\f4\fs24\lang1033 {\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 may solve this problem as it was designed with the goal of handling}
+\par \pard\plain \ltrpar\s1\cf0\tx280\tx600{\*\hyphen2\hyphlead2\hyphtrail2\hyphmax0}\li600\ri0\lin600\rin0\fi-600\rtlch\af4\afs24\lang255\ltrch\dbch\af4\langfe255\hich\f4\fs24\lang1033\loch\f4\fs24\lang1033 {\rtlch \ltrch\loch\f4\fs24\lang1033\i0\b0 multiple predictors for the same bug. My comment: I don't see how this addresses the previously stated problem.}
+\par }

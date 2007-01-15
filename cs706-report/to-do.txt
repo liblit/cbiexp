@@ -26,15 +26,13 @@ lower sampling rate.
 
 Formatting for program names is inconsistent, both internally and with
 previously published CBI papers.  exif, ccrypt and the siemens programs
-use \texttt, where btrace and rhythmbox use \textsc.
+use \texttt, where btrace and rhythmbox use \textsc.  Previous papers
+used \textsc for all program names (I think).
 
 ------------------------------------------------------------------------
 --
 --  Section 2
 --
-
-Jazz up the new Section 2
-[*Jake]
 
 ------------------------------------------------------------------------
 --
