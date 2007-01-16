@@ -67,8 +67,7 @@ nd = size(X,2); % # of documents
 e = nnz(X); 
 
 if Learn.Normalized;
-    C = sum(X,1); 
-    X = X * diag(invertNonZeros(C));
+    X = normalizeColumns(X); 
 end; 
 
 [I,J,V] = find(X);
@@ -126,13 +125,10 @@ Pd_z = principled_randomize(nd,K);   % word probabilities conditioned on topic
 %zeros entries corresponding to succeeding runs and bug aspects
 %if not doing constrained pLSA pass empty KbIndices
 Pd_z(Sindices, KbIndices) = 0; 
-C    = sum(Pd_z,1);  
-Pd_z = Pd_z * diag(invertNonZeros(C));
+Pd_z = normalizeColumns(Pd_z);
 
 % random assignment
-Pw_z = principled_randomize(m,K);
-C    = sum(Pw_z,1); 
-Pw_z = Pw_z * diag(invertNonZeros(C));
+Pw_z = normalizeColumns(principled_randomize(m,K));
 
 
 return;
@@ -198,11 +194,9 @@ function [Pw_z,Pd_z,Pz] = pLSA_Mstep(X,Pz_dw,K,Sindices,KbIndices)
    Pz = sum(Pd_z,1);
    
    % normalize to sum to 1
-   C = sum(Pw_z,1);
-   Pw_z = Pw_z * diag(full(invertNonZeros(C)));
+   Pw_z = normalizeColumns(Pw_z);
 
-   C = sum(Pd_z,1);
-   Pd_z = Pd_z * diag(full(invertNonZeros(C)));
+   Pd_z = normalizeColumns(Pd_z);
    
    C = sum(Pz,2);
    if C == 0 
@@ -212,25 +206,6 @@ function [Pw_z,Pd_z,Pz] = pLSA_Mstep(X,Pz_dw,K,Sindices,KbIndices)
 
 return;
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% data log-likelihood
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function L = pLSA_logL(I,J,V,Pw_z,Pz,Pd_z,M,N,E)
-   L = spalloc(M,N,E);   
-   for i = 1:E
-       L(I(i),J(i)) = Pw_z(I(i), :) * diag(Pz) * Pd_z(J(i),:)'; 
-   end;
-   if nnz(L) ~= E 
-       L = -Inf;   
-       warning('Probability of word and document co-occurring was zero, but actual count was not.');
-   else
-       [IL,JL,L] = find(L); 
-       L = sum(V .* log(L));
-   end;
-
-return; 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % use Bayes rule to invert probabilities
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -239,8 +214,4 @@ function Px_y = invertProbs(Py_x, Px)
     Sx_y = sum(Px_y,2); 
     Sx_y = invertNonZeros(Sx_y); 
     Px_y = Px_y' * diag(Sx_y);
-return;
-
-function Z = invertNonZeros(V)
-    Z = spfun(inline('1./x'),V);
 return;
