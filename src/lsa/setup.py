@@ -5,7 +5,7 @@ import sys
 
 from optparse import OptionParser
 from os import mkdir
-from os.path import join
+from os.path import exists, join
 
 def main():
     parser = OptionParser(usage='%prog numaspects numbugaspects numrestarts') 
@@ -19,13 +19,16 @@ def main():
 
     for restart in range(int(numrestarts)):
         curdir = str(restart)
-        makeexpdir(curdir, numaspects, numbugaspects)
-        makehtmldir(curdir)
-        makefile = open(join(curdir, 'GNUmakefile'), 'w')
-        print >>makefile, 'numaspects = %s' % numaspects
-        print >>makefile, 'numbugaspects = %s' % numbugaspects
-        print >>makefile, 'include %s/analysis-rules.mk' % sys.path[0] 
-        makefile.close()
+        if exists(curdir):
+            print 'skipping %s because it has already been made' % curdir 
+        else:
+            makeexpdir(curdir, numaspects, numbugaspects)
+            makehtmldir(curdir)
+            makefile = open(join(curdir, 'GNUmakefile'), 'w')
+            print >>makefile, 'numaspects = %s' % numaspects
+            print >>makefile, 'numbugaspects = %s' % numbugaspects
+            print >>makefile, 'include %s/analysis-rules.mk' % sys.path[0] 
+            makefile.close()
 
 
 ########################################################################
