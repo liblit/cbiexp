@@ -38,15 +38,21 @@ loglikelihoods.txt best:
 
 rank: loglikelihoods.txt best
 
-results.mat loglikelihood.txt:
+results.mat loglikelihood.txt clusters.mat:
+	-rm X.sparse
+	-rm f.indices
+	-rm s.indices
+	-rm runsinfo.mat
+	-rm configure.m
 	ln ../../X.sparse
 	ln ../../f.indices
 	ln ../../s.indices
 	ln ../../runsinfo.mat
 	ln ../configure.m
-	$(MATLAB) -r "path(path, '$(tooldir)'); runOnce()" > /dev/null
+	$(MATLAB) -r "path(path, '$(tooldir)'); runOnce(); clusterByMaxAspect()" > /dev/null
 	touch results.mat
 	touch loglikelihood.txt
+	touch clusters.mat
 
 html/summary.xml html/features.xml html/runs.xml: results.mat runsinfo.mat clusters.mat configure.m
 	$(MATLAB) -r "path(path, '$(xmldir)'); summarize()" > /dev/null
@@ -54,7 +60,7 @@ html/summary.xml html/features.xml html/runs.xml: results.mat runsinfo.mat clust
 	mv features.xml html/features.xml
 	mv runs.xml html/runs.xml
 
-run: results.mat loglikelihood.txt html/summary.xml
+run: results.mat loglikelihood.txt clusters.mat html/summary.xml
 
 summary.html: summary.xml
 	xsltproc --path $(xmldir) --path ../../../.. --path . --stringparam source-dir ../../../../src --output summary.html summary.xsl summary.xml
