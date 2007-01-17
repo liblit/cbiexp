@@ -4,6 +4,8 @@
 <!-- a wrapper for runid refs -->
 <!ELEMENT runid EMPTY>
 <!ATTLIST runid index NMTOKEN #REQUIRED>
+<!ATTLIST runid llrank NMTOKEN #REQUIRED>
+<!ATTLIST runid llvalue NMTOKEN #REQUIRED>
 
 <!-- a wrapper for feature id refs -->
 <!ELEMENT featureclaimed EMPTY>

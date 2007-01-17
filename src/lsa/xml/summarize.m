@@ -3,18 +3,34 @@ function summarize()
     load runsinfo.mat;
     load clusters.mat;
     Learn = configure();
+    if Learn.Normalized;
+        NX = normalizeColumns(X);
+    else;
+        NX = X;
+    end;
+    [I,J,V] = find(NX);
+    [L,LM] = pLSA_logL(I,J,V,Pw_z,Pz,Pd_z,size(NX,1),size(NX,2),nnz(NX)); 
     fid = fopen('summary.xml', 'wt');
     fprintf(fid, '<?xml version=\"1.0\"?>\n');
     fprintf(fid, '<!DOCTYPE plsa SYSTEM "summary.dtd">\n'); 
     fprintf(fid, '<plsa>\n');
-    printaspects(fid, Learn, Clusters, Pw_z,X,Pz_d);
+    printaspects(fid, Learn, Clusters, Pw_z,X,Pz_d,LM);
     fprintf(fid, '</plsa>\n');
     fclose(fid);
     printfeatures(Pw_z);
     printruns(Learn, Findices, Sindices, UsageClusters, BugClusters, X);
     quit;
 
-function printaspects(fid, Learn, Clusters,Pw_z,X,Pz_d)  
+function printclaimedruns(fid, runindices, Pz_d, LM)
+    runloglikelihoods = sum(LM(:,runindices),1); 
+    [V,I] = sort(full(runloglikelihoods), 2, 'descend');
+    for j = 1:numel(runindices);
+       rank = find(I == j);
+       fprintf(fid, '<runid index=\"%u\" llrank=\"%u\" llvalue=\"%f\"/>', runindices(j), rank, V(rank));
+    end;
+    return;
+
+function printaspects(fid, Learn, Clusters,Pw_z,X,Pz_d,LM)  
    topnum = 400;
    Sum = sum(X,1);
    numaspects = Learn.K;
@@ -29,9 +45,7 @@ function printaspects(fid, Learn, Clusters,Pw_z,X,Pz_d)
        [S,I] = sort(Pw_z(:,i), 1, 'descend');
        counts = full(Sum(runindices));
        fprintf(fid, '<aspect index=\"%u\" kind=\"%s\" ratio=\"%1.4f\" maxrunlength=\"%u\" minrunlength=\"%u\" meanrunlength=\"%u\" runlengthstd=\"%u\">\n', i, kind, sum(S(1:topnum)),max(counts),min(counts),round(mean(counts)),round(std(counts)));
-       for j = runindices; 
-           fprintf(fid, '<runid index=\"%u\"/>', j); 
-       end;
+       printclaimedruns(fid, runindices, Pz_d, LM);
        for j = 1:topnum;
            fprintf(fid, '<featureclaimed index=\"%u\"/>', I(j));
        end;

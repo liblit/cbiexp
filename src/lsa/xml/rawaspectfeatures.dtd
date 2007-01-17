@@ -14,6 +14,8 @@
 <!ATTLIST run index NMTOKEN #REQUIRED>
 <!ATTLIST run outcome (success | failure | ignore) #REQUIRED>
 <!ATTLIST run totalcount NMTOKEN #REQUIRED>
+<!ATTLIST run llrank NMTOKEN #REQUIRED>
+<!ATTLIST run llvalue NMTOKEN #REQUIRED>
 
 <!ELEMENT aspectprobability EMPTY>
 <!ATTLIST aspectprobability aspectindex NMTOKEN #REQUIRED>
@@ -29,3 +31,4 @@
 <!ATTLIST runstats minrunlength NMTOKEN #REQUIRED>
 <!ATTLIST runstats meanrunlength NMTOKEN #REQUIRED>
 <!ATTLIST runstats runlengthstd NMTOKEN #REQUIRED>
+<!ATTLIST runstats bestrun NMTOKEN #REQUIRED> 

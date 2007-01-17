@@ -14,6 +14,7 @@
   <xsl:import href="scores.xsl"/>
 
   <xsl:variable name="preds" select="document('predictor-info.xml')/predictor-info/info"/>
+  <xsl:variable name="runs" select="document('runs.xml')/runinfos/run"/>
 
   <xsl:output method="html"/>
 
@@ -91,6 +92,33 @@
           <td style="text-align:right">
             <xsl:value-of select="@runlengthstd"/>
           </td>
+        </tr>
+        <tr>
+          <th style="text-align:left">
+            Best Run
+            <table>
+              <tbody>
+                <tr>
+                  <th style="text-align:left">
+                    Index:
+                  </th>
+                  <td style="text-align:right">
+                    <xsl:value-of select="@bestrun"/>
+                  </td>
+                </tr>
+                <xsl:variable name="index" select="@bestrun"/>
+                <xsl:variable name="bestrun" select="$runs[position() = $index]"/>
+                <tr>
+                  <th style="text-align:left">
+                    Length:
+                  </th>
+                  <td style="text-align:right">
+                    <xsl:value-of select="$bestrun/@totalcount"/>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </th>
         </tr>
       </tbody>
     </table>

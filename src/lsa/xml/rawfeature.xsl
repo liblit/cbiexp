@@ -49,6 +49,10 @@
         <xsl:attribute name="runlengthstd">
           <xsl:value-of select="@runlengthstd"/>
         </xsl:attribute> 
+        <xsl:attribute name="bestrun">
+          <xsl:variable name="best" select="runid[@llrank='1']"/>
+          <xsl:value-of select="$best/@index"/>
+        </xsl:attribute>
         <xsl:apply-templates select="aspectprobability" mode="rawfeature"/>
       </xsl:element>
     </xsl:element>
@@ -85,6 +89,12 @@
       </xsl:attribute>
       <xsl:attribute name="totalcount">
         <xsl:value-of select="$run/@totalcount"/>
+      </xsl:attribute>
+      <xsl:attribute name="llrank">
+        <xsl:value-of select="@llrank"/>
+      </xsl:attribute>
+      <xsl:attribute name="llvalue">
+        <xsl:value-of select="@llvalue"/>
       </xsl:attribute>
     </xsl:element>
   </xsl:template>
