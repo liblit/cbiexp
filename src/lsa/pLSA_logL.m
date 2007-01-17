@@ -17,12 +17,14 @@ function [L,LM] = pLSA_logL(I,J,V,Pw_z,Pz,Pd_z,M,N,E)
    for i = 1:E
        LM(I(i),J(i)) = Pw_z(I(i), :) * diag(Pz) * Pd_z(J(i),:)'; 
    end;
+   [IL,JL,L] = find(LM); 
+   T = V .* log(L);
    if nnz(LM) ~= E 
        L = -Inf;   
        warning('Probability of word and document co-occurring was zero, but actual count was not.');
    else
-       [IL,JL,L] = find(LM); 
-       L = sum(V .* log(L));
+       L = sum(T);
+       LM = sparse(I,J,T);
    end;
 
 return; 
