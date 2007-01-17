@@ -39,17 +39,6 @@ used \textsc for all program names (I think).
 --  Section 3
 --
 
-Section 3.1 needs to better define what it means for a predicate to be
-true or false.  If I observe a predicate true once and false once in a
-single run, is that predicate considered true, false, or both for
-purposes of your three-valued logic?
-[+tchen]
-
-Section 3.3 is fairly technical and not easy to follow.  An example
-with concrete numbers might help here, but I'm not sure.  This may
-just be inherently tricky stuff.
-[+tchen]
-
 ------------------------------------------------------------------------
 --
 --  Section 4
@@ -132,12 +121,3 @@ prose discussion with no table or figure at all.
 Section 8 concludes on a weak note.  We ought to be able to make this
 a bit sexier while still being honest about the technique's
 limitations. [+Ben]
-
-Regarding those limitations ... do you have further ideas in mind for
-pulling the interesting predictors out from the big (quadratic) pool
-of complex predicates?  Is it just a matter of implementation time to
-try out something you think might work?  Or are we essentially out of
-ideas at this point?  If you have ideas, then that's where I could see
-more revisions to the implementation.  Otherwise, no, I don't think
-more implementation work is needed.  Rather, it's a matter of revising
-what's already here to get it really polished.
