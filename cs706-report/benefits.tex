@@ -1,8 +1,5 @@
 % -*- TeX-master: "report" -*-
 
-\newcommand{\rhythmbox}{\textsc{Rhythmbox}\xspace}
-% Copied from Ben's PLDI-2004 paper.  --Jake
-
 \section{Background}
 \label{sec-bground}
 CBI uses lightweight instrumentation to collect feedback reports that contain truth values of predicates in an execution as well as the outcome (e.g., crash or non-crash) of the execution.  A large number of these reports are collected and analyzed using statistical debugging techniques.  These techniques identify \emph{bug predictors} - predicates which, when true, herald failure due to a specific bug.  Bug predictors indicate areas of the code related to program failure and so provide information useful when correcting program faults.  Feedback reports can be collected from deployed executions by end users, who may encounter bugs not identified in program testing.  CBI can therefore be used to monitor software after its release and help direct program patches by identifying bugs as they present in the field.
@@ -17,7 +14,7 @@ When a predicate is identified as the top predictor of failure it is assumed to 
 
 This process of iterative elimination maps each predictor to a set of program runs.  Ideally each such set corresponds to the expression of a distinct bug; unfortunately this is not always the case.  Due to the statistical nature of the analysis, along with incomplete feedback reports resulting from sparse sampling rates, a single bug could be predicted by several top-ranked predicates, and predictors for less prevalent bugs may not be found at all.
 
-The output of the analysis will contain the list of predicates that had the highest score during any iteration of the redundancy elimination algorithm.  This list may be used by a programmer to identify areas of the program related to faulty behavior.  Liblit et al. discovered previously unknown bugs in \texttt{bc} \cite{Liblit:2003:BIRPS}, \texttt{exif} \cite{Liblit:2005:SSBI} and \rhythmbox \cite{Liblit:2005:SSBI} by employing this method.
+The output of the analysis will contain the list of predicates that had the highest score during any iteration of the redundancy elimination algorithm.  This list may be used by a programmer to identify areas of the program related to faulty behavior.  Liblit et al. discovered previously unknown bugs in \prog{bc} \cite{Liblit:2003:BIRPS}, \prog{exif} \cite{Liblit:2005:SSBI} and \prog{rhythmbox} \cite{Liblit:2005:SSBI} by employing this method.
 
 The list of bug predictors can alternately be used as input to an automated analysis tool, such as \textsc{BTrace} \cite{Lal:2006:POPAD}. \textsc{BTrace} finds the shortest control- and dataflow-feasible path in the program that visits a given set of bug predictors.  This analysis allows a programmer to examine the fault-predicting behavior even if the connection to a bug is not easily identifiable, or if the predictors are numerous or complex enough to overwhelm a programmer examining them directly.
 

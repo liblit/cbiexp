@@ -2,7 +2,7 @@
 
 \section{Experiments}
 
-This section presents quantitative data about the ideas presented in previous sections.  This data was collected using the Siemens test suite \cite{257766} as maintained by the Galileo Software-artifact Infrastructure Repository (SIR) \cite{Do05,SAI}.  There are two configurable parameters for the experiments: the rate of sampling and $\effort$ (described in \autoref{sec-metrics}).  Unless specified, the default sampling rate is 1 (i.e., complete data collection) and the default $\effort$ is 5\% (only predicates that are reachable from each other by exploring less than 5\% of the program are considered).  Each Siemens application is available in multiple variants with different bugs: as few as 9 variants of \texttt{schedule2} and as many as 41 variants of \texttt{tcas}.  We report aggregate results by averaging the relevant measures across all variants of each Siemens application.
+This section presents quantitative data about the ideas presented in previous sections.  This data was collected using the Siemens test suite \cite{257766} as maintained by the Galileo Software-artifact Infrastructure Repository (SIR) \cite{Do05,SAI}.  There are two configurable parameters for the experiments: the sampling rate and the $\effort$ cutoff (described in \autoref{sec-metrics}).  Unless specified, the default sampling rate is 1 (i.e., complete data collection) and the default $\effort$ is 5\% (only predicates that are reachable from each other by exploring less than 5\% of the program are considered).  Each Siemens application is available in multiple variants with different bugs: as few as 9 variants of \prog{schedule2} and as many as 41 variants of \prog{tcas}.  We report aggregate results by averaging the relevant measures across all variants of each Siemens application.
 
 \subsection{Top Scoring Predicates}
 
@@ -14,7 +14,7 @@ This section presents quantitative data about the ideas presented in previous se
   \label{fig-top-pred}
 \end{figure}
 
-\autoref{fig-top-pred} plots the percentage of variants within each program for which a complex predicate had the highest score among all predicates.  The value is 100\% for \texttt{print\_tokens2, replace} and \texttt{schedule} and is close to 100\% for the other programs.  The results shown in \autoref{fig-top-pred} combined with the case studies in \autoref{sec-qual} demonstrates the usefulness of complex predicates.
+\autoref{fig-top-pred} plots the percentage of variants within each program for which a complex predicate had the highest score among all predicates.  The value is 100\% for \prog{print\_tokens2}, \prog{replace} and \prog{schedule} and is close to 100\% for the other programs.  The results shown in \autoref{fig-top-pred} combined with the case studies in \autoref{sec-qual} demonstrates the usefulness of complex predicates.
 
 \subsection{Effectiveness of Pruning}
 
@@ -48,7 +48,7 @@ Even when restricted to binary conjunction and disjunction, complex predicates c
     \includegraphics[width=\columnwidth]{charts/tot_info} & \includegraphics[width=\columnwidth]{charts/print_tokens2} \\
     \includegraphics[width=\columnwidth]{charts/schedule} & \includegraphics[width=\columnwidth]{charts/schedule2} \\
   \end{array}$
-  \caption{Sampling Rate vs. Number of Interesting Predicates}
+  \caption{Sampling rate vs. number of interesting predicates}
   \label{fig-sampling}
 \end{figure*}
 

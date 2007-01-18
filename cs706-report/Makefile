@@ -45,6 +45,6 @@ $(pycharts:%=charts/%.pdf): charts/%.pdf: charts/%.py charts/common.py data/data
 	python $< $@
 
 clean:
-	rm -f $(PS) $(PDF) $(DVI) $(BBL) $(pdfs) $(pycharts:%=charts/%.eps)
+	rm -f $(PS) $(PDF) $(DVI) $(BBL) $(MAIN).aux $(MAIN).out $(pdfs) $(pycharts:%=charts/%.eps)
 
 .DELETE_ON_ERROR:

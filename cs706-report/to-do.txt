@@ -16,31 +16,6 @@ empty, that basically means we're done!
 
 ------------------------------------------------------------------------
 --
---  overall
-
-There may be some inconsistency about the use of "rate" or "sampling
-rate".  A sampling rate should always be a fraction between 0 and 1,
-such as 1/10 or 1/100.  The inverse of a sampling rate is a sampling
-density, such as 10 or 100.  Higher sampling density is equivalent to
-lower sampling rate.
-
-Formatting for program names is inconsistent, both internally and with
-previously published CBI papers.  exif, ccrypt and the siemens programs
-use \texttt, where btrace and rhythmbox use \textsc.  Previous papers
-used \textsc for all program names (I think).
-
-------------------------------------------------------------------------
---
---  Section 2
---
-
-------------------------------------------------------------------------
---
---  Section 3
---
-
-------------------------------------------------------------------------
---
 --  Section 4
 --
 
@@ -54,6 +29,7 @@ would be ones with very little apparent connection in the PDG, but
 which nonetheless are tightly connected in how they predict failures.
 [+chen]
 
+
 ------------------------------------------------------------------------
 --
 --  Section 5
@@ -65,6 +41,7 @@ of threat types very well.
 
 A third case study would be nice here, but is probably not essential.
 [-tchen]
+
 
 ------------------------------------------------------------------------
 --
@@ -107,11 +84,6 @@ Figure 2 has relatively little information in it.  Perhaps this
 one-bar plot should be replaced with either a small table or just
 prose discussion with no table or figure at all.
 
-
-------------------------------------------------------------------------
---
---  Section 7
---
 
 ------------------------------------------------------------------------
 --
