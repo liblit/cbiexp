@@ -21,14 +21,15 @@ function summarize()
     printruns(Learn, Findices, Sindices, UsageClusters, BugClusters, X);
     quit;
 
-function printclaimedruns(fid, runindices, Pz_d, LM)
+function best = printclaimedruns(fid, runindices, Pz_d, LM)
     runloglikelihoods = sum(LM(:,runindices),1); 
     [V,I] = sort(full(runloglikelihoods), 2, 'descend');
     for j = 1:numel(runindices);
        rank = find(I == j);
        fprintf(fid, '<runid index=\"%u\" llrank=\"%u\" llvalue=\"%f\"/>', runindices(j), rank, V(rank));
     end;
-    return;
+    best = runindices(I(1));
+    return; 
 
 function printaspects(fid, Learn, Clusters,Pw_z,X,Pz_d,LM)  
    topnum = 400;
@@ -45,9 +46,9 @@ function printaspects(fid, Learn, Clusters,Pw_z,X,Pz_d,LM)
        [S,I] = sort(Pw_z(:,i), 1, 'descend');
        counts = full(Sum(runindices));
        fprintf(fid, '<aspect index=\"%u\" kind=\"%s\" ratio=\"%1.4f\" maxrunlength=\"%u\" minrunlength=\"%u\" meanrunlength=\"%u\" runlengthstd=\"%u\">\n', i, kind, sum(S(1:topnum)),max(counts),min(counts),round(mean(counts)),round(std(counts)));
-       printclaimedruns(fid, runindices, Pz_d, LM);
+       bestindex = printclaimedruns(fid, runindices, Pz_d, LM);
        for j = 1:topnum;
-           fprintf(fid, '<featureclaimed index=\"%u\"/>', I(j));
+           fprintf(fid, '<featureclaimed index=\"%u\" bestcount=\"%u\"/>', I(j), X(I(j), bestindex));
        end;
        for k = 1:numaspects;
            vals = Pz_d(k,runindices); 

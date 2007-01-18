@@ -140,7 +140,7 @@
       <th><xsl:value-of select="@index"/></th>
       <td><xsl:value-of select="@probability"/></td>
       <td><xsl:value-of select="@cumulative"/></td>
-      <td><xsl:value-of select="round(@probability * $mean)"/></td> 
+      <td><xsl:value-of select="@bestcount"/></td> 
       <xsl:apply-templates select="$preds[number($index)]" mode="static-cells"/>
     </tr>
   </xsl:template>
@@ -151,7 +151,7 @@
         <th>Index</th>
         <th>Probability</th>
         <th>Cumulative</th>
-        <th>Expected Count</th>
+        <th>Best Count</th>
         <th>Predicate</th>
         <th>Function</th>
         <th>File:Line</th>

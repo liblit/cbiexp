@@ -9,6 +9,7 @@
 <!ELEMENT feature EMPTY>
 <!ATTLIST feature index NMTOKEN #REQUIRED>
 <!ATTLIST feature probability NMTOKEN #REQUIRED>
+<!ATTLIST feature bestcount NMTOKEN #REQUIRED>
 
 <!ELEMENT run EMPTY> 
 <!ATTLIST run index NMTOKEN #REQUIRED>

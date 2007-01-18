@@ -70,6 +70,9 @@
       <xsl:attribute name="probability">
         <xsl:apply-templates select="$aspectentry" mode="rawfeature"/>
       </xsl:attribute>
+      <xsl:attribute name="bestcount">
+        <xsl:value-of select="@bestcount"/>
+      </xsl:attribute>
     </xsl:element>
   </xsl:template>
 
