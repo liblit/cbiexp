@@ -1,6 +1,20 @@
 % -*- TeX-master: "report" -*-
 
 \begin{abstract}
-Cooperative Bug Isolation (CBI) is a technique to find bugs in programs, that analyzes data collected from program executions.  At each program point CBI identifies Boolean expressions, called predicates, to be instrumented.  We augment CBI's bug predictive ability by combining these predicates using logical operators (conjunction and disjunction).  The motivation is that a complex predicate will provide more information to the programmer by narrowing down possible program states.  We present both qualitative and quantitative evidence that complex predicates are useful.  We discuss a new metric that uses program structure to quantify the usefulness of complex predicates.  Using this metric, we could eliminate a large number of spurious complex predicates from consideration.  Finally we discuss the effect of sparse random sampling on the usefulness of complex predicates.
+
+  Statistical debugging uses dynamic instrumentation and machine
+  learning to identify predicates on program state which are strongly
+  predictive of program failure.  Prior approaches have only
+  considered simple, atomic predicates such as the directions of
+  branches or the return values of function calls.  We enrich the
+  predicate vocabulary by adding complex Boolean formulae derived from
+  these simple predicates.  We draw upon three-valued logic, static
+  program structure, and statistical estimation techniques to
+  efficiently sift through large numbers of candidate Boolean
+  predicate formulae.  We present qualitative and quantitative
+  evidence that complex predicates are practical, precise, and
+  informative.  Furthermore, we demonstrate that our approach is
+  robust in the face of incomplete data provided by the sparse random
+  sampling that typifies post-deployment statistical debugging.
 
 \end{abstract}
