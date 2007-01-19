@@ -20,11 +20,11 @@ For a complex predicate $C = \phi(p_1, p_2, \ldots p_k)$, $R(C) = \true$ iff $\p
 
 In other words, we assume that $R$ is distributive over $\phi$, effectively removing the requirement that all $p_i$ be observed simultaneously.  This can lead to false positives, because $R(C)$ may be computed to $\true$ when it is actually $\false$ at all moments in time.  False negatives, however, cannot arise.  The impact of this assumption on the score of $C$ may be either positive or negative depending on whether $R$ failed or succeeded.
 
-There are $2^{2^N}$ Boolean functions of $N$ predicates \cite{MathWorld:BoolFuncs}.  This is a prohibitively large number considering that there can be hundreds of simple predicates.  To reduce the complexity, we consider only functions of two predicates.  There are $2^{2^2}$ = 16 such functions and their arguments can be chosen from $N$ predicates in $N^2$ ways.  Out of the 16 Boolean functions of two variables, we consider only conjunction and disjunction since they are likely to be most easily understood by programmers.  Conjunction and disjunction are commutative, and the reflexive cases ($p_1 \wedge p_1$ and $p_1 \vee p_1$) are uninteresting.  Thus further reduces the search space to just ${N \choose 2} = \frac{N (N-1)}{2}$ binary conjunctions and an equal number of binary disjunctions.  (Other functions can be easily included in our implementation once their truth tables (discussed in \autoref{sec-tvl}) are derived correctly.)  All complex predicates under consideration may be evaluated for a set of $R$ runs in $O(R N^2)$ time.
+There are $2^{2^N}$ Boolean functions of $N$ predicates \cite{MathWorld:BoolFuncs}.  This is a prohibitively large number considering that there can be hundreds of simple predicates.  To reduce the complexity, we consider only functions of two predicates.  There are $2^{2^2}$ = 16 such functions and their arguments can be chosen from $N$ predicates in $N^2$ ways.  Out of the 16 Boolean functions of two variables, we consider only conjunction and disjunction since they are likely to be most easily understood by programmers.  Conjunction and disjunction are commutative, and the reflexive cases ($p_1 \wedge p_1$ and $p_1 \vee p_1$) are uninteresting.  Thus further reduces the number of complex predicates to just ${N \choose 2} = \frac{N (N-1)}{2}$ binary conjunctions and an equal number of binary disjunctions.  These may be evaluated for a set of $R$ runs in $O(R N^2)$ time.
 
 \subsection{Three valued logic}
 \label{sec-tvl}
-This section explains how conjunctions and disjunctions are actually computed.  Three-valued logic is used because the value of a predicate in a run may not be conclusive. This can arise in two situations:
+This section explains how conjunctions and disjunctions are actually computed.  Three-valued logic is used because the value of a predicate in a run may not be certain. This can arise in two situations:
 \begin{enumerate}
 \item The predicate was not observed in a run because the run did not reach the line where it was defined.
 \item The program reached the line where the predicate was defined but was not observed because of sampling.
@@ -32,9 +32,9 @@ This section explains how conjunctions and disjunctions are actually computed.  
 
 In such a case, the value of a predicate $p$ is considered unknown.  For the analysis introduced in \autoref{sec-bground}, it is enough to consider whether $R(p)$ was $\true$ or $\neg \true$ (either $\false$ or $\unknown$).  But while computing complex predicates, the two sub-cases of the $\neg \true$ case must be considered separately.
 
-Consider a complex predicate $C = p_1 \wedge p_2$.  If either $R(p_1)$ or $R(p_2)$ was $\false$ in a run $R$, then $R(C) = \false$.  If both $R(p_1)$ and $R(p_2)$ were $\true$, then $C$ was observed to be true.  Otherwise, the value of $R(C)$ is $\unknown$. This is shown using a three-valued truth table in \autoref{tab:and}. Recall that for a predicate $p$ and a run $R$, $R(p) = \true$ if and only if $p$ was observed to be true at least once during run $R$.  
+Consider a complex predicate $C = p_1 \wedge p_2$.  If either $R(p_1)$ or $R(p_2)$ was $\false$ in a run $R$, then $R(C) = \false$ - one false value is sufficient to disprove a conjunction.  If both $R(p_1)$ and $R(p_2)$ were $\true$, then $C$ was observed to be true.  Otherwise, the value of $R(C)$ is $\unknown$. This is shown using a three-valued truth table in \autoref{tab:and}. Recall that for a predicate $p$ and a run $R$, $R(p) = \true$ if and only if $p$ was observed to be true at least once during run $R$.  
 
-Similarly, for a complex predicate $D = p_1 \vee p_2$, if either $R(p_1)$ or $R(p_2)$ was $\true$ then $R(D) = \true$.  If both $R(p_1)$ and $R(p_2)$ were $\false$, then $D$ was observed to be false.  Otherwise, the value of $R(D)$ is $\unknown$.  This is shown using a three-valued truth table in \autoref{tab:or}.
+Similarly, one true value is sufficient to prove a disjunction.  The truth table for complex predicate $D = p_1 \vee p_2$ is shown in \autoref{tab:or}.
 
 \begin{table}
   \caption{3-valued Truth Table for $C = p_1 \wedge p_2$}
@@ -66,7 +66,6 @@ Similarly, for a complex predicate $D = p_1 \vee p_2$, if either $R(p_1)$ or $R(
 \end{table}
 
 \subsection{Interesting Complex Predicate}
-
 Even after imposing many constraints, the number of complex predicates is still quadratic in the number of simple predicates.  A large number of complex predicates formed by this procedure are likely to be useless in the analysis of the program.  A complex predicate that has a lower score than one of its components is useless.  The component (simple) predicate with a higher score is a better predictor of failure, and so the complex predicate adds nothing to the analysis.
 
 \begin{defn}
@@ -78,7 +77,16 @@ In the case where the complex predicate has the same score as a component predic
 
 \subsection{Pruning}
 \label{sec-pruning}
-Forming a complex predicate from its components is a nontrivial task, requiring a conjunction or disjunction for each program run.  After this computation is complete the score of the newly formed predicate can be calculated, potentially labeling it uninteresting.  In such a case the effort to form the predicate has been wasted.  This provides the motivation to prune combinations early based on an estimate of their resulting scores.  An upper bound for a predicate's score can be determined by maximizing $F(p)$ and $\Increase(p)$ under constraints based on the propositional operation.  The score of the predicate (\autoref{eqn2}), being a harmonic mean of these two terms, will likewise be maximized.
+Constructing complex predicates from simple ones requires generating two bits of information (according to the three value logic discussed in \autoref{sec-tvl}) for each program run; as CBI is meant to analyze deployed software program runs potentially number in the hundreds of thousands, if not millions.  The measure of a complex predicate's relevance to a bug is its $\Importance$ score, which can only be derived once run information has been generated.  Complex predicates with low $\Importance$ provide no information useful in debugging and are not presented to the programmer; in such a case the effort to form the predicate has been wasted.  This provides the motivation to prune combinations before run information is generated based on an estimate of their resulting scores.  If this estimate falls below the threshold required for the predicate to be presented to the programmer, the complex predicate is not constructed.  Pruning predicates before they are constructed reduces a $O(R)$ operation (constructing run information) to one which executes in constant time.
+
+The threshold $\Importance$ value, which complex predicates must potentially exceed to be constructed, can be calculated in two ways:
+\begin{enumerate}
+\item Only \emph{interesting} complex predicates are retained; for predicate $C = \phi(p_1, p_2)$ the threshold is max($\Importance(p_1)$, $\Importance(p_2)$).
+\item During redundancy elimination, only the predicate with the highest score is retained at each iteration.  The threshold is therefore the highest score yet seen (including those of simple predicates).
+% Note: as of 12/06 our implementation didn't do this.  This may have changed with recent modifications...
+\end{enumerate}
+
+Using an upper bound as the estimate of $\Importance$ guarantees that no predicate is pruned erroneously.  This upper bound can be determined by maximizing $F(p)$ and $\Increase(p)$ under constraints based on the propositional operation.  $\Importance(P)$ (\autoref{eqn2}), being a harmonic mean of these two terms, will likewise be maximized.
 
 In this context, the disjunction $D = p_1 \vee p_2$ can be considered as the union of the set of runs where $p_1$ was $\true$ and the set where $p_2$ was $\true$.  The size of the resulting set is maximized when the two do not overlap, and that is the assumption made when calculating an upper bound on $F(D)$.  $S(D)$ is minimized by making the opposite assumption - that one is a subset of the other.  The size of the union is thus the size of the superset.  The best disjunction that can be formed using $p_1$ and $p_2$ will have the following parameters:
 
@@ -89,9 +97,7 @@ In this context, the disjunction $D = p_1 \vee p_2$ can be considered as the uni
   \obs{S}{D}' &=& S(D)'
 \end{eqnarray*}
 
-The second term in $\Increase$ (\autoref{eqn1}) can only reduce the result, and so it is ignored in calculating an upper bound.  For completeness, $\obs{S}{D}'$ is assigned the same value as $S(D)'$ even though it does not affect $\Increase(D)$.  The $F(D)$ component of $\Importance$ is maximized while maximizing $\Increase$.  Thus the $\Importance$ score calculated with the above values is an upper bound on the score of the disjunction of $p_1$ and $p_2$. As a concrete example, suppose $F(p_1) = 500$, $F(p_2) = 1000$, $S(p_1) = 250$ and $S(p_2) = 500$. Furthermore assume the total number of failed runs is 1500. To maximize the value of $\Importance(D)$ where $D = p_1 \vee p_2$,  we will let $F(D)' = 500 + 1000 = 1500$, $S(D)' = 500$. As a result, the upbound of $\Increase(D)$ will be $\frac{1500}{2000}=0.75$ when we disgard the term after the minus sign in \autoref{eqn2}. Finally the upbound of $\Importance(D)$ would be $\frac{2}{\frac{1}{0.75}+\frac{1}{log1500/log1500}} = 0.856$. 
-
-
+The second term in $\Increase$ (\autoref{eqn1}) can only reduce the result, and so it is ignored in calculating an upper bound.  For completeness, $\obs{S}{D}'$ is assigned the same value as $S(D)'$ even though it does not affect $\Increase(D)$.  The $F(D)$ component of $\Importance$ is maximized while maximizing $\Increase$.  Thus the $\Importance$ score calculated with the above values is an upper bound on the score of the disjunction of $p_1$ and $p_2$. As a concrete example, suppose $F(p_1) = 500$, $F(p_2) = 1000$, $S(p_1) = 250$ and $S(p_2) = 500$. Furthermore assume the total number of failed runs is 1500. To maximize the value of $\Importance(D)$ where $D = p_1 \vee p_2$,  we will let $F(D)' = 500 + 1000 = 1500$, $S(D)' = 500$. As a result, the upper bound of $\Increase(D)$ will be $\frac{1500}{2000}=0.75$ when we disgard the term after the minus sign in \autoref{eqn2}. Finally the upper bound of $\Importance(D)$ would be $\frac{2}{\frac{1}{0.75}+\frac{1}{log1500/log1500}} = 0.856$. 
 
 The conjunction $C = p_1 \wedge p_2$ can be regarded as the intersection of the set of runs where $p_1$ was $\true$ and the set where $p_2$ was $\true$.  Maximizing $F(C)$ requires that one of the intersecting sets is a subset of the other, making the size of the intersection the size of the smaller set.  A minimal $S(C)$ is found when the component sets are non overlapping; the intersection of two such sets is empty.
 
@@ -117,12 +123,4 @@ $\obs{F}{C}$ is minimized by assuming that $C$ was \textit{observed} only in the
   \label{maxsuccess}
 \end{figure}
 
-
-Pruning is useful when a computed complex predicate, $C = \phi(p_1, p_2)$, will be thrown away if its score falls below a threshold.  Such a threshold can be found in two ways:
-\begin{enumerate}
-\item The scores of $p_1$ and $p_2$ that determine whether $C$ is interesting or not.
-% Changed 'lowest' to 'highest', because a complex pred must beat the
-% best known pred to be considered, not the worst known.
-\item During the redundancy elimination, the highest % just thought about it... our implementation does not do this
-score among simple predicates can be used as the threshold because if the score is below this value, computing $C$ is useless for this iteration.
-\end{enumerate}
+Pruning complex predicates using the above calculations reduces the computational intensity of the analysis without affecting the results.  The effectiveness of pruning is examined in \autoref{sec-effectprune}.
