@@ -141,6 +141,7 @@
       <td><xsl:value-of select="@probability"/></td>
       <td><xsl:value-of select="@cumulative"/></td>
       <td><xsl:value-of select="@bestcount"/></td> 
+      <td><xsl:value-of select="@bestprediction"/></td>
       <xsl:apply-templates select="$preds[number($index)]" mode="static-cells"/>
     </tr>
   </xsl:template>
@@ -152,6 +153,7 @@
         <th>Probability</th>
         <th>Cumulative</th>
         <th>Best Count</th>
+        <th>Best Prediction</th>
         <th>Predicate</th>
         <th>Function</th>
         <th>File:Line</th>

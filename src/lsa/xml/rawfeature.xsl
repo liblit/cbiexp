@@ -73,6 +73,9 @@
       <xsl:attribute name="bestcount">
         <xsl:value-of select="@bestcount"/>
       </xsl:attribute>
+      <xsl:attribute name="bestprediction">
+        <xsl:value-of select="@bestprediction"/>
+      </xsl:attribute>
     </xsl:element>
   </xsl:template>
 

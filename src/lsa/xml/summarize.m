@@ -47,8 +47,11 @@ function printaspects(fid, Learn, Clusters,Pw_z,X,Pz_d,LM)
        counts = full(Sum(runindices));
        fprintf(fid, '<aspect index=\"%u\" kind=\"%s\" ratio=\"%1.4f\" maxrunlength=\"%u\" minrunlength=\"%u\" meanrunlength=\"%u\" runlengthstd=\"%u\">\n', i, kind, sum(S(1:topnum)),max(counts),min(counts),round(mean(counts)),round(std(counts)));
        bestindex = printclaimedruns(fid, runindices, Pz_d, LM);
+       BP = Pw_z * Pz_d(:,bestindex);
+       bestcount = sum(X(:,bestindex),1);
        for j = 1:topnum;
-           fprintf(fid, '<featureclaimed index=\"%u\" bestcount=\"%u\"/>', I(j), X(I(j), bestindex));
+           featureindex = I(j);
+           fprintf(fid, '<featureclaimed index=\"%u\" bestcount=\"%u\" bestprediction=\"%u\"/>', featureindex, X(featureindex, bestindex), round(full(BP(featureindex) * bestcount)));
        end;
        for k = 1:numaspects;
            vals = Pz_d(k,runindices); 
