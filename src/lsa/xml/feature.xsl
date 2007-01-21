@@ -60,6 +60,31 @@
     </html> 
   </xsl:template>
 
+  <xsl:template name="selectrun">
+    <xsl:param name="runindex"/>
+    <table>
+      <tbody>
+        <tr>
+          <th style="text-align:left">
+            Index:
+          </th>
+          <td style="text-align:right">
+            <xsl:value-of select="$runindex"/>
+          </td>
+        </tr>
+        <xsl:variable name="run" select="$runs[position() = $runindex]"/>
+        <tr>
+          <th style="text-align:left">
+            Length:
+          </th>
+          <td style="text-align:right">
+            <xsl:value-of select="$run/@totalcount"/>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </xsl:template>
+
   <xsl:template match="cbi:runstats">
     <table>
       <tbody>
@@ -96,28 +121,15 @@
         <tr>
           <th style="text-align:left">
             Best Run
-            <table>
-              <tbody>
-                <tr>
-                  <th style="text-align:left">
-                    Index:
-                  </th>
-                  <td style="text-align:right">
-                    <xsl:value-of select="@bestrun"/>
-                  </td>
-                </tr>
-                <xsl:variable name="index" select="@bestrun"/>
-                <xsl:variable name="bestrun" select="$runs[position() = $index]"/>
-                <tr>
-                  <th style="text-align:left">
-                    Length:
-                  </th>
-                  <td style="text-align:right">
-                    <xsl:value-of select="$bestrun/@totalcount"/>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <xsl:call-template name="selectrun">
+              <xsl:with-param name="runindex" select="@bestrun"/>
+            </xsl:call-template>
+          </th>
+          <th style="text-align:left">
+            Worst Run
+            <xsl:call-template name="selectrun">
+              <xsl:with-param name="runindex" select="@worstrun"/>
+            </xsl:call-template>
           </th>
         </tr>
       </tbody>
@@ -142,6 +154,8 @@
       <td><xsl:value-of select="@cumulative"/></td>
       <td><xsl:value-of select="@bestcount"/></td> 
       <td><xsl:value-of select="@bestprediction"/></td>
+      <td><xsl:value-of select="@worstcount"/></td>
+      <td><xsl:value-of select="@worstprediction"/></td>
       <xsl:apply-templates select="$preds[number($index)]" mode="static-cells"/>
     </tr>
   </xsl:template>
@@ -154,6 +168,8 @@
         <th>Cumulative</th>
         <th>Best Count</th>
         <th>Best Prediction</th>
+        <th>Worst Count</th>
+        <th>Worst Prediction</th>
         <th>Predicate</th>
         <th>Function</th>
         <th>File:Line</th>

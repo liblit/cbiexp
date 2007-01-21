@@ -11,6 +11,8 @@
 <!ATTLIST feature probability NMTOKEN #REQUIRED>
 <!ATTLIST feature bestcount NMTOKEN #REQUIRED>
 <!ATTLIST feature bestprediction NMTOKEN #REQUIRED>
+<!ATTLIST feature worstcount NMTOKEN #REQUIRED>
+<!ATTLIST feature worstprediction NMTOKEN #REQUIRED>
 
 <!ELEMENT run EMPTY> 
 <!ATTLIST run index NMTOKEN #REQUIRED>

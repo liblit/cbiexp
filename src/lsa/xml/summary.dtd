@@ -12,6 +12,8 @@
 <!ATTLIST featureclaimed index NMTOKEN #REQUIRED> 
 <!ATTLIST featureclaimed bestcount NMTOKEN #REQUIRED>
 <!ATTLIST featureclaimed bestprediction NMTOKEN #REQUIRED>
+<!ATTLIST featureclaimed worstcount NMTOKEN #REQUIRED>
+<!ATTLIST featureclaimed worstprediction NMTOKEN #REQUIRED>
 
 <!ELEMENT aspectprobability EMPTY>
 <!ATTLIST aspectprobability aspectindex NMTOKEN #REQUIRED>
