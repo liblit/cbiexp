@@ -3,6 +3,11 @@ function summarize()
     load runsinfo.mat;
     load clusters.mat;
     Learn = configure();
+    if Learn.TruthCounts;
+        X = Xtru;
+    else;
+        X = Xobs;
+    end;
     if Learn.Normalized;
         NX = normalizeColumns(X);
     else;

@@ -25,6 +25,7 @@ using __gnu_cxx::hash_map;
 struct PredInfo
 {
     vector < pair <unsigned int, unsigned int> > tru;
+    vector < pair <unsigned int, unsigned int> > obs;
 };
 
 
@@ -44,7 +45,7 @@ protected:
     void handleSite(const SiteCoords &, vector<count_tp> &);
 
 private:
-    void notice(const SiteCoords &coords, unsigned, unsigned) const;
+    void notice(const SiteCoords &coords, unsigned, unsigned, unsigned) const;
 
     const unsigned index;
 };
@@ -58,13 +59,15 @@ Reader::Reader(unsigned index)
 
 
 void
-Reader::notice(const SiteCoords &site, unsigned predicate, unsigned int count) const
+Reader::notice(const SiteCoords &site, unsigned predicate, unsigned int count, unsigned int sum) const
 {
-    if(count == 0) return;
+    if(sum == 0) return;
     const PredCoords coords(site, predicate);
     const PredInfos::iterator found = predInfos.find(coords);
     if (found != predInfos.end()) {
 	PredInfo &info = found->second;
+        info.obs.push_back(pair<unsigned int, unsigned int> (index, sum));
+        if(count == 0) return;
 	info.tru.push_back(pair<unsigned int, unsigned int> (index, count));
     }
 }
@@ -78,12 +81,13 @@ Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 
     const size_t size = counts.size();
     if (size == 2)
-	for (unsigned predicate = 0; predicate < size; ++predicate)
-	    notice(coords, predicate, counts[predicate]);
+	for (unsigned predicate = 0; predicate < size; ++predicate) {
+	    notice(coords, predicate, counts[predicate], sum);
+        }
     else
 	for (unsigned predicate = 0; predicate < size; ++predicate) {
-	    notice(coords, 2 * predicate,           counts[predicate]);
-	    notice(coords, 2 * predicate + 1, sum - counts[predicate]);
+	    notice(coords, 2 * predicate,           counts[predicate], sum);
+	    notice(coords, 2 * predicate + 1, sum - counts[predicate], sum);
 	}
 }
 
@@ -148,16 +152,20 @@ int main(int argc, char** argv)
     }
 
     {
-        ofstream out("X.sparse");
+        ofstream outtru("Xtru.sparse");
+        ofstream outobs("Xobs.sparse");
 	Progress::Bounded progress("printing matrix", predInfos.size());
         unsigned int row = 0;
 	while (!interesting.empty()) {
+            row++;
 	    progress.step();
 	    const PredInfo * const info = interesting.front();
-            print_sparse(out, ++row, info->tru);
+            print_sparse(outtru, row, info->tru);
+            print_sparse(outobs, row, info->obs);
 	    interesting.pop();
 	}
-        out.close();
+        outtru.close();
+        outobs.close();
     }
 
     {

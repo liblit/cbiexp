@@ -5,7 +5,7 @@ tooldir ?= $(root)/src/lsa
 xmldir ?= $(tooldir)/xml
 MATLAB = matlab -nodisplay
 
-runsinfo.mat: X.sparse f.indices s.indices
+runsinfo.mat: Xobs.sparse Xtru.sparse f.indices s.indices
 	$(MATLAB) -r "path('$(tooldir)',path); convertData()" > /dev/null
 
 initialize : runsinfo.mat
@@ -26,7 +26,12 @@ prepare_experiment: runsinfo.mat
 	echo 'function Learn = configure()' > $(expdir)/configure.m
 	echo '	Learn.K = $(numaspects);' >> $(expdir)/configure.m
 	echo '	Learn.Kb = $(numbugaspects);' >> $(expdir)/configure.m
-	echo '	Learn.Normalized = 1;' >> $(expdir)/configure.m  
+	echo '	Learn.Normalized = 1;' >> $(expdir)/configure.m
+ifdef obscounts
+	echo '	Learn.TruthCounts = 0;' >> $(expdir)/configure.m
+else
+	echo '	Learn.TruthCounts = 1;' >> $(expdir)/configure.m
+endif
 	echo '	Learn.Max_Iterations = 100;' >> $(expdir)/configure.m
 	echo '	Learn.Min_Likelihood_Change = 1;' >> $(expdir)/configure.m
 
@@ -39,12 +44,14 @@ loglikelihoods.txt best:
 rank: loglikelihoods.txt best
 
 results.mat loglikelihood.txt:
-	-rm X.sparse
+	-rm Xobs.sparse
+	-rm Xtru.sparse
 	-rm f.indices
 	-rm s.indices
 	-rm runsinfo.mat
 	-rm configure.m
-	ln ../../X.sparse
+	ln ../../Xobs.sparse
+	ln ../../Xtru.sparse
 	ln ../../f.indices
 	ln ../../s.indices
 	ln ../../runsinfo.mat
