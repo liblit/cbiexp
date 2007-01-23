@@ -1,37 +1,47 @@
-Date: Fri, 5 Jan 2007 09:02:21 -0600 (CST)
-Subject: Re: [svn: cbiexp] r1478 - in branches/conjunctions/cs706-report: . 
-     data
-From: arumuga@cs.wisc.edu
-To: liblit@cs.wisc.edu
-Cc: rosin@cs.wisc.edu, tchen@cs.wisc.edu, arumuga@cs.wisc.edu
+0 Application: parameter
+1 Version: parameter
+2 SamplingRate: parameter
+3 Effort: Parameter
 
-Oh.. I forgot to mention the format of data.txt.  The columns headings are
-not very informative...
+4 simple_preds: `wc -l preds.txt`
 
-Parameters: Application Version SamplingRate Effort
+5 time: time taken for computing complex predicates (in seconds)
 
-Total: Total complex predicates possible - (n^2 - n) where n is number of
-interesting simple predicates i.e. those found in preds.txt
-Skipped: No. of complex preds. removed by pruning
-Computed: No. of complex preds. not removed by pruning
-Interesting: No. of computed complex preds. that are interesting
-
-(As I said, this file belongs to the pre-presentation era.. It has the
-data used for all but the sampling charts.. the new analysis produces the
-above info for conj.s and disj.s separately... And this data was generated
-by a script that aggregates condor job results... It is very much
-customized to my root and has a lot of hard-wired paths.. I don't think
-anybody can use it without much effort.. I will commit it later)
-
-Top, Bottom: Scores of first and 1000-th complex predicate
-PredTop: Score of top simple predicate
-Complex_Perf: Number of perfect complex predicates
-Simple_Perf: Number of perfect simple predicates
-Preds: `wc -l preds.txt`
+6 conj_total: Total conjunctions possible - (n^2 - n) / 2 where n is the number of interesting simple predicates (those found in preds.txt')
+7 conj_pdg_metric_pruned: Number of conjunctions pruned by PDG metric 1 (defn. 4.1 in paper)
+8 conj_ub_est_pruned: Number of conjunctions pruned by upper bound estimation
+9 conj_computed: Number of conjunctions for which the actual score was computed
+10 conj_interesting: Number of interesting conjunctions
 
 
-Complex: Type of top predicate of corrective ranking with complex preds...
-simple, conj, disj = 0, 1, 2
-PerfComplex: Was that perfect?
-Base: corrective ranking without complex-preds... always simple
-PerfBase: Was that perfect?
+11 disj_total: Total disjunctions possible - (n^2 - n) / 2 where n is the number of interesting simple predicates (those found in preds.txt')
+12 disj_pdg_metric_pruned: Number of disjunctions pruned by PDG metric 1 (defn. 4.1 in paper)
+13 disj_ub_est_pruned: Number of disjunctions pruned by upper bound estimation
+14 disj_computed: Number of disjunctions for which the actual score was computed
+15 disj_interesting: Number of interesting disjunctions
+
+[Invariants:
+		conj_total = disj_total
+		conj_pdg_metric_pruned = disj_pdg_metric_pruned (the metric does not differentiate conj. and disj.)
+		
+		conj_pdg_metric_pruned + conj_ub_est_pruned + conj_computed = conj_total
+		disj_pdg_metric_pruned + disj_ub_est_pruned + disj_computed = disj_total
+		
+		conj_interesting <= conj_computed
+		disj_interesting <= disj_computed (for completeness)
+]
+
+16 top_compl: Score of top complex predicate
+17 hundredth_compl: Score of 100-th complex predicate
+
+18 num_perf_compl: Number of perfect complex predicates
+19 num_perf_simple: Number of perfect simple predicates
+
+20 top_simple: Score of top simple predicate
+
+21 compl_cr: Type of top predicate of corrective ranking with complex preds...
+          simple, conj, disj = 0, 1, 2
+22 compl_cr_is_top_perf: Was that perfect?
+
+23 simple_cr: Type of top predicate of corrective ranking without complex-preds... always simple
+24 simple_cr_is_top_perf: Was that perfect?
