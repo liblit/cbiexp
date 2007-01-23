@@ -23,22 +23,34 @@ def rawData():
         fix(float, 'SamplingRate')
         fix(int, 'Effort')
 
-        fix(int, 'Total')
-        fix(int, 'Skipped')
-        fix(int, 'Computed')
-        fix(int, 'Interesting')
+        fix(int, 'simple_preds')
+        fix(int, 'time')
+        
+        fix(int, 'conj_total')
+        fix(int, 'conj_pdg_metric_pruned')
+        fix(int, 'conj_ub_est_pruned')
+        fix(int, 'conj_computed')
+        fix(int, 'conj_interesting')
 
-        fix(float, 'Top')
-        fix(float, 'Bottom')
-        fix(float, 'PredTop')
-        fix(int, 'Complex_Perf')
-        fix(int, 'Simple_Perf')
-        fix(int, 'Preds')
-
-        fix(int, 'Complex')
-        fix(bool, 'PerfComplex')
-        fix(int, 'Base')
-        fix(bool, 'PerfBase')
+        fix(int, 'disj_total')
+        fix(int, 'disj_pdg_metric_pruned')
+        fix(int, 'disj_ub_est_pruned')
+        fix(int, 'disj_computed')
+        fix(int, 'disj_interesting')
+        
+        fix(float, 'top_compl')
+        fix(float, 'hundredth_compl')
+        
+        fix(int, 'num_perf_compl')
+        fix(int, 'num_perf_simple')
+        
+        fix(float, 'top_simple')
+        
+        fix(int, 'compl_cr')
+        fix(int, 'compl_cr_is_top_perf')
+        
+        fix(int, 'simple_cr')
+        fix(int, 'simple_cr_is_top_perf')
 
         yield row
 
