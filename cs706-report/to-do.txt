@@ -39,9 +39,6 @@ Section 5: I'm not sure that these are properly considered as
 *internal* threats to validity, but I don't really know that taxonomy
 of threat types very well.
 
-A third case study would be nice here, but is probably not essential.
-[-tchen]
-
 
 ------------------------------------------------------------------------
 --
@@ -51,13 +48,14 @@ A third case study would be nice here, but is probably not essential.
 Section 6 presents some results with conjunctions and disjunctions
 broken out, but not all.  I'd like to see that done with the rest,
 such as for Figure 2, to see if there's anything interesting going on.
-[-Ben] [+arumuga]
+[-Ben] [*arumuga]
 
 The first paragraph of Section 6.4 [Effect of Sampling Rate] claims
 that the number of interesting conjunctions is comparable to the
 number of interesting simple predicates even at 1/1000 sampling.  Is
 that really true?  You can't tell by squinting at the plots, and I
 cannot find these raw numbers anywhere in the "data/*.txt" files.
+[*arumuga]
 
 Several of the figures need layout or color-selection work, especially
 for monochrome printing.  [*Ben]
@@ -69,11 +67,11 @@ downsampling gives numbers which are completely indistinguishable from
 online sampling.  And just getting a weird run of numbers from your
 random number generator is unlikely to show the same conjunction hump
 in six different applications.
-[-tchen]
+[*arumuga]
 
 You also don't say anything about how long it takes to perform this
 analysis.  Seconds?  Hours?  Weeks?  Readers will want to know.
-[-Ben]
+[+Ben]
 
 Section 6.1 [Top Scoring Predicates] no longer matches the data
 actually shown in Figure 2.  We need to understand why the new Figure
