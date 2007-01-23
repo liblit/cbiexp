@@ -1,3 +1,4 @@
+Application Version SamplingRate Effort simple_preds time conj_total conj_pdg_metric_pruned conj_ub_est_pruned conj_computed conj_interesting disj_total disj_pdg_metric_pruned disj_ub_est_pruned disj_computed disj_interesting top_compl hundredth_compl num_perf_compl num_perf_simple top_simple compl_cr compl_cr_is_top_perf simple_cr simple_cr_is_top_perf
 tot_info 1 1 1 417 17 86736 62128 168 24440 10743 86736 62128 22985 1623 35 0.90584 0.888669 103 2 0.903186 1 1 0 1
 tot_info 1 1 2 417 19 86736 51371 528 34837 15815 86736 51371 33409 1956 41 0.90814 0.893423 116 2 0.903186 1 1 0 1
 tot_info 1 1 5 417 34 86736 38439 1128 47169 21033 86736 38439 47017 1280 25 0.90814 0.898548 147 2 0.903186 1 1 0 1
