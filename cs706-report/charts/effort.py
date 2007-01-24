@@ -24,7 +24,7 @@ def main():
 
     # summarize by averaging values at each (app, effort) coordinate
     for coord, counts in data.iteritems():
-        data[coord] = float(sum(counts)) / len(counts)
+        data[coord] = common.average(counts)
 
     # extract effort levels to serve as X axis category labels
     efforts = ( coord[1] for coord in data.iterkeys() )
@@ -37,6 +37,8 @@ def main():
     ticks = [tick_mark.blackcircle3, tick_mark.blacksquare3, tick_mark.blacktri3, tick_mark.blackdtri3, tick_mark.plus3, tick_mark.x3]
 
     # create plot area
+    [outfile] = sys.argv[1:]
+    theme.output_file = outfile
     common.setTheme()
     x_coord = category_coord.T(categories, 0)
     x_axis = axis.X(label='/ieffort', format='%d%%')

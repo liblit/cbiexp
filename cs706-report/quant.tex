@@ -43,11 +43,8 @@ Even when restricted to binary conjunction and disjunction, complex predicates c
 
 \begin{figure*}
   \centering
-  $\begin{array}{cc}
-    \includegraphics[width=\columnwidth]{charts/tcas} & \includegraphics[width=\columnwidth]{charts/replace} \\
-    \includegraphics[width=\columnwidth]{charts/tot_info} & \includegraphics[width=\columnwidth]{charts/print_tokens2} \\
-    \includegraphics[width=\columnwidth]{charts/schedule} & \includegraphics[width=\columnwidth]{charts/schedule2} \\
-  \end{array}$
+  \newcommand{\plot}[2]{\subfloat[\prog{#1}]{\includegraphics{charts/sampling-#2}}}
+  \input{charts/sampling}
   \caption{Sampling rate vs. number of interesting predicates}
   \label{fig-sampling}
 \end{figure*}

@@ -1,14 +1,15 @@
 MAIN      = report
-SRCS      = $(wildcard *.tex *.bib *.sty *.cls)
+SRCS      = $(wildcard *.tex *.bib *.sty *.cls) charts/sampling.tex
 PS        = $(MAIN).ps
 PDF       = $(MAIN).pdf
 DVI       = $(MAIN).dvi
 BBL       = $(MAIN).bbl
 
-siemens := print_tokens2 replace schedule schedule2 tcas tot_info
+siemens := print_tokens print_tokens2 replace schedule schedule2 tcas tot_info
+sampling := $(siemens:%=sampling-%)
 pycharts := effort pruning top-pred
-others := maxsuccess
-figs := $(siemens) $(pycharts) $(others)
+others := maxsuccess $(sampling)
+figs := $(pycharts) $(others)
 epss := $(figs:%=charts/%.eps)
 pdfs := $(figs:%=charts/%.pdf)
 
@@ -43,6 +44,9 @@ $(pycharts:%=charts/%.eps): charts/%.eps: charts/%.py charts/common.py data/data
 
 $(pycharts:%=charts/%.pdf): charts/%.pdf: charts/%.py charts/common.py data/data.txt
 	python $< $@
+
+charts/sampling.tex $(sampling:%=charts/%.eps) $(sampling:%=charts/%.pdf): charts/sampling.py charts/common.py data/data.txt
+	python $<
 
 clean:
 	rm -f $(PS) $(PDF) $(DVI) $(BBL) $(MAIN).aux $(MAIN).out $(pdfs) $(pycharts:%=charts/%.eps)

@@ -7,6 +7,9 @@ from os.path import dirname
 from pychart import *
 
 
+apps = ['print_tokens', 'print_tokens2', 'replace', 'schedule', 'schedule2', 'tcas', 'tot_info']
+
+
 def rawData():
     filename = dirname(__file__) + '/../data/data.txt'
     stream = file(filename)
@@ -18,6 +21,8 @@ def rawData():
                 row[key] = None
             else:
                 row[key] = coercion(row[key])
+
+        assert row['Application'] in apps
 
         fix(int, 'Version')
         fix(float, 'SamplingRate')
@@ -55,16 +60,11 @@ def rawData():
         yield row
 
 
-def setTheme():
+def setTheme(size=(180, 140)):
     chart_object.set_defaults(bar_plot.T, width=10)
-    chart_object.set_defaults(area.T, size=(180, 140))
+    chart_object.set_defaults(area.T, size=size)
     theme.default_font_family = 'Times'
-    [outfile] = sys.argv[1:]
-    theme.output_file = outfile
     theme.reinitialize()
-
-
-apps = ['print_tokens2', 'replace', 'schedule', 'schedule2', 'tcas', 'tot_info']
 
 
 def appsCoord(overall=False):
@@ -86,3 +86,7 @@ def appsAxisX():
 
 def format_percent(value):
     return '/6{}%.0f%%' % round(value * 100)
+
+
+def average(values):
+    return float(sum(values)) / len(values)

@@ -32,6 +32,8 @@ def main():
     data = [ (app, data[app]) for app in common.apps ]
 
     # create plot area
+    [outfile] = sys.argv[1:]
+    theme.output_file = outfile
     common.setTheme()
     x_coord = common.appsCoord()
     x_axis = common.appsAxisX()

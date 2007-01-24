@@ -52,12 +52,14 @@ def main():
     for fate in fates:
         series = data[fate]
         for app, values in series.iteritems():
-            series[app] = sum(values) / len(values)
+            series[app] = average(values)
         values = list(series.itervalues())
-        series['Overall'] = sum(values) / len(values)
+        series['Overall'] = average(values)
         print 'Overall: %.0f%%: %s' % (series['Overall'] * 100, fate)
 
     # create plot area
+    [outfile] = sys.argv[1:]
+    theme.output_file = outfile
     common.setTheme()
     x_coord = common.appsCoord(overall=True)
     x_axis = common.appsAxisX()
