@@ -7,7 +7,7 @@ BBL       = $(MAIN).bbl
 
 siemens := print_tokens print_tokens2 replace schedule schedule2 tcas tot_info
 sampling := $(siemens:%=sampling-%)
-pycharts := effort pruning top-pred
+pycharts := effort-conj effort-disj pruning top-pred
 others := maxsuccess $(sampling)
 figs := $(pycharts) $(others)
 epss := $(figs:%=charts/%.eps)
@@ -39,14 +39,17 @@ $(PS): %.ps: %.dvi $(epss)
 %.pdf: %.eps
 	epstopdf --outfile=$@ $<
 
-$(pycharts:%=charts/%.eps): charts/%.eps: charts/%.py charts/common.py data/data.txt
+charts/pruning.eps charts/top-pred.eps: charts/%.eps: charts/%.py charts/common.py data/data.txt
 	python $< $@
 
-$(pycharts:%=charts/%.pdf): charts/%.pdf: charts/%.py charts/common.py data/data.txt
+charts/pruning.pdf charts/top-pred.pdf: charts/%.pdf: charts/%.py charts/common.py data/data.txt
 	python $< $@
 
 charts/sampling.tex $(sampling:%=charts/%.eps) $(sampling:%=charts/%.pdf): charts/sampling.py charts/common.py data/data.txt
 	python $<
+
+charts/effort-conj.eps charts/effort-disj.eps charts/effort-conj.pdf charts/effort-disj.pdf: charts/effort.py charts/common.py data/data.txt
+	python $< $@ $(subst effort-, , $(basename $(@F)))
 
 clean:
 	rm -f $(PS) $(PDF) $(DVI) $(BBL) $(MAIN).aux $(MAIN).out $(pdfs) $(pycharts:%=charts/%.eps)

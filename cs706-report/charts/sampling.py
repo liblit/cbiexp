@@ -6,19 +6,12 @@ from itertools import imap
 from os.path import dirname
 from pychart import *
 
-import locale
-
 
 def format_x(density):
     return '/6{}1//%s' % density
 
 
-def format_y(count):
-    return locale.format('/6{}%d', count, grouping=True)
-
-
 def main():
-    locale.setlocale(locale.LC_ALL, '')
     subdir = dirname(__file__)
 
     # prepare to read data and apply basic filtering
@@ -53,7 +46,7 @@ def main():
     x_coord = category_coord.T(categories, 0)
     x_axis = axis.X(label='Sampling Rate', format=format_x)
     y_coord = log_coord.T()
-    y_axis = axis.Y(label='Number of Predicates', format=format_y)
+    y_axis = axis.Y(label='Number of Predicates', format=common.format_count)
 
     # create per-application plots
     for app in common.apps:

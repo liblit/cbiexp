@@ -5,12 +5,12 @@ import common
 from itertools import izip
 from pychart import *
 
-
-def format_y(value):
-    return '%dK' % (value / 1000)
+import sys
 
 
 def main():
+    [outfile, kind] = sys.argv[1:]
+
     # prepare to read data and apply basic filtering
     rows = common.rawData()
     rows = ( row for row in rows if row['SamplingRate'] == 1 )
@@ -19,7 +19,8 @@ def main():
     data = {}
     for row in rows:
         coord = (row['Application'], row['Effort'])
-        value = row['Interesting']
+        value = row[kind + '_interesting']
+        if value == None: value = 0
         data.setdefault(coord, []).append(value)
 
     # summarize by averaging values at each (app, effort) coordinate
@@ -37,15 +38,18 @@ def main():
     ticks = [tick_mark.blackcircle3, tick_mark.blacksquare3, tick_mark.blacktri3, tick_mark.blackdtri3, tick_mark.plus3, tick_mark.x3]
 
     # create plot area
-    [outfile] = sys.argv[1:]
     theme.output_file = outfile
     common.setTheme()
     x_coord = category_coord.T(categories, 0)
     x_axis = axis.X(label='/ieffort', format='%d%%')
-    y_axis = axis.Y(label='Number of interesting predicates', format=format_y, tic_interval=10000)
-    leg = legend.T(loc=(20, 100), shadow=(1, -1, fill_style.gray50))
+    y_coord = log_coord.T()
+    y_axis = axis.Y(label='Number of interesting predicates', format=common.format_count)
+
+    loc = {'conj': (100, 20), 'disj': (20, 110)}[kind]
+    leg = legend.T(loc=loc)
+
     ar = area.T(x_axis=x_axis, x_coord=x_coord,
-                y_axis=y_axis, y_grid_interval=5000,
+                y_axis=y_axis, y_coord=y_coord,
                 legend=leg)
 
     # add one line plot for each application

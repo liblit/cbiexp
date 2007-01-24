@@ -31,12 +31,13 @@ Even when restricted to binary conjunction and disjunction, complex predicates c
 
 \begin{figure}
   \centering
-  \includegraphics{charts/effort}
+  \subfloat[Conjunctions]{\includegraphics{charts/effort-conj}
+  \subfloat[Disjunctions]{\includegraphics{charts/effort-disj}
   \caption{Variation of number of interesting predicates with $\effort$}
   \label{fig-effort}
 \end{figure}
 
-\autoref{fig-effort} has one curve for each program showing how the number of interesting predicates (\autoref{dfn3}) varies at four different values - 1, 2, 5, 10 for $\effort$.  As expected, as $\effort$ increases more predicates are evaluated and so more interesting predicates are found.
+\autoref{fig-effort} shows how the number of interesting conjunction and disjunction predicates (\autoref{dfn3}) varies at four different $\effort$ levels.  As expected, as $\effort$ increases more predicates are evaluated and so more interesting predicates are found.
 
 \subsection{Effect of Sampling Rate}
 \label{sec-sampling}

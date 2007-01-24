@@ -6,6 +6,8 @@ from itertools import chain
 from os.path import dirname
 from pychart import *
 
+import locale
+
 
 apps = ['print_tokens', 'print_tokens2', 'replace', 'schedule', 'schedule2', 'tcas', 'tot_info']
 
@@ -61,6 +63,7 @@ def rawData():
 
 
 def setTheme(size=(180, 140)):
+    locale.setlocale(locale.LC_ALL, '')
     chart_object.set_defaults(bar_plot.T, width=10)
     chart_object.set_defaults(area.T, size=size)
     theme.default_font_family = 'Times'
@@ -86,6 +89,10 @@ def appsAxisX():
 
 def format_percent(value):
     return '/6{}%.0f%%' % round(value * 100)
+
+
+def format_count(count):
+    return '/6{}' + locale.format('%d', count, grouping=True)
 
 
 def average(values):

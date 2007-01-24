@@ -82,6 +82,12 @@ Figure 2 has relatively little information in it.  Perhaps this
 one-bar plot should be replaced with either a small table or just
 prose discussion with no table or figure at all.
 
+As effort levels increase, several Siemens apps show slight
+*decreases* in the number of interesting disjunctions.  This seems
+incorrect.  Either our data is bad (i.e., we have a bug) or we are
+misunderstanding something important.  We need to figure out what's
+going on and fix or explain it.  [*arumuga]
+
 
 ------------------------------------------------------------------------
 --
