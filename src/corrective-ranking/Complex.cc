@@ -212,8 +212,8 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
             
             interestingD ++;
             if(result.size() > limit) {
-            result.erase(min_element(result.begin(), result.end()));
-            minMax = min_element(result.begin(), result.end())->score();
+              result.erase(min_element(result.begin(), result.end()));
+              minMax = min_element(result.begin(), result.end())->score();
             }
         } 
       }
@@ -248,3 +248,97 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   return result;
 }
 
+std::list<Complex>
+combine1(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
+
+  time_t begin, finish; 
+
+  std::list<Complex> result;
+  double minMax = lb;
+  
+  unsigned total = candidates.size() * candidates.size() - candidates.size();
+  unsigned prunedC = 0, computedC = 0, interestingC = 0;
+  unsigned prunedD = 0, computedD = 0, interestingD = 0;
+  
+  if(afterCSURF == 0)
+    afterCSURF = total;
+
+  if(limit == 0) {
+    return result;
+  }
+
+  Progress::Bounded progress("Finding conjunctions and disjunctions", total / 2);
+  time(&begin);
+  
+  Candidates::iterator i, j;
+  for(i = candidates.begin(); i != candidates.end(); i ++) {
+    for(j = candidates.begin(); j != i; j ++) {
+      
+      progress.step();        
+      if(! isValidPair(i->index, j->index))
+        continue;
+      
+      Conjunction dummyC(&*i, &*j, true);
+      Conjunction c(&*i, &*j);
+      
+      if(dummyC.isInteresting())
+        computedC ++;
+      else
+        prunedC ++;
+      
+      assert(c.score() <= dummyC.score());
+      if(c.isInteresting()) {
+        interestingC ++;
+         
+        if(result.size() == 0 || result.front().score() < c.score()) {
+          result.clear();
+          result.push_back(c);
+        }
+      }
+      
+      Disjunction dummyD(&*i, &*j, true);
+      Disjunction d(&*i, &*j);
+      
+      if(dummyD.isInteresting())
+        computedD ++;
+      else
+        prunedD ++;
+      
+      assert(d.score() <= dummyD.score());
+      if(d.isInteresting()) {
+        interestingD ++;
+         
+        if(result.size() == 0 || result.front().score() < d.score()) {
+          result.clear();
+          result.push_back(d);
+        }
+      }
+    }
+  }
+  
+  time(&finish);
+  time_t exec_time = finish - begin;
+
+  printf("COMBINE:: was able to prune %u conjunctions, %u disjunctions\n", prunedC, prunedD);
+  printf("COMBINE:: In all, %u %u complex predicates were interesting\n", interestingC, interestingD);
+  printf("COMBINE:: :( Had to compute %u %u complex predicates\n", computedC, computedD);
+  
+  result.sort();
+  result.reverse();
+
+  if ( fout != NULL ) {
+    // sanity check
+    assert(afterCSURF == prunedC + computedC + prunedD + computedD);
+
+    fprintf(fout, "%u %u\n", total, total - afterCSURF); // Total possible complex predicates
+    fprintf(fout, "%u %u %u\n", prunedC, computedC, interestingC);
+    fprintf(fout, "%u %u %u\n", prunedD, computedD, interestingD);
+    fprintf(fout, "%u\n", exec_time);
+    
+    if(result.size() > 0)
+      fprintf(fout, "%lf %lf\n", result.front().score(), result.back().score());
+    else
+      fprintf(fout, "-1 -1\n");
+  }
+  return result;
+}

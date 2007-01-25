@@ -65,7 +65,8 @@ void read_pairs();
 // Computes conjunctions of predicates from input list.  The length of
 // the resulting candidate list is bound by the second parameter.
 std::list<Complex> combine(Candidates &, unsigned, double = 0, FILE * = NULL );
-  
+std::list<Complex> combine1(Candidates &, unsigned, double = 0, FILE * = NULL );
+
 ////////////////////////////////////////////////////////////////////////
 
 #endif // !INCLUDE_corrective_ranking_Complex_h
