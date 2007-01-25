@@ -18,24 +18,27 @@ This section presents quantitative data about the ideas presented in previous se
 
 \subsection{Effectiveness of Pruning}
 \label{sec-effectprune}
-\begin{figure}
+\begin{figure*}
   \centering
-  \includegraphics{charts/pruning}
+  \subfloat[Conjunctions]{\includegraphics{charts/pruning-conj}}
+  \hfill
+  \subfloat[Disjunctions]{\includegraphics{charts/pruning-disj}}
   \caption{Avoiding computing exact scores by pruning complex predicates.  ``Overall'' summarizes the entire Siemens suite.}
   \label{fig-pruning}
-\end{figure}
+\end{figure*}
 
 Even when restricted to binary conjunction and disjunction, complex predicates could substantially increase the analysis workload if na\"ively implemented.  \autoref{sec-metrics} suggests heuristics for pruning complex predicates which are unlikely to be useful or understandable to a programmer, while \autoref{sec-pruning} describes how to compute an upper bound on a predicate's score.  \autoref{fig-pruning} shows that these measures are highly effective in practice.  On average, 57\% of candidate complex predicates are discarded because the $\effort$ as defined in \autoref{def-effort} would require traversing more than 5\% of the application code.  A further 14\% of complex predicates are pruned because the upper bounds of their $\Importance$ scores, computed per \autoref{sec-pruning}, are lower than the scores of their constituent simple predicates.  Only 29\% of complex predicates remain to have their exact scores computed, of which roughly a sixth (5\% of the initial pool) are retained as potentially interesting bug predictors.  Thus we find that the techniques proposed earlier significantly reduce the computational load required to identify a useful, high-scoring subset of complex predicates.
 
 \subsection{Effect of Effort}
 
-\begin{figure}
+\begin{figure*}
   \centering
-  \subfloat[Conjunctions]{\includegraphics{charts/effort-conj}
-  \subfloat[Disjunctions]{\includegraphics{charts/effort-disj}
+  \subfloat[Conjunctions]{\includegraphics{charts/effort-conj}}
+  \hfill
+  \subfloat[Disjunctions]{\includegraphics{charts/effort-disj}}
   \caption{Variation of number of interesting predicates with $\effort$}
   \label{fig-effort}
-\end{figure}
+\end{figure*}
 
 \autoref{fig-effort} shows how the number of interesting conjunction and disjunction predicates (\autoref{dfn3}) varies at four different $\effort$ levels.  As expected, as $\effort$ increases more predicates are evaluated and so more interesting predicates are found.
 

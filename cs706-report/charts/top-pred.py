@@ -5,6 +5,8 @@ import common
 from itertools import imap
 from pychart import *
 
+import sys
+
 
 def complex(best):
     return best in set([1, 2])
@@ -17,12 +19,13 @@ def main():
     rows = ( row for row in rows if row['Effort'] == 5 )
 
     # collect and index individual data points of interest
-    data = {}
+    data = dict((app, []) for app in common.apps)
     for row in rows:
         app = row['Application']
-        best = row['Complex']
-        assert best in [0, 1]           # 2 == disjunction, never best in our experiments
-        data.setdefault(app, []).append(best)
+        best = row['compl_cr']
+        if best != None:
+            assert best in [0, 1, 2]
+            data[app].append(best)
 
     # for each app, compute fraction having complex (non-0) best
     for app, counts in data.iteritems():

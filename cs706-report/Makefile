@@ -7,7 +7,7 @@ BBL       = $(MAIN).bbl
 
 siemens := print_tokens print_tokens2 replace schedule schedule2 tcas tot_info
 sampling := $(siemens:%=sampling-%)
-pycharts := effort-conj effort-disj pruning top-pred
+pycharts := effort-conj effort-disj pruning-conj pruning-disj top-pred
 others := maxsuccess $(sampling)
 figs := $(pycharts) $(others)
 epss := $(figs:%=charts/%.eps)
@@ -47,6 +47,9 @@ charts/pruning.pdf charts/top-pred.pdf: charts/%.pdf: charts/%.py charts/common.
 
 charts/sampling.tex $(sampling:%=charts/%.eps) $(sampling:%=charts/%.pdf): charts/sampling.py charts/common.py data/data.txt
 	python $<
+
+charts/pruning-conj.eps charts/pruning-disj.eps charts/pruning-conj.pdf charts/pruning-disj.pdf: charts/pruning.py charts/common.py data/data.txt
+	python $< $@ $(subst pruning-, , $(basename $(@F)))
 
 charts/effort-conj.eps charts/effort-disj.eps charts/effort-conj.pdf charts/effort-disj.pdf: charts/effort.py charts/common.py data/data.txt
 	python $< $@ $(subst effort-, , $(basename $(@F)))

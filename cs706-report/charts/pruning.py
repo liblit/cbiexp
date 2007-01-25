@@ -2,7 +2,10 @@
 
 import common
 
+from itertools import count, izip
 from pychart import *
+
+import sys
 
 
 lastBarPlot = None
@@ -24,54 +27,66 @@ fates = [computeRetain, computeDiscard, pruneBound, pruneEffort]
 
 
 def main():
+    [outfile, kind] = sys.argv[1:]
+
     # prepare to read data and apply basic filtering
     rows = common.rawData()
     rows = ( row for row in rows if row['SamplingRate'] == 1 )
     rows = ( row for row in rows if row['Effort'] == 5 )
 
+    # prepare master data table
+    data = dict(((app, fate), [])
+                for app in common.apps
+                for fate in fates)
+
     # collect and index individual data points of interest
-    data = dict((fate, {}) for fate in fates)
     for row in rows:
         app = row['Application']
 
-        compute = row['Computed']
-        retain = row['Interesting']
-        waste = compute - retain
-        bound = row['Skipped']
-        total = row['Total']
-        effort = total - (compute + bound)
-        assert retain + waste + bound + effort == total
+        total = row[kind + '_total']
+        if total != None:
+            compute = row[kind + '_computed']
+            retain = row[kind + '_interesting']
+            waste = compute - retain
+            bound = row[kind + '_ub_est_pruned']
+            effort = row[kind + '_pdg_metric_pruned']
+            assert retain + waste + bound + effort == total
 
-        total = float(row['Total'])
-        data[computeRetain].setdefault(app, []).append(retain / total)
-        data[computeDiscard].setdefault(app, []).append(waste / total)
-        data[pruneBound].setdefault(app, []).append(bound / total)
-        data[pruneEffort].setdefault(app, []).append(effort / total)
+            total = float(total)
+            data[app, computeRetain].append(retain / total)
+            data[app, computeDiscard].append(waste / total)
+            data[app, pruneBound].append(bound / total)
+            data[app, pruneEffort].append(effort / total)
 
     # summarize by averaging at each data point
-    for fate in fates:
-        series = data[fate]
-        for app, values in series.iteritems():
-            series[app] = average(values)
-        values = list(series.itervalues())
-        series['Overall'] = average(values)
-        print 'Overall: %.0f%%: %s' % (series['Overall'] * 100, fate)
+    for coord, values in data.iteritems():
+        data[coord] = common.average(values)
 
     # create plot area
-    [outfile] = sys.argv[1:]
     theme.output_file = outfile
     common.setTheme()
     x_coord = common.appsCoord(overall=True)
     x_axis = common.appsAxisX()
     y_axis = axis.Y(label='Fraction of complex predicates', format=common.format_percent)
-    leg = legend.T(loc=(20, 100), shadow=(1, -1, fill_style.gray50))
+    leg = legend.T(loc=(23, 100), shadow=(1, -1, fill_style.gray50))
     ar = area.T(x_axis=x_axis, x_coord=x_coord,
                 y_axis=y_axis, y_range=(0, 1), y_grid_interval=0.1,
                 legend=leg)
 
     # add stacked bars in reverse order so legend looks right
-    plots = [ addBars(fate, data[fate]) for fate in fates ]
-    ar.add_plot(*reversed(plots))
+
+    def plots():
+        prior = None
+        for fate in fates:
+            series = [ (app, data[app, fate]) for app in common.apps ]
+            overall = common.average([ point[1] for point in series ])
+            series.append(('Overall', overall))
+            bars = bar_plot.T(data=series, stack_on=prior, label=fate)
+            prior = bars
+            yield bars
+
+    bars = reversed(list(plots()))
+    ar.add_plot(*bars)
 
     # save rendered plot
     ar.draw()
