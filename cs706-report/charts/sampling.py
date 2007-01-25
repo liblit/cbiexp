@@ -18,16 +18,23 @@ def main():
     rows = common.rawData()
     rows = ( row for row in rows if row['Effort'] == 5 )
 
+    # prepare master data table
+    densities = [1, 1.01, 2, 5, 10, 100, 1000]
+    kinds = ['Conjunctions', 'Disjunctions', 'Simple']
+    data = dict(((app, density, kind), [])
+                for app in common.apps
+                for density in densities
+                for kind in kinds)
+
     # collect and index individual data points of interest
-    data = {}
     for row in rows:
         app = row['Application']
         density = row['SamplingRate']
 
         def record(kind, column):
             count = row[column]
-            if count == None: count = 0
-            data.setdefault((app, density, kind), []).append(count)
+            if count != None:
+                data[app, density, kind].append(count)
 
         record('Conjunctions', 'conj_interesting')
         record('Disjunctions', 'disj_interesting')

@@ -96,4 +96,7 @@ def format_count(count):
 
 
 def average(values):
-    return float(sum(values)) / len(values)
+    if values:
+        return float(sum(values)) / len(values)
+    else:
+        return None
