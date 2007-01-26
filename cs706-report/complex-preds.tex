@@ -2,27 +2,45 @@
 
 \section{Complex Predicates}
 \label{sec-complex-preds}
-This section gives a precise definition of complex predicates and discusses the trade-offs in our implementation.
+%         *         *         *         *         *         *        80 columns |
+A complex predicate $C$ is defined as $C = \phi(p_1, p_2, \ldots p_k)$ where 
+$p_1, p_2, \ldots p_k$ are simple predicates and $\phi$ is a function in 
+conjunctive normal form (CNF).  Evaluating $C$ requires combining predicates 
+using $\wedge$ (``and'') and $\vee$ (``or''); a negation operator is not required 
+because by design, the negation of every CBI predicate $p$ is also a predicate.  
+For $N$ predicates there are $2^{2^N}$ such Boolean functions 
+\cite{MathWorld:BoolFuncs}.  There may be hundreds of simple predicates involved 
+in the analysis, and so this a prohibitively large number.
 
-A complex predicate $C$ is defined as $C = \phi(p_1, p_2, \ldots p_k)$ where $p_1, p_2, \ldots p_k$ are simple predicates and $\phi$ is a function that can be computed using only the logical operators $\wedge$ (``and'') and $\vee$ (``or'').  A negation operator is not required because any propositional formula can be written in conjunctive normal form (CNF) in which the negation appears only before the literals.  By design, the negation of every simple predicate $p$ is also a predicate.
+To reduce complexity we consider only functions of two predicates.  Out of the
+16 ($2^{2^2}$) such functions, we consider only conjunction and disjunction since
+they are likely to be most easily understood by programmers.  Our revised
+definition is $C = \phi(p_1, p_2)$ where $\phi \in \{\vee, \wedge\}$.  Conjunction
+and disjunction are commutative, and the reflexive cases ($p_1 \wedge p_1$ and 
+$p_1 \vee p_1$) are uninteresting.  This reduces the number of complex predicates
+to just ${N \choose 2} = \frac{N (N-1)}{2}$ binary conjunctions and an equal number 
+of binary disjunctions.  These may be evaluated for a set of $R$ runs in $O(R N^2)$ 
+time.  The revised definition for a complex predicate is used throughout; related
+definitions may be trivially extended to the general case.
+
+\subsection{Measuring Complex Predicates}
+\label{sec-measuring}
 
 For a predicate $p$ and a run $R$, $R(p) = \true$ if and only if $p$ was observed to be true at least once during run $R$.  Similarly we could define $R(C)$ as follows:
 \begin{defn}
 \label{dfn1}
-For a complex predicate $C = \phi(p_1, p_2, \ldots p_k)$, $R(C) \equiv \true$ iff at some point during the execution of the program, $C$ was observed to be true.
+For a complex predicate $C = \phi(p_1, p_2)$, $R(C) \equiv \true$ iff at some point during the execution of the program, $C$ was observed to be true.
 \end{defn}
 
 The difficulty with this notion of complex predicates is that $C$ must be explicitly monitored during the program execution.  For example, if $C_1 = p_1 \wedge p_2$ then $R(p_1) = \true$ and $R(p_2) = \true$ does not imply that $R(C) = \true$.  $p_1$ and $p_2$ may be true at different stages of execution but never true at the same time.  Furthermore, when $p_1$ and $p_2$ appear at different source locations, there may be no single point in time at which both are even well-defined and therefore simultaneously observable.  In order to be able to estimate the value of $C$ from its components, we adapt a less time-sensitive definition as follows:
 \begin{defn}
 \label{dfn2}
-For a complex predicate $C = \phi(p_1, p_2, \ldots p_k)$, $R(C) = \true$ iff $\phi(R(p_1), R(p_2), \ldots R(p_k)) = \true$
+For a complex predicate $C = \phi(p_1, p_2)$, $R(C) = \true$ iff $\phi(R(p_1), R(p_2)) = \true$
 \end{defn}
 
 In other words, we assume that $R$ is distributive over $\phi$, effectively removing the requirement that all $p_i$ be observed simultaneously.  This can lead to false positives, because $R(C)$ may be computed to $\true$ when it is actually $\false$ at all moments in time.  False negatives, however, cannot arise.  The impact of this assumption on the score of $C$ may be either positive or negative depending on whether $R$ failed or succeeded.
 
-There are $2^{2^N}$ Boolean functions of $N$ predicates \cite{MathWorld:BoolFuncs}.  This is a prohibitively large number considering that there can be hundreds of simple predicates.  To reduce the complexity, we consider only functions of two predicates.  There are $2^{2^2}$ = 16 such functions and their arguments can be chosen from $N$ predicates in $N^2$ ways.  Out of the 16 Boolean functions of two variables, we consider only conjunction and disjunction since they are likely to be most easily understood by programmers.  Conjunction and disjunction are commutative, and the reflexive cases ($p_1 \wedge p_1$ and $p_1 \vee p_1$) are uninteresting.  Thus further reduces the number of complex predicates to just ${N \choose 2} = \frac{N (N-1)}{2}$ binary conjunctions and an equal number of binary disjunctions.  These may be evaluated for a set of $R$ runs in $O(R N^2)$ time.
-
-\subsection{Three valued logic}
+\subsection{Three Valued Logic}
 \label{sec-tvl}
 This section explains how conjunctions and disjunctions are actually computed.  Three-valued logic is used because the value of a predicate in a run may not be certain. This can arise in two situations:
 \begin{enumerate}
@@ -30,11 +48,11 @@ This section explains how conjunctions and disjunctions are actually computed.  
 \item The program reached the line where the predicate was defined but was not observed because of sampling.
 \end{enumerate}
 
-In such a case, the value of a predicate $p$ is considered unknown.  For the analysis introduced in \autoref{sec-bground}, it is enough to consider whether $R(p)$ was $\true$ or $\neg \true$ (either $\false$ or $\unknown$).  But while computing complex predicates, the two sub-cases of the $\neg \true$ case must be considered separately.
+In such a case, the value of a predicate $p$ is considered unknown.  For the analysis introduced in \autoref{sec-bground}, it is enough to consider whether $R(p)$ was $\true$ or $\neg \true$ (either $\false$ or $\unknown$), since $\obs{R}{p}$ is used independently.  When constructing conjunctive predicates, however, considering the sub-cases of $\neg \true$ separately allows additional run information to be derived.
 
-Consider a complex predicate $C = p_1 \wedge p_2$.  If either $R(p_1)$ or $R(p_2)$ was $\false$ in a run $R$, then $R(C) = \false$ - one false value is sufficient to disprove a conjunction.  If both $R(p_1)$ and $R(p_2)$ were $\true$, then $C$ was observed to be true.  Otherwise, the value of $R(C)$ is $\unknown$. This is shown using a three-valued truth table in \autoref{tab:and}. Recall that for a predicate $p$ and a run $R$, $R(p) = \true$ if and only if $p$ was observed to be true at least once during run $R$.  
+Consider a complex predicate $C = p_1 \wedge p_2$.  If either $R(p_1)$ or $R(p_2)$ was $\false$ in a run $R$, then $R(C) = \false$ - one false value is sufficient to disprove a conjunction.  If both $R(p_1)$ and $R(p_2)$ were $\true$, then $C$ was observed to be true.  Otherwise, the value of $R(C)$ is $\unknown$. This is shown using a three-valued truth table in \autoref{tab:and}.  The emphasized entries would have been $\unknown$ if the subcases of $\neg \true$ were treated as equivalent.  This increases the number of runs where a conjunctive predicate is considered to be observed, affecting its $\Importance$ score.
 
-Similarly, one true value is sufficient to prove a disjunction.  The truth table for complex predicate $D = p_1 \vee p_2$ is shown in \autoref{tab:or}.
+Similarly one true value is sufficient to prove a disjunction.  While the distinction between $\false$ and $\unknown$ is less important when constructing a disjunctive predicate, the same style of short-circuit evaluation is used.  The truth table for complex predicate $D = p_1 \vee p_2$ is shown in \autoref{tab:or} for completeness.
 
 \begin{table}
   \caption{3-valued Truth Table for $C = p_1 \wedge p_2$}
@@ -45,8 +63,8 @@ Similarly, one true value is sufficient to prove a disjunction.  The truth table
     $p_1 \diagdown p_2$ & T & F & ? \\
     \hline
     T & T & F & ? \\
-    F & F & F & F \\
-    ? & ? & F & ? \\
+    F & F & F & \emph{F} \\
+    ? & ? & \emph{F} & ? \\
   \end{tabular}
 \end{table}
 
@@ -66,14 +84,14 @@ Similarly, one true value is sufficient to prove a disjunction.  The truth table
 \end{table}
 
 \subsection{Interesting Complex Predicate}
-Even after imposing many constraints, the number of complex predicates is still quadratic in the number of simple predicates.  A large number of complex predicates formed by this procedure are likely to be useless in the analysis of the program.  A complex predicate that has a lower score than one of its components is useless.  The component (simple) predicate with a higher score is a better predictor of failure, and so the complex predicate adds nothing to the analysis.
+Even using the revised definition for $C$ the number of complex predicates is still quadratic in the number of simple predicates.  A large number of complex predicates formed by this procedure are likely to be useless in the analysis of the program.  A complex predicate that has a lower score than one of its components is useless.  The component (simple) predicate with a higher score is a better predictor of failure, and so the complex predicate adds nothing to the analysis.
 
 \begin{defn}
 \label{dfn3}
-A complex predicate $C = \phi(p_1, p_2, \ldots p_k)$ is ``interesting'' iff $\Importance(C) > \Importance(p_i)$ for all $i \in \{1, 2, \ldots k\}$
+A complex predicate $C = \phi(p_1, p_2)$ is ``interesting'' iff $\Importance(C) > \max(\Importance(p_1), \Importance(p_2))$
 \end{defn}
 
-In the case where the complex predicate has the same score as a component predictor, the simpler one is preferable.  Keeping only interesting combinations of predicates reduces the memory burden of storing them, and helps ensure the utility of a complex predicate that is presented to the user.  \autoref{dfn3} is for the general case and as explained earlier, we explore only the case where $k = 2$ and $\phi \in \{\vee, \wedge\}$.
+In the case where the complex predicate has the same score as a component predictor, the simpler one is preferable.  Keeping only interesting combinations of predicates reduces the memory burden of storing them, and helps ensure the utility of a complex predicate that is presented to the user.
 
 \subsection{Pruning}
 \label{sec-pruning}
