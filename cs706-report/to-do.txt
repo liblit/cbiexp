@@ -29,6 +29,14 @@ would be ones with very little apparent connection in the PDG, but
 which nonetheless are tightly connected in how they predict failures.
 [+chen]
 
+Choosing predicates with the smallest intersection of predecessor sets also 
+relates well with the revised motivation for the metrics; the smaller 
+the intersection, the easier it is for a programmer to search the 
+code related to both predicates to find the connection.  By the current 
+definition "highly correlated" predicate combinations are selected; 
+this means a programmer has a potentially huge intersection set to
+search through for the item which 1. connects the components and 
+2. relates to the bug.
 
 ------------------------------------------------------------------------
 --
