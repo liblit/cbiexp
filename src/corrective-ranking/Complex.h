@@ -32,7 +32,9 @@ protected:
   Predicate *pred1, *pred2;
   virtual void estimate() {}
   virtual void initialize() {}
-
+  double max(double, double);
+  double min(double, double);
+  
 public:
   Complex(char, Predicate *, Predicate *);
   bool isInteresting();

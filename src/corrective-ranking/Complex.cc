@@ -102,6 +102,13 @@ operator<<(std::ostream &out, const Complex &c)
         << *(c.pred2) << " " << (c.pred1)->score();
 }
 
+double Complex::max(double a, double b) {
+  return (a > b)? a: b;
+};
+
+double Complex::min(double a, double b) {
+  return (a < b)? a: b;
+};
 
 // These methods are not members of class Complex
 map<int, set<int> > pairs;
@@ -248,6 +255,34 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   return result;
 }
 
+time_t
+fast_estimate(Candidates &candidates) {
+  time_t begin, finish;
+  
+  unsigned total = candidates.size() * candidates.size() - candidates.size();
+  
+  Progress::Bounded progress("Fast estimate", total / 2);
+  time(&begin);
+  
+  Candidates::iterator i, j;
+  for(i = candidates.begin(); i != candidates.end(); i ++) {
+    for(j = candidates.begin(); j != i; j ++) {
+      progress.step();        
+      if(! isValidPair(i->index, j->index))
+        continue;
+      
+      Conjunction dummyC(&*i, &*j, true);
+      Disjunction dummyD(&*i, &*j, true);
+    }
+  }
+  
+  time(&finish);
+  time_t exec_time = finish - begin;
+  
+  printf("FAST ESTIMATE:: Time: %u\n", exec_time);
+  return exec_time;
+}
+
 std::list<Complex>
 combine1(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
 
@@ -259,6 +294,7 @@ combine1(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   unsigned total = candidates.size() * candidates.size() - candidates.size();
   unsigned prunedC = 0, computedC = 0, interestingC = 0;
   unsigned prunedD = 0, computedD = 0, interestingD = 0;
+  unsigned wrongC = 0, wrongD = 0;
   
   if(afterCSURF == 0)
     afterCSURF = total;
@@ -286,7 +322,9 @@ combine1(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
       else
         prunedC ++;
       
-      assert(c.score() <= dummyC.score());
+      if(c.score() - dummyC.score() > 0.00001)
+        wrongC ++;
+        
       if(c.isInteresting()) {
         interestingC ++;
          
@@ -304,7 +342,9 @@ combine1(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
       else
         prunedD ++;
       
-      assert(d.score() <= dummyD.score());
+      if(d.score() - dummyD.score() > 0.00001)
+        wrongD ++;
+        
       if(d.isInteresting()) {
         interestingD ++;
          
@@ -322,6 +362,7 @@ combine1(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   printf("COMBINE:: was able to prune %u conjunctions, %u disjunctions\n", prunedC, prunedD);
   printf("COMBINE:: In all, %u %u complex predicates were interesting\n", interestingC, interestingD);
   printf("COMBINE:: :( Had to compute %u %u complex predicates\n", computedC, computedD);
+  printf("My Mistakes: %u %u\n", wrongC, wrongD);
   
   result.sort();
   result.reverse();
@@ -333,7 +374,9 @@ combine1(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
     fprintf(fout, "%u %u\n", total, total - afterCSURF); // Total possible complex predicates
     fprintf(fout, "%u %u %u\n", prunedC, computedC, interestingC);
     fprintf(fout, "%u %u %u\n", prunedD, computedD, interestingD);
-    fprintf(fout, "%u\n", exec_time);
+    
+    unsigned fe = fast_estimate(candidates);
+    fprintf(fout, "%u %u\n", exec_time, fe);
     
     if(result.size() > 0)
       fprintf(fout, "%lf %lf\n", result.front().score(), result.back().score());
@@ -342,3 +385,4 @@ combine1(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
   }
   return result;
 }
+

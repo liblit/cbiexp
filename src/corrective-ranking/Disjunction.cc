@@ -57,20 +57,49 @@ void Disjunction::initialize() {
     else
       assert(false);
   }
-
+  
+//   printf("Actual: %lf %lf %lf %lf %lf\n", tru.failures.count, tru.successes.count, obs.failures.count, obs.successes.count, score());
+  
   initial = effective = score();
   if(isPerfect())
     perfectCount ++;
 }
 
 void Disjunction::estimate() {
-//   cout << "I dont know to estimate score for a disjunction yet :(\n";
-  tru.failures.count = pred1->tru.failures.count + pred2->tru.failures.count;
-  tru.successes.count = (pred1->tru.successes.count > pred2->tru.successes.count)
-                                                ? pred1->tru.successes.count
-                                                : pred2->tru.successes.count;
-  obs.failures.count = 0;
-  obs.successes.count = 1;
-  initial = effective = score();
-//   initialize();
+  double fp, sp, ofp, osp, fpbar, spbar;
+  double fq, sq, ofq, osq, fqbar, sqbar;
+  
+  double fail = allFailures.count;
+  static double succ = NumRuns::count() - fail;
+  
+  fp = pred1->tru.failures.count;
+  sp = pred1->tru.successes.count;
+  ofp = pred1->obs.failures.count;
+  osp = pred1->obs.successes.count;
+  fpbar = ofp - fp;
+  spbar = osp - sp;
+  
+  fq = pred2->tru.failures.count;
+  sq = pred2->tru.successes.count;
+  ofq = pred2->obs.failures.count;
+  osq = pred2->obs.successes.count;
+  fqbar = ofq - fq;
+  sqbar = osq - sq;
+  
+  // counts to maximize
+  tru.failures.count = min(fail, fp + fq);
+  obs.successes.count = min(succ, sp + sq + min(spbar, sqbar));
+  
+  // counts to minimize
+  tru.successes.count = max(sp, sq);
+  obs.failures.count = max(fp, fq) +
+                       max(0, fpbar + fqbar + min(fp, fq) - fail);
+                       
+//   printf("Estimate: %lf %lf %lf %lf %lf\n", tru.failures.count, tru.successes.count, obs.failures.count, obs.successes.count, score());
+  
+  if(tru.failures.count + tru.successes.count == 0 ||
+     obs.failures.count + obs.successes.count == 0)
+    initial = effective = 0;
+  else
+    initial = effective = score();
 }

@@ -5,6 +5,7 @@
 #include "Conjunction.h"
 #include "Predicate.h"
 #include "RunSuite.h"
+#include "allFailures.h"
 
 using namespace std;
 
@@ -30,45 +31,45 @@ void Conjunction::initialize() {
     else
       obs.set(r, Neither);
   }
-
+  
   initial = effective = score();
   if(isPerfect())
     perfectCount ++;
 }
 
-void Conjunction::estimate() {  
-  Predicate opt1(0), opt2(0);
-  double score1, score2 = 0;
+void Conjunction::estimate() {
+  double fp, sp, ofp, osp, fpbar, spbar;
+  double fq, sq, ofq, osq, fqbar, sqbar;
   
-  // s, f - tru successes, failures.  os, of - obs successes and failures
-  // BOUNDS on conjunctions of p1, p2
-  // s' = 0, f' = p1.f  i.e., no successes are retained and all failures are retained
-  // os' = p1.os + (p2.os - p2.s)  the second term is the runs in which p2 was observed false
-  // of' = p1.f
+  double fail = allFailures.count;
+  static double succ = NumRuns::count() - fail;
   
-  if(pred1->tru.failures.count == 0 || pred2->tru.failures.count == 0) {
+  fp = pred1->tru.failures.count;
+  sp = pred1->tru.successes.count;
+  ofp = pred1->obs.failures.count;
+  osp = pred1->obs.successes.count;
+  fpbar = ofp - fp;
+  spbar = osp - sp;
+  
+  fq = pred2->tru.failures.count;
+  sq = pred2->tru.successes.count;
+  ofq = pred2->obs.failures.count;
+  osq = pred2->obs.successes.count;
+  fqbar = ofq - fq;
+  sqbar = osq - sq;
+  
+  // counts to maximize
+  tru.failures.count = min(fp, fq);
+  obs.successes.count = max(succ, spbar + sqbar + min(sp, sq));
+  
+  // counts to minimize
+  tru.successes.count = max(0, sp + sq - succ);
+  obs.failures.count = max(fpbar, fqbar) + 
+                       max(0, fp + fq + min(fpbar, fqbar) - fail);
+                       
+  if(tru.failures.count + tru.successes.count == 0 ||
+     obs.failures.count + obs.successes.count == 0)
     initial = effective = 0;
-    return;
-  }
-  // get upper bound based on pred1
-  opt1.tru.successes.count = 0;
-  opt1.tru.failures.count = pred1->tru.failures.count;
-  opt1.obs.successes.count = pred1->obs.successes.count + pred2->obs.successes.count - pred2->tru.successes.count;
-  opt1.obs.failures.count = pred1->tru.failures.count;
-  score1 = opt1.score();
-  
-  // get upper bound based on pred2
-  opt2.tru.successes.count = 0;
-  opt2.tru.failures.count = pred2->tru.failures.count;
-  opt2.obs.successes.count = pred2->obs.successes.count + pred1->obs.successes.count - pred1->tru.successes.count;
-  opt2.obs.failures.count = pred2->tru.failures.count;
-  score2 = opt2.score();
-  
-  Predicate &best = (score1 > score2)? opt1 : opt2;
-  tru.successes.count = best.tru.successes.count;
-  tru.failures.count = best.tru.failures.count;
-  obs.successes.count = best.obs.successes.count;
-  obs.failures.count = best.obs.failures.count;
-  
-  initial = effective = score();
+  else
+    initial = effective = score();
 }
