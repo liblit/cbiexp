@@ -77,8 +77,8 @@ same score, it is useful to just retain $p$ as it is a more stringent
 condition than $q$ but still has the same score.  However it does not mean
 that \texttt{a > b} was never true.  \texttt{a > b} may be observed  during 
 some runs but does not affect the outcome of \texttt{a >= b} if \texttt{a == b}
-also happens to be true in that run.  However, at sampling rates lower than
-1, only \texttt{a > b} may be observed in some runs and hence the number of
+also happens to be true in those runs.  However, at sampling rates lower than
+$1$, only \texttt{a > b} may be observed in some runs and hence the number of
 runs in which $p$ and $q$ are observed \emph{true}, and consequently their
 scores may be different.  Thus, the adhoc elimination heuristic performs 
 less effectively at lower sampling rates, leading to an increase in the 
@@ -98,7 +98,3 @@ $\Increase(p)$ may be nonzero and if it becomes positive a predicate that
 was not interesting at higher sampling rates becomes interesting at lower 
 sampling rates.
 \end{enumerate}
-
-The first scenario was found to be more prevalent than the second during
-exploration of the results of an experiment (\prog{tot\_info} version 1).
-
