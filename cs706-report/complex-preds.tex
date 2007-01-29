@@ -173,7 +173,7 @@ However, there has to be an overlap between these cases if their sum exceeds
 $|R|$, the total number of runs.  Thus,
 \begin{equation}
   \ub{\obs{R}{C}} = \min(|R|, \obsFalse{R}{p_1} + \obsFalse{R}{p_2}
-                   + \min(R(p_1), R(p_2))
+                   + \min(R(p_1), R(p_2)))
 \end{equation}
 
 Finally, to minimize $\obs{R}{C}$, applications of the two rules above are 
@@ -181,19 +181,19 @@ minimized.  This can happen when:
 \begin{enumerate}
 \item the $\false$ observations of $p_1$ and $p_2$ completely overlap, contributing
 $\max(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})$ to $\obs{R}{C}$
-\item the $\true$ observations of $p_1$ and $p_2$ are completely overlapping.
+\item the $\true$ observations of $p_1$ and $p_2$ are completely non-overlapping.
 However, the outcomes of $\min(\obsFalse{R}{p_1}, \obs{R}{p_2})$ runs has
 been fixed in the previous step reducing the number of effective runs to
-$|R| - \min(\obsFalse{R}{p_1}, \obs{R}{p_2})$.  Among these runs, $R(p_1) + R(p_2)$
+$|R| - \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})$.  Among these runs, $R(p_1) + R(p_2)$
 runs must be selected non-overlappingly, failing which there would be an
-$R(p_1) + R(p_2) + (|R| - \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2}))$ overlap
+$R(p_1) + R(p_2) - (|R| - \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2}))$ overlap
 between the two sets.
 \end{enumerate}
 
 Thus,
 \begin{eqnarray*}
   \lb{\obs{R}{C}} &=& \max(\obsFalse{R}{p_1}, \obsFalse{R}{p_2}) + \\
-            & & \max(0, R(p_1) + R(p_2) + (|R| - \\
+            & & \max(0, R(p_1) + R(p_2) - (|R| - \\
             & & \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})))
 \end{eqnarray*}
 
@@ -205,7 +205,7 @@ disjunction $D = p_1 \vee p_2$ below:
   \ub{\obs{R}{D}} &=& \min(|R|, R(p_1) + R(p_2)
                    + \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})) \\
   \lb{\obs{R}{D}} &=& \max(R(p_1), R(p_2)) + \\
-            & & \max(0, \obsFalse{R}{p_1} + \obsFalse{R}{p_2} + (|R| - \\
+            & & \max(0, \obsFalse{R}{p_1} + \obsFalse{R}{p_2} - (|R| - \\
             & & \min(R(p_1), R(p_2))))
 \end{eqnarray*}
 
@@ -237,10 +237,10 @@ runs $F$ instead of $R$.
     $\lb{\obs{F}{C|D}}$
       & % conjunction
       $\max(\obsFalse{F}{p_1}, \obsFalse{F}{p_2}) +
-      \max(0, F(p_1) + F(p_2) + (|F| - \min(\obsFalse{F}{p_1}, \obsFalse{F}{p_2})))$
+      \max(0, F(p_1) + F(p_2) - (|F| - \min(\obsFalse{F}{p_1}, \obsFalse{F}{p_2})))$
       & % dijsunction
       $\max(F(p_1), F(p_2)) + 
-      \max(0, \obsFalse{F}{p_1} + \obsFalse{F}{p_2} + (|F| - \min(F(p_1), F(p_2))))$
+      \max(0, \obsFalse{F}{p_1} + \obsFalse{F}{p_2} - (|F| - \min(F(p_1), F(p_2))))$
       \\
     $\ub{\obs{S}{D}}$
       & % conjunction
@@ -258,6 +258,6 @@ $F(p_1) = 500$, $F(p_2) = 1000$, $S(p_1) = 250$ and $S(p_2) = 500$.
 Substituting $\obsFalse{R}{p} = 1000 - R(p)$ and computing the bounds listed in
 \autoref{tab:bounds} we get $\ub{F(C)} = 500, \lb{S(C)} = 0, \lb{\obs{F}{C}} = 1000$ and
 $\ub{\obs{S}{C}} = 1000$.  As a result, the upper bound of $\Increase(C)$ will be 
-$\frac{500}{500} - \frac{1000}{2000}=0.5$. Finally the upper bound of $\Importance(C)$ would be $\frac{2}{\frac{1}{0.5}+\frac{1}{log1000/log1000}} = 0.75$. 
+$\frac{500}{500} - \frac{1000}{2000}=0.5$. Finally the upper bound of $\Importance(C)$ would be $\frac{2}{\frac{1}{0.5}+\frac{1}{log1000/log1000}} = 0.66$. 
 
 Pruning complex predicates using the above calculations reduces the computational intensity of the analysis without affecting the results.  The effectiveness of pruning is examined in \autoref{sec-effectprune}.
