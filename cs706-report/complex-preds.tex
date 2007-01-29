@@ -105,11 +105,11 @@ In the case where the complex predicate has the same score as a component predic
 
 \subsection{Pruning}
 \label{sec-pruning}
-Constructing complex predicates from simple ones requires generating two bits of information (according to the three value logic discussed in \autoref{sec-tvl}) for each program run; as CBI is meant to analyze deployed software program runs potentially number in the hundreds of thousands, if not millions.  The measure of a complex predicate's relevance to a bug is its $\Importance$ score, which can only be derived once run information has been generated.  Complex predicates with low $\Importance$ provide no information useful in debugging and are not presented to the programmer; in such a case the effort to form the predicate has been wasted.  This provides the motivation to prune combinations before run information is generated based on an estimate of their resulting scores.  If this estimate falls below the threshold required for the predicate to be presented to the programmer, the complex predicate is not constructed.  Pruning predicates before they are constructed reduces a $O(R)$ operation (constructing run information) to one which executes in constant time.
+Constructing complex predicates from simple ones requires generating two bits of information (according to the three value logic discussed in \autoref{sec-tvl}) for each program run; as CBI is meant to analyze deployed software program runs potentially number in the hundreds of thousands, if not millions.  The measure of a complex predicate's relevance to a bug is its $\Importance$ score, which can only be derived once run information has been generated.  Complex predicates that are not \emph{interesting} provide no information useful in debugging and are not presented to the programmer; in such a case the effort to form the predicate has been wasted.  This provides the motivation to prune combinations before run information is generated based on an estimate of their resulting scores.  If this estimate falls below the threshold required for the predicate to be presented to the programmer, the complex predicate is not constructed.  Pruning predicates before they are constructed reduces a $O(R)$ operation (constructing run information) to one which executes in constant time.
 
 The threshold $\Importance$ value, which complex predicates must potentially exceed to be constructed, can be calculated in two ways:
 \begin{enumerate}
-\item Only \emph{interesting} complex predicates are retained; for predicate $C = \phi(p_1, p_2)$ the threshold is max($\Importance(p_1)$, $\Importance(p_2)$).
+\item Only \emph{interesting} complex predicates are retained; for predicate $C = \phi(p_1, p_2)$ the threshold is $\max(\Importance(p_1), \Importance(p_2))$.
 \item During redundancy elimination, only the predicate with the highest score is retained at each iteration.  The threshold is therefore the highest score yet seen (including those of simple predicates).
 % Note: as of 12/06 our implementation didn't do this.  This may have changed with recent modifications...
 \end{enumerate}
@@ -197,55 +197,63 @@ Thus,
             & & \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})))
 \end{eqnarray*}
 
-In interest of space, we skip the derivation and just list the bounds for a
-disjunction $D = p_1 \vee p_2$ below:
-\begin{eqnarray*}
-  \ub{R(D)} &=& \min(|R|, R(p_1), R(p_2)) \\
-  \lb{R(D)} &=& \max(R(p_1) + R(p_2)) \\
-  \ub{\obs{R}{D}} &=& \min(|R|, R(p_1) + R(p_2)
-                   + \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})) \\
-  \lb{\obs{R}{D}} &=& \max(R(p_1), R(p_2)) + \\
-            & & \max(0, \obsFalse{R}{p_1} + \obsFalse{R}{p_2} - (|R| - \\
-            & & \min(R(p_1), R(p_2))))
-\end{eqnarray*}
-
 For simplicity and generality, the above discussion derives the bounds for a general 
-set of runs $R$.  \autoref{tab:bounds} lists the specific bounds required in
+set of runs $R$.  \autoref{tab:bounds-conj} lists the specific bounds required in
 \autoref{eqn3} by considering the set of successful runs $S$ or the set of failed
-runs $F$ instead of $R$.
+runs $F$ instead of $R$.  In interest of space, we skip the derivation and just 
+list the bounds for a disjunction $D = p_1 \vee p_2$ in \autoref{tab:bounds-disj}
 
 \begin{table*}
-  \caption{Bounds required in \autoref{eqn3}}
-  \label{tab:bounds}
+  \caption{Bounds required in \autoref{eqn3} for a conjunction}
+  \label{tab:bounds-conj}
   \centering
-  \begin{tabular}{c|c|c}
+  \begin{tabular}{c|c}
     % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-    Quantity & For $C = p_1 \wedge p_2$ & For $D = p_1 \vee p_2$ \\
+    Quantity & Bounds for $C = p_1 \wedge p_2$ \\
     \hline
-    $\ub{F(C|D)} $
-      & % conjunction
+    $\ub{F(C)} $
+      &
       $\min(F(p_1), F(p_2))$
-      & % disjunction
-      $\min(|F|, F(p_1), F(p_2))$
       \\      
-    $\lb{S(C|D)}$
-      & % conjunction
+    $\lb{S(C)}$
+      &
       $\max(0, S(p_1) + S(p_2) - |S|)$
-      & % disjunction
-      $\max(S(p_1) + S(p_2))$
       \\
-    $\lb{\obs{F}{C|D}}$
-      & % conjunction
+    $\lb{\obs{F}{C}}$
+      &
       $\max(\obsFalse{F}{p_1}, \obsFalse{F}{p_2}) +
       \max(0, F(p_1) + F(p_2) - (|F| - \min(\obsFalse{F}{p_1}, \obsFalse{F}{p_2})))$
-      & % dijsunction
+      \\
+    $\ub{\obs{S}{C}}$
+      &
+      $\min(|S|, \obsFalse{S}{p_1} + \obsFalse{S}{p_2} + \min(S(p_1), S(p_2)))$
+      \\    
+  \end{tabular}
+\end{table*}
+
+\begin{table*}
+  \caption{Bounds required in \autoref{eqn3} for a disjunction}
+  \label{tab:bounds-disj}
+  \centering
+  \begin{tabular}{c|c}
+    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+    Quantity & Bounds for $D = p_1 \vee p_2$ \\
+    \hline
+    $\ub{F(D)} $
+      &
+      $\min(|F|, F(p_1), F(p_2))$
+      \\      
+    $\lb{S(D)}$
+      &
+      $\max(S(p_1) + S(p_2))$
+      \\
+    $\lb{\obs{F}{D}}$
+      &
       $\max(F(p_1), F(p_2)) + 
       \max(0, \obsFalse{F}{p_1} + \obsFalse{F}{p_2} - (|F| - \min(F(p_1), F(p_2))))$
       \\
     $\ub{\obs{S}{D}}$
-      & % conjunction
-      $\min(|S|, \obsFalse{S}{p_1} + \obsFalse{S}{p_2} + \min(S(p_1), S(p_2)))$
-      & % disjunction
+      &
       $\min(|S|, S(p_1) + S(p_2) + \min(\obsFalse{S}{p_1}, \obsFalse{S}{p_2}))$
       \\    
   \end{tabular}
