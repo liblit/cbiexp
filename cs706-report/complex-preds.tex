@@ -114,41 +114,150 @@ The threshold $\Importance$ value, which complex predicates must potentially exc
 % Note: as of 12/06 our implementation didn't do this.  This may have changed with recent modifications...
 \end{enumerate}
 
-Using an upper bound as the estimate of $\Importance$ guarantees that no predicate is pruned erroneously.  This upper bound can be determined by maximizing $F(p)$ and $\Increase(p)$ under constraints based on the propositional operation.  $\Importance(P)$ (\autoref{eqn2}), being a harmonic mean of these two terms, will likewise be maximized.
+%         *         *         *         *         *         *        80 columns |
+To simplify the forumlae derived in this section, we introduce some new terms and
+notations.  \obsFalse{R}{p} is the number of runs in which predicate $p$ was observed
+at least once but never observed $\true$.  It is equal to $\obs{R}{p} - R(p)$.
+$\ub{x}$ and $\lb{x}$ denote an upper-bound and lower-bound on quantity $x$
+respectively.  
 
-In this context, the disjunction $D = p_1 \vee p_2$ can be considered as the union of the set of runs where $p_1$ was $\true$ and the set where $p_2$ was $\true$.  The size of the resulting set is maximized when the two do not overlap, and that is the assumption made when calculating an upper bound on $F(D)$.  $S(D)$ is minimized by making the opposite assumption - that one is a subset of the other.  The size of the union is thus the size of the superset.  The best disjunction that can be formed using $p_1$ and $p_2$ will have the following parameters:
+Using an upper bound as the estimate of $\Importance$ guarantees that no 
+predicate is pruned erroneously.  This upper bound can be determined by maximizing
+$\Increase(p)$ and $F(p)$ under constraints based on the propositional operation.
+$\Importance(P)$ (\autoref{eqn2}), being a harmonic mean of these two terms, will
+likewise be maximized.  From \autoref{eqn1}, an increase in $F(p)$ or $\obs{S}{p}$
+or a decrease in $S(p)$ or $\obs{F}{p}$ will increase the value of $\Increase(p)$.
+So an upperbound on $\Increase(p)$ would be:
 
+\begin{equation}
+\label{eqn3}
+\ub{\Increase(p)} \equiv
+\frac{\ub{F(p)}}{\lb{S(p)} + \ub{F(p)}}
+-
+\frac{\lb{\obs{F}{p}}}{\ub{\obs{S}{p}} + \lb{\obs{F}{p}}}
+\end{equation}
+
+Consider a conjunction $C = p_1 \wedge p_2$.  From \autoref{tab:and}, $C$ is
+observed $\true$ if both $p_1$ and $p_2$ were observed $\true$.  i.e. the set
+of runs in which $C$ was observed $\true$ is the intersection of the sets of
+runs in which $p_1$ was observed $\true$ and $p_2$ was observed $\true$.  So
+$R(C)$ cannot exceed either $R(p_1)$ or $R(p_2)$.  Thus,
+\begin{equation}
+  \ub{R(C)} = \min(R(p_1), R(p_2))
+\end{equation}
+
+Likewise, $R(C)$ is minimized when there is minimum overlap between the set
+of runs in which $p_1$ was observed $\true$ and $p_2$ was observed $\true$.
+The minimum overlap is $0$ as long as $R(p_1) + R(p_2)$ does not exceed $|R|$,
+the total number of runs.  Otherwise, both $p_1$ and $p_2$ must be observed
+together in atleast $R(p_1) + R(p_2) - |R|$ runs.
+\begin{equation}
+  \lb{R(C)} = \max(0, R(p_1) + R(p_2) - |R|)
+\end{equation}
+
+Consider $\obs{R}{C}$.  $C$ is observed when
+\begin{enumerate}
+\item Both $p_1$ and $p_2$ are observed $\true$
+\item Either $p_1$ or $p_2$ is observed $\false$
+\end{enumerate}
+
+Now, to maximize $\obs{R}{C}$, applications of both rules above should be
+maximized.
+There are $\min(R(p_1), R(p_2)$ applications of Rule 1 when the set 
+of runs in which $p_1$ and $p_2$ are observed completely overlap.
+There are $\obsFalse{R}{p_1} + \obsFalse{R}{p_2}$ applications of Rule
+2 when the sets of runs in which $p_1$ and $p_2$ are observed $\false$ are
+completely non-overlapping.
+
+However, there has to be an overlap between these cases if their sum exceeds 
+$|R|$, the total number of runs.  Thus,
+\begin{equation}
+  \ub{\obs{R}{C}} = \min(|R|, \obsFalse{R}{p_1} + \obsFalse{R}{p_2}
+                   + \min(R(p_1), R(p_2))
+\end{equation}
+
+Finally, to minimize $\obs{R}{C}$, applications of the two rules above are 
+minimized.  This can happen when:
+\begin{enumerate}
+\item the $\false$ observations of $p_1$ and $p_2$ completely overlap, contributing
+$\max(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})$ to $\obs{R}{C}$
+\item the $\true$ observations of $p_1$ and $p_2$ are completely overlapping.
+However, the outcomes of $\min(\obsFalse{R}{p_1}, \obs{R}{p_2})$ runs has
+been fixed in the previous step reducing the number of effective runs to
+$|R| - \min(\obsFalse{R}{p_1}, \obs{R}{p_2})$.  Among these runs, $R(p_1) + R(p_2)$
+runs must be selected non-overlappingly, failing which there would be an
+$R(p_1) + R(p_2) + (|R| - \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2}))$ overlap
+between the two sets.
+\end{enumerate}
+
+Thus,
 \begin{eqnarray*}
-  F(D)' &=&  F(p_1) + F(p_2) \\
-  S(D)' &=&  \max(S(p_1),S(p_2)) \\
-  \obs{F}{D}' &=& 0 \\
-  \obs{S}{D}' &=& S(D)'
+  \lb{\obs{R}{C}} &=& \max(\obsFalse{R}{p_1}, \obsFalse{R}{p_2}) + \\
+            & & \max(0, R(p_1) + R(p_2) + (|R| - \\
+            & & \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})))
 \end{eqnarray*}
 
-The second term in $\Increase$ (\autoref{eqn1}) can only reduce the result, and so it is ignored in calculating an upper bound.  For completeness, $\obs{S}{D}'$ is assigned the same value as $S(D)'$ even though it does not affect $\Increase(D)$.  The $F(D)$ component of $\Importance$ is maximized while maximizing $\Increase$.  Thus the $\Importance$ score calculated with the above values is an upper bound on the score of the disjunction of $p_1$ and $p_2$. As a concrete example, suppose $F(p_1) = 500$, $F(p_2) = 1000$, $S(p_1) = 250$ and $S(p_2) = 500$. Furthermore assume the total number of failed runs is 1500. To maximize the value of $\Importance(D)$ where $D = p_1 \vee p_2$,  we will let $F(D)' = 500 + 1000 = 1500$, $S(D)' = 500$. As a result, the upper bound of $\Increase(D)$ will be $\frac{1500}{2000}=0.75$ when we disgard the term after the minus sign in \autoref{eqn2}. Finally the upper bound of $\Importance(D)$ would be $\frac{2}{\frac{1}{0.75}+\frac{1}{log1500/log1500}} = 0.856$. 
-
-The conjunction $C = p_1 \wedge p_2$ can be regarded as the intersection of the set of runs where $p_1$ was $\true$ and the set where $p_2$ was $\true$.  Maximizing $F(C)$ requires that one of the intersecting sets is a subset of the other, making the size of the intersection the size of the smaller set.  A minimal $S(C)$ is found when the component sets are non overlapping; the intersection of two such sets is empty.
-
+In interest of space, we skip the derivation and just list the bounds for a
+disjunction $D = p_1 \vee p_2$ below:
 \begin{eqnarray*}
-  F(C)' &=&  \min(F(p_1),F(p_2)) \\
-  S(C)' &=& 0
+  \ub{R(D)} &=& \min(|R|, R(p_1), R(p_2)) \\
+  \lb{R(D)} &=& \max(R(p_1) + R(p_2)) \\
+  \ub{\obs{R}{D}} &=& \min(|R|, R(p_1) + R(p_2)
+                   + \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})) \\
+  \lb{\obs{R}{D}} &=& \max(R(p_1), R(p_2)) + \\
+            & & \max(0, \obsFalse{R}{p_1} + \obsFalse{R}{p_2} + (|R| - \\
+            & & \min(R(p_1), R(p_2))))
 \end{eqnarray*}
 
-If the second term in $\Increase$ is ignored, as with disjunctions, the upper bound of a conjoined predicate's $\Increase$ score is 1.  This is the maximum $\Increase$ possible, reducing the likelihood of a conjoined predicate being pruned to almost zero.  The second term is therefore used for conjunctions to drop the upper bound to a more useful level. To minimize the second term, we are going to minimize $\obs{F}{C}$ and maximize $\obs{S}{C}$.
+For simplicity and generality, the above discussion derives the bounds for a general 
+set of runs $R$.  \autoref{tab:bounds} lists the specific bounds required in
+\autoref{eqn3} by considering the set of successful runs $S$ or the set of failed
+runs $F$ instead of $R$.
 
-$\obs{F}{C}$ is minimized by assuming that $C$ was \textit{observed} only in the (failed) runs where it was true.  Maximizing $\obs{S}{C}$ is more difficult.  Recall that a conjunction can be considered \textit{observed} if either component is \textit{observed false}, or both are \textit{observed true}.  The combination of successful runs where a predicate is \textit{observed false} (union) is maximized if the sets are non overlapping, while the combination where they are \textit{observed true} (intersection) is maximized if one is a subset of the other.  By assuming both cases meet that criteria $\obs{S}{C}$ can be maximized.  Its value is the sum of successful runs where $p_1$ was \textit{observed} and those where $p_2$ was \textit{observed false}, formed as the difference between $\obs{S}{p_2}$ and $S(p_2)$.  \autoref{maxsuccess} depicts the above scenario which maximizes $\obs{S}{C}$: notice that the sets $S(\neg p_1)$ and $S(\neg p_2)$ are disjoint and $s(p_1)$ is a subset of $s(p_2)$.  Since the result may differ depending on which predicate is chosen as $p_1$, the larger result is used.
-\begin{eqnarray*}
-  \obs{F}{C}' &=& F(C)' \\
-  \obs{S}{C}' &=&
-  \max(\obs{S}{p_1} + \obs{S}{p_2} - S(p_2),\\
-  & &\ \ \ \ \obs{S}{p_2} + \obs{S}{p_1} - S(p_1))
-\end{eqnarray*}
-
-\begin{figure}[h]
+\begin{table*}
+  \caption{Bounds required in \autoref{eqn3}}
+  \label{tab:bounds}
   \centering
-  \includegraphics[scale = 0.6]{charts/maxsuccess}
-  \caption{Maximizing \obs{S}{C}}
-  \label{maxsuccess}
-\end{figure}
+  \begin{tabular}{c|c|c}
+    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+    Quantity & For $C = p_1 \wedge p_2$ & For $D = p_1 \vee p_2$ \\
+    \hline
+    $\ub{F(C|D)} $
+      & % conjunction
+      $\min(F(p_1), F(p_2))$
+      & % disjunction
+      $\min(|F|, F(p_1), F(p_2))$
+      \\      
+    $\lb{S(C|D)}$
+      & % conjunction
+      $\max(0, S(p_1) + S(p_2) - |S|)$
+      & % disjunction
+      $\max(S(p_1) + S(p_2))$
+      \\
+    $\lb{\obs{F}{C|D}}$
+      & % conjunction
+      $\max(\obsFalse{F}{p_1}, \obsFalse{F}{p_2}) +
+      \max(0, F(p_1) + F(p_2) + (|F| - \min(\obsFalse{F}{p_1}, \obsFalse{F}{p_2})))$
+      & % dijsunction
+      $\max(F(p_1), F(p_2)) + 
+      \max(0, \obsFalse{F}{p_1} + \obsFalse{F}{p_2} + (|F| - \min(F(p_1), F(p_2))))$
+      \\
+    $\ub{\obs{S}{D}}$
+      & % conjunction
+      $\min(|S|, \obsFalse{S}{p_1} + \obsFalse{S}{p_2} + \min(S(p_1), S(p_2)))$
+      & % disjunction
+      $\min(|S|, S(p_1) + S(p_2) + \min(\obsFalse{S}{p_1}, \obsFalse{S}{p_2}))$
+      \\    
+  \end{tabular}
+\end{table*}
+
+As a concrete example, consider $C = p_1 \wedge p_2$.  Let us assume that there are $1000$
+successful and failed runs and $p_1$ and $p_2$ are observed in all of these runs.
+Furthermore, assume
+$F(p_1) = 500$, $F(p_2) = 1000$, $S(p_1) = 250$ and $S(p_2) = 500$.
+Substituting $\obsFalse{R}{p} = 1000 - R(p)$ and computing the bounds listed in
+\autoref{tab:bounds} we get $\ub{F(C)} = 500, \lb{S(C)} = 0, \lb{\obs{F}{C}} = 1000$ and
+$\ub{\obs{S}{C}} = 1000$.  As a result, the upper bound of $\Increase(C)$ will be 
+$\frac{500}{500} - \frac{1000}{2000}=0.5$. Finally the upper bound of $\Importance(C)$ would be $\frac{2}{\frac{1}{0.5}+\frac{1}{log1000/log1000}} = 0.75$. 
 
 Pruning complex predicates using the above calculations reduces the computational intensity of the analysis without affecting the results.  The effectiveness of pruning is examined in \autoref{sec-effectprune}.
