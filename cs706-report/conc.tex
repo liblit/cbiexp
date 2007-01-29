@@ -1,6 +1,21 @@
 % -*- TeX-master: "report" -*-
+%       *         *         *         *         *         *         *         *
 
 \section{Conclusion}
 \label{sec-conc}
-We have demonstrated that complex predicates are useful predictors of bugs.  Our experiments show qualitative and quantitative evidence that complex predicates can improve the current statistical analysis used by CBI\@.  We describe two optimizations that make the task of computing complex predicates feasible.  First is a numeric estimate on the upper bound of the score of a complex predicate.  The second is a metric that quantifies the usefulness of a complex predicate.  Even after these, the computational complexity is still high and requires further optimizations.  The metrics described in \autoref{sec-metrics} help reduce the number of spurious predicates.  But the metrics are not perfect as good bug predictors are still swamped by less useful ones.  The bi-clustering algorithm of Zheng et al. \cite{Zheng:2006:SDSIMB} may solve this problem as it was designed with the goal of handling multiple predictors for the same bug.
-
+We have demonstrated that complex predicates are useful predictors of bugs.  
+Our experiments show qualitative and quantitative evidence that the statistical 
+analysis used by CBI can be effectively applied to compound predicates, and that
+the resulting analysis provides improved results.  We describe
+two methods of eliminating predicate combinations from consideration, making
+the task of computing complex predicates more feasible.  First is a numeric 
+estimate on the upper bound of the score of a complex predicate.  The second is 
+a metric that quantifies the usefulness of a complex predicate.  Even after these, 
+the computational complexity is still high and requires further improvements.  
+The metrics described in \autoref{sec-metrics} help select the most useful predicates
+from those generated.  But the metrics are not perfect as finding a good candidate
+for use in debugging requires sifting through a large number of less useful predicates
+which also passed automated inspection.  Most such predicates are redundant predictors
+for the same set of program failures, and so the bi-clustering algorithm of Zheng et al. 
+\cite{Zheng:2006:SDSIMB} may solve this problem as it was designed with the goal 
+of handling multiple predictors for the same bug.
