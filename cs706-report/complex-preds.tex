@@ -115,10 +115,10 @@ The threshold $\Importance$ value, which complex predicates must potentially exc
 \end{enumerate}
 
 %         *         *         *         *         *         *        80 columns |
-To simplify the forumlae derived in this section, we introduce some new terms and
+To simplify the formulae derived in this section, we introduce some new terms and
 notations.  \obsFalse{R}{p} is the number of runs in which predicate $p$ was observed
 at least once but never observed $\true$.  It is equal to $\obs{R}{p} - R(p)$.
-$\ub{x}$ and $\lb{x}$ denote an upper-bound and lower-bound on quantity $x$
+$\ub{x}$ and $\lb{x}$ denote an upper bound and lower bound on quantity $x$
 respectively.  
 
 Using an upper bound as the estimate of $\Importance$ guarantees that no 
@@ -127,7 +127,7 @@ $\Increase(p)$ and $F(p)$ under constraints based on the propositional operation
 $\Importance(P)$ (\autoref{eqn2}), being a harmonic mean of these two terms, will
 likewise be maximized.  From \autoref{eqn1}, an increase in $F(p)$ or $\obs{S}{p}$
 or a decrease in $S(p)$ or $\obs{F}{p}$ will increase the value of $\Increase(p)$.
-So an upperbound on $\Increase(p)$ would be:
+So an upper bound on $\Increase(p)$ would be:
 
 \begin{equation}
 \label{eqn3}
@@ -150,7 +150,7 @@ Likewise, $R(C)$ is minimized when there is minimum overlap between the set
 of runs in which $p_1$ was observed $\true$ and $p_2$ was observed $\true$.
 The minimum overlap is $0$ as long as $R(p_1) + R(p_2)$ does not exceed $|R|$,
 the total number of runs.  Otherwise, both $p_1$ and $p_2$ must be observed
-together in atleast $R(p_1) + R(p_2) - |R|$ runs.
+together in at least $R(p_1) + R(p_2) - |R|$ runs.
 \begin{equation}
   \lb{R(C)} = \max(0, R(p_1) + R(p_2) - |R|)
 \end{equation}
@@ -163,7 +163,7 @@ Consider $\obs{R}{C}$.  $C$ is observed when
 
 Now, to maximize $\obs{R}{C}$, applications of both rules above should be
 maximized.
-There are $\min(R(p_1), R(p_2)$ applications of Rule 1 when the set 
+There are $\min(R(p_1), R(p_2))$ applications of Rule 1 when the set 
 of runs in which $p_1$ and $p_2$ are observed completely overlap.
 There are $\obsFalse{R}{p_1} + \obsFalse{R}{p_2}$ applications of Rule
 2 when the sets of runs in which $p_1$ and $p_2$ are observed $\false$ are
@@ -182,7 +182,7 @@ minimized.  This can happen when:
 \item the $\false$ observations of $p_1$ and $p_2$ completely overlap, contributing
 $\max(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})$ to $\obs{R}{C}$
 \item the $\true$ observations of $p_1$ and $p_2$ are completely non-overlapping.
-However, the outcomes of $\min(\obsFalse{R}{p_1}, \obs{R}{p_2})$ runs has
+However, the outcomes of $\min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})$ runs has
 been fixed in the previous step reducing the number of effective runs to
 $|R| - \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})$.  Among these runs, $R(p_1) + R(p_2)$
 runs must be selected non-overlappingly, failing which there would be an
@@ -241,11 +241,11 @@ list the bounds for a disjunction $D = p_1 \vee p_2$ in \autoref{tab:bounds-disj
     \hline
     $\ub{F(D)} $
       &
-      $\min(|F|, F(p_1), F(p_2))$
+      $\min(|F|, F(p_1) + F(p_2))$
       \\      
     $\lb{S(D)}$
       &
-      $\max(S(p_1) + S(p_2))$
+      $\max(S(p_1), S(p_2))$
       \\
     $\lb{\obs{F}{D}}$
       &
