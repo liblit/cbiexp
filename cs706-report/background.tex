@@ -2,48 +2,47 @@
 
 \section{Background}
 \label{sec-bground}
-CBI uses lightweight instrumentation to collect feedback reports that contain truth values of predicates in an execution as well as the outcome (e.g., crash or non-crash) of the execution.  A large number of these reports are collected and analyzed using statistical debugging techniques.  These techniques identify \emph{bug predictors} - predicates that, when true, herald failure due to a specific bug.  Bug predictors indicate areas of the code related to program failure and so provide information useful when correcting program faults.  Feedback reports can be collected from deployed executions by end users, who may encounter bugs not identified in program testing.  CBI can therefore be used to monitor software after its release and help direct program patches by identifying bugs as they present in the field.
+CBI uses lightweight instrumentation to collect feedback reports that contain truth values of predicates in an execution as well as the outcome (e.g., crash or non-crash) of the execution.  A large number of these reports are collected and analyzed using statistical debugging techniques.  These techniques identify \emph{bug predictors}: predicates that, when true, herald failure due to a specific bug.  Bug predictors indicate areas of the code related to program failure and so provide information useful when correcting program faults.  Feedback reports can be collected from deployed software in the hands of end users, who may encounter bugs not identified in program testing.  CBI can therefore be used to monitor software after its release and help direct program patches by identifying bugs as they manifest in the field.
 
 \subsection{Finding Bug Predictors}
 \label{sec-elimalg}
-The feedback report for a particular program execution is formed as a bit-vector, with two bits for each predicate (observed and true), and one final bit representing success or failure.  If generated in experimental or testing conditions these feedback reports are likely to be complete; when instrumented code is distributed to end users predicates are usually sampled infrequently to reduce computational overhead.  Previous experiments \cite{Liblit:2003:BIRPS} have determined that a sampling rate of $10^{-2}$ to $10^{-3}$ is most realistic for deployed use.
+The feedback report for a particular program execution is formed as a bit-vector, with two bits for each predicate (observed and true), and one final bit representing success or failure.  If generated in experimental or testing conditions these feedback reports are likely to be complete; when instrumented code is distributed to end users predicates are usually sampled infrequently to reduce computational overhead.  Previous experiments \cite{Liblit:2003:BIRPS} have determined that sampling rates of \nicefrac{1}{100} to \nicefrac{1}{1000} are most realistic for deployed use.
 
-From these reports CBI analysis identifies from all available predicates the best predictor of program failure (this step is described in detail in \autoref{sec-scoring}).  This predicate is recorded, after which all feedback reports where it was true are removed from consideration.  The best predictor among the remaining reports is identified, recorded and removed, repeating until either no failed runs remain in the feedback information, or no predictive predicates can be found.
-
-When a predicate is identified as the top predictor of failure it is assumed to act as a \emph{perfect predictor} for a specific bug.  A perfect predictor is a necessary and sufficient condition to predict failure due to the bug.  Once the bug is fixed the predicate will no longer be relevant to program failure; removing all feedback reports where the predicate was true simulates a bug-fix, allowing analysis to continue.  Alternate methods of removing the identified predictor from consideration are discussed in \cite{Liblit:2005:SSBI}.
+Using these reports, CBI analysis identifies from all available predicates the single best predictor of program failure (this step is described in detail in \autoref{sec-scoring}).  It is assumed that this predictor corresponds to one important bug, though other bugs may remain.    This top predictor is recorded, and then all feedback reports where it was true are removed from consideration on the assumption that fixing the corresponding bug will change the behavior of runs in which the predictor originally appeared.  The next best predictor among the remaining reports is then identified, recorded, and removed in the same manner.  This iterative process repeats until either no undiagnosed failed runs remain, or no more failure-predictive predicates can be found.
 
 This process of iterative elimination maps each predictor to a set of program runs.  Ideally each such set corresponds to the expression of a distinct bug; unfortunately this is not always the case.  Due to the statistical nature of the analysis, along with incomplete feedback reports resulting from sparse sampling rates, a single bug could be predicted by several top-ranked predicates, and predictors for less prevalent bugs may not be found at all.
 
-The output of the analysis will contain the list of predicates that had the highest score during any iteration of the redundancy elimination algorithm, as well as a complete list of predicates and their scores before any elimination is performed.  These lists may be used by a programmer to identify areas of the program related to faulty behavior.  Liblit et al. discovered previously unknown bugs in \prog{bc} \cite{Liblit:2003:BIRPS}, \prog{exif} \cite{Liblit:2005:SSBI} and \prog{rhythmbox} \cite{Liblit:2005:SSBI} by employing this method.
+The output of the analysis is a list of predicates that had the highest score during each iteration of the elimination algorithm, as well as a complete list of predicates and their scores before any elimination is performed.  These lists may be used by a programmer to identify areas of the program related to faulty behavior.  Liblit et al.\ employed this method to discover previously unknown bugs in several widely-used applications \cite{Liblit:2003:BIRPS,Liblit:2005:SSBI}.
 
 CBI output can alternately be used as input to an automated analysis tool, such as \textsc{BTrace} \cite{Lal:2006:POPAD}. \textsc{BTrace} finds the shortest control- and dataflow-feasible path in the program that visits a given set of bug predictors.  This analysis allows a programmer to examine the fault-predicting behavior even if the connection to a bug is not easily identifiable, or if the predictors are numerous or complex enough to overwhelm a programmer examining them directly.
 
 \subsection{Scoring Predicates}
 \label{sec-scoring}
-Identifying the best predictor from a set of predicates is a difficult problem.  A good predictor should be both \emph{sensitive} and \emph{specific}: it should account for many failed runs, without mis-predicting failure in successful ones.  Assigning scores based on sensitivity will result in \emph{super-bug predictors}, which include failures from more than one bug.  Super-bug predictors are highly non-deterministic, since they are not specific to any single cause of failure, and rarely provide useful debugging information.  Scoring predicates based on specificity instead results in \emph{sub-bug predictors}.  A sub-bug predictor accounts for a portion of the failures caused by a bug, but not all.  Unlike super-bug predictors sub-bug predictors that account for a significant sub-set of failures can be useful in debugging, although perfect predictors are of course preferred.  To balance sensitivity and specificity Liblit et al. \cite{Liblit:2005:SSBI} compute a numeric $\Importance$ score corresponding to each predicate, define as follows.
+Identifying the best predictor from a set of predicates is a difficult problem.  A good predictor should be both \emph{sensitive} and \emph{specific}: it should account for many failed runs, without mis-predicting failure in successful ones.  Assigning scores based on sensitivity will result in \emph{super-bug predictors}, which include failures from more than one bug.  Super-bug predictors are highly non-deterministic, since they are not specific to any single cause of failure, and rarely provide useful debugging information.  Scoring predicates based on specificity instead results in \emph{sub-bug predictors}.  A sub-bug predictor accounts for a portion of the failures caused by a bug, but not all.  Unlike super-bug predictors, sub-bug predictors that account for a significant sub-set of failures can be useful in debugging, although perfect predictors are of course preferred.  To balance sensitivity and specificity Liblit et al.\ \cite{Liblit:2005:SSBI} compute a numeric $\Importance$ score corresponding to each predicate, defined as follows.
 
 The truth values of a predicate $p$ from all the runs can be aggregated into four values:
 
 \begin{enumerate}
-\item $\obs{S}{p}$ and $\obs{F}{p}$, the number of successful and failed runs respectively, in which the value of $p$ was evaluated.
-\item $S(p)$ and $F(p)$, the number of successful and failed runs respectively, in which the value of $p$ was evaluated and was found to be true.
+\item $\obs{S}{p}$ and $\obs{F}{p}$, respectively the number of successful and failed runs in which the value of $p$ was evaluated.
+\item $S(p)$ and $F(p)$, respectively the number of successful and failed runs in which the value of $p$ was evaluated and was found to be true.
 \end{enumerate}
 
-Using these values, two scores of bug relevance are calculated.  They are:
-\begin{enumerate}
-\item $F(p)$.  Sensitivity.  A good predictor must predict a large number of failing runs.
-\item $\Increase(p)$.  Specificity.  The amount by which $p$ being true increases the probability of failure over simply reaching the line where p is defined.  It is computed as follows:
-\end{enumerate}
+Using these values, two scores of bug relevance are calculated:
+\begin{description}
+\item[Sensitivity:] $\log{F(p)} / \log{\NumF}$ where $\NumF$ is the total number of failing runs.  A good predictor must predict a large number of failing runs.
+\item[Specificity:] $\Increase(p)$.  The amount by which $p$ being true increases the probability of failure over simply reaching the line where $p$ is defined.  It is computed as follows:
 
-\begin{equation}
-\label{eqn1}
-\Increase(p) \equiv
-\frac{F(p)}{S(p) + F(p)}
--
-\frac{\obs{F}{p}}{\obs{S}{p} + \obs{F}{p}}
-\end{equation}
+  \begin{equation}
+    \label{eqn1}
+    \Increase(p) \equiv
+    \frac{F(p)}{S(p) + F(p)}
+    -
+    \frac{\obs{F}{p}}{\obs{S}{p} + \obs{F}{p}}
+  \end{equation}
 
-Both of these scores are independent but good dimensions of a bug predictor.  These dimensions are combined into a single value by taking their harmonic mean.  Since $\Increase(p)$ is bounded by 1, the $F(p)$ component in $\Importance$ is normalized over the total number of failed runs $\NumF$ after a logarithmic transformation.  This calculation will prefer results with both high sensitivity and high specificity.  The overall metric is:
+\end{description}
+
+Taking the harmonic mean combines these two scores, selecting out predicates that are both highly sensitive and highly specific:
 \begin{equation}
 \label{eqn2}
 \Importance(p) \equiv
@@ -55,12 +54,12 @@ Both of these scores are independent but good dimensions of a bug predictor.  Th
 
 The $\Importance$ score is calculated for each predicate, and the top result selected.  After all runs in which the top predicate is true are eliminated scores are recalculated for all remaining predicates in the remaining set of runs.  This process of eliminating runs continues, as described above, until there are no remaining failed runs or no remaining predicates.
 
-\subsection{Expected Benefits}
-A single predicate can be thought of as partitioning the space of all runs into two subspaces: those satisfying the predicate and those not.  The more closely these partitions match the subspaces where the bug is expressed or not, the better the predicate is as a bug predictor.  If a bug has a simple cause, and this cause corresponds well to a simple predicate, then a simple analysis is sufficient.  For bugs with more complex causes no perfect predictor will be available among the simple predicates measured, and traditional analysis will produce only super- and sub-bug predictors.
+\subsection{Expected Benefits of Complex Predicates}
+A single predicate can be thought of as partitioning the space of all runs into two subspaces: those satisfying the predicate and those not.  The more closely these partitions match the subspaces where the bug is and is not expressed, the better the predicate is as a bug predictor.  If a bug has a simple cause, and this cause corresponds well to a simple predicate, then a simple analysis is sufficient.  For bugs with more complex causes no perfect predictor will be available among the simple predicates measured, and traditional analysis will produce only super- and sub-bug predictors.
 
-A richer language of candidate bug predictors can describe more complex shapes within the set of runs.  This allows predictors for bugs with more complicated causes.  Some bugs may have causes connected to simple predicates, but that no single predicate can accurately predict.  Complex predicates formed from these simpler ones would be more accurate predictors than any component predicate.  Sub-bug predictors and \emph{partial predictors} are two classes of simple predicates that can be combined into more accurate predictors.
+A richer language of predicates can describe more complex shapes within the space of runs.  This allows good predictors for bugs with more complicated causes.  Some bugs may have causes connected to simple predicates, but that no single predicate can accurately predict.  Complex predicates formed from these simpler ones would be more accurate predictors than any component predicate.  Sub-bug predictors and \emph{partial predictors} are two classes of simple predicates that can be combined into more accurate predictors.
 
-A sub-bug predictor is one that correctly partitions some (but not all) expressions of the bug.  In information-retrieval terms, a sub-bug predictor has high precision but low recall.  Sub-bug predictors are useful in identifying a bug because though they do not predict the bug in a general sense, they are extremely good predictors of some special case where the bug is expressed.  Combining two such predictors with a disjunction will reduce false negatives and result in a predicate that correctly partitions more expressions of the bug; combine enough special cases in this manner and the resulting predicate will predict the bug in the general case.  It is important to note that the analysis may find a disjunction of predictors of individual bugs as a predictor for the whole set of failures.  The user should keep this in mind while using a disjoined predictor to track down a bug, but it is not as problematic as it seems: for such a disjunction to be high-ranked each component predicate must be a good predictor for a specific bug, providing useful information on all bugs involved.
+A sub-bug predictor is one that correctly partitions some (but not all) expressions of the bug.  In information-retrieval terms, a sub-bug predictor has high precision but low recall.  Sub-bug predictors are useful in identifying a bug because, though they do not predict the bug in a general sense, they are extremely good predictors of some special case where the bug is expressed.  Combining two such predictors with a disjunction will reduce false negatives and result in a predicate that correctly partitions more manifestations of the bug; combine enough special cases in this manner and the resulting predicate will predict the bug in the general case.  It is important to note that the analysis may find a disjunction of predictors of individual bugs as a predictor for the whole set of failures.  The user should keep this in mind while using a disjoined predictor to track down a bug, but it is not as problematic as it seems: for such a disjunction to be high-ranked each component predicate must be a good predictor for a specific bug, providing useful information on all bugs involved.
 
 Partial predictors predict some aspect of a bug that is necessary, but not sufficient, for program failure.  A partial predictor will correctly partition all (or most) expressions of the bug, but would also predict the bug in a large number of runs where it did not occur.  In information-retrieval terms, a partial predictor has high recall but low precision.  Because partial predictors are highly non-deterministic with respect to the bug, they are likely to be outscored by a sub- or super-bug predictor.  Partial predictors can be improved by eliminating false positives - this can be accomplished by taking a conjunction with another predicate that captures another aspect of the bug; the resulting partitioning would more closely match the bug's behavior.  The case study presented in \autoref{sec-exif} describes a bug best predicted by a conjunction involving a partial predictor.
 
