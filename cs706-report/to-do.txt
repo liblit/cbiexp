@@ -40,17 +40,6 @@ search through for the item which 1. connects the components and
 
 ------------------------------------------------------------------------
 --
---  Section 5
---
-
-Section 5: I'm not sure that these are properly considered as
-*internal* threats to validity, but I don't really know that taxonomy
-of threat types very well.
-[+Jake]
-
-
-------------------------------------------------------------------------
---
 --  Section 6
 --
 
