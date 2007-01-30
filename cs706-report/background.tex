@@ -29,7 +29,7 @@ The truth values of a predicate $p$ from all the runs can be aggregated into fou
 
 Using these values, two scores of bug relevance are calculated:
 \begin{description}
-\item[Sensitivity:] $\log{F(p)} / \log{\NumF}$ where $\NumF$ is the total number of failing runs.  A good predictor must predict a large number of failing runs.
+\item[Sensitivity:] $\log{(F(p))} / \log{(\NumF)}$ where $\NumF$ is the total number of failing runs.  A good predictor must predict a large number of failing runs.
 \item[Specificity:] $\Increase(p)$.  The amount by which $p$ being true increases the probability of failure over simply reaching the line where $p$ is defined.  It is computed as follows:
 
   \begin{equation}
