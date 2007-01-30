@@ -1,7 +1,7 @@
 % -*- TeX-master: "master" -*-
 
 \section{Background}
-\label{sec-bground}
+\label{sec-background}
 CBI uses lightweight instrumentation to collect feedback reports that contain truth values of predicates in an execution as well as the outcome (e.g., crash or non-crash) of the execution.  A large number of these reports are collected and analyzed using statistical debugging techniques.  These techniques identify \emph{bug predictors}: predicates that, when true, herald failure due to a specific bug.  Bug predictors indicate areas of the code related to program failure and so provide information useful when correcting program faults.  Feedback reports can be collected from deployed software in the hands of end users, who may encounter bugs not identified in program testing.  CBI can therefore be used to monitor software after its release and help direct program patches by identifying bugs as they manifest in the field.
 
 \subsection{Finding Bug Predictors}
