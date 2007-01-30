@@ -1,4 +1,4 @@
-MAIN      = report
+MAIN      = master
 SRCS      = $(wildcard *.tex *.bib *.sty *.cls) charts/sampling.tex
 PS        = $(MAIN).ps
 PDF       = $(MAIN).pdf
