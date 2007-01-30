@@ -32,6 +32,7 @@ def rawData():
 
         fix(int, 'simple_preds')
         fix(int, 'time')
+        fix(int, 'time_est')
         
         fix(int, 'conj_total')
         fix(int, 'conj_pdg_metric_pruned')
@@ -55,6 +56,7 @@ def rawData():
         
         fix(int, 'compl_cr')
         fix(int, 'compl_cr_is_top_perf')
+        fix(int, 'time_compl_cr')
         
         fix(int, 'simple_cr')
         fix(int, 'simple_cr_is_top_perf')

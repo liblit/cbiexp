@@ -1,24 +1,25 @@
-0 Application: parameter
-1 Version: parameter
-2 SamplingRate: parameter
-3 Effort: Parameter
+Application: parameter
+Version: parameter
+SamplingRate: parameter
+Effort: Parameter
 
-4 simple_preds: `wc -l preds.txt`
+simple_preds: `wc -l preds.txt`
 
-5 time: time taken for computing complex predicates (in seconds)
+time: time taken for computing complex predicates, along with estimation (in seconds)
+time_est: time taken for just estimating scores of complex predicate.  Note: This can be larger than the previous entry because 'time' is also low when there are few predicates (during low sampling rates) and hence measurement at second granularity is imprecise
 
-6 conj_total: Total conjunctions possible - (n^2 - n) / 2 where n is the number of interesting simple predicates (those found in preds.txt')
-7 conj_pdg_metric_pruned: Number of conjunctions pruned by PDG metric 1 (defn. 4.1 in paper)
-8 conj_ub_est_pruned: Number of conjunctions pruned by upper bound estimation
-9 conj_computed: Number of conjunctions for which the actual score was computed
-10 conj_interesting: Number of interesting conjunctions
+conj_total: Total conjunctions possible - (n^2 - n) / 2 where n is the number of interesting simple predicates (those found in preds.txt')
+conj_pdg_metric_pruned: Number of conjunctions pruned by PDG metric 1 (defn. 4.1 in paper)
+conj_ub_est_pruned: Number of conjunctions pruned by upper bound estimation
+conj_computed: Number of conjunctions for which the actual score was computed
+conj_interesting: Number of interesting conjunctions
 
 
-11 disj_total: Total disjunctions possible - (n^2 - n) / 2 where n is the number of interesting simple predicates (those found in preds.txt')
-12 disj_pdg_metric_pruned: Number of disjunctions pruned by PDG metric 1 (defn. 4.1 in paper)
-13 disj_ub_est_pruned: Number of disjunctions pruned by upper bound estimation
-14 disj_computed: Number of disjunctions for which the actual score was computed
-15 disj_interesting: Number of interesting disjunctions
+disj_total: Total disjunctions possible - (n^2 - n) / 2 where n is the number of interesting simple predicates (those found in preds.txt')
+disj_pdg_metric_pruned: Number of disjunctions pruned by PDG metric 1 (defn. 4.1 in paper)
+disj_ub_est_pruned: Number of disjunctions pruned by upper bound estimation
+disj_computed: Number of disjunctions for which the actual score was computed
+disj_interesting: Number of interesting disjunctions
 
 [Invariants:
 		conj_total = disj_total
@@ -31,17 +32,18 @@
 		disj_interesting <= disj_computed (for completeness)
 ]
 
-16 top_compl: Score of top complex predicate
-17 hundredth_compl: Score of 100-th complex predicate
+top_compl: Score of top complex predicate
+hundredth_compl: Score of 100-th complex predicate
 
-18 num_perf_compl: Number of perfect complex predicates
-19 num_perf_simple: Number of perfect simple predicates
+num_perf_compl: Number of perfect complex predicates
+num_perf_simple: Number of perfect simple predicates
 
-20 top_simple: Score of top simple predicate
+top_simple: Score of top simple predicate
 
-21 compl_cr: Type of top predicate of corrective ranking with complex preds...
+compl_cr: Type of top predicate of corrective ranking with complex preds...
           simple, conj, disj = 0, 1, 2
-22 compl_cr_is_top_perf: Was that perfect?
+compl_cr_is_top_perf: Was that perfect?
+time_compl_cr: Time taken for first iteration of complex predicate construction.  This shows how well we can perform in the best case: when we have a good threshold value and are interested in just the top complex predicate
 
-23 simple_cr: Type of top predicate of corrective ranking without complex-preds... always simple
-24 simple_cr_is_top_perf: Was that perfect?
+simple_cr: Type of top predicate of corrective ranking without complex-preds... always simple
+simple_cr_is_top_perf: Was that perfect?
