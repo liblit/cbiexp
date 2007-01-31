@@ -43,19 +43,6 @@ search through for the item which 1. connects the components and
 --  Section 6
 --
 
-You also don't say anything about how long it takes to perform this
-analysis.  Seconds?  Hours?  Weeks?  Readers will want to know.  Section
-6.2 mentions how the computational load is decreased using pruning and
-effort; Mulhern suggested making the difference explicit. This
-is especially important considering that the conclusion mentions the
-need to further reduce the computational complexity of the analysis.
-[+arumuga]
-
-Section 6.2 mentions an aggressive pruning method which includes the best
-simple predicate in calculating the threshold.  The description of the
-corresponding graph (Figure 1) doesn't specify whether this aggressive
-pruning method was used.
-
 Section 6.4 gives the complex predicate sampling rate as r^2, where r is the
 sampling rate for a simple predicate.  The sampling rate is actually better
 because of 3-valued logic, e.g. one false predicate observation disproves a
