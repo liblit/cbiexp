@@ -50,20 +50,17 @@ that really true?  You can't tell by squinting at the plots, and I
 cannot find these raw numbers anywhere in the "data/*.txt" files.
 [*arumuga]
 
-Several of the figures need layout or color-selection work, especially
-for monochrome printing.  [*Ben]
-
 You also don't say anything about how long it takes to perform this
 analysis.  Seconds?  Hours?  Weeks?  Readers will want to know.  Section
 6.2 mentions how the computational load is decreased using pruning and
 effort; Mulhern suggested making the difference explicit. This
 is especially important considering that the conclusion mentions the
 need to further reduce the computational complexity of the analysis.
-[+Ben]
+[+arumuga]
 
 Figure 2 has relatively little information in it.  Perhaps this
 one-bar plot should be replaced with either a small table or just
-prose discussion with no table or figure at all.
+prose discussion with no table or figure at all.  [*Ben]
 
 ------------------------------------------------------------------------
 --
