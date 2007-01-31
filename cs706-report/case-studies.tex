@@ -78,13 +78,14 @@ There are a few threats to the validity of the above experiment.  Firstly, \prog
 
 \subsection{\large\textbf{\prog{ccrypt}}}
 \label{sec-ccrypt}
-\prog{ccrypt} 1.2 contains a known bug that can cause a crash on certain user-input - when an \texttt{EOF} is entered at the confirmation prompt when overwriting an existing file.  Entering \texttt{EOF} in other contexts does not cause failure, however, and an examination of the source code can quickly reveal why:
+\prog{ccrypt} 1.2 contains a known bug that can cause a crash on certain user-input - when an \texttt{EOF} is entered at the confirmation prompt when overwriting an existing file.  Entering \texttt{EOF} in other contexts does not cause failure, however, and an examination of the source code quickly reveals why:
 \begin{quote}
+\small
 \begin{verbatim}
 /* read a yes/no response from the user */
 int prompt(void) {
   ...
-  line = xreadline(fin, cmd.name);    (a)
+  line = xreadline(fin, cmd.name);    // (a)
   return (!strcmp(line, "y") ||
      !strcmp(line, "yes"));
 }
@@ -92,17 +93,17 @@ int prompt(void) {
 char *xreadline(FILE *fin, char *myname) {
   ...
   res = fgets(buf, INITSIZE, fin);
-  if (res==NULL) {                    (b)
+  if (res==NULL) {                    // (b)
     free(buf);
     return NULL;
   }
   ...
   return buf;
 }
-
 \end{verbatim}
 \end{quote}
-Calls to \func{xreadline}, the function used to get user-input, can return \texttt{NULL} under some circumstances.  In most cases the value is checked before being dereferenced; in \func{prompt} however it is used immediately.  \func{xreadline} returning \texttt{NULL} in \func{prompt} should thus be a perfect predictor of failure, occurring in no successful runs and in every failure related to this bug.  The branch taken in \prog{xreadline} is important as well, serving as the moment failure in \prog{prompt} becomes inevitable.  This branch is only taken when the user enters \texttt{EOF} on the command line.  In mapping the cause of failure, a programmer without a clear understanding of the code is likely to spend time tracking the user-entered \texttt{EOF} through \prog{xreadline} to the \texttt{NULL} dereference in \prog{prompt}, requiring either a visual inspection of the source or use of an interactive debugger.  Knowledge of the connection between program events such as these is necessary to make good debugging decisions, e.g., adding a \texttt{NULL} check to \prog{prompt} versus ensuring \prog{xreadline} always returns a valid pointer.  Automated bug analysis should ideally reveal as much of this chain of causation to the programmer as possible.
+
+Calls to \func{xreadline}, the function used to get user-input, can return \texttt{NULL} under some circumstances.  In most cases the value is checked before being dereferenced; in \func{prompt} however it is used immediately after the call on line (a).  \func{xreadline} returning \texttt{NULL} in \func{prompt} should thus be a perfect predictor of failure, occurring in no successful runs and in every failure related to this bug.  The branch taken on line (b) in \prog{xreadline} is important as well, serving as the moment failure in \prog{prompt} becomes inevitable.  This branch is only taken when the user enters \texttt{EOF} on the command line.  In mapping the cause of failure, a programmer without a clear understanding of the code is likely to spend time tracking the user-entered \texttt{EOF} through \prog{xreadline} to the \texttt{NULL} dereference in \prog{prompt}, requiring either a visual inspection of the source or use of an interactive debugger.  Knowledge of the connection between program events such as these is necessary to make good debugging decisions, e.g., adding a \texttt{NULL} check to \prog{prompt} versus ensuring \prog{xreadline} always returns a valid pointer.  Automated bug analysis should ideally reveal as much of this chain of causation to the programmer as possible.
 
 We generated 1,000 runs of \prog{ccrypt}, again using randomly selected command line arguments.  Input files included images and text archived from the online documentation of a remote desktop display system.  There were 658 successful executions and 342 crashes.  All failed runs crashed due to the \texttt{NULL} dereference described above - no other bugs were visible to our test suite.
 
