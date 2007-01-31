@@ -64,7 +64,7 @@ Even when restricted to binary conjunction and disjunction, complex predicates c
 Real deployments of CBI use sparse random sampling of simple
 predicates to reduce performance overhead and protect user privacy.
 Prior work \cite{Liblit:2003:BIRPS} has recommended sampling rates of
-\nicefrac{1}{100} to \nicefrac{1}{1000} to balance data quality
+\nicefrac{1}{100} to \nicefrac{1}{1,000} to balance data quality
 against performance and privacy concerns.  However, a pair of
 independent features each observed in \nicefrac{1}{100} runs have only
 a \nicefrac{1}{10,000} chance of being observed together, raising
@@ -119,7 +119,7 @@ interesting conjunctions.  This is likely due to the shrinking odds of
 observing both components of a conjunction within a single run.
 Despite the sharp drop, the number of interesting conjunctions is
 still comparable to the number of interesting simple predicates even
-at \nicefrac{1}{1000} sampling.  This shows that interesting complex
+at \nicefrac{1}{1,000} sampling.  This shows that interesting complex
 predicates can still be found at sparse but realistic sampling rates.
 
 A puzzling trend in \autoref{fig-sampling} is that all three curves
