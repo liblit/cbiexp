@@ -26,16 +26,16 @@ definitions may be trivially extended to the general case.
 \subsection{Measuring Complex Predicates}
 \label{sec-measuring}
 
-For a predicate $p$ and a run $r$, define $r(p) \equiv \true$ if and only if $p$ was observed to be true at least once during run $r$.  Similarly we could define $r(C)$ as follows:
+For a predicate $p$ and a run $r$, $r(p)$ is $\true$ if and only if $p$ was observed to be true at least once during run $r$.  Similarly we could define $r(C)$ as follows:
 \begin{defn}
 \label{dfn1}
-For a complex predicate $C = \phi(p_1, p_2)$, define $r(C) \equiv \true$ iff at some point during the execution of the program, $C$ was observed to be true.
+For a complex predicate $C = \phi(p_1, p_2)$, $r(C)$ is $\true$ iff at some point during the execution of the program, $C$ was observed to be true.
 \end{defn}
 
 The difficulty with this notion of complex predicates is that $C$ must be explicitly monitored during the program execution.  For example, $r(p_1) = \true$ and $r(p_2) = \true$ does not imply that $p_1 \wedge p_2$ is ever true at a single program point.  $p_1$ and $p_2$ may be true at different stages of execution but never true at the same time.  Furthermore, when $p_1$ and $p_2$ appear at different source locations, there may be no single point in time at which both are even well-defined and therefore simultaneously observable.  In order to be able to estimate the value of $C$ from its components, we adapt a less time-sensitive definition as follows:
 \begin{defn}
 \label{dfn2}
-For a complex predicate $C = \phi(p_1, p_2)$, define $r(C) \equiv \true$ iff $\phi(r(p_1), r(p_2)) = \true$
+For a complex predicate $C = \phi(p_1, p_2)$, $r(C)$ is $\true$ iff $\phi(r(p_1), r(p_2)) = \true$
 \end{defn}
 
 In other words, we treat $r$ as distributive over $\phi$, effectively removing the requirement that all $p_i$ be observed simultaneously.  This can lead to false positives, because $r(C)$ may be computed to $\true$ when $C$ is actually $\false$ at all moments in time.  False negatives, however, cannot arise.  The impact of this assumption on the score of $C$ may be either positive or negative depending on whether $r$ failed or succeeded.
@@ -184,7 +184,7 @@ minimized.  This can happen when
 \begin{enumerate}
 \item the $\false$ observations of $p_1$ and $p_2$ completely overlap, contributing
 $\Max{\obsFalse{R}{p_1}}{\obsFalse{R}{p_2})}$ to $\obs{R}{C}$, and
-\item the $\true$ observations of $p_1$ and $p_2$ are completely non-overlapping.
+\item the $\true$ observations of $p_1$ and $p_2$ do not overlap.
 However, the outcomes of $\Min{\obsFalse{R}{p_1}}{\obsFalse{R}{p_2}}$ runs have
 been fixed in the previous rule, effectively reducing the number of runs to
 $|R'| = |R| - \Min{\obsFalse{R}{p_1}}{\obsFalse{R}{p_2}}$.  Among these runs,

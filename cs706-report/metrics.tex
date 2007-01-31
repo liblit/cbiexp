@@ -10,7 +10,7 @@ The first metric models the debugging effort required from the programmer to fin
 
 \begin{defn}
 \label{def-effort}
-The effort required by a programmer while using a complex predicate $C = \phi(p_1, p_2)$ is inversely proportional to the smaller fraction of code ignored in a breadth-first bidirectional search for $p_1$ from $p_2$ and vice-versa.
+The effort required by a programmer while using a complex predicate $\phi(p_1, p_2)$ is inversely proportional to the smaller fraction of code ignored in a breadth-first bidirectional search for $p_1$ from $p_2$ and vice-versa.
 \end{defn}
 
 The idea behind this metric is that the larger the distance between the two predicates, the greater the effort required to understand their relationship.  Also, if a large number of other branches are seen during the search, the programmer should keep track of these dependencies too.  Per Cleve and Zeller \cite{1062522}, we use the program dependence graph (PDG) to model the program rather than the source code. We perform a breadth-first search starting from $p_1$ until $p_2$ is reached and count the total number of vertices visited during the search. The fraction of code covered is the ratio of the number of visited vertices to the total number of PDG vertices. 
