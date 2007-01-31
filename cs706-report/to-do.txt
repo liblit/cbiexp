@@ -50,12 +50,3 @@ effort; Mulhern suggested making the difference explicit. This
 is especially important considering that the conclusion mentions the
 need to further reduce the computational complexity of the analysis.
 [+arumuga]
-
-------------------------------------------------------------------------
---
---  Section 8
---
-
-Section 8 concludes on a weak note.  We ought to be able to make this
-a bit sexier while still being honest about the technique's
-limitations. [+Ben]
