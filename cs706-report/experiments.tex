@@ -32,6 +32,7 @@ This section presents quantitative data about the ideas presented in previous se
 As can be seen, conjunctions dominate, with 86\% of programs tested selecting a conjunction as the top bug predictor.  This confirms that complex predicates can diagnose failures more accurately than simple predicates alone.  Because each Siemens program variant has only a single bug, it is to be expected that disjunctions are not needed as frequently.  Thus, disjunctions play a smaller but significant role, especially in the case of \prog{schedule}.  Even in single-bug programs, disjunctions can be helpful if no one simple predicate perfectly aligns with the conditions that cause failure.
 
 \subsection{Effectiveness of Pruning}
+\label{sec-effectprune}
 
 \begin{figure*}[tb]
   \centering
