@@ -146,18 +146,18 @@ observed $\true$ if both $p_1$ and $p_2$ were observed $\true$.  Equivalently, t
 of runs in which $C$ was observed $\true$ is the intersection,
 and thus cannot exceed the sizes, of the sets of
 runs in which $p_1$ was observed $\true$ and $p_2$ was observed $\true$.
-\begin{equation}
+\begin{equation*}
   \ub{R(C)} = \Min{R(p_1)}{R(p_2)}
-\end{equation}
+\end{equation*}
 
 Likewise, $R(C)$ is minimized when there is minimum overlap between the set
 of runs in which $p_1$ was observed $\true$ and $p_2$ was observed $\true$.
 The minimum overlap is $0$ as long as $R(p_1) + R(p_2)$ does not exceed $|R|$,
 the total number of runs.  Otherwise, both $p_1$ and $p_2$ must be observed
 together in at least $R(p_1) + R(p_2) - |R|$ runs.  Thus,
-\begin{equation}
+\begin{equation*}
   \lb{R(C)} = \Max{0}{R(p_1) + R(p_2) - |R|}
-\end{equation}
+\end{equation*}
 
 Next consider $\obs{R}{C}$.  $C$ is observed when (1) both $p_1$ and
 $p_2$ are observed $\true$, or (2) either $p_1$ or $p_2$ is observed
@@ -171,10 +171,10 @@ There are $\obsFalse{R}{p_1} + \obsFalse{R}{p_2}$ applications of Rule
 completely non-overlapping.
 However, there has to be an overlap between these cases if their sum exceeds
 $|R|$, the total number of runs.  Thus,
-\begin{equation}
+\begin{equation*}
   \ub{\obs{R}{C}} = \Min{|R|}{\obsFalse{R}{p_1} + \obsFalse{R}{p_2}
                    + \Min{R(p_1)}{R(p_2)}}
-\end{equation}
+\end{equation*}
 
 Finally, to minimize $\obs{R}{C}$, applications of the two rules above are
 minimized.  This can happen when
@@ -295,9 +295,9 @@ Substituting $\obsFalse{R}{p} = 1000 - R(p)$ and computing the bounds listed in
 \autoref{tab:bounds-conj} we get $\ub{F(C)} = 500, \lb{S(C)} = 0, \lb{\obs{F}{C}} = 1000$ and
 $\ub{\obs{S}{C}} = 1000$.  Therefore the upper bound of $\Increase(C)$ is
 $\frac{500}{500} - \frac{1000}{2000}=0.5$ and the upper bound of $\Importance(C)$ is
-\begin{equation}
+\begin{equation*}
 \frac{2}{\frac{1}{0.5}+\frac{1}{\log{1000}/\log{1000}}} = 0.666\dots.
-\end{equation}
+\end{equation*}
 
 All upper- and lower-bound estimates are conservative.  Pruning complex predicates using the above calculations reduces the computational intensity of the analysis without affecting the results.  The effectiveness of pruning in practice is examined in \autoref{sec-effectprune}.
 
