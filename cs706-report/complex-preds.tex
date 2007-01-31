@@ -99,7 +99,7 @@ Even using the revised definition for $C$ the number of complex predicates is st
 
 \begin{defn}
 \label{dfn3}
-A complex predicate $C = \phi(p_1, p_2)$ is ``interesting'' iff $\Importance(C) > \max(\Importance(p_1), \Importance(p_2))$
+A complex predicate $C = \phi(p_1, p_2)$ is ``interesting'' iff $\Importance(C) > \Max{\Importance(p_1)}{\Importance(p_2)}$
 \end{defn}
 
 In the case where the complex predicate has the same score as a component predictor, the simpler one is preferable.  Keeping only interesting combinations of predicates reduces the memory burden of storing them, and helps ensure the utility of a complex predicate that is presented to the user.
@@ -110,7 +110,7 @@ Constructing complex predicates from simple ones requires generating two bits of
 
 The threshold $\Importance$ value, which complex predicates must potentially exceed to be constructed, can be calculated in two ways:
 \begin{enumerate}
-\item Only interesting complex predicates are retained; for a complex predicate $\phi(p_1, p_2)$ the threshold for $\Importance(C)$ is therefore $\max(\Importance(p_1), \Importance(p_2))$.
+\item Only interesting complex predicates are retained; for a complex predicate $\phi(p_1, p_2)$ the threshold for $\Importance(C)$ is therefore $\Max{\Importance(p_1)}{\Importance(p_2)}$.
 \item During redundancy elimination, only the predicate with the highest score is retained at each iteration.  The threshold for $\Importance(C)$ is therefore the highest score yet seen (including those of simple predicates).
 % Note: as of 12/06 our implementation didn't do this.  This may have changed with recent modifications...
 \end{enumerate}
@@ -147,7 +147,7 @@ of runs in which $C$ was observed $\true$ is the intersection,
 and thus cannot exceed the sizes, of the sets of
 runs in which $p_1$ was observed $\true$ and $p_2$ was observed $\true$.
 \begin{equation}
-  \ub{R(C)} = \min(R(p_1), R(p_2))
+  \ub{R(C)} = \Min{R(p_1)}{R(p_2)}
 \end{equation}
 
 Likewise, $R(C)$ is minimized when there is minimum overlap between the set
@@ -156,7 +156,7 @@ The minimum overlap is $0$ as long as $R(p_1) + R(p_2)$ does not exceed $|R|$,
 the total number of runs.  Otherwise, both $p_1$ and $p_2$ must be observed
 together in at least $R(p_1) + R(p_2) - |R|$ runs.  Thus,
 \begin{equation}
-  \lb{R(C)} = \max(0, R(p_1) + R(p_2) - |R|)
+  \lb{R(C)} = \Max{0}{R(p_1) + R(p_2) - |R|}
 \end{equation}
 
 Next consider $\obs{R}{C}$.  $C$ is observed when
@@ -167,7 +167,7 @@ Next consider $\obs{R}{C}$.  $C$ is observed when
 
 To maximize $\obs{R}{C}$, applications of both rules above should be
 maximized.
-There are $\min(R(p_1), R(p_2))$ applications of Rule 1 when the set
+There are $\Min{R(p_1)}{R(p_2)}$ applications of Rule 1 when the set
 of runs in which $p_1$ and $p_2$ are observed completely overlap.
 There are $\obsFalse{R}{p_1} + \obsFalse{R}{p_2}$ applications of Rule
 2 when the sets of runs in which $p_1$ and $p_2$ are observed and never $\true$ are
@@ -175,19 +175,19 @@ completely non-overlapping.
 However, there has to be an overlap between these cases if their sum exceeds
 $|R|$, the total number of runs.  Thus,
 \begin{equation}
-  \ub{\obs{R}{C}} = \min(|R|, \obsFalse{R}{p_1} + \obsFalse{R}{p_2}
-                   + \min(R(p_1), R(p_2)))
+  \ub{\obs{R}{C}} = \Min{|R|}{\obsFalse{R}{p_1} + \obsFalse{R}{p_2}
+                   + \Min{R(p_1)}{R(p_2)}}
 \end{equation}
 
 Finally, to minimize $\obs{R}{C}$, applications of the two rules above are
 minimized.  This can happen when
 \begin{enumerate}
 \item the $\false$ observations of $p_1$ and $p_2$ completely overlap, contributing
-$\max(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})$ to $\obs{R}{C}$, or
+$\Max{\obsFalse{R}{p_1}}{\obsFalse{R}{p_2})}$ to $\obs{R}{C}$, or
 \item the $\true$ observations of $p_1$ and $p_2$ are completely non-overlapping.
-However, the outcomes of $\min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})$ runs has
+However, the outcomes of $\Min{\obsFalse{R}{p_1}}{\obsFalse{R}{p_2}}$ runs has
 been fixed in the previous rule, effectively reducing the number of runs to
-$|R'| = |R| - \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})$.  Among these runs,
+$|R'| = |R| - \Min{\obsFalse{R}{p_1}}{\obsFalse{R}{p_2}}$.  Among these runs,
 $R(p_1) + R(p_2)$
 runs must be selected without overlap, failing which there would be an
 $R(p_1) + R(p_2) - |R'|$ overlap
@@ -196,8 +196,8 @@ between the two sets.
 
 Thus,
 \begin{multline}
-  \lb{\obs{R}{C}} = \max(\obsFalse{R}{p_1}, \obsFalse{R}{p_2}) + \\
-  \max(0, R(p_1) + R(p_2) - |R'|)
+  \lb{\obs{R}{C}} = \Max{\obsFalse{R}{p_1}}{\obsFalse{R}{p_2}} + \\
+  \Max{0}{R(p_1) + R(p_2) - |R'|}
 \end{multline}
 
 For simplicity and generality, the preceding discussion derives the
@@ -218,32 +218,32 @@ a disjunction $D = p_1 \vee p_2$ in \autoref{tab:bounds-disj}.
     \midrule
     $\ub{F(C)} $
       &
-      $\min(F(p_1), F(p_2))$
+      $\Min{F(p_1)}{F(p_2)}$
       \\
       
     $\lb{S(C)}$
       &
-      $\max(0, S(p_1) + S(p_2) - |S|)$
+      $\Max{0}{S(p_1) + S(p_2) - |S|}$
       \\
       
     $\lb{\obs{F}{C}}$
       &
-      $\max(\obsFalse{F}{p_1}, \obsFalse{F}{p_2}) +$
+      $\Max{\obsFalse{F}{p_1}}{\obsFalse{F}{p_2}} +$
       \\
       
     % empty first column
       &
-      $\max(0, F(p_1) + F(p_2) - |F'|)$
+      $\Max{0}{F(p_1) + F(p_2) - |F'|}$
       \\
       
     % empty first column
       &
-      \multicolumn{1}{r}{where $|F'| = |F| - \min(\obsFalse{F}{p_1}, \obsFalse{F}{p_2})$}
+      \multicolumn{1}{r}{where $|F'| = |F| - \Min{\obsFalse{F}{p_1}}{\obsFalse{F}{p_2}}$}
       \\
       
     $\ub{\obs{S}{C}}$
       &
-      $\min(|S|, \obsFalse{S}{p_1} + \obsFalse{S}{p_2} + \min(S(p_1), S(p_2)))$
+      $\Min{|S|}{\obsFalse{S}{p_1} + \obsFalse{S}{p_2} + \Min{S(p_1)}{S(p_2)}}$
       \\
       \bottomrule
   \end{tabular}
@@ -259,32 +259,32 @@ a disjunction $D = p_1 \vee p_2$ in \autoref{tab:bounds-disj}.
     \midrule
     $\ub{F(D)} $
       &
-      $\min(|F|, F(p_1) + F(p_2))$
+      $\Min{|F|}{F(p_1) + F(p_2)}$
       \\
       
     $\lb{S(D)}$
       &
-      $\max(S(p_1), S(p_2))$
+      $\Max{S(p_1)}{S(p_2)}$
       \\
       
     $\lb{\obs{F}{D}}$
       &
-      $\max(F(p_1), F(p_2)) +$
+      $\Max{F(p_1)}{F(p_2)} +$
       \\
       
     % empty first column
       &
-      $\max(0, \obsFalse{F}{p_1} + \obsFalse{F}{p_2} - |F'|)$
+      $\Max{0}{\obsFalse{F}{p_1} + \obsFalse{F}{p_2} - |F'|}$
       \\
       
     % empty first column
       &
-      \multicolumn{1}{r}{where $|F'| = |F| - \min(F(p_1), F(p_2))$}
+      \multicolumn{1}{r}{where $|F'| = |F| - \Min{F(p_1), F(p_2)}$}
       \\
       
     $\ub{\obs{S}{D}}$
       &
-      $\min(|S|, S(p_1) + S(p_2) + \min(\obsFalse{S}{p_1}, \obsFalse{S}{p_2}))$
+      $\Min{|S|}{S(p_1) + S(p_2) + \Min{\obsFalse{S}{p_1}}{\obsFalse{S}{p_2}}}$
       \\
       \bottomrule
   \end{tabular}
