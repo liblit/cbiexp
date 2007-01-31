@@ -6,6 +6,8 @@ from itertools import imap
 from os.path import dirname
 from pychart import *
 
+import locale
+
 
 def format_x(density):
     return '/6{}1//%s' % density
@@ -20,7 +22,7 @@ def main():
 
     # prepare master data table
     densities = [1, 1.01, 2, 5, 10, 100, 1000]
-    kinds = ['Conjunctions', 'Disjunctions', 'Simple']
+    kinds = ['Conjunctions', 'Simple', 'Disjunctions']
     data = dict(((app, density, kind), [])
                 for app in common.apps
                 for density in densities
@@ -55,28 +57,38 @@ def main():
     y_coord = log_coord.T()
     y_axis = axis.Y(label='Number of Predicates', format=common.format_count)
 
-    # create per-application plots
-    for app in common.apps:
-        theme.reinitialize()
+    # create single-application plot
+    theme.reinitialize()
+    leg = legend.T(loc=(115, 10))
+    ar = area.T(x_axis=x_axis, x_coord=x_coord,
+                y_axis=y_axis, y_coord=y_coord,
+                legend=leg)
 
-        leg = legend.T()
-        ar = area.T(x_axis=x_axis, x_coord=x_coord,
-                    y_axis=y_axis, y_coord=y_coord,
-                    legend=leg)
+    # one data series (line) per category of counted predicates
+    app = 'print_tokens2'
+    for series in kinds:
+        counts = [ (density, data[app, density, series]) for density in densities ]
+        ar.add_plot(line_plot.T(label=series, data=counts))
 
-        # one data series (line) per category of counted predicates
-        for series in ['Conjunctions', 'Disjunctions', 'Simple']:
-            counts = [ (density, data[app, density, series]) for density in densities ]
-            ar.add_plot(line_plot.T(label=series, data=counts))
+    # render plots to disk
+    ar.draw(canvas.init('%s/sampling-%s.pdf' % (subdir, app)))
+    ar.draw(canvas.init('%s/sampling-%s.eps' % (subdir, app)))
 
-        ar.draw(canvas.init('%s/sampling-%s.pdf' % (subdir, app)))
-        ar.draw(canvas.init('%s/sampling-%s.eps' % (subdir, app)))
-
-    # helper LaTeX fragment to pull in all plots
-    latex = file(subdir + '/sampling.tex', 'w')
+    # LaTeX fragment with table rows
+    latex = file(subdir + '/sampling-rows.tex', 'w')
     for app in common.apps:
         protected = app.replace('_', '\\_')
-        print >>latex, '\\plot{%s}{%s}' % (protected, app)
+        print >>latex, '\\prog{%s}' % protected,
+        for series in ['Simple', 'Conjunctions', 'Disjunctions']:
+            for density in [1, 100, 1000]:
+                count = data[app, density, series]
+                if count == None:
+                    cell = '-'
+                else:
+                    cell = locale.format('%.0f', count, grouping=True)
+                print >>latex, '&', cell,
+        print >>latex, '\\\\'
+
 
 if __name__ == '__main__':
     main()

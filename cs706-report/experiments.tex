@@ -8,7 +8,7 @@ This section presents quantitative data about the ideas presented in previous se
 \subsection{Top Scoring Predicates}
 
 \label{sec-quant}
-\begin{figure}
+\begin{figure}[tb]
   \centering
   \includegraphics{charts/top-pred}
   \caption{Fraction of buggy application variants having a complex predicate as the top-scoring predictor}
@@ -19,7 +19,7 @@ This section presents quantitative data about the ideas presented in previous se
 
 \subsection{Effectiveness of Pruning}
 \label{sec-effectprune}
-\begin{figure*}
+\begin{figure*}[tb]
   \centering
   \subfloat[Conjunctions]{\includegraphics{charts/pruning-conj}}
   \hfill
@@ -33,7 +33,7 @@ Even when restricted to binary conjunction and disjunction, complex predicates c
 
 \subsection{Effect of Effort}
 
-\begin{figure*}
+\begin{figure*}[tb]
   \centering
   \subfloat[Conjunctions]{\includegraphics{charts/effort-conj}}
   \hfill
@@ -47,56 +47,102 @@ Even when restricted to binary conjunction and disjunction, complex predicates c
 \subsection{Effect of Sampling Rate}
 \label{sec-sampling}
 
-\begin{figure*}
+Real deployments of CBI use sparse random sampling of simple
+predicates to reduce performance overhead and protect user privacy.
+Prior work \cite{Liblit:2003:BIRPS} has recommended sampling rates of
+\nicefrac{1}{100} to \nicefrac{1}{1000} to balance data quality
+against performance and privacy concerns.  However, a pair of
+independent features each observed in \nicefrac{1}{100} runs have only
+a \nicefrac{1}{10,000} chance of being observed together, raising
+doubts whether interesting complex predicates will be found in
+sparsely sampled data.
+
+\begin{table*}[tb]
   \centering
-  \newcommand{\plot}[2]{\subfloat[\prog{#1}]{\includegraphics{charts/sampling-#2}}}
-  \input{charts/sampling}
-  \caption{Sampling rate vs. number of interesting predicates}
+  \begin{tabular}{lrrrrrrrrr}
+    \toprule
+    & \multicolumn{3}{c}{Simple}
+    & \multicolumn{3}{c}{Conjunctions}
+    & \multicolumn{3}{c}{Disjunctions}
+    \\
+    \cmidrule(r){2-4} \cmidrule(lr){5-7} \cmidrule(l){8-10}
+    Application
+    & \nicefrac{1}{1} & \nicefrac{1}{100} & \nicefrac{1}{1,000}
+    & \nicefrac{1}{1} & \nicefrac{1}{100} & \nicefrac{1}{1,000}
+    & \nicefrac{1}{1} & \nicefrac{1}{100} & \nicefrac{1}{1,000}
+    \\
+    \midrule
+    \input{charts/sampling-rows}
+    \bottomrule
+  \end{tabular}
+  \caption{Sampling rate vs. number of interesting predicates,
+    averaged across all variants of each Siemens application. ``-'' marks
+    an average count of exactly zero, i.e., no interesting predicates in
+    any variant.}
+  \label{tab-sampling}
+\end{table*}
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics{charts/sampling-print_tokens2}
+  \caption{Sampling rate vs. number of interesting predicates,
+    averaged across all variants of \prog{print\_tokens2}.  Other
+    Siemens applications are similar.}
   \label{fig-sampling}
-\end{figure*}
+\end{figure}
 
-The dependence between sampling rate and the number of interesting predicates (both complex and simple) is plotted in \autoref{fig-sampling}.  \autoref{fig-sampling} has one chart per program with sampling rates in the $x-$axis and the average number of interesting conjunctions, disjunctions and simple predicates in the $y-$axis.  The number of interesting disjunctions is always very low (order of tens) compared to interesting conjunctions.  So the plot for interesting complex predicates closely follows the plot for conjunctions.  At sampling rates lower than \nicefrac{1}{10}, there is a sharp drop in the number of interesting conjunctions.  This is because the chance of observing both components of a conjunction within a single run falls with the square of the sampling rate.  Despite the sharp drop, the number of interesting conjunctions is still comparable to the number of interesting simple predicates even at \nicefrac{1}{1000} sampling.  This shows interesting complex predicates can still be found at sparse but realistic sampling rates.
+\autoref{tab-sampling} shows the average number of interesting simple
+and complex predicates found is each Siemens application for both
+complete data collection (\nicefrac{1}{1}) and two realistic sampling
+rates.  \autoref{fig-sampling} shows the same information at
+additional, denser rates for \prog{print\_tokens2}.  Other Siemens
+applications behave similarly and are omitted for brevity.
 
-A puzzling trend in \autoref{fig-sampling} is that the curves raise for a 
-brief interval before dropping off.  This trend occurs for conjunctions and 
-disjunctions as well as for simple predicates.  Also it is consistent across
-all applications.  The bumps in the conjunction and disjunction curves could
-be attributed to the bump in the simple predicates curve.  An increase
-in the number of interesting simple predicates is likely to produce a steeper 
-increase in the number of interesting complex predicates, especially because
-the additional simple predicates are likely to be redundant (as explained
-later).
+The number of interesting disjunctions is always very low (order of
+tens) compared to interesting conjunctions.  At sampling rates lower
+than \nicefrac{1}{10}, there is a sharp drop in the number of
+interesting conjunctions.  This is likely due to the shrinking odds of
+observing both components of a conjunction within a single run.
+Despite the sharp drop, the number of interesting conjunctions is
+still comparable to the number of interesting simple predicates even
+at \nicefrac{1}{1000} sampling.  This shows that interesting complex
+predicates can still be found at sparse but realistic sampling rates.
 
-This surprising trend in the simple predicates was previously undiscovered
-and seemed counterintuitive in the beginning.  But drilling down into our
-experimental results revealed two scenarios where this could happen.
+A puzzling trend in \autoref{fig-sampling} is that all three curves
+rise for a brief interval before dropping off.  Other Siemens
+applications exhibit a similar bump.  The bumps in the conjunction and
+disjunction curves could be attributed to the bump in the simple
+predicates curve.  Any increase in the number of interesting simple
+predicates is likely to produce a greater increase in the number of
+interesting complex predicates, especially because the additional
+simple predicates are likely to be redundant (as explained later).
 
-\begin{enumerate}
-\item The first scenario happens due to an adhoc, but perfectly reasonable
+The transient increase in the number simple predicates at moderate
+sampling rates was previously undiscovered and initially seems
+counterintuitive.  Closer inspection of experimental results reveals
+two scenarios where this can happen.
+
+The first scenario happens due to an ad hoc, but perfectly reasonable
 elimination of seemingly identical predicates.  As an example, consider the
 predicates $p$: \texttt{a == b} and $q$: \texttt{a >= b}.  If they have the
 same score, it is useful to just retain $p$ as it is a more stringent
-condition than $q$ but still has the same score.  However it does not mean
+condition than $q$.  However, this does not mean
 that \texttt{a > b} was never true.  \texttt{a > b} may be observed  during 
 some runs but does not affect the outcome of \texttt{a >= b} if \texttt{a == b}
 also happens to be true in those runs.  However, at sampling rates lower than
-$1$, only \texttt{a > b} may be observed in some runs and hence the number of
+1, only \texttt{a > b} may be observed in some runs and hence the number of
 runs in which $p$ and $q$ are observed \emph{true}, and consequently their
-scores may be different.  Thus, the adhoc elimination heuristic performs 
+scores may be different.  Thus, the ad hoc elimination heuristic performs 
 less effectively at lower sampling rates, leading to an increase in the 
 number of interesting simple predicates
 
-\item To understand the second scenario, consider a predicate $p$ for which
-\begin{eqnarray*}
- \obs{S}{p} &=& S(p) \\
- \obs{F}{p} &=& F(p) \\
-\end{eqnarray*}
-In other words, $p$ was true atleast once in every run in which it was 
-observed atleast once.  From \autoref{eqn1}, $\Increase(p) = 0$.  In a run 
+To understand the second scenario, consider a predicate $p$ for which
+$\obs{S}{p} = S(p)$ and $\obs{F}{p} = F(p)$.
+In other words, $p$ is true at least once in every run in which it is
+observed.  From \autoref{eqn1}, $\Increase(p) = 0$.  In a run 
 in which $p$ was observed, it may also be \emph{false} atleast once.  As we
 reduce the sampling rates, only the \emph{false} occurences may be recorded
 in some runs and hence the two equalities may no longer hold.  As a result
 $\Increase(p)$ may be nonzero and if it becomes positive a predicate that
 was not interesting at higher sampling rates becomes interesting at lower 
 sampling rates.
-\end{enumerate}

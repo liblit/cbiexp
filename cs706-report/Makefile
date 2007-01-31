@@ -1,15 +1,14 @@
 MAIN      = master
-SRCS      = $(wildcard *.tex *.bib *.sty *.cls) charts/sampling.tex
+SRCS      = $(wildcard *.tex *.bib *.sty *.cls) charts/sampling-rows.tex
 PS        = $(MAIN).ps
 PDF       = $(MAIN).pdf
 DVI       = $(MAIN).dvi
 BBL       = $(MAIN).bbl
 
 siemens := print_tokens print_tokens2 replace schedule schedule2 tcas tot_info
-sampling := $(siemens:%=sampling-%)
+sampling := sampling-print_tokens2
 pycharts := effort-conj effort-disj pruning-conj pruning-disj top-pred
-others := maxsuccess $(sampling)
-figs := $(pycharts) $(others)
+figs := $(pycharts) $(sampling)
 epss := $(figs:%=charts/%.eps)
 pdfs := $(figs:%=charts/%.pdf)
 
@@ -45,7 +44,7 @@ charts/pruning.eps charts/top-pred.eps: charts/%.eps: charts/%.py charts/common.
 charts/pruning.pdf charts/top-pred.pdf: charts/%.pdf: charts/%.py charts/common.py data/data.txt
 	python $< $@
 
-charts/sampling.tex $(sampling:%=charts/%.eps) $(sampling:%=charts/%.pdf): charts/sampling.py charts/common.py data/data.txt
+charts/sampling-rows.tex $(sampling:%=charts/%.eps) $(sampling:%=charts/%.pdf): charts/sampling.py charts/common.py data/data.txt
 	python $<
 
 charts/pruning-conj.eps charts/pruning-disj.eps charts/pruning-conj.pdf charts/pruning-disj.pdf: charts/pruning.py charts/common.py data/data.txt
@@ -55,6 +54,6 @@ charts/effort-conj.eps charts/effort-disj.eps charts/effort-conj.pdf charts/effo
 	python $< $@ $(subst effort-, , $(basename $(@F)))
 
 clean:
-	rm -f $(PS) $(PDF) $(DVI) $(BBL) $(MAIN).aux $(MAIN).out $(pdfs) $(pycharts:%=charts/%.eps)
+	rm -f $(PS) $(PDF) $(DVI) $(BBL) $(MAIN).aux $(MAIN).out $(pdfs) $(pycharts:%=charts/%.eps) charts/sampling-rows.tex
 
 .DELETE_ON_ERROR:
