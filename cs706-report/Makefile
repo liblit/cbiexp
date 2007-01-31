@@ -1,5 +1,5 @@
 MAIN      = master
-SRCS      = $(wildcard *.tex *.bib *.sty *.cls) charts/sampling-rows.tex
+SRCS      = $(wildcard *.tex *.bib *.sty *.cls) charts/sampling.tex charts/top-pred.tex
 PS        = $(MAIN).ps
 PDF       = $(MAIN).pdf
 DVI       = $(MAIN).dvi
@@ -7,7 +7,7 @@ BBL       = $(MAIN).bbl
 
 siemens := print_tokens print_tokens2 replace schedule schedule2 tcas tot_info
 sampling := sampling-print_tokens2
-pycharts := effort-conj effort-disj pruning-conj pruning-disj top-pred
+pycharts := effort-conj effort-disj pruning-conj pruning-disj
 figs := $(pycharts) $(sampling)
 epss := $(figs:%=charts/%.eps)
 pdfs := $(figs:%=charts/%.pdf)
@@ -38,13 +38,10 @@ $(PS): %.ps: %.dvi $(epss)
 %.pdf: %.eps
 	epstopdf --outfile=$@ $<
 
-charts/pruning.eps charts/top-pred.eps: charts/%.eps: charts/%.py charts/common.py data/data.txt
-	python $< $@
+charts/top-pred.tex: charts/top-pred.py data/data.txt
+	python $<
 
-charts/pruning.pdf charts/top-pred.pdf: charts/%.pdf: charts/%.py charts/common.py data/data.txt
-	python $< $@
-
-charts/sampling-rows.tex $(sampling:%=charts/%.eps) $(sampling:%=charts/%.pdf): charts/sampling.py charts/common.py data/data.txt
+charts/sampling.tex $(sampling:%=charts/%.eps) $(sampling:%=charts/%.pdf): charts/sampling.py charts/common.py charts/common.py data/data.txt
 	python $<
 
 charts/pruning-conj.eps charts/pruning-disj.eps charts/pruning-conj.pdf charts/pruning-disj.pdf: charts/pruning.py charts/common.py data/data.txt

@@ -75,7 +75,7 @@ def main():
     ar.draw(canvas.init('%s/sampling-%s.eps' % (subdir, app)))
 
     # LaTeX fragment with table rows
-    latex = file(subdir + '/sampling-rows.tex', 'w')
+    latex = file(subdir + '/sampling.tex', 'w')
     for app in common.apps:
         protected = app.replace('_', '\\_')
         print >>latex, '\\prog{%s}' % protected,
