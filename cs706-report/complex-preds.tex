@@ -186,17 +186,18 @@ minimized.  This can happen when
 $\max(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})$ to $\obs{R}{C}$, or
 \item the $\true$ observations of $p_1$ and $p_2$ are completely non-overlapping.
 However, the outcomes of $\min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})$ runs has
-been fixed in the previous rule, reducing the number of effective runs to
-$|R| - \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})$.  Among these runs, $R(p_1) + R(p_2)$
+been fixed in the previous rule, effectively reducing the number of runs to
+$|R'| = |R| - \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})$.  Among these runs,
+$R(p_1) + R(p_2)$
 runs must be selected non-overlappingly, failing which there would be an
-$R(p_1) + R(p_2) - (|R| - \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2}))$ overlap
+$R(p_1) + R(p_2) - |R'|$ overlap
 between the two sets.
 \end{enumerate}
 
 Thus,
 \begin{multline}
   \lb{\obs{R}{C}} = \max(\obsFalse{R}{p_1}, \obsFalse{R}{p_2}) + \\
-  \max(0, R(p_1) + R(p_2) - (|R| - \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})))
+  \max(0, R(p_1) + R(p_2) - |R'|)
 \end{multline}
 
 For simplicity and generality, the preceding discussion derives the
@@ -207,7 +208,7 @@ $F$ in place of $R$.  The approach for disjunctions is similar.  In
 interest of space, we omit the derivation and just list the bounds for
 a disjunction $D = p_1 \vee p_2$ in \autoref{tab:bounds-disj}.
 
-\begin{table*}
+\begin{table}
   \caption{Bounds required in \autoref{eqn3} for a conjunction}
   \label{tab:bounds-conj}
   \centering
@@ -219,24 +220,36 @@ a disjunction $D = p_1 \vee p_2$ in \autoref{tab:bounds-disj}.
       &
       $\min(F(p_1), F(p_2))$
       \\
+      
     $\lb{S(C)}$
       &
       $\max(0, S(p_1) + S(p_2) - |S|)$
       \\
+      
     $\lb{\obs{F}{C}}$
       &
-      $\max(\obsFalse{F}{p_1}, \obsFalse{F}{p_2}) +
-      \max(0, F(p_1) + F(p_2) - (|F| - \min(\obsFalse{F}{p_1}, \obsFalse{F}{p_2})))$
+      $\max(\obsFalse{F}{p_1}, \obsFalse{F}{p_2}) +$
       \\
+      
+    % empty first column
+      &
+      $\max(0, F(p_1) + F(p_2) - |F'|)$
+      \\
+      
+    % empty first column
+      &
+      \multicolumn{1}{r}{where $|F'| = |F| - \min(\obsFalse{F}{p_1}, \obsFalse{F}{p_2})$}
+      \\
+      
     $\ub{\obs{S}{C}}$
       &
       $\min(|S|, \obsFalse{S}{p_1} + \obsFalse{S}{p_2} + \min(S(p_1), S(p_2)))$
       \\
       \bottomrule
   \end{tabular}
-\end{table*}
+\end{table}
 
-\begin{table*}
+\begin{table}
   \caption{Bounds required in \autoref{eqn3} for a disjunction}
   \label{tab:bounds-disj}
   \centering
@@ -248,22 +261,34 @@ a disjunction $D = p_1 \vee p_2$ in \autoref{tab:bounds-disj}.
       &
       $\min(|F|, F(p_1) + F(p_2))$
       \\
+      
     $\lb{S(D)}$
       &
       $\max(S(p_1), S(p_2))$
       \\
+      
     $\lb{\obs{F}{D}}$
       &
-      $\max(F(p_1), F(p_2)) +
-      \max(0, \obsFalse{F}{p_1} + \obsFalse{F}{p_2} - (|F| - \min(F(p_1), F(p_2))))$
+      $\max(F(p_1), F(p_2)) +$
       \\
+      
+    % empty first column
+      &
+      $\max(0, \obsFalse{F}{p_1} + \obsFalse{F}{p_2} - |F'|)$
+      \\
+      
+    % empty first column
+      &
+      \multicolumn{1}{r}{where $|F'| = |F| - \min(F(p_1), F(p_2))$}
+      \\
+      
     $\ub{\obs{S}{D}}$
       &
       $\min(|S|, S(p_1) + S(p_2) + \min(\obsFalse{S}{p_1}, \obsFalse{S}{p_2}))$
       \\
       \bottomrule
   \end{tabular}
-\end{table*}
+\end{table}
 
 As a concrete example, consider $C = p_1 \wedge p_2$.  Assume that there are 1,000
 successful runs, 1,000 failed runs, and that $p_1$ and $p_2$ are observed in all runs.
