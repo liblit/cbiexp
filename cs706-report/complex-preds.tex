@@ -222,7 +222,12 @@ a disjunction $D = p_1 \vee p_2$ in \autoref{tab:bounds-disj}.
       &
       $\Max{0}{S(p_1) + S(p_2) - |S|}$
       \\
-      
+    
+    $\ub{\obs{S}{C}}$
+      &
+      $\Min{|S|}{\obsFalse{S}{p_1} + \obsFalse{S}{p_2} + \Min{S(p_1)}{S(p_2)}}$
+      \\
+        
     $\lb{\obs{F}{C}}$
       &
       $\Max{\obsFalse{F}{p_1}}{\obsFalse{F}{p_2}} +$
@@ -237,12 +242,7 @@ a disjunction $D = p_1 \vee p_2$ in \autoref{tab:bounds-disj}.
       &
       \multicolumn{1}{r}{where $|F'| = |F| - \Min{\obsFalse{F}{p_1}}{\obsFalse{F}{p_2}}$}
       \\
-      
-    $\ub{\obs{S}{C}}$
-      &
-      $\Min{|S|}{\obsFalse{S}{p_1} + \obsFalse{S}{p_2} + \Min{S(p_1)}{S(p_2)}}$
-      \\
-      \bottomrule
+    \bottomrule
   \end{tabular}
 \end{table}
 
@@ -264,6 +264,11 @@ a disjunction $D = p_1 \vee p_2$ in \autoref{tab:bounds-disj}.
       $\Max{S(p_1)}{S(p_2)}$
       \\
       
+    $\ub{\obs{S}{D}}$
+      &
+      $\Min{|S|}{S(p_1) + S(p_2) + \Min{\obsFalse{S}{p_1}}{\obsFalse{S}{p_2}}}$
+      \\
+        
     $\lb{\obs{F}{D}}$
       &
       $\Max{F(p_1)}{F(p_2)} +$
@@ -278,12 +283,7 @@ a disjunction $D = p_1 \vee p_2$ in \autoref{tab:bounds-disj}.
       &
       \multicolumn{1}{r}{where $|F'| = |F| - \Min{F(p_1)}{F(p_2)}$}
       \\
-      
-    $\ub{\obs{S}{D}}$
-      &
-      $\Min{|S|}{S(p_1) + S(p_2) + \Min{\obsFalse{S}{p_1}}{\obsFalse{S}{p_2}}}$
-      \\
-      \bottomrule
+    \bottomrule
   \end{tabular}
 \end{table}
 
