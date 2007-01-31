@@ -47,7 +47,6 @@ def rawData():
         fix(int, 'disj_interesting')
         
         fix(float, 'top_compl')
-        fix(float, 'hundredth_compl')
         
         fix(int, 'num_perf_compl')
         fix(int, 'num_perf_simple')
@@ -56,6 +55,8 @@ def rawData():
         
         fix(int, 'compl_cr')
         fix(int, 'compl_cr_is_top_perf')
+        fix(int, 'compl_cr_pruned_conj')
+        fix(int, 'compl_cr_pruned_disj')
         fix(int, 'time_compl_cr')
         
         fix(int, 'simple_cr')
