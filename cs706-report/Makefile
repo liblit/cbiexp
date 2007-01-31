@@ -33,7 +33,7 @@ $(DVI): %.dvi: $(SRCS) $(BBL) $(epss)
 	$(latex) $*
 
 $(PS): %.ps: %.dvi $(epss)
-	dvips -o $@ -P generic $<
+	env TEXCONFIG=:/usr/share/texmf/dvips/config dvips -o $@ -P generic $<
 
 %.pdf: %.eps
 	epstopdf --outfile=$@ $<
