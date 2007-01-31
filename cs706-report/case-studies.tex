@@ -9,20 +9,21 @@ This section discusses two cases where complex predicates prove to be useful.  T
 
 \prog{exif} 0.6.9 crashes while manipulating a thumbnail in a Canon image.  The bug is in function \texttt{exif\_mnote\_data\_canon\_load} in the module handling Canon images.  The following is a snippet from said function:
 \begin{quote}
+\small
 \begin{verbatim}
 for (i = 0; i < c; i++) {
     ...
     n->count = i + 1;
     ...
-    if (o + s > buf_size) return;    (a)
+    if (o + s > buf_size) return;    // (a)
     ...
-    n->entries[i].data = malloc(s);  (b)
+    n->entries[i].data = malloc(s);  // (b)
     ...
 }
 \end{verbatim}
 \end{quote}
 
-If the condition \texttt{o + s > buf\_size} is true, the allocation of memory to the pointer \texttt{n->entries[i].data} is skipped.  The program crashes when another function \texttt{exif\_mnote\_canon\_save} reads from \texttt{n->entries[i].data} without checking if the pointer is valid.  This is an example of a non-deterministic bug as the program succeeds as long as the uninitialized pointer is not accessed somewhere else.
+If the condition \texttt{o + s > buf\_size} is true on line (a), then the allocation of memory to the pointer \texttt{n->entries[i].data} on line (b) is skipped.  The program crashes when other code reads from \texttt{n->entries[i].data} without checking if the pointer is valid.  This is an example of a non-deterministic bug as the program succeeds as long as the uninitialized pointer is not accessed somewhere else.
 
 We generated 1,000 runs of the program using randomly generated command line arguments and input images randomly selected from a set of Canon and non-Canon images.  There are 934 successful executions and 66 crashes.  Applying the redundancy elimination algorithm with only simple predicates produces two predicates that account for all failed runs as shown in \autoref{tab:tbl1}.  Studying the source code of the program does not show any obvious relation between the two predictors and the cause of failure.  Even though the second predictor is present in the crashing function it is a comparison between two unrelated variables: the loop iterator \texttt{i} and the size of the data stored in the traversed array \texttt{s}.  Also it is $\true$ in only 31 of the 66 failures.
 
