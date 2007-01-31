@@ -189,7 +189,7 @@ However, the outcomes of $\min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})$ runs has
 been fixed in the previous rule, effectively reducing the number of runs to
 $|R'| = |R| - \min(\obsFalse{R}{p_1}, \obsFalse{R}{p_2})$.  Among these runs,
 $R(p_1) + R(p_2)$
-runs must be selected non-overlappingly, failing which there would be an
+runs must be selected without overlap, failing which there would be an
 $R(p_1) + R(p_2) - |R'|$ overlap
 between the two sets.
 \end{enumerate}
@@ -300,3 +300,5 @@ $\ub{\obs{S}{C}} = 1000$.  As a result, the upper bound of $\Increase(C)$ will b
 $\frac{500}{500} - \frac{1000}{2000}=0.5$. Finally the upper bound of $\Importance(C)$ would be $2 / (\frac{1}{0.5}+\frac{1}{\log{1000}/\log{1000}}) = 0.666\dots$.
 
 All upper- and lower-bound estimates are conservative.  Pruning complex predicates using the above calculations reduces the computational intensity of the analysis without affecting the results.  The effectiveness of pruning in practice is examined in \autoref{sec-effectprune}.
+
+% LocalWords:  ccc tvl eqn disj effectprune
