@@ -43,13 +43,6 @@ search through for the item which 1. connects the components and
 --  Section 6
 --
 
-The first paragraph of Section 6.4 [Effect of Sampling Rate] claims
-that the number of interesting conjunctions is comparable to the
-number of interesting simple predicates even at 1/1000 sampling.  Is
-that really true?  You can't tell by squinting at the plots, and I
-cannot find these raw numbers anywhere in the "data/*.txt" files.
-[*arumuga]
-
 You also don't say anything about how long it takes to perform this
 analysis.  Seconds?  Hours?  Weeks?  Readers will want to know.  Section
 6.2 mentions how the computational load is decreased using pruning and
