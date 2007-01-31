@@ -131,8 +131,8 @@ $\Increase(p)$ and $F(p)$ under constraints based on the propositional operation
 $\Importance(P)$ (\autoref{eqn2}), being a harmonic mean of these two terms, will
 likewise be maximized.  From \autoref{eqn1}, an increase in $F(p)$ or $\obs{S}{p}$
 or a decrease in $S(p)$ or $\obs{F}{p}$ will increase the value of $\Increase(p)$.
-So an upper bound on $\Increase(p)$ would be:
-
+So an upper bound on $\Increase(p)$ is
+%
 \begin{equation}
 \label{eqn3}
 \ub{\Increase(p)} \equiv
@@ -159,13 +159,10 @@ together in at least $R(p_1) + R(p_2) - |R|$ runs.  Thus,
   \lb{R(C)} = \Max{0}{R(p_1) + R(p_2) - |R|}
 \end{equation}
 
-Next consider $\obs{R}{C}$.  $C$ is observed when
-\begin{enumerate}
-\item both $p_1$ and $p_2$ are observed $\true$, or
-\item either $p_1$ or $p_2$ is observed $\false$.
-\end{enumerate}
-
-To maximize $\obs{R}{C}$, applications of both rules above should be
+Next consider $\obs{R}{C}$.  $C$ is observed when (1) both $p_1$ and
+$p_2$ are observed $\true$, or (2) either $p_1$ or $p_2$ is observed
+$\false$.
+To maximize $\obs{R}{C}$, instances of both of these cases should be
 maximized.
 There are $\Min{R(p_1)}{R(p_2)}$ applications of Rule 1 when the set
 of runs in which $p_1$ and $p_2$ are observed completely overlap.
@@ -296,8 +293,11 @@ Furthermore, assume
 $F(p_1) = 500$, $F(p_2) = 1000$, $S(p_1) = 250$ and $S(p_2) = 500$.
 Substituting $\obsFalse{R}{p} = 1000 - R(p)$ and computing the bounds listed in
 \autoref{tab:bounds-conj} we get $\ub{F(C)} = 500, \lb{S(C)} = 0, \lb{\obs{F}{C}} = 1000$ and
-$\ub{\obs{S}{C}} = 1000$.  As a result, the upper bound of $\Increase(C)$ will be
-$\frac{500}{500} - \frac{1000}{2000}=0.5$. Finally the upper bound of $\Importance(C)$ would be $2 / (\frac{1}{0.5}+\frac{1}{\log{1000}/\log{1000}}) = 0.666\dots$.
+$\ub{\obs{S}{C}} = 1000$.  Therefore the upper bound of $\Increase(C)$ is
+$\frac{500}{500} - \frac{1000}{2000}=0.5$ and the upper bound of $\Importance(C)$ is
+\begin{equation}
+\frac{2}{\frac{1}{0.5}+\frac{1}{\log{1000}/\log{1000}}} = 0.666\dots.
+\end{equation}
 
 All upper- and lower-bound estimates are conservative.  Pruning complex predicates using the above calculations reduces the computational intensity of the analysis without affecting the results.  The effectiveness of pruning in practice is examined in \autoref{sec-effectprune}.
 
