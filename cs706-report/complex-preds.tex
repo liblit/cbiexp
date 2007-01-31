@@ -110,7 +110,7 @@ Constructing complex predicates from simple ones requires generating two bits of
 
 The threshold $\Importance$ value, which complex predicates must potentially exceed to be constructed, can be calculated in two ways:
 \begin{enumerate}
-\item Only interesting complex predicates are retained; for predicate $C = \phi(p_1, p_2)$ the threshold for $\Importance(C)$ is therefore $\max(\Importance(p_1), \Importance(p_2))$.
+\item Only interesting complex predicates are retained; for a complex predicate $\phi(p_1, p_2)$ the threshold for $\Importance(C)$ is therefore $\max(\Importance(p_1), \Importance(p_2))$.
 \item During redundancy elimination, only the predicate with the highest score is retained at each iteration.  The threshold for $\Importance(C)$ is therefore the highest score yet seen (including those of simple predicates).
 % Note: as of 12/06 our implementation didn't do this.  This may have changed with recent modifications...
 \end{enumerate}
@@ -141,11 +141,11 @@ So an upper bound on $\Increase(p)$ would be:
 \frac{\lb{\obs{F}{p}}}{\ub{\obs{S}{p}} + \lb{\obs{F}{p}}}
 \end{equation}
 
-Consider a conjunction $C = p_1 \wedge p_2$.  From \autoref{tab:and}, $C$ is
+Consider a conjunction $C = p_1 \wedge p_2$ and a set of runs $R$.  From \autoref{tab:and}, $C$ is
 observed $\true$ if both $p_1$ and $p_2$ were observed $\true$.  Equivalently, the set
-of runs in which $C$ was observed $\true$ is the intersection of the sets of
-runs in which $p_1$ was observed $\true$ and $p_2$ was observed $\true$.  So
-$R(C)$ cannot exceed either $R(p_1)$ or $R(p_2)$.  Thus,
+of runs in which $C$ was observed $\true$ is the intersection,
+and thus cannot exceed the sizes, of the sets of
+runs in which $p_1$ was observed $\true$ and $p_2$ was observed $\true$.
 \begin{equation}
   \ub{R(C)} = \min(R(p_1), R(p_2))
 \end{equation}
@@ -165,14 +165,13 @@ Next consider $\obs{R}{C}$.  $C$ is observed when
 \item either $p_1$ or $p_2$ is observed $\false$.
 \end{enumerate}
 
-Now, to maximize $\obs{R}{C}$, applications of both rules above should be
+To maximize $\obs{R}{C}$, applications of both rules above should be
 maximized.
 There are $\min(R(p_1), R(p_2))$ applications of Rule 1 when the set
 of runs in which $p_1$ and $p_2$ are observed completely overlap.
 There are $\obsFalse{R}{p_1} + \obsFalse{R}{p_2}$ applications of Rule
-2 when the sets of runs in which $p_1$ and $p_2$ are observed $\false$ are
+2 when the sets of runs in which $p_1$ and $p_2$ are observed and never $\true$ are
 completely non-overlapping.
-
 However, there has to be an overlap between these cases if their sum exceeds
 $|R|$, the total number of runs.  Thus,
 \begin{equation}
