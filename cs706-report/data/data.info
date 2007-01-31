@@ -33,7 +33,6 @@ disj_interesting: Number of interesting disjunctions
 ]
 
 top_compl: Score of top complex predicate
-hundredth_compl: Score of 100-th complex predicate
 
 num_perf_compl: Number of perfect complex predicates
 num_perf_simple: Number of perfect simple predicates
@@ -43,6 +42,8 @@ top_simple: Score of top simple predicate
 compl_cr: Type of top predicate of corrective ranking with complex preds...
           simple, conj, disj = 0, 1, 2
 compl_cr_is_top_perf: Was that perfect?
+compl_cr_pruned_conj: Number of conjunctions pruned by aggressive pruning
+compl_cr_pruned_disj: Number of disjunctions pruned by aggressive pruning
 time_compl_cr: Time taken for first iteration of complex predicate construction.  This shows how well we can perform in the best case: when we have a good threshold value and are interested in just the top complex predicate
 
 simple_cr: Type of top predicate of corrective ranking without complex-preds... always simple
