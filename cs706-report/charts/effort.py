@@ -45,7 +45,7 @@ def main():
     y_coord = log_coord.T()
     y_axis = axis.Y(label='Number of interesting predicates', format=common.format_count)
 
-    loc = {'conj': (100, 20), 'disj': (20, 110)}[kind]
+    loc = {'conj': (100, 20), 'disj': (130, 7)}[kind]
     leg = legend.T(loc=loc)
 
     ar = area.T(x_axis=x_axis, x_coord=x_coord,
