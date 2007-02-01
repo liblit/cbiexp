@@ -34,10 +34,10 @@ We generated 1,000 runs of the program using randomly generated command line arg
 \scriptsize
 \begin{tabular}{lllll}
 \toprule
-initial & effective & Predicate & Function & File:line \\
+Score & Predicate & Function & File:Line \\
 \midrule
-0.704974 & 0.704974 & $\text{new value of len} == \text{old value of len}$ & \func{jpeg\_data\_load\_data} & exif-0.6.9/libjpeg/jpeg-data.c:224 \\
-0.395001 & 0.589484 & $\text{i} == \text{s}$ & \func{exif\_mnote\_data\_canon\_save} & libexif-0.6.10/libexif/canon/exif-mnote-data-canon.c:176 \\
+0.704974 & $\text{new value of len} == \text{old value of len}$ & \func{jpeg\_data\_load\_data} & jpeg-data.c:224 \\
+0.589484 & $\text{i} == \text{s}$ & \func{exif\_mnote\_data\_canon\_save} & exif-mnote-data-canon.c:176 \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -51,12 +51,10 @@ The analysis assigns a very low score of 0.0191528 to the predicate $p_1$: \text
 \scriptsize
 \begin{tabular}{lllll}
 \toprule
-initial & effective & Predicate & Function & File:line \\
+Score & Predicate & Function & File:Line \\
 \midrule
-0.941385 & 0 & $\text{o} + \text{s} > \text{buf\_size}$ is TRUE & \func{exif\_mnote\_data\_canon\_load} &
- libexif-0.6.10/libexif/canon/exif-mnote-data-canon.c:237 \\
-
-	 &          & \emph{and} $\text{offset} < \text{len}$ & \func{exif\_data\_load\_data} & libexif-0.6.10/libexif/exif-data.c:644 \\
+0.941385 & $\text{o} + \text{s} > \text{buf\_size}$ is TRUE & \func{exif\_mnote\_data\_canon\_load} & exif-mnote-data-canon.c:237 \\
+         & \emph{and} $\text{offset} < \text{len}$ & \func{exif\_data\_load\_data} & exif-data.c:644 \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -115,10 +113,10 @@ We generated 1,000 runs of \prog{ccrypt}, again using randomly selected command 
 \scriptsize
 \begin{tabular}{lllllll}
 \toprule
-initial & effective & true successes & false successes & Predicate & Function & File\:line \\
+Score & True Successes & False Successes & Predicate & Function & File:Line \\
 \midrule
-0.431678 & 0.431678 & 0 & 342 & $\text{xreadline} == \text{0}$ & \func{prompt} & src/traverse.c:122 \\
-0.385597 & 0 & 200 & 342 & $\text{res} == \text{(char *)0}$ & \func{xreadline} & src/xalloc.c:43 \\
+0.431678 & 0 & 342 & $\text{xreadline} == \text{0}$ & \func{prompt} & traverse.c:122 \\
+0 & 200 & 342 & $\text{res} == \text{(char *)0}$ & \func{xreadline} & xalloc.c:43 \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -132,11 +130,10 @@ An initial analysis of only simple predicates finds $p_1:$ \texttt{xreadline == 
 \scriptsize
 \begin{tabular}{lllllll}
 \toprule
-initial & effective & true successes & false successes & Predicate & Function & File\:line \\
+Score & True Successes & False Successes & Predicate & Function & File:Line \\
 \midrule
-0.72814 & 0 & 0 & 342 & $\text{xreadline} == \text{0}$ & \func{prompt} & src/traverse.c:12 \\
-
-	&   &   &     & \emph{and} $\text{res} == \text{(char *)0}$ & \func{xreadline} & src/xalloc.c:43 \\
+0.72814 & 0 & 342 & $\text{xreadline} == \text{0}$ & \func{prompt} & traverse.c:12 \\
+	&   &     & \emph{and} $\text{res} == \text{(char *)0}$ & \func{xreadline} & xalloc.c:43 \\
 \bottomrule
 \end{tabular}
 \end{table*}
