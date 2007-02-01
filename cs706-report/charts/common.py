@@ -81,8 +81,10 @@ def appsCoord(overall=False):
 
 
 def __format_app(app):
-    if app == 'print_tokens2': app = 'print_\ntokens2'
-    if app != 'Overall': app = '/C' + app
+    if app.startswith('print_'):
+        app = app.replace('_', '_\n')
+    if app != 'Overall':
+        app = '/C' + app
     return '/a90/6' + app
 
 
