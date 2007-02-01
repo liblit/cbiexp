@@ -66,32 +66,31 @@ Consider a complex predicate $C = p_1 \wedge p_2$.  If either $r(p_1)$ or $r(p_2
 Similarly one true value proves a disjunction, and so a disjunction is $\false$ only if its components were observed $\false$ and not $\unknown$.  The truth table for complex predicate $D = p_1 \vee p_2$ is shown in \autoref{tab:or}.
 
 \begin{table}
-  \caption{Three-valued Truth Table for $C = p_1 \wedge p_2$}
-  \label{tab:and}
-  \centering
-  \begin{tabular}{c|ccc}
-    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-    $p_1 \diagdown p_2$ & T & F & ? \\
-    \hline
-    T & T & F & ? \\
-    F & F & F & F \\
-    ? & ? & F & ? \\
-  \end{tabular}
-\end{table}
-
-
-\begin{table}
-  \caption{Three-valued Truth Table for $D = p_1 \vee p_2$}
-  \label{tab:or}
-  \centering
-  \begin{tabular}{c|ccc}
-    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-    $p_1 \diagdown p_2$ & T & F & ? \\
-    \hline
-    T & T & T & T \\
-    F & T & F & ? \\
-    ? & T & ? & ? \\
-  \end{tabular}
+  \caption{Three-valued truth tables for complex predicates}
+  \label{tab:truth-tables}
+  \hfill
+  \subfloat[Conjunction: $p_1 \wedge p_2$]{%
+    \label{tab:and}
+    \centering
+    \begin{tabular}{c|ccc}
+      $p_1 \diagdown p_2$ & T & F & ? \\
+      \hline
+      T & T & F & ? \\
+      F & F & F & F \\
+      ? & ? & F & ? \\
+    \end{tabular}}
+  \hfill
+  \subfloat[Disjunction: $p_1 \vee p_2$]{%
+    \label{tab:or}
+    \centering
+    \begin{tabular}{c|ccc}
+      $p_1 \diagdown p_2$ & T & F & ? \\
+      \hline
+      T & T & T & T \\
+      F & T & F & ? \\
+      ? & T & ? & ? \\
+    \end{tabular}}
+  \hspace*{\fill}
 \end{table}
 
 \subsection{Interesting Complex Predicates}
