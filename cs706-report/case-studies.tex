@@ -121,7 +121,7 @@ Score & True Successes & False Successes & Predicate & Function & File:Line \\
 \end{tabular}
 \end{table*}
 
-An initial analysis of only simple predicates finds $p_1:$ \texttt{xreadline == 0} as the top predictor of failure: true in no successes and all 342 failed runs, verifying our assumptions.  The related predicate $p_2$: \texttt{res == (char *)0} scores substantially lower, appearing in all failures but a large number of successes.  $p_2$'s reported score is low enough that without knowledge of the nature of the bug a programmer would be likely to overlook its significance, and because of its relationship to $p_1$ it is removed by the redundancy elimination algorithm.  More importantly, traditional CBI analysis reveals no connection between the two predictors to the programmer, despite the fact that $p_2$, a necessary but not sufficient condition for failure, is subordinate to $p_1$ in predicting a crash.
+An initial analysis of only simple predicates (\autoref{tab:tbl3}) finds $p_1:$ \texttt{xreadline == 0} as the top predictor of failure: true in no successes and all 342 failed runs, verifying our assumptions.  The related predicate $p_2$: \texttt{res == (char *)0} scores substantially lower, appearing in all failures but a large number of successes.  $p_2$'s reported score is low enough that without knowledge of the nature of the bug a programmer would be likely to overlook its significance, and because of its relationship to $p_1$ it is removed by the redundancy elimination algorithm.  More importantly, traditional CBI analysis reveals no connection between the two predictors to the programmer, despite the fact that $p_2$, a necessary but not sufficient condition for failure, is subordinate to $p_1$ in predicting a crash.
 
 \begin{table*}
 \caption{Results for \prog{ccrypt} with complex predicates}
@@ -138,7 +138,7 @@ Score & True Successes & False Successes & Predicate & Function & File:Line \\
 \end{tabular}
 \end{table*}
 
-When complex predicates are included in the analysis, a conjunction of $p_1$ and $p_2$ is among the top predictors.  This provides little help in finding the bug, which is easily identified by traditional CBI analysis, but it does reveal the nature of $p_2$ as a partial predictor.  The conjunction $p_1 \wedge p_2$ is observed in more successful runs than $p_1$ alone, but is true in the same number of successes and failures.  That $p_1$ can be conjoined with $p_2$ without affecting $p_1$'s predictive power demonstrates a connection between the two predicates, in this case suggesting that $p_1 \implies p_2$.
+When complex predicates are included in the analysis (\autoref{tab:tbl4}), a conjunction of $p_1$ and $p_2$ is among the top predictors.  This provides little help in finding the bug, which is easily identified by traditional CBI analysis, but it does reveal the nature of $p_2$ as a partial predictor.  The conjunction $p_1 \wedge p_2$ is observed in more successful runs than $p_1$ alone, but is true in the same number of successes and failures.  That $p_1$ can be conjoined with $p_2$ without affecting $p_1$'s predictive power demonstrates a connection between the two predicates, in this case suggesting that $p_1 \implies p_2$.
 
 This implication is detectable because the experiment is run using complete data collection.  Results taken using sparse sampling rates would have made this detection impossible, given the likelihood of $p_2$ being unobserved in a run where $p_1$ was true.
 
