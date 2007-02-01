@@ -22,6 +22,8 @@ $(PDF): %.pdf: $(SRCS) $(BBL) $(pdfs)
 	$(pdflatex) $*
 	thumbpdf $*
 	$(pdflatex) $*
+	mv $@ $@.nonopt
+	pdfopt $@.nonopt $@
 
 $(BBL): %.bbl: $(SRCS) $(epss)
 	$(latex) $*
@@ -51,6 +53,6 @@ charts/effort-conj.eps charts/effort-disj.eps charts/effort-conj.pdf charts/effo
 	python $< $@ $(subst effort-, , $(basename $(@F)))
 
 clean:
-	rm -f $(PS) $(PDF) $(DVI) $(BBL) $(MAIN).aux $(MAIN).out $(pdfs) $(pycharts:%=charts/%.eps) charts/sampling-rows.tex
+	rm -f $(PS) $(PDF) $(DVI) $(BBL) $(MAIN).aux $(MAIN).out $(MAIN).pdf.nonopt $(pdfs) $(pycharts:%=charts/%.eps) charts/sampling-rows.tex
 
 .DELETE_ON_ERROR:
