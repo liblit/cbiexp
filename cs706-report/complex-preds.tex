@@ -126,9 +126,9 @@ For some unknown quantity $x$, let $\ub{x}$ and $\lb{x}$ denote estimated upper
 and lower bounds on the exact value of $x$, respectively.
 
 Using an upper bound as the estimate of $\Importance$ guarantees that no
-predicate is pruned erroneously.  This upper bound can be determined by maximizing
-$\Increase(p)$ and $F(p)$ under constraints based on the propositional operation.
-$\Importance(P)$ (\autoref{eqn2}), being a harmonic mean of these two terms, will
+predicate is pruned erroneously.  This upper bound can be computed by maximizing
+$\Increase(p)$ and $log(F(p))/log(\NumF)$ under constraints based on the boolean operation.
+$\Importance(p)$ (\autoref{eqn2}), being a harmonic mean of these two terms, will
 likewise be maximized.  From \autoref{eqn1}, an increase in $F(p)$ or $\obs{S}{p}$
 or a decrease in $S(p)$ or $\obs{F}{p}$ will increase the value of $\Increase(p)$.
 So an upper bound on $\Increase(p)$ is
@@ -140,6 +140,10 @@ So an upper bound on $\Increase(p)$ is
 -
 \frac{\lb{\obs{F}{p}}}{\ub{\obs{S}{p}} + \lb{\obs{F}{p}}}
 \end{equation}
+
+The second component of $\Importance$ is $log(F(p))/log(\NumF)$.  $\NumF$
+being a constant, maximizing $F(p)$ yields an upper bound of this term.  Note that
+$\ub{F(p)}$ is also required for the upper bound of the first term, $\Increase(p)$
 
 Consider a conjunction $C = p_1 \wedge p_2$ and a set of runs $R$.  From \autoref{tab:and}, $C$ is
 observed $\true$ if both $p_1$ and $p_2$ were observed $\true$.  Equivalently, the set
