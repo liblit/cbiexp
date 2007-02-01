@@ -169,10 +169,10 @@ $\false$.
 To maximize $\obs{R}{C}$, instances of both of these cases should be
 maximized.
 There are $\Min{R(p_1)}{R(p_2)}$ applications of Rule 1 when the set
-of runs in which $p_1$ and $p_2$ are observed completely overlap.
+of runs in which $p_1$ and $p_2$ are observed $\true$ completely overlap.
 There are $\obsFalse{R}{p_1} + \obsFalse{R}{p_2}$ applications of Rule
 2 when the sets of runs in which $p_1$ and $p_2$ are observed and never $\true$ are
-completely non-overlapping.
+non-overlapping.
 However, there has to be an overlap between these cases if their sum exceeds
 $|R|$, the total number of runs.  Thus,
 \begin{equation*}
@@ -180,7 +180,7 @@ $|R|$, the total number of runs.  Thus,
                    + \Min{R(p_1)}{R(p_2)}}
 \end{equation*}
 
-Finally, to minimize $\obs{R}{C}$, applications of the two rules above are
+Finally, to minimize $\obs{R}{C}$, applications of the two rules mentioned above are
 minimized.  This can happen when
 \begin{enumerate}
 \item the $\false$ observations of $p_1$ and $p_2$ completely overlap, contributing
