@@ -37,14 +37,3 @@ definition "highly correlated" predicate combinations are selected;
 this means a programmer has a potentially huge intersection set to
 search through for the item which 1. connects the components and 
 2. relates to the bug.
-
-------------------------------------------------------------------------
---
---  Section 6
---
-
-Section 6.4 gives the complex predicate sampling rate as r^2, where r is the
-sampling rate for a simple predicate.  The sampling rate is actually better
-because of 3-valued logic, e.g. one false predicate observation disproves a
-conjunction.  Mentioning this may help explain why interesting complex
-preds can still be found at high sampling rates.
