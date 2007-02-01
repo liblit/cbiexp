@@ -37,7 +37,7 @@ We generated 1,000 runs of the program using randomly generated command line arg
 Score & Predicate & Function & File:Line \\
 \midrule
 0.704974 & $\text{new value of len} == \text{old value of len}$ & \func{jpeg\_data\_load\_data} & jpeg-data.c:224 \\
-0.589484 & $\text{i} == \text{s}$ & \func{exif\_mnote\_data\_canon\_save} & exif-mnote-data-canon.c:176 \\
+0.395001 & $\text{i} == \text{s}$ & \func{exif\_mnote\_data\_canon\_save} & exif-mnote-data-canon.c:176 \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -116,12 +116,12 @@ We generated 1,000 runs of \prog{ccrypt}, again using randomly selected command 
 Score & True Successes & False Successes & Predicate & Function & File:Line \\
 \midrule
 0.431678 & 0 & 342 & $\text{xreadline} == \text{0}$ & \func{prompt} & traverse.c:122 \\
-0 & 200 & 342 & $\text{res} == \text{(char *)0}$ & \func{xreadline} & xalloc.c:43 \\
+0.385597 & 200 & 342 & $\text{res} == \text{(char *)0}$ & \func{xreadline} & xalloc.c:43 \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
-An initial analysis of only simple predicates finds $p_1:$ \texttt{xreadline == 0} as the top predictor of failure: true in no successes and all 342 failed runs, verifying our assumptions.  The related predicate $p_2$: \texttt{res == (char *)0} scores substantially lower, appearing in all failures but a large number of successes.  $p_2$'s reported score is low enough that without knowledge of the nature of the bug a programmer would be likely to overlook its significance, and because of its relationship to $p_1$ it is removed by the redundancy elimination algorithm (see \autoref{tab:tbl3}).  More importantly, traditional CBI analysis reveals no connection between the two predictors to the programmer, despite the fact that $p_2$, a necessary but not sufficient condition for failure, is subordinate to $p_1$ in predicting a crash.
+An initial analysis of only simple predicates finds $p_1:$ \texttt{xreadline == 0} as the top predictor of failure: true in no successes and all 342 failed runs, verifying our assumptions.  The related predicate $p_2$: \texttt{res == (char *)0} scores substantially lower, appearing in all failures but a large number of successes.  $p_2$'s reported score is low enough that without knowledge of the nature of the bug a programmer would be likely to overlook its significance, and because of its relationship to $p_1$ it is removed by the redundancy elimination algorithm.  More importantly, traditional CBI analysis reveals no connection between the two predictors to the programmer, despite the fact that $p_2$, a necessary but not sufficient condition for failure, is subordinate to $p_1$ in predicting a crash.
 
 \begin{table*}
 \caption{Results for \prog{ccrypt} with complex predicates}
@@ -146,7 +146,7 @@ This result provides evidence that complex predicate analysis can automatically 
 
 \paragraph{Threats to validity}
 
-The version of \prog{ccrypt} used in this experiment had only one bug visible to our test suite.  The statistically demonstrated relationship between $p_1$ and $p_2$ is discovered in the absence of predictors for other bugs, which may affect the results.  Intuitively an unrelated bug would cause faults in different program runs, allowing the analysis to distinguish between unrelated sets of predictors, but we have not demonstrated this.  Further experimentation is needed to determine if this analysis retains this power in the face of multiple bugs.  Additionally the predictor $p_1 \wedge p_2$, though it scores highly, is not top-ranked, and in fact is discarded by the redundancy elimination algorithm (see \autoref{tab:tbl4}) due to the large number of similar predicates.  Knowledge of the code and the component predicates is necessary to distinguish it as important.  This once again demonstrates the need for techniques to effectively filter through large numbers of complex predicates, as discussed in \autoref{sec-metrics}.
+The version of \prog{ccrypt} used in this experiment had only one bug visible to our test suite.  The statistically demonstrated relationship between $p_1$ and $p_2$ is discovered in the absence of predictors for other bugs, which may affect the results.  Intuitively an unrelated bug would cause faults in different program runs, allowing the analysis to distinguish between unrelated sets of predictors, but we have not demonstrated this.  Further experimentation is needed to determine if this analysis retains this power in the face of multiple bugs.  Additionally the predictor $p_1 \wedge p_2$, though it scores highly, is not top-ranked, and in fact is discarded by the redundancy elimination algorithm due to the large number of similar predicates.  Knowledge of the code and the component predicates is necessary to distinguish it as important.  This once again demonstrates the need for techniques to effectively filter through large numbers of complex predicates, as discussed in \autoref{sec-metrics}.
 
 % LocalWords:  ccrypt mnote buf tbl lllll len jpeg pred preidentify xreadline
 % LocalWords:  lllllll src BTrace
