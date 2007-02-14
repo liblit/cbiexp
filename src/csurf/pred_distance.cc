@@ -120,7 +120,7 @@ void read_effort() {
     
   size = total_size();
   tmp = size * percent / 100;
-  effort = round(tmp);
+  effort = lround(tmp);
   printf("%d %d\n", size, effort);
 }
 
