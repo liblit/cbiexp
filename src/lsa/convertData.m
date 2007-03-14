@@ -11,7 +11,7 @@ function convertData()
 
 % Build X
 function X = buildCounts(X, dimensions, Findices, Sindices)
-  X = zeroDiscards(convertCounts(X, dimensions), Findices, Sindices)
+  X = zeroDiscards(convertCounts(X, dimensions), Findices, Sindices);
 
 % Pads the matrix to the appropriate length
 function X = convertCounts(X,dimensions)
