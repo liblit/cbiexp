@@ -33,7 +33,7 @@
 % http://people.csail.mit.edu/fergus/iccv2005/bagwords.html 
 % as part of a short course on recognizing and learning object categories.
 
-function [Pw_z,Pd_z,Pz,Pw,Pd,Pz_w,Pz_d,Li] = pLSA_EM(X,Learn,Sindices)
+function [Pw_z,Pd_z,Pz,Li] = pLSA_EM(X,Learn,Sindices)
 
 if nargin < 2
     error('pLSA_EM called with incomplete specification.');
@@ -97,11 +97,6 @@ for it = 1:maxit
        if dLi < Learn.Min_Likelihood_Change, break; end;   
    end;
 end;
-
-Pw = marginalize(Pw_z, Pz);
-Pd = marginalize(Pd_z, Pz);
-Pz_d = applyBayes(Pd_z,Pz,Pd);
-Pz_w = applyBayes(Pw_z,Pz,Pw); 
 
 return;
 
