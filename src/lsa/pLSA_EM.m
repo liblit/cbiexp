@@ -33,7 +33,7 @@
 % http://people.csail.mit.edu/fergus/iccv2005/bagwords.html 
 % as part of a short course on recognizing and learning object categories.
 
-function [Pw_z,Pd_z,Pz,Pz_d,Li] = pLSA_EM(X,Learn,Sindices)
+function [Pw_z,Pd_z,Pz,Pw,Pd,Pz_w,Pz_d,Li] = pLSA_EM(X,Learn,Sindices)
 
 if nargin < 2
     error('pLSA_EM called with incomplete specification.');
@@ -98,7 +98,10 @@ for it = 1:maxit
    end;
 end;
 
-Pz_d = invertProbs(Pd_z,Pz);
+Pw = marginalize(Pw_z, Pz);
+Pd = marginalize(Pd_z, Pz);
+Pz_d = applyBayes(Pd_z,Pz,Pd);
+Pz_w = applyBayes(Pw_z,Pz,Pw); 
 
 return;
 
@@ -204,14 +207,4 @@ function [Pw_z,Pd_z,Pz] = pLSA_Mstep(X,Pz_dw,K,Sindices,KbIndices)
    end;
    Pz = Pz .* 1./C;
 
-return;
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% use Bayes rule to invert probabilities
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function Px_y = invertProbs(Py_x, Px)
-    Px_y = Py_x * diag(Px);
-    Sx_y = sum(Px_y,2); 
-    Sx_y = invertNonZeros(Sx_y); 
-    Px_y = Px_y' * diag(Sx_y);
 return;

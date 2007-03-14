@@ -15,9 +15,9 @@ function runOnce()
     seed = sum(100*clock);
     rand('state',seed);
 
-    [Pw_z,Pd_z,Pz,Pz_d, Li] = pLSA_EM(X, Learn, Sindices);
+    [Pw_z,Pd_z,Pz,Pw,Pd,Pz_w,Pz_d,Li] = pLSA_EM(X, Learn, Sindices);
 
-    save -mat results.mat Pw_z Pd_z Pz Pz_d Li seed Learn
+    save -mat results.mat Pw_z Pd_z Pz Pw Pd Pz_w Pz_d Li seed Learn
 
     out = fopen('loglikelihood.txt', 'w');
     fprintf(out, '%.0f\n', Li(end));
