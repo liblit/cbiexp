@@ -168,6 +168,11 @@ int main(int argc, char** argv)
         outobs.close();
     }
 
+    //We record the dimensions of the data matrix. We don't want zero
+    //entries on the right hand side to cause the matrix to be truncated. 
+    //count() returns exactly the difference between the start and end
+    //specified, so the matrix may include all zero columns corresponding
+    //to discarded runs. This is OK---the pLSA algorithm ignores these runs.
     {
         ofstream out("X.dimensions");
         out <<  PredStats::count() << " " << NumRuns::count() << "\n";  
