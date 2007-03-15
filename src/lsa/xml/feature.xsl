@@ -61,31 +61,6 @@
     </html> 
   </xsl:template>
 
-  <xsl:template name="selectrun">
-    <xsl:param name="runindex"/>
-    <table>
-      <tbody>
-        <tr>
-          <th style="text-align:left">
-            Index:
-          </th>
-          <td style="text-align:right">
-            <xsl:value-of select="$runindex"/>
-          </td>
-        </tr>
-        <xsl:variable name="run" select="$runs[position() = $runindex]"/>
-        <tr>
-          <th style="text-align:left">
-            Length:
-          </th>
-          <td style="text-align:right">
-            <xsl:value-of select="$run/@totalcount"/>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </xsl:template>
-
   <xsl:template match="cbi:runstats">
     <table>
       <tbody>
@@ -119,20 +94,6 @@
             <xsl:value-of select="@runlengthstd"/>
           </td>
         </tr>
-        <tr>
-          <th style="text-align:left">
-            Best Run
-            <xsl:call-template name="selectrun">
-              <xsl:with-param name="runindex" select="@bestrun"/>
-            </xsl:call-template>
-          </th>
-          <th style="text-align:left">
-            Worst Run
-            <xsl:call-template name="selectrun">
-              <xsl:with-param name="runindex" select="@worstrun"/>
-            </xsl:call-template>
-          </th>
-        </tr>
       </tbody>
     </table>
     <h3>Aspect Probabilities</h3> 
@@ -153,10 +114,6 @@
       <th><xsl:value-of select="@index"/></th>
       <td><xsl:value-of select="@probability"/></td>
       <td><xsl:value-of select="@cumulative"/></td>
-      <td><xsl:value-of select="@bestcount"/></td> 
-      <td><xsl:value-of select="@bestprediction"/></td>
-      <td><xsl:value-of select="@worstcount"/></td>
-      <td><xsl:value-of select="@worstprediction"/></td>
       <xsl:apply-templates select="$preds[number($index)]" mode="static-cells">
          <xsl:with-param name="source-dir" select="$source-dir"/>
       </xsl:apply-templates>
@@ -169,10 +126,6 @@
         <th>Index</th>
         <th>Probability</th>
         <th>Cumulative</th>
-        <th>Best Count</th>
-        <th>Best Prediction</th>
-        <th>Worst Count</th>
-        <th>Worst Prediction</th>
         <th>Predicate</th>
         <th>Function</th>
         <th>File:Line</th>

@@ -9,10 +9,6 @@
 <!ELEMENT feature EMPTY>
 <!ATTLIST feature index NMTOKEN #REQUIRED>
 <!ATTLIST feature probability NMTOKEN #REQUIRED>
-<!ATTLIST feature bestcount NMTOKEN #REQUIRED>
-<!ATTLIST feature bestprediction NMTOKEN #REQUIRED>
-<!ATTLIST feature worstcount NMTOKEN #REQUIRED>
-<!ATTLIST feature worstprediction NMTOKEN #REQUIRED>
 
 <!ELEMENT run EMPTY> 
 <!ATTLIST run index NMTOKEN #REQUIRED>
@@ -35,4 +31,3 @@
 <!ATTLIST runstats minrunlength NMTOKEN #REQUIRED>
 <!ATTLIST runstats meanrunlength NMTOKEN #REQUIRED>
 <!ATTLIST runstats runlengthstd NMTOKEN #REQUIRED>
-<!ATTLIST runstats bestrun NMTOKEN #REQUIRED> 

@@ -49,15 +49,6 @@
         <xsl:attribute name="runlengthstd">
           <xsl:value-of select="@runlengthstd"/>
         </xsl:attribute> 
-        <xsl:attribute name="bestrun">
-          <xsl:variable name="best" select="runid[@llrank='1']"/>
-          <xsl:value-of select="$best/@index"/>
-        </xsl:attribute>
-        <xsl:attribute name="worstrun">
-          <xsl:variable name="numruns" select="count(runid)"/>
-          <xsl:variable name="worst" select="runid[@llrank=$numruns]"/>
-          <xsl:value-of select="$worst/@index"/>
-        </xsl:attribute>
         <xsl:apply-templates select="aspectprobability" mode="rawfeature"/>
       </xsl:element>
     </xsl:element>
@@ -74,18 +65,6 @@
       </xsl:attribute>
       <xsl:attribute name="probability">
         <xsl:apply-templates select="$aspectentry" mode="rawfeature"/>
-      </xsl:attribute>
-      <xsl:attribute name="bestcount">
-        <xsl:value-of select="@bestcount"/>
-      </xsl:attribute>
-      <xsl:attribute name="bestprediction">
-        <xsl:value-of select="@bestprediction"/>
-      </xsl:attribute>
-      <xsl:attribute name="worstcount">
-        <xsl:value-of select="@worstcount"/>
-      </xsl:attribute>
-      <xsl:attribute name="worstprediction">
-        <xsl:value-of select="@worstprediction"/>
       </xsl:attribute>
     </xsl:element>
   </xsl:template>

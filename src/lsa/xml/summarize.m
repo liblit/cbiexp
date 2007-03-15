@@ -26,15 +26,13 @@ function summarize()
     printruns(Learn, Findices, Sindices, UsageClusters, BugClusters, X);
     quit;
 
-function [best, worst] = printclaimedruns(fid, runindices, Pz_d, LM)
+function printclaimedruns(fid, runindices, Pz_d, LM)
     runloglikelihoods = sum(LM(:,runindices),1); 
     [V,I] = sort(full(runloglikelihoods), 2, 'descend');
     for j = 1:numel(runindices);
        rank = find(I == j);
        fprintf(fid, '<runid index=\"%u\" llrank=\"%u\" llvalue=\"%f\"/>', runindices(j), rank, V(rank));
     end;
-    best = runindices(I(1));
-    worst = runindices(I(end));
     return; 
 
 function printaspects(fid, Learn, Clusters,Pw_z,X,Pz_d,LM)  
@@ -52,14 +50,10 @@ function printaspects(fid, Learn, Clusters,Pw_z,X,Pz_d,LM)
        [S,I] = sort(Pw_z(:,i), 1, 'descend');
        counts = full(Sum(runindices));
        fprintf(fid, '<aspect index=\"%u\" kind=\"%s\" ratio=\"%1.4f\" maxrunlength=\"%u\" minrunlength=\"%u\" meanrunlength=\"%u\" runlengthstd=\"%u\">\n', i, kind, sum(S(1:topnum)),max(counts),min(counts),round(mean(counts)),round(std(counts)));
-       [bestindex, worstindex] = printclaimedruns(fid, runindices, Pz_d, LM);
-       BP = Pw_z * Pz_d(:,bestindex);
-       WP = Pw_z * Pz_d(:,worstindex);
-       bestcount = sum(X(:,bestindex),1);
-       worstcount = sum(X(:,worstindex),1);
+       printclaimedruns(fid, runindices, Pz_d, LM);
        for j = 1:topnum;
            featureindex = I(j);
-           fprintf(fid, '<featureclaimed index=\"%u\" bestcount=\"%u\" bestprediction=\"%u\" worstcount=\"%u\" worstprediction=\"%u\"/>', featureindex, X(featureindex, bestindex), round(full(BP(featureindex) * bestcount)), X(featureindex, worstindex), round(full(WP(featureindex) * worstcount)));
+           fprintf(fid, '<featureclaimed index=\"%u\"/>', featureindex);
        end;
        for k = 1:numaspects;
            vals = Pz_d(k,runindices); 
