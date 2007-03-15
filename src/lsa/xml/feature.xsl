@@ -15,6 +15,7 @@
 
   <xsl:variable name="preds" select="document('predictor-info.xml')/predictor-info/info"/>
   <xsl:variable name="runs" select="document('runs.xml')/runinfos/run"/>
+  <xsl:variable name="source-dir" select="document('summary.xml',/)/plsa/@source-dir"/>
 
   <xsl:output method="html"/>
 
@@ -156,7 +157,9 @@
       <td><xsl:value-of select="@bestprediction"/></td>
       <td><xsl:value-of select="@worstcount"/></td>
       <td><xsl:value-of select="@worstprediction"/></td>
-      <xsl:apply-templates select="$preds[number($index)]" mode="static-cells"/>
+      <xsl:apply-templates select="$preds[number($index)]" mode="static-cells">
+         <xsl:with-param name="source-dir" select="$source-dir"/>
+      </xsl:apply-templates>
     </tr>
   </xsl:template>
 

@@ -1,5 +1,6 @@
 <!-- results from one plsa analysis -->
 <!ELEMENT plsa (aspect*)> 
+<!ATTLIST plsa source-dir CDATA #REQUIRED>
 
 <!-- a wrapper for runid refs -->
 <!ELEMENT runid EMPTY>

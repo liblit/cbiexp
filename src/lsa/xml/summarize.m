@@ -18,7 +18,7 @@ function summarize()
     fid = fopen('summary.xml', 'wt');
     fprintf(fid, '<?xml version=\"1.0\"?>\n');
     fprintf(fid, '<!DOCTYPE plsa SYSTEM "summary.dtd">\n'); 
-    fprintf(fid, '<plsa>\n');
+    fprintf(fid, '<plsa source-dir="../../../../src">\n');
     printaspects(fid, Learn, Clusters, Pw_z,X,Pz_d,LM);
     fprintf(fid, '</plsa>\n');
     fclose(fid);
