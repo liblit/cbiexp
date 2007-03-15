@@ -86,12 +86,6 @@
       <xsl:attribute name="totalcount">
         <xsl:value-of select="$run/@totalcount"/>
       </xsl:attribute>
-      <xsl:attribute name="llrank">
-        <xsl:value-of select="@llrank"/>
-      </xsl:attribute>
-      <xsl:attribute name="llvalue">
-        <xsl:value-of select="@llvalue"/>
-      </xsl:attribute>
     </xsl:element>
   </xsl:template>
 

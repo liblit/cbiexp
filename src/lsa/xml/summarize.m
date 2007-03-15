@@ -27,11 +27,8 @@ function summarize()
     quit;
 
 function printclaimedruns(fid, runindices, Pz_d, LM)
-    runloglikelihoods = sum(LM(:,runindices),1); 
-    [V,I] = sort(full(runloglikelihoods), 2, 'descend');
     for j = 1:numel(runindices);
-       rank = find(I == j);
-       fprintf(fid, '<runid index=\"%u\" llrank=\"%u\" llvalue=\"%f\"/>', runindices(j), rank, V(rank));
+       fprintf(fid, '<runid index=\"%u\"/>', runindices(j));
     end;
     return; 
 
