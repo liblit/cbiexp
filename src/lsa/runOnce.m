@@ -23,8 +23,10 @@ function runOnce()
     Pz_w = applyBayes(Pw_z,Pz,Pw); 
     Pd_w = Pd_z * Pz_w;
     Pw_d = Pw_z * Pz_d; 
+    [Sd, Id] = sortMinDiffs(Pz_d);
+    [Sw, Iw] = sortMinDiffs(Pz_w);
 
-    save -mat results.mat Pw_z Pd_z Pz Pw Pd Pz_w Pz_d Pd_w Pw_d Li seed Learn
+    save -mat results.mat Pw_z Pd_z Pz Pw Pd Pz_w Pz_d Pd_w Pw_d Sd Id Sw Iw Li seed Learn
 
     out = fopen('loglikelihood.txt', 'w');
     fprintf(out, '%.0f\n', Li(end));
