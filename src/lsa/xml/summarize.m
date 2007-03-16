@@ -14,25 +14,28 @@ function summarize()
         NX = X;
     end;
     [I,J,V] = find(NX);
-    [L,LM] = pLSA_logL(I,J,V,Pw_z,Pz,Pd_z,size(NX,1),size(NX,2),nnz(NX)); 
     fid = fopen('summary.xml', 'wt');
     fprintf(fid, '<?xml version=\"1.0\"?>\n');
     fprintf(fid, '<!DOCTYPE plsa SYSTEM "summary.dtd">\n'); 
     fprintf(fid, '<plsa source-dir="../../../../src">\n');
-    printaspects(fid, Learn, Clusters, Pw_z,X,Pz_d,LM);
+    printaspects(fid, Learn, Clusters, Pw_z,X,Pz_d);
     fprintf(fid, '</plsa>\n');
     fclose(fid);
     printfeatures(Pw_z);
     printruns(Learn, Findices, Sindices, UsageClusters, BugClusters, X);
     quit;
 
-function printclaimedruns(fid, runindices, Pz_d, LM)
+function printclaimedruns(fid, aspectindex, runindices, Pz_d) 
+    Pz_d = Pz_d(:, runindices);
+    [Sd, Id] = sortMinDiffs(Pz_d, aspectindex); 
+    Pz_d = Pz_d(aspectindex,Id);
     for j = 1:numel(runindices);
-       fprintf(fid, '<runid index=\"%u\"/>', runindices(j));
+       index = runindices(Id(1,j));
+       fprintf(fid, '<runid index=\"%u\" Pz_d-diff=\"%0.4f\" Pz_d-abs=\"%0.4f\"/>', index, Sd(1, j), Pz_d(1, j));
     end;
     return; 
 
-function printaspects(fid, Learn, Clusters,Pw_z,X,Pz_d,LM)  
+function printaspects(fid, Learn, Clusters,Pw_z,X,Pz_d)
    topnum = 400;
    Sum = sum(X,1);
    numaspects = Learn.K;
@@ -47,7 +50,7 @@ function printaspects(fid, Learn, Clusters,Pw_z,X,Pz_d,LM)
        [S,I] = sort(Pw_z(:,i), 1, 'descend');
        counts = full(Sum(runindices));
        fprintf(fid, '<aspect index=\"%u\" kind=\"%s\" ratio=\"%1.4f\" maxrunlength=\"%u\" minrunlength=\"%u\" meanrunlength=\"%u\" runlengthstd=\"%u\">\n', i, kind, sum(S(1:topnum)),max(counts),min(counts),round(mean(counts)),round(std(counts)));
-       printclaimedruns(fid, runindices, Pz_d, LM);
+       printclaimedruns(fid, i, runindices, Pz_d);
        for j = 1:topnum;
            featureindex = I(j);
            fprintf(fid, '<featureclaimed index=\"%u\"/>', featureindex);

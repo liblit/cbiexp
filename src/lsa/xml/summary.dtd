@@ -5,6 +5,8 @@
 <!-- a wrapper for runid refs -->
 <!ELEMENT runid EMPTY>
 <!ATTLIST runid index NMTOKEN #REQUIRED>
+<!ATTLIST runid Pz_d-diff NMTOKEN #REQUIRED>
+<!ATTLIST runid Pz_d-abs NMTOKEN #REQUIRED> 
 
 <!-- a wrapper for feature id refs -->
 <!ELEMENT featureclaimed EMPTY>
