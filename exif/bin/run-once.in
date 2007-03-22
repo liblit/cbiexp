@@ -47,12 +47,19 @@ my $image = pick @images;
 note 'input-image', $image;
 copy $image, 'input.jpg' or die;
 
+my @flags;
 my @argv = ("$FindBin::Bin/../install/bin/exif");
 my $task = pick @tasks;
 push @argv, @$task;
-push @argv, '-m' if int rand 2;
+my $flag = @$task[0];
+push @flags, substr($flag,1) if $flag;
+if (int rand 2) {
+  push @argv, '-m';
+  push @flags, 'm';
+};
 push @argv, 'input.jpg';
 note 'command-line', "@argv";
+note 'flags', "@flags";
 
 open STDOUT, '>', 'stdout' or die;
 open STDERR, '>', 'stderr' or die;
