@@ -27,6 +27,12 @@
 
 /* #define DEBUG */
 
+#pragma sampler_exclude_function("bugIf")
+static void bugIf(int condition)
+{
+  if(condition) fprintf(stderr, "Error 2: fewer than two jpeg sections.\n"); 
+}
+
 struct _JPEGDataPrivate
 {
 	unsigned int ref_count;
@@ -426,6 +432,7 @@ jpeg_data_set_exif_data (JPEGData *data, ExifData *exif_data)
 	if (!section) {
 		jpeg_data_append_section (data);
                 int i = sizeof (JPEGSection) * (data->count - 2);
+		bugIf(i < 0); 
                 if (i < 0) abort();
 		memmove (&data->sections[2], &data->sections[1],
 			 sizeof (JPEGSection) * (data->count - 2));

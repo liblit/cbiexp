@@ -32,6 +32,12 @@
 
 #define DEBUG
 
+#pragma sampler_exclude_function("bugIf")
+static void bugIf(int condition)
+{
+  if(condition) fprintf(stderr, "Error 3: exif_mnote_data_canon_{load,save} out of sync.\n");
+}
+
 static void
 exif_mnote_data_canon_clear (ExifMnoteDataCanon *n)
 {
@@ -186,6 +192,7 @@ exif_mnote_data_canon_save (ExifMnoteData *ne,
 			doff = o;
 
 		/* Write the data. Fill unneeded bytes with 0. */
+		bugIf (n->entries[i].data == NULL); 
 		memcpy (*buf + doff, n->entries[i].data, s);
 		if (s < 4) memset (*buf + doff + s, 0, (4 - s));
 	}

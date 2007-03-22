@@ -31,6 +31,12 @@
 #define ENTRY_FOUND     "   *   "
 #define ENTRY_NOT_FOUND "   -   "
 
+#pragma sampler_exclude_function("bugIf")
+static void bugIf(int condition)
+{
+  if(condition) fprintf(stderr, "Error 1: printing null string in -m mode.\n");
+}
+
 void
 action_tag_table (const char *filename, ExifData *ed)
 {
@@ -169,6 +175,7 @@ show_entry_machine (ExifEntry *e, void *data)
 	if (*ids) fprintf (stdout, "0x%04x", e->tag);
 	else fprintf (stdout, "%s", exif_tag_get_title (e->tag));
 	printf ("\t");
+  bugIf(exif_entry_get_value(e, v, sizeof(v)) == NULL);
 	fprintf (stdout, "%s", exif_entry_get_value (e, v, sizeof (v)));
 	fputc ('\n', stdout);
 }
