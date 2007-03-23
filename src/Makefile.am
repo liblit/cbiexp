@@ -33,6 +33,7 @@ noinst_PROGRAMS =				\
 	max-observed				\
 	oracle					\
 	partial_order				\
+        process_run_flags                       \
 	process_run_labels			\
 	project					\
 	sampling-plans/uniform			\
@@ -135,6 +136,9 @@ oracle_LDADD = libanalyze.a -ldl
 partial_order_SOURCES = partial_order.cc
 partial_order_LDADD = libanalyze.a -ldl
 partial_order_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
+
+process_run_flags_SOURCES = process_run_flags.cc
+process_run_flags_LDADD = libanalyze.a
 
 process_run_labels_SOURCES = process_run_labels.cc
 process_run_labels_LDADD = libanalyze.a
