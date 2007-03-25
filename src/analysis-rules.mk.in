@@ -450,7 +450,7 @@ plsa/Xobs.sparse Xtru.sparse plsa/X.dimensions: $(datadir)/stamp-labels plsa
 
 plsa/GNUmakefile plsa/site-rules.mk: plsa
 	echo '-include site-rules.mk' > plsa/GNUmakefile
-	echo 'include $(tooldir)/lsa/analysis-rules.mk' >> plsa/GNUmakefile
+	echo 'include ../$(tooldir)/lsa/analysis-rules.mk' >> plsa/GNUmakefile
 	echo '#numaspects=' > plsa/site-rules.mk
 	echo '#numbugaspects=' >> plsa/site-rules.mk
 	echo '#numrestarts=' >> plsa/site-rules.mk
@@ -460,6 +460,11 @@ plsa:
 	mkdir plsa
 
 plsa_prepare: plsa/f.indices plsa/s.indices plsa/Xobs.sparse plsa/Xtru.sparse plsa/GNUmakefile plsa/site-rules.mk plsa/X.dimensions
+
+plsa_flags: flags.sparse
+	mv flags.sparse plsa/flags.sparse
+	mv flags.dimensions plsa/flags.dimensions
+
 clean::
 	rm -Rf plsa
 

@@ -8,6 +8,9 @@ MATLAB = matlab -nodisplay
 runsinfo.mat: Xobs.sparse Xtru.sparse f.indices s.indices
 	$(MATLAB) -r "path('$(tooldir)',path); convertData()" > /dev/null
 
+flagsinfo.mat: flags.sparse
+	$(MATLAB) -r "path('$(tooldir)',path); convertFlagsInfo()" > /dev/null
+
 initialize : runsinfo.mat
 
 numbugaspects := $(if $(numbugaspects),$(numbugaspects),0)
@@ -44,30 +47,26 @@ loglikelihoods.txt best:
 rank: loglikelihoods.txt best
 
 results.mat loglikelihood.txt:
-	-rm Xobs.sparse
-	-rm Xtru.sparse
-	-rm f.indices
-	-rm s.indices
 	-rm runsinfo.mat
 	-rm configure.m
-	ln ../../Xobs.sparse
-	ln ../../Xtru.sparse
-	ln ../../f.indices
-	ln ../../s.indices
 	ln ../../runsinfo.mat
 	ln ../configure.m
 	$(MATLAB) -r "path('$(tooldir)',path); runOnce()" > /dev/null
 	touch results.mat
 	touch loglikelihood.txt
 
-clusters.mat: results.mat runsinfo.mat
+clusters.mat: results.mat
 	$(MATLAB) -r "path('$(tooldir)',path); clusterByMaxAspect()" > /dev/null
 	touch clusters.mat
 
 plsa: results.mat loglikelihood.txt clusters.mat html/summary.xml
 	touch plsa
 
-html/summary.xml html/features.xml html/runs.xml: results.mat runsinfo.mat clusters.mat configure.m
+plsa_flags:
+	-rm flagsinfo.mat
+	ln ../../flagsinfo.mat
+
+html/summary.xml html/features.xml html/runs.xml: results.mat clusters.mat configure.m
 	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarize()" > /dev/null
 	mv summary.xml html/summary.xml
 	mv features.xml html/features.xml
