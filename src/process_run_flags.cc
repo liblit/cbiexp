@@ -53,6 +53,10 @@ int main(int argc, char** argv)
     }
     flags_file.close();
 
+    ofstream flags_dim("flags.dimensions");
+    flags_dim << counter - 1 << " " << 1; 
+    flags_dim.close();
+
     ofstream aspect_file("flags.oal");
     ofstream matlab_file("flags.sparse");
     Progress::Bounded progress("scanning flags", NumRuns::count());
