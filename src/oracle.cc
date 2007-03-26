@@ -54,10 +54,11 @@ class UnknownBugException
 * line of the file and with no preceding characters. 
 *******************************************************************************/
 int getBug(FILE* fp) {
-    char s[100];
-    int result = fscanf(fp, "About to trigger bug #%s\n", s);
+    char description[100];
+    char number[2];
+    int result = fscanf(fp, "Error %s: %s\n", number, description);
     if(result != 1) throw UnknownBugException(); 
-    return atoi(s);  
+    return atoi(number);
 }
 
 int main(int argc, char** argv)
@@ -65,19 +66,15 @@ int main(int argc, char** argv)
     process_cmdline(argc, argv);
     ios::sync_with_stdio(false);
 
-    vector <int> * bugIds = (new Bugs())->bugIndex(); 
+    ifstream bugs_file("bugs.txt");
+    unsigned int numbugs = 0;
+    string line;
+    while(getline(bugs_file, line)) numbugs++;
+    bugs_file.close();
 
-    /***************************************************************************
-    * Build map from bug ids to run ids
-    ***************************************************************************/
-    hash_map <int, RunSet> bug_run_map;
-
-    /************************************************************************ 
-     * We prefer to record failing runs that have gone unattributed to any
-     * particular bug, rather than throw them away.
-     ***********************************************************************/
-    RunSet unknown_runs;
-
+    ofstream bugs_dim("bugs.dimensions");
+    bugs_dim << numbugs << " " << 1;
+    bugs_dim.close(); 
 
     ifstream failures(ClassifyRuns::failuresFilename); 
     if (!failures) {
@@ -85,6 +82,8 @@ int main(int argc, char** argv)
         cerr << "cannot read " << ClassifyRuns::failuresFilename << ": " << strerror(code) << '\n';
         exit(code || 1);
     }
+
+    ofstream oraclefile("bugs.sparse");
 
     Progress::Unbounded progress("attributing failed runs");
 
@@ -99,31 +98,15 @@ int main(int argc, char** argv)
         FILE* fp = fopenRead(filename);
 	try {
             int bugId = getBug(fp);
-	    bug_run_map[bugId].set(runId);
+	    oraclefile << bugId << " " << runId + 1 << " 1\n"; 
         }
 	catch(UnknownBugException & e) {
-	    unknown_runs.set(runId);
+	    oraclefile << numbugs + 1 << " " << runId + 1 << " 0\n"; 
 	}
         fclose(fp);
     }
     failures.close();
-
-    /***************************************************************************
-    * We write out the runs associated with each bug in the order in which the 
-    * bugs were read in.
-    ***************************************************************************/
-    ofstream bug_runs("bug_runs.txt");
-    for (unsigned int i = 0; i < bugIds->size(); i++) {
-        bug_runs << (bug_run_map[(*bugIds)[i]]) << '\n';
-    }
-    bug_runs.close();
-
-    /***************************************************************************
-    * We write out any unexplained runs.
-    ***************************************************************************/
-    bug_runs.open("unknown_runs.txt");
-    bug_runs << unknown_runs << '\n';
-    bug_runs.close();
+    oraclefile.close();
 
     return 0;
 }

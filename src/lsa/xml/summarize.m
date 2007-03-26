@@ -36,7 +36,7 @@ function printclaimedruns(fid, aspectindex, runindices, Pz_d)
     return; 
 
 function printaspects(fid, Learn, Clusters,Pw_z,X,Pz_d)
-   topnum = 400;
+   topnum = 28;
    Sum = sum(X,1);
    numaspects = Learn.K;
    numbugaspects = Learn.Kb;

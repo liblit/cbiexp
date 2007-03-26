@@ -8,8 +8,11 @@ MATLAB = matlab -nodisplay
 runsinfo.mat: Xobs.sparse Xtru.sparse f.indices s.indices
 	$(MATLAB) -r "path('$(tooldir)',path); convertData()" > /dev/null
 
-flagsinfo.mat: flags.sparse
+flagsinfo.mat: flags.sparse X.dimensions flags.dimensions
 	$(MATLAB) -r "path('$(tooldir)',path); convertFlagsInfo()" > /dev/null
+
+bugsinfo.mat: bugs.sparse bugs.dimensions X.dimensions 
+	$(MATLAB) -r "path('$(tooldir)',path); convertBugsInfo()" > /dev/null
 
 initialize : runsinfo.mat
 
@@ -65,6 +68,10 @@ plsa: results.mat loglikelihood.txt clusters.mat html/summary.xml
 plsa_flags:
 	-rm flagsinfo.mat
 	ln ../../flagsinfo.mat
+
+plsa_oracle:
+	-rm bugsinfo.mat
+	ln ../../bugsinfo.mat
 
 html/summary.xml html/features.xml html/runs.xml: results.mat clusters.mat configure.m
 	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarize()" > /dev/null
