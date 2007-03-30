@@ -5,7 +5,7 @@ function V = makeColorVector(M)
         error('M matrix is incorrectly formatted');
     end;
 
-    [I,J] = ind2sub(size(M), find(M));
+    [I,J] = find(M); 
     V(1,size(M,2)) = 0;
     V(1,J) = I;
 return;
