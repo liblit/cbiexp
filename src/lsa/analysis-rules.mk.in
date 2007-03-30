@@ -73,13 +73,21 @@ plsa_oracle:
 	-rm bugsinfo.mat
 	ln ../../bugsinfo.mat
 
-html/summary.xml html/features.xml html/runs.xml: results.mat clusters.mat configure.m
+html/summary.xml: results.mat clusters.mat configure.m
 	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarize()" > /dev/null
 	mv summary.xml html/summary.xml
+
+html/features.xml: results.mat
+	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarizeFeatures()" > /dev/null
 	mv features.xml html/features.xml
+
+html/runs.xml: results.mat
+	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarizeRuns()" > /dev/null
 	mv runs.xml html/runs.xml
 
-summary.html: summary.xml
+summary: html/summary.xml html/features.xml html/runs.xml
+
+summary.html: summary.xml runs.xml
 	xsltproc --path $(xmldir) --path ../../../.. --path . --stringparam source-dir ../../../../src --output summary.html summary.xsl summary.xml
 CLEANFILES += summary.html
 

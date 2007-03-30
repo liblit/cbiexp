@@ -12,7 +12,6 @@
 >
 
 <xsl:import href="logo.xsl"/>
-<xsl:import href="rawfeature.xsl"/>
 
 <xsl:output method="html"/>
 
@@ -30,6 +29,7 @@
         </div>
         <div id="rest">
           <xsl:call-template name="summary"/>
+          <xsl:call-template name="features"/>
           <xsl:call-template name="aspects"/>
         </div>
       </body>
@@ -40,7 +40,6 @@
     <div id="summary">
       <h2>Summary:</h2>
       <xsl:call-template name="runs"/>
-      <xsl:call-template name="features"/>
     </div>
   </xsl:template>
 
@@ -51,7 +50,6 @@
         <thead>
           <th></th>
           <th>Count</th>
-          <th>Mean Length</th>
         </thead>
         <tbody>
           <tr>
@@ -89,18 +87,6 @@
     <xsl:param name="group"/>
     <xsl:variable name="count" select="count($group)"/>
     <td style="text-align:right"><xsl:value-of select="$count"/></td>
-    <xsl:variable name="total" select="sum($group/@totalcount)"/>
-    <xsl:variable name="mean">
-      <xsl:choose>
-        <xsl:when test="$total=0">
-          <xsl:value-of select="number(0)"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of select="round($total div $count)"/>
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <td style="text-align:right"><xsl:value-of select="$mean"/></td>
   </xsl:template>
 
   <xsl:template name="features">
