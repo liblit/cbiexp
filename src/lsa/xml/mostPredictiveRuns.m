@@ -8,11 +8,17 @@ function mostPredictiveRuns()
         I = 1:size(X,2);    
     end;
     numaspects = size(Pz_d, 1);
+    doc = com.mathworks.xml.XMLUtils.createDocument('predictiveruns');
+    docRoot = doc.getDocumentElement();
     for i = 1:numaspects;
-        printruns(i, Pz_d, I);
+        aspect = doc.createElement('aspect'); 
+        printruns(doc, aspect, i, Pz_d, I);
+        docRoot.appendChild(aspect);
     end;
+    xmlwrite('predictive_runs.xml', doc);
 
-function printruns(i, X, I);
+function printruns(doc, node, i, X, I);
     [S, Is] = sortMinDiffs(X, i);
     pos = find(S > 0); 
-    xmlify([S(1,pos)' I(Is(1,pos))'], {}, ['aspect_' num2str(i) '_exemplars.xml'], 'exemplars', 'run', {'score' 'index'}, {});
+    M = {num2cell(S(1,pos)') num2cell(I(Is(1,pos))')};
+    xmlify(doc, node, M, 'run', {'score' 'index'});

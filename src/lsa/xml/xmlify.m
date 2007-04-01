@@ -1,42 +1,29 @@
-% X -- matrix to xmlify, rows correspond to elements, columns give values of
-% attributes
-% Y -- cell array to xmlify, necessary when we use strings rather than numeric
-% values
-% filename -- name of file to write xml to, as string
-% t -- name for top (enclosing) element as string
+% doc -- xml document node (Java) 
+% node -- node to add elements to (Java)
+% X -- cell array to xmlify, rows correspond to elements, columns give values of
+% attributes, we use a cell array in case we need to handle string values
 % e -- name for each contained element as string
 % A -- array of string cells containing attributes for X 
-% A -- array of string cells containing attributes for Y
-function xmlify(X,Y,filename,t,e,A,B)
+% xmlify works entirely by side-effects, inserting elements into node 
+function xmlify(doc, node, X, e, A)
     % checking arguments
-    if not(iscellstr(A) & iscellstr(B) & iscellstr(Y));
-        error('A, B, and Y must be arrays of string cells.');  
+    if not(iscellstr(A));
+        error('A must be an array of string cells.');  
     end;
     if not(size(X,2) == numel(A));  
         error('A must have the same number of attributes as X has columns.');
     end;
-    if not(size(Y,2) == numel(B));  
-        error('B must have the same number of attributes as Y has columns.');
-    end;
-    if not(ischar(filename) & ischar(t) & ischar(e));
-        error('filename, t, and e, must be string arrays');
+    if not(ischar(e));
+        error('e must be string array');
     end; 
-    if not(size(X,1) == size(Y,1) | numel(X) == 0 | numel(Y) == 0);
-        error('X and Y represent the same elements, so must have the same number of rows.');
-    end;
 
-    doc = com.mathworks.xml.XMLUtils.createDocument(t);
-    docRoot = doc.getDocumentElement();
-    for i = 1:size(X,1);
+    numrows = size(X{1,1},1);
+    numattributes = size(X,2); 
+
+    for i = 1:numrows;
         element = doc.createElement(e);
-        for j = 1:size(X,2);
-            element.setAttribute(A(j), num2str(X(i,j)));
+        for j = 1:numattributes;
+            element.setAttribute(A(j), num2str(X{1,j}{i,1}));
         end;
-        for j = 1:size(Y,2);
-            element.setAttribute(B(j), Y{i,j});
-        end;
-        docRoot.appendChild(element);
+        node.appendChild(element);
     end;
-    xmlwrite(filename, doc);
-    
-

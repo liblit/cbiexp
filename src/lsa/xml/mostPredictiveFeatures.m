@@ -3,11 +3,17 @@ function mostPredictiveFeatures()
     load results.mat;
     X = selectX(Xtru, Xobs, configure());
     numaspects = size(Pz_w, 1);
+    doc = com.mathworks.xml.XMLUtils.createDocument('predictivefeatures');
+    docRoot = doc.getDocumentElement();
     for i = 1:numaspects;
-        printfeatures(i, Pz_w);
+        aspect = doc.createElement('aspect');
+        printfeatures(doc, aspect, i, Pz_w);
+        docRoot.appendChild(aspect); 
     end;
+    xmlwrite('predictive_features.xml', doc);
 
-function printfeatures(i, X);
+function printfeatures(doc, node, i, X);
     [S, I] = sortMinDiffs(X, i);
     pos = find(S > 0); 
-    xmlify([S(1,pos)' I(1,pos)'], {}, ['aspect_' num2str(i) '_predictors.xml'], 'predictors', 'feature', {'score' 'index'}, {});
+    M = {num2cell(S(1,pos)') num2cell(I(1,pos)')};
+    xmlify(doc, node, M, 'feature', {'score' 'index'});

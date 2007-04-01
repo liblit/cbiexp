@@ -9,10 +9,16 @@ function runsClaimedByAnyAspect()
         I = 1:size(X,2);    
     end;
     [S, Is] = max(Pz_d);
+    doc = com.mathworks.xml.XMLUtils.createDocument('claimedruns');
+    docRoot = doc.getDocumentElement();
     for i = 1:Learn.K;
-        printruns(i, S, Is, I);
+        aspect = doc.createElement('aspect');
+        printruns(doc, aspect, i, S, Is, I);
+        docRoot.appendChild(aspect);
     end;
+    xmlwrite('claimed_runs.xml', doc);
 
-function printruns(i, S, Is, I);
+function printruns(doc, node, i, S, Is, I);
     wins = find(Is == i);
-    xmlify([S(1,wins)' I(1,wins)'], {}, ['aspect_' num2str(i) '_runs.xml'], 'runs', 'run', {'Pz_d' 'index'}, {});
+    M = {num2cell(S(1,wins)') num2cell(I(1,wins)')}; 
+    xmlify(doc, node, M, 'run', {'Pz_d' 'index'});
