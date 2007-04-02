@@ -120,16 +120,24 @@
       </tr>
     </table>
     <h3>Features claimed:</h3>
-    <img src="./claimed_features.png" align="left"/>
-    <table class="aspecttable">
-      <xsl:call-template name="aspectheader"/>
-      <tbody>
-        <xsl:for-each select="$aspects">
-          <xsl:call-template name="aspectrow">
-            <xsl:with-param name="suffix">features</xsl:with-param>
-          </xsl:call-template>
-        </xsl:for-each>
-      </tbody>
+    <table>
+      <tr>
+        <td>
+          <img src="./claimed_features.png" align="left"/>
+        </td>
+        <td> 
+          <table class="aspecttable">
+            <xsl:call-template name="aspectheader"/>
+            <tbody>
+              <xsl:for-each select="$aspects">
+                <xsl:call-template name="aspectrow">
+                  <xsl:with-param name="suffix">features</xsl:with-param>
+                </xsl:call-template>
+              </xsl:for-each>
+            </tbody>
+          </table>
+        </td>
+      </tr>
     </table>
     </div>
   </xsl:template>
