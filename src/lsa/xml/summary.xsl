@@ -1,4 +1,3 @@
-<?xml version="1.0"?>
 <!DOCTYPE stylesheet [
   <!ENTITY link "&#9679;">
 ]>
@@ -7,22 +6,15 @@
   version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:exsl="http://exslt.org/common"
-  extension-element-prefixes="exsl"
 >
 
 <xsl:import href="logo.xsl"/>
 
 <xsl:output method="html"/>
 
-<xsl:variable name="runs" select="document('runs.xml')/runinfos/run"/>
-
   <xsl:template match="/">
     <xsl:variable name="title">pLSA Results</xsl:variable>  
     <html>
-      <head>
-        <title><xsl:value-of select="$title"/></title>
-      </head>
       <body>
         <div id="frontmatter">
           <h1><xsl:copy-of select="$logo-icon"/><xsl:value-of select="$title"/></h1>
@@ -44,6 +36,7 @@
   </xsl:template>
 
   <xsl:template name="runs">
+    <xsl:variable name="runs" select="document('runs.xml')/runinfos/run"/>
     <div id="runs">
       <h3>Runs:</h3>
       <table>
@@ -90,7 +83,7 @@
   </xsl:template>
 
   <xsl:template name="features">
-    <xsl:variable name="features" select="document('predictor-info.xml')/predictor-info/info"/>
+    <xsl:variable name="features" select="document('features.xml')/featureinfos/feature"/>
     <div id="features"> 
       <h3>Features:</h3>
       <table>
@@ -103,32 +96,17 @@
   </xsl:template>
 
   <xsl:template name="aspects">
+    <xsl:variable name="aspects" select="document('aspects.xml')/aspectinfos/aspect"/>
     <div class="aspects">
     <h2>Aspects:</h2>
-    <h3>Usage:</h3>
+    <img src="./claimed_runs.png" align="left"/> 
     <table class="aspecttable">
       <xsl:call-template name="aspectheader"/>
       <tbody>
-      <xsl:for-each select="plsa/aspect[@kind='usage']">
+      <xsl:for-each select="$aspects">
         <xsl:call-template name="aspectrow"/>
       </xsl:for-each>
       </tbody>
-      <xsl:call-template name="aspectfooter">
-        <xsl:with-param name="runs" select="id(plsa/aspect[@kind='usage']/runid/@idref)"/>
-      </xsl:call-template>
-    </table>
-    <h3>Buggy:</h3>
-    <table class="aspecttable">
-      <xsl:call-template name="aspectheader"/>
-      <tbody>
-      <xsl:for-each select="plsa/aspect[@kind='bug']">
-        <xsl:call-template name="aspectrow"/>
-      </xsl:for-each>
-      </tbody>
-      <xsl:variable name="runindices" select="plsa/aspect[@kind='bug']/runid/@index"/>
-      <xsl:call-template name="aspectfooter">
-        <xsl:with-param name="runs" select="$runs[$runindices]"/>
-      </xsl:call-template>
     </table>
     </div>
   </xsl:template>
@@ -136,60 +114,22 @@
   <xsl:template name="aspectheader">
     <thead>
     <tr>
-      <th>Aspect Number</th>
-      <th>Total Runs</th>
-      <th>Successes</th>
-      <th>Failures</th>
-      <th>Mean Run Length</th>
-      <th>Runs</th>
-      <th>Features</th>
+      <th>Index</th>
+      <th>Kind</th>
+      <th>Detail</th>
     </tr>
     </thead>
   </xsl:template>
 
   <xsl:template name="aspectrow">
-    <xsl:variable name="runindices" select="runid/@index"/>
-    <xsl:variable name="runs" select="$runs[position() = $runindices]"/>
-    <xsl:variable name="succeeding" select="count($runs[@outcome='success'])"/>
-    <xsl:variable name="failing" select="count($runs[@outcome='failure'])"/>
-    <xsl:variable name="runslink">
-      <xsl:text>./aspect</xsl:text><xsl:value-of select="@index"/><xsl:text>-runs.html</xsl:text>
-    </xsl:variable>
-    <xsl:variable name="featuresprefix">
-      <xsl:text>./aspect</xsl:text><xsl:value-of select="@index"/><xsl:text>-features</xsl:text>
-    </xsl:variable>
-    <xsl:variable name="featureslink">
-      <xsl:value-of select="$featuresprefix"/><xsl:text>.html</xsl:text>
-    </xsl:variable>
-    <xsl:variable name="featuresfile">
-      <xsl:value-of select="$featuresprefix"/><xsl:text>.xml.raw</xsl:text>
+    <xsl:variable name="linkurl">
+        <xsl:text>./aspect</xsl:text><xsl:value-of select="position()"/><xsl:text>.html</xsl:text>
     </xsl:variable>
     <tr>
-      <th><xsl:value-of select="@index"/></th>
-      <td><xsl:value-of select="count($runs)"/></td>
-      <td><xsl:value-of select="$succeeding"/></td>
-      <td><xsl:value-of select="$failing"/></td>
-      <td><xsl:value-of select="@meanrunlength"/></td>
-      <td><a href="{$runslink}">&link;</a></td>
-      <td><a href="{$featureslink}"><xsl:value-of select="@ratio"/></a></td>
-      <exsl:document href="{$featuresfile}" method="xml">
-        <xsl:call-template name="rawfeature">
-          <xsl:with-param name="num" select="@index"/>
-        </xsl:call-template>
-      </exsl:document>
+      <th><xsl:value-of select="position()"/></th>
+      <td style="text-align:center"><xsl:value-of select="@kind"/></td>
+      <td style="text-align:center"><a href="{$linkurl}">&link;</a></td>
     </tr>
-  </xsl:template>
-
-  <xsl:template name="aspectfooter">
-    <xsl:param name="runs"/>
-    <tfoot>
-      <tr>
-        <th>Totals</th>
-        <td><xsl:value-of select="count($runs)"/></td>
-        <td><xsl:value-of select="count($runs[@outcome='success'])"/></td>
-        <td><xsl:value-of select="count($runs[@outcome='failure'])"/></td>
-      </tr>
-    </tfoot>
   </xsl:template>
 
 </xsl:stylesheet>

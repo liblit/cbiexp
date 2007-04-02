@@ -85,7 +85,16 @@ html/runs.xml: results.mat
 	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarizeRuns()" > /dev/null
 	mv runs.xml html/runs.xml
 
-summary: html/summary.xml html/features.xml html/runs.xml
+html/aspects.xml: results.mat
+	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarizeAspects()" > /dev/null
+	mv aspects.xml html/aspects.xml
+
+html/claimed_runs.xml html/claimed_runs.png: results.mat
+	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); runsClaimedByAnyAspect()" > /dev/null
+	mv claimed_runs.xml html/claimed_runs.xml
+	mv claimed_runs.png html/claimed_runs.png
+
+summary: html/summary.xml html/features.xml html/runs.xml html/aspects.xml html/claimed_runs.xml html/claimed_runs.png
 
 summary.html: summary.xml runs.xml
 	xsltproc --path $(xmldir) --path ../../../.. --path . --stringparam source-dir ../../../../src --output summary.html summary.xsl summary.xml
