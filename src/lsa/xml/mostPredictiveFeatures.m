@@ -11,6 +11,7 @@ function mostPredictiveFeatures()
         docRoot.appendChild(aspect); 
     end;
     xmlwrite('predictive_features.xml', doc);
+    quit();
 
 function printfeatures(doc, node, i, X);
     [S, I] = sortMinDiffs(X, i);

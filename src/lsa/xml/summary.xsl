@@ -1,5 +1,5 @@
 <!DOCTYPE stylesheet [
-  <!ENTITY link "&#9679;">
+  <!ENTITY link "&amp;#9679;">
 ]>
 
 <xsl:stylesheet
@@ -99,13 +99,36 @@
     <xsl:variable name="aspects" select="document('aspects.xml')/aspectinfos/aspect"/>
     <div class="aspects">
     <h2>Aspects:</h2>
-    <img src="./claimed_runs.png" align="left"/> 
+    <h3>Runs claimed:</h3>
+    <table>
+      <tr>
+        <td>
+          <img src="./claimed_runs.png"/> 
+        </td>
+        <td>
+          <table class="aspecttable">
+            <xsl:call-template name="aspectheader"/>
+            <tbody>
+            <xsl:for-each select="$aspects">
+              <xsl:call-template name="aspectrow">
+                <xsl:with-param name="suffix">runs</xsl:with-param>
+              </xsl:call-template>
+            </xsl:for-each>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <h3>Features claimed:</h3>
+    <img src="./claimed_features.png" align="left"/>
     <table class="aspecttable">
       <xsl:call-template name="aspectheader"/>
       <tbody>
-      <xsl:for-each select="$aspects">
-        <xsl:call-template name="aspectrow"/>
-      </xsl:for-each>
+        <xsl:for-each select="$aspects">
+          <xsl:call-template name="aspectrow">
+            <xsl:with-param name="suffix">features</xsl:with-param>
+          </xsl:call-template>
+        </xsl:for-each>
       </tbody>
     </table>
     </div>
@@ -122,13 +145,22 @@
   </xsl:template>
 
   <xsl:template name="aspectrow">
+    <xsl:param name="suffix"/>
     <xsl:variable name="linkurl">
-        <xsl:text>./aspect</xsl:text><xsl:value-of select="position()"/><xsl:text>.html</xsl:text>
+      <xsl:text>./aspect</xsl:text>
+      <xsl:value-of select="position()"/>
+      <xsl:text>_</xsl:text>
+      <xsl:value-of select="$suffix"/>
+      <xsl:text>.html</xsl:text>
     </xsl:variable>
     <tr>
       <th><xsl:value-of select="position()"/></th>
       <td style="text-align:center"><xsl:value-of select="@kind"/></td>
-      <td style="text-align:center"><a href="{$linkurl}">&link;</a></td>
+      <td style="text-align:center">
+        <a href="{$linkurl}">
+          <xsl:text disable-output-escaping="yes">&link;</xsl:text>
+        </a>
+      </td>
     </tr>
   </xsl:template>
 

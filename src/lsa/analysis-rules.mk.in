@@ -94,7 +94,16 @@ html/claimed_runs.xml html/claimed_runs.png: results.mat
 	mv claimed_runs.xml html/claimed_runs.xml
 	mv claimed_runs.png html/claimed_runs.png
 
-summary: html/summary.xml html/features.xml html/runs.xml html/aspects.xml html/claimed_runs.xml html/claimed_runs.png
+html/claimed_features.xml html/claimed_features.png: results.mat
+	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); featuresClaimedByAnyAspect()" > /dev/null
+	mv claimed_features.xml html/claimed_features.xml
+	mv claimed_features.png html/claimed_features.png
+
+html/predictive_features.xml: results.mat 
+	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); mostPredictiveFeatures()" > /dev/null
+	mv predictive_features.xml html/predictive_features.xml
+
+summary: html/summary.xml html/features.xml html/runs.xml html/aspects.xml html/claimed_runs.xml html/claimed_runs.png html/predictive_features.xml html/claimed_features.xml html/claimed_features.png
 
 summary.html: summary.xml runs.xml
 	xsltproc --path $(xmldir) --path ../../../.. --path . --stringparam source-dir ../../../../src --output summary.html summary.xsl summary.xml
