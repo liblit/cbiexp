@@ -13,6 +13,124 @@ As you fix outstanding items, remove them from the list and check in
 this updated to-do list along with your changes.  When this list is
 empty, that basically means we're done!
 
+------------------------------------------------------------------------
+--
+--  Review 1
+--
+
+>> The authors present an approach for estimating the debugging 
+>> effort required from the predicate. In order to demonstrate the accuracy
+>> of these estimation techniques one has to conduct an experimental study
+>> that records the debugging effort by programmers.
+
+1. Add clarification/response for the above comment:
+
+>> The authors present techniques such as pruning in order to reduce
+>> the cost of monitoring. They also reduce complex predicates to combinations
+>> of two simple predicates in order to limit monitoring costs. However, the
+>> experiments reported in the paper do not discuss the monitoring overhead.
+>> It is not clear from this paper if the monitoring overhead caused by complex
+>> predicates is an acceptable overhead. It would have helped if the authors 
+>> presented some data about the runtime monitoring overhead and how it is
+>> effected by the presented pruning techniques, or how bad it would be
+>> if one uses complex predicates that contain three or more simple predicates.
+
+2. Clarify that we do not change the execution monitoring in any way
+
+------------------------------------------------------------------------
+--
+--  Review 2
+--
+
+>> Can you think of a better term for "interesting" complex predicates.
+>> Interesting is a rather anodyne term in this context.
+
+1. Come up with a more suitable term than "interesting"
+2. Make sure ALL references to "interesting" are changed.
+
+>> In the introduction you refer to current statistical analysis algorithms and
+>> cite 10 and 6; both these are previous work by one of the authors. Perhaps you
+>> should make it more clear that you are in effect building a fix to a
+>> shortcoming of your own previous work. I am not saying that this is an
+>> unacceptable practice --- all research proceeds by increments and no work is
+>> perfect form the outset --- however, they way this is written it sounds as
+>> though you are claiming an improvement on a more general class of activity by a
+>> community.
+
+3. Tone down the claims
+4. Make it clear that we do address a general class of activity: those that 
+analyse count vectors from feedback reports.
+
+>> The treatment of scoring predicates is somewhat glossed over. I would like to
+>> see a little more explanation here, For example, you could motivate why it is
+>> necessary to take logs for sensitivity and why the harmonic mean is preferred
+>> to some other method of aggregating the two values.
+
+5. Add a suitable response.  For e.g., "See [PLDI '05] for a detailed
+explanation
+
+In section 3.4 the claim that bounding the predicates does not affect the
+results surely has the hidden assumption that an error is caused by a single
+fault? If so then I think that this should be stated. Naturally errors caused
+by the co-occurrence of several faults are unlikely, but then they are also the
+most subtle and important of all faults. Are there any other assumptions in
+this claim (in section 3.4)? It is a very strong claim and I don't see that the
+proof is obvious. Have I missed something? Some words of proof sketch would be
+helpful (unless you are sure that it is obvious in which case I've missed
+something).
+
+
+>> Your paper is demeaned by including a "threats to validity" as a
+>> "ritual". Use the space for something more important (or discuss the meat of
+>> the threats under a different title, perhaps I the discussion of the results).
+
+6. Reduce the discussion of threats... and buy more space out of it
+
+>> I was disappointed that the references were not complete (for example 3, 10 and
+>> 16, missing volume numbers, parts, and pages).
+
+7. Fill in all the details about citations.
+(Honestly, who needs page numbers?)
+
+------------------------------------------------------------------------
+--
+--  Review 2
+--
+
+>> I had some trouble understanding the discussion of the pruning of complex
+>> predicates in Section 3.4. I think it would be helpful to add a small 
+>> example to illustrate why a given complex predicate can be pruned before 
+>> run information is generated.  What confuses me here is the term "before 
+>> run information is generated".  Presumably you already have some information 
+>> about the effectiveness of simple predicates?  Please clarify.
+
+(I think we do have an example)
+1. explain that applying the truth tables itself is an expensive task and we
+are tackling that by pruning.. not generation of reports itself
+
+>> The discussion of the effectiveness of complex predicates for lower
+>> sampling rates in Section 6 could be improved. I think it would be very 
+>> useful to include counterparts to Table 8 (where sampling rate is 1 if 
+>> I understand you correctly) with sampling rates of 0.1, 0.01, ...
+
+2. Unfortunately this needs a lot of real estate.  May be we can add one more
+table, for e.g. with rate 1/100.
+(Fortunately, we do have the required data.. no need to go back to condor)
+
+>> The paper could make a stronger case for the usefullness of disjunctions.
+>> Figure 1(b) seems to imply that they're completely uselesss. Perhaps a 
+>> small experiment of a variation on a Siemens program with multiple bugs 
+>> could be used to argue in favor of disjunctions?
+
+3. Disjunctions are less useful with multiple bugs as we don't know if we are
+picking up primary predictors of 2 bugs or a single bug with disjunctive 
+predictor.  This is mentioned somewhere.  Revise its text and placement if
+necessary.
+
+>> Related work by Alex Orso, Adam Porter et al. on the classification of data
+>> from deployed software should be discussed.
+
+4. Gosh!  Add that right away.
 
 ------------------------------------------------------------------------
 --
