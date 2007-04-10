@@ -69,27 +69,29 @@ analyse count vectors from feedback reports.
 5. Add a suitable response.  For e.g., "See [PLDI '05] for a detailed
 explanation
 
-In section 3.4 the claim that bounding the predicates does not affect the
-results surely has the hidden assumption that an error is caused by a single
-fault? If so then I think that this should be stated. Naturally errors caused
-by the co-occurrence of several faults are unlikely, but then they are also the
-most subtle and important of all faults. Are there any other assumptions in
-this claim (in section 3.4)? It is a very strong claim and I don't see that the
-proof is obvious. Have I missed something? Some words of proof sketch would be
-helpful (unless you are sure that it is obvious in which case I've missed
-something).
+>> In section 3.4 the claim that bounding the predicates does not affect the
+>> results surely has the hidden assumption that an error is caused by a single
+>> fault? If so then I think that this should be stated. Naturally errors caused
+>> by the co-occurrence of several faults are unlikely, but then they are also the
+>> most subtle and important of all faults. Are there any other assumptions in
+>> this claim (in section 3.4)? It is a very strong claim and I don't see that the
+>> proof is obvious. Have I missed something? Some words of proof sketch would be
+>> helpful (unless you are sure that it is obvious in which case I've missed
+>> something).
 
+6. I completely miss the point here.  Perhaps one of you could clarify the 
+question of the comment
 
 >> Your paper is demeaned by including a "threats to validity" as a
 >> "ritual". Use the space for something more important (or discuss the meat of
 >> the threats under a different title, perhaps I the discussion of the results).
 
-6. Reduce the discussion of threats... and buy more space out of it
+7. Reduce the discussion of threats... and buy more space out of it
 
 >> I was disappointed that the references were not complete (for example 3, 10 and
 >> 16, missing volume numbers, parts, and pages).
 
-7. Fill in all the details about citations.
+8. Fill in all the details about citations.
 (Honestly, who needs page numbers?)
 
 ------------------------------------------------------------------------
