@@ -3,6 +3,3 @@ function printFeatureSlice(filename, I)
    docRoot = doc.getDocumentElement();
    xmlify(doc, docRoot, {num2cell(I)}, 'feature', {'index'});
    xmlwrite(filename, doc);
-   quit();
-   
-     
