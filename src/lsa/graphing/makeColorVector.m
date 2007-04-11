@@ -2,7 +2,7 @@
 % M -- matrix with rows corresponding to the property we want to color 
 function V = makeColorVector(M)
     if not(isempty(find(sum(M,1) > 1)));
-        error('M matrix is incorrectly formatted');
+        warning('At least one column has more than one entry.')
     end;
 
     [I,J] = find(M); 
