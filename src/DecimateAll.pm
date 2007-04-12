@@ -50,6 +50,7 @@ sub run_task ($$$) {
 	open STDOUT, '>&', $pipe or die "cannot redirect stdout into pipe: $!\n";
 	my @command = $self->{decimator};
 	push @command, '--plan', $_ foreach @{$self->{plans}};
+	push @command, '--upsample' if $self->{upsample};
 	exec @command;
 	die "cannot spawn $self->{decimator}: $!\n";
     }

@@ -25,6 +25,7 @@ my $datadir = 'data';
 my $jobs;
 my $start = 0;
 my @plans = ();
+my $upsample = 0;
 
 my $usage = <<EOT;
 Usage: $0 [OPTION...] <report-output-suffix>
@@ -33,6 +34,8 @@ Usage: $0 [OPTION...] <report-output-suffix>
   --datadir=DIR     find run suite in DIR (default "data")
   --jobs=COUNT      use COUNT simultaneous jobs (default CPUs - 1)
   --plan=FILE       downsample according to sampling plan in FILE
+  --upsample        upsample after downsampling, creating a noisy
+                    approximation of the original data
 EOT
 
 sub help () {
@@ -44,6 +47,7 @@ my $understood = GetOptions('jobs=i' => \$jobs,
 			    'datadir=s' => \$datadir,
 			    'begin-runs=i' => \$start,
 			    'plan|p=s' => \@plans,
+			    'upsample|u' => \$upsample,
 			    'help|?' => \&help);
 
 die $usage unless $understood && @ARGV == 1;
@@ -74,5 +78,6 @@ my $runner = new DecimateAll(jobs => $jobs,
 			     datadir => $datadir,
 			     suffix => $suffix,
 			     decimator => $decimator,
+			     upsample => $upsample,
 			     plans => \@plans);
 $runner->run_tasks($start .. $numRuns - 1);

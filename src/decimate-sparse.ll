@@ -4,12 +4,14 @@
 #include <iostream>
 #include <ext/hash_map>
 #include <gsl/gsl_randist.h>
+#include <math.h>
 #include "SiteCoords.h"
 #include "termination.h"
 
 static gsl_rng *generator;
 
- static double probability;
+static bool upsample;
+static double probability;
 static unsigned unitIndex;
 
 typedef __gnu_cxx::hash_map<SiteCoords, double> Plan;
@@ -53,7 +55,8 @@ static Plan plan;
   /* zero counts pass through unchanged */
   const unsigned complete = strtoul(yytext, 0, 10);
   const unsigned reduced = gsl_ran_binomial(generator, probability, complete);
-  printf("%u", reduced);
+  const unsigned transformed = upsample ? lround(reduced / probability) : reduced;
+  printf("%u", transformed);
 }
 
 <COUNTS,EXEMPT>\n	{
@@ -103,6 +106,10 @@ parseFlag(int key, char *arg, argp_state *state)
 	return 0;
       }
 
+    case 'u':
+      upsample = true;
+      return 0;
+
     default:
       return ARGP_ERR_UNKNOWN;
     }
@@ -114,6 +121,7 @@ processCommandLine(int argc, char *argv[])
 {
   static const argp_option options[] = {
     { "plan", 'p', "FILE", 0, "downsample according to sampling plan in FILE", 0 },
+    { "upsample", 'u', 0, 0, "upsample after downsampling, creating a noisy approximation of the original data", 0 },
     { 0, 0, 0, 0, 0, 0 }
   };
 

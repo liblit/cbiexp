@@ -199,9 +199,10 @@ ifndef report-series
 stamp-decimate := $(datadir)/stamp-convert-reports
 else
 stamp-decimate := $(datadir)/stamp-decimate-$(report-series)
+upsample :=
 $(stamp-decimate):
 	$(build) plan-$(report-series).txt $(datadir)/stamp-convert-reports $(call tool-deps, decimate-all decimate-sparse)
-	$(time) $(tooldir)/decimate-all --begin-runs=$(training-runs) --datadir=$(datadir) --plan=plan-$(report-series).txt $(report-series)
+	$(time) $(tooldir)/decimate-all --begin-runs=$(training-runs) --datadir=$(datadir) --plan=plan-$(report-series).txt $(if $(upsample), --upsample) $(report-series)
 	cp plan-$(report-series).txt $@
 endif
 
@@ -282,7 +283,7 @@ theta: train.runs val.runs nonconst_preds.txt static-site-info.so $(call tool-de
 CLEANFILES += theta.txt train_lls.txt val_lls.txt confmat.txt
 
 static-site-info.so: %.so: %.cc
-	$(LINK.cc) -shared -o $@ $<
+	$(LINK.cc) -shared -fpic -o $@ $<
 CLEANFILES += static-site-info.so
 
 static-site-info.cc: $(sites) $(call tool-deps, map-sites)
