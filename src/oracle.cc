@@ -66,16 +66,6 @@ int main(int argc, char** argv)
     process_cmdline(argc, argv);
     ios::sync_with_stdio(false);
 
-    ifstream bugs_file("bugs.txt");
-    unsigned int numbugs = 0;
-    string line;
-    while(getline(bugs_file, line)) numbugs++;
-    bugs_file.close();
-
-    ofstream bugs_dim("bugs.dimensions");
-    bugs_dim << numbugs << " " << 1;
-    bugs_dim.close(); 
-
     ifstream failures(ClassifyRuns::failuresFilename); 
     if (!failures) {
         const int code = errno;
@@ -94,14 +84,15 @@ int main(int argc, char** argv)
     unsigned runId;
     while (failures >> runId) {
         progress.step();
-        const string filename = RunsDirectory::format(runId, "stderr");
+        const string filename = RunsDirectory::format(runId, "bad/stderr");
         FILE* fp = fopenRead(filename);
 	try {
             int bugId = getBug(fp);
+            if (bugId == 0) throw UnknownBugException();
 	    oraclefile << bugId << " " << runId + 1 << " 1\n"; 
         }
 	catch(UnknownBugException & e) {
-	    oraclefile << numbugs + 1 << " " << runId + 1 << " 0\n"; 
+            cerr << "Bug at " << runId << " is unknown.\n";
 	}
         fclose(fp);
     }
