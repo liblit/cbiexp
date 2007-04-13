@@ -173,7 +173,11 @@ more_arrays ()
 
 
   /* Initialize the new elements. */
+#ifdef FAULT_MORE_ARRAYS_V_COUNT
   for (; indx < v_count; indx++)
+#else
+  for (; indx < a_count; indx++)
+#endif
     arrays[indx] = NULL;
 
   /* Free the old elements. */

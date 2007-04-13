@@ -8,3 +8,5 @@ CC="$CC --exclude-file=bc.y"
 CC="$CC --exclude-file=scan.c"
 CC="$CC --exclude-file=/usr/gnu/share/bison.simple"
 CC="$CC --exclude-file=lex.yy.c"
+
+CPPFLAGS='-DFAULT_MORE_ARRAYS_V_COUNT'

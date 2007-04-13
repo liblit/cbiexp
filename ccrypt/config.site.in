@@ -4,3 +4,5 @@ CC="@sampler_cc@"
 CC="$CC --relative-paths"
 CC="$CC --no-sample"
 CC="$CC --sampler-scheme=returns"
+
+CPPFLAGS='-DFAULT_PROMPT_XREADLINE_NULL_CHECK'

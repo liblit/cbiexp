@@ -120,6 +120,10 @@ int prompt(void) {
   }
   
   line = xreadline(fin, cmd.name);
+#ifdef FAULT_PROMPT_XREADLINE_NULL_CHECK
+  if (line == NULL)
+    return 0;
+#endif
   return (!strcmp(line, "y") || !strcmp(line, "yes"));
 }
 
