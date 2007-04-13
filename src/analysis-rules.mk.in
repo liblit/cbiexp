@@ -199,7 +199,7 @@ ifndef report-series
 stamp-decimate := $(datadir)/stamp-convert-reports
 else
 stamp-decimate := $(datadir)/stamp-decimate-$(report-series)
-upsample :=
+upsample ?=
 $(stamp-decimate):
 	$(build) plan-$(report-series).txt $(datadir)/stamp-convert-reports $(call tool-deps, decimate-all decimate-sparse)
 	$(time) $(tooldir)/decimate-all --begin-runs=$(training-runs) --datadir=$(datadir) --plan=plan-$(report-series).txt $(if $(upsample), --upsample) $(report-series)
