@@ -1,4 +1,4 @@
-function convertData()
+function convertData(outputfile)
     Findices = load('f.indices');
     Sindices = load('s.indices');
     dimensions = load('X.dimensions');
@@ -6,8 +6,7 @@ function convertData()
     Xobs = buildCounts(X,dimensions, Findices, Sindices);
     X = load('Xtru.sparse');
     Xtru = buildCounts(X,dimensions, Findices, Sindices);
-    save -mat runsinfo.mat Findices Sindices Xobs Xtru
-    quit; 
+    save('-mat', outputfile, 'Findices', 'Sindices', 'Xobs', 'Xtru')
 
 % Build X
 function X = buildCounts(X, dimensions, Findices, Sindices)
