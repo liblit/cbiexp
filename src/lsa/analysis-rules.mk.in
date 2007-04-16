@@ -77,7 +77,7 @@ clusters.mat: results.mat
 	$(MATLAB) -r "path('$(tooldir)',path); clusterByMaxAspect()" > /dev/null
 	touch clusters.mat
 
-plsa: results.mat loglikelihood.txt clusters.mat html/summary.xml
+plsa: results.mat loglikelihood.txt clusters.mat
 	touch plsa
 
 plsa_flags:
@@ -88,7 +88,7 @@ plsa_oracle:
 	-rm bugsinfo.mat
 	ln ../../bugsinfo.mat
 
-html/summary.xml: results.mat clusters.mat configure.m
+html/summary.xml:
 	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarize()" > /dev/null
 	mv summary.xml html/summary.xml
 
@@ -103,11 +103,17 @@ html/runs.xml: results.mat
 html/aspects.xml: results.mat
 	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarizeAspects()" > /dev/null
 	mv aspects.xml html/aspects.xml
+	mv aspect*.base html
 
 html/claimed_runs.xml html/claimed_runs.png: results.mat
 	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); runsClaimedByAnyAspect()" > /dev/null
 	mv claimed_runs.xml html/claimed_runs.xml
 	mv claimed_runs.png html/claimed_runs.png
+
+html/probable_features.xml: results.mat
+	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); mostProbableFeatures()" > /dev/null
+	mv probable_features.xml html/probable_features.xml
+	mv aspect_*_probable_features.png html 
 
 html/claimed_features.xml html/claimed_features.png: results.mat
 	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); featuresClaimedByAnyAspect()" > /dev/null
@@ -124,26 +130,17 @@ summary.html: summary.xml runs.xml
 	xsltproc --path $(xmldir) --path ../../../.. --path . --stringparam source-dir ../../../../src --output summary.html summary.xsl summary.xml
 CLEANFILES += summary.html
 
-aspect%.xml : aspect%.xml.raw
-	xsltproc --path $(xmldir) --path . --output $@ accum.xsl $<
+aspect_%_probable_features.html : aspect_%.base
+	xsltproc --path . --path $(xmldir) --path ../.. --output $@ --stringparam index `cat $<` probable_features.xsl probable_features.xml
 
-aspect%.html : aspect%.xml
-	xsltproc --path $(xmldir) --path ../../../.. --path . --output $@ feature.xsl $<
-
-aspectsxml: $(basename $(wildcard aspect*.xml.raw))
-.PHONY: aspectsxml 
-
-aspectshtml: $(addsuffix .html, $(basename $(wildcard aspect*.xml)))
-.PHONY: aspectshtml
+aspectsprobablefeatures: $(addsuffix _probable_features.html, $(basename $(wildcard aspect*.base)))
+.PHONY: aspectsprobablefeatures 
 
 html: summary.html
-	$(MAKE) aspectsxml
-	$(MAKE) aspectshtml
+	$(MAKE) aspectsprobablefeatures 
 .PHONY: html
 
 clean::
-	find . -name 'aspect*.xml.raw' -exec rm '{}' ';'
-	find . -name 'aspect*.xml' -exec rm '{}' ';'
 	find . -name 'aspect*.html' -exec rm '{}' ';'
 	rm -rf $(CLEANFILES)
 .PHONY: clean

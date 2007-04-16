@@ -13,7 +13,7 @@
 <xsl:output method="html"/>
 
   <xsl:template match="/">
-    <xsl:variable name="title">pLSA Results</xsl:variable>  
+    <xsl:variable name="title">Results</xsl:variable>  
     <html>
       <body>
         <div id="frontmatter">
@@ -22,7 +22,7 @@
         <div id="rest">
           <xsl:call-template name="summary"/>
           <xsl:call-template name="features"/>
-          <xsl:call-template name="aspects"/>
+          <xsl:call-template name="aspects" mode="probablefeatures"/>
         </div>
       </body>
     </html>
@@ -95,53 +95,6 @@
     </div>
   </xsl:template>
 
-  <xsl:template name="aspects">
-    <xsl:variable name="aspects" select="document('aspects.xml')/aspectinfos/aspect"/>
-    <div class="aspects">
-    <h2>Aspects:</h2>
-    <h3>Runs claimed:</h3>
-    <table>
-      <tr>
-        <td>
-          <img src="./claimed_runs.png"/> 
-        </td>
-        <td>
-          <table class="aspecttable">
-            <xsl:call-template name="aspectheader"/>
-            <tbody>
-            <xsl:for-each select="$aspects">
-              <xsl:call-template name="aspectrow">
-                <xsl:with-param name="suffix">runs</xsl:with-param>
-              </xsl:call-template>
-            </xsl:for-each>
-            </tbody>
-          </table>
-        </td>
-      </tr>
-    </table>
-    <h3>Features claimed:</h3>
-    <table>
-      <tr>
-        <td>
-          <img src="./claimed_features.png" align="left"/>
-        </td>
-        <td> 
-          <table class="aspecttable">
-            <xsl:call-template name="aspectheader"/>
-            <tbody>
-              <xsl:for-each select="$aspects">
-                <xsl:call-template name="aspectrow">
-                  <xsl:with-param name="suffix">features</xsl:with-param>
-                </xsl:call-template>
-              </xsl:for-each>
-            </tbody>
-          </table>
-        </td>
-      </tr>
-    </table>
-    </div>
-  </xsl:template>
-
   <xsl:template name="aspectheader">
     <thead>
     <tr>
@@ -155,7 +108,7 @@
   <xsl:template name="aspectrow">
     <xsl:param name="suffix"/>
     <xsl:variable name="linkurl">
-      <xsl:text>./aspect</xsl:text>
+      <xsl:text>./aspect_</xsl:text>
       <xsl:value-of select="position()"/>
       <xsl:text>_</xsl:text>
       <xsl:value-of select="$suffix"/>
@@ -170,6 +123,24 @@
         </a>
       </td>
     </tr>
+  </xsl:template>
+
+  <xsl:template name="aspects" mode="probablefeatures">
+    <xsl:variable name="aspects" select="document('aspects.xml')/aspectinfos/aspect"/>
+    <div class="aspects">
+      <h2>Aspects:</h2>
+        <h3>Probable Profiles</h3>
+          <table class="aspecttable">
+            <xsl:call-template name="aspectheader"/>
+            <tbody>
+              <xsl:for-each select="$aspects">
+                <xsl:call-template name="aspectrow">
+                  <xsl:with-param name="suffix">probable_features</xsl:with-param>
+                </xsl:call-template>
+              </xsl:for-each>
+            </tbody>
+        </table>
+      </div>
   </xsl:template>
 
 </xsl:stylesheet>
