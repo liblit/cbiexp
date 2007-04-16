@@ -4,6 +4,8 @@
 \label{sec-qual}
 This section discusses two cases where complex predicates prove to be useful.  The first study is about a memory access bug in \prog{exif} 0.6.9, an open source image manipulation program.  A complex predicate is useful in increasing the score of an extremely useful bug predictor.  The second study uses an input validation bug in \prog{ccrypt} 1.2 to explain how complex predicates can be used to identify partial predictors automatically.
 
+Both studies present predicates found during automated analysis.  It should be noted that in most cases the predicates discussed were not top-ranked, and in fact many were removed by the redundancy elimination algorithm - these predicates were manually identified from the full list of predictors.  This demonstrates the need for techniques to effectively filter through large numbers of complex predicates, as discussed in \autoref{sec-metrics}.
+
 \subsection{\large\textbf{\prog{exif}}}
 \label{sec-exif}
 
@@ -25,7 +27,8 @@ for (i = 0; i < c; i++) {
 
 If the condition \texttt{o + s > buf\_size} is true on line (a), then the allocation of memory to the pointer \texttt{n->entries[i].data} on line (b) is skipped.  The program crashes when other code reads from \texttt{n->entries[i].data} without checking if the pointer is valid.  This is an example of a non-deterministic bug as the program succeeds as long as the uninitialized pointer is not accessed somewhere else.
 
-We generated 1,000 runs of the program using randomly generated command line arguments and input images randomly selected from a set of Canon and non-Canon images.  There are 934 successful executions and 66 crashes.  Applying the redundancy elimination algorithm with only simple predicates produces two predicates that account for all failed runs as shown in \autoref{tab:tbl1}.  Studying the source code of the program does not show any obvious relation between the two predictors and the cause of failure.  Even though the second predictor is present in the crashing function it is a comparison between two unrelated variables: the loop iterator \texttt{i} and the size of the data stored in the traversed array \texttt{s}.  Also it is $\true$ in only 31 of the 66 failures.
+We generated 1,000 runs of the program using input images randomly selected from a set of Canon and non-Canon images.  As the bug being studied rarely manifests, this set of images was designed to trigger sufficient failed executions.  Each run was executed with randomly generated command line arguments, omitting arguments which would have triggered two unrelated bugs.
+There are 934 successful executions and 66 crashes.  Applying the redundancy elimination algorithm with only simple predicates produces two predicates that account for all failed runs as shown in \autoref{tab:tbl1}.  Studying the source code of the program does not show any obvious relation between the two predictors and the cause of failure.  Even though the second predictor is present in the crashing function it is a comparison between two unrelated variables: the loop iterator \texttt{i} and the size of the data stored in the traversed array \texttt{s}.  Also it is $\true$ in only 31 of the 66 failures.
 
 \begin{table*}
 \caption{Results for \prog{exif} with only simple predicates}
@@ -72,8 +75,11 @@ At the point where the uninitialized pointer is actually used, a hypothetical pr
 % External validity: This is probably the most likely.  The experimental input was fixed to emphasize the predicate we wanted high-ranked.  End users won't do this.  Additionally, searched the predicate list with a particular pred in mind.  To perform the same analysis on a similar but not identical program we would need to preidentify another predicate to examine (as opposed to one being immediately noticeable in the analysis).
 % I'm of the opinion that most of the threats below are threats to external validity, but I'm not sure.  A compelling argument can be made for construct validity.  I'm splitting the difference and just calling them 'threats.'
 
-\paragraph{Threats to validity}
-There are a few threats to the validity of the above experiment.  Firstly, \prog{exif} 0.6.9 had two other bugs and we had to manually remove command line arguments that trigger those bugs.  Secondly, the bug studied here is very rare.  In order to get sufficient failed executions, we downscaled the input images by selecting many Canon images (that cause the bug) and some other images (both Canon and non-Canon) that do not trigger the bug.  These two changes introduce some bias into the scores of some predicates.  For example, a high score is assigned to the predicate \func{remove\_thumbnail} \texttt{is true} that corresponds to the \texttt{---remove-thumbnail} command-line flag.  However a subjective evaluation of the predicates in \autoref{tab:tbl1} and \autoref{tab:tbl2} shows that their scores are not affected by any bias introduced by the test suite.  Another threat is that the analysis with complex predicates produces many of other predictors tied with the predicate listed in \autoref{tab:tbl2} for the highest score (0.941385).  Because of this the predicate is not selected by the redundancy elimination algorithm, and we had to scan the list of all predicates to identify it.  This is not a real threat but is an instance of the numerous complex predicates problem discussed in \autoref{sec-metrics}.
+% Three threats were discussed in the (former) threats to validity section.  They were incorporated into the discussion above.
+% (1) exif 0.6.9 had two other bugs; command line arguments which triggered these bugs were omitted.
+% (2) Image data was altered to trigger the bug more frequently (frequently enough to get sufficient crashes for study).
+% (3) The predicates chosen were not top ranked; in fact they were removed by redundancy elimination.  They were manually identified from the list of all predictors (this provides support for the discussion in section 4).
+% I moved (1) and (2) to the paragraph discussing how run information was generated.  (3) is closely related to a similar comment in ccrypt's threats to validity; the two were combined and moved to the header for section 5.
 
 \subsection{\large\textbf{\prog{ccrypt}}}
 \label{sec-ccrypt}
@@ -140,13 +146,14 @@ Score & True Successes & False Successes & Predicate & Function & File:Line \\
 
 When complex predicates are included in the analysis (\autoref{tab:tbl4}), a conjunction of $p_1$ and $p_2$ is among the top predictors.  This provides little help in finding the bug, which is easily identified by traditional CBI analysis, but it does reveal the nature of $p_2$ as a partial predictor.  The conjunction $p_1 \wedge p_2$ is observed in more successful runs than $p_1$ alone, but is true in the same number of successes and failures.  That $p_1$ can be conjoined with $p_2$ without affecting $p_1$'s predictive power demonstrates a connection between the two predicates, in this case suggesting that $p_1 \implies p_2$.
 
-This implication is detectable because the experiment is run using complete data collection.  Results taken using sparse sampling rates would have made this detection impossible, given the likelihood of $p_2$ being unobserved in a run where $p_1$ was true.
+This implication is detectable because the experiment is run using complete data collection.  Results taken using sparse sampling rates would have made this detection impossible, given the likelihood of $p_2$ being unobserved in a run where $p_1$ was true.  Additionally, it is detected in the absence of other bugs.  Intuitively an unrelated bug would cause faults in different program runs, allowing the analysis to distinguish between unrelated sets of predictors, but this was not tested.
 
 This result provides evidence that complex predicate analysis can automatically group related predicates in ways traditional CBI analysis does not, including the discovery partial, sub-bug, and perfect predictor hierarchies and implications.  Grouping related predictors statistically provides insight into program structure and execution features that can be used in debugging.  This example reiterates that complex predicates can collaborate with tools like \textsc{BTrace} that produce an execution trace from a set of predicates.  Cooperative Bug Isolation can therefore utilize techniques that previously required detailed execution information by generating a facsimile from statistical data.
 
-\paragraph{Threats to validity}
-
-The version of \prog{ccrypt} used in this experiment had only one bug visible to our test suite.  The statistically demonstrated relationship between $p_1$ and $p_2$ is discovered in the absence of predictors for other bugs, which may affect the results.  Intuitively an unrelated bug would cause faults in different program runs, allowing the analysis to distinguish between unrelated sets of predictors, but we have not demonstrated this.  Further experimentation is needed to determine if this analysis retains this power in the face of multiple bugs.  Additionally the predictor $p_1 \wedge p_2$, though it scores highly, is not top-ranked, and in fact is discarded by the redundancy elimination algorithm due to the large number of similar predicates.  Knowledge of the code and the component predicates is necessary to distinguish it as important.  This once again demonstrates the need for techniques to effectively filter through large numbers of complex predicates, as discussed in \autoref{sec-metrics}.
+% Two threats were discussed in the (former) threats to validity section.  They were incorporated into the discussion above.
+% (1) ccrypt had only one visible bug; p1 => p2 was detected in this environment.  We don't know if other bugs would have prevented this detection.
+% (2) p1 ^ p2 was highly-ranked but not top-scored, and was removed by redundancy elimination.
+% I incorporated (1) into an earlier paragraph which mentioned another possible flaw in this technique, namely that this experiment was run without sampling and we don't know how to get the same result in a sampled environment.  (2) was moved to the top of section 5 in a discussion which mentioned this issue globally, as it occurred in both case studies.
 
 % LocalWords:  ccrypt mnote buf tbl lllll len jpeg pred preidentify xreadline
 % LocalWords:  lllllll src BTrace
