@@ -15,7 +15,7 @@ function clusterByMaxAspect()
 
     % for failures, find buggy aspect with maximum probability 
     Rows = numusageaspects + 1:numaspects;
-    BugClusters = findBestIndex(Pz_d,Rows, adjustIndices(Findices,I));
+    BugClusters = findBestIndex(Pz_d,Rows, adjustIndices(Findices,Indices));
 
     % for all runs, find usage aspects with maximum probability
     UsageClusters = findBestIndex(Pz_d, [1:numusageaspects], [1:numruns]);

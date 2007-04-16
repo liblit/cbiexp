@@ -1,7 +1,6 @@
 function mostPredictiveFeatures()
     load runsinfo.mat;
     load results.mat;
-    X = selectX(Xtru, Xobs, configure());
     numaspects = size(Pz_w, 1);
     doc = com.mathworks.xml.XMLUtils.createDocument('predictivefeatures');
     docRoot = doc.getDocumentElement();

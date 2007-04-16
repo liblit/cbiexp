@@ -1,7 +1,7 @@
 function summarizeRuns()
     load runsinfo.mat;
     Learn = configure();
-    printruns(Learn, Findices, Sindices, selectX(Xtru, Xobs, Learn));
+    printruns(Learn, Findices, Sindices, X); 
     quit;
 
 function o = outcome(F, S, i)

@@ -1,6 +1,6 @@
 function summarizeFeatures()
     load runsinfo.mat;
-    printfeatures(selectX(Xtru, Xobs, configure()));
+    printfeatures(X);
     quit;
 
 function printfeatures(X);

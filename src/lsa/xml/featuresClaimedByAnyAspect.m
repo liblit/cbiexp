@@ -2,7 +2,6 @@ function runsClaimedByAnyAspect()
     load runsinfo.mat;
     load results.mat;
     Learn = configure();
-    X = selectX(Xtru, Xobs, Learn); 
     [S, Is] = max(Pz_w);
     doc = com.mathworks.xml.XMLUtils.createDocument('claimedruns');
     docRoot = doc.getDocumentElement();
