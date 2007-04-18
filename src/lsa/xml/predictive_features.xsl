@@ -42,9 +42,6 @@
           <img src="{$imagetitle}"/> 
           <table>
             <xsl:call-template name="featureheader"/>
-            <xsl:message>
-              <xsl:value-of select="count($mypreds)"/>
-            </xsl:message>
             <tbody>
               <xsl:apply-templates select="$mypreds"/>  
             </tbody>
