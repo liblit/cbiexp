@@ -48,14 +48,6 @@ empty, that basically means we're done!
 1. Come up with a more suitable term than "interesting"
 2. Make sure ALL references to "interesting" are changed.
 
->> The treatment of scoring predicates is somewhat glossed over. I would like to
->> see a little more explanation here, For example, you could motivate why it is
->> necessary to take logs for sensitivity and why the harmonic mean is preferred
->> to some other method of aggregating the two values.
-
-5. Add a suitable response.  For e.g., "See [PLDI '05] for a detailed
-explanation
-
 >> In section 3.4 the claim that bounding the predicates does not affect the
 >> results surely has the hidden assumption that an error is caused by a single
 >> fault? If so then I think that this should be stated. Naturally errors caused
