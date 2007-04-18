@@ -4,12 +4,18 @@ import common
 
 from itertools import imap
 from os.path import dirname
-
+import sys
 
 def main():
+    if len(sys.argv) != 1:
+        assert len(sys.argv) == 2
+        samplingRate = float(sys.argv[1])
+    else:
+        samplingRate = 1
+        
     # prepare to read data and apply basic filtering
     rows = common.rawData()
-    rows = ( row for row in rows if row['SamplingRate'] == 1 )
+    rows = ( row for row in rows if row['SamplingRate'] == samplingRate )
     rows = ( row for row in rows if row['Effort'] == 5 )
 
     # prepare data storage area
