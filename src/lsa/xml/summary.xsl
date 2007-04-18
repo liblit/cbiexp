@@ -22,7 +22,7 @@
         <div id="rest">
           <xsl:call-template name="summary"/>
           <xsl:call-template name="features"/>
-          <xsl:call-template name="aspects" mode="probablefeatures"/>
+          <xsl:call-template name="aspects"/>
         </div>
       </body>
     </html>
@@ -100,42 +100,60 @@
     <tr>
       <th>Index</th>
       <th>Kind</th>
-      <th>Detail</th>
+      <th>Probable Profiles</th>
+      <th>Predictive Features</th>
+      <th>Predictive Runs</th>
     </tr>
     </thead>
   </xsl:template>
 
   <xsl:template name="aspectrow">
-    <xsl:param name="suffix"/>
-    <xsl:variable name="linkurl">
+    <xsl:variable name="probableurl">
       <xsl:text>./aspect_</xsl:text>
       <xsl:value-of select="position()"/>
-      <xsl:text>_</xsl:text>
-      <xsl:value-of select="$suffix"/>
-      <xsl:text>.html</xsl:text>
+      <xsl:text>_probable_features.html</xsl:text>
+    </xsl:variable>
+    <xsl:variable name="predictiveurl">
+      <xsl:text>./aspect_</xsl:text>
+      <xsl:value-of select="position()"/>
+      <xsl:text>_predictive_features.html</xsl:text>
+    </xsl:variable>
+    <xsl:variable name="predictiverunurl">
+      <xsl:text>./aspect_</xsl:text>
+      <xsl:value-of select="position()"/>
+      <xsl:text>_predictive_runs.html</xsl:text>
     </xsl:variable>
     <tr>
       <th><xsl:value-of select="position()"/></th>
       <td style="text-align:center"><xsl:value-of select="@kind"/></td>
       <td style="text-align:center">
-        <a href="{$linkurl}">
+        <a href="{$probableurl}">
+          <xsl:text disable-output-escaping="yes">&link;</xsl:text>
+        </a>
+      </td>
+      <td style="text-align:center">
+        <a href="{$predictiveurl}">
+          <xsl:text disable-output-escaping="yes">&link;</xsl:text>
+        </a>
+      </td>
+      <td style="text-align:center">
+        <a href="{$predictiverunurl}">
           <xsl:text disable-output-escaping="yes">&link;</xsl:text>
         </a>
       </td>
     </tr>
   </xsl:template>
 
-  <xsl:template name="aspects" mode="probablefeatures">
+  <xsl:template name="aspects">
     <xsl:variable name="aspects" select="document('aspects.xml')/aspectinfos/aspect"/>
     <div class="aspects">
       <h2>Aspects:</h2>
-        <h3>Probable Profiles</h3>
+        <h3>General Stats</h3>
           <table class="aspecttable">
             <xsl:call-template name="aspectheader"/>
             <tbody>
               <xsl:for-each select="$aspects">
                 <xsl:call-template name="aspectrow">
-                  <xsl:with-param name="suffix">probable_features</xsl:with-param>
                 </xsl:call-template>
               </xsl:for-each>
             </tbody>

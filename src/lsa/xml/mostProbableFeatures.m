@@ -20,5 +20,5 @@ function printfeatures(doc, node, i, X)
     figure;
     plot(S, 'o');
     xlabel('Rank');
-    ylabel('Probability');
+    ylabel(['P(w_{i}|z_{' num2str(i) '})']);
     print('-dpng', '-r300', ['aspect_' int2str(i) '_probable_features.png']);

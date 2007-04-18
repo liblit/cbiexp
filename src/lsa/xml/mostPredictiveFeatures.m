@@ -10,10 +10,15 @@ function mostPredictiveFeatures()
         docRoot.appendChild(aspect); 
     end;
     xmlwrite('predictive_features.xml', doc);
-    quit();
 
 function printfeatures(doc, node, i, X);
     [S, I] = sortMinDiffs(X, i);
     pos = find(S > 0); 
     M = {num2cell(S(1,pos)') num2cell(I(1,pos)')};
     xmlify(doc, node, M, 'feature', {'score' 'index'});
+
+    figure;
+    plot(S, 'o');
+    xlabel('Rank');
+    ylabel(['P(z_{' num2str(i) '}|w_{i}) - max \{ P(z_{k}|w_{i}) | k <> ' num2str(i) '\}']);
+    print('-dpng', '-r300', ['aspect_' int2str(i) '_predictive_features.png']);
