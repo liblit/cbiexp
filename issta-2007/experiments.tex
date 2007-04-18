@@ -23,13 +23,16 @@ This section presents quantitative data about the ideas presented in previous se
   \end{tabular}
   \caption{Number of buggy application variants in experiments, and
     number (percentage) having a complex predicate as the top-scoring
-    predictor}
+    predictor (at a sampling Rate of 1)}
   \label{tab-top-pred}
 \end{table}
 
-\autoref{tab-top-pred} shows the number of buggy variants of each Siemens application used in our experiments.  For each of these 130 buggy programs, we perform a statistical debugging analysis using the iterative redundancy elimination algorithm discussed earlier.  We then determine whether the top-scoring bug predictor is a simple predicate, a complex conjunction, or a complex disjunction.  \autoref{tab-top-pred} reports how often each of these three kinds of predictors appears with the highest score.
+\autoref{tab-top-pred} shows the number of buggy variants of each Siemens application used in our experiments.  For each of these 130 buggy programs, we perform a statistical debugging analysis using the iterative redundancy elimination algorithm discussed earlier, at a sampling rate of 1.  We then determine whether the top-scoring bug predictor is a simple predicate, a complex conjunction, or a complex disjunction.  \autoref{tab-top-pred} reports how often each of these three kinds of predictors appears with the highest score.
 
 As can be seen, conjunctions dominate, with 86\% of programs tested selecting a conjunction as the top bug predictor.  This confirms that complex predicates can diagnose failures more accurately than simple predicates alone.  Because each Siemens program variant has only a single bug, it is to be expected that disjunctions are not needed as frequently.  Thus, disjunctions play a smaller but significant role, especially in the case of \prog{schedule}.  Even in single-bug programs, disjunctions can be helpful if no one simple predicate perfectly aligns with the condition that causes failure.
+
+\autoref{sec-sampling} explains that the chance of observing a complex predicate reduces quadratically with the sampling rate.  Despite this low probability, the top scoring predictor is a conjunction in 84\% of the Siemens applications except \prog{tcas} at a sampling rate of $\nicefrac{1}{100}$.  In \prog{tcas}, there is no looping or recursion and every function is called atmost twice.  The number of observations of a predicate in \prog{tcas} is atmost two.  As a result, the chance of observing a complex predicate at lower sampling rates reduces drastically.  Only 25\% of the \prog{tcas} experiments had a complex predicate as the top predictor.
+
 
 \subsection{Effectiveness of Pruning}
 \label{sec-effectprune}

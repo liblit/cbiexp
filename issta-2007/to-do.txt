@@ -88,9 +88,10 @@ are tackling that by pruning.. not generation of reports itself
 >> useful to include counterparts to Table 8 (where sampling rate is 1 if 
 >> I understand you correctly) with sampling rates of 0.1, 0.01, ...
 
-2. Unfortunately this needs a lot of real estate.  May be we can add one more
+"""2. Unfortunately this needs a lot of real estate.  May be we can add one more
 table, for e.g. with rate 1/100.
-(Fortunately, we do have the required data.. no need to go back to condor)
+(Fortunately, we do have the required data.. no need to go back to condor)"""
+Done!  Please review
 
 >> The paper could make a stronger case for the usefullness of disjunctions.
 >> Figure 1(b) seems to imply that they're completely uselesss. Perhaps a 
