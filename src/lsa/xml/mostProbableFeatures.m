@@ -10,7 +10,6 @@ function mostProbableFeatures()
         docRoot.appendChild(aspect); 
     end;
     xmlwrite('probable_features.xml', doc);
-    quit();
 
 function printfeatures(doc, node, i, X)
     [S, I] = sort(X, 1, 'descend');

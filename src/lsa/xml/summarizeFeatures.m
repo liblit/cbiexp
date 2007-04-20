@@ -1,7 +1,6 @@
 function summarizeFeatures()
     load runsinfo.mat;
     printfeatures(X);
-    quit;
 
 function printfeatures(X);
     doc = com.mathworks.xml.XMLUtils.createDocument('featureinfos');

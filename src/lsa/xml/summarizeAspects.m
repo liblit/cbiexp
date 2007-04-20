@@ -1,7 +1,6 @@
 function summarizeAspects()
     load runsinfo.mat
     printaspects(configure());
-    quit()
 
 function printaspects(Learn)
     doc = com.mathworks.xml.XMLUtils.createDocument('aspectinfos');

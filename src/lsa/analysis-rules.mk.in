@@ -89,19 +89,19 @@ plsa_oracle:
 	ln ../../bugsinfo.mat
 
 html/summary.xml:
-	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarize()" > /dev/null
+	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarize(); quit()" > /dev/null
 	mv summary.xml html/summary.xml
 
 html/features.xml: results.mat
-	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarizeFeatures()" > /dev/null
+	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarizeFeatures(); quit()" > /dev/null
 	mv features.xml html/features.xml
 
 html/runs.xml: results.mat
-	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarizeRuns()" > /dev/null
+	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarizeRuns(); quit()" > /dev/null
 	mv runs.xml html/runs.xml
 
 html/aspects.xml: results.mat
-	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarizeAspects()" > /dev/null
+	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); summarizeAspects(); quit()" > /dev/null
 	mv aspects.xml html/aspects.xml
 	mv aspect*.base html
 
@@ -111,7 +111,7 @@ html/claimed_runs.xml html/claimed_runs.png: results.mat
 	mv claimed_runs.png html/claimed_runs.png
 
 html/probable_features.xml: results.mat
-	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); mostProbableFeatures()" > /dev/null
+	$(MATLAB) -r "path('$(xmldir)',path); path('$(tooldir)',path); mostProbableFeatures(); quit()" > /dev/null
 	mv probable_features.xml html/probable_features.xml
 	mv aspect_*_probable_features.png html 
 

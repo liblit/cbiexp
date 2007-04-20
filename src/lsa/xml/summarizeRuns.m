@@ -1,7 +1,6 @@
 function summarizeRuns()
     load runsinfo.mat;
     printruns(Findices, Sindices, X); 
-    quit;
 
 function o = outcome(F, S, i)
     if F;
