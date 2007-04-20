@@ -26,7 +26,7 @@
       <xsl:value-of select="$index"/>
       <xsl:text> (</xsl:text>
       <xsl:value-of select="$kind"/>
-      <xsl:text> )</xsl:text>
+      <xsl:text> ): Predictive Features</xsl:text>
     </xsl:variable>  
     <xsl:variable name="imagetitle">
       <xsl:text>aspect_</xsl:text>
@@ -57,7 +57,7 @@
       <th>
         <xsl:value-of select="position()"/>
       </th>
-      <td>
+      <td style="text-align:right">
         <xsl:value-of select="@index"/>
       </td>
       <td>
