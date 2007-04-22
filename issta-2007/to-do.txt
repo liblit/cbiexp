@@ -60,17 +60,6 @@ question of the comment
 --  Review 3
 --
 
->> I had some trouble understanding the discussion of the pruning of complex
->> predicates in Section 3.4. I think it would be helpful to add a small 
->> example to illustrate why a given complex predicate can be pruned before 
->> run information is generated.  What confuses me here is the term "before 
->> run information is generated".  Presumably you already have some information 
->> about the effectiveness of simple predicates?  Please clarify.
-
-(I think we do have an example)
-1. explain that applying the truth tables itself is an expensive task and we
-are tackling that by pruning.. not generation of reports itself
-
 >> The discussion of the effectiveness of complex predicates for lower
 >> sampling rates in Section 6 could be improved. I think it would be very 
 >> useful to include counterparts to Table 8 (where sampling rate is 1 if 
