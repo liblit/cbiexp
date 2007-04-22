@@ -18,13 +18,6 @@ empty, that basically means we're done!
 --  Review 1
 --
 
->> The authors present an approach for estimating the debugging 
->> effort required from the predicate. In order to demonstrate the accuracy
->> of these estimation techniques one has to conduct an experimental study
->> that records the debugging effort by programmers.
-
-1. Add clarification/response for the above comment:
-
 ------------------------------------------------------------------------
 --
 --  Review 2
