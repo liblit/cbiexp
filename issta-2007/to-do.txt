@@ -25,18 +25,6 @@ empty, that basically means we're done!
 
 1. Add clarification/response for the above comment:
 
->> The authors present techniques such as pruning in order to reduce
->> the cost of monitoring. They also reduce complex predicates to combinations
->> of two simple predicates in order to limit monitoring costs. However, the
->> experiments reported in the paper do not discuss the monitoring overhead.
->> It is not clear from this paper if the monitoring overhead caused by complex
->> predicates is an acceptable overhead. It would have helped if the authors 
->> presented some data about the runtime monitoring overhead and how it is
->> effected by the presented pruning techniques, or how bad it would be
->> if one uses complex predicates that contain three or more simple predicates.
-
-2. Clarify that we do not change the execution monitoring in any way
-
 ------------------------------------------------------------------------
 --
 --  Review 2
