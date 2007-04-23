@@ -1,7 +1,10 @@
 %% -*- TeX-master: t -*-
 
-% \documentclass[draft]{acm_proc_article-sp}
-\documentclass[draft]{sig-alternate}
+% \documentclass{acm_proc_article-sp}
+\documentclass{sig-alternate}
+
+% remove this before creating camera-ready final copy!
+\setlength{\overfullrule}{5pt}
 
 \newcommand{\thetitle}[0]{Statistical Debugging Using Compound Boolean Predicates}
 \newcommand{\wraptitle}[0]{Statistical Debugging Using \\ Compound Boolean Predicates}
@@ -21,7 +24,7 @@
 
 \usepackage{booktabs}
 \usepackage{flushend}
-\usepackage[final]{graphicx}
+\usepackage{graphicx}
 \usepackage{hyphenat}
 \usepackage{nicefrac}
 \usepackage{paralist}
@@ -32,7 +35,6 @@
 \usepackage[
 bookmarks,
 breaklinks,
-draft=false,
 pdftitle={\thetitle},
 pdfauthor={Piramanayagam Arumuga Nainar, Ting Chen, Jake Rosin, and Ben Liblit},
 % pdfsubject={D.2.4 [Software Engineering]: Software/Program Verification -- statistical methods; D.2.5 [Software Engineering]: Testing and Debugging -- debugging aids, distributed debugging, monitors, tracing; I.5.2 [Pattern Recognition]: Design Methodology -- feature evaluation and selection},
