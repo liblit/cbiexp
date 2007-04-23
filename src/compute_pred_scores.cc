@@ -2,9 +2,11 @@
 #include <cassert>
 #include <cmath>
 #include <cstdio>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <fstream>
+#include <iterator>
+#include <map>
 #include <sstream>
 #include "IndexedPredInfo.h"
 #include "NumRuns.h"
@@ -31,6 +33,7 @@ typedef list<IndexedPredInfo> Stats;
 static Stats predList;
 static RunList * contribRuns;
 static int nselected = 0;
+static map<unsigned, unsigned> finalVotes;
 
 static double * W;
 static double * run_weights;
@@ -245,7 +248,17 @@ print_histograms()
   outfp << "</histograms>" << endl;
   outfp.close();
 }
- 
+
+
+static void
+print_final_votes(const char outfile[])
+{
+  ofstream out(outfile);
+  for (map<unsigned, unsigned>::const_iterator vote = finalVotes.begin(); vote != finalVotes.end(); ++vote)
+    out << vote->first << '\t' << vote->second << '\n';
+}
+
+
 void
 print_scores(const char *outfn)
 {
@@ -357,6 +370,7 @@ update_max(const unsigned j, const unsigned r, const unsigned npreds,
   if (is_frun[r])
     contribRuns[argmax].push_back(r);
 
+  finalVotes[r] = argmax;
 }
 
 void
@@ -379,6 +393,8 @@ iterate_max(double * u, double * notu, double * v, double * notv,
   //normalize(oldpscore, S, npreds, MAX);
   //normalize(oldnotpscore, F, npreds, MAX);
   //normalize(oldnotpscore, S, npreds, MAX);
+
+  finalVotes.clear();
 
   unsigned j = 0;
   for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
@@ -705,6 +721,7 @@ int main (int argc, char** argv)
     if (XMLTemplate::prefix == "moss")
       print_histograms();
   
+    print_final_votes("final-votes.txt");
     print_scores("pred_scores.xml");
   
     ttest_rank();

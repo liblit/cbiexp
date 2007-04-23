@@ -393,11 +393,11 @@ endif
 CLEANFILES += X.amplify.dat notX.amplify.dat amps.log
 
 predscores: pred_scores.xml
-pred_scores.xml bicluster-preds.xml: preds.txt $(truth-probs) $(not-truth-probs) $(call tool-deps, compute_pred_scores)
+pred_scores.xml bicluster-preds.xml final-votes.txt: preds.txt $(truth-probs) $(not-truth-probs) $(call tool-deps, compute_pred_scores)
 	$(build) links
 	$(time) $(tooldir)/compute_pred_scores --begin-runs=$(training-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name) --truth-probability-weights=$(truth-probs) --not-truth-probability-weights=$(not-truth-probs)
 	xmllint --valid --noout pred_scores.xml
-CLEANFILES += pred_scores.xml bicluster-preds.xml pred_scores.log list*.xml qualities.log notQualities.log
+CLEANFILES += pred_scores.xml bicluster-preds.xml final-votes.txt pred_scores.log list*.xml qualities.log notQualities.log
 
 sober.xml sober.txt: static-site-info.so preds.txt $(call tool-deps, calc_sober)
 	$(build) links
