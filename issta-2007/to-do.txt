@@ -73,11 +73,6 @@ picking up primary predictors of 2 bugs or a single bug with disjunctive
 predictor.  This is mentioned somewhere.  Revise its text and placement if
 necessary.
 
->> Related work by Alex Orso, Adam Porter et al. on the classification of data
->> from deployed software should be discussed.
-
-4. Gosh!  Add that right away.
-
 ------------------------------------------------------------------------
 --
 --  Section 4
