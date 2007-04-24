@@ -18,13 +18,6 @@ empty, that basically means we're done!
 --  General
 --
 
-1. Add 
-    Categories & Subject Descriptors 
-    General Terms
-    Keywords
-    
-  (see http://www.sheridanprinting.com/typedept/issta.htm)
-
 ------------------------------------------------------------------------
 --
 --  Review 1
