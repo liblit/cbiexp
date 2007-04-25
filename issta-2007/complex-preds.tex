@@ -301,7 +301,7 @@ $\frac{500}{500} - \frac{1000}{2000}=0.5$ and the upper bound of $\Importance(C)
 \begin{equation*}
 \frac{2}{\frac{1}{0.5}+\frac{1}{\log{1000}/\log{1000}}} = 0.666\dots.
 \end{equation*}
-If the complex predicate $C$ is generated during the iterative elimination step (see \autoref{sec-elimalg}) and we already know a predicate $C'$ which scored better than $0.666$, we can prune $C$ before computing its exact score.  $C$'s estimated $\Importance$ is calculated as an upper-bound on its actual score, making it mathematically impossible for it to beat $C'$ if fully generated.
+If the complex predicate $C$ is generated during the iterative elimination step (see \autoref{sec-elimalg}) and we already know a predicate $C'$ which scored better than $0.666$, we can prune $C$ before computing its exact score.  The estimate of $\Importance(C)$ computed above is an upper-bound on the actual score of $C$, making it mathematically impossible for it to beat $C'$ if fully generated.
 
 All upper- and lower-bound estimates are conservative.  Pruning complex predicates using the above calculations and the appropriate threshold value reduces the computational intensity of the analysis without affecting the results.  The effectiveness of pruning in practice is examined in \autoref{sec-effectprune}.
 
