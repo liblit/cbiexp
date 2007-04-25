@@ -32,25 +32,25 @@ Using these values, two scores of bug relevance are calculated:
 \item[Sensitivity:] $\log{(F(p))} / \log{(\NumF)}$ where $\NumF$ is the total number of failing runs.  A good predictor must predict a large number of failing runs.
 \item[Specificity:] $\Increase(p)$.  The amount by which $p$ being true increases the probability of failure over simply reaching the line where $p$ is defined.  It is computed as follows:
 
-  \begin{equation*}
+  \begin{equation}
     \label{eqn1}
     \Increase(p) \equiv
     \frac{F(p)}{S(p) + F(p)}
     -
     \frac{\obs{F}{p}}{\obs{S}{p} + \obs{F}{p}}
-  \end{equation*}
+  \end{equation}
 
 \end{description}
 
 Taking the harmonic mean combines these two scores, identifying predicates that are both highly sensitive and highly specific:
-\begin{equation*}
+\begin{equation}
 \label{eqn2}
 \Importance(p) \equiv
 \frac{2}{%
   \frac{1}{\Increase(p)}
   +
   \frac{1}{log(F(p)) / log(\NumF)}}
-\end{equation*}
+\end{equation}
 
 The $\Importance$ score is calculated for each predicate, and the top result selected.  After all runs in which the top predicate is true are eliminated scores are recalculated for all remaining predicates in the remaining sets of runs.  This process of eliminating runs continues, as described above, until there are no remaining failed runs or no remaining predicates.
 
