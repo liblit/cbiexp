@@ -141,7 +141,7 @@ sampling rates was previously undiscovered and initially seems
 counterintuitive.  Closer inspection of experimental results reveals
 two scenarios where this can happen.
 
-The first scenario happens due to an ad hoc, but perfectly reasonable
+The first scenario happens due to an ad hoc but perfectly reasonable
 elimination of seemingly identical predicates.  As an example, consider the
 predicates $p$: \texttt{a == b} and $q$: \texttt{a >= b}.  If they have the
 same score, it is useful to just retain $p$ as it is a more stringent
@@ -150,7 +150,7 @@ that \texttt{a > b} was never true.  \texttt{a > b} may be observed  during
 some runs but does not affect the outcome of \texttt{a >= b} if \texttt{a == b}
 also happens to be true in those runs.  However, at sampling rates lower than
 1, only \texttt{a > b} may be observed in some runs and hence the number of
-runs in which $p$ and $q$ are observed \emph{true}, and consequently their
+runs in which $p$ and $q$ are observed true, and consequently their
 scores may be different.  Thus, the ad hoc elimination heuristic performs 
 less effectively at lower sampling rates, leading to an increase in the 
 number of interesting simple predicates
@@ -159,10 +159,10 @@ To understand the second scenario, consider a predicate $p$ for which
 $\obs{S}{p} = S(p)$ and $\obs{F}{p} = F(p)$.
 In other words, $p$ is true at least once in every run in which it is
 observed.  From \autoref{eqn1}, $\Increase(p) = 0$.  In a run 
-in which $p$ was observed, it may also be \emph{false} at least once.  As we
-reduce the sampling rates, only the \emph{false} occurrences may be recorded
+in which $p$ was observed, it may also be false at least once.  As we
+reduce the sampling rates, only the false occurrences may be recorded
 in some runs and hence the two equalities may no longer hold.  As a result
-$\Increase(p)$ may be nonzero and if it becomes positive a predicate that
+$\Increase(p)$ may be nonzero and if it becomes positive, then a predicate that
 was not interesting at higher sampling rates becomes interesting at lower 
 sampling rates.
 
