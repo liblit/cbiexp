@@ -63,7 +63,7 @@ the same was true for its components.
 
 Consider a complex predicate $C = p_1 \wedge p_2$.  If either $r(p_1)$ or $r(p_2)$ was $\false$ in a run $r$, then $r(C) = \false$, since one false value disproves a conjunction.  If both $r(p_1)$ and $r(p_2)$ were $\true$, then $C$ was observed to be $\true$.  Otherwise, the value of $r(C)$ is $\unknown$. This is shown using a three-valued truth table in \autoref{tab:and}.
 
-Similarly one true value proves a disjunction, and so a disjunction is $\false$ only if its components were observed $\false$ and not $\unknown$.  The truth table for the predicate $D = p_1 \vee p_2$ is shown in \autoref{tab:or}.
+Similarly one true value proves a disjunction, and so a disjunction is $\false$ only if both of its components were observed $\false$.  The truth table for the predicate $D = p_1 \vee p_2$ is shown in \autoref{tab:or}.
 
 \begin{table}[tb]
   \caption{Three-valued truth tables for complex predicates}
