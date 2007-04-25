@@ -52,6 +52,8 @@ Taking the harmonic mean combines these two scores, selecting out predicates tha
   \frac{1}{log(F(p)) / log(\NumF)}}
 \end{equation*}
 
+The $\Importance$ score is calculated for each predicate, and the top result selected.  After all runs in which the top predicate is true are eliminated scores are recalculated for all remaining predicates in the remaining sets of runs.  This process of eliminating runs continues, as described above, until there are no remaining failed runs or no remaining predicates.
+
 \subsection{Expected Benefits of Complex Predicates}
 A single predicate can be thought of as partitioning the space of all runs into two subspaces: those satisfying the predicate and those not.  The more closely these partitions match the subspaces where the bug is and is not expressed, the better the predicate is as a bug predictor.  If a bug has a cause which corresponds well to a simple predicate then a simple analysis is sufficient, but analysis of more complex bugs will produce only super- and sub-bug predictors.
 
