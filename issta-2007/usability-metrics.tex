@@ -19,16 +19,16 @@ The idea behind this metric is that the larger the distance between the two pred
 
 \subsection{Correlation}
 
-The second metric is to consider the correlation between the two predicates.  Two predicates may be easily reached from one another without having an apparent connection - a complex predicate formed from them would provide little help to the programmer.  On the other hand, two predicates which are both affected by some shared area of code may have a connection which a programmer can easily discern.  The correlation between two predicates is defined based on the program dependency graph.  Given a single predicate $p$, we define its \textit{predecessor set} as the set of vertices in the PDG that can influence $p$.
+The second metric considers the correlation between the two predicates.  Two predicates may be easily reached from one another without having an apparent connection; a complex predicate formed from them would provide little help to the programmer.  On the other hand, two predicates which are both affected by some shared area of code may have a connection which a programmer can easily discern.  The correlation between two predicates is defined based on the program dependency graph.  Given a single predicate $p$, we define the \textit{predecessor set} of $p$ as the set of vertices in the PDG that can influence $p$.
 
 \begin{defn}
 \label{dfn5}
 The correlation between two predicates of a complex predicate is defined as the number of vertices in the intersection of the two predecessor sets.
 \end{defn}
 
-The idea behind this metric is that a larger intersection between the $predecessor\ sets$ means it is possible that they are closely related.  We expect correlation to mitigate the issue of disjunctive predicates raised in \autoref{sec-background}, namely that the disjunction of predictors for two separate bugs will be scored very highly.  The predictors of two unrelated program faults are likely to reside in different areas of the program, and therefore the intersection of their predecessor sets would be smaller than two related predictors for the same bug, which are likely to be in closer proximity.
+The idea behind this metric is that a larger intersection between the predecessor sets means it is possible that they are closely related.  We expect correlation to mitigate the issue of disjunctive predicates raised in \autoref{sec-background}, namely that the disjunction of predictors for two separate bugs will be scored very highly.  The predictors of two unrelated program faults are likely to reside in different areas of the program, and therefore the intersection of their predecessor sets would be smaller than two related predictors for the same bug, which are likely to be in closer proximity.
 
-\subsection{Proactive and Retroactive Pruning}
+\subsection{Proactive and Reactive Pruning}
 
 %Changed ``higher'' to ``better'' in the second-to-last sentence below, since what we actually want for metric 1 is a *lower* result.
-The above two metrics can be applied both \emph{proactively} and \emph{reactively}.  Proactive use of the metrics removes complex predicates whose metric values fall below a certain threshold of usefulness.  This eliminates them from being computed and hence improves performance.  Reactive use of the metrics retains all the predicates but breaks ties by giving higher ranks to those with better values for the metrics. This is desirable if neither computing time nor space is a concern.
+The above two metrics can be applied both \emph{proactively} and \emph{reactively}.  Proactive use of the metrics removes complex predicates whose metric values fall below a certain threshold of usefulness.  This avoids computing their scores and hence improves performance.  Reactive use of the metrics retains all the predicates but breaks ties by giving higher ranks to those with better values for the metrics. This is desirable if neither computing time nor space is a concern.
