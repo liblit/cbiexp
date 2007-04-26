@@ -16,7 +16,7 @@ RunSet::dilute(const Predicate &, const RunSet &winner)
   for (size_t runId = 0; runId < size(); ++runId)
     if ((*this)[runId] && winner[runId])
       {
-	(*this)[runId] = 0;
+	(*this)[runId] = false;
 	--count;
       }
 }

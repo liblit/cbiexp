@@ -21,7 +21,7 @@ operator>>(istream &in, RunSet &runs)
   in.exceptions(ios::badbit);
   while (in >> runId)
     {
-      runs[runId] = 1;
+      runs[runId] = true;
       ++runs.count;
     }
 
