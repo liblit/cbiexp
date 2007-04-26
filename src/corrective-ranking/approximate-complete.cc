@@ -4,7 +4,7 @@
 
 
 void
-RunSet::dilute(const Predicate &, const RunSet &winner)
+RunSet::dilute(const Predicate &, const RunSet &winner, bool)
 {
   if (!empty())
     {

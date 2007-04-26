@@ -20,7 +20,7 @@ vector<RunSuite> trueComplete;
 
 
 void
-RunSet::dilute(const Predicate &winPred, const RunSet &winSet)
+RunSet::dilute(const Predicate &winPred, const RunSet &winSet, bool)
 {
   if (!empty())
     {

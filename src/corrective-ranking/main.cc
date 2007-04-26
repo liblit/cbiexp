@@ -50,7 +50,7 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
       if (foci)
 	foci->insert(winner->index);
 
-      allFailures.dilute(*winner, winner->tru.failures);
+      allFailures.dilute(*winner, winner->tru.failures, true);
       if (allFailures.count <= 0)
 	break;
 
