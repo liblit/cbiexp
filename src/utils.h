@@ -32,5 +32,9 @@ bool read_pred_full(FILE* fp, pred_info &);
 
 const std::string &scheme_name(char code);
 
+/* Return the index for the complement of the predicate
+ * for pred indices 0, 2, 4, complement is 1, 3, 5 and vice versa
+ */
+PredCoords notP (PredCoords &p);
 
 #endif

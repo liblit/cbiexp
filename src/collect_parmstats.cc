@@ -1,3 +1,23 @@
+/****************************************************************
+ * This program collects sufficient statistics for estimating the 
+ * parameters of the truth probability model.  Statistics are
+ * collected for all predicates that passed the pre-filtering test,
+ * as well as the complements of those predicates.  Statistics for
+ * failed runs are collected separately from those of successful
+ * runs.
+ * Input: 
+ * 1. file containing sampling rates (defined on the commandline)
+ * 2. preds.txt (predicates retained after pre-filtering)
+ * 3. all the program runs
+ * 4. s.runs and f.runs
+ * Output:
+ * parmstats.txt and notp-parmstats.txt: sufficient stats for the 
+ *   list of predicates in preds.txt and their complements (in the
+ *   same order as preds.txt)
+ *
+ * -- documented by alicez 04/2007
+ ***************************************************************/
+
 #include <argp.h>
 #include <cassert>
 #include <fstream>
@@ -21,17 +41,33 @@ using namespace std;
 using __gnu_cxx::hash_map;
 
 string sampleRateFile;
+typedef hash_map<SiteCoords, double> site_hash_t;
+static site_hash_t sampleRates;
 
 typedef queue<PredCoords> Preds;
 Preds retainedPreds;
 
 /****************************************************************
- * Information about non-constant predicates
+ * Structure to store information about predicates
+ * N = number of runs the predicate is reached at least once
+ * Z = number of runs in which predicate is not reached
+ * S = total number of times pred is observed in all (failed/succ) runs
+ * Y = total number of times pred is true in all (f/s) runs
+ * a = min(number of times observed in any run)
+ * b = max(number of times observed in any run)
+ * rho = sampling rate of the predicate
+ * Asize = number of runs in set A (num_obs > num_true > 0)
+ * Asumobs = total number of times predicate is observed in all runs
+ * Asumtrue = total number of times predicate is true in all runs
+ * Bsize = number of runs in set B (num_obs > num_true = 0)
+ * Bset is a histogram of num_obs counts in the runs in set B
+ * Csize = number of runs in set C (num_obs = num_true > 0)
+ * Cset is a histogram of num_obs counts in the runs in set C
  ***************************************************************/
 
 class pred_info_t {
 private:
-    unsigned N, Z;
+    unsigned N, Z; 
     count_tp S, Y;
     double a;
     double b;
@@ -83,6 +119,9 @@ void pred_info_t::update (const count_tp m, const count_tp y)
   }
 }
 
+/* Set the number of runs in which a predicate is not observed.
+ * If there are such runs, set a (minimum num_obs) to be zero.
+ */
 inline void
 pred_info_t::setmin (const unsigned nruns)
 {
@@ -91,6 +130,7 @@ pred_info_t::setmin (const unsigned nruns)
     a = 0.0;
 }
 
+/* container for a pair of predicates */
 class PredPair;
 typedef pred_info_t (PredPair::* PredInfoPtr);
 class PredPair
@@ -114,64 +154,8 @@ class pred_hash_t : public hash_map<PredCoords, PredPair>
 };
 static pred_hash_t predHash;
 
-typedef hash_map<SiteCoords, double> site_hash_t;
-static site_hash_t sampleRates;
-
-// This function reads down sampling rates off of file, if the info
-// is available.  The non-uniform down-sampling rates file may not
-// contain sampling rates for all sites.  (A site is omiited if it
-// was not observed in the training runs.)  The default behavior of 
-// the decimator is to not do anything; therefore the default down
-// sampling rate is 1.
-void 
-read_rates()
-{
-  if (sampleRateFile.empty()) {
-    return;
-  }
-
-  FILE *const rates = fopenRead(sampleRateFile.c_str());
-  SiteCoords coords;
-  double rho;
-  unsigned ctr;
-
-  while (true) {
-    ctr = fscanf(rates, "%u\t%u\t%lg\n", &coords.unitIndex, &coords.siteOffset, &rho);
-    if (ctr != 3)
-	break;
-
-    sampleRates[coords] = rho;
-  }
-  
-  fclose(rates);
-}
-
-/* for each interesting predicate, set rho according to sampleRates hash */
-void set_rates ()
-{
-    for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
-	const PredCoords &pc = c->first;
-	PredPair &pp = c->second;
-	const site_hash_t::iterator found = sampleRates.find(pc);
-	if (found != sampleRates.end()) {
-	    const double rho = found->second;
-	    pp.f.setrho(rho);
-	    pp.s.setrho(rho);
-        }
-    }
-}
-
-void set_min()
-{
-  for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
-    PredPair &pp = c->second;
-    pp.f.setmin(num_fruns);
-    pp.s.setmin(num_sruns);
-  }
-}
-
 /****************************************************************
- * Information about each run
+ * Structure for processing information about each run
  ***************************************************************/
 
 class Reader : public ReportReader
@@ -222,20 +206,63 @@ Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 }
 
 /****************************************************************************
- * Utilities
+ * Utility functions
  ***************************************************************************/
 
-PredCoords
-notP (PredCoords &p) {
-  PredCoords notp(p);
-  if (p.predicate % 2 == 0) {
-    notp.predicate = p.predicate + 1;
-  }
-  else {
-    notp.predicate = p.predicate - 1;
+// This function reads down-sampling rates contained in a file if it
+// exists and is non-empty.  The non-uniform down-sampling rates file
+// may not contain sampling rates for all sites.  (A site is omitted
+// if it was not observed in the training runs.)  The default behavior
+// of the decimator is to not do anything; therefore the default
+// sampling rate is 1.
+void 
+read_rates()
+{
+  if (sampleRateFile.empty()) {
+    return;
   }
 
-  return notp;
+  FILE *const rates = fopenRead(sampleRateFile.c_str());
+  SiteCoords coords;
+  double rho;
+  unsigned ctr;
+
+  while (true) {
+    ctr = fscanf(rates, "%u\t%u\t%lg\n", &coords.unitIndex, &coords.siteOffset, &rho);
+    if (ctr != 3)
+	break;
+
+    sampleRates[coords] = rho;
+  }
+  
+  fclose(rates);
+}
+
+/* For each interesting predicate, set rho according to sampleRates hash.
+ * rho is initialized to have a default value of 1.0. (See definition of
+ * pred_info_t)
+ */
+void set_rates ()
+{
+    for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
+	const PredCoords &pc = c->first;
+	PredPair &pp = c->second;
+	const site_hash_t::iterator found = sampleRates.find(pc);
+	if (found != sampleRates.end()) {
+	    const double rho = found->second;
+	    pp.f.setrho(rho);
+	    pp.s.setrho(rho);
+        }
+    }
+}
+
+void set_min()
+{
+  for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
+    PredPair &pp = c->second;
+    pp.f.setmin(num_fruns);
+    pp.s.setmin(num_sruns);
+  }
 }
 
 
@@ -364,11 +391,14 @@ int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
 
-    classify_runs();
+    classify_runs(); // classify runs as either successful or failing
 
     FILE * const pfp = fopenRead(PredStats::filename);
     pred_info pi;
-    while (read_pred_full(pfp, pi)) {
+    // read in the list of pre-filtered predicates, insert both the 
+    // predicate and its complement into the hashtable if they don't 
+    // already exist
+    while (read_pred_full(pfp, pi)) { 
 	PredPair &pp = predHash[pi];
 	PredPair &notpp = predHash[notP(pi)];
 	pp.init();
@@ -377,15 +407,16 @@ int main(int argc, char** argv)
     }
     fclose(pfp);
 
-    read_rates();
-    set_rates();
+    read_rates();  // read the sampling rates from file
+    set_rates();   // set sampling rates in predHash according to values read from file
 
     Progress::Bounded prog("Reading runs and collecting sufficient stats", NumRuns::count());
     for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
       prog.step();
+      // pipt is a pointer to the pred_info singleton for success or failure
       PredInfoPtr pipt = 0;
       if (is_srun[r])
-	pipt = &PredPair::s;
+	pipt = &PredPair::s; 
       else if (is_frun[r])
         pipt = &PredPair::f;
       else

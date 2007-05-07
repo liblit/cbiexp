@@ -1,3 +1,22 @@
+/****************************************************************
+ * Calculate the posterior truth probabilities of each predicate
+ * in each run based on estimated probabilistic model parameters.
+ * If input runs are not downsampled, then just collect the ground
+ * truth counts.
+ * Input:
+ * - parms.txt: estimated parameter values for all predicates in preds.txt
+ * - notp-parms.txt: same as above but for pred complements
+ * Output:
+ * - X.dat: matrix of inferred truth probabilities (rows = runs, columsn = preds)
+ * - notX.dat: same as above, but for the complement preds
+ * - truX.dat: matrix of binary truth counts from downsampled runs
+ * - trunotX.dat: same as above, but for the complement preds
+ * - truFreq.dat: matrix of truth frequencies (num tru/num observed)
+ * - trunotFreq.dat: same as above, but for the complement preds
+ * 
+ * -- documented by alicez 4/07
+ ***************************************************************/
+
 #include <argp.h>
 #include <cassert>
 #include <cmath>
@@ -24,10 +43,11 @@
 using namespace std;
 using __gnu_cxx::hash_map;
 
-bool full = 0;
-static int score_ctr = 0;
-static double score2 = 0.0, score_n2 = 0.0;
-static double score3 = 0.0;
+
+bool full = 0;  // whether we are looking at downsampled or full reports
+static double score = 0.0, score_n = 0.0; // sum of absolute difference between inferred probs and full (binarized) counts
+static double score_ds = 0.0; // sum of absolute difference between full and downsampled counts (binarized)
+static int score_ctr = 0; // number of runs used to compute score
 static ofstream datfp("X.dat", ios_base::trunc);
 static ofstream notdatfp("notX.dat", ios_base::trunc);
 static ofstream gdatfp("truX.dat", ios_base::trunc);
@@ -39,7 +59,20 @@ static vector<PredCoords> predVec;
 static vector<PredCoords> notpredVec;
 
 /****************************************************************
- * Predicate-specific information
+ * Storage for statistics on a single predicate in a single run
+ * tru = observed truth count
+ * obs = number of times observed
+ * rho = predicate sampling rate
+ * alpha = truth rate in P(X|N)
+ * beta = mixture proportions in P(X|N)
+ * lamba = Poisson parameter in P(N)
+ * gamma = mixture proportion in P(N)
+ * tp = inferred truth probability P(X > 0 | m, y)
+ * tp_n = inferred truth probability P(X > 0 | n, m, y)
+ * dst = truth count in downsampled run
+ * dso = num times observed in downsampled run
+ * realt = truth count in full run
+ * realo = num times observed in full run
  ***************************************************************/
 
 struct PredInfo
@@ -49,40 +82,42 @@ struct PredInfo
     double alpha; // truth rate = tru/obs
     double beta[3];
     double lambda, gamma;
-    double tp2, tp_n2; // truth probabilities from model 2
+    double tp, tp_n; // truth probabilities
     count_tp dst, dso, realt, realo;
     PredInfo() {
 	tru = obs = 0;
 	rho = alpha = beta[0] = beta[1] = beta[2] = lambda = gamma = 0.0;
-	tp2 = tp_n2 = 0.0;
+	tp = tp_n = 0.0;
 	dst = dso = realt = realo = 0;
     }
     void reinit_probs() {
-	tp2 = tp_n2 = 0.0;
+	tp = tp_n = 0.0;
 	dst = dso = realt = realo = 0;
     }
     void update_stats(count_tp _tru, count_tp _obs) {
 	tru += _tru;
 	obs += _obs;
     }
-    void set_parms(FILE *fp);
-    void calc_prob2(count_tp t, count_tp o);
-    void calc_prob_n2(count_tp t, count_tp o, count_tp n);
-    void calc_zero_prob2() {  calc_prob2(0,0);    }
+    void set_parms(FILE *fp);  // set parameter values according to file
+    void calc_prob(count_tp t, count_tp o);
+    void calc_prob_n(count_tp t, count_tp o, count_tp n);
+    void calc_zero_prob() {  calc_prob(0,0);    }
     void record_vals (count_tp t, count_tp o) {
         realt = t;
         realo = o;
     }
+    // compare ground truth against inferred probabilities
     void compare_prob (count_tp t, count_tp o) {
         realt = t;
         realo = o;
-	calc_prob_n2(dst, dso, realo);
-        double answer = (realt > 0) ? 1.0 : 0.0;
-	double obstru = (dst > 0) ? 1.0 : 0.0;
-        score2 += abs(answer - tp2);
-        score_n2 += abs(answer - tp_n2);
-	score3 += abs(answer - obstru);
+	calc_prob_n(dst, dso, realo);
+        double realt_bin = (realt > 0) ? 1.0 : 0.0;
+	double dst_bin = (dst > 0) ? 1.0 : 0.0;
+        score += abs(realt_bin - tp);
+        score_n += abs(realt_bin - tp_n);
+	score_ds += abs(realt_bin - dst_bin);
     }
+    void print_groundtruth (ofstream &, ofstream &);
 };
 
 void
@@ -100,11 +135,14 @@ PredInfo::set_parms (FILE * fp)
   assert(ctr == 18);
 }
 
+// Calculate the posterior truth probability P(X | o, t)
+// t = num times predicate observed to be true
+// o = num times predicate observed
 void
-PredInfo::calc_prob2(count_tp t, count_tp o)
+PredInfo::calc_prob(count_tp t, count_tp o)
 {
     if (t > 0)
-	tp2 = 1.0;
+	tp = 1.0;
     else {
 	double numer, denom;
 	if (o > 0) { // t = 0, m > 0
@@ -115,27 +153,47 @@ PredInfo::calc_prob2(count_tp t, count_tp o)
 	    numer = (beta[0]*exp(-lambda*alpha*(1.0-rho)) + beta[1] + beta[2]*exp(-lambda*(1.0-rho))) * gamma * exp(-lambda*rho) + 1.0 - gamma;
 	    denom = gamma*exp(-lambda*rho) + 1.0 - gamma;
 	}
-	tp2 = 1.0 - numer / denom;
-        if (tp2 < 0.0) 
-          tp2 = 0.0;
+	tp = 1.0 - numer / denom;
+        if (tp < 0.0)  // small numerical errors may cause tp to be negative
+          tp = 0.0;
     }
 }
 
+// Calculate the posterior probability P(X > 0 | n, o, t)
+// t and o same as in calc_prob(), n = num times predicate is reached
 void
-PredInfo::calc_prob_n2(count_tp t, count_tp o, count_tp n)
+PredInfo::calc_prob_n(count_tp t, count_tp o, count_tp n)
 {
     if (t > 0)
-	tp_n2 = 1.0;
+	tp_n = 1.0;
     else { // t = 0, n > 0
 	double numerator = beta[0]*exp((double)n*log(1.0-alpha)) + beta[1]; 
 	if (o > 0) { // t = 0, m > 0, n > 0
 	    double denominator = beta[0]*exp((double)o*log(1.0-alpha)) + beta[1];
-	    tp_n2 = 1.0 - numerator/denominator;
+	    tp_n = 1.0 - numerator/denominator;
 	}
 	else // t = 0, m = 0, n > 0
-	    tp_n2 = 1.0 - numerator;
+	    tp_n = 1.0 - numerator;
     }
 }
+
+// Calculate truthprobs of predicates we didn't see in this run
+void calc_zero_prob(piptr pp) 
+{
+  for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
+    PredInfoPair &PP = c->second;
+    if ((PP.*pp).dso == 0) // it is zero if the predicate hasn't been observed in this run
+    {
+	(PP.*pp).calc_zero_prob();
+    }
+    
+  }
+}
+
+/****************************************************************
+ * Storage for a pair of predicates (one for failed runs, one for
+ * the successes)
+ ***************************************************************/
 
 class PredInfoPair;
 typedef PredInfo (PredInfoPair::* piptr);
@@ -146,6 +204,10 @@ public:
     PredInfo f;
     PredInfo s;
 };
+
+/****************************************************************
+ * Hash array of a pair of predicates
+ ***************************************************************/
 
 class pred_hash_t : public hash_map<PredCoords, PredInfoPair>
 {
@@ -161,39 +223,11 @@ public:
 static pred_hash_t predHash;
 static piptr pptr = 0;
 
-inline ostream &
-operator<< (ostream &out, const PredInfo &pi)
-{
-    out << pi.tru << ' ' << pi.obs << ' ' << pi.rho << ' ' 
-	<< pi.alpha << ' ' << pi.beta[0] << ' ' << pi.beta[1] << ' ' << pi.beta[2] << ' ' 
-	<< pi.lambda << ' ' << pi.gamma << ' '
-	<< pi.tp2 << ' ' << pi.tp_n2 << ' '
-        << pi.dst << ' ' << pi.dso << ' '
-	<< pi.realt << ' ' << pi.realo;
-    return out;
-}
-
-inline ostream &
-operator<< (ostream &out, const PredInfoPair &pp)
-{
-  out << (pp.*pptr); 
-  return out;
-}
-
-inline ostream &
-operator<< (ostream &out, const pred_hash_t &hash)
-{
-  for (pred_hash_t::const_iterator c = hash.begin(); c != hash.end(); ++c) 
-  {
-    out << c->first << '\n' << c->second << endl;
-  }
-  return out;
-}
-
 /****************************************************************
- * Information about each run
+ * Report reader, records and makes of of information from each run
  ***************************************************************/
-enum { READ_DS, READ_FULL, RECORD_FULL };
+
+enum { READ_DS, READ_FULL, RECORD_FULL }; // different reader modes
 
 class Reader : public ReportReader
 {
@@ -214,6 +248,7 @@ Reader::Reader(int _mode)
 {
 }
 
+// record the right information from this run, according to reader mode
 inline void
 Reader::update(const SiteCoords &coords, unsigned p, count_tp obs, count_tp tru) const
 {
@@ -223,17 +258,16 @@ Reader::update(const SiteCoords &coords, unsigned p, count_tp obs, count_tp tru)
     if (found != predHash.end()) {
 	PredInfoPair &pp = found->second;
 	switch (mode) {
-	case READ_DS:
+	case READ_DS: // record down-sampled counts and calculate post prob
 	    (pp.*pptr).dst = tru;
 	    (pp.*pptr).dso = obs;
-	    (pp.*pptr).calc_prob2(tru, obs);
+	    (pp.*pptr).calc_prob(tru, obs);
 	    break;
-	case READ_FULL:
+	case READ_FULL: // compare against inferred prob
             score_ctr++;
 	    (pp.*pptr).compare_prob(tru, obs);
 	    break;
-        case RECORD_FULL:
-            score_ctr++;
+        case RECORD_FULL: // just record full counts
             (pp.*pptr).record_vals(tru, obs);
             break;
 	default:
@@ -259,22 +293,12 @@ void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 }
 
 /****************************************************************************
- * Utilities
+ * I/O utilities
  ***************************************************************************/
 
-PredCoords
-notP (PredCoords &p) {
-  PredCoords notp(p);
-  if (p.predicate % 2 == 0) {
-    notp.predicate = p.predicate + 1;
-  }
-  else {
-    notp.predicate = p.predicate - 1;
-  }
-
-  return notp;
-}
-
+// Read and store the list of predicates in preds.txt, as well as the
+// complements of those predicates.  This function is only called when
+// we are looking at full (non-downsampled) data.
 void
 read_preds()
 {
@@ -311,17 +335,18 @@ read_preds()
   assert(notpredVec.size() == predVec.size());
 }
 
+// Read in the estimated parameters of all interesting predicates
 void
 read_parms()
 {
-  FILE *fp = fopenRead("hyperparms.txt");
-  FILE *notpfp = fopenRead("notp-hyperparms.txt");
+  FILE *fp = fopenRead("parms.txt");
+  FILE *notpfp = fopenRead("notp-parms.txt");
   if (!fp) {
-    cerr << "Cannot open hyperparms.txt for reading\n";
+    cerr << "Cannot open parms.txt for reading\n";
     exit(1);
   }
   if (!notpfp) {
-    cerr << "Cannot open notp-hyperparms.txt for reading\n";
+    cerr << "Cannot open notp-parms.txt for reading\n";
     exit(1);
   }
 
@@ -343,7 +368,7 @@ read_parms()
       pp.s.set_parms(fp);
       predHash[coords] = pp;
 
-      // read info for predicate ~p
+      // read info for the predicate's complement
       ctr = fscanf(notpfp, "%u\t%u\t%u\n", 
 		   &coords.unitIndex, &coords.siteOffset, &coords.predicate);
       assert(ctr == 3);
@@ -374,21 +399,6 @@ read_parms()
   assert(notpredVec.size() == predVec.size());
 }
 
-void calc_zero_prob(piptr pp) // calculate truthprobs of predicates we didn't see in this previous run
-{
-  for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
-    PredInfoPair &PP = c->second;
-    if ((PP.*pp).dso == 0) // it is zero if the predicate hasn't been observed in the previous run
-    {
-	(PP.*pp).calc_zero_prob2();
-    }
-    
-  }
-}
-
-/****************************************************************************
- * Print results to file
- ***************************************************************************/
 static ostream &
 operator<< (ostream &out, const vector<PredCoords> &pv)
 {
@@ -400,32 +410,34 @@ operator<< (ostream &out, const vector<PredCoords> &pv)
           out << t << ' ';
         }
         else {
-	  out << (found->second.*pptr).tp2 << ' ';
+	  out << (found->second.*pptr).tp << ' ';
         }
     }
     return out;
 }
 
+// Print the groundtruth counts from the down-sampled runs
+void 
+PredInfo::print_groundtruth(ostream &gfp, ostream &ffp)
+{
+  double freq = (dso > 0) ? (double) dst/dso : 0.0;
+  gfp << dst << ' ';
+  ffp << freq << ' ';
+  return;
+}
+
+// Wrapper function for PredInfo::print_groundtruth()
 void
 print_groundtruth()
 {
-  double freq;
   for (unsigned i = 0; i < predVec.size(); ++i) {
     pred_hash_t::iterator found = predHash.find(predVec[i]);
     assert(found != predHash.end());
-    gdatfp << (found->second.*pptr).dst << ' ';
-    freq = 0.0;
-    if ((found->second.*pptr).dso > 0)
-      freq = (double) (found->second.*pptr).dst/(found->second.*pptr).dso;
-    freqfp << freq << ' ';
+    (found->second.*pptr).print_groundtruth(gdatfp, freqfp);
 
     found = predHash.find(notpredVec[i]);
     assert(found != predHash.end());
-    gnotdfp << (found->second.*pptr).dst << ' ';
-    freq = 0.0;
-    if ((found->second.*pptr).dso > 0)
-      freq = (double) (found->second.*pptr).dst/(found->second.*pptr).dso;
-    nfreqfp << freq << ' ';
+    (found->second.*pptr).print_groundtruth(gnotdfp, nfreqfp);
   }
   gdatfp << endl;
   freqfp << endl;
@@ -433,6 +445,9 @@ print_groundtruth()
   nfreqfp << endl;
 }
 
+// print collected truth counts or probabilities, if we're doing
+// probabilistic inference, also print groundtruth of downsampled
+// counts to compare against the inferred probabilities later on
 void print_results()
 {
   datfp << predVec << endl;
@@ -485,6 +500,7 @@ int main(int argc, char** argv)
     datfp << scientific << setprecision(12);
     notdatfp << scientific << setprecision(12);
     freqfp << scientific << setprecision(12);
+    nfreqfp << scientific << setprecision(12);
 
     Progress::Bounded prog("Calculating truth probabilities", NumRuns::count());
     for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
@@ -496,17 +512,17 @@ int main(int argc, char** argv)
 	    continue;
 
 	prog.step();
-        predHash.reinit_probs(pptr);
+        predHash.reinit_probs(pptr);  // reinitialize predicate probabilities for each new run
 
         if (!full) { // looking at downsampled data
-	  Reader(READ_DS).read(r);
-	  calc_zero_prob(pptr);
+	  Reader(READ_DS).read(r); // read in down-sampled counts and compute posterior truth probabilities for all observed predicates
+	  calc_zero_prob(pptr); // calculate the posterior truth probability for predicates that were not observed
   
 	  CompactReport::suffix = "";
-	  Reader(READ_FULL).read(r);
+	  Reader(READ_FULL).read(r);  // read in the full data for comparison
 	  CompactReport::suffix = report_suffix;
         }
-        else {
+        else { // record full data
           Reader(RECORD_FULL).read(r);
         }
 

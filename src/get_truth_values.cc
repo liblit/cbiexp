@@ -114,19 +114,6 @@ void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
  * Utilities
  ***************************************************************************/
 
-PredCoords
-notP (PredCoords &p) {
-  PredCoords notp(p);
-  if (p.predicate % 2 == 0) {
-    notp.predicate = p.predicate + 1;
-  }
-  else {
-    notp.predicate = p.predicate - 1;
-  }
-
-  return notp;
-}
-
 void
 read_preds()
 {

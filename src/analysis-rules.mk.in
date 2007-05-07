@@ -356,9 +356,9 @@ parmstats.txt notp-parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt stat
 	$(time) $(tooldir)/collect_parmstats --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) --sample-rates=$(stamp-decimate)
 CLEANFILES += parmstats.txt notp-parmstats.txt
 
-hyperparms.txt notp-hyperparms.txt: parmstats.txt notp-parmstats.txt static-site-info.so $(call tool-deps, est_hyperparms)
+parms.txt notp-parms.txt: parmstats.txt notp-parmstats.txt static-site-info.so $(call tool-deps, est_hyperparms)
 	$(time) $(tooldir)/est_hyperparms
-CLEANFILES += hyperparms.txt notp-hyperparms.txt est_hyperparms.log
+CLEANFILES += parms.txt notp-parms.txt est_parms.log
 
 ifdef $(HAVE_GSL_CDF)
 chi2stats.txt: parmstats.txt fpriors.dat fpriors-full.dat spriors.dat spriors-full.dat $(call tool-deps, chi2test)
@@ -370,7 +370,7 @@ truthprobs: static-site-info.so $(call tool-deps, calc_truthprobs)
 	$(time) $(tooldir)/calc_truthprobs --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
 CLEANFILES += truthprobs.txt
 
-X.dat notX.dat : preds.txt hyperparms.txt notp-hyperparms.txt static-site-info.so $(call tool-deps, get_tp_weights)
+X.dat notX.dat : preds.txt parms.txt notp-parms.txt static-site-info.so $(call tool-deps, get_tp_weights)
 	$(time) $(tooldir)/get_tp_weights --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series)
 CLEANFILES += X.dat notX.dat truX.dat trunotX.dat truFreq.dat trunotFreq.dat
 else

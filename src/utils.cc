@@ -72,6 +72,19 @@ scheme_name(char code)
     }
 }
 
+PredCoords
+notP (PredCoords &p) {
+  PredCoords notp(p);
+  if (p.predicate % 2 == 0) {
+    notp.predicate = p.predicate + 1;
+  }
+  else {
+    notp.predicate = p.predicate - 1;
+  }
+
+  return notp;
+}
+
 // Local variables:
 // c-file-style: "cc-mode"
 // End:
