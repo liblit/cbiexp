@@ -1,3 +1,15 @@
+/****************************************************************************
+ * Estimate the MAP (Maximum A Posteriori) parameters of the truth
+ * probability model using Newton-Raphson.
+ * Input: 
+ * 1. parmstats.txt and notp-parmstats.txt (sufficient stats of parameters)
+ * Output:
+ * parms.txt, notp-parms.txt
+ * log file: est_parms.log
+ *
+ * -- documented by alicez 4/07
+ ***************************************************************************/
+
 #include <argp.h>
 #include <cassert>
 #include <cmath>
@@ -19,18 +31,42 @@
 using namespace std;
 using __gnu_cxx::hash_map;
 
-const unsigned MAXITER = 500;
-const double thresh = 1e-10;
-static ofstream logfp ("est_hyperparms.log", ios_base::trunc);
+
+static ofstream logfp ("est_parms.log", ios_base::trunc);
 
 /****************************************************************************
  * Definitions of constants, structs, and classes
  ***************************************************************************/
 
-static gsl_rng *generator;
+const unsigned MAXITER = 500; // max number of iterations of newton-raphson
+const double thresh = 1e-10;  // threshold for determining convergence of newton-raphson
+static gsl_rng *generator;    // random number generator
 
 /****************************************************************
- * Pred-specific information
+ * Statistics of a single predicate
+ * N = number of runs the predicate is reached at least once
+ * Z = number of runs in which predicate is not reached
+ * S = total number of times pred is observed in all (failed/succ) runs
+ * Y = total number of times pred is true in all (f/s) runs
+ * a = min(number of times observed in any run)
+ * b = max(number of times observed in any run)
+ * rho = sampling rate of the predicate
+ * Asize = number of runs in set A (num_obs > num_true > 0)
+ * Asumobs = total number of times predicate is observed in all runs
+ * Asumtrue = total number of times predicate is true in all runs
+ * Bsize = number of runs in set B (num_obs > num_true = 0)
+ * Bset is a histogram of num_obs counts in the runs in set B
+ * Csize = number of runs in set C (num_obs = num_true > 0)
+ * Cset is a histogram of num_obs counts in the runs in set C
+ * alpha = the binomial heads probability in P(X | N) (where X is 
+           the number of times pred is true, and N is number of times
+           pred is reached during a single run of the program)
+ * lambda = mean parameter of the Poisson dist in P(N)
+ * gamma = mixture probability in P(N)
+ * beta[0..2] = mixture probabilities of P(X|N)
+ * t[0..2] = softmax values of beta[0..2] (Newton-Raphson operates
+             on t instead of beta because, unlike beta, t can take
+             on negative values)
  ***************************************************************/
 struct pred_info_t {
     unsigned N, Z;
@@ -54,50 +90,53 @@ struct pred_info_t {
 	Cset.clear();
     }
     void read_stats(FILE * fp);
-    void scale_t() {
+    void scale_t() { // normalize t because beta is invariant to multiplicative constants in t
       double mint = t[0];
       mint = (t[1] < mint) ? t[1] : mint;
       mint = (t[2] < mint) ? t[2] : mint;
       for (unsigned i = 0; i < 3; ++i)
         t[i] -= mint;
     }
+    void calc_beta() { // compute beta based on t
+	double T = exp(t[0]) + exp(t[1]) + exp(t[2]);
+	for (unsigned i = 0; i < 3; ++i) {
+	    beta[i] = exp(t[i])/T;
+	}
+    }
     void init_parms() {
 	alpha = (double) Y/S;
 	lambda = (double) S/N/rho;
-	gamma = 0.5; // (double) N/(N+Z);
+	gamma = 0.5; 
 	beta[0] = (double) Asize/(Asize + Bsize + Csize);
 	beta[1] = (double) Bsize/(Asize + Bsize + Csize);
 	beta[2] = (double) Csize/(Asize + Bsize + Csize);
 	for (unsigned i = 0; i < 3; ++i) 
 	  t[i] = log(beta[i]);
         scale_t();
+        //Alternative ways of initialization:
+        //gamma = (double) N/(N+Z);
 	//t[0] = t[1] = t[2] = 1.0;
 	//beta[0] = beta[1] = beta[2] = 1.0/3.0;
 	//beta = gsl_rng_uniform(generator);
 	//lambda = gsl_rng_uniform(generator)*(b-a) + a;
     }
-
-    void map_estimate();
-    bool est_Nparms();
-    bool est_Xparms();
-    double newton_raphson_N();
-    double newton_raphson_X();
-    void update_Xparms(double grad[4], double Hess[4][4]);
-    void beta_der(double d[3][3], double D[3][3][3]);
+    void map_estimate(); // brief driver routine that calls est_Nparms() and est_Xparms()
+    bool est_Nparms(); // driver for newton-raphson on parameters for N (num times pred is reached)
+    bool est_Xparms(); // driver for newton-raphson on parameters for X (num times pred is true 
+    double newton_raphson_N(); // compute derivatives and update N parms
+    double newton_raphson_X(); // compute derivatives and update X parms
+    void update_Xparms(double grad[4], double Hess[4][4]); // update X parms
+    // helper routines for computing specific derivatives
+    void beta_der(double d[3][3], double D[3][3][3]); 
     void B_der(double dB[4], double ddB[4][4], const double d[3][3], 
 	       const double D[3][3][3] , const double m, double *Bi);
     void C_der(double dC[4], double ddC[4][4], const double d[3][3] , 
 	       const double D[3][3][3] , const double m, double *Ci);
-    void calc_beta() {
-	double T = exp(t[0]) + exp(t[1]) + exp(t[2]);
-	for (unsigned i = 0; i < 3; ++i) {
-	    beta[i] = exp(t[i])/T;
-	}
-    }
 };
 
-ostream & operator<< (ostream &out, const pred_info_t &pi);
-
+/****************************************************************************
+ * A pair of predicates (one for failed runs, one for successful runs)
+ ***************************************************************************/
 class PredPair
 {
 public:
@@ -116,9 +155,13 @@ public:
 static PredPair currPred;
 static PredCoords currCoords;
 
+
 /****************************************************************************
- * Utilities
+ * Utility functions for error checking, printing results,
+ * and reading predicate statistics from file
  ***************************************************************************/
+ostream & operator<< (ostream &out, const pred_info_t &pi);
+
 void
 pred_info_t::read_stats (FILE * fp)
 {
@@ -183,14 +226,14 @@ checkstatus(bool retval, char * errstr)
 /****************************************************************************
  * Main computational routines
  ***************************************************************************/
+// If the parameter value falls outside of allowed range during Newton-Raphson,
+// project it back into the legal range
 inline void
 project(double *val, const double min, const double max)
 {
     if (*val < min) {
       logfp << "Value " << *val << " less than minimum " << min << endl;
       *val = min+1e-5;
-      //logfp.close();
-      //exit(1);
     }
     if (*val > max) {
       logfp << "Value " << *val << " greater than maximum " << max << endl;
@@ -198,6 +241,9 @@ project(double *val, const double min, const double max)
     }
 }
 
+// Compute the derivatives of lambda and gamma, which are the parameters
+// for P(N) (where N represents the number of times a predicate is reached
+// in a single run)
 double
 pred_info_t::newton_raphson_N()
 {
@@ -211,8 +257,6 @@ pred_info_t::newton_raphson_N()
     double zloga = (Z > 0)? ((double) Z * log(A)) : 0.0;
     // likelihood
     double L = N*log(gamma) - lambda*rho*N + S*log(lambda)+ zloga;
-
-    // logfp << "log(A): " << log(A) << " Z/A: " << t1 << endl;
 
     // gradient
     double ga = -rho*N + S/lambda + t1*B;  // partial wrt lambda
@@ -228,18 +272,14 @@ pred_info_t::newton_raphson_N()
     double lchange = det*(dd*ga-bb*gb);
     double gchange = det *(-bb*ga + aa*gb);
 
-     //logfp << "ex: " << ex << " C: " << C << " A: " << A 
- 	  //<< " E: " << E << " B: " << B << " D: " << D
- 	  //<< " t1: " << t1 << endl;
-     //logfp << S << ' ' << -S/(lambda*lambda) << ' ' << B*B/A-D << endl;
-     //logfp << "a: " << ga << " b: " << gb << " aa: " << aa << " bb: " << bb << " dd: " << dd << " det: " << det << " lchange: " << lchange << " gchange: " << gchange << endl;
-
     lambda -= lchange;
     gamma -= gchange;
 
     return L;
 }
 
+// Wrapper for newton_raphson_N()
+// check for convergence after each iteration, stop when MAXITER is reached
 bool
 pred_info_t::est_Nparms()
 {
@@ -275,6 +315,7 @@ pred_info_t::est_Nparms()
   return 0;
 }
 
+// Compute derivatives of t[..]
 void pred_info_t::beta_der(double d[3][3], double D[3][3][3])
 {
     double et[] = {exp(t[0]), exp(t[1]), exp(t[2])};
@@ -298,7 +339,9 @@ void pred_info_t::beta_der(double d[3][3], double D[3][3][3])
     }
 }
 
-// in order: t[0], t[1], t[2], alpha
+// compute the first and second order partial derivatives of
+// B_i = beta_1 (1-alpha)^m_i + beta_2 w.r.t. t[0], t[1], t[2], alpha,
+// in that order
 void 
 pred_info_t::B_der(double dB[4], double ddB[4][4], const double d[3][3], 
 		   const double D[3][3][3] , const double m, double *Bi)
@@ -320,15 +363,10 @@ pred_info_t::B_der(double dB[4], double ddB[4][4], const double d[3][3],
 	}
     }
 
-    //logfp << "Bi: " << *Bi << endl;
-    //logfp << "dB: " << dB[0] << ' ' << dB[1] << ' ' << dB[2] << ' ' << dB[3] << endl;
-    //logfp << "ddB: " << endl;
-    //logfp << ddB[0][0] << ' ' << ddB[0][1] << ' ' << ddB[0][2] << ' ' << ddB[0][3] << endl
-          //<< ddB[1][0] << ' ' << ddB[1][1] << ' ' << ddB[1][2] << ' ' << ddB[1][3] << endl
-          //<< ddB[2][0] << ' ' << ddB[2][1] << ' ' << ddB[2][2] << ' ' << ddB[2][3] << endl
-          //<< ddB[3][0] << ' ' << ddB[3][1] << ' ' << ddB[3][2] << ' ' << ddB[3][3] << endl;
 }
 
+// Compute the first and second order partial derivatives of 
+// C_i = beta_1 alpha^m_i + beta_3 w.r.t. t[0..2] and alpha, in that order
 void 
 pred_info_t::C_der(double dC[4], double ddC[4][4], const double d[3][3] , 
 		   const double D[3][3][3] , const double m, double *Ci)
@@ -348,17 +386,10 @@ pred_info_t::C_der(double dC[4], double ddC[4][4], const double d[3][3] ,
 	    ddC[k][j] = ddC[j][k];
 	}
     }
-
-    //logfp << "m: " << m << " am: " << am << " beta[0]: " << beta[0] << " beta[2]: " << beta[2] << endl;
-    //logfp << "Ci: " << *Ci << endl;
-    //logfp << "dC: " << dC[0] << ' ' << dC[1] << ' ' << dC[2] << ' ' << dC[3] << endl;
-    //logfp << "ddC: " << endl;
-    //logfp << ddC[0][0] << ' ' << ddC[0][1] << ' ' << ddC[0][2] << ' ' << ddC[0][3] << endl
-          //<< ddC[1][0] << ' ' << ddC[1][1] << ' ' << ddC[1][2] << ' ' << ddC[1][3] << endl
-          //<< ddC[2][0] << ' ' << ddC[2][1] << ' ' << ddC[2][2] << ' ' << ddC[2][3] << endl
-          //<< ddC[3][0] << ' ' << ddC[3][1] << ' ' << ddC[3][2] << ' ' << ddC[3][3] << endl;
 }
 
+// Update the parameters for P(X|N) using computed derivatives
+// and the matrix-vector multiplication code from gsl
 void
 pred_info_t::update_Xparms(double grad[4], double Hess[4][4])
 {
@@ -369,7 +400,6 @@ pred_info_t::update_Xparms(double grad[4], double Hess[4][4])
 
     gsl_vector_view vec = gsl_vector_view_array(grad, 4);
     gsl_matrix_view Mat = gsl_matrix_view_array(H_data, 4, 4);
-    //gsl_matrix * V = gsl_matrix_alloc(4,4);
     gsl_vector * tau = gsl_vector_alloc (4);
     gsl_vector * change = gsl_vector_alloc (4);
 
@@ -391,9 +421,9 @@ pred_info_t::update_Xparms(double grad[4], double Hess[4][4])
 
     gsl_vector_free (change);
     gsl_vector_free (tau);
-    //gsl_matrix_free (V);
 }
 
+// Compute derivatives for updating parameters of P(X|N)
 double
 pred_info_t::newton_raphson_X()
 {
@@ -401,8 +431,8 @@ pred_info_t::newton_raphson_X()
     double D[3][3][3]; // second order beta derivatives
     double dB[4];      // first order derivatives of B_i
     double ddB[4][4];  // second order derivatives of B_i
-    double dC[4];
-    double ddC[4][4];
+    double dC[4];      // first order derivatives of C_i
+    double ddC[4][4];  // second order derivatives of C_i
     double as = (double) S-Y;
     double at = (double) Y;
     double log1a = log(1.0-alpha);
@@ -415,23 +445,6 @@ pred_info_t::newton_raphson_X()
         + (double) Asumtrue * loga + (double) (Asumobs - Asumtrue) * log1a;
 
     beta_der(d, D);
-    //logfp << "d: " << endl;
-    //logfp << d[0][0] << ' ' << d[0][1] << ' ' << d[0][2] << endl
-          //<< d[1][0] << ' ' << d[1][1] << ' ' << d[1][2] << endl
-          //<< d[2][0] << ' ' << d[2][1] << ' ' << d[2][2] << endl;
-    //logfp << "D[0]: " << endl;
-    //logfp << D[0][0][0] << ' ' << D[0][0][1] << ' ' << D[0][0][2] << endl
-          //<< D[0][1][0] << ' ' << D[0][1][1] << ' ' << D[0][1][2] << endl
-          //<< D[0][2][0] << ' ' << D[0][2][1] << ' ' << D[0][2][2] << endl;
-    //logfp << "D[1]: " << endl;
-    //logfp << D[1][0][0] << ' ' << D[1][0][1] << ' ' << D[1][0][2] << endl
-          //<< D[1][1][0] << ' ' << D[1][1][1] << ' ' << D[1][1][2] << endl
-          //<< D[1][2][0] << ' ' << D[1][2][1] << ' ' << D[1][2][2] << endl;
-    //logfp << "D[2]: " << endl;
-    //logfp << D[2][0][0] << ' ' << D[2][0][1] << ' ' << D[2][0][2] << endl
-          //<< D[2][1][0] << ' ' << D[2][1][1] << ' ' << D[2][1][2] << endl
-          //<< D[2][2][0] << ' ' << D[2][2][1] << ' ' << D[2][2][2] << endl;
-
 
     // derivative ordering: t[0], t[1], t[2], alpha
     double grad[4];
@@ -453,8 +466,6 @@ pred_info_t::newton_raphson_X()
     grad[3] = (at+ (double) Asumtrue)/alpha - (as + (double) (Asumobs - Asumtrue))/(1.0-alpha);
     Hess[3][3] = -(at + (double) Asumtrue)/(alpha*alpha) 
 	- (as + (double) (Asumobs - Asumtrue))/((1.0-alpha)*(1.0-alpha));
-
-    //logfp << "grad (before): " << grad[0] << ' ' << grad[1] << ' ' << grad[2] << ' ' << grad[3] << endl;
 
     // Add the terms involving set B
     for (DiscreteDist::iterator c = Bset.begin(); c != Bset.end(); ++c) {
@@ -486,7 +497,7 @@ pred_info_t::newton_raphson_X()
 	}
     }
 
-    // make Hess symmetric
+    // make the Hessian symmetric
     for (unsigned j = 0; j < 4; ++j) 
 	for (unsigned k = j+1; k < 4; ++k)
 	    Hess[k][j] = Hess[j][k];
@@ -503,6 +514,8 @@ pred_info_t::newton_raphson_X()
     return L;
 }
 
+// Wrapper routine for updating P(X|N) parameters
+// checks for convergence of Newton-Raphson
 bool
 pred_info_t::est_Xparms() 
 {
@@ -513,7 +526,7 @@ pred_info_t::est_Xparms()
     double change;
     unsigned nbzero = 0;
 
-    if (Asize == 0) {  // didn't observe and runs where m > y > 0, just use initial values
+    if (Asize == 0) {  // didn't observe any runs where m > y > 0, just use initial values
        return (0);
     }
 
@@ -647,7 +660,11 @@ inline void free_gsl_generator ()
 
 
 /****************************************************************************
- * Driver routine
+ * Driver routine: 
+ * 1. read in previously collected statistics for each predicate 
+ * 2. estimate parameters for this predicate
+ * 3. output result to file 
+ * 4. repeat for next predicate
  ***************************************************************************/
 void
 driver (char *infn, char *outfn)
@@ -682,8 +699,8 @@ int main(int argc, char** argv)
 
     init_gsl_generator();
 
-    driver("parmstats.txt", "hyperparms.txt");
-    driver("notp-parmstats.txt", "notp-hyperparms.txt");
+    driver("parmstats.txt", "parms.txt");
+    driver("notp-parmstats.txt", "notp-parms.txt");
 
     logfp.close();
     free_gsl_generator();
