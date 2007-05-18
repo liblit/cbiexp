@@ -1,5 +1,5 @@
-function convertICMLResults(outfilename)
-    Votes = load('final-votes.txt');
+function convertPriorResults(infilename, outfilename)
+    Votes = load(infilename);
 
     % convert to one based indexing instead of zero based indexing
     Votes = [Votes(:,1) + 1 Votes(:,2) + 1];
@@ -15,5 +15,5 @@ function convertICMLResults(outfilename)
     % prepare to pass to conversion function 
     Xdimensions = load('X.dimensions');
     Indexing = indexing();
-    ICMLvotes = convertInfo(Votes, Xdimensions(2), Indexing); 
-    save('-mat', outfilename, 'ICMLvotes')
+    Votes = convertInfo(Votes, Xdimensions(2), Indexing); 
+    save('-mat', outfilename, 'Votes')
