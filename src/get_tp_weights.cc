@@ -117,7 +117,7 @@ struct PredInfo
         score_n += abs(realt_bin - tp_n);
 	score_ds += abs(realt_bin - dst_bin);
     }
-    void print_groundtruth (ofstream &, ofstream &);
+    void print_groundtruth (ostream &, ostream &);
 };
 
 void
@@ -177,19 +177,6 @@ PredInfo::calc_prob_n(count_tp t, count_tp o, count_tp n)
     }
 }
 
-// Calculate truthprobs of predicates we didn't see in this run
-void calc_zero_prob(piptr pp) 
-{
-  for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
-    PredInfoPair &PP = c->second;
-    if ((PP.*pp).dso == 0) // it is zero if the predicate hasn't been observed in this run
-    {
-	(PP.*pp).calc_zero_prob();
-    }
-    
-  }
-}
-
 /****************************************************************
  * Storage for a pair of predicates (one for failed runs, one for
  * the successes)
@@ -222,6 +209,19 @@ public:
 
 static pred_hash_t predHash;
 static piptr pptr = 0;
+
+// Calculate truthprobs of predicates we didn't see in this run
+void calc_zero_prob(piptr pp) 
+{
+  for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
+    PredInfoPair &PP = c->second;
+    if ((PP.*pp).dso == 0) // it is zero if the predicate hasn't been observed in this run
+    {
+	(PP.*pp).calc_zero_prob();
+    }
+    
+  }
+}
 
 /****************************************************************
  * Report reader, records and makes of of information from each run
