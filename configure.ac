@@ -24,8 +24,7 @@ AC_REQUIRE_CPP
 if test "$GXX" = yes; then
   AC_MSG_CHECKING(for GNU C++ compiler version)
   AC_PREPROC_IFELSE([AC_LANG_PROGRAM([[
-#include <ansidecl.h>
-#if GCC_VERSION < 3003
+#if __GNUC__ * 1000 + __GNUC_MINOR__ < 3003
 #error
 #endif]])],
     [AC_MSG_RESULT(3.3.x or later)],
