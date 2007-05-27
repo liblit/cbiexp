@@ -133,17 +133,17 @@ html/predictive_runs.xml: results.mat
 summary: html/summary.xml html/features.xml html/runs.xml html/aspects.xml html/claimed_runs.xml html/claimed_runs.png html/predictive_features.xml html/claimed_features.xml html/claimed_features.png
 
 summary.html: summary.xml runs.xml
-	xsltproc --path $(xmldir) --path ../.. --path . --stringparam source-dir ../../src --output summary.html summary.xsl summary.xml
+	xsltproc --path $(xmldir) --path ../.. --path . --path ../../../.. --stringparam source-dir ../../src --output summary.html summary.xsl summary.xml
 CLEANFILES += summary.html
 
 aspect_%_probable_features.html : aspect_%.base
-	xsltproc --path . --path $(xmldir) --path ../.. --output $@ --stringparam index `cat $<` probable_features.xsl probable_features.xml
+	xsltproc --path . --path $(xmldir) --path ../.. --path ../../../.. --output $@ --stringparam index `cat $<` probable_features.xsl probable_features.xml
 
 aspect_%_predictive_features.html : aspect_%.base
-	xsltproc --path . --path $(xmldir) --path ../.. --output $@ --stringparam index `cat $<` predictive_features.xsl predictive_features.xml
+	xsltproc --path . --path $(xmldir) --path ../.. --path ../../../.. --output $@ --stringparam index `cat $<` predictive_features.xsl predictive_features.xml
 
 aspect_%_predictive_runs.html : aspect_%.base
-	xsltproc --path . --path $(xmldir) --path ../.. --output $@ --stringparam index `cat $<` predictive_runs.xsl predictive_runs.xml
+	xsltproc --path . --path $(xmldir) --path ../.. --path ../../../.. --output $@ --stringparam index `cat $<` predictive_runs.xsl predictive_runs.xml
 
 aspectsprobablefeatures: $(addsuffix _probable_features.html, $(basename $(wildcard aspect*.base)))
 .PHONY: aspectsprobablefeatures 

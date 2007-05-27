@@ -58,8 +58,11 @@
       <td style="text-align:right">
         <xsl:value-of select="@index"/>
       </td>
-      <td>
+      <td style="text-align:right">
         <xsl:value-of select="@score"/>
+      </td>
+      <td style="text-align:right">
+        <xsl:value-of select="@totalcounts"/>
       </td>
     </tr>
   </xsl:template>
@@ -70,6 +73,7 @@
         <th>Rank</th>
         <th>Index</th>
         <th>Score</th>
+        <th>Total Counts</th>
       </tr>
     </thead>
   </xsl:template>
