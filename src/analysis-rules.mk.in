@@ -186,12 +186,21 @@ $(sparse): $(corrdir)/mhn2sparsemat.pl f.runs s.runs obs.txt tru.txt
 CLEANFILES += $(sparse)
 endif
 
-$(corrected): all_hl_corrected-%.xml: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/%)
-	$(time) $(tooldir)/corrective-ranking/$* --zoom=$(zoom) --begin-runs=$(training-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
+all_hl_corrected-approximate-complete.xml: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/approximate-complete)
+	$(time) $(tooldir)/corrective-ranking/approximate-complete --zoom=$(zoom) --begin-runs=$(training-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
 	$(build) links
 	xmllint --valid --noout $@
 	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
-CLEANFILES += all_hl_corrected-exact-complete.xml all_hl_corrected-approximate-complete.xml
+CLEANFILES += all_hl_corrected-approximate-complete.xml
+
+all_hl_corrected-exact-complete.xml elimination-clusters.txt: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/exact-complete)
+	$(time) $(tooldir)/corrective-ranking/exact-complete --zoom=$(zoom) --begin-runs=$(training-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
+	$(build) links
+	xmllint --valid --noout all_hl_corrected-exact-complete.xml
+	test -e elimination-clusters.txt
+	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
+CLEANFILES += all_hl_corrected-exact-complete.xml elimination-clusters.txt
+
 clean::
 	$(find-zooms) -exec rm '{}' ';'
 
