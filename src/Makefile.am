@@ -19,7 +19,7 @@ noinst_PROGRAMS =				\
 	compute-results				\
 	convert-reports				\
 	decimate-sparse				\
-	est_hyperparms				\
+	est_parms				\
 	extract-timestamps			\
 	find_tsSCC				\
 	gather_prior_dist			\
@@ -93,8 +93,8 @@ decimate_sparse_SOURCES = decimate-sparse.ll
 decimate_sparse_INCLUDES = $(GSL_CFLAGS)
 decimate_sparse_LDADD = libanalyze.a $(GSL_LIBS)
 
-est_hyperparms_SOURCES = est_hyperparms.cc
-est_hyperparms_LDADD = libanalyze.a $(GSL_LIBS)
+est_parms_SOURCES = est_parms.cc
+est_parms_LDADD = libanalyze.a $(GSL_LIBS)
 
 extract_timestamps_SOURCES = extract_timestamps.ll
 extract_timestamps_LDADD = libanalyze.a -ldl $(LEXLIB)

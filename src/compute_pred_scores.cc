@@ -411,7 +411,7 @@ cast_finalvote(double * u, double * notu, double * v, double * notv,
 // or not the run is a success, v and notv are current quality scores, 
 // pvotes and notpvotes are voting summaries to be updated 
 inline void
-update_sum(const unsigned j, const unsigned is_s, const unsigned npreds,
+update_votes(const unsigned j, const unsigned is_s, const unsigned npreds,
            double *v, double *notv,
            double pvotes[][2], double notpvotes[][2])
 {
@@ -426,9 +426,9 @@ update_sum(const unsigned j, const unsigned is_s, const unsigned npreds,
   }
   for (unsigned i = 0; i < npreds; ++i) {
     if (contribj != 0 && run_weights[j] != 0) {
-        Aij = W[j*npreds+i] / run_weights[j];
-        cij = contrib(W,i,j,is_s,v,npreds) / contribj;
-        pvotes[i][is_s] += Aij * cij;
+        Aij = W[j*npreds+i];
+        cij = contrib(W,i,j,is_s,v,npreds) / contribj / run_weights[j];
+        pvotes[i][is_s] += Aij * (1.0 - cij);
     }
 
     if (notp_contribj != 0 && notrun_weights[j] != 0) {
@@ -470,7 +470,7 @@ iterate_votes(double * u, double * notu, double * v, double * notv,
 	continue;
 
       is_s = is_srun[r];
-      update_sum(j, is_s, npreds, v, notv, pvotes, notpvotes);
+      update_votes(j, is_s, npreds, v, notv, pvotes, notpvotes);
       j++;
     }
 

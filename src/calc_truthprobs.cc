@@ -331,9 +331,9 @@ void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 void
 read_parms()
 {
-  FILE *fp = fopenRead("hyperparms.txt");
+  FILE *fp = fopenRead("parms.txt");
   if (!fp) {
-    cerr << "Cannot open hyperparms.txt for reading\n";
+    cerr << "Cannot open parms.txt for reading\n";
     exit(1);
   }
 

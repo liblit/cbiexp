@@ -83,9 +83,9 @@ double rexp(const site_info_t &si, count_tp r, count_tp n)
 void
 read_parms()
 {
-  FILE *fp = fopenRead("hyperparms.txt");
+  FILE *fp = fopenRead("parms.txt");
   if (!fp) {
-    cerr << "Cannot open hyperparms.txt for reading\n";
+    cerr << "Cannot open parms.txt for reading\n";
     exit(1);
   }
 

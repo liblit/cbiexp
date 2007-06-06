@@ -365,8 +365,8 @@ parmstats.txt notp-parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt stat
 	$(time) $(tooldir)/collect_parmstats --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) --sample-rates=$(stamp-decimate)
 CLEANFILES += parmstats.txt notp-parmstats.txt
 
-parms.txt notp-parms.txt: parmstats.txt notp-parmstats.txt static-site-info.so $(call tool-deps, est_hyperparms)
-	$(time) $(tooldir)/est_hyperparms
+parms.txt notp-parms.txt: parmstats.txt notp-parmstats.txt static-site-info.so $(call tool-deps, est_parms)
+	$(time) $(tooldir)/est_parms
 CLEANFILES += parms.txt notp-parms.txt est_parms.log
 
 ifdef $(HAVE_GSL_CDF)
