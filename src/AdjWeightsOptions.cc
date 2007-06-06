@@ -1,11 +1,11 @@
 #include <sstream>
-#include "TpWeights.h"
+#include "AdjWeightsOptions.h"
 
 using namespace std;
 
 
-string TpWeights::tp_weights;
-string TpWeights::not_tp_weights;
+string AdjWeightsOptions::adj_weights;
+string AdjWeightsOptions::not_adj_weights;
 
 
 #ifdef HAVE_ARGP_H
@@ -34,15 +34,15 @@ static const argp_option options[] = {
 static int
 parseFlag(int key, char *arg, argp_state *)
 {
-  using namespace TpWeights;
+  using namespace AdjWeightsOptions;
 
   switch (key)
     {
     case 27:
-      TpWeights::tp_weights = arg;
+      AdjWeightsOptions::adj_weights = arg;
       return 0;
     case 28:
-      TpWeights::not_tp_weights = arg;
+      AdjWeightsOptions::not_adj_weights = arg;
       return 0;
     default:
       return ARGP_ERR_UNKNOWN;
@@ -50,7 +50,7 @@ parseFlag(int key, char *arg, argp_state *)
 }
 
 
-const argp TpWeights::argp = {
+const argp AdjWeightsOptions::argp = {
   options, parseFlag, 0, 0, 0, 0, 0
 };
 

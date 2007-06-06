@@ -7,13 +7,13 @@
  * - the adjacency matrices between runs and predicates and predicate
  *   complements, defaults are X.dat and notX.dat
  * Output:
- * - pred_scores.xml: list of predicates ranked by the number of failed
+ * - bicluster_votes.xml: list of predicates ranked by the number of failed
  *                    runs they account for
  * - bicluster_preds.xml: top predicate for each run cluster as determined
- *        by two-sample t-testing (not nec. same as pred_scores.xml);
+ *        by two-sample t-testing (not nec. same as bicluster_votes.xml);
  *        run cluster i is the set of runs that voted for the ith most
  *        popular predicate 
- * - pred_scores.log, qualities.log, notQualities.log: log files
+ * - bicluster_votes.log, qualities.log, notQualities.log: log files
  *
  **********************************************************************/
 
@@ -29,7 +29,7 @@
 #include <sstream>
 #include "IndexedPredInfo.h"
 #include "NumRuns.h"
-#include "TpWeights.h"
+#include "AdjWeightsOptions.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
 #include "RunBugs.h"
@@ -61,7 +61,7 @@ static double * run_weights; // run_weights[i] is the row sum of W_i
 static double * notrun_weights; // row sum of notW
 static double * pred_scores[2]; // vector of quality scores for each predicate, pred_scores[F][i] is the portion of Q_i that came from the failed runs, pred_scores[S][i] is the portion that came from the successes
 
-static ofstream logfp ("pred_scores.log", ios_base::trunc); // log file
+static ofstream logfp ("bicluster_votes.log", ios_base::trunc); // log file
 static ofstream qualities_log ("qualities.log", ios_base::trunc); // quality scores for each predicate
 static ofstream not_qualities_log ("notQualities.log", ios_base::trunc); // quality scores for complement predicates
 
@@ -171,8 +171,8 @@ read_weights()
   memset(run_weights, 0, sizeof(double)*nruns);
   memset(notrun_weights, 0, sizeof(double)*nruns);
 
-  FILE * xfp = fopenRead(TpWeights::tp_weights);
-  FILE * notxfp = fopenRead(TpWeights::not_tp_weights);
+  FILE * xfp = fopenRead(AdjWeightsOptions::adj_weights);
+  FILE * notxfp = fopenRead(AdjWeightsOptions::not_adj_weights);
   int ctr;
   unsigned i = 0;
   for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
@@ -518,7 +518,7 @@ compute_scores()
   iterate_votes(u, notu, v, notv, pvotes, notpvotes, npreds);
   cast_finalvote(u, notu, v, notv, pvotes, notpvotes, npreds);
 
-  // record stats that will be output in pred_scores.xml
+  // record stats that will be output in bicluster_votes.xml
   unsigned i = 0;
   for (Stats::iterator c = predList.begin(); c != predList.end(); ++c) {
     (*c).ps.fdenom = pred_scores[F][i];
@@ -686,7 +686,7 @@ static void process_cmdline(int argc, char **argv)
 	{ &NumRuns::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ &XMLTemplate::argp, 0, 0, 0},
-	{ &TpWeights::argp, 0, 0, 0},
+	{ &AdjWeightsOptions::argp, 0, 0, 0},
 	{ 0, 0, 0, 0 }
     };
 
@@ -722,7 +722,7 @@ int main (int argc, char** argv)
       print_histograms();
   
     print_final_votes("final-votes.txt"); // print which run voted for which predicate
-    print_scores("pred_scores.xml"); // print the final bi-clustering ranking
+    print_scores("bicluster_votes.xml"); // print the final bi-clustering ranking
   
     ttest_rank(); // run two-sample t-test to obtain final ranking of predicates within each run cluster
     delete[] W;
@@ -733,7 +733,7 @@ int main (int argc, char** argv)
     delete[] pred_scores[S];
   }
   else {
-    print_scores("pred_scores.xml");  // print out skeleton pred_scores.xml file
+    print_scores("bicluster_votes.xml");  // print out skeleton pred_scores.xml file
   }
 
   logfp.close();

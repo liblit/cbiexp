@@ -236,8 +236,8 @@ libanalyze_a_SOURCES =				\
 	Stylesheet.h				\
 	TimestampReport.cc			\
 	TimestampReport.h			\
-	TpWeights.cc				\
-	TpWeights.h				\
+	AdjWeightsOptions.cc			\
+	AdjWeightsOptions.h			\
 	TsReportReader.cc			\
 	TsReportReader.h			\
 	StaticSiteInfo.cc			\
