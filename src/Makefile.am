@@ -7,6 +7,7 @@ chi2test = chi2test
 endif
 
 noinst_PROGRAMS =				\
+	bicluster				\
 	build_tsgraph				\
 	calc_sober				\
 	calc_truthprobs				\
@@ -15,7 +16,6 @@ noinst_PROGRAMS =				\
 	collect_parmstats			\
 	compute_nonconst_preds			\
 	compute-obs-tru				\
-	compute_pred_scores			\
 	compute-results				\
 	convert-reports				\
 	decimate-sparse				\
@@ -80,8 +80,8 @@ compute_obs_tru_LDADD = libanalyze.a -ldl
 compute_nonconst_preds_SOURCES = compute_nonconst_preds.cc
 compute_nonconst_preds_LDADD = libanalyze.a -ldl $(GSL_LIBS)
 
-compute_pred_scores_SOURCES = compute_pred_scores.cc
-compute_pred_scores_LDADD = libanalyze.a
+bicluster_SOURCES = bicluster.cc
+bicluster_LDADD = libanalyze.a
 
 compute_results_SOURCES = compute_results.cc
 compute_results_LDADD = libanalyze.a -ldl
