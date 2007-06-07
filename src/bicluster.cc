@@ -43,11 +43,11 @@
 
 using namespace std;
 
-const unsigned MAX_ITER = 20; // maximum number of voting updates
-const double thresh = 10e-12; // threshold for convergence test
+const unsigned MAX_ITER = 50; // maximum number of voting updates
+const double thresh = 1e-6; // threshold for convergence test
 const double smooth = 1.0; // smoothing parameters used in quality score updates
 
-const double smooth2 = 1e-12;
+const double smooth2 = 1e-9;
 
 typedef list<IndexedPredInfo> Stats;
 static Stats predList;
@@ -432,9 +432,9 @@ update_votes(const unsigned j, const unsigned is_s, const unsigned npreds,
     }
 
     if (notp_contribj != 0 && notrun_weights[j] != 0) {
-    	notAij = notW[j*npreds+i] / notrun_weights[j];
-    	notp_cij = contrib(notW,i,j,is_s,notv,npreds) / notp_contribj;
-    	notpvotes[i][is_s] += notAij * notp_cij;
+    	notAij = notW[j*npreds+i];
+    	notp_cij = contrib(notW,i,j,is_s,notv,npreds) / notp_contribj / notrun_weights[j];
+    	notpvotes[i][is_s] += notAij * (1.0 - notp_cij);
     }
  }
 }
