@@ -250,8 +250,8 @@ $(stamp-amplify): $(stamp-decimate) $(sites) $(implications)
 endif
 CLEANFILE += amps.txt
 
-preds.txt: s.runs f.runs $(stamp-amplify) static-site-info.so $(call tool-deps, compute-results)
-	$(time) $(tooldir)/compute-results --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) $(confidence:%=--confidence=%) $(amplify_flag) 
+preds.txt: s.runs f.runs $(stamp-amplify) static-site-info.so $(call tool-deps, prefilter)
+	$(time) $(tooldir)/prefilter --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) $(confidence:%=--confidence=%) $(amplify_flag) 
 CLEANFILES += preds.txt
 
 $(datadir)/stamp-convert-reports: s.runs f.runs static-site-info.so $(call tool-deps, convert-reports)

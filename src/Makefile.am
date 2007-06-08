@@ -16,7 +16,6 @@ noinst_PROGRAMS =				\
 	collect_parmstats			\
 	compute_nonconst_preds			\
 	compute-obs-tru				\
-	compute-results				\
 	convert-reports				\
 	decimate-sparse				\
 	est_parms				\
@@ -33,6 +32,7 @@ noinst_PROGRAMS =				\
 	max-observed				\
 	oracle					\
 	partial_order				\
+	prefilter				\
         process_run_flags                       \
 	process_run_labels			\
 	project					\
@@ -54,6 +54,9 @@ noinst_LIBRARIES = libanalyze.a
 
 all-local: analysis-rules.mk
 
+
+bicluster_SOURCES = bicluster.cc
+bicluster_LDADD = libanalyze.a
 
 build_tsgraph_SOURCES = build_tsgraph.cc
 build_tsgraph_LDADD = libanalyze.a -ldl
@@ -79,12 +82,6 @@ compute_obs_tru_LDADD = libanalyze.a -ldl
 
 compute_nonconst_preds_SOURCES = compute_nonconst_preds.cc
 compute_nonconst_preds_LDADD = libanalyze.a -ldl $(GSL_LIBS)
-
-bicluster_SOURCES = bicluster.cc
-bicluster_LDADD = libanalyze.a
-
-compute_results_SOURCES = compute_results.cc
-compute_results_LDADD = libanalyze.a -ldl
 
 convert_reports_SOURCES = convert_reports.ll
 convert_reports_LDADD = libanalyze.a -ldl $(LEXLIB)
@@ -136,6 +133,9 @@ oracle_LDADD = libanalyze.a -ldl
 partial_order_SOURCES = partial_order.cc
 partial_order_LDADD = libanalyze.a -ldl
 partial_order_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
+
+prefilter_SOURCES = prefilter.cc
+prefilter_LDADD = libanalyze.a -ldl
 
 process_run_flags_SOURCES = process_run_flags.cc
 process_run_flags_LDADD = libanalyze.a
