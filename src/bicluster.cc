@@ -427,13 +427,13 @@ update_votes(const unsigned j, const unsigned is_s, const unsigned npreds,
   for (unsigned i = 0; i < npreds; ++i) {
     if (contribj != 0 && run_weights[j] != 0) {
         Aij = W[j*npreds+i];
-        cij = contrib(W,i,j,is_s,v,npreds) / contribj / run_weights[j];
+        cij = (contribj - contrib(W,i,j,is_s,v,npreds)) / contribj / run_weights[j];
         pvotes[i][is_s] += Aij * (1.0 - cij);
     }
 
     if (notp_contribj != 0 && notrun_weights[j] != 0) {
     	notAij = notW[j*npreds+i];
-    	notp_cij = contrib(notW,i,j,is_s,notv,npreds) / notp_contribj / notrun_weights[j];
+    	notp_cij = (notp_contribj - contrib(notW,i,j,is_s,notv,npreds)) / notp_contribj / notrun_weights[j];
     	notpvotes[i][is_s] += notAij * (1.0 - notp_cij);
     }
  }
