@@ -6,6 +6,7 @@ name ?= $(error no name set)
 datadir ?= $(experiment)/data
 corrdir := $(root)/correlations
 tooldir := $(root)/src
+toolsrcdir := $(tooldir)
 srcdir ?= $(experiment)/src
 training-runs ?= 0
 raw-report-name ?= reports
