@@ -1,4 +1,9 @@
-SUBDIRS = amplify corrective-ranking lsa mutual-information never-reached Score symmetric
+SUBDIRS = corrective-ranking lsa mutual-information never-reached Score symmetric
+if ENABLE_AMPLIFY
+SUBDIRS += amplify
+endif
+
+DIST_SUBDIRS = $(SUBDIRS)
 
 AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 $(BOOST_CPPFLAGS)
 
@@ -186,8 +191,10 @@ libanalyze_a_SOURCES =				\
 	CompactReport.h				\
 	Confidence.cc				\
 	Confidence.h				\
+	Counts.h				\
 	Dilute.cc				\
 	Dilute.h				\
+	DiscreteDist.h				\
 	DynamicLibrary.h			\
 	DynamicLibrary-dl.cc			\
 	DynamicLibrary-dl.h			\
