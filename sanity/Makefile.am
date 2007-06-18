@@ -24,7 +24,7 @@ clean-local:
 
 check-local: data/stamp-labels
 	test -d analysis || mkdir analysis
-	$(MAKE) -C analysis -f ../$(srcdir)/analysis/GNUmakefile toolsrcdir=$(top_srcdir)/src
+	$(MAKE) -C analysis
 
 data/stamp-labels: build/sanity
 	$(top_srcdir)/bin/make-runs --bindir=$(srcdir)/bin 100
