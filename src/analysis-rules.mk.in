@@ -6,7 +6,6 @@ name ?= $(error no name set)
 datadir ?= $(experiment)/data
 corrdir := $(root)/correlations
 tooldir := $(root)/src
-toolsrcdir := $(tooldir)
 srcdir ?= $(experiment)/src
 training-runs ?= 0
 raw-report-name ?= reports
@@ -98,12 +97,6 @@ corrected :=						\
 	all_hl_corrected-approximate-complete.xml
 
 biclustering :=					\
-	preds.txt				\
-	s.runs f.runs				\
-	X.dat					\
-	predscores
-
-biclustering-full :=				\
 	preds.txt				\
 	s.runs f.runs				\
 	X.dat					\
@@ -445,8 +438,7 @@ $(nevers): $(stamp-decimate) f.runs static-site-info.so $(call tool-deps, never-
 CLEANFILES += $(nevers)
 
 bicluster: $(biclustering)
-bicluster-full: $(biclustering-full)
-.PHONY: bicluster bicluster-full
+.PHONY: bicluster
 
 plsa/indexing.m :
 	$(time) $(tooldir)/lsa/make-indexing-info --runs-directory=$(datadir) --begin-runs=$(training-runs) 
