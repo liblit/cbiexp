@@ -88,6 +88,7 @@ convert_reports_LDADD = libanalyze.a -ldl $(LEXLIB)
 
 decimate_sparse_SOURCES = decimate-sparse.ll
 decimate_sparse_INCLUDES = $(GSL_CFLAGS)
+decimate_sparse_CPPFLAGS = -Wno-sign-compare
 decimate_sparse_LDADD = libanalyze.a $(GSL_LIBS)
 
 est_parms_SOURCES = est_parms.cc
