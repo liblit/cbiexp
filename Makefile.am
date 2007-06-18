@@ -21,3 +21,8 @@ check-local:
 
 dist-hook:
 	rm -rf $(distdir)/bc $(distdir)/ccrypt $(distdir)/exif $(distdir)/mossexp $(distdir)/rhythmbox
+
+distcheck: dist
+	gunzip -c $(distdir).tar.gz | $(am__untar)
+	cd $(distdir) && ./configure && make && make check
+	$(am__remove_distdir)
