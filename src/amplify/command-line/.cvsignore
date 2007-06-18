@@ -1,8 +1,0 @@
-*.annot
-*.cma
-*.cmi
-*.cmo
-*.di
-*.do
-Makefile
-Makefile.in
