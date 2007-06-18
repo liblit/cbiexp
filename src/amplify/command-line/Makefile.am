@@ -16,6 +16,6 @@ all-local: commandLine.$(cma)
 
 commandLine.$(cma): $(objects)
 	$(archive)
-	
+
 include $(top_srcdir)/ocaml.mk.in
 -include $(depends)
