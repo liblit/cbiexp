@@ -129,6 +129,11 @@ AC_SUBST(sampler_tooldir)
 #  for amplify
 #
 
+AC_MSG_CHECKING(for amplify support)
+AC_ARG_ENABLE(amplify, AC_HELP_STRING([--enable-amplify], [Build predicate amplification tools]), , enable_amplify=no)
+AC_MSG_RESULT($enable_amplify)
+
+AM_CONDITIONAL(ENABLE_AMPLIFY, test "$enable_mining" = yes)
 AM_CONDITIONAL(ENABLE_AMPLIFY_NATIVE, test "$enable_amplify_native" = yes)
 AM_CONDITIONAL(ENABLE_AMPLIFY_PROFILING, test "$enable_amplify_profiling" = yes)
 
@@ -144,8 +149,6 @@ AC_CONFIG_FILES([
 Makefile
 correlations/Makefile
 src/Makefile
-src/amplify/Makefile
-src/amplify/command-line/Makefile
 src/corrective-ranking/Makefile
 src/lsa/Makefile
 src/lsa/analysis-rules.mk
@@ -156,6 +159,14 @@ src/symmetric/Makefile
 src/Score/Makefile
 src/analysis-rules.mk
 ])
+
+if test "$enable_mining" = yes; then
+   AC_CONFIG_FILES([
+   src/amplify/Makefile
+   src/amplify/command-line/Makefile
+   ])
+fi
+
 
 CBI_CONFIG_APP(bc, [bc/bin/run-once bc/Makefile bc/config.site], [chmod +x bc/bin/run-once])
 CBI_CONFIG_APP(ccrypt, [ccrypt/bin/run-once ccrypt/Makefile ccrypt/config.site], [chmod +x ccrypt/bin/run-once])
