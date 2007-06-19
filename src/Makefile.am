@@ -1,4 +1,4 @@
-SUBDIRS = corrective-ranking lsa never-reached Score symmetric
+SUBDIRS = corrective-ranking never-reached Score symmetric
 if ENABLE_AMPLIFY
 SUBDIRS += amplify
 endif
@@ -38,7 +38,7 @@ noinst_PROGRAMS =				\
 	oracle					\
 	partial_order				\
 	prefilter				\
-        process_run_flags                       \
+	process_run_flags                       \
 	process_run_labels			\
 	project					\
 	sampling-plans/uniform			\
