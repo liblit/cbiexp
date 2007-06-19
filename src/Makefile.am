@@ -1,4 +1,4 @@
-SUBDIRS = corrective-ranking lsa mutual-information never-reached Score symmetric
+SUBDIRS = corrective-ranking lsa never-reached Score symmetric
 if ENABLE_AMPLIFY
 SUBDIRS += amplify
 endif
@@ -210,8 +210,6 @@ libanalyze_a_SOURCES =				\
 	OutcomeRunSets.h			\
 	PredCoords.cc				\
 	PredCoords.h				\
-	PredSet.cc				\
-	PredSet.h				\
 	PredStats.cc				\
 	PredStats.h				\
 	Progress/Bounded.cc			\
