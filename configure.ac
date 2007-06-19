@@ -140,6 +140,17 @@ AM_CONDITIONAL(ENABLE_AMPLIFY_PROFILING, test "$enable_amplify_profiling" = yes)
 
 ########################################################################
 #
+# for lsa
+#
+
+AC_MSG_CHECKING(for latent semantic analysis) 
+AC_ARG_ENABLE(lsa, AC_HELP_STRING([--enable-lsa], [Build latent semantic analysis tools]), , enable_lsa=no) 
+AC_MSG_RESULT($enable_lsa)
+
+AM_CONDITIONAL(ENABLE_LSA, test "$enable_lsa" = yes)
+
+########################################################################
+#
 #  generate output files
 #
 
@@ -150,10 +161,6 @@ Makefile
 correlations/Makefile
 src/Makefile
 src/corrective-ranking/Makefile
-src/lsa/Makefile
-src/lsa/analysis-rules.mk
-src/mutual-information/Makefile
-src/mutual-information/analysis-rules.mk
 src/never-reached/Makefile
 src/symmetric/Makefile
 src/Score/Makefile
@@ -167,6 +174,12 @@ if test "$enable_mining" = yes; then
    ])
 fi
 
+if test "$enable_lsa" = yes; then
+   AC_CONFIG_FILES([
+   src/lsa/analysis-rules.mk
+   src/lsa/Makefile
+   ])
+fi
 
 CBI_CONFIG_APP(bc, [bc/bin/run-once bc/Makefile bc/config.site], [chmod +x bc/bin/run-once])
 CBI_CONFIG_APP(ccrypt, [ccrypt/bin/run-once ccrypt/Makefile ccrypt/config.site], [chmod +x ccrypt/bin/run-once])

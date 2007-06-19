@@ -2,6 +2,9 @@ SUBDIRS = corrective-ranking never-reached Score symmetric
 if ENABLE_AMPLIFY
 SUBDIRS += amplify
 endif
+if ENABLE_LSA
+SUBDIRS += lsa
+endif
 
 DIST_SUBDIRS = $(SUBDIRS)
 
