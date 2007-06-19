@@ -7,4 +7,4 @@ set -x
 cd $srcdir
 rm -rf autom4te.cache
 [ -d config-aux ] || mkdir config-aux
-autoreconf --force --verbose --install --warnings=all,no-obsolete,no-portability,error "$@"
+autoreconf --force --verbose --install --warnings=all,no-obsolete,no-override,no-portability,error "$@"
