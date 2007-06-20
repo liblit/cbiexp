@@ -161,6 +161,7 @@ Makefile
 correlations/Makefile
 src/Makefile
 src/corrective-ranking/Makefile
+src/matlab/Makefile
 src/never-reached/Makefile
 src/symmetric/Makefile
 src/Score/Makefile

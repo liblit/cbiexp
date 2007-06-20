@@ -1,4 +1,4 @@
-SUBDIRS = corrective-ranking never-reached Score symmetric
+SUBDIRS = corrective-ranking matlab never-reached Score symmetric
 if ENABLE_AMPLIFY
 SUBDIRS += amplify
 endif
