@@ -1,15 +1,21 @@
+/******************************************************************************
+* Generates a text file in the appropriate format to serve as input to a matlab
+* process. 
+*
+* Indices of failing runs and successful run are one indexed rather
+* zero indexed. 
+*
+* The indices are offset by the number of runs used to train the
+* instrumentation sampler.
+******************************************************************************/
+
+
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <argp.h>
-#include <boost/dynamic_bitset.hpp>
 #include "../RunsDirectory.h"
 #include "../NumRuns.h"
 #include "../classify_runs.h"
-#include "../Progress/Bounded.h"
-#include "../PredStats.h"
-#include "../RunSet.h"
-#include "../Bugs.h"
 
 using namespace std;
 
@@ -45,12 +51,16 @@ int main(int argc, char** argv)
 
     ofstream ffile("f.indices");
     ofstream sfile("s.indices");
+    ofstream ifile("i.indices"); 
      
     for(unsigned int i = NumRuns::begin; i < NumRuns::end; i++) {
         if(is_frun[i]) ffile << i + 1 - NumRuns::begin << "\n";   
         else if(is_srun[i]) sfile << i + 1 - NumRuns::begin << "\n"; 
+        else ifile << i + 1 - NumRuns::begin << "\n";
     }
+
     ffile.close();
     sfile.close();
+    ifile.close();
 
 }

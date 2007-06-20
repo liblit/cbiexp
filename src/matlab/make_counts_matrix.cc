@@ -1,3 +1,21 @@
+/******************************************************************************
+* Print out a representation of the data that is easily read by matlab into a
+* sparse matrix format.
+*
+* We do not read any data from runs that were not classified, i.e., are neither
+* failures or successes. This saves us trouble and leaves zero columns as place
+* holders for these runs.
+*
+* The files produced are Xtru.sparse which contains tru counts, Xobs.sparse 
+* which contains observed counts, and X.dimensions which contains the number of
+* runs and predicates in the data. This data is not always obtainable from the 
+* Xtru.sparse and Xobs.sparse files. Consider the case where all counts are 
+* zero. In that case Xtru.sparse and Xobs.sparse are empty, but the number of 
+* runs and predicates could be anything.
+*
+* Currently counts are only taken for predicates in preds.txt. 
+******************************************************************************/
+
 #include <argp.h>
 #include <cassert>
 #include <cstdio>
@@ -172,7 +190,7 @@ int main(int argc, char** argv)
     //entries on the right hand side to cause the matrix to be truncated. 
     //count() returns exactly the difference between the start and end
     //specified, so the matrix may include all zero columns corresponding
-    //to discarded runs. This is OK---the pLSA algorithm ignores these runs.
+    //to discarded runs.
     {
         ofstream out("X.dimensions");
         out <<  PredStats::count() << " " << NumRuns::count() << "\n";  
