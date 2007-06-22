@@ -14,13 +14,15 @@ EXTRA_DIST =					\
 	bin/make-runs				\
 	bin/MakeRuns.pm				\
 	bin/RunsRunner.pm			\
-	bin/TaskRunner.pm
+	bin/TaskRunner.pm			\
+	doc
 
 check-local:
 	$(MAKE) -C sanity check
 
 dist-hook:
 	rm -rf $(distdir)/bc $(distdir)/ccrypt $(distdir)/exif $(distdir)/mossexp $(distdir)/rhythmbox
+	rm -rf $(distdir)/doc/.svn
 
 distcheck: dist
 	gunzip -c $(distdir).tar.gz | $(am__untar)
