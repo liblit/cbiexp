@@ -13,6 +13,10 @@
  * - trunotX.dat: same as above, but for the complement preds
  * - truFreq.dat: matrix of truth frequencies (num tru/num observed)
  * - trunotFreq.dat: same as above, but for the complement preds
+ *
+ * See cbiexp/doc/truth_prob_estimation.pdf (under the sections for
+ * Alternative Model) for detailed explantion of the derivations
+ * for the posterior truth probabilities.
  * 
  * -- documented by alicez 4/07
  ***************************************************************/
