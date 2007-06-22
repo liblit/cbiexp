@@ -1,0 +1,334 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.61 [en] (X11; I; Linux 2.2.6 i686) [Netscape]">
+   <meta name="keywords" content="security remote access ssh, VNC, AT&T Laboratories Cambridge, Virtual Network Computing, thin-client">
+   <title>Using VNC with SSH
+</title>
+<link REL="stylesheet" HREF="/vnc/styles.css" TYPE="text/css">
+</head>
+<body bgcolor="#FFFFFF" vlink="#000080" marginheight="0" topmargin="0" leftmargin="0" marginwidth="0">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><a href="index.html"><img SRC="sidelogo.gif" ALT="VNC logo" BORDER=0 height=113 width=120></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="20"><img SRC="spacer.gif" HSPACE=8 height=1 width=1></td>
+
+<td>
+<table BORDER=0 WIDTH="100%" >
+<tr>
+<td WIDTH="90%" valign="center">
+<center>
+<h1>
+<IMG SRC="vnctitle.gif"  WIDTH=370 HEIGHT=30 ALT="Virtual Network Computing"></h1></center>
+</td>
+
+<td WIDTH="10%"><a href="http://www.uk.research.att.com/"><img SRC="attlogo.gif" ALT="AT&T" BORDER=0 height=75 width=66 align=RIGHT></a></td>
+</tr>
+</table>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+<tr><td colspan=5 bgcolor="#eecc80"><img src="spacer.gif" height=3 vspace=0 hspace=1></td></tr>
+<tr><td bgcolor="#eecc80"><img src="spacer.gif" height=4 vspace=0 hspace=1></td><td colspan=4></td></tr>
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><a href="index.html"><img SRC="homebutton.gif" ALT="[Home]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="screenshots.html"><img SRC="screenbutton.gif" ALT="[screenshots]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+
+<tr>
+<td><a href="start.html"><img SRC="startbutton.gif" ALT="[getting started]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="docs.html"><img SRC="docbutton.gif" ALT="[documentation]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="faq.html"><img SRC="faqbutton.gif" ALT="FAQs" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="download.html"><img SRC="downloadbutton.gif" ALT="[download]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="intouch.html"><img SRC="intouchbutton.gif" ALT="[keep in touch]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="contribs.html"><img SRC="contribbutton.gif" ALT="Others' ports and add-ons etc" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="help.html"><img SRC="helpbutton.gif" ALT="Project ideas" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="vncpeople.html"><img SRC="vncpeoplebutton.gif" ALT="VNC people" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/search.html"><img SRC="searchbutton.gif" ALT="Search" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/"><img SRC="attbutton.gif" ALT="[AT&T Laboratories Cambridge]" BORDER=0 height=33 width=120></a></td>
+</tr>
+</table></center>
+</td>
+
+<td VALIGN=TOP WIDTH="8%"></td>
+
+<td VALIGN=TOP WIDTH="100%">
+<h2>
+Making VNC more secure using SSH</h2> 
+
+VNC uses a random challenge-response system to provide the basic
+authentication that allows you to connect to a VNC server. This is
+reasonably secure; the password is not sent over the network. Once you
+are connected, however, traffic between the viewer and the server is
+unencrypted, and could be snooped by someone with access to the
+intervening network. We therefore recommend that if security is
+important to you, you 'tunnel' the VNC protocol through some more
+secure channel such as SSH.  <p>If you are using Unix, this is pretty
+easy; SSH clients and servers are freely available for Unix.&nbsp;
+<i>Clients</i> are also available for Windows, Macs, and other
+machines, but if you want servers on these platforms you may need to
+go for a commercial version, or to route your connection via a Unix
+machine (see later).&nbsp; If you're using Java, check out the
+modified Java viewer created by Mindbright Technology. There are links
+at the bottom of this page to point you in the right direction for all
+of these things. The rest of this document refers to the Unix world,
+though the techniques will be relevant for other systems.&nbsp; Frank
+Stajano has contributed a page which describes how he uses <a
+href="sshwin.html">a free Windows SSH client to connect to a Unix
+server</a>.
+
+<h3>
+Installation</h3>
+We won't go into details here about how to install SSH.&nbsp; For my Linux
+machine I found two RPMs called ssh-clients and ssh-server.&nbsp; I downloaded
+the source versions, built, and installed them, and this did almost everything,
+including the generation of a key for my machine.
+<br>You can get RPMs at <a href="http://rufus.w3.org/linux/RPM/">http://rufus.w3.org/linux/RPM/</a>
+- for other distributions see the <a href="http://www.employees.org/~satch/ssh/faq/">SSH
+FAQ</a>.
+<h3>
+Basic Use</h3>
+SSH normally just provides you with a 'Secure SHell' - i.e. a login window
+to a remote machine. All traffic is encrypted between the two machines
+using public key encryption techniques, making it really very difficult
+for anyone else to spy on it.&nbsp; Once SSH is installed, you could connect
+to a machine called 'snoopy' from elsewhere simply by running the SSH client:
+<p>&nbsp;&nbsp;&nbsp; <tt>ssh snoopy</tt>
+<p>(You may need more options depending on your situation). You would then
+be prompted for the password of your account on snoopy and you would be
+logged in, just like a telnet session, but safer.&nbsp; However, SSH has
+some nice extra tricks up its sleeve.&nbsp; You can also request that it
+listens on a particular port on your local machine, and forwards that down
+the secure connection to a port on a machine at the other end.&nbsp;&nbsp;
+For example,
+<p>&nbsp;&nbsp;&nbsp; <tt>ssh -L <i>x</i>:snoopy:<i>y</i> snoopy</tt>
+<p>means "Start an SSH connection to snoopy, and also listen on port <i>x</i>
+on my machine, and forward any connections there to port <i>y</i> on snoopy."
+<p>Now, the VNC protocol normally uses port 59xx, where xx is the display
+number of the server.&nbsp; So a VNC server on a Windows machine, which
+normally uses display number 0, will listen on port 5900.&nbsp;&nbsp; Most
+Unix VNC servers will probably use display numbers 1,2, etc and so will
+be listening on ports 5901, 5902 and so forth.&nbsp; If you forward these
+ports to a remote machine, you can make the remote VNC server appear to
+be a server running on your local machine.
+<p>So, imagine you had a VNC server running as display :1 on machine snoopy,
+and you wanted a secure connection to it from your local machine.&nbsp;
+You could start the ssh session using:
+<p>&nbsp;&nbsp;&nbsp; <tt>ssh -L 5902:snoopy:5901 snoopy</tt>
+<p>and any references to display :2 on your local machine would actually
+connect to display :1 on snoopy, so instead of running a vncviewer:
+<p><tt>&nbsp; vncviewer snoopy:1</tt>
+<p>you could run:
+<p>&nbsp;&nbsp;&nbsp; <tt>vncviewer localhost:2</tt>
+<p>and you get the same effect, but with a secure connection.
+<p>A quick note if you're using the Unix VNC viewer to connect via SSH:
+By default, when the viewer connects to a server on the local machine,
+it uses VNC's 'raw' pixel encoding because this generally gives&nbsp; better
+performance for local access. If this 'server' is actually an SSHD redirecting
+the data to another machine, you probably want to override this using the
+-hextile option to the viewer, or you will send a lot more data over the
+network than is necessary. (On the latest versions of the viewer, use -encodings "copyrect hextile").
+<h2>
+Compression</h2>
+SSH has another advantage.&nbsp; It can compress the data as well.&nbsp;
+This is particularly useful if the link between you and the server is a
+slow one, such as a modem, but even on a faster network it can help make
+up for the fact that the encryption takes a certain amount of time and
+so can slow the link down a little.&nbsp; To add simple compression, use
+the -C option (or +C in ssh2). For more control, set it up in your ssh
+configuration files (see the man page for details). To see how much your
+data is being compressed, use the -v option.&nbsp;
+<p>If you are on a slow link
+<i>please</i> read the note in the previous
+section about connections to local hosts.
+<h2>
+More advanced use</h2>
+In fact, the connection can be forwarded to a port on a <i>third</i> machine
+at the other end - it doesn't have to be snoopy that's running the VNC
+server, but remember that connections between snoopy and third machine
+will not be encrypted, only the one between you and snoopy.&nbsp; And&nbsp;
+you can tell ssh to allow incoming connections from other machines and
+forward those over the link as well. This can allow you to do really fun
+things like:
+<br><TABLE COLS=5 WIDTH="100%" BGCOLOR="#99FFCC" NOSAVE >
+<tr NOSAVE>
+<td ALIGN=CENTER BGCOLOR="#33FF33" NOSAVE><b>machine windows1</b></td>
+
+<td ALIGN=CENTER VALIGN=BOTTOM BGCOLOR="#FFFFFF" NOSAVE>------</td>
+
+<td ALIGN=CENTER BGCOLOR="#33FF33" NOSAVE><b>machine</b>
+<br><b>linux1</b></td>
+
+<td BGCOLOR="#FFFFFF" NOSAVE>&nbsp;</td>
+
+<td BGCOLOR="#FFFFFF" NOSAVE>&nbsp;</td>
+</tr>
+
+<tr NOSAVE>
+<td BGCOLOR="#99FFCC" NOSAVE>Runs vncviewer connecting to linux1:1, actually
+sees display of windows2</td>
+
+<td ALIGN=CENTER VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE>&nbsp;secure local
+network</td>
+
+<td ALIGN=LEFT VALIGN=TOP BGCOLOR="#99FFCC" NOSAVE>Runs ssh to linux2,
+fowards local port 5901 via link to windows2:5900</td>
+
+<td ALIGN=LEFT BGCOLOR="#FFFFFF" NOSAVE></td>
+
+<td BGCOLOR="#FFFFFF" NOSAVE>&nbsp;</td>
+</tr>
+
+<tr BGCOLOR="#FFFFFF" NOSAVE>
+<td NOSAVE></td>
+
+<td></td>
+
+<td ALIGN=CENTER NOSAVE>|
+<br>|
+<br>insecure public network
+<br>|
+<br>|</td>
+
+<td NOSAVE></td>
+
+<td></td>
+</tr>
+
+<tr NOSAVE>
+<td BGCOLOR="#FFFFFF" NOSAVE>&nbsp;</td>
+
+<td BGCOLOR="#FFFFFF" NOSAVE>&nbsp;</td>
+
+<td ALIGN=CENTER BGCOLOR="#33FF33" NOSAVE><b>machine</b>
+<br><b>linux2</b></td>
+
+<td ALIGN=CENTER VALIGN=BOTTOM BGCOLOR="#FFFFFF" NOSAVE>----</td>
+
+<td ALIGN=CENTER BGCOLOR="#33FF33" NOSAVE><b>machine</b>
+<br><b>windows2</b></td>
+</tr>
+
+<tr NOSAVE>
+<td BGCOLOR="#FFFFFF" NOSAVE></td>
+
+<td ALIGN=CENTER VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE></td>
+
+<td VALIGN=TOP BGCOLOR="#99FFCC" NOSAVE>Runs sshd</td>
+
+<td ALIGN=CENTER VALIGN=TOP BGCOLOR="#FFFFFF" NOSAVE>secure remote
+<br>network</td>
+
+<td NOSAVE>Runs WinVNC server as display 0</td>
+</tr>
+</table>
+
+<p>To do this, you need to run the following on machine linux1;
+<br>&nbsp;&nbsp; <tt>ssh -g -L 5901:windows2:5900 linux2</tt>
+<p>Lastly, remember&nbsp; that if you want to use the Java VNC viewer,
+you will need to forward the 58xx ports as well as the 59xx ports.&nbsp;
+See the FAQ for info on how these ports are used.&nbsp;
+<h3>
+Useful links</h3>
+
+<ul>
+<li>
+The <a href="http://www.employees.org/~satch/ssh/faq/">SSH FAQ</a>.</li>
+
+<li>
+Commercial versions of SSH are available from <a href="http://www.ssh.fi/">http://www.ssh.fi/</a></li>
+
+<li>
+<a href="mailto:mats@mindbright.se">mats@mindbright.se</a> has created
+a version of the Java VNC viewer applet which can connect to an SSH server.
+See <a href="http://www.mindbright.se/english/technology/products/mindvnc.html">here
+</a>for details.</li>
+
+<li>
+Miroslav Luptak posted detailed information to the mailing list about how
+he set his SSH system up on NT using a version built for the Cygwin package.
+Luis B. Almeida then posted modified versions for Win95. See the following
+links:</li>
+
+<ul>
+<li>
+<a href="http://www.uk.research.att.com/vnc/archives/1999-03/0060.html">Miroslav's
+original</a></li>
+
+<li>
+<a href="http://www.uk.research.att.com/vnc/archives/1999-07/0339.html">Luis'
+first modification</a></li>
+
+<li>
+<a href="http://www.uk.research.att.com/vnc/archives/1999-07/0368.html">A
+better version</a></li>
+</ul>
+
+<li>
+Various free SSH implementations can be found at
+<a href="http://www.net.lut.ac.uk/psst/">http://www.net.lut.ac.uk/psst/</a>.</li>
+
+<li>
+There is also a free SSH client for Windows available at <a href="http://www.doc.ic.ac.uk/~ci2/ssh">http://www.doc.ic.ac.uk/~ci2/ssh</a>.</li>
+</ul>
+
+<h3>
+Acknowlegements</h3>
+Many thanks to Axel Boldt, Miroslav Luptak &amp; Luis B. Almeida for information
+which helped in the writing of this page.&nbsp;</td>
+
+<td WIDTH="5%"></td>
+</tr>
+
+<tr>
+<td bgcolor="#eecc80">&nbsp;</td><td ALIGN=CENTER VALIGN=TOP COLSPAN="4" WIDTH="100%">
+<!-- Ruler here? -->
+<center>
+<p><i><font size=-1>For comments, feedback, etc, please see the '<a href="intouch.html">Keeping
+in touch</a>' page</font>.</i>
+<br><i><font size=-1>Copyright 1999 - AT&amp;T Laboratories Cambridge</font></i></center>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

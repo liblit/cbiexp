@@ -1,0 +1,9 @@
+#!/bin/sh -e
+
+top=`cd \`dirname $0\`/.. && pwd;`
+
+find $top/images -follow -iname '*.jpg' -o -iname '*.jpeg' >$top/image-list
+test -s $top/image-list
+
+find $top/thumbnails/* >$top/thumbnail-list
+test -s $top/thumbnail-list

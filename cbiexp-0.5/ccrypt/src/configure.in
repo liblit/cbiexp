@@ -1,0 +1,65 @@
+dnl Process this file with autoconf to produce a configure script.
+
+AC_INIT(src/ccrypt.c)
+AM_INIT_AUTOMAKE(ccrypt, 1.2)
+DATE="November 2001"
+AM_CONFIG_HEADER(config.h)
+
+dnl Find lisp installation directory
+AM_PATH_LISPDIR
+
+dnl The names of the installed executables and the default suffix are in
+dnl principle configurable. However, they should not normally be changed,
+dnl because other scripts might depend on them.
+
+NAME=ccrypt
+NAMEENCRYPT=ccencrypt
+NAMEDECRYPT=ccdecrypt
+NAMECAT=ccat
+SUF=.cpt
+
+dnl 
+NAMEUC=`echo $NAME | tr a-z A-Z`
+
+dnl Export some parameters to config file
+AC_DEFINE_UNQUOTED(NAME,"$NAME",Name of the ccrypt binary)
+AC_DEFINE_UNQUOTED(NAMEENCRYPT,"$NAMEENCRYPT",Name of the ccencrypt binary)
+AC_DEFINE_UNQUOTED(NAMEDECRYPT,"$NAMEDECRYPT",Name of the ccdecrypt binary)
+AC_DEFINE_UNQUOTED(NAMECAT,"$NAMECAT",Name of the ccat binary)
+AC_DEFINE_UNQUOTED(SUF,"$SUF",Default suffix for encrypted files)
+
+dnl Check for programs.
+AC_PROG_CC
+AC_CHECK_PROGS(TAR, gtar, tar)
+
+dnl Checks for libraries.
+AC_CHECK_LIB(crypt, crypt, , EXTRA_OBJS="$EXTRA_OBJS unixcrypt3.o")
+
+dnl Checks for header files.
+AC_CHECK_HEADERS(stdint.h)
+
+dnl Checks for library functions.
+AC_CHECK_FUNC(getopt_long, , EXTRA_OBJS="$EXTRA_OBJS getopt.o getopt1.o")
+
+dnl Check for sizes
+AC_CHECK_SIZEOF(unsigned int, 4)
+AC_CHECK_SIZEOF(unsigned long, 4)
+
+dnl Set up substitutions of non-standard configuration parameters
+AC_SUBST(NAME)
+AC_SUBST(NAMEENCRYPT)
+AC_SUBST(NAMEDECRYPT)
+AC_SUBST(NAMECAT)
+AC_SUBST(SUF)
+AC_SUBST(DATE)
+AC_SUBST(NAMEUC)
+AC_SUBST(EXTRA_OBJS)
+AC_SUBST(TAR)
+
+AC_OUTPUT([doc/ccrypt.1
+	   Makefile 
+	   src/Makefile 
+	   emacs/Makefile
+	   check/Makefile
+	   doc/Makefile
+          ])

@@ -1,0 +1,68 @@
+While we have targeted our algorithm at finding bugs, there are other
+possible applications, and there are variations of the basic approach
+we have presented that may prove useful.  In this section we briefly
+discuss some of these possibilities.
+
+While we have focused on bug finding, the same ideas
+can be used to isolate predictors of any program event.  For example,
+we could potentially look for early predictors of when the program
+will raise an exception, send a message on the network, write to disk,
+or suspend itself.  Furthermore, it is interesting to consider
+applications in which the predictors are used on-line by the running
+program; for example, knowing that a strong predictor of program
+failure has become true may enable preemptive action (see
+\autoref{sec:related-work}).
+
+There are also variations on the specific algorithm we have proposed
+that are worth investigating.  For example, we have chosen to discard
+all the runs where $R(P) = 1$ when $P$ is selected by the
+elimination algorithm, but there are at least three natural choices:
+\begin{enumerate}
+\item When $P$ is selected, discard all runs where $R(P) = 1$.
+
+\item When $P$ is selected, discard only failing runs where $R(P) = 1$.
+
+\item When $P$ is selected, relabel all failing runs where $R(P) = 1$ as successful runs.
+\end{enumerate}
+
+We have already given the intuition for (1), our current choice.  For
+(2), the idea is that whatever the bug is, it is not manifested in the
+successful runs and thus retaining all successful runs is more
+representative of correct program behavior.  Proposal (3) goes one step
+further, asserting that even the failing runs will look mostly the same
+once the bug is fixed, and the best approximation to a program without the
+bug is simply that the failing runs are now successful runs.
+
+On a more technical level, the three proposals differ in how much code
+coverage they preserve.  By discarding no runs, proposal (3) preserves
+all the code paths that were executed in the original
+runs, while proposal (1) discards the most runs and so
+potentially renders more paths unreached in the runs that
+remain.  This difference in paths preserved translates into differences
+in the \crash\ and \context\ scores of predicates under the different proposals.
+In fact, for a predicate $P$ and its complement $\neg P$, it is
+possible to prove that just after predicate $P$ is selected by the
+elimination algorithm, then 
+\[ \increase_3(\neg P) \geq \increase_2(\neg P) \geq \increase_1(\neg P) = 0 \]
+where the subscripts indicate which proposal for discarding runs is used
+and assuming all the quantities are defined.  Thus, proposal (1) is the
+most conservative, in the sense that only one of $P$ or $\neg P$ can
+have positive predictive power, while proposal (3) potentially allows
+more predictors to have positive \increase\ scores.  
+
+This analysis reveals that a predicate $P$ with a negative \increase\
+score is not necessarily useless---the score may be negative only
+because it is temporarily overshadowed by stronger predictors of
+different bugs that are anti-correlated with $P$.  It is possible to
+construct examples where both $P$ and $\neg P$ are the best predictors
+of different bugs, but the result mentioned above assures us that once
+one is selected by the elimination algorithm, the other's
+\increase\ score is non-negative if it is defined.  This line of
+reasoning also suggests that when using proposal (2) or (3) for discarding runs,
+a predicate $P$ with $\increase(P) \leq 0$ should not be
+discarded in a preprocessing step, as $P$ may become a positive
+predictor once $\neg P$ is selected by the elimination algorithm.  In
+the case of proposal (1), only one of $P$ or $\neg P$ can ever have a
+non-negative \increase\ score, and so it seems reasonable to eliminate
+predicates with negative scores early.
+

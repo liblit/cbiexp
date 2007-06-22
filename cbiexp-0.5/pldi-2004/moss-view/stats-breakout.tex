@@ -1,0 +1,41 @@
+%% -*- TeX-master: "../master.tex" -*-
+
+\begin{table*}[tb]
+  \nocaptionrule
+  \caption{Comparison of ranking strategies for \moss without
+    redundancy elimination}
+  \label{tab:sorts}
+  \centering
+
+  \vspace{2\abovetopsep}
+  \setlength{\abovetopsep}{0pt}
+  \addtolength{\subfigbottomskip}{\subfigbottomskip}
+
+  \newenvironment{stats}[2]{%
+    \begin{subtab}
+      \caption{Sort descending by #1\label{tab:sorts-#2}}
+      \small
+      \begin{tabular}{l|rr@{$\:\pm\:$}rr|rrl}
+        \toprule
+        Thermometer & Context & \multicolumn{2}{r}{Increase} &
+        S & F & F + S & Predicate \\
+        \midrule}{%
+        \bottomrule
+      \end{tabular}
+    \end{subtab}}
+
+  \begin{stats}{$\text{F}(P)$}{failure}
+    \input{moss-view/stats-by-failure}
+  \end{stats}
+
+  \begin{stats}{$\text{Increase}(P)$}{increase}
+    \input{moss-view/stats-by-increase}
+  \end{stats}
+
+  \begin{stats}{harmonic mean}{harmonic}
+    \input{moss-view/stats-by-harmonic}
+  \end{stats}
+
+\end{table*}
+
+%% LocalWords:  rr rrl

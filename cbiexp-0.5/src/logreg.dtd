@@ -1,0 +1,13 @@
+<!ELEMENT logreg (predictor)+>
+
+<!ELEMENT predictor (operand*)>
+<!ATTLIST predictor
+  scheme (branches|g-object-unref|returns|scalar-pairs) #REQUIRED
+  file CDATA #REQUIRED
+  line NMTOKEN #REQUIRED
+  function NMTOKEN #REQUIRED
+  predicate NMTOKEN #REQUIRED
+  importance NMTOKEN #REQUIRED>
+
+<!ENTITY % operand SYSTEM "operand.dtd">
+%operand;

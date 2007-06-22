@@ -1,0 +1,30 @@
+Rhythmbox Bug 1:
+
+Synopsis:
+Dangling pointers to timer events
+
+Bug report:
+http://bugzilla.gnome.org/show_bug.cgi?id=137460
+
+Predictors:
+lib/disclosure-widget.c, line 77, cddb_disclosure_destroy(), g_source_remove() > 0
+unit="178e2b04489c1df41d6fb5b67eb56dc4" scheme="returns" site=7
+or
+monkey-media/monkey-media-player-gst-tmp.c, line 241,
+monkey_media_player_finalize(), (mp->priv)->timer is FALSE
+unit="12cb0d54e3e5f5c0a5a8490b867edc69" scheme="branches" site=4
+
+
+Rhythmbox Bug 2:
+
+Synopsis:
+Signal callbacks call player that has already been destroyed
+
+Bug Report:
+http://bugzilla.gnome.org/show_bug.cgi?id=137834
+
+Predictors:
+shell/rb-shell-player.c, lines 1765 and 1774, function info_available_cb(),
+call to monkey_media_player_get_uri() returns null
+unit="0c08f91c21433db361ecd2dbdc8a6e12" scheme="returns" 
+sites 356 and 357

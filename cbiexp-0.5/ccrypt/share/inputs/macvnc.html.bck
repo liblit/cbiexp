@@ -1,0 +1,684 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 (Macintosh; I; PPC) [Netscape]">
+   <meta name="keywords" content="VNC, AT&T Laboratories Cambridge, Virtual Network Computing, thin-client, Macintosh">
+   <title>VNCserver for Macintosh</title>
+<link REL="stylesheet" HREF="styles.css" TYPE="text/css">
+</head>
+<body bgcolor="#FFFFFF" vlink="#000080">
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#DCD9BE" BACKGROUND="sidebarbg.gif">
+<center><a href="index.html"><img SRC="sidelogo.gif" ALT="VNC logo" BORDER=0 height=113 width=120></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="20"><img SRC="spacer.gif" HSPACE=8 height=1 width=1></td>
+
+<td>
+<table BORDER=0 WIDTH="100%" >
+<tr>
+<td WIDTH="90%">
+<center>
+<h1>
+<i>Virtual Network Computing</i></h1></center>
+</td>
+
+<td WIDTH="10%"><a href="http://www.uk.research.att.com/"><img SRC="attlogo.gif" ALT="AT&T" BORDER=0 height=81 width=68 align=RIGHT></a></td>
+</tr>
+</table>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+</table>
+
+<hr color="#000080">
+<table BORDER=0 WIDTH="100%" >
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#DCD9BE" BACKGROUND="sidebarbg.gif">
+<center><table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><a href="index.html"><img SRC="homebutton.gif" ALT="[Home]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="screenshots.html"><img SRC="screenbutton.gif" ALT="[screenshots]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="free.html"><img SRC="freebutton.gif" ALT="[free?]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="start.html"><img SRC="startbutton.gif" ALT="[getting started]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="docs.html"><img SRC="docbutton.gif" ALT="[documentation]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="faq.html"><img SRC="faqbutton.gif" ALT="FAQs" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="download.html"><img SRC="downloadbutton.gif" ALT="[download]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="intouch.html"><img SRC="intouchbutton.gif" ALT="[keep in touch]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="contribs.html"><img SRC="contribbutton.gif" ALT="Others' ports and add-ons etc" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="help.html"><img SRC="helpbutton.gif" ALT="Project ideas" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="vncpeople.html"><img SRC="vncpeoplebutton.gif" ALT="VNC people" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/search.html"><img SRC="searchbutton.gif" ALT="Search" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/"><img SRC="attbutton.gif" ALT="[AT&T Laboratories Cambridge]" BORDER=0 height=33 width=120></a></td>
+</tr>
+</table></center>
+</td>
+
+<td VALIGN=TOP WIDTH="8%">
+<center><a href="docs.html"><img SRC="backbutton.gif" ALT="back to docs" HSPACE=2 BORDER=0 height=20 width=20></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="100%">
+<h2>
+<b>MacVNC - VNC server for Macintosh</b></h2>
+<i>Beta 2 - 7/ 6/99</i>
+<br><i>Alpha 1 .1- 25/1/99</i>
+<br><i>Alpha 1&nbsp; -16/7/98 .</i>
+<br>&nbsp;
+<p>Use of the Mac server should be straightforward if you are familiar
+with the concepts behind VNC, and have a suitable VNC viewer running on
+another machine.&nbsp; Read '<a href="index.html">What is VNC?</a>' and
+'<a href="start.html">Getting Started</a>' if you haven't already done
+so - they'll give you a good overview, despite being Unix and Windows-orientated.&nbsp;
+<p><i>Note. This is a beta release. As with all VNC software, you use at
+your own risk!&nbsp; We welcome bug fixes/ comments.</i>
+<h3>
+Requirements:</h3>
+To use the Macintosh VNC server, you will need:
+<ul>
+<li>
+A version of MacOS greater than 7.6.1,</li>
+
+<li>
+A Power PC machine</li>
+
+<li>
+Open Transport (1.1.3 or later).</li>
+</ul>
+
+<h3>
+Quick Start</h3>
+
+<ul>
+<li>
+Drag vncPatches from the ->Extensions folder of the distribution onto a
+closed System Folder</li>
+
+<li>
+Drag the VNC Controls from ->Control Panels onto a closed System Folder</li>
+
+<li>
+Restart the machine</li>
+
+<li>
+Run VNCServer</li>
+
+<li>
+Run VNC Controls and set the password/ desktop name. Set display number
+to 0.</li>
+
+<li>
+Connect with a VNC client to &lt;hostname>:0 or with a Java capable web
+browser to http://&lt;hostname>:5800</li>
+</ul>
+
+<h3>
+Introduction</h3>
+
+<h4>
+<a NAME="patches"></a>The Patches</h4>
+The installation is in three parts, the patches, the server and the control
+panel. The patches (in a system extension called vncPatches, stored in
+the ->Extensions folder of the distribution) catch draws to the screen
+and pass them on to the server. To install these patches you need to put
+them in the Extensions folder inside your System folder (you can drag the
+vncPatches extension onto a closed System folder if you want, the Finder
+will work out where it needs to go). After that you need to restart for
+the patches to come into effect.
+<h4>
+<a NAME="server"></a>The Server</h4>
+The actual work horse of the installation is the VNCServer program. Note:
+even though you've installed the patches, no one will be able to access
+your machine unless the server is running as well. To automatically have
+the server run at start up you can put it (or one of its aliases) into
+the Startup Items sub folder of your system folder.&nbsp; Otherwise, just
+double click it like any other application.
+<h4>
+<a NAME="control"></a>The Control Panel</h4>
+Once the server is running, you'll need to set the password (the default
+is none, which means the server will refuse all connections). The server
+currently supports 3 ways of setting options, via a <a href="#webinter">web
+browser</a>, the control panel or <a href="#apples">Apple Script</a>. The
+easiest and most reliable way is to use the control panel (called VNC Controls).
+Note: The server needs to be running (or at least have been run) the first
+time you use the control panel (<a href="#Qone">why?</a>). Also, the control
+panel may pause for a few seconds (more on over loaded machines) whilst
+it communicates with the server. If the control panel is put into the Control
+Panels folder (inside the System Folder), then it will be accessible by
+selecting the Options menu option from the <a href="#server">server</a>.
+<p>The first two options determine how your screen will be described to
+clients, the desktop name is what external viewers will see in their title
+bars, while the display number is what they'll have to add to your host
+name for them to connect properly (i.e. if you set the server running on
+machine 123.456.789.789 to have a display number of 0, then viewers can
+connect by specifying 123.456.789.789:0 or computer.room.place.com:0 as
+the host name).&nbsp; The display number is NOT normally the TCP/IP port
+number (see web site for further details). The password box is (surprise,
+surprise) where you should enter your desired password. Only the first
+8 characters will be used in authentication but it is case sensitive (i.e.
+thispassword is the same as thispassXXX but not the same as THISPASS).
+<p>Macintoshes have a key (the command key) that most other computers lack,
+which means that for an external client to send command key events, some
+sort of key press equivalent needs to be set. The four drop down menus
+specify which key combination will be used as command. For example, if
+you wanted your external clients to get command-c by pressing left control
++ right alt + F3 + c&nbsp; you'd select "L Control", "R Alt", "F3" and
+"None" from the four menus. Other key presses can be set via the <a href="#apples">Apple
+Script</a> interface.
+<p><a NAME="advanced"></a>The advanced button on the control panel takes
+you though to a slightly different set of options, which are described
+more fully on the panel itself.
+<p>If the VNC server preferences file is locked for any reason, no option
+settings will be allowed through any of the 3 interfaces. Also the <a href="#webinter">web
+interface</a> and the <a href="#apples">Apple Script</a> interface can
+be disabled by setting the appropriate flags on the <a href="#advanced">Advanced</a>
+settings page.
+<p>Once the initial settings have been set, that's it. The server can be
+stopped by selecting Quit from the file menu or by pressing command- Q.
+<h3>
+<a NAME="webinter"></a>The Web Interface</h3>
+All VNC servers include a web interface, and this one is no different,
+although does go slightly further. While the server is running, any Java
+capable web browser can connect to http://&lt;host name>:58xx (where xx
+is the display number) and will be sent a Java viewer that will then act
+as the VNC client. The Mac server can also accept option changes through
+local browsers accessing http://&lt;host name>:58xx/settings.html. There
+is also way to look at the server's internal logs by looking at http://&lt;host
+name>:58xx/log.html
+<p>All the html sent out by the server needs is kept in a directory called
+Html which should be in the same directory as the VNCServer binary. You
+can change the look of your server's settings page by changing the contents
+of this directory. Files ending .tmpl will be put through a template parser
+before being sent out, so in your customised html you can include things
+like $HOSTNAME&nbsp; if you want to display your current desktop name.
+See the included .tmpl files for examples of other variables. You can change
+where the server looks for its html by changing the HtmlDirectory line
+in VNC Server preferences (found in the &lt;startup disk>:System Folder:Preferences)
+or you can include the html/ tmpl files as TEXT resources inside the VNCServer
+binary. The names of the resources should be the same as the names of the
+files. Resources are searched before the Html directory.
+<p>The web interface can be disabled by removing the Html directory or
+clearing the "Use Http Options" flag on the <a href="#advanced">Advanced</a>
+screen of the <a href="#control">VNC control panel</a>.
+<h3>
+<a NAME="apples"></a>The Apple Script interface</h3>
+The server can be controlled by Apple Scripts which can be easily written
+with the Script Editor which comes with every installation of the Mac OS.
+A sample program is shown below.
+<pre>-- example for communicating with a VNC server</pre>
+
+<pre>tell application "VNCServer"</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; -- set the options to&nbsp; sensible things</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; set password to "password"</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; set display number to 34</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; set desktop name to "Bob's Computer"</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; set cmd equivalent to "ffe3 ffe9 0000 0000"</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; -- The following is a very esoteric option described more fully below</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; set mouse id to "03045ef2"</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; -- get a table of function use (very uninteresting)</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; get stats</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; -- Clear the previous statistics</pre>
+
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; set stats to 0</pre>
+
+<pre>end tell</pre>
+
+<h4>
+cmd equivalent</h4>
+The command key equivalent press can consist of up to 4 keys and is defined
+by 4 X key sym values which are passed to the server as a string consisting
+of four space deliminated, un prefixed, four digit hexadecimal numbers
+(got that?). Seeing as most users are not going to know (or care) what
+an X key sym is, the <a href="#control">control panel</a> includes a way
+of easily setting this combination via four drop down menus. People who
+are quite happy with a ctrl/ alt/ shift etc. style key press can use the
+control panel while others can set what ever key press they like via this
+Apple Script command.
+<h4>
+mouse id</h4>
+The mouse id option is for people with more than one mouse on their bus
+who don't want to use the first one as the captured pointing device (for
+whatever reason). By default, the first pointing device encountered by
+the CursorDevice manager is the one that is controlled by clients. However,
+if you want the clients to control the second one, then you're going to
+have to find out the device ID of the second mouse and pass it to the the
+server via the mouse id command. The parameter is a string containing the
+device ID in hexadecimal with no leading characters. Very very few people
+are going to need this.
+<h3>
+Question Index</h3>
+How Do I ...&nbsp;
+<p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#tthree">... stop other users changing
+the settings once I have set them?</a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#tseven">... use my command key from
+other machines?</a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#teight">... customise my html pages?</a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#tnine">... paste into my Mac from
+a remote connection?</a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#tten">... communicate my feedback
+to AT&amp;T Laboratories Cambridge?</a>
+<p>Why ...&nbsp;
+<p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#televelen">... does my machine keep
+crashing?</a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#ttwo">... doesn't the Server Options..
+menu item work?</a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <a href="#Qone">... do I need to run the server
+before I can change the settings?</a>
+<h3>
+How Do I....</h3>
+
+<h4>
+Q.&nbsp;<a NAME="tthree"></a>... stop other users changing the settings
+once I have set them?</h4>
+A. Make the preferences file (which is called VNC Server preferences nd
+should be in the Preferences file inside the System Folder) read only.
+<br>&nbsp;
+<h4>
+Q.&nbsp;<a NAME="tseven"></a>... use my command key from other machines?</h4>
+A. The modifiers that correspond to command can be set via the settings
+page or via Apple Script.&nbsp; The default is Left Alt and Left Control.
+So L Alt+ L Control + c is the same as&nbsp; command + c. Note: The command
+key is the one next to the space bar with a propeller symbol or an Apple
+symbol on it.&nbsp;
+<p>&nbsp;&nbsp;&nbsp; Up to four modifiers can be chosen and are described
+by thier X keysym values. See keysyms.h in the source distribution for
+more details of X keysyms. The default settings page has drop down menus
+to choose from a number of common modifiers. To add more modiifers to these
+menus put more &lt;option value="0xNNNN">Key name&lt;/option> lines in
+the settings.tmpl file in the Html directory.&nbsp;
+<br>&nbsp;The modifiers can be set from AppleScript like this:&nbsp;
+<p>&nbsp;&nbsp; <b>tell application</b> "VNCserver"&nbsp;
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <b>set</b> cmd equivalent <b>to</b> "ffe3
+ffe9 0000 0000"&nbsp;
+<br>&nbsp;&nbsp;&nbsp; <b>end tell</b>
+<p>The string is four 4 digit hexadecimal numbers describing the modifiers
+requested. (ffe3 ffe9 correspond to the default L Alt + L Control).&nbsp;
+<p><u>Note:</u>&nbsp; Setting the modifiers to anything strange will produce
+"Current Modifiers: unknown" on the settings page. Do not panic. This just
+means that the server doesn't know how to describe the keysyms you've given
+it. They will still work, it's just the server doesn't have name for them.&nbsp;
+<br>&nbsp;
+<h4>
+Q.&nbsp;<a NAME="teight"></a>... customise my settings/ logs / initial
+page?</h4>
+A. The HTTP server look at the following places for HTTP files:&nbsp;
+<ul>
+<li>
+&nbsp; The directory specified in the Html directory line in the preferences
+file. (Default is the directory called Html in the same directory as the
+server)</li>
+
+<li>
+&nbsp; Resources of type 'TEXT' inside VNCServer</li>
+
+<li>
+&nbsp; Resources of type ' WWW' inside VNCServer (There's a space before
+the first W in ' WWW')</li>
+
+<li>
+&nbsp; Resources of type 'JAVA inside VNCServer</li>
+</ul>
+You can therfore override the internal html files by putting new files
+in the Html directory.&nbsp;
+<br>Also, the server will transform certain filenames under cetain conditions:&nbsp;
+<br>&nbsp;
+<center><table BORDER COLS=3 WIDTH="80%" >
+<tr>
+<td WIDTH="60%"><u>Condition...</u></td>
+
+<td WIDTH="20%"><u>Maps ...</u></td>
+
+<td><u>... to ...</u></td>
+</tr>
+
+<tr>
+<td>Connection is local and the server unlocked&nbsp;</td>
+
+<td>settings.html</td>
+
+<td>settings.tmpl</td>
+</tr>
+
+<tr>
+<td>Connection is not local and the server is unlocked</td>
+
+<td>settings.html</td>
+
+<td>localonly.tmpl</td>
+</tr>
+
+<tr>
+<td>Server is locked&nbsp;</td>
+
+<td>settings.html</td>
+
+<td>noserver.html</td>
+</tr>
+
+<tr>
+<td>Server is running properly</td>
+
+<td>index.html or /&nbsp;</td>
+
+<td>javastart.tmpl</td>
+</tr>
+
+<tr>
+<td>Server is not running properly&nbsp;</td>
+
+<td>index.html or /</td>
+
+<td>noserver.html</td>
+</tr>
+
+<tr>
+<td>Status info is available.</td>
+
+<td>log.html</td>
+
+<td>&nbsp;log.tmpl</td>
+</tr>
+
+<tr>
+<td>Status info is not availble</td>
+
+<td>log.html</td>
+
+<td>noserver.html</td>
+</tr>
+
+<tr>
+<td>Status info is available.</td>
+
+<td>&nbsp;log&lt;X>.html&nbsp;</td>
+
+<td>single_log.tmpl</td>
+</tr>
+
+<tr>
+<td>Status info is not availble&nbsp;</td>
+
+<td>&nbsp;log&lt;X>.html</td>
+
+<td>single_log.tmpl</td>
+</tr>
+</table></center>
+
+<p>The &lt;X> in the last two files is an ascii character from 0 onwards
+that describes which log number you want.&nbsp;
+<br>Log 0 is the main program log, log 1 is the http log, log 2 is a dcescription
+of status of the server and a list of active connections. Logs 3 and onward
+are the logs associated with the active connections. The logs are serverd
+via the template file single_log.tmpl. For example if a request for log0.html
+is received, the file single_log.html is used with the token $THELOG replaced
+with $LOG0 which is in turn replaced with the corect log.&nbsp;
+<p>Most of the html files served are passed through a template parser before
+being sent to the client. The template parser translates some tokens into
+useful information:&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<table BORDER COLS=2 WIDTH="100%" >
+<tr>
+<td WIDTH="20%"><u>Token ...</u></td>
+
+<td><u>Expands to...</u></td>
+</tr>
+
+<tr>
+<td>$SETTINGS_LINK</td>
+
+<td>&lt;A href=&lt;host>/settings.html>Settings&lt;/A> if the connection
+is local and the server unlocked. Nothiong otherwise.</td>
+</tr>
+
+<tr>
+<td>$HOST&nbsp;</td>
+
+<td>The ip address of the host.</td>
+</tr>
+
+<tr>
+<td>$WIDTH,$APPLETWIDTH</td>
+
+<td>The width of the screen</td>
+</tr>
+
+<tr>
+<td>$HEIGHT,$APPLETHEIGHT</td>
+
+<td>The height of the screen</td>
+</tr>
+
+<tr>
+<td>$LOG&lt;X></td>
+
+<td>The specified log. &lt;X> is an ascii character starting at 0 which
+specifys the log</td>
+</tr>
+
+<tr>
+<td>$MAINPAGE</td>
+
+<td>A fully formed URL to the index page</td>
+</tr>
+
+<tr>
+<td>$PORT</td>
+
+<td>&nbsp;The port number for vnc connections (normally 5900)</td>
+</tr>
+
+<tr>
+<td>$DESKTOP</td>
+
+<td>The user specified name of the desktop</td>
+</tr>
+
+<tr>
+<td>$DISPLAY</td>
+
+<td>The display number. Normally 0</td>
+</tr>
+
+<tr>
+<td>$MODIFIERS</td>
+
+<td>English description of the modifers that correspond to the command
+key</td>
+</tr>
+
+<tr>
+<td>$THELOG</td>
+
+<td>A log. This token only works in single_log.html, which is only used
+when the user requests log&lt;X>.html. See above for what the &lt;X>&nbsp;
+means.</td>
+</tr>
+</table>
+
+<p>Settings can be changed by sending a POST event to the server, via a
+an HTML form.&nbsp;
+<br>The labels in the POST correspond to various variables:&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<table BORDER COLS=2 WIDTH="100%" >
+<tr>
+<td><u>Label...</u></td>
+
+<td><u>Variable ...</u></td>
+</tr>
+
+<tr>
+<td>PASS</td>
+
+<td>The password</td>
+</tr>
+
+<tr>
+<td>PAS2</td>
+
+<td>The password again. It will be set if both of these are the same</td>
+</tr>
+
+<tr>
+<td>DISP</td>
+
+<td>Display number</td>
+</tr>
+
+<tr>
+<td>DESK</td>
+
+<td>Desktop name</td>
+</tr>
+
+<tr>
+<td>Key1,Key2,Key3,Key4</td>
+
+<td>The command key modifiers.</td>
+</tr>
+</table>
+
+<p>In response to a POST event (usually sent from the settings page) the
+server returns changed.tmpl unless the password was incorrectly set in
+which case passwrong.tmpl is sent.&nbsp;
+<h4>
+&nbsp;Q.&nbsp;<a NAME="tnine"></a>... paste into my Mac from another machine?</h4>
+A. The short answer is "You can't". The longer answer is "You can't because
+of the slightly odd way the Mac handles clipboards". This problem is being
+currently being investigated. Pasting from the Mac to other machine should
+work.&nbsp;
+<br>&nbsp;
+<h4>
+Q.&nbsp;<a NAME="tten"></a>... communicate with the developers?</h4>
+A. We run a VNC mailing list run that has a pretty large membership list
+and is read by all the VNC developers (not just the Mac one), so any questions
+you have can probably be answered by posting to this list. To join the
+list go <a href="http://www.uk.research.att.com/vnc/intouch.html">here.</a>&nbsp;
+Note that asking questions which are answered in this document or in the
+<a href="http://www.uk.research.att.com/vnc/faq.html">FAQ</a>
+is a Bad Idea.&nbsp;
+<br>&nbsp;
+<h3>
+Why?..</h3>
+
+<h4>
+Q.&nbsp;<a NAME="televen"></a>... does my machine keep crashing?</h4>
+A.&nbsp; VNCServer, in its fastest mode, breaks a general guideline in
+that it patches ShowCursor (which has to be interrupt time safe) with some
+code that isn't interrupt safe. This may sometimes cause bad things to
+happen. If this is happening to you, you can switch to an interrupt-safe
+version of ShowCursor by changing the "Use Error prone updates" flag in
+the security resource. See above for details. The downside is that updates
+that happen when the mouse button is down (like drags and menu operation)
+may not work so well.&nbsp;
+<br>As mentioned above, there are also some known problems with the hextile
+encoding. You should find that the server is more reliable if you switch
+this off.
+<h4>
+Q.&nbsp;<a NAME="ttwo"></a>... doesn't the File/Options(HTTP).. menu item
+work?</h4>
+A. The server options are set using a web browser via an HTTP connection.
+If your machine isn't set up for this already, you need Internet Config
+to make this work. From the IC faq:&nbsp;
+<blockquote>Each new release of Internet Config is posted to MacGifts and
+is therefore available Info-Mac and UMich (and their mirror sites). It
+is also available from any site that holds Peter Lewis' software, namely
+<a href="ftp://mirrors.aol.com/pub/peterlewis/">AOL</a>,
+<a href="ftp://ftp.amug.org/pub/peterlewis/">AMUG</a>,
+<a href="ftp://ftp.share.com/peterlewis/">PopCo</a>,
+<a href="ftp://redback.cs.uwa.edu.au/Others/PeterLewis/">Australia</a>,
+<a href="ftp://ftp.nig.ac.jp/pub/mac/PeterLewis/">Japan</a>,
+and <a href="ftp://nic.switch.ch/software/mac/peterlewis/">Switzerland</a>.&nbsp;
+<p>Internet Config is also available as a <a href="ftp://ftp.acns.nwu.edu/pub/newswatcher/helpers/">NewsWatcher</a>
+helper and on the <a href="ftp://ftp.tidbits.com/pub/tidbits/">TidBITS</a>
+site.&nbsp;
+<p>Finally, all sorts of IC related material, including the latest version
+of the IC software, is available from the IC home sites in <a href="ftp://ftp.quinn.echidna.id.au/Others/Quinn/Config/">Australia</a>
+and the <a href="ftp://ftp.share.com/internet-configuration/">USA</a>.
+<br>&nbsp;</blockquote>
+
+<h4>
+<a NAME="Qone"></a>Q: ... won't the control panel run unless the server
+has been run at least once before?</h4>
+
+<p><br>A: The reason for this is that the panel either communicates directly
+with the server (through <a href="#apples">Apple Script</a>) or alters
+its preferences file. If the server has never been run before, there will
+be no preferences file on the system and the panel won't be able to do
+anything.
+<br>&nbsp;
+<p>Any comments regarding this program should be directed to the <a href="intouch.html">VNC
+mailing list</a>.&nbsp;
+<br>
+<hr width="100%">
+<div align=right><a href="docs.html"><img SRC="backbutton.gif" ALT="back to docs" HSPACE=5 BORDER=0 height=20 width=20></a><i>go
+back to <a href="docs.html">documentation</a></i></div>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+
+<tr>
+<td ALIGN=CENTER VALIGN=TOP COLSPAN="4" WIDTH="100%">
+<hr color="#000080">
+<center>
+<p><i><font size=-1>For comments, feedback, etc, please see the '<a href="intouch.html">Keeping
+in touch</a>' page</font>.</i>
+<br><i><font size=-1>Copyright 1999 - AT&amp;T Laboratories Cambridge</font></i></center>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

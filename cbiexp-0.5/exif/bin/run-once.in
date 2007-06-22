@@ -1,0 +1,76 @@
+#!@PERL@ -w
+
+use strict;
+use File::Copy;
+use File::Path;
+use FileHandle;
+use FindBin;
+
+
+########################################################################
+
+
+sub getlines ($) {
+    my $file = new FileHandle "$FindBin::Bin/../$_[0]";
+    my @lines = map { chomp; $_ } $file->getlines;
+    return @lines;
+}
+
+
+sub pick (@) {
+    return $_[int rand @_];
+}
+
+
+sub note ($@) {
+    my $filename = shift;
+    my $handle = new FileHandle $filename, 'w' or warn "cannot write to $filename: $!";
+    $handle->print(@_, "\n");
+}
+
+
+########################################################################
+
+
+my @images = getlines 'image-list';
+my @thumbnails = getlines 'thumbnail-list';
+my @tasks = ([],
+	     ['-i'],
+	     ['-l'],
+	     ['-|'],
+	     ['-e'],
+	     ['-r'],
+	     ['-n', pick @thumbnails]);
+
+
+my $image = pick @images;
+note 'input-image', $image;
+copy $image, 'input.jpg' or die;
+
+my @flags;
+my @argv = ("$FindBin::Bin/../install/bin/exif");
+my $task = pick @tasks;
+push @argv, @$task;
+my $flag = @$task[0];
+push @flags, substr($flag,1) if $flag;
+if (int rand 2) {
+  push @argv, '-m';
+  push @flags, 'm';
+};
+push @argv, 'input.jpg';
+note 'command-line', "@argv";
+note 'flags', "@flags";
+
+open STDOUT, '>', 'stdout' or die;
+open STDERR, '>', 'stderr' or die;
+
+$ENV{SAMPLER_FILE} = 'reports';
+$ENV{SAMPLER_REAL_EXECUTABLE} = $argv[0];
+$ENV{SAMPLER_SPARSITY} = 1;
+
+my $outcome = system @argv;
+
+note 'outcome', $outcome;
+
+unlink glob '*.jpg';
+unlink glob '*.jpeg';

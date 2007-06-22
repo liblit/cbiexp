@@ -1,0 +1,281 @@
+<!-- arch-tag: Rhythmbox GConf schema file
+  -->
+
+<gconfschemafile>
+   <schemalist>
+      <schema>
+        <key>/schemas/apps/rhythmbox/first_time_flag</key>
+        <applyto>/apps/rhythmbox/first_time_flag</applyto>
+        <owner>rhythmbox</owner>
+        <type>bool</type>
+        <default>0</default>
+        <locale name="C">
+	<short>True if the initial druid has already been run.</short>
+	<long>True if the initial druid has already been run.</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/state/paned_position</key>
+        <applyto>/apps/rhythmbox/state/paned_position</applyto>
+        <owner>rhythmbox</owner>
+        <type>int</type>
+        <default>88</default>
+        <locale name="C">
+	<short>Position of main window pane</short>
+	<long>Position of main window pane.</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/state/window_width</key>
+        <applyto>/apps/rhythmbox/state/window_width</applyto>
+        <owner>rhythmbox</owner>
+        <type>int</type>
+        <default>600</default>
+        <locale name="C">
+	<short>Main window width</short>
+	<long>Main window width.</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/state/window_height</key>
+        <applyto>/apps/rhythmbox/state/window_height</applyto>
+        <owner>rhythmbox</owner>
+        <type>int</type>
+        <default>600</default>
+        <locale name="C">
+	<short>Main window height</short>
+	<long>Main window height.</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/state/small_width</key>
+        <applyto>/apps/rhythmbox/state/small_width</applyto>
+        <owner>rhythmbox</owner>
+        <type>int</type>
+        <default>600</default>
+        <locale name="C">
+	<short>Small window width</short>
+	<long>Main window width when the player is in Small Display mode.</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/state/window_maximized</key>
+        <applyto>/apps/rhythmbox/state/window_maximized</applyto>
+        <owner>rhythmbox</owner>
+        <type>bool</type>
+        <default>0</default>
+        <locale name="C">
+	<short>Main window maximization state</short>
+	<long>If true, the main window is maximized.</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/ui/sourcelist_hidden</key>
+	<applyto>/apps/rhythmbox/ui/sourcelist_hidden</applyto>
+	<owner>rhythmbox</owner>
+	<type>bool</type>
+	<default>0</default>
+	<locale name="C">
+	<short>Source list visibility</short>
+	<long>If true, the main source list is hidden.</long>
+	</locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/ui/small_display</key>
+	<applyto>/apps/rhythmbox/ui/small_display</applyto>
+	<owner>rhythmbox</owner>
+	<type>bool</type>
+	<default>0</default>
+	<locale name="C">
+	<short>Small display mode</short>
+	<long>If true, the main window is displayed without the source list, browser or playlist.</long>
+	</locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/ui/statusbar_hidden</key>
+	<applyto>/apps/rhythmbox/ui/statusbar_hidden</applyto>
+	<owner>rhythmbox</owner>
+	<type>bool</type>
+	<default>0</default>
+	<locale name="C">
+	<short>Statusbar visibility</short>
+	<long>If true, the statusbar is hidden.</long>
+	</locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/state/repeat</key>
+        <applyto>/apps/rhythmbox/state/repeat</applyto>
+        <owner>rhythmbox</owner>
+        <type>bool</type>
+        <default>0</default>
+        <locale name="C">
+	<short>Repeat mode</short>
+	<long>If true, rhythmbox will go into repeat mode.</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/state/play_order</key>
+        <applyto>/apps/rhythmbox/state/play_order</applyto>
+        <owner>rhythmbox</owner>
+        <type>string</type>
+        <default>linear</default>
+        <locale name="C">
+	<short>Order to play songs in</short>
+	<long>Value identifies the order songs are played in. Legal values are:
+	"linear", "shuffle", "random-equal-weights", "random-by-age".</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/state/add_dir</key>
+        <applyto>/apps/rhythmbox/state/add_dir</applyto>
+        <owner>rhythmbox</owner>
+        <type>string</type>
+        <default></default>
+        <locale name="C">
+	<short>"Add to library" filesel state</short>
+	<long>"Add to library" filesel state.</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/state/volume</key>
+        <applyto>/apps/rhythmbox/state/volume</applyto>
+        <owner>rhythmbox</owner>
+        <type>float</type>
+        <default>1.0</default>
+        <locale name="C">
+	<short>Volume level</short>
+	<long>Volume level.</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/state/library/sorting</key>
+        <applyto>/apps/rhythmbox/state/library/sorting</applyto>
+        <owner>rhythmbox</owner>
+        <type>string</type>
+        <default>Artist,ascending</default>
+        <locale name="C">
+	<short>The sorting order</short>
+	<long>A comma-separated list.  The first is the title of the
+	column to sort on, the second is the sort type.</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/state/library/show_browser</key>
+        <applyto>/apps/rhythmbox/state/library/show_browser</applyto>
+        <owner>rhythmbox</owner>
+        <type>bool</type>
+        <default>1</default>
+        <locale name="C">
+	<short>Show browser in library</short>
+	<long>Show the artist and album browser in the library.</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/state/library/paned_position</key>
+        <applyto>/apps/rhythmbox/state/library/paned_position</applyto>
+        <owner>rhythmbox</owner>
+        <type>int</type>
+        <default>180</default>
+        <locale name="C">
+	<short>Position of library browser pane</short>
+	<long>Position of library browser pane.</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/ui/columns_setup</key>
+        <applyto>/apps/rhythmbox/ui/columns_setup</applyto>
+        <owner>rhythmbox</owner>
+        <type>string</type>
+        <default>RB_TREE_MODEL_NODE_COL_TRACK_NUMBER_STR,RB_TREE_MODEL_NODE_COL_ARTIST,RB_TREE_MODEL_NODE_COL_ALBUM,RB_TREE_MODEL_NODE_COL_GENRE,RB_TREE_MODEL_NODE_COL_DURATION</default>
+        <locale name="C">
+	<short>(obsolete) List of active columns.</short>
+	<long>The list of columns that will be shown for Rhythmbox versions &lt; 0.6.0.  If a source
+              doesn't support a particular column, it won't be displayed. </long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/ui/rhythmdb_columns_setup</key>
+        <applyto>/apps/rhythmbox/ui/rhythmdb_columns_setup</applyto>
+        <owner>rhythmbox</owner>
+        <type>string</type>
+        <default>RHYTHMDB_PROP_TRACK_NUMBER,RHYTHMDB_PROP_ARTIST,RHYTHMDB_PROP_ALBUM,RHYTHMDB_PROP_GENRE,RHYTHMDB_PROP_DURATION</default>
+        <locale name="C">
+	<short>List of active columns.</short>
+	<long>The list of columns that will be shown.  If a source
+              doesn't support a particular column, it won't be displayed. </long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/ui/time_display</key>
+        <applyto>/apps/rhythmbox/ui/time_display</applyto>
+        <owner>rhythmbox</owner>
+        <type>bool</type>
+        <default>1</default>
+        <locale name="C">
+        <short>Whether to show elapsed or remaining time</short>
+        <long>If true, the elapsed time will be shown in song duration
+              displays. Otherwise the remaining time will be shown.</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/state/iradio/show_browser</key>
+        <applyto>/apps/rhythmbox/state/iradio/show_browser</applyto>
+        <owner>rhythmbox</owner>
+        <type>bool</type>
+        <default>0</default>
+        <locale name="C">
+	  <short>Show browser in radio display</short>
+	  <long>Show the genre browser in the Internet Radio display.</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/state/iradio/sorting</key>
+        <applyto>/apps/rhythmbox/state/iradio/sorting</applyto>
+        <owner>rhythmbox</owner>
+        <type>string</type>
+        <default>Title,ascending</default>
+        <locale name="C">
+	<short>The sorting order</short>
+	<long>A comma-separated list.  The first is the title of the
+	column to sort on, the second is the sort type.</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/ui/library/browser_views</key>
+        <applyto>/apps/rhythmbox/ui/library/browser_views</applyto>
+        <owner>rhythmbox</owner>
+        <type>int</type>
+        <default>0</default>
+        <locale name="C">
+	<short>Views to show in the library browser.</short>
+	<long>
+	0 Artists, Albums
+	1 Genres, Artists
+	2 Genres, Artists, Albums
+        </long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/state/load_failure_dialog/window_width</key>
+        <applyto>/apps/rhythmbox/state/load_failure_dialog/window_width</applyto>
+        <owner>rhythmbox</owner>
+        <type>int</type>
+        <default>300</default>
+        <locale name="C">
+	<short>Window width of the load failure dialog</short>
+	<long>Window width of the load failure dialog</long>
+        </locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/state/load_failure_dialog/window_height</key>
+        <applyto>/apps/rhythmbox/state/load_failure_dialog/window_height</applyto>
+        <owner>rhythmbox</owner>
+        <type>int</type>
+        <default>300</default>
+        <locale name="C">
+	<short>Window height of the load failure dialog</short>
+	<long>Window height of the load failure dialog</long>
+        </locale>
+      </schema>
+    </schemalist>
+</gconfschemafile>

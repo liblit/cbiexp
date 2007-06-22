@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE sorts SYSTEM "sorts.dtd">
+
+<sorts>
+  <sort code="lb">Lower Bound of Confidence Interval</sort>
+  <sort code="is">Increase Score</sort>
+  <sort code="fs">Fail Score</sort>
+  <sort code="nf">True in # Failed Runs</sort>
+  <sort code="hl">Harmonic Mean (log)</sort>
+  <sort code="hs">Harmonic Mean (sqrt)</sort>
+</sorts>

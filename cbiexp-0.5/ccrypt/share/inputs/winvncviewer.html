@@ -1,0 +1,389 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.51 [en] (X11; I; Linux 2.2.6 i686) [Netscape]">
+   <meta name="keywords" content="VNC, AT&T Laboratories Cambridge, Virtual Network Computing, thin-client">
+   <title>VNCviewer for Windows</title>
+<link REL="stylesheet" HREF="styles.css" TYPE="text/css">
+</head>
+<body bgcolor="#FFFFFF" vlink="#000080" marginheight="0" topmargin="0" leftmargin="0" marginwidth="0">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><a href="index.html"><img SRC="sidelogo.gif" ALT="VNC logo" BORDER=0 height=113 width=120></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="20"><img SRC="spacer.gif" HSPACE=8 height=1 width=1></td>
+
+<td>
+<table BORDER=0 WIDTH="100%" >
+<tr>
+<td WIDTH="90%" valign="center">
+<center>
+<h1>
+<IMG SRC="vnctitle.gif"  WIDTH=370 HEIGHT=30 ALT="Virtual Network Computing"></h1></center>
+</td>
+
+<td WIDTH="10%"><a href="http://www.uk.research.att.com/"><img SRC="attlogo.gif" ALT="AT&T" BORDER=0 height=75 width=66 align=RIGHT></a></td>
+</tr>
+</table>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+<tr><td colspan=5 bgcolor="#eecc80"><img src="spacer.gif" height=3 vspace=0 hspace=1></td></tr>
+<tr><td bgcolor="#eecc80"><img src="spacer.gif" height=4 vspace=0 hspace=1></td><td colspan=4></td></tr>
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><a href="index.html"><img SRC="homebutton.gif" ALT="[Home]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="screenshots.html"><img SRC="screenbutton.gif" ALT="[screenshots]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+
+<tr>
+<td><a href="start.html"><img SRC="startbutton.gif" ALT="[getting started]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="docs.html"><img SRC="docbutton.gif" ALT="[documentation]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="faq.html"><img SRC="faqbutton.gif" ALT="FAQs" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="download.html"><img SRC="downloadbutton.gif" ALT="[download]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="intouch.html"><img SRC="intouchbutton.gif" ALT="[keep in touch]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="contribs.html"><img SRC="contribbutton.gif" ALT="Others' ports and add-ons etc" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="help.html"><img SRC="helpbutton.gif" ALT="Project ideas" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="vncpeople.html"><img SRC="vncpeoplebutton.gif" ALT="VNC people" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/search.html"><img SRC="searchbutton.gif" ALT="Search" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/"><img SRC="attbutton.gif" ALT="[AT&T Laboratories Cambridge]" BORDER=0 height=33 width=120></a></td>
+</tr>
+</table></center>
+</td>
+
+<td VALIGN=TOP WIDTH="8%">
+<center><a href="docs.html"><img SRC="backbutton.gif" ALT="back to docs" HSPACE=2 BORDER=0 height=20 width=20></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="100%">
+<h2>
+<b>VNCviewer for Windows</b></h2>
+
+<p>If you install the Windows server, the viewer is also installed and is available from the VNC section of the start menu.  But you can start it in other ways, and you can use the viewer without installing the server. </p>
+<p>You can run the windows vncviewer from the command line or from a shortcut
+and it will prompt you for a display:
+<center>
+<p><tt>vncviewer</tt></center>
+
+<p>You can specify a display on the command line:
+<center>
+<p><tt>vncviewer snoopy:2</tt></center>
+
+<p>And you can run it with -h to get a list of other important options.
+The full list is below. These can all take either<tt> -</tt> or <tt>/</tt>
+as the switch character.&nbsp; Most of the options can also be set from
+the 'Options...' dialog box which is available from the initial connection
+prompt before connecting, and some from the system menu by clicking the
+VNC logo in the top-left corner of the window after connection, and selecting
+'Connection options...'.
+<p>The system menu also allows you to see some information about the connection,
+start new connections, and send a Ctrl-Alt-Del to a remote machine.&nbsp;
+This will only have an effect if the remote server is able to interpret
+it, currently only true for WinVNC running as a service under NT 4.
+<p>Keystrokes such as Ctrl-Esc and Alt-Tab may be interpreted at the local
+(viewer) machine.&nbsp; If you want to send them to the remote machine,
+you can use the options on the viewer menu to send individual Ctrl-down,
+Ctrl-up, Alt-down and Alt-up keystrokes.&nbsp; For example, to type Ctrl-Esc
+on the remote machine, send Ctrl-down using the menu, press Esc, and then
+send Ctrl-up (or just tap the Ctrl key) to release the Ctrl key at the
+remote end.
+<h3>
+Command line options:</h3>
+
+<dl>
+<dt>
+<tt>-shared</tt></dt>
+
+<dd>
+When you make a connection to a VNC server, all other existing
+connections are normally closed.&nbsp; This is for security reasons,
+and because we normally think of VNC as a tool for mobility: your
+desktop follows you from place to place. This option asks the server
+to leave any existing connections open, allowing you to share the
+desktop with someone already using it.  Some servers have options to
+change the default behaviour and to override this request.</dd>
+
+<dt>
+<tt>-8bit</tt></dt>
+
+<dd>
+The viewer will normally accept whatever pixel format the server offers
+and do the translation locally.&nbsp; This forces it to request 8-bit true-colour
+(BGR233) from the server, which will reduce network traffic.&nbsp; Useful
+over modems.&nbsp;</dd>
+
+<dt>
+<tt>-config</tt> <i>file</i></dt>
+
+<dd>
+You can save all the details of an open connection to a file using a
+command from the menu.  You can then restart that connection at a
+later date by specifying the name of the file using this switch.
+</dd>
+
+<dt>
+<tt>-register</tt></dt>
+
+<dd>
+This tells the Windows shell that .vnc files are associated with the
+vncviewer.  You should then be able to double-click on them to start
+the session.  Sometimes Windows seems to need restarting before this
+take effect.
+</dd>
+
+<dt>
+<tt>-scale</tt> <i>n</i><tt>/</tt><i>m</i></dt>
+
+<dd>
+Specify a scaling factor for the local display. The values n and m
+should be integers. The '/' and the m can be omitted if m=1.
+</dd>
+
+<dt>
+<tt>-emulate3</tt></dt>
+
+<dd>
+Users with a two-button mouse can emulate a middle button by pressing both
+buttons at once if this option is enabled on the command line or in the
+dialog box. <B>Note:</B> On recent versions of the viewer this is the default, so there's now a -noemulate3 option to turn it off if wanted.</dd>
+
+<dt>
+<tt>-noemulate3</tt></dt>
+
+<dd>Opposite of <tt>-emulate3</tt></dd>
+
+<dt>
+<tt>-swapmouse</tt></dt>
+
+<dd>
+This option was more commonly used before the 3-button emulation was available.
+Normally the PC buttons left-middle-right are mapped on to X buttons 1,2,3.
+This switch causes them to be mapped onto buttons 1,3,2, which may be more
+useful for two-button users who only have left-right, because they will
+then get buttons 1 &amp; 2 instead of 1 &amp; 3.</dd>
+
+<br>If combined with 3-button emulation, this also causes the middle button
+to emulate button 3 instead of button 2. This may be useful if you use
+button 2 more.
+<dt>
+<tt>-emulate3timeout</tt></dt>
+
+<dd>
+When using 3-button emulation, both mouse buttons must be pressed within
+a certain period for them to be registered as a single middle-click instead
+of separate left and right clicks. This option allows that time period
+to be specified in msec. The default is 100.</dd>
+
+<dt>
+<tt>-emulate3fuzz</tt></dt>
+
+<dd>
+When using 3-button emulation, both mouse buttons must be pressed within
+a certain distance of each other for them to be registered as a single
+middle-click. This option allows that distance to be specified in pixels.
+The default is 4.</dd>
+
+<dt>
+<tt>-fullscreen</tt></dt>
+
+<dd>
+This causes connections to start in full-screen mode by default. See below
+for more details.</dd>
+
+
+<dt>
+<tt>-listen</tt></dt>
+
+<dd>
+<img SRC="viewertray.gif" HSPACE=10 VSPACE=8 height=43 width=145 align=RIGHT>In
+the <a href="internalversion.html">internal version</a> of VNC used at
+AT&amp;T Labs Cambridge, the server can initiate connections to
+the clients under CORBA control. This switch puts vncviewer into listening
+mode where it can accept these connections, but it also has a useful side-effect
+which may be of interest to those outside AT&amp;T using the public version.&nbsp;
+A listening vncviewer does not pop up a connection dialog, but instead
+installs itself in the system tray.&nbsp; From there you can easily start
+up new connections and can set default options to be used for them during
+this instance of the program. <b>RECENT&nbsp;NEWS! </b>The latest versions
+of WinVNC can initiate the connection to a viewer using the 'Add New Client'
+menu option. For this to work, the viewer must be in listening mode.</dd>
+
+<dt>
+<tt>-disableclipboard</tt></dt>
+
+<dd>
+Clipboard changes caused by cutting or copying at either the viewer or
+server end are normally transmitted to the other end. This option disables
+clipboard transfers.</dd>
+
+<dt>
+<tt>-belldeiconify</tt></dt>
+
+<dd>
+VNC allows for the transmission of a 'bell' character, causing a beep at
+the viewer if it has sound facilities.&nbsp; You can set the sound to be
+used for the bell under the VNCviewer section of 'Sounds' in the Control
+Panel.&nbsp; Often a beep will happen because you are being notified of
+something such as email arriving or compilation finishing.&nbsp;&nbsp;
+This switch causes a minimized vncviewer to be un-minimized when a bell
+character is received.</dd>
+
+<dt>
+<tt>-nocursor, -dotcursor, -normalcursor</tt></dt>
+
+<dd>
+Most VNC servers send their cursor as part of the screen image that is
+displayed in the viewer.  Having a local cursor in addition to this
+can be distracting.  The default is for the viewer to use a small dot
+to show the position of the local cursor, and this is our recommended
+mode of use.  You can use the -nocursor option to turn off this local
+cursor completely, or -normalcursor to leave it at the default Windows
+'arrow'. Some things to note here:
+<ul>
+<li>When you press a mouse button, it is the <i>local</i> mouse
+position that is used to send the event.  On a slow network, the
+remote cursor may lag behind the local one a bit.  You don't need to
+wait for it to catch up before you click, but if you have switched off
+the local cursor display, it can be harder to know exactly where
+you're clicking! </li>
+
+<li>The X-based server has an option which tells it
+not to show a cursor.  This can be useful if combined with
+-normalcursor at the viewer, particularly on slow networks.  However,
+the cursor will then never change shape - it will always be the arrow.</li>
+</ul>
+
+We like the default dot the best!
+</dd>
+
+<dt>
+<tt>-keyboard <i>kbdname</i></tt></dt>
+
+<dd>
+Windows uses an internal and not very helpful name for the keyboard layout
+currently selected for an application.&nbsp; You can see the one being
+used by vncviewer if you select 'Connection Info' from the system menu
+of the viewer window.&nbsp; If you change the keyboard settings and then
+make a note of this, you can specify it on the command line to cause vncviewer
+to attempt to load this in the future.&nbsp; Note that vncviewer does not
+currently support 'dead keys', and that the differences between language
+and keyboard are confusing and the way they are handled is different in
+Windows 95 and NT.&nbsp; But this may help a bit.&nbsp;</dd>
+
+<dt>
+<tt>-logfile <i>filename</i></tt></dt>
+
+<dd>
+VNCviewer (R6 and later) has a logging mechanism which can save some debugging
+information to a file or display it on a console. This option specifies
+the name of a file to which a log will be written.</dd>
+
+<dt>
+<tt>-loglevel <i>n</i></tt></dt>
+
+<dd>
+This option controls the amount of logging information sent to the log
+file.&nbsp; The default is zero, and higher values (up to about 12) will
+provide more detail.</dd>
+
+<dt>
+<tt>-console</tt></dt>
+
+<dd>
+In addition to, or instead of, logging to a file, this option will cause
+the debugging information to be sent to a console window.</dd>
+
+<dt>
+<tt>-viewonly</tt></dt>
+
+<dd>
+In View-only mode, no mouse or keyboard events will be sent back to the
+server. This is useful for teaching sessions or other situations where
+you want to observe but don't want to interfere.</dd>
+
+<dt>
+<tt>-restricted</tt></dt>
+
+<dd>
+In restricted mode, most of the items are removed from the menu, so that
+the user cannot, for example, send a Ctrl-Alt-Del to the remote end.</dd>
+</dl>
+
+<h3>
+Full-screen mode</h3>
+Vncviewer can now be switched into a fullscreen mode.&nbsp; This is particularly
+useful when connecting to a remote screen which is the same size as your
+local one.&nbsp; If the remote screen is bigger, you won't get any scrollbars,
+but you can scroll by bumping the mouse against the edge of the screen.&nbsp;
+<p>To leave fullscreen mode you must disable it from the menu, but the
+menu is no longer visible! So you have to bring the taskbar to the front
+by typing Ctrl-Esc Esc, and then right-click on the vncviewer icon.&nbsp;
+A dialog box will appear when you select fullscreen mode to remind you
+of this; if, after a while you get annoyed with the dialog box, you can
+disable it by creating a DWORD registry value named
+<br><tt>HKEY_CURRENT_USER\Software\ORL\</tt>
+<br><tt>VNCviewer\Settings\SkipFullScreenPrompt</tt>
+<p>and setting it to 1. A simpler method will be in a future version!
+<p>You can cause new connections to start in fullscreen mode using the
+-fullscreen command-line option.
+<center>
+<p><i><font size=-1>See also '<a href="winhistory.html">What's new in the
+Windows VNC package?</a>'</font></i></center>
+
+<div align=right><a href="docs.html"><img SRC="backbutton.gif" ALT="back to docs" HSPACE=5 BORDER=0 height=20 width=20></a><i>go
+back to <a href="docs.html">documentation</a></i></div>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+
+<tr>
+<td bgcolor="#eecc80">&nbsp;</td><td ALIGN=CENTER VALIGN=TOP COLSPAN="4" WIDTH="100%">
+<!-- Ruler here? -->
+<center>
+<p><i><font size=-1>For comments, feedback, etc, please see the '<a href="intouch.html">Keeping
+in touch</a>' page</font>.</i>
+<br><i><font size=-1>Copyright 1999 - AT&amp;T Laboratories Cambridge</font></i></center>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

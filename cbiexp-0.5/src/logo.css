@@ -1,0 +1,9 @@
+a.logo {
+  width: 96px;
+  height: 96px;
+  float: right
+}
+
+a.logo img {
+  border-style: none
+}

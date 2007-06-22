@@ -1,0 +1,183 @@
+2004-05-27  Lutz Mueller <lutz@users.sourceforge.net>
+
+	* *: Now make distcheck works.
+
+2004-05-24  Jan Patera <patera@users.sourceforge.net>
+
+	* libjpeg/jpeg-data.[c,h]: jpeg_data_append_section changed
+	  from static to public
+
+2004-05-20  Lutz Mueller <lutz@users.sourceforge.net>
+
+	* exif/*: Support for maker notes.
+	* exif/main.c: Proposal for support of debugging messages.
+
+2004-05-11  Jan Patera <patera@users.sourceforge.net>
+
+	* libjpeg/jpeg-data.c: memory leak in jpeg_data_set_exif_data,
+	  return type of jpeg_data_save_file
+
+2004-04-04  Lutz Mueller lutz@users.sourceforge.net
+
+	* configure.in: libmnote is no longer separate from libexif.
+
+2004-01-08  Lutz Mueller <lutz@users.sourceforge.net>
+
+	* exif/actions.c: Adapt to new API
+	* configure.in: Require libexif-0.5.13.
+
+2003-10-15  Lutz Mueller <lutz@users.sourceforge.net>
+                                                                                
+	* exif.spec.in: Patches by Peter Bieringer <pb@bieringer.de>.
+                                                                                
+2003-10-01  Lutz Mueller <lutz@users.sourceforge.net>
+
+	* exif/exif-i18n.c: Patch to fix 64bit related crash by
+	  Marcus Meissner (#784852).
+
+2003-10-01  Lutz Mueller <lutz@users.sourceforge.net>
+
+	* exif/actions.[c,h]:
+	* exif/main.c: Add option --machine-readable. Patch by
+	  Greg Baker (#761641).
+
+2003-08-21  Lutz Mueller <lutz@users.sourceforge.net>
+
+	* exif/exif-main.c: Patch by Roberto Costa <roberto.costa@ensta.org>
+	  without ChangeLog entry. Does something with --set-value and
+	  compiles without warnings...
+
+2003-05-05  Lutz Mueller <lutz@users.sourceforge.net>
+
+	* exif/exif-i18n.[c,h]: New. Suggested by Gernot Jander
+	  <gernot@bigpond.com>.
+
+2003-03-13  Lutz Mueller <lutz@users.sourceforge.net>
+
+	* libjpeg/jpeg-data.c: Aravind aravinds1@users.sourceforge.net found
+	  a bug there.
+
+2003-02-11  Lutz Mueller <lutz@users.sourceforge.net>
+
+	* exif/main.c: IRIS fixes by Andrea Suatoni
+	  <a.suatoni@telefonica.net>.
+
+2003-01-28  Lutz Mller <lutz@users.sourceforge.net>
+
+	* exif/main.c: Change the description of '--output' from
+	  'write output' to 'write data'. Should fix #671440.
+
+2002-11-17  Rod Whitby <software.libexif@rwhitby.net>
+
+	* configure.in:
+	* exif/main.c:
+	* exif/actions.c:
+	* exif/actions.h:
+	* exif/utils.c:
+	* exif/utils.h: Added support for libmnote (MakerNote parsing).
+
+	* exif/main.c: Changed show_entry to use exif_entry_dump.
+
+	* exif/main.c: Fixed set_value for EXIF_FORMAT_ASCII.
+	
+2002-11-15  Lutz Müller <lutz@users.sourceforge.net>
+
+	* configure.in: Ok, I got the message. Let exif _optionally_ use
+	  libmnote if available.
+
+2002-11-15  Lutz Müller <lutz@users.sourceforge.net>
+
+	* configure.in: Make exif depend on libmnote. This library isn't used
+	  yet, but that's subject to change.
+
+2002-10-23  Lutz Müller <lutz@users.sourceforge.net>
+
+	* exif/main.c: s/poptPrintUsage/poptPrintHelp
+
+2002-10-22  Lutz Müller <lutz@users.sourceforge.net>
+
+	* exif/main.c: Fix segfault.
+
+2002-10-22  Lutz Müller <lutz@users.sourceforge.net>
+
+	* exif/main.c: Print usage if no arguments are given. Save modified
+	  files on --remove-ifd and --remove. Try to avoid a segfault.
+
+2002-10-21  Lutz Müller <lutz@users.sourceforge.net>
+
+	* exif/main.c: --remove-thumbnail and --remove [tag,ifd] as
+	  requested by Marko Mäkelä <Marko.Makela@HUT.FI>.
+
+2002-09-16  Lutz Müller <lutz@users.sourceforge.net>
+
+	* exif.1: Donated by Thomas Pircher <thomas.pircher@gmx.net>
+
+2002-09-15  Lutz Müller <lutz@users.sourceforge.net>
+
+	* configure.in:
+	* exif/main.c:
+	* exif/actions.c: IRIS fixes by Andrea Suatoni
+	  <a.suatoni@telefonica.net>
+
+2002-09-15  Lutz Müller <lutz@users.sourceforge.net>
+
+	* configure.in:
+	* po/es.po: Spanish translation by Fabian Mandelbaum
+	  <fabman@2vias.com.ar>
+
+2002-08-30  Lutz Müller <lutz@users.sourceforge.net>
+
+	* exif/main.c: Make sure people don't try too save too much EXIF data.
+
+2002-08-06  Lutz Müller <lutz@users.sourceforge.net>
+
+	* configure.in: Check for locale.h
+	* exif/main.c: Only use setlocale if locale.h is availabe.
+
+2002-07-25  Lutz Müller <lutz@users.sourceforge.net>
+
+	* configure.in: Version 0.5. Require at least libexif-0.5.4.
+	* exif: Adapt to new API. Prepare --set-value.
+
+2002-06-10  Lutz Müller <lutz@users.sourceforge.net>
+
+	* configure.in: Version 0.4
+
+2002-06-10  Lutz Müller <lutz@users.sourceforge.net>
+
+        * configure.in: We need autoconf > 2.50.
+
+2002-06-09  Lutz Müller <lutz@users.sourceforge.net>
+
+	Internationalization.
+
+2002-06-08  Lutz Müller <lutz@users.sourceforge.net>
+
+	* exif: --insert-thumbnail option.
+
+2002-06-03  Lutz Müller <lutz@users.sourceforge.net>
+
+	* configure.in: Version 0.3
+
+2002-06-03  Lutz Müller <lutz@users.sourceforge.net>
+
+	Patch by Guido Ostkamp <Guido.Ostkamp@t-online.de>:
+
+	* exif/main.c: Fix pointer error.
+
+2002-04-15  Lutz Müller <lutz@users.sourceforge.net>
+
+	* exif/main.c: Print a warning if no EXIF data can be found.
+	* exif/actions.c: Don't segfault.
+
+2002-04-04  Hans Ulrich Niedermann <gp@n-dimensional.de>
+
+	* Makefile.am: dded .tar.bz2 packaging to "make dist"
+
+2002-04-04  Lutz Müller <lutz@users.sourceforge.net>
+
+	* exif/main.c: Old versions of popt.h don't define POPT_TABLEEND.
+
+2002-02-12  Lutz Müller <lutz@users.sourceforge.net>
+
+	* configure.in: Version 0.2

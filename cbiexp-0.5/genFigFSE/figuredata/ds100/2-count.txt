@@ -1,0 +1,45 @@
+Using 31871 runs total.
+Ctr 0: #S runs: 2410 #F runs: 590
+count of B preds: 11
+count of R preds: 14
+count of S preds: 2803
+Ctr 1: #S runs: 4809 #F runs: 1191
+count of B preds: 12
+count of R preds: 18
+count of S preds: 3630
+Ctr 2: #S runs: 7236 #F runs: 1764
+count of B preds: 15
+count of R preds: 20
+count of S preds: 4325
+Ctr 3: #S runs: 9705 #F runs: 2295
+count of B preds: 17
+count of R preds: 22
+count of S preds: 5031
+Ctr 4: #S runs: 12099 #F runs: 2901
+count of B preds: 18
+count of R preds: 25
+count of S preds: 5432
+Ctr 5: #S runs: 14569 #F runs: 3431
+count of B preds: 23
+count of R preds: 26
+count of S preds: 5752
+Ctr 6: #S runs: 16997 #F runs: 4003
+count of B preds: 22
+count of R preds: 24
+count of S preds: 5963
+Ctr 7: #S runs: 19410 #F runs: 4590
+count of B preds: 25
+count of R preds: 24
+count of S preds: 6275
+Ctr 8: #S runs: 21858 #F runs: 5142
+count of B preds: 29
+count of R preds: 28
+count of S preds: 6530
+Ctr 9: #S runs: 24271 #F runs: 5729
+count of B preds: 31
+count of R preds: 28
+count of S preds: 6696
+Ctr 10: #S runs: 25783 #F runs: 6088
+count of B preds: 31
+count of R preds: 28
+count of S preds: 6780
