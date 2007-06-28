@@ -2,6 +2,9 @@
 * Print out a representation of the data that is easily read by matlab into a
 * sparse matrix format.
 *
+* It looks like: row# col# count
+* Which corresponds to: (predicate index) (run index) (count) 
+*
 * We do not read any data from runs that were not classified, i.e., are neither
 * failures or successes. This saves us trouble and leaves zero columns as place
 * holders for these runs.
