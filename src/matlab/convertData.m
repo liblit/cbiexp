@@ -1,4 +1,4 @@
-% function convertData(inputfile, outputfile, ffile, sfile, ifile, dimfile) 
+% function convertData(inputfile, outputfile, ffile, sfile, ifile, dimfile)
 %
 % converts data from a textual representation to a straightforward matlab
 % representation. 
@@ -21,39 +21,49 @@
 % ffile -- contains indices of failing runs
 % sfile -- contains indices of succeeding runs
 % ifile -- contains indices of discarded runs
-% dimfile -- contains the pair: # of predicates and # of runs 
+% dimfile -- the miscellaneous info about the experiment 
 
-function convertData(inputfile, outputfile, ffile, sfile, ifile, dimfile) 
-    dimensions = load(dimfile);
+function convertData(inputfile, outputfile, ffile, sfile, ifile, dimfile)
+
+    % get miscellaneous info about experiment
+    dims = xmlread(dimfile);
+    data = dims.getDocumentElement();
+    numpreds = str2num(data.getAttribute('numpreds'));
+    numruns = str2num(data.getAttribute('numruns'));
+    offset = str2num(data.getAttribute('runoffset'));
+
+    % load data
     Findices = load(ffile);
     Sindices = load(sfile);
     Dindices = load(ifile);
-    Findices = explode(Findices, dimensions(1,2));
-    Sindices = explode(Sindices, dimensions(1,2));
-    Dindices = explode(Dindices, dimensions(1,2));
-    verifyWellFormed([Findices Sindices Dindices], dimensions);
+    Findices = explode(Findices, numruns);
+    Sindices = explode(Sindices, numruns);
+    Dindices = explode(Dindices, numruns);
+    verifyWellFormed([Findices Sindices Dindices], numruns);
     Indices = find(sum([Findices Sindices], 2));
     X = load(inputfile);
-    X = convertCounts(X,dimensions);
+    X = convertCounts(X, [numpreds numruns]);
+
+    % discard discards
     X = X(:, Indices);
     Findices = Findices(Indices,:);
     Sindices = Sindices(Indices, :);
     if any((Dindices(Indices, :)) ~= 0)
         error('discards not correctly discarded');
     end
-    save('-mat', outputfile, 'Findices', 'Sindices', 'X', 'Indices')
 
-% Turns an index vector into a bit vector of the correct length
-% X -- the index vector
-% l -- the length to explode to
-function E = explode(X, l) 
-    E = zeros(l, 1);
-    E(X) = 1;
+    % save data
+    Data.X = X;
+    Data.Findices = Findices;
+    Data.Sindices = Sindices;
+    Data.Indices = Indices;
+    Data.offset = offset;
+    save('-mat', outputfile, 'Data'); 
 
 % Checks that every run has a designation and that no runs have two
 %
 function verifyWellFormed(X, l)
-    if size(X,2) ~= l
+    if size(X,1) ~= l
         error('classify vectors are wrong size');
     end
 

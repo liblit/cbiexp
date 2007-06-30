@@ -1,0 +1,7 @@
+<!ELEMENT actions (action)*>
+
+<!ELEMENT action (arg)*>
+<!ATTLIST action name CDATA #REQUIRED>
+
+<!ELEMENT arg EMPTY>
+<!ATTLIST arg value CDATA #REQUIRED>

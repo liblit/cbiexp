@@ -10,11 +10,7 @@
 * holders for these runs.
 *
 * The files produced are Xtru.sparse which contains tru counts, Xobs.sparse 
-* which contains observed counts, and X.dimensions which contains the number of
-* runs and predicates in the data. This data is not always obtainable from the 
-* Xtru.sparse and Xobs.sparse files. Consider the case where all counts are 
-* zero. In that case Xtru.sparse and Xobs.sparse are empty, but the number of 
-* runs and predicates could be anything.
+* which contains observed counts, and X.xml which contains miscellaneous info. 
 *
 * Currently counts are only taken for predicates in preds.txt. 
 ******************************************************************************/
@@ -195,8 +191,11 @@ int main(int argc, char** argv)
     //specified, so the matrix may include all zero columns corresponding
     //to discarded runs.
     {
-        ofstream out("X.dimensions");
-        out <<  PredStats::count() << " " << NumRuns::count() << "\n";  
+        ofstream out("X.xml");
+        out << "<data "
+            << "numpreds=\"" << PredStats::count() << "\" " 
+            << "numruns=\"" << NumRuns::count() << "\" "
+            << "runoffset=\"" << NumRuns::begin << "\"/>\n";
         out.close();
     }
 

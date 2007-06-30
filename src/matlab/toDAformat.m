@@ -2,11 +2,12 @@
 %
 % reads matlab data from inputfile, converts to a particular text format, and
 % writes to outputfile
-% inputfile is presumed to contain 
-%  X -- a sparse matrix of counts(rows are predicates, columns are runs)
-%  Findices -- a bit vector, a 1 indicates a failing run 
 function toDAformat(inputfile, outputfile)
     load(inputfile);
+
+    X = Data.X;
+    Findices = Data.Findices;
+
     out = fopen(outputfile, 'w');
     for i = 1:size(X,2)
         fprintf(out, '%u ', Findices(i));    
