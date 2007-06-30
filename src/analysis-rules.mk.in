@@ -440,44 +440,25 @@ CLEANFILES += $(nevers)
 bicluster: $(biclustering)
 .PHONY: bicluster
 
-plsa/indexing.m :
-	$(time) $(tooldir)/lsa/make-indexing-info --runs-directory=$(datadir) --begin-runs=$(training-runs) 
-	mv indexing.m plsa/indexing.m
+f.indices s.indices i.indices: f.runs s.runs $(datadir)/stamp-labels
+	$(time) $(tooldir)/matlab/make-classify-vectors --runs-directory=$(datadir) --begin-runs=$(training-runs)
+CLEANFILES += f.indices s.indices i.indices
 
-plsa/s.indices plsa/f.indices: s.runs f.runs plsa
-	$(time) $(tooldir)/lsa/make-classify-vectors --runs-directory=$(datadir) --begin-runs=$(training-runs)  
-	mv s.indices plsa/s.indices
-	mv f.indices plsa/f.indices
+Xtru.sparse Xobs.sparse X.xml: preds.txt $(datadir)/stamp-labels
+	$(time) $(tooldir)/matlab/make-counts-matrix --runs-directory=$(datadir) --begin-runs=$(training-runs) --report-suffix=$(report-series) 
+CLEANFILES += Xtru.sparse Xobs.sparse X.xml
 
-plsa/Xobs.sparse Xtru.sparse plsa/X.dimensions: $(datadir)/stamp-labels plsa
-	$(time) $(tooldir)/lsa/make-counts-matrix --runs-directory=$(datadir) --begin-runs=$(training-runs) --report-suffix=$(report-series)
-	mv Xobs.sparse plsa/Xobs.sparse
-	mv Xtru.sparse plsa/Xtru.sparse
-	mv X.dimensions plsa/X.dimensions
+prerunsinfo.mat: f.indices s.indices i.indices Xtru.sparse X.xml 
+	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); convertData('X.tru', 'prerunsinfo.mat', 'f.indices', 's.indices', 'i.indices', 'X.xml')"
+CLEANFILES += prerunsinfo.mat
 
-plsa/GNUmakefile plsa/site-rules.mk: plsa
-	echo '-include site-rules.mk' > plsa/GNUmakefile
-	echo 'include ../$(tooldir)/lsa/analysis-rules.mk' >> plsa/GNUmakefile
-	echo '#numaspects=' > plsa/site-rules.mk
-	echo '#numbugaspects=' >> plsa/site-rules.mk
-	echo '#numrestarts=' >> plsa/site-rules.mk
-	echo '#obscounts=' >> plsa/site-rules.mk
-	echo '#srunfraction=' >> plsa/site-rules.mk
+runsinfo.mat: prerunsinfo.mat process.xml
+	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); path(pwd, path); postProcess('prerunsinfo.mat', 'runsinfo.mat', 'process.xml')"
+CLEANFILES += runsinfo.mat
 
-plsa: 
-	mkdir plsa
-
-plsa_prepare: plsa/f.indices plsa/s.indices plsa/Xobs.sparse plsa/Xtru.sparse plsa/GNUmakefile plsa/site-rules.mk plsa/X.dimensions plsa/indexing.m
-
-plsa_flags: flags.sparse
-	mv flags.sparse plsa/flags.sparse
-	mv flags.dimensions plsa/flags.dimensions
-
-plsa_oracle: bugs.sparse 
-	mv bugs.sparse plsa/bugs.sparse
-
-clean::
-	rm -Rf plsa
+runsinfo.dat: runsinfo.mat
+	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); toDAformat('runsinfo.mat', 'runsinfo.dat')"
+CLEANFILES += runsinfo.dat
 
 ########################################################################
 
