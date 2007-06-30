@@ -452,7 +452,8 @@ prerunsinfo.mat: f.indices s.indices i.indices Xtru.sparse X.xml
 	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); convertData('X.tru', 'prerunsinfo.mat', 'f.indices', 's.indices', 'i.indices', 'X.xml')"
 CLEANFILES += prerunsinfo.mat
 
-runsinfo.mat: prerunsinfo.mat process.xml
+runsinfo.mat: prerunsinfo.mat
+	test process.xml || $(time) xmllint --valid --noout process.xml
 	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); path(pwd, path); postProcess('prerunsinfo.mat', 'runsinfo.mat', 'process.xml')"
 CLEANFILES += runsinfo.mat
 
