@@ -163,6 +163,7 @@ src/Makefile
 src/corrective-ranking/Makefile
 src/matlab/Makefile
 src/never-reached/Makefile
+src/plsa/analysis-rules.mk
 src/symmetric/Makefile
 src/Score/Makefile
 src/analysis-rules.mk
