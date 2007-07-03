@@ -304,6 +304,8 @@ EXTRA_DIST =					\
 	projections.xml				\
 	rho.dtd					\
 	rho.xsl					\
+	sampling-plans/inverse			\
+	sampling-plans/rare			\
 	schemes.dtd				\
 	schemes.xml				\
 	scores.css				\
