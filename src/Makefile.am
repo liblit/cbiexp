@@ -55,6 +55,8 @@ noinst_SCRIPTS =				\
 	decimate-all				\
 	htmlify-sources				\
 	map-sites				\
+	sampling-plans/inverse			\
+	sampling-plans/rare			\
 	static-site-info			\
 	top-rho
 
@@ -287,6 +289,7 @@ EXTRA_DIST =					\
 	bug-o-meter.xsl				\
 	corrected-view.dtd			\
 	corrected-view.xsl			\
+	DecimateAll.pm				\
 	link-cell.css				\
 	logo.css				\
 	logo.xsl				\
@@ -304,8 +307,6 @@ EXTRA_DIST =					\
 	projections.xml				\
 	rho.dtd					\
 	rho.xsl					\
-	sampling-plans/inverse			\
-	sampling-plans/rare			\
 	schemes.dtd				\
 	schemes.xml				\
 	scores.css				\
