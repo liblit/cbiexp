@@ -3,7 +3,7 @@
 #  basic project setup
 #
 
-AC_INIT(cbiexp, 0.5)
+AC_INIT(cbiexp, 0.5.1)
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
