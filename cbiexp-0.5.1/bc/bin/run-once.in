@@ -1,0 +1,61 @@
+#!@PERL@ -w
+
+use strict;
+
+use File::Temp qw(tempfile);
+use File::Find;
+use FileHandle;
+use FindBin;
+
+my $fuzz = "$FindBin::Bin/fuzz";
+my $bc = "$FindBin::Bin/../build/bc/bc";
+
+@ARGV == 1 or die "Usage: $0 <run-id>\n";
+my $runId = shift;
+
+
+########################################################################
+#
+#  record some small fact in an external file
+#
+
+sub note ($@) {
+    my ($filename, @message) = @_;
+    my $handle = new FileHandle $filename, 'w' or warn "cannot write to $filename: $!";
+    $handle->print("@message\n");
+}
+
+
+########################################################################
+#
+#  prepare for sampler data collection
+#
+
+$ENV{SAMPLER_FILE} = 'reports';
+$ENV{SAMPLER_REAL_EXECUTABLE} = $bc;
+$ENV{SAMPLER_SPARSITY} = 1;
+
+delete $ENV{SAMPLER_REPORT_FD};
+
+# workaround for hang in "futex(0x42133220, FUTEX_WAIT, 2, NULL)"
+# suggested by Carlos Morgado <http://mail.gnome.org/archives/balsa-list/2004-March/msg00107.html>
+$ENV{LD_ASSUME_KERNEL} = '2.4.19';
+
+
+########################################################################
+#
+#  run bc on random input noise
+#
+
+my ($inHandle, $inName) = tempfile(UNLINK => 1);
+(system { $fuzz } $fuzz, $runId, 9, $inName) == 0
+    or die "cannot create random input file: $!";
+
+open STDIN, '<&=' . fileno($inHandle) or die "cannot redirect standard input: $!";
+open STDOUT, '>/dev/null' or die "cannot redirect standard output: $!";
+open STDERR, '>/dev/null' or die "cannot redirect standard error: $!";
+
+my $outcome = system { $bc } $bc;
+note 'outcome', $outcome;
+
+exit 0;

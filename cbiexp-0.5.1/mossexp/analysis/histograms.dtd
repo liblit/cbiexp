@@ -1,0 +1,6 @@
+<!ELEMENT histograms (predictor)+>
+
+<!ELEMENT predictor (bug, bug, bug, bug, bug, bug, bug, bug, bug, bug)>
+
+<!ELEMENT bug EMPTY>
+<!ATTLIST bug count NMTOKEN #REQUIRED>

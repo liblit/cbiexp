@@ -1,0 +1,89 @@
+@import "logo.css";
+@import "link-cell.css";
+
+
+/***********************************************************************
+ *
+ *  shared rules
+ *
+ */
+
+table {
+  border-collapse: collapse
+}
+
+th.label,
+td.label {
+  text-align: left
+}
+
+td.count,
+td.percent {
+  text-align: right;
+}
+
+
+/***********************************************************************
+ *
+ *  outcome summary
+ *
+ */
+
+p.outcomes {
+  margin-bottom: 0px
+}
+
+table.outcomes {
+  padding: 0;
+  margin-left: 2em
+}
+
+table.outcomes th, 
+table.outcomes td {
+  border: none;
+  padding: 0
+}
+
+
+/***********************************************************************
+ *
+ *  schemes table
+ *
+ */
+
+table.scheme-links, thead, tfoot {
+  border: 1px solid black
+}
+
+thead {
+  background: #dfd
+}
+
+td.solidus,
+td.link {
+  text-align: center
+}
+
+table.scheme-links th {
+  vertical-align: middle
+}
+
+table.scheme-links th,
+table.scheme-links td {
+  border: 1px dotted;
+  padding: 0.25em
+}
+
+table.scheme-links td.retain,
+table.scheme-links td.solidus,
+table.scheme-links td.total {
+  border-right: none;
+  padding-right: 0
+}
+
+table.scheme-links td.solidus,
+table.scheme-links td.total,
+table.scheme-links td.percent {
+  border-left: none;
+  padding-left: 0
+}

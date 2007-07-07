@@ -1,0 +1,18 @@
+%% The \aupar definition below messes up paragraph filling in Emacs AuC TeX
+%% mode.  So I'm hiding this in its own style file which the main
+%% document can include indirectly.  Annoying, but effective.
+
+\usepackage{mailto}
+
+\makeatletter
+\newcommand*{\eecsMark}[0]{\@fnsymbol{2}}
+\newcommand*{\statMark}[0]{\@fnsymbol{3}}
+\newcommand*{\stanMark}[0]{\@fnsymbol{4}}
+\makeatother
+\newcommand*{\eecs}[0]{\textsuperscript{\eecsMark}}
+\newcommand*{\stat}[0]{\textsuperscript{\statMark}}
+\newcommand*{\both}[0]{\textsuperscript{\eecsMark, \statMark}}
+\newcommand*{\stan}[0]{\textsuperscript{\stanMark}}
+
+\newcommand{\aumail}[1]{\small{\mailto{#1}}}
+\newcommand{\aupar}[0]{\end{tabular} \\ \begin{tabular}[t]{c}}

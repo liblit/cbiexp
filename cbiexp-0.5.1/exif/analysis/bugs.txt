@@ -1,0 +1,3 @@
+Error 1: printing null string in -m mode.
+Error 2: fewer than two jpeg sections.
+Error 3: exif_mnote_data_canon_{load,save} out of sync.

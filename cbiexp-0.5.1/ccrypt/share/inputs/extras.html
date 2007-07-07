@@ -1,0 +1,294 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.6 [en] (X11; I; Linux 2.2.6 i686) [Netscape]">
+   <meta name="keywords" content="VNC, AT&T Laboratories Cambridge, Virtual Network Computing, thin-client">
+   <title>VNC add-ons</title>
+<link REL="stylesheet" HREF="styles.css" TYPE="text/css">
+</head>
+<body bgcolor="#FFFFFF" vlink="#000080" marginheight="0" topmargin="0" leftmargin="0" marginwidth="0">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><a href="index.html"><img SRC="sidelogo.gif" ALT="VNC logo" BORDER=0 height=113 width=120></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="20"><img SRC="spacer.gif" HSPACE=8 height=1 width=1></td>
+
+<td>
+<table BORDER=0 WIDTH="100%" >
+<tr>
+<td WIDTH="90%" valign="center">
+<center>
+<h1>
+<IMG SRC="vnctitle.gif"  WIDTH=370 HEIGHT=30 ALT="Virtual Network Computing"></h1></center>
+</td>
+
+<td WIDTH="10%"><a href="http://www.uk.research.att.com/"><img SRC="attlogo.gif" ALT="AT&T" BORDER=0 height=75 width=66 align=RIGHT></a></td>
+</tr>
+</table>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+<tr><td colspan=5 bgcolor="#eecc80"><img src="spacer.gif" height=3 vspace=0 hspace=1></td></tr>
+<tr><td bgcolor="#eecc80"><img src="spacer.gif" height=4 vspace=0 hspace=1></td><td colspan=4></td></tr>
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><a href="index.html"><img SRC="homebutton.gif" ALT="[Home]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="screenshots.html"><img SRC="screenbutton.gif" ALT="[screenshots]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+
+<tr>
+<td><a href="start.html"><img SRC="startbutton.gif" ALT="[getting started]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="docs.html"><img SRC="docbutton.gif" ALT="[documentation]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="faq.html"><img SRC="faqbutton.gif" ALT="FAQs" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="download.html"><img SRC="downloadbutton.gif" ALT="[download]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="intouch.html"><img SRC="intouchbutton.gif" ALT="[keep in touch]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="contribs.html"><img SRC="contribbutton.gif" ALT="Others' ports and add-ons etc" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="help.html"><img SRC="helpbutton.gif" ALT="Project ideas" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="vncpeople.html"><img SRC="vncpeoplebutton.gif" ALT="VNC people" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/search.html"><img SRC="searchbutton.gif" ALT="Search" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/"><img SRC="attbutton.gif" ALT="[AT&T Laboratories Cambridge]" BORDER=0 height=33 width=120></a></td>
+</tr>
+</table></center>
+</td>
+
+<td VALIGN=TOP WIDTH="8%"></td>
+
+<td VALIGN=TOP WIDTH="100%">
+<h2>
+<b>VNC Extras, Add-ons and modifications</b></h2>
+
+<!-- Ruler here? -->
+<h3>
+Firewalls</h3>
+<i>Karl Harkimian &lt;</i><a href="mailto:hakimian@aha.com">hakimian@aha.com</a><i>>
+sent in a patch to compile the Unix viewer so that it can reach external
+servers through a SOCKS firewall.&nbsp; It's very simple, and the patch
+is here: <a href="http://www.uk.research.att.com/vnc/contrib/socks-patch.txt">socks-patch.txt</a>.
+These patches apply to 3.3.1 but they are simple enough to apply by hand
+to later versions.</i>
+<p><i>Obviously, you cannot access a server inside a firewall from outside
+without specially configuring the firewall; that's what firewalls are for!
+Christian A. Lademann <a href="mailto:cal@zls.de">cal@zls.de</a> has used
+an elaborate scheme:</i>
+<p>I have had a problem with connections from my workstation to a PC connected
+to a customers LAN, because my firewall as well as the customers firewall
+does IP-masquerading. This means that my workstation can only connect to
+the customers firewall and the customers PC can only connect to my
+<br>firewall. The reason for this is, of course, to hide the complete LAN
+behind the firewall(s).
+<p><i>Christian's solution involved a script listening on a single accessible
+well-known port behind the firewall, which could accept incoming connections
+and redirect them to the appropriate machine.&nbsp; His full details are
+here: <a href="http://www.uk.research.att.com/vnc/contrib/rvnc.txt">rvnc.txt</a></i>
+<br>
+<!-- Ruler here? -->
+<h3>
+SSLeay encryption</h3>
+<i>Ray Jones <a href="mailto:rjones@pobox.com">rjones@pobox.com </a>has
+built a version of VNC which uses SSLeay public key encryption for a more
+secure connection.</i>
+<p><i>You can get it from <a href="http://web.mit.edu/thouis/vnc">http://web.mit.edu/thouis/vnc</a>
+.</i>
+<br>
+<!-- Ruler here? -->
+<h3>
+Restricting connections by IP address (TCP wrapper)</h3>
+<p><b>Note that similar functionality is now built in to the Windows VNC server.</b></p>
+
+<p><i>Wolfram Gloger &lt;<a href="mailto:wmglo@dent.med.uni-muenchen.de">wmglo@dent.med.uni-muenchen.de</a>&gt;.</p>
+writes:</i>
+<p>In the list archives I notice there was a discussion of implementing
+access control for Xvnc with the tcp wrapper library. I have now implemented
+this for 3.3.2r2. You will need to have tcpd.h and libwrap already installed.
+<p><i>Wolfram's full message is at <a href="http://www.uk.research.att.com/vnc/archives/1998-09/0168.html">http://www.uk.research.att.com/vnc/archives/1998-09/0168.html</a>
+.</i>
+<p><i>Jared Smolens &lt;<a href="mailto:jsmolens@andrew.cmu.edu">jsmolens@andrew.cmu.edu</a>>
+has done an equivalent for WinVNC. He writes:</i>
+<p>... I wrote some code to read a list of IPs to allow and IPs to deny
+from a text file. The rules are identical (to the best of my knowledge)
+to /etc/hosts.allow and /etc/hosts.deny on my Linux box and the text file's
+syntax is close to that format. This is a feature which has been discussed
+at least once on the mailing list, so I thought that you might want to
+add it to the official code base.&nbsp;
+<p>The x86 binaries and source code are available at:&nbsp;
+<p><a href="ftp://wik.res.cmu.edu/pub/vncip_bin.zip">ftp://wik.res.cmu.edu/pub/vncip_bin.zip</a>
+and <a href="ftp://wik.res.cmu.edu/pub/vncip_src.zip">ftp://wik.res.cmu.edu/pub/vncip_src.zip</a>
+<p>I have two new files, ipauth.h and ipauth.cpp. I made some changes to
+vncclient.cpp (but not the header) to use the class and disconnect unauthorized
+clients. I also have a sample "iplist.txt" file which contains the allowed
+IPs.&nbsp;
+<p>The format of the text file works like this:
+<p><tt>&lt;ALLOW|DENY> &lt;Partial/full IP></tt>
+<br><tt>&lt;DENY ALL></tt>
+<p>An unlimited, unordered list of IPs (or partial IPs) may be entered
+into the file like this:
+<p><tt>ALLOW 128.2.93.</tt>
+<br><tt>ALLOW 128.2.87.80</tt>
+<br><tt>DENY 128.220.</tt>
+<br><tt>DENY ALL</tt>
+<p>In this case, the DENY 128.220. is redundant because of the DENY ALL,
+but you get the point. ALLOW ALL is the default, and if the user specifies
+that, it is ignored. Allows always take precidence over denies. This code
+is not case sensitive.&nbsp;
+<p>I am fairly sure that I got rid of all of my memory leaks (I ran Purify
+on it, but I have done some slight modifications since then). I also use
+the fstream library. I don't know if you consider this to be too
+<br>much overhead.&nbsp;
+<p>-- Jared Smolens
+<br>
+<!-- Ruler here? -->
+<h3>
+zlib compression</h3>
+<i>Dave DeBarr <a href="mailto:(debarr@mitre.org">(debarr@mitre.org</a>)
+has modified the X server and viewer to use zlib-based compression.&nbsp;
+We plan to incorporate something similar in the standard release before
+long, but until then you can find his patches at:</i>
+<p><a href="http://www.uk.research.att.com/vnc/archives/1998-08/0039.html">http://www.uk.research.att.com/vnc/archives/1998-08/0039.html</a>
+<p><i>In addition, Dave has provided patches for the Windows viewer at:</i>
+<p><a href="http://www.uk.research.att.com:80/vnc/archives/1998-08/0228.html">http://www.uk.research.att.com:80/vnc/archives/1998-08/0228.html</a>
+<p><i>Luis B. Almeida has also created a version of the Windows software
+which you can get from </i><a href="ftp://neural.inesc.pt/pub/lba/vnc">ftp://neural.inesc.pt/pub/lba/vnc</a>
+.
+
+<p><i>Warren Toomey has done an alternative implementation of zlib compression,
+along with some other hacks, which you can get from:</i>
+<p><a href="http://minnie.cs.adfa.edu.au/VNC_bits/">http://minnie.cs.adfa.edu.au/VNC_bits/</a>
+<br>
+<!-- Ruler here? -->
+<h3>
+x2vnc</h3>
+<i>Here's a different twist to VNC. Fredrik Hubinette <a href="mailto:hubbe@hubbe.net">hubbe@hubbe.net</a>
+has written a VNC-based variation on the popular x2x program.&nbsp; If
+you run x2vnc on an X server, you can move off the side of the screen and
+the mouse movements will then be sent to a VNC server (eg. a PC sitting
+beside it) He writes:</i>
+<p>x2vnc is basically a stripped down version of the vncviewer but with
+slightly different goals and a very different GUI.. :)
+<p>x2vnc emulates a 'dual head' setup by catching when the user tries to
+move the pointer past the edge of the screen. This allows me to control
+<br>both computers from one mouse/keyboard.
+<p>I have made x2vnc available for download from my web site:
+<p><a href="http://www.hubbe.net/~hubbe/x2vnc.html">http://www.hubbe.net/~hubbe/x2vnc.html</a>
+<br>&nbsp;
+<p>
+<!-- Ruler here? -->
+<h3>
+Enhanced Java viewer for JDK 1.1</h3>
+Muddassar Farooq &lt;mfarooq@cse.unsw.edu.au> has produced an enhanced
+version of the Java VNC viewer.
+<p>When run as a standalone application, it adds scrollbars, and the ability
+to specify 'host:display' as with the other VNC viewers.
+<p>It uses the Java 1.1 event model, so is 'better' Java, but won't run
+on older JVMs &amp; browsers.
+<p>You can get it from <a href="http://www.uk.research.att.com/vnc/contrib/mfviewer.tar.gz">http://www.uk.research.att.com/vnc/contrib/mfviewer.tar.gz
+</a>.
+<p>
+<!-- Ruler here? -->
+<h3>
+VncMonitor</h3>
+<i>John Wilson &lt;<a href="mailto:tug@wilson.co.uk">tug@wilson.co.uk</a>> writes:</i>
+<p>VncMonitor is intended for those people who need to monitor several
+remote systems. A single window is used to present all the displays. The
+tab or backtab key allows the user to switch between systems. The return
+key causes the currently viewed system display to be transferred to its
+own window and the user can interact with the system using the mouse and
+keyboard. Closing
+<br>the new window returns the monitored system display back to the initial
+window.
+<p>The configuration of VncMonitor is controlled by a file which contains
+all the information about what systems are to be monitored.
+<p>A version can be downloaded from:
+<p><a href="http://www.wilson.co.uk/Software/vnc/VncMonitor.htm">http://www.wilson.co.uk/Software/vnc/VncMonitor.htm</a>
+
+<h3>VNCProxy</H3>
+
+<p>John Wilson has also written VNCProxy, a Java proxy that can sit
+between a VNC viewer and server and can be configured to map various
+incoming requests to different VNC servers. You can find it at <A
+HREF="http://www.wilson.co.uk/Software/vnc/proxy/VncProxy.htm">http://www.wilson.co.uk/Software/vnc/proxy/VncProxy.htm</A></p>
+
+<h3>VNConnector</h3>
+
+<p>Alastair Burr has written a similar program to allow you to switch between multiple VNC servers. VNConnector can be found <a href="http://www.chronetal.vispa.co.uk/m_programs.html">here</a>.</p>
+
+<h3>VNCScan</h3>
+
+<p><A HREF="mailto:steveb@tshore.com">Steve Bostedor</A> has written a
+utility which will scan a network and list the machines running VNC
+servers. You can find it at <A
+HREF="http://tgcs.d-a-v-e.com/vncscan/vshome.htm">http://tgcs.d-a-v-e.com/vncscan/vshome.htm</A>. You'll
+need to email Steve for the password to unzip the file.</p> <p>(You
+can also use port scanners such as <a
+href="http://www.insecure.org/nmap">nmap</a> or <a
+href="http://avian.org/web1/hak/netcat.html">Netcat</a> to scan for
+the ports used by VNC. See the <a href="faq.html">VNC FAQ</a> for
+details of these ports.)</p>
+
+<h3>iXvnc</h3>
+<p>
+Andre Moreira <A HREF="mailto:andre@dei.isep.ipp.pt">&lt;andre@dei.isep.ipp.pt&gt;</A> has written some patches for Xvnc to allow it to be run under the control of inetd and hence be started automatically as users connect.
+See <A HREF="http://www.dei.isep.ipp.pt/~andre/extern/ixvnc.htm">http://www.dei.isep.ipp.pt/~andre/extern/ixvnc.htm</A> for details.
+</p>
+
+<h3>Share a Single Window</h3>
+<p>
+Céline FAGES <A HREF="mailto:celine.fages@silogic.fr">&lt;celine.fages@silogic.fr&gt;</A> has written some modifications for WinVNC to allow it to share a single window.<p>
+See <A HREF="http://www.uk.research.att.com/vnc/contrib/one-window.txt">http://www.uk.research.att.com/vnc/contrib/one-window.txt</A> for the modification details.<p>
+See Céline's original message in: <A HREF="http://www.uk.research.att.com/vnc/archives/2000-02/0658.html">http://www.uk.research.att.com/vnc/archives/2000-02/0658.html</A>
+</p>
+
+<p>&nbsp;</td>
+
+<td WIDTH="5%"></td>
+</tr>
+
+<tr>
+<td bgcolor="#eecc80">&nbsp;</td><td ALIGN=CENTER VALIGN=TOP COLSPAN="4" WIDTH="100%">
+<!-- Ruler here? -->
+<center>
+<p><i><font size=-1>For comments, feedback, etc, please see the '<a href="intouch.html">Keeping
+in touch</a>' page</font>.</i>
+<br><i><font size=-1>Copyright 1999 - AT&amp;T Laboratories Cambridge</font></i></center>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use HTML::LinkExtor;
+use HTTP::Request;
+use LWP::UserAgent;
+
+
+########################################################################
+
+
+my @images;
+
+sub link_callback ($%) {
+    my ($tag, %attributes) = @_;
+    return unless $tag eq 'img';
+    my $src = $attributes{src};
+    return unless defined $src;
+    return unless $src =~ /\.(jpg|jpeg|jfif)$/i;
+    push @images, $src;
+}
+
+
+my $parser;
+
+sub request_callback ($$$) {
+    my ($data, $response, $protocol) = @_;
+    unless ($parser) {
+	print 'random page: ', $response->base, "\n";
+	my $type = $response->content_type;
+	die "random link is $type, not text/html\n" unless $type eq 'text/html';
+	$parser = HTML::LinkExtor->new(\&link_callback, $response->base);
+    }
+    $parser->parse($data);
+}
+
+
+########################################################################
+
+
+my $agent = LWP::UserAgent->new(keep_alive => 1);
+my $request = HTTP::Request->new('GET', 'http://www.altavista.com/image/randomlink');
+$request->header(Accept => 'text/html');
+my $response = $agent->request($request, \&request_callback);
+
+die 'random link yielded error: ', $response->status_line, "\n" unless $response->is_success;
+
+print "image link: $_\n" foreach @images;

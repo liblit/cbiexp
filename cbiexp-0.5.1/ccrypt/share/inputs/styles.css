@@ -1,0 +1,91 @@
+BODY
+{
+	margin-top: 0pt;
+}
+
+P.sidebar 
+{ 
+	font-size: 9pt; 
+	font-family: helvetica, arial, sans-serif; 
+	font-weight: bold; 
+	text-align: center; 
+	text-decoration: none;
+}
+
+P.subsection
+{
+	font-family: times, times-roman, serif; 
+	font-size: 14pt;
+	font-style: italic;
+	margin-left: 0pt;
+}
+
+P.answer
+{
+	margin-right: 18pt;
+	margin-left: 12pt;
+}
+
+P
+{
+	margin-top: 6pt;
+	margin-right: 12pt;
+	margin-left: 0pt;
+
+}
+
+A:link, A:visited, A:hover, A:active
+{
+	text-decoration: none;
+}
+
+A:link
+{
+	color: #0000C0;
+}
+
+A:visited
+{
+	color: #200080;
+}
+
+A:hover
+{
+	color: #FF0000;
+}
+
+A:active
+{
+	color: #008000;
+}
+
+H1 
+{ 
+	font-family: times, times-roman, serif; 
+	font-size: 18pt;
+	font-weight: bold;
+	font-style: italic;
+}
+
+H2 
+{ 
+	font-family: helvetica, arial, sans-serif; 
+	font-size: 12pt;
+	font-weight: bold; 	
+}
+
+H3 
+{ 
+	font-family: helvetica, arial, sans-serif; 
+	font-size: 11pt 
+}
+
+.spaced
+{
+	margin-top: 2pt;
+}
+
+TT.spaced
+{
+	margin-top: 6pt;
+}

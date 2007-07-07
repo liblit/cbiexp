@@ -1,0 +1,43 @@
+Guide to data files:
+
+bin/*
+    various executables and supporting scripts
+
+share/*.cfg
+    extracted CFG info for use with "order-sites"
+
+share/*.sites
+    extracted site info for use with "resolve-samples"
+
+*/{good,bad}
+    one subdirectory per variant moss executable
+
+*/{good,bad}/command
+    command line used for run
+
+*/{good,bad}/stdout
+    logged standard output from run
+
+*/{good,bad}/stderr
+    logged standard error from run
+    includes "Error <n>" messages
+
+*/{good,bad}/time
+    wall clock execution time in seconds
+
+*/{good,bad}/exit
+    exactly one of the following:
+        normal    <exit status>
+        signal    <signal number>
+        timeout
+
+*/reports
+    feedback report suitable for use with "resolve-samples"
+
+*/bad/fail
+    zero if "stdout" and "fail" match corresponding good files
+    arbitrary non-zero value if either of these are different
+
+*/disregard
+    reason why the entire triple of runs should be disregarded
+    absent for run triples that pass basic sanity checks
