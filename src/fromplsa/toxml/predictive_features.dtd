@@ -1,0 +1,8 @@
+<!ELEMENT predictivefeatures (aspect*)>
+
+<!ELEMENT aspect (feature*)> 
+
+<!ELEMENT feature EMPTY>
+
+<!ATTLIST feature score NMTOKEN #REQUIRED>
+<!ATTLIST feature index NMTOKEN #REQUIRED>

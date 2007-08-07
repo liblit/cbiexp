@@ -1,0 +1,8 @@
+<!ELEMENT predictiveruns (aspect*)>
+
+<!ELEMENT aspect (feature*)> 
+
+<!ELEMENT run EMPTY>
+
+<!ATTLIST run score NMTOKEN #REQUIRED>
+<!ATTLIST run index NMTOKEN #REQUIRED>

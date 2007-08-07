@@ -1,0 +1,5 @@
+<!-- information about features, i.e., predicates, from plsa analysis -->
+<!ELEMENT featureinfos (feature*)> 
+
+<!ELEMENT feature EMPTY> 
+<!ATTLIST feature sumoverdocs NMTOKEN #REQUIRED>

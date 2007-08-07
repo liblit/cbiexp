@@ -1,0 +1,2 @@
+<!ELEMENT summary EMPTY> 
+<!ATTLIST summary source-dir NMTOKEN #REQUIRED>

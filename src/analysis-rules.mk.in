@@ -454,11 +454,11 @@ CLEANFILES += prerunsinfo.mat
 
 runsinfo.mat: prerunsinfo.mat
 	test process.xml || $(time) xmllint --valid --noout process.xml
-	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); path(pwd, path); postProcess('prerunsinfo.mat', 'runsinfo.mat', 'process.xml'); quit()"
+	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); path(pwd, path); postProcess('$<', '$>', 'process.xml'); quit()"
 CLEANFILES += runsinfo.mat
 
 runsinfo.dat: runsinfo.mat
-	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); toDAformat('runsinfo.mat', 'runsinfo.dat'); quit()"
+	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); toDAformat('$<', '$@'); quit()"
 CLEANFILES += runsinfo.dat
 
 ########################################################################

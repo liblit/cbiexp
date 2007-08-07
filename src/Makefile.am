@@ -2,9 +2,6 @@ SUBDIRS = corrective-ranking matlab never-reached Score symmetric
 if ENABLE_AMPLIFY
 SUBDIRS += amplify
 endif
-if ENABLE_LSA
-SUBDIRS += lsa
-endif
 
 DIST_SUBDIRS = $(SUBDIRS)
 

@@ -3,6 +3,7 @@
 
 from optparse import OptionParser
 from os.path import join
+from shutil import copytree
 from subprocess import call
 
 def main():
@@ -33,6 +34,9 @@ def main():
     for p in loglikelihoods: 
         print >>rankfile, "%.0f %s" % (p[0], p[1])
     rankfile.close() 
+
+    best = loglikelihoods[-1][1] 
+    copytree(best, 'best')
 
 
 ########################################################################

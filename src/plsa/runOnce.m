@@ -15,8 +15,13 @@ function runOnce(inputfile, outputfile, logfile, numaspects, numbugaspects, maxi
     rand('state',seed);
 
     [Results.Pw_z,Results.Pd_z,Results.Pz,Results.Li] = pLSA_EM(Data.X, Learn, find(Data.Sindices));
+    Results.Learn.Max_Iterations = maxiterations;
+    Results.Learn.Min_Likelihood_Change = minlikelihoodchange;
+    Results.Learn.UsageIndices = [1:numaspects - numbugaspects]';
+    Results.Learn.BuggyIndices = [numaspects - numbugaspects + 1:numaspects]'; 
+    Results.Learn.numaspects = numaspects;
 
-    save('-mat', outputfile', 'Results'); 
+    save('-mat', outputfile, 'Results'); 
     
     out = fopen(logfile, 'w');
     fprintf(out, '%.0f\n', Results.Li(end));
