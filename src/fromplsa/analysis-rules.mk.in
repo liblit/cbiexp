@@ -23,7 +23,7 @@ results.mat: $(resultsdir)/results.mat
 	$(time) $(MATLAB) -r "path('$(tooldir)', path); postProcess('$<', '$@'); quit ()"
 
 summary.xml:
-	$(time) $(MATLAB) -r "path('$(tooldir)/toxml', path); summarize('$@', '$(analysisdir)'); quit()"
+	$(time) $(MATLAB) -r "path('$(tooldir)/toxml', path); summarize('$@', '$(analysisdir)/src'); quit()"
 
 aspects.xml: results.mat
 	$(time) $(MATLAB) -r "path('$(tooldir)/toxml', path); summarizeAspects('$<', '$@'); quit()"
