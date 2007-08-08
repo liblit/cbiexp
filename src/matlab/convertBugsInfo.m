@@ -1,0 +1,5 @@
+function convertBugsInfo(datafilename, inputfilename, outfilename)
+    load(datafilename)
+    Bugs = load(inputfilename)
+    Bugs = convertInfo(Bugs, Data) 
+    save('-mat', outfilename, 'Bugs')

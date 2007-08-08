@@ -1,0 +1,5 @@
+<!ELEMENT runinfos (run*)>
+
+<!ELEMENT run EMPTY>
+<!ATTLIST aspect outcome NMTOKEN #REQUIRED>
+<!ATTLIST aspect sumoverfeatures NMTOKEN #REQUIRED>

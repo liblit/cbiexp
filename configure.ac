@@ -140,17 +140,6 @@ AM_CONDITIONAL(ENABLE_AMPLIFY_PROFILING, test "$enable_amplify_profiling" = yes)
 
 ########################################################################
 #
-# for lsa
-#
-
-AC_MSG_CHECKING(for latent semantic analysis) 
-AC_ARG_ENABLE(lsa, AC_HELP_STRING([--enable-lsa], [Build latent semantic analysis tools]), , enable_lsa=no) 
-AC_MSG_RESULT($enable_lsa)
-
-AM_CONDITIONAL(ENABLE_LSA, test "$enable_lsa" = yes)
-
-########################################################################
-#
 #  generate output files
 #
 
@@ -161,7 +150,10 @@ Makefile
 correlations/Makefile
 src/Makefile
 src/corrective-ranking/Makefile
+src/fromplsa/analysis-rules.mk
+src/matlab/Makefile
 src/never-reached/Makefile
+src/plsa/analysis-rules.mk
 src/symmetric/Makefile
 src/Score/Makefile
 src/analysis-rules.mk
@@ -171,13 +163,6 @@ if test "$enable_mining" = yes; then
    AC_CONFIG_FILES([
    src/amplify/Makefile
    src/amplify/command-line/Makefile
-   ])
-fi
-
-if test "$enable_lsa" = yes; then
-   AC_CONFIG_FILES([
-   src/lsa/analysis-rules.mk
-   src/lsa/Makefile
    ])
 fi
 
