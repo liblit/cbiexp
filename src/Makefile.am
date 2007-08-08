@@ -1,6 +1,9 @@
-SUBDIRS = corrective-ranking matlab never-reached Score symmetric
+SUBDIRS = corrective-ranking fromplsa matlab never-reached Score symmetric
 if ENABLE_AMPLIFY
 SUBDIRS += amplify
+endif
+if ENABLE_PLSA
+SUBDIRS += plsa
 endif
 
 DIST_SUBDIRS = $(SUBDIRS)

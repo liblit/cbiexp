@@ -140,6 +140,17 @@ AM_CONDITIONAL(ENABLE_AMPLIFY_PROFILING, test "$enable_amplify_profiling" = yes)
 
 ########################################################################
 #
+#  for plsa 
+#
+
+AC_MSG_CHECKING(for plsa support)
+AC_ARG_ENABLE(plsa, AC_HELP_STRING([--enable-plsa], [Build plsa tools]), , enable-plsa=no) 
+AC_MSG_RESULT($enable_plsa)
+
+AM_CONDITIONAL(ENABLE_PLSA, test "$enable_plsa" = yes)
+
+########################################################################
+#
 #  generate output files
 #
 
@@ -151,13 +162,20 @@ correlations/Makefile
 src/Makefile
 src/corrective-ranking/Makefile
 src/fromplsa/analysis-rules.mk
+src/fromplsa/Makefile
+src/fromplsa/toxml/Makefile
 src/matlab/Makefile
 src/never-reached/Makefile
-src/plsa/analysis-rules.mk
 src/symmetric/Makefile
 src/Score/Makefile
 src/analysis-rules.mk
 ])
+
+if test "$enable_plsa" = yes; then
+   AC_CONFIG_FILES([
+   src/plsa/analysis-rules.mk
+   ])
+fi
 
 if test "$enable_mining" = yes; then
    AC_CONFIG_FILES([
