@@ -1,11 +1,7 @@
 AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 $(BOOST_CPPFLAGS)
 
 EXTRA_DIST =					\
-	bugs2sparse.py				\
-	convertBugsInfo.m			\
 	convertData.m				\
-	convertInfo.m				\
-	convertPriorResults.m			\
 	explode.m				\
 	postProcess.m				\
 	process.xml				\

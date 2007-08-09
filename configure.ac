@@ -161,6 +161,8 @@ Makefile
 correlations/Makefile
 src/Makefile
 src/corrective-ranking/Makefile
+src/evaluateplsa/analysis-rules.mk
+src/evaluateplsa/Makefile
 src/fromplsa/analysis-rules.mk
 src/fromplsa/Makefile
 src/fromplsa/toxml/Makefile
