@@ -15,4 +15,8 @@ function convertPriorResults(datafilename, infilename, outfilename)
 
     % prepare to pass to conversion function 
     Votes = convertInfo(Votes, Data); 
+    if numel(find(Votes)) > size(Votes,2);
+        error('some runs are voted for twice---can not reduce')
+    end;
+    [I,Votes] = max(Votes); 
     save('-mat', outfilename, 'Votes')

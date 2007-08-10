@@ -25,8 +25,11 @@ bugsinfo.mat: oracle.sparse runsinfo.mat
 	$(time) $(MATLAB) -r "path('$(tooldir)', path); convertBugsInfo('runsinfo.mat', 'oracle.sparse', 'bugsinfo.mat', '$(oracletype)'); quit()"
 CLEANFILES += bugsinfo.mat
 
-RandIndex.txt: bugsinfo.mat results.mat runsinfo.mat 
-	$(time) $(MATLAB) -r "path('$(tooldir)', path); calculateRandIndex('bugsinfo.mat', 'results.mat', 'runsinfo.mat', '$@'); quit();"
+votes.mat: results.mat
+	$(time) $(MATLAB) -r "path('$(tooldir)', path); generateVotes('$<', '$@'); quit()"
+
+RandIndex.txt: bugsinfo.mat votes.mat runsinfo.mat 
+	$(time) $(MATLAB) -r "path('$(tooldir)', path); calculateRandIndex('bugsinfo.mat', 'votes.mat', 'runsinfo.mat', '$@'); quit();"
 CLEANFILES += RandIndex.txt
 
 .PHONY: clean

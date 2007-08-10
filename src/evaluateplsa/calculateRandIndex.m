@@ -1,12 +1,11 @@
-function calculateRandIndex(bugfile, resultsfile, datafile, outputfile)
+function calculateRandIndex(bugfile, votesfile, datafile, outputfile)
     load(bugfile);
-    load(resultsfile); 
+    load(votesfile); 
     load(datafile);
-    Cluster = clusterByMaxValue(Results.Pz_d(Results.Learn.BuggyIndices,:));
     Bugs = Bugs(:,Data.Indices);
 
     Findices = find(Data.Findices); 
-    Cluster = Cluster(:, Findices);
+    Votes = Votes(:, Findices);
     Bugs = Bugs(:, Findices);
 
     if any(sum(Bugs,1) < 1);
@@ -22,10 +21,10 @@ function calculateRandIndex(bugfile, resultsfile, datafile, outputfile)
     num = 0;
     for i = 1:numfailures;
         b = Bugs(i); 
-        c = Cluster(i);
+        c = Votes(i);
         for j = (i + 1):numfailures;
             b_other = Bugs(j); 
-            c_other = Cluster(j);
+            c_other = Votes(j);
             agreement = or(and(b == b_other, c == c_other), and(b ~= b_other, c ~= c_other));
             num = num + agreement;
         end
@@ -36,5 +35,3 @@ function calculateRandIndex(bugfile, resultsfile, datafile, outputfile)
     out = fopen(outputfile, 'w');
     fprintf(out, '%.4f\n', Rand);
     fclose(out);
-
-    quit;
