@@ -4,4 +4,5 @@ EXTRA_DIST =				\
 	clusterByMaxValue.m		\
 	convertBugsInfo.m		\
 	convertInfo.m			\
-	convertPriorResults.m
+	convertPriorResults.m		\
+	generateVotes.m
