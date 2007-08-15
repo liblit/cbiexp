@@ -57,6 +57,27 @@ inline pred_stat get_pred_stat(int u, int c, int p)
     return compute_pred_stat(s, f, os, of, Confidence::level);
 }
 
+int num_preds(char scheme_code)
+{
+    switch (scheme_code) {
+        case 'B':
+            return 2;
+            break;
+        case 'F':
+            return 18;
+            break;
+        case 'G':
+            return 8;
+            break;
+        case 'R':
+        case 'S':
+            return 6;
+            break;
+        default:
+            assert(0);
+    }
+}
+
 /****************************************************************************
  * Procedures for printing retained predicates
  ***************************************************************************/
@@ -89,35 +110,35 @@ static void print_retained_preds()
 	for (c = 0; c < unit.num_sites; c++, site++) {
 	    switch (unit.scheme_code) {
 	    case 'S':
-		for (p = 0; p < 6; p++)
+		for (p = 0; p < num_preds('S'); p++)
 		    if (site_info[u][c].retain[p]) {
 			num_s_preds++;
 			print_pred(fp, u, c, p, site);
 		    }
 		break;
 	    case 'R':
-		for (p = 0; p < 6; p++)
+		for (p = 0; p < num_preds('R'); p++)
 		    if (site_info[u][c].retain[p]) {
 			num_r_preds++;
 			print_pred(fp, u, c, p, site);
 		    }
 		break;
 	    case 'B':
-		for (p = 0; p < 2; p++)
+		for (p = 0; p < num_preds('B'); p++)
 		    if (site_info[u][c].retain[p]) {
 			num_b_preds++;
 			print_pred(fp, u, c, p, site);
 		    }
 		break;
 	    case 'F':
-		for (p = 0; p < 18; p++)
+		for (p = 0; p < num_preds('F'); p++)
 		    if (site_info[u][c].retain[p]) {
 			num_f_preds++;
 			print_pred(fp, u, c, p, site);
 		    }
 		break;
 	    case 'G':
-		for (p = 0; p < 8; p++)
+		for (p = 0; p < num_preds('G'); p++)
 		    if (site_info[u][c].retain[p]) {
 			num_g_preds++;
 			print_pred(fp, u, c, p, site);
@@ -262,25 +283,7 @@ void cull_preds()
     for (unsigned u = 0; u < staticSiteInfo->unitCount; u++) {
 	const unit_t &unit = staticSiteInfo->unit(u);
 	for (unsigned c = 0; c < unit.num_sites; c++) {
-	    int numPreds;
-	    switch (unit.scheme_code) {
-	    case 'B':
-		numPreds = 2;
-		break;
-	    case 'F':
-		numPreds = 18;
-		break;
-	    case 'G':
-		numPreds = 8;
-		break;
-	    case 'R':
-	    case 'S':
-		numPreds = 6;
-		break;
-	    default:
-		assert(0);
-	    }
-	    for (int p = 0; p < numPreds; p++)
+	    for (int p = 0; p < num_preds(unit.scheme_code); p++)
 		cull(u, c, p);
 	}
     }
