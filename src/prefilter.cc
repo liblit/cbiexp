@@ -7,6 +7,7 @@
 #include "AmplifyReport.h"
 #include "CompactReport.h"
 #include "Confidence.h"
+#include "CullPredicates.h"
 #include "NumRuns.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
@@ -269,6 +270,11 @@ const string AmplifyReader::format(const unsigned runId) const
   return AmplifyReport::format(runId); 
 }
 
+inline void retain(int u, int c, int p)
+{
+    site_info[u][c].retain[p] = true;
+}
+
 inline void cull(int u, int c, int p)
 {
     pred_stat ps = get_pred_stat(u, c, p); 
@@ -289,6 +295,11 @@ void foreach_pred(pfct thef)
 		(*thef)(u, c, p);
 	}
     }
+}
+
+void retain_all_preds()
+{
+    foreach_pred(&retain);
 }
 
 void cull_preds()
@@ -493,6 +504,7 @@ void process_cmdline(int argc, char** argv)
 	{ &CompactReport::argp, 0, 0, 0 },
 	{ &AmplifyReport::argp, 0, 0, 0 },
 	{ &Confidence::argp, 0, 0, 0 },
+        { &CullPredicates::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
 	{ &ReportReader::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
@@ -531,9 +543,14 @@ int main(int argc, char** argv)
         if (AmplifyReport::amplify) AmplifyReader().read(cur_run);
     }
 
-    cull_preds();
-    cull_preds_aggressively1();
-    cull_preds_aggressively2();
+    if (CullPredicates::cull) {
+        cull_preds();
+        cull_preds_aggressively1();
+        cull_preds_aggressively2();
+    }
+    else {
+        retain_all_preds();
+    }
 
     print_retained_preds();
 

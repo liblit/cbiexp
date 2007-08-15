@@ -9,6 +9,7 @@ tooldir := $(root)/src
 srcdir ?= $(experiment)/src
 training-runs ?= 0
 raw-report-name ?= reports
+cull-predicates ?= yes
 
 sitesdir ?= $(experiment)/share
 sitesglob := $(sitesdir)/*.sites
@@ -245,7 +246,7 @@ endif
 CLEANFILE += amps.txt
 
 preds.txt: s.runs f.runs $(stamp-amplify) static-site-info.so $(call tool-deps, prefilter)
-	$(time) $(tooldir)/prefilter --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) $(confidence:%=--confidence=%) $(amplify_flag) 
+	$(time) $(tooldir)/prefilter --begin-runs=$(training-runs) --runs-directory=$(datadir) --report-suffix=$(report-series) $(confidence:%=--confidence=%) $(amplify_flag) --cull=$(cull-predicates)
 CLEANFILES += preds.txt
 
 $(datadir)/stamp-convert-reports: s.runs f.runs static-site-info.so $(call tool-deps, convert-reports)
