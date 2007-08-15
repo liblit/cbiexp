@@ -278,15 +278,22 @@ inline void cull(int u, int c, int p)
     }
 }
 
-void cull_preds()
+typedef void (*pfct)(int,int,int);
+
+void foreach_pred(pfct thef)
 {
     for (unsigned u = 0; u < staticSiteInfo->unitCount; u++) {
 	const unit_t &unit = staticSiteInfo->unit(u);
 	for (unsigned c = 0; c < unit.num_sites; c++) {
 	    for (int p = 0; p < num_preds(unit.scheme_code); p++)
-		cull(u, c, p);
+		(*thef)(u, c, p);
 	}
     }
+}
+
+void cull_preds()
+{
+    foreach_pred(&cull);
 }
 
 inline bool have_equal_increase(int u1, int c1, int p1, int u2, int c2, int p2)
