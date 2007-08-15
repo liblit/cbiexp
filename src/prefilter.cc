@@ -28,7 +28,6 @@ struct site_info_t {
     int S[18], F[18];
     int OS[18], OF[18]; 
     bool retain[18];
-    int lb[18];
     site_info_t()
     {
 	for (int i = 0; i < 18; i++) {
@@ -37,7 +36,6 @@ struct site_info_t {
 	    OS[i] = 0;
 	    OF[i] = 0;
 	    retain[i] = false;
-	    lb[i] = -1;
 	}
     }
 };
@@ -50,24 +48,32 @@ static int num_b_preds = 0;
 static int num_f_preds = 0;
 static int num_g_preds = 0;
 
+inline pred_stat get_pred_stat(int u, int c, int p)
+{
+    int s = site_info[u][c].S[p];
+    int f = site_info[u][c].F[p];
+    int os = site_info[u][c].OS[p];
+    int of = site_info[u][c].OF[p];
+    return compute_pred_stat(s, f, os, of, Confidence::level);
+}
+
 /****************************************************************************
  * Procedures for printing retained predicates
  ***************************************************************************/
 
 static void print_pred(FILE* fp, int u, int c, int p, int site)
 {
-    int s  = site_info[u][c].S[p];
-    int f  = site_info[u][c].F[p];
-    int os = site_info[u][c].OS[p];
-    int of = site_info[u][c].OF[p];
 
-    pred_stat ps = compute_pred_stat(s, f, os, of, Confidence::level);
+    pred_stat ps = get_pred_stat(u, c, p);
 
     fprintf(fp, "%c %d %d %d %d %g %g %g %g %d %d %d %d\n",
 	staticSiteInfo->unit(u).scheme_code,
 	u, c, p, site,
 	ps.lb, ps.in, ps.fs, ps.co,
-	s, f, os, of);
+        site_info[u][c].S[p],
+        site_info[u][c].F[p], 
+        site_info[u][c].OS[p], 
+        site_info[u][c].OF[p]);
 }
 
 static void print_retained_preds()
@@ -244,15 +250,10 @@ const string AmplifyReader::format(const unsigned runId) const
 
 inline void cull(int u, int c, int p)
 {
-    int s = site_info[u][c].S[p];
-    int f = site_info[u][c].F[p];
-    int os = site_info[u][c].OS[p];
-    int of = site_info[u][c].OF[p];
-    pred_stat ps = compute_pred_stat(s, f, os, of, Confidence::level);
+    pred_stat ps = get_pred_stat(u, c, p); 
 
-    if (retain_pred(s, f, ps.lb)) {
+    if (retain_pred(site_info[u][c].S[p], site_info[u][c].F[p], ps.lb)) {
 	site_info[u][c].retain[p] = true;
-	site_info[u][c].lb[p] = (int) rint(ps.lb * 100);
     }
 }
 
@@ -287,7 +288,10 @@ void cull_preds()
 
 inline bool have_equal_increase(int u1, int c1, int p1, int u2, int c2, int p2)
 {
-    return site_info[u1][c1].lb[p1] == site_info[u2][c2].lb[p2];
+    pred_stat ps1 = get_pred_stat(u1, c1, p1);
+    pred_stat ps2 = get_pred_stat(u2, c2, p2);
+
+    return (int) rint(ps1.lb * 100) == (int) rint(ps2.lb * 100);
 }
 
 void cull_preds_aggressively1()
