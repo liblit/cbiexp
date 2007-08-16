@@ -10,6 +10,7 @@ srcdir ?= $(experiment)/src
 training-runs ?= 0
 raw-report-name ?= reports
 cull-predicates ?= yes
+matlab-counts ?= Xtru.sparse
 
 sitesdir ?= $(experiment)/share
 sitesglob := $(sitesdir)/*.sites
@@ -449,8 +450,8 @@ Xtru.sparse Xobs.sparse X.xml: preds.txt $(datadir)/stamp-labels
 	$(time) $(tooldir)/matlab/make-counts-matrix --runs-directory=$(datadir) --begin-runs=$(training-runs) --report-suffix=$(report-series) 
 CLEANFILES += Xtru.sparse Xobs.sparse X.xml
 
-prerunsinfo.mat: f.indices s.indices i.indices Xtru.sparse X.xml 
-	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); convertData('Xtru.sparse', 'prerunsinfo.mat', 'f.indices', 's.indices', 'i.indices', 'X.xml'); quit()"
+prerunsinfo.mat: f.indices s.indices i.indices X.xml $(matlab-counts)
+	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); convertData('$(matlab-counts)', 'prerunsinfo.mat', 'f.indices', 's.indices', 'i.indices', 'X.xml'); quit()"
 CLEANFILES += prerunsinfo.mat
 
 runsinfo.mat: prerunsinfo.mat
