@@ -58,6 +58,7 @@ function convertData(inputfile, outputfile, ffile, sfile, ifile, dimfile)
     Data.Sindices = Sindices;
     Data.Indices = Indices;
     Data.offset = offset;
+    Data.inputfile = inputfile;
     save('-mat', outputfile, 'Data'); 
 
 % Checks that every run has a designation and that no runs have two
