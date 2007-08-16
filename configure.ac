@@ -144,7 +144,7 @@ AM_CONDITIONAL(ENABLE_AMPLIFY_PROFILING, test "$enable_amplify_profiling" = yes)
 #
 
 AC_MSG_CHECKING(for plsa support)
-AC_ARG_ENABLE(plsa, AC_HELP_STRING([--enable-plsa], [Build plsa tools]), , enable-plsa=no) 
+AC_ARG_ENABLE(plsa, AC_HELP_STRING([--enable-plsa], [Build plsa tools]), , enable_plsa=no) 
 AC_MSG_RESULT($enable_plsa)
 
 AM_CONDITIONAL(ENABLE_PLSA, test "$enable_plsa" = yes)
