@@ -54,21 +54,3 @@ void Candidates::load(const char directory[])
   assert(tru.peek() == EOF);
   assert(obs.peek() == EOF);
 }
-
-
-void
-Candidates::rescore(Progress::Bounded &progress)
-{
-  iterator loser = begin();
-  while (loser != end())
-    if (loser->lowerBound() > 0)
-      {
-	loser->effective = loser->score();
-	++loser;
-      }
-    else
-      {
-	progress.step();
-	loser = erase(loser);
-      }
-}

@@ -5,8 +5,6 @@
 
 #include "Predicates.h"
 
-namespace Progress { class Bounded; }
-
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -19,8 +17,6 @@ struct Candidates : public Predicates
   Candidates();
   void load(const char[] = ".");
   unsigned count;
-
-  void rescore(Progress::Bounded &);
 };
 
 
