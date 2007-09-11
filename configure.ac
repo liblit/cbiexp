@@ -165,6 +165,7 @@ src/evaluateplsa/analysis-rules.mk
 src/evaluateplsa/Makefile
 src/fromplsa/analysis-rules.mk
 src/fromplsa/Makefile
+src/fromplsa/tocsurf/Makefile
 src/fromplsa/toxml/Makefile
 src/matlab/Makefile
 src/never-reached/Makefile

@@ -13,7 +13,25 @@ MATLAB = matlab -nodisplay
 XSLTPROC = xsltproc --path $(tooldir)/toxml --path . --path $(analysisdir)
 time := /usr/bin/time
 
-all: summary.html aspects.xml bases
+csurf: bases
+	$(MAKE) aspectstables
+
+pred_sites.txt: $(analysisdir)/pred_sites.txt
+	cp $< $@
+
+aspect_%_probs.txt: aspect_%.base results.mat 
+	$(time) $(MATLAB) -r "path('$(tooldir)/tocsurf', path); makeProbabilityFile('results.mat', `cat $<`, '$@'); quit" 
+
+aspectsprobs: $(addsuffix _probs.txt, $(basename $(wildcard aspect*.base)))
+.PHONY: aspectsprobs
+
+aspect_%_table.txt: aspect_%_probs.txt pred_sites.txt
+	$(time) paste -d " " pred_sites.txt $< > $@
+
+aspectstables: $(addsuffix _table.txt, $(basename $(wildcard aspect*.base)))
+.PHONY: aspectstables
+
+xml: summary.html aspects.xml bases
 	$(MAKE) aspectspredictiveruns aspectspredictivefeatures aspectsprobablefeatures
 
 runsinfo.mat: $(datadir)/runsinfo.mat

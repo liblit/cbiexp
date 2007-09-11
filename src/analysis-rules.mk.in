@@ -463,6 +463,10 @@ runsinfo.dat: runsinfo.mat
 	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); toDAformat('$<', '$@'); quit()"
 CLEANFILES += runsinfo.dat
 
+pred_sites.txt: preds.txt
+	$(tooldir)/fromplsa/tocsurf/make-location-data
+CLEANFILE += pred_sites.txt
+
 ########################################################################
 
 
