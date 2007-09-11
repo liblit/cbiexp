@@ -6,9 +6,6 @@ function printaspects(outfilename, Learn)
     doc = com.mathworks.xml.XMLUtils.createDocument('aspectinfos');
     docRoot = doc.getDocumentElement();
     for i = 1:Learn.numaspects;
-        fid = fopen(['aspect_' num2str(i) '.base'], 'w');
-        fprintf(fid, '%u', i);
-        fclose(fid);
         if any(find(i == Learn.UsageIndices));
             M{1,1}{i,1} = 'usage';
         elseif any(find(i == Learn.BuggyIndices));
