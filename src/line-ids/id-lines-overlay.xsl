@@ -18,6 +18,7 @@
 
   <xsl:template match="xhtml:a" mode="overlay">
     <a id="{@name}">
+      <xsl:apply-templates/>
       <xsl:variable name="here" select="."/>
       <!-- successor nodes which are not line anchors -->
       <!-- and whose immediately-preceding line achor is this one -->
