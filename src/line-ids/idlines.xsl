@@ -13,12 +13,9 @@
         <xsl:copy-of select="."/>
         <xsl:variable name="next" select="following-sibling::xhtml:span[1]/xhtml:span"/>
         <xsl:variable name="lineid" select="@name"/>
-        <xsl:element name="span"> 
-            <xsl:attribute name="id">
-                <xsl:value-of select="$lineid"/>
-            </xsl:attribute>
+	<span id="{$lineid}">
             <xsl:value-of select="$next"/>
-        </xsl:element>
+	</span>
     </xsl:template>
 
     <xsl:template match="xhtml:head">
