@@ -12,6 +12,15 @@
     doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"
     />
 
+  <xsl:param name="stylesheet" select="'metrics.css'"/>
+
+  <xsl:template match="xhtml:head">
+    <xsl:copy>
+      <xsl:apply-templates select="@* | node()"/>
+      <link type="text/css" rel="stylesheet" href="{$stylesheet}" />
+    </xsl:copy>
+  </xsl:template>
+
   <xsl:template match="xhtml:body/xhtml:pre/xhtml:tt">
     <xsl:apply-templates select="xhtml:a" mode="overlay"/>
   </xsl:template>
