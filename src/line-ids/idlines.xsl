@@ -1,20 +1,16 @@
 <xsl:stylesheet
   version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns="http://www.w3.org/1999/xhtml"
   xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns="http://www.w3.org/1999/xhtml"
+  exclude-result-prefixes="xhtml"
 >
 
 <xsl:output method="html"/>
 
-    <xsl:template match="xhtml:tt/xhtml:span"/>
-
-    <xsl:template match="xhtml:a">
-        <xsl:copy-of select="."/>
-        <xsl:variable name="next" select="following-sibling::xhtml:span[1]/xhtml:span"/>
-        <xsl:variable name="lineid" select="@name"/>
-	<span id="{$lineid}">
-            <xsl:value-of select="$next"/>
+    <xsl:template match="xhtml:body/xhtml:pre/xhtml:tt/xhtml:span">
+	<span id="{preceding-sibling::xhtml:a[position()=1]/@name}">
+	    <xsl:copy-of select="xhtml:span/node()"/>
 	</span>
     </xsl:template>
 
