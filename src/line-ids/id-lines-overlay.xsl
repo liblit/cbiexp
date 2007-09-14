@@ -6,23 +6,28 @@
   exclude-result-prefixes="xhtml"
   >
 
+  <xsl:output
+    method="xml"
+    doctype-public="-//W3C//DTD XHTML 1.1//EN"
+    doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"
+    />
+
   <xsl:template match="xhtml:body/xhtml:pre/xhtml:tt">
     <xsl:apply-templates select="xhtml:a" mode="overlay"/>
   </xsl:template>
 
   <xsl:template match="xhtml:a" mode="overlay">
-    <xsl:copy-of select="."/>
-    <span id="{@name}">
+    <a id="{@name}">
       <xsl:variable name="here" select="."/>
       <!-- successor nodes which are not line anchors -->
       <!-- and whose immediately-preceding line achor is this one -->
       <xsl:copy-of select="following-sibling::node()[not(self::xhtml:a) and preceding-sibling::xhtml:a[1] = $here]"/>
-    </span>
+    </a>
   </xsl:template>
 
-  <xsl:template match="*">
-    <xsl:copy select=".">
-      <xsl:apply-templates/>
+  <xsl:template match="@* | node()">
+    <xsl:copy>
+      <xsl:apply-templates select="@* | node()"/>
     </xsl:copy> 
   </xsl:template>
 
