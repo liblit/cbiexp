@@ -14,15 +14,10 @@
     <xsl:copy-of select="."/>
     <span id="{@name}">
       <xsl:variable name="here" select="."/>
-      <!-- successor nodes whose immediately-preceding a is this one -->
-      <xsl:apply-templates select="following-sibling::node()[preceding-sibling::xhtml:a[1] = $here]" mode="underlay"/>
+      <!-- successor nodes which are not line anchors -->
+      <!-- and whose immediately-preceding line achor is this one -->
+      <xsl:copy-of select="following-sibling::node()[not(self::xhtml:a) and preceding-sibling::xhtml:a[1] = $here]"/>
     </span>
-  </xsl:template>
-
-  <xsl:template match="xhtml:a" mode="underlay"/>
-
-  <xsl:template match="*" mode="underlay">
-    <xsl:copy-of select="."/>
   </xsl:template>
 
   <xsl:template match="*">
