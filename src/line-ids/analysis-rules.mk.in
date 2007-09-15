@@ -10,10 +10,10 @@ tooldir := $(root)/src/line-ids
 all: idfiles
 
 %.c.html: $(srcdir)/%.c
-	source-highlight --input=$< --output=$@ --lang-def=$(tooldir)/matchlines.lang --style-file=$(tooldir)/matchlines.style --out-format=xhtml --line-number-ref --doc
+	source-highlight --input=$< --output=$@ --lang-def=cpp.lang --out-format=xhtml --line-number-ref --doc
 
 %.c.ids.html: %.c.html
-	xsltproc --path $(tooldir) -o $@ idlines.xsl $< 
+	xsltproc --path $(tooldir) -o $@ id-lines-overlay.xsl $<
 
 idfiles: $(addsuffix .c.ids.html, $(notdir $(basename $(wildcard $(srcdir)/*.c))))
 .PHONY: idfiles
