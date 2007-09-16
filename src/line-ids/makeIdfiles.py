@@ -4,7 +4,7 @@ import sys
 
 from optparse import OptionParser
 from os import mkdir, remove, walk
-from os.path import basename, exists, isdir, join
+from os.path import basename, exists, isdir, join, splitext
 from shutil import rmtree
 from subprocess import call
 
@@ -13,8 +13,7 @@ def makeRecursive(tooldir, srcdirname, targetname):
         newdir = join(targetname, basename(root))
         mkdir(newdir) 
         for f in filter((lambda f: f.endswith('.html')), files):
-            bits = f.split('.')
-            truncated = '.'.join(bits[0:len(bits) - 1])
+            (truncated, ext) = splitext(f)
             newfile = join(newdir, '.'.join([truncated, 'ids', 'html']))
             cssfilename = '.'.join([truncated, 'css'])
             call(['xsltproc', '--path', tooldir, '--stringparam', 'stylesheet', cssfilename, '-o', newfile, 'id-lines-overlay.xsl', join(root, f)])  
