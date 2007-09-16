@@ -167,7 +167,6 @@ src/fromplsa/analysis-rules.mk
 src/fromplsa/Makefile
 src/fromplsa/tocsurf/Makefile
 src/fromplsa/toxml/Makefile
-src/line-ids/analysis-rules.mk
 src/matlab/Makefile
 src/never-reached/Makefile
 src/symmetric/Makefile
