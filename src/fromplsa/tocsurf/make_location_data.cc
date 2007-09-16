@@ -35,7 +35,7 @@ static void process_cmdline(int argc, char **argv)
 
 void print_locations(FILE* out, site_t site) 
 {
-    fprintf(out, "%s %s %u\n", site.file, site.fun, site.line);  
+    fprintf(out, "%s,%s,%u\n", site.file, site.fun, site.line);  
 }
 
 int main(int argc, char** argv)

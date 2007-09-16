@@ -26,7 +26,7 @@ aspectsprobs: $(addsuffix _probs.txt, $(basename $(wildcard aspect*.base)))
 .PHONY: aspectsprobs
 
 aspect_%_table.txt: aspect_%_probs.txt pred_sites.txt
-	$(time) paste -d " " pred_sites.txt $< > $@
+	$(time) paste -d "," pred_sites.txt $< > $@
 
 aspectstables: $(addsuffix _table.txt, $(basename $(wildcard aspect*.base)))
 .PHONY: aspectstables
@@ -88,4 +88,4 @@ aspectspredictiveruns: $(addsuffix _predictive_runs.html, $(basename $(wildcard 
 
 .PHONY : clean
 clean:
-	-rm *.html *.png *.xml *.mat *.base
+	-rm *.html *.png *.xml *.mat *.base *.txt
