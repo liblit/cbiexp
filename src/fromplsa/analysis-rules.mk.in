@@ -17,7 +17,7 @@ csurf: bases
 	$(MAKE) aspectstables
 
 pred_sites.txt: $(analysisdir)/pred_sites.txt
-	cp $< $@
+	$(tooldir)/tocsurf/stripCommonDirs.py --force $< $@
 
 aspect_%_probs.txt: aspect_%.base results.mat 
 	$(time) $(MATLAB) -r "path('$(tooldir)/tocsurf', path); makeProbabilityFile('results.mat', `cat $<`, '$@'); quit" 
