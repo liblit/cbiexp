@@ -52,7 +52,7 @@ def main():
         if not(tails[0] == ''): 
             print >>sys.stderr, 'This prefix is uncommon!'
             sys.exit(1) 
-        e['filename'] = tails[1] 
+        e['filename'] = (tails[1].split('/'))[1] 
 
     # print results
     outstream = open(outfile, 'w')
