@@ -2,6 +2,7 @@
 
 analysisdir ?= ../../analysis
 tooldir := $(root)/src/fromplsa
+idtooldir := $(root)/src/line-ids
 
 # where the original data, processed by plsa analysis can be found 
 datadir ?= ..
@@ -13,8 +14,8 @@ MATLAB = matlab -nodisplay
 XSLTPROC = xsltproc --path $(tooldir)/toxml --path . --path $(analysisdir)
 time := /usr/bin/time
 
-csurf: bases
-	$(MAKE) aspectstables
+csurf: bases 
+	$(MAKE) aspectsrc
 
 pred_sites.txt: $(analysisdir)/pred_sites.txt
 	$(tooldir)/tocsurf/stripCommonDirs.py --force $< $@
@@ -31,6 +32,16 @@ aspect_%_table.txt: aspect_%_probs.txt pred_sites.txt
 aspectstables: $(addsuffix _table.txt, $(basename $(wildcard aspect*.base)))
 .PHONY: aspectstables
 
+aspect_%_src: aspect_%_table.txt
+	mkdir $@
+	$(time) $(idtooldir)/makeIdfiles.py --force $(idtooldir) $(analysisdir)/src/ $@
+	$(time) $(tooldir)/tocsurf/separateScoreFiles.py --force $< $@
+	$(time) $(tooldir)/tocsurf/transformLinesScores.py --force $@
+	$(time) $(tooldir)/tocsurf/makeCSSFiles.py --force $@
+
+aspectsrc: $(addsuffix _src, $(basename $(wildcard aspect*.base)))
+.PHONY: aspectsrc
+
 xml: summary.html aspects.xml bases
 	$(MAKE) aspectspredictiveruns aspectspredictivefeatures aspectsprobablefeatures
 
@@ -42,7 +53,7 @@ results.mat: $(resultsdir)/results.mat
 
 bases: results.mat
 	$(time) $(MATLAB) -r "path('$(tooldir)', path); makeBaseFiles('$<'); quit" 
-.PHONY: bases
+	touch bases
 
 summary.xml:
 	$(time) $(MATLAB) -r "path('$(tooldir)/toxml', path); summarize('$@', '$(analysisdir)/src'); quit()"
@@ -88,4 +99,5 @@ aspectspredictiveruns: $(addsuffix _predictive_runs.html, $(basename $(wildcard 
 
 .PHONY : clean
 clean:
-	-rm *.html *.png *.xml *.mat *.base *.txt
+	-rm *.html *.png *.xml *.mat *.base *.txt bases
+	-rm -Rf *_src
