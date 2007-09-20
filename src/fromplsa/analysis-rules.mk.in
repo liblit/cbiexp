@@ -14,7 +14,8 @@ MATLAB = matlab -nodisplay
 XSLTPROC = xsltproc --path $(tooldir)/toxml --path . --path $(analysisdir)
 time := /usr/bin/time
 
-csurf: bases 
+Pz_w_colorings: results.mat 
+	$(time) $(MATLAB) -r "path('$(tooldir)', path); makeBaseFiles('$<', 'all'); quit" 
 	$(MAKE) aspectsrc
 
 pred_sites.txt: $(analysisdir)/pred_sites.txt
@@ -42,7 +43,8 @@ aspect_%_src: aspect_%_table.txt
 aspectsrc: $(addsuffix _src, $(basename $(wildcard aspect*.base)))
 .PHONY: aspectsrc
 
-xml: summary.html aspects.xml bases
+xml: results.mat summary.html aspects.xml
+	$(time) $(MATLAB) -r "path('$(tooldir)', path); makeBaseFiles('$<', 'all'); quit" 
 	$(MAKE) aspectspredictiveruns aspectspredictivefeatures aspectsprobablefeatures
 
 runsinfo.mat: $(datadir)/runsinfo.mat
@@ -50,10 +52,6 @@ runsinfo.mat: $(datadir)/runsinfo.mat
 
 results.mat: $(resultsdir)/results.mat
 	$(time) $(MATLAB) -r "path('$(tooldir)', path); postProcess('$<', '$@'); quit ()"
-
-bases: results.mat
-	$(time) $(MATLAB) -r "path('$(tooldir)', path); makeBaseFiles('$<'); quit" 
-	touch bases
 
 summary.xml:
 	$(time) $(MATLAB) -r "path('$(tooldir)/toxml', path); summarize('$@', '$(analysisdir)/src'); quit()"
@@ -99,5 +97,5 @@ aspectspredictiveruns: $(addsuffix _predictive_runs.html, $(basename $(wildcard 
 
 .PHONY : clean
 clean:
-	-rm *.html *.png *.xml *.mat *.base *.txt bases
+	-rm *.html *.png *.xml *.mat *.base *.txt
 	-rm -Rf *_src
