@@ -18,10 +18,10 @@ csurf: bases
 	$(MAKE) aspectsrc
 
 pred_sites.txt: $(analysisdir)/pred_sites.txt
-	$(tooldir)/tocsurf/stripCommonDirs.py --force $< $@
+	$(tooldir)/line-colorings/stripCommonDirs.py --force $< $@
 
 aspect_%_probs.txt: aspect_%.base results.mat 
-	$(time) $(MATLAB) -r "path('$(tooldir)/tocsurf', path); makeProbabilityFile('results.mat', `cat $<`, '$@'); quit" 
+	$(time) $(MATLAB) -r "path('$(tooldir)/line-colorings', path); makeProbabilityFile('results.mat', `cat $<`, '$@'); quit" 
 
 aspectsprobs: $(addsuffix _probs.txt, $(basename $(wildcard aspect*.base)))
 .PHONY: aspectsprobs
@@ -35,9 +35,9 @@ aspectstables: $(addsuffix _table.txt, $(basename $(wildcard aspect*.base)))
 aspect_%_src: aspect_%_table.txt
 	mkdir $@
 	$(time) $(idtooldir)/makeIdfiles.py --force $(idtooldir) $(analysisdir)/src/ $@
-	$(time) $(tooldir)/tocsurf/separateScoreFiles.py --force $< $@
-	$(time) $(tooldir)/tocsurf/transformLinesScores.py --force $@
-	$(time) $(tooldir)/tocsurf/makeCSSFiles.py --force $@
+	$(time) $(tooldir)/line-colorings/separateScoreFiles.py --force $< $@
+	$(time) $(tooldir)/line-colorings/transformLinesScores.py --force $@
+	$(time) $(tooldir)/line-colorings/makeCSSFiles.py --force $@
 
 aspectsrc: $(addsuffix _src, $(basename $(wildcard aspect*.base)))
 .PHONY: aspectsrc

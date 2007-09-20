@@ -1,4 +1,4 @@
-SUBDIRS = tocsurf
+SUBDIRS = line-colorings
 
 DIST_SUBDIRS = toxml
 

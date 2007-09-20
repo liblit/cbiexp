@@ -464,7 +464,7 @@ runsinfo.dat: runsinfo.mat
 CLEANFILES += runsinfo.dat
 
 pred_sites.txt: preds.txt
-	$(tooldir)/fromplsa/tocsurf/make-location-data
+	$(tooldir)/fromplsa/line-colorings/make-location-data
 CLEANFILE += pred_sites.txt
 
 ########################################################################
