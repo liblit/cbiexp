@@ -48,12 +48,14 @@ aspect_%_table.txt: aspect_%_probs.txt pred_sites.txt
 aspect_%_table.txt: aspect_%_counts.txt pred_sites.txt
 	$(time) paste -d "," pred_sites.txt $< > $@
 
-aspect_%_src: aspect_%_table.txt
+aspect_%_src: aspect_%_table.txt summary.xml
 	mkdir $@
 	$(time) $(idtooldir)/makeIdfiles.py --force $(idtooldir) $(analysisdir)/src/ $@
 	$(time) $(tooldir)/line-colorings/separateScoreFiles.py --force $< $@
-	$(time) $(tooldir)/line-colorings/transformLinesScores.py --force $@
+	$(time) $(tooldir)/line-colorings/transformLinesScores.py --force --transformation=$(transformation) $@
 	$(time) $(tooldir)/line-colorings/makeCSSFiles.py --force $@
+	$(time) $(tooldir)/line-colorings/makeExplanation.py --force $@
+	$(time) $(tooldir)/line-colorings/makeExplanationFile.py --force $@ $(analysisdir) $(tooldir)/line-colorings `pwd`
 
 aspectsrc: $(addsuffix _src, $(basename $(wildcard aspect*.base)))
 .PHONY: aspectsrc
