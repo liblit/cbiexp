@@ -52,7 +52,6 @@ def main():
             functionargs.append(parentdir)
             functionargs.append('render-explanations.xsl')
             functionargs.append(infile)
-            print >>sys.stderr, functionargs
             spawnvp(P_WAIT, 'xsltproc', functionargs)
 
 if __name__ == '__main__':
