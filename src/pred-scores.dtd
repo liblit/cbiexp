@@ -1,7 +1,21 @@
+<!ENTITY % conjunction.content "EMPTY">
+<!ENTITY % conjunction.coordinates "index NMTOKEN #REQUIRED">
+<!ENTITY % conjunction.extra-attrs "score CDATA #REQUIRED">
+
 <!ENTITY % scores.dtd SYSTEM "scores.dtd">
 %scores.dtd;
 
 <!ATTLIST predictor
+  stat1 CDATA #REQUIRED
+  stat2 CDATA #REQUIRED
+>
+
+<!ELEMENT conjunction %conjunction.content;>
+<!ATTLIST conjunction
+  %conjunction.coordinates;
+  %conjunction.extra-attrs;
+>
+<!ATTLIST conjunction
   stat1 CDATA #REQUIRED
   stat2 CDATA #REQUIRED
 >

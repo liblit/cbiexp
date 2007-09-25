@@ -13,6 +13,7 @@ AM_INIT_AUTOMAKE
 #  compilation basics
 #
 
+AC_PROG_LIBTOOL
 AC_PROG_CXX
 AC_PROG_RANLIB
 AM_PROG_LEX
@@ -173,6 +174,7 @@ Makefile
 correlations/Makefile
 src/Makefile
 src/corrective-ranking/Makefile
+src/csurf/Makefile
 src/evaluateplsa/analysis-rules.mk
 src/evaluateplsa/Makefile
 src/fromplsa/analysis-rules.mk

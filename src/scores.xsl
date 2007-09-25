@@ -85,7 +85,31 @@
     <th>Function</th>
     <th>File:Line</th>
   </xsl:template>
-
+  
+  <!-- one conjunction row -->
+  <xsl:template match="conjunction">	
+   
+      <xsl:variable name="index" select="number(@index)"/>
+      <xsl:variable name="num" 
+	      select="count(document('complex-info.xml', /)/conjunction-info/info[@index= $index]/pred)"/>
+    <tr>
+      <xsl:apply-templates select="." mode="dynamic-cells"/>
+      <xsl:for-each
+	      select="document('complex-info.xml', /)/conjunction-info/info[@index= $index]/pred[1]">
+	      <xsl:variable name="i" select="number(@index)"/>
+	      <xsl:variable name="info" select="document('predictor-info.xml', /)/predictor-info/info[$i]"/>
+	      <xsl:apply-templates select="$info" mode="static-cells"/>
+      </xsl:for-each>
+    </tr>
+      
+	      <xsl:for-each
+		      select="document('complex-info.xml', /)/conjunction-info/info[@index= $index]/pred[position() > 1]">
+	      <xsl:variable name="i" select="number(@index)"/>
+	      <xsl:variable name="info" select="document('predictor-info.xml', /)/predictor-info/info[$i]"/>
+	      <tr> <xsl:apply-templates select="$info" mode="static-cells"/> </tr>
+      </xsl:for-each>
+    	      
+  </xsl:template>
 
   <!-- one predictor row -->
   <xsl:template match="predictor">
@@ -159,3 +183,5 @@
 
 
 </xsl:stylesheet>
+
+

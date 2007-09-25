@@ -1,0 +1,169 @@
+% -*- TeX-master: "master" -*-
+
+\section{Experiments}
+\label{sec-experiments}
+
+This section presents quantitative data about the ideas presented in previous sections.  This data was collected using the Siemens test suite \cite{257766} as maintained by the Galileo Software-artifact Infrastructure Repository (SIR) \cite{Do05,SAI}.  There are two configurable parameters for the experiments: the sampling rate and the $\effort$ cutoff (described in \autoref{sec-metrics}).  Unless specified, the default sampling rate is 1 (i.e., complete data collection) and the default $\effort$ is 5\% (only predicates that are reachable from each other by exploring less than 5\% of the program are considered).  Each Siemens application is available in multiple variants with different bugs: as few as 7 variants of \prog{print\_tokens} and as many as 41 variants of \prog{tcas}.  We report aggregate results by averaging the relevant measures across all variants of each Siemens application.  We use CodeSurfer to build program dependence graphs and to compute effort and correlation metrics as described in \autoref{sec-metrics}.
+
+\subsection{Top-Scoring Predicates}
+
+\begin{table}[tb]
+  \centering
+  \newlength{\percentwidth}
+  \settowidth{\percentwidth}{\%}
+  \newcommand{\countcell}[1]{#1\hspace{\percentwidth}}
+  \begin{tabular}{lrrrr}
+    \toprule
+    & & \multicolumn{3}{c}{Type of Top Predictor} \\
+    \cmidrule{3-5}
+    Application & Variants & Simple & Conj. & Disj. \\
+    \midrule
+    \input{charts/top-pred}
+    \bottomrule
+  \end{tabular}
+  \caption{Number of buggy application variants in experiments, and
+    number (percentage) having a complex predicate as the top-scoring
+    predictor.  Results are shown for complete data collection (sampling
+    rate 1).}
+  \label{tab-top-pred}
+\end{table}
+
+\autoref{tab-top-pred} shows the number of buggy variants of each Siemens application used in our experiments.  For each of these 130 buggy programs, we perform a statistical debugging analysis using the iterative redundancy elimination algorithm discussed earlier, at a sampling rate of 1.  We then determine whether the top-scoring bug predictor is a simple predicate, a complex conjunction, or a complex disjunction.  \autoref{tab-top-pred} reports how often each of these three kinds of predictors appears with the highest score.
+
+As can be seen, conjunctions dominate, with 86\% of programs tested selecting a conjunction as the top bug predictor.  This confirms that complex predicates can diagnose failures more accurately than simple predicates alone.  Because each Siemens program variant has only a single bug, it is to be expected that disjunctions are not needed as frequently.  Thus, disjunctions play a smaller but significant role, especially in the case of \prog{schedule}.  Even in single-bug programs, disjunctions can be helpful if no one simple predicate perfectly aligns with the condition that causes failure.
+
+\autoref{sec-sampling} explains that the chance of observing a complex predicate shrinks quadratically with the sampling rate.  However, conjunctions remain important even with sparse sampling.  With \nicefrac{1}{100} sampling, 84\% of the Siemens applications excluding \prog{tcas} still show a conjunction as the top-scoring predictor.  \prog{tcas} has no looping or recursion and every function is called at most twice.  Thus, no simple predicate can be observed more than twice in a single \prog{tcas} run, and two-predicate conjunctions are infrequently observed when sampling is sparse.  Only 25\% of the \prog{tcas} experiments have a complex predicate as the top predictor.
+
+\subsection{Effectiveness of Pruning}
+\label{sec-effectprune}
+
+\begin{figure*}[tb]
+  \centering
+  \subfloat[Conjunctions]{\includegraphics{charts/pruning-conj}}
+  \hfill
+  \subfloat[Disjunctions]{\includegraphics{charts/pruning-disj}}
+  \caption{Avoiding computing exact scores by pruning complex predicates.  ``Overall'' summarizes the entire Siemens suite.}
+  \label{fig-pruning}
+\end{figure*}
+
+Even when restricted to binary conjunction and disjunction, complex predicates could substantially increase the analysis workload if na\"ively implemented.  \autoref{sec-metrics} suggests heuristics for pruning complex predicates that are unlikely to be useful or understandable to a programmer, while \autoref{sec-pruning} describes how to compute an upper bound on a predicate's score.  \autoref{fig-pruning} shows that these measures are highly effective in practice.  On average, 53\% of candidate complex predicates are discarded because the $\effort$ as defined in \autoref{def-effort} would require traversing more than 5\% of the application code. Computing the exact scores of the remaining 47\% of the complex predicates takes, on average, 9 minutes.  Pruning complex predicates whose upper bound of the $\Importance$ scores, computed per \autoref{sec-pruning}, are lower than the scores of their constituent simple predicates eliminates a further 25\% of the complex predicates.  This pruning reduces the average time required per analysis to 6 minutes.  Only 22\% of complex predicates remain to have their exact scores computed, of which roughly a fourth (6\% of the initial pool) are retained as potentially interesting bug predictors.  Thus we find that the techniques proposed earlier significantly reduce the computational load required to identify a useful, high-scoring subset of complex predicates.  Pruning based on upper bound estimation can be applied more aggressively by applying stricter thresholds.  For example, during redundancy elimination, we are only interested in a complex predicate with score larger than the best simple predicate.  Using this threshold eliminates, on average, 40\% of the complex predicates, as opposed to the 25\% pruned by the moderate threshold described earlier.  This analysis takes just a minute, on average, to complete.  Since these experiments have been conducted on nodes of a heterogeneous Condor cluster \cite{condor-hunter}, the absolute timing measurements mentioned above are not precise.  But the relative improvement is still valid because, for each application, the time taken for the different configurations (no pruning to aggressive pruning) are measured on the same Condor node.
+
+\subsection{Effect of Effort}
+
+\begin{figure*}[tb]
+  \centering
+  \subfloat[Conjunctions]{\includegraphics{charts/effort-conj}}
+  \hfill
+  \subfloat[Disjunctions]{\includegraphics{charts/effort-disj}}
+  \caption{Variation of number of interesting predicates with $\effort$}
+  \label{fig-effort}
+\end{figure*}
+
+\autoref{fig-effort} shows how the number of interesting conjunction and disjunction predicates (\autoref{dfn3}) varies at four different $\effort$ levels.  As expected, as $\effort$ increases more predicates are evaluated and so more interesting predicates are found.
+
+\subsection{Effect of Sampling Rate}
+\label{sec-sampling}
+
+Real deployments of CBI use sparse random sampling of simple
+predicates to reduce performance overhead and protect user privacy.
+Prior work \cite{Liblit:2003:BIRPS} has recommended sampling rates of
+\nicefrac{1}{100} to \nicefrac{1}{1,000} to balance data quality
+against performance and privacy concerns.  However, a pair of
+independent features each observed in \nicefrac{1}{100} runs have only
+a \nicefrac{1}{10,000} chance of being observed together, raising
+doubts whether interesting complex predicates will be found in
+sparsely sampled data.  (Note, however, that certain complex predicate
+values can be ``observed'' even if one simple component is not, per
+the rules in \autoref{tab:truth-tables}.)
+
+\begin{table*}[tb]
+  \centering
+  \begin{tabular}{lrrrrrrrrr}
+    \toprule
+    & \multicolumn{3}{c}{Simple}
+    & \multicolumn{3}{c}{Conjunctions}
+    & \multicolumn{3}{c}{Disjunctions}
+    \\
+    \cmidrule(r){2-4} \cmidrule(lr){5-7} \cmidrule(l){8-10}
+    Application
+    & \nicefrac{1}{1} & \nicefrac{1}{100} & \nicefrac{1}{1,000}
+    & \nicefrac{1}{1} & \nicefrac{1}{100} & \nicefrac{1}{1,000}
+    & \nicefrac{1}{1} & \nicefrac{1}{100} & \nicefrac{1}{1,000}
+    \\
+    \midrule
+    \input{charts/sampling}
+    \bottomrule
+  \end{tabular}
+  \caption{Sampling rate vs.\ number of interesting predicates,
+    averaged across all variants of each Siemens application. ``-'' marks
+    an average count of exactly zero, i.e., no interesting predicates in
+    any variant.}
+  \label{tab-sampling}
+\end{table*}
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics{charts/sampling-print_tokens2}
+  \caption{Sampling rate vs.\ number of interesting predicates,
+    averaged across all variants of \prog{print\_tokens2}.  Other
+    Siemens applications are similar.}
+  \label{fig-sampling}
+\end{figure}
+
+\autoref{tab-sampling} shows the average number of interesting simple
+and complex predicates found is each Siemens application for both
+complete data collection (\nicefrac{1}{1}) and two realistic sampling
+rates.  \autoref{fig-sampling} shows the same information at
+additional, denser rates for \prog{print\_tokens2}.  Other Siemens
+applications behave similarly and are omitted for brevity.
+
+The number of interesting disjunctions is always very low (order of
+tens) compared to interesting conjunctions.  At sampling rates lower
+than \nicefrac{1}{10}, there is a sharp drop in the number of
+interesting conjunctions.  This is likely due to the shrinking odds of
+observing both components of a conjunction within a single run.
+Despite the sharp drop, the number of interesting conjunctions is
+still comparable to the number of interesting simple predicates even
+at \nicefrac{1}{1,000} sampling.  This shows that interesting complex
+predicates can still be found at sparse but realistic sampling rates.
+
+A puzzling trend in \autoref{fig-sampling} is that all three curves
+rise for a brief interval before dropping off.  Other Siemens
+applications exhibit a similar bump.  The bumps in the conjunction and
+disjunction curves could be attributed to the bump in the simple
+predicates curve.  Any increase in the number of interesting simple
+predicates is likely to produce a greater increase in the number of
+interesting complex predicates, especially because the additional
+simple predicates are likely to be redundant (as explained later).
+
+The transient increase in the number simple predicates at moderate
+sampling rates was previously undiscovered and initially seems
+counterintuitive.  Closer inspection of experimental results reveals
+two scenarios where this can happen.
+
+The first scenario happens due to an ad hoc but perfectly reasonable
+elimination of seemingly identical predicates.  As an example, consider the
+predicates $p$: \texttt{a == b} and $q$: \texttt{a >= b}.  If they have the
+same score, it is useful to just retain $p$ as it is a more stringent
+condition than $q$.  However, this does not mean
+that \texttt{a > b} was never true.  \texttt{a > b} may be observed  during 
+some runs but does not affect the outcome of \texttt{a >= b} if \texttt{a == b}
+also happens to be true in those runs.  However, at sampling rates lower than
+1, only \texttt{a > b} may be observed in some runs and hence the number of
+runs in which $p$ and $q$ are observed true, and consequently their
+scores may be different.  Thus, the ad hoc elimination heuristic performs 
+less effectively at lower sampling rates, leading to an increase in the 
+number of interesting simple predicates
+
+To understand the second scenario, consider a predicate $p$ for which
+$\obs{S}{p} = S(p)$ and $\obs{F}{p} = F(p)$.
+In other words, $p$ is true at least once in every run in which it is
+observed.  From \autoref{eqn1}, $\Increase(p) = 0$.  In a run 
+in which $p$ was observed, it may also be false at least once.  As we
+reduce the sampling rates, only the false occurrences may be recorded
+in some runs and hence the two equalities may no longer hold.  As a result
+$\Increase(p)$ may be nonzero and if it becomes positive, then a predicate that
+was not interesting at higher sampling rates becomes interesting at lower 
+sampling rates.
+
+% LocalWords:  lrrrr pred dfn lrrrrrrrrr lr eqn

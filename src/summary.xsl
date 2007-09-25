@@ -38,11 +38,13 @@
 
 	<xsl:apply-templates/>
 
+	<p><a href="complex_hl_none.xml">Complex Predicates</a></p>
 	<!-- dilution algorithms -->
 	<p>Dilution algorithms, all schemes, harmonic mean (log):</p>
 	<ul>
 	  <li><a href="all_hl_corrected-exact-complete.xml">exact</a></li>
 	  <li><a href="all_hl_corrected-approximate-complete.xml">approximate</a></li>
+      <li><a href="all_hl_corrected-exact-complete_complex.xml">exact with complex predicates</a></li>
 	</ul>
       </body>
     </html>

@@ -5,3 +5,15 @@
 
 <!ENTITY % bug-o-meter SYSTEM "bug-o-meter.dtd">
 %bug-o-meter;
+
+<!ELEMENT conjunction ((bug-o-meter|pred)*)>
+
+<!ATTLIST conjunction
+  initial CDATA #REQUIRED
+  effective CDATA #REQUIRED
+>	
+
+<!ELEMENT pred EMPTY>
+<!ATTLIST pred
+  index CDATA #REQUIRED
+>

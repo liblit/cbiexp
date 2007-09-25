@@ -4,6 +4,7 @@
 #include <iosfwd>
 
 #include "RunSuite.h"
+#include "allFailures.h"
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -12,11 +13,16 @@
 //
 
 
-struct Predicate
+// Made into a class (rather than a struct) so that Conjunction
+// can subclass off of it.
+// --rosin
+class Predicate
 {
+public:
   Predicate(unsigned);
   const unsigned index;
   double initial, effective;
+  int delta;
 
   RunSuite tru;
   RunSuite obs;
@@ -30,12 +36,30 @@ struct Predicate
   double recall() const;
   double harmonic() const;
   double score() const;
-
+  
+  bool isPerfect() const;
   void dilute(const Predicate &winner);
+
+
+  virtual std::vector<unsigned> getPredicateList() const {
+    //Returns a vector containing all the indices for the
+    //predicates being conjoined to form this one.  For a
+    //primitive predicate (not a conjunction) this vector has
+    //one element.  If printing to an XML file, add one to each
+    //element.
+
+    std::vector<unsigned> vect;
+    vect.push_back(index);
+    return vect;
+  }
+  
+  //Destructor is needed because virtual methods are used.
+  virtual ~Predicate() { }
+  virtual int getDelta() { return 0; }
 };
 
 
-bool operator<(const Predicate &, const Predicate &);
+bool operator<(Predicate &,Predicate &);
 
 std::ostream &operator<<(std::ostream &, const Predicate &);
 
@@ -68,11 +92,29 @@ Predicate::score() const
   return result;
 }
 
+inline bool
+Predicate::isPerfect() const
+{
+  return tru.successes.count == 0 && tru.failures.count == allFailures.count;
+}
 
 inline bool
-operator<(const Predicate &a, const Predicate &b)
+operator<(Predicate &a, Predicate &b)
 {
-  return a.effective < b.effective;
+  if (a.effective == b.effective){
+    if(a.getPredicateList().size() == 1 && b.getPredicateList().size() == 1)
+      return a.effective < b.effective;
+    else if(a.getPredicateList().size() == 1){
+      return 1;
+    } else if(b.getPredicateList().size() == 1){
+      return 0;
+    } else {
+      return a.getDelta() > b.getDelta();
+    }
+     
+  } else
+    return a.effective < b.effective;
+  
 }
 
 

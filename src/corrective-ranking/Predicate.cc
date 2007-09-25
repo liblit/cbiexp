@@ -70,14 +70,12 @@ Predicate::harmonic() const
   return 2 / (1 / lowerBound() + 1 / recall());
 }
 
-
 void
 Predicate::dilute(const Predicate &winner)
 {
   tru.dilute(winner, winner.tru);
   obs.dilute(winner, winner.tru);
 }
-
 
 std::ostream &
 operator<<(std::ostream &out, const Predicate &predicate)
@@ -101,3 +99,4 @@ operator<<(std::ostream &out, const Predicate &predicate)
 
 	<< "</predictor>";
 }
+

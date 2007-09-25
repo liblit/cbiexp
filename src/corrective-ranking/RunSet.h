@@ -19,6 +19,10 @@ class RunSet : public std::vector<bool>
 public:
   Outcome outcome;
   RunSet(Outcome);
+  RunSet( Outcome, int size );
+    //Creates a RunSet of the specified size.
+  void set(unsigned, bool);
+    //Change the value of a run.  Change count accordingly
 
   double count;
   void load(std::istream &);
