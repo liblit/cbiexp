@@ -29,7 +29,7 @@ extern "C" {
  * void cs_plug_main(void) is defined and acts as the entry point to the
  * plugin.
  */
-void libpred_distance();
+void libeffort();
 extern "C" {
 
 void cs_plug_main(void);
@@ -37,7 +37,7 @@ void cs_plug_main(void);
 #ifdef _MSC_VER
 __declspec(dllexport)
 #endif
-CS_DEFINE_PLUGIN(libpred_distance);
+CS_DEFINE_PLUGIN(libeffort);
 }
 
 /* The main function of the plugin. */
@@ -48,7 +48,7 @@ extern "C" void cs_plug_main(void)
     exit(1);
   }
   
-  libpred_distance();
+  libeffort();
 
   if( cs_cleanup() != 0 ) {
     printf("ERROR: %s\n", cs_resolve_error(cs_get_last_error()));
@@ -230,7 +230,7 @@ void add_close_pair(int p1, int p2) {
   close_predicates[small].insert(big);
 }
 
-void libpred_distance()
+void libeffort()
 {
   read_effort();
   

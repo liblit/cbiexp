@@ -5,10 +5,10 @@ H_INCLUDE = $(CSURF_ROOT)/api/include
 CODESURFER_LIB = $(CSURF_ROOT)/lib/codesurfer.lib
 
 pkglib_LTLIBRARIES =				\
-	libpred_distance.la
+	libeffort.la
 
 noinst_SCRIPTS =				\
-	pred_distance_load.stk
+	effort.stk
 
 # Set the csurf executable.
 # If the path to GrammaTech/CodeSurfer/bin (or wherever you installed CodeSurfer)
@@ -20,16 +20,16 @@ CSURF_COMPILER = $(CC)
 # Set the plugin directory
 DIR := `pwd`
 
-pred_distance_load.stk:
-	@rm -f $(DIR)/pred_distance_load.stk
-	@echo "(load \"$(DIR)/.libs/libpred_distance.so\")" >> \
-		pred_distance_load.stk
-	@echo "(quit)" >> pred_distance_load.stk
+effort.stk:
+	@rm -f $(DIR)/effort.stk
+	@echo "(load \"$(DIR)/.libs/libeffort.so\")" >> \
+		effort.stk
+	@echo "(quit)" >> effort.stk
 
-libpred_distance_la_SOURCES =				\
-	pred_distance.cc
+libeffort_la_SOURCES =				\
+	effort.cc
 
-libpred_distance_la_LIBADD =				\
+libeffort_la_LIBADD =				\
 	../libanalyze.a
         
-libpred_distance_la_CPPFLAGS = -W -Wall -Wformat -Werror -I$(H_INCLUDE) -I../..
+libeffort_la_CPPFLAGS = -W -Wall -Wformat -Werror -I$(H_INCLUDE) -I../..
