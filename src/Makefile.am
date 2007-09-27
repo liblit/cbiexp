@@ -1,4 +1,4 @@
-SUBDIRS = corrective-ranking evaluateplsa fromplsa matlab never-reached Score symmetric csurf
+SUBDIRS = corrective-ranking evaluateplsa fromplsa matlab never-reached Score symmetric effort
 if ENABLE_AMPLIFY
 SUBDIRS += amplify
 endif

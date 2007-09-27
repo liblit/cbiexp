@@ -501,7 +501,7 @@ force:
 pairs.txt: preds.txt
 ifdef CSURF
 	(cd .. && ln -sf analysis/static-site-info.so analysis/preds.txt .)
-	csurf -nogui ../$(program).exe.prj -l $(tooldir)/csurf/effort.stk
+	csurf -nogui ../$(program).exe.prj -l $(tooldir)/effort/effort.stk
 else
 	touch pairs.txt
 endif
