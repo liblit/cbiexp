@@ -32,5 +32,4 @@ libpred_distance_la_SOURCES =				\
 libpred_distance_la_LIBADD =				\
 	../libanalyze.a
         
-# TODO Add -Werror and fix the resulting compiler error
-libpred_distance_la_CPPFLAGS = -W -Wall -Wformat -I$(H_INCLUDE) -I../..
+libpred_distance_la_CPPFLAGS = -W -Wall -Wformat -Werror -I$(H_INCLUDE) -I../..

@@ -121,7 +121,7 @@ void read_effort() {
   size = total_size();
   tmp = size * percent / 100;
   effort = lround(tmp);
-  printf("%d %d\n", size, effort);
+  printf("%d %d\n", (int) size, (int) effort);
 }
 
 void put_edges_into_vertex_set(
