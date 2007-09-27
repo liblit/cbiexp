@@ -27,7 +27,7 @@ pred_distance_load.stk:
 	@echo "(quit)" >> pred_distance_load.stk
 
 libpred_distance_la_SOURCES =				\
-	libpred_distance.cc
+	pred_distance.cc
 
 libpred_distance_la_LIBADD =				\
 	../libanalyze.a
