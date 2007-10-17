@@ -17,6 +17,7 @@
 
 <xsl:variable name="kind" select="document('aspects.xml',/)/aspectinfos/aspect[position() = $index]/@kind"/>
 <xsl:variable name="myruns" select="document('predictive_runs.xml',/)/predictiveruns/aspect[position() = $index]/run"/> 
+<xsl:variable name="theruns" select="document('runs.xml',/)/runinfos/run"/>
 
   <xsl:template match="/">
     <xsl:variable name="title">
@@ -51,6 +52,9 @@
 
   <xsl:template match="run">
     <xsl:variable name="index" select="@index"/>
+    <xsl:variable name="thisrun" select="$theruns[position() = $index]"/>
+    <xsl:variable name="rundir" select="$thisrun/@runid"/>
+    <xsl:variable name="count" select="$thisrun/@sum"/>
     <tr>
       <th>
         <xsl:value-of select="position()"/>
@@ -61,6 +65,12 @@
       <td style="text-align:right">
         <xsl:value-of select="@score"/>
       </td>
+      <td style="text-align:right">
+        <xsl:value-of select="$rundir"/>
+      </td>
+      <td style="text-align:right">
+        <xsl:value-of select="$count"/>
+      </td>
     </tr>
   </xsl:template>
 
@@ -70,6 +80,8 @@
         <th>Rank</th>
         <th>Index</th>
         <th>Score</th>
+        <th>Run</th> 
+        <th>Count</th>
       </tr>
     </thead>
   </xsl:template>

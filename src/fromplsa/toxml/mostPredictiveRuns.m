@@ -2,14 +2,12 @@ function mostPredictiveRuns(resultsfile, datafile, outputfile)
     load(resultsfile);
     load(datafile);
     numaspects = Results.Learn.numaspects;
-    Indices = find(Data.Indices);
-    offset = Data.offset;
     Pz_d = Results.Pz_d;
     doc = com.mathworks.xml.XMLUtils.createDocument('predictiveruns');
     docRoot = doc.getDocumentElement();
     for i = 1:numaspects;
         aspect = doc.createElement('aspect'); 
-        printruns(doc, aspect, i, Pz_d, Indices, offset); 
+        printruns(doc, aspect, i, Pz_d); 
         docRoot.appendChild(aspect);
     end;
     xmlwrite(outputfile, doc);
@@ -17,7 +15,7 @@ function mostPredictiveRuns(resultsfile, datafile, outputfile)
 function printruns(doc, node, i, X, Indices, offset);
     [S, Is] = sortMinDiffs(X, i);
     pos = find(S > 0); 
-    M = {num2cell(S(1,pos)') num2cell(Indices(Is(1,pos)) + offset)};
+    M = {num2cell(S(1,pos)') num2cell(Is(1,pos)')};
     xmlify(doc, node, M, 'run', {'score' 'index'});
 
     figure;

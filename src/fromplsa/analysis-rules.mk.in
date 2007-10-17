@@ -80,7 +80,7 @@ features.xml: runsinfo.mat
 	$(time) $(MATLAB) -r "path('$(tooldir)/toxml', path); summarizeFeatures('$<', '$@'); quit()"
 
 runs.xml: runsinfo.mat
-	$(time) $(MATLAB) -r "path('$(tooldir)/toxml', path); summarizeRuns('$<', '$@'); quit()"
+	$(time) $(MATLAB) -r "path('$(tooldir)/toxml', path); summarizeRuns('$<', '$(analysisdir)/$<', '$@'); quit()"
 
 predictive_features.xml: results.mat
 	$(time) $(MATLAB) -r "path('$(tooldir)', path); path('$(tooldir)/toxml', path); mostPredictiveFeatures('$<', '$@'); quit()"
