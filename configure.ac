@@ -156,10 +156,10 @@ AM_CONDITIONAL(ENABLE_PLSA, test "$enable_plsa" = yes)
 #
 
 AC_MSG_CHECKING(for plsa coloring support)
-AC_ARG_ENABLE(line-coloring, AC_HELP_STRING([--enable-coloring], [Build experimental coloring tools]), , enable_line-coloring=no)
-AC_MSG_RESULT($enable_line-coloring)
+AC_ARG_ENABLE(line_coloring, AC_HELP_STRING([--enable-coloring], [Build experimental coloring tools]), , enable_line_coloring=no)
+AC_MSG_RESULT($enable_line_coloring)
 
-AM_CONDITIONAL(ENABLE_LINECOLORING, test "$enable_line-coloring" = yes)
+AM_CONDITIONAL(ENABLE_LINECOLORING, test "$enable_line_coloring" = yes)
 
 
 ########################################################################
@@ -193,7 +193,7 @@ if test "$enable_plsa" = yes; then
    ])
 fi
 
-if test "$enable_line-coloring" = yes; then
+if test "$enable_line_coloring" = yes; then
   AC_CONFIG_FILES([
   src/fromplsa/line-colorings/Makefile
   ])
