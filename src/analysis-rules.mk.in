@@ -119,7 +119,7 @@ web :=						\
 
 publish ?= $(HOME)/www/$(name)-new
 
-all: $(web) runsinfo.dat
+all: $(web)
 .PHONY: all
 
 publish: $(web:%=$(publish)/%)
