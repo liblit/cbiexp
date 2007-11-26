@@ -1,0 +1,14 @@
+#!/bin/sh -e
+
+case "`cd $HOME; /bin/pwd`" in
+  /afs/*)
+    echo "*** Running Rhythmbox tests with an AFS home directory will kill the"
+    echo "*** test host.  Use sudo to run tests as user 'aikenexp' instead."
+    exit 1
+    ;;
+esac
+
+gconftool-2 --set --type=string /apps/rhythmbox/state/play_order random-by-age
+gconftool-2 --set --type=bool   /apps/rhythmbox/state/repeat false
+
+gconftool-2 --set --type=string /system/gstreamer/default/audiosink fakesink

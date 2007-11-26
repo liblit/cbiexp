@@ -1,0 +1,24 @@
+\begin{table*}[tb]
+\nocaptionrule
+\caption{Summary statistics for bug isolation experiments}
+\label{tab:exps}
+\centering
+\begin{tabular}{lrrrrrrr}
+  \toprule
+  & &
+  \multicolumn{2}{c}{Runs} & &
+  \multicolumn{3}{c}{Predicate Counts} \\
+  \cmidrule(lr){3-4}
+  \cmidrule(lr){6-8}
+  & Lines of Code & Successful & Failing & Sites & Initial & $\increase > 0$ & Elimination \\
+  \midrule
+  \moss       & 6001   & 26,299 & 5598   & 35,223  & 202,998 & 2740    & 21 \\
+  \ccrypt     & 5276   & 20,684 & 10,316 & 9948    & 58,720  & 50      & 2 \\
+  \bc         & 14,288 & 23,198 & 7802   & 50,171  & 298,482 & 147     & 2 \\ 
+  \exif       & 10,588 & 30,789 & 2211   & 27,380  & 156,476 & 272     & 3 \\ 
+  \rhythmbox  & 56,484 & 12,530 & 19,431 & 14,5176 & 857,384 & 537     & 15 \\
+  \bottomrule
+\end{tabular}
+\end{table*}
+
+%% LocalWords:  lrrrrrrr lr

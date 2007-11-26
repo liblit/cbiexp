@@ -1,0 +1,273 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (X11; I; Linux 2.0.35 i686) [Netscape]">
+   <meta name="keywords" content="VNC, AT&T Laboratories Cambridge, Virtual Network Computing, thin-client">
+
+
+   <title>VNCviewer for X</title>
+<link REL="stylesheet" HREF="styles.css" TYPE="text/css">
+</head>
+<body bgcolor="#FFFFFF" vlink="#000080" marginheight="0" topmargin="0" leftmargin="0" marginwidth="0">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><a href="index.html"><img SRC="sidelogo.gif" ALT="VNC logo" BORDER=0 height=113 width=120></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="20"><img SRC="spacer.gif" HSPACE=8 height=1 width=1></td>
+
+<td>
+<table BORDER=0 WIDTH="100%" >
+<tr>
+<td WIDTH="90%" valign="center">
+<center>
+<h1>
+<IMG SRC="vnctitle.gif"  WIDTH=370 HEIGHT=30 ALT="Virtual Network Computing"></h1></center>
+</td>
+
+<td WIDTH="10%"><a href="http://www.uk.research.att.com/"><img SRC="attlogo.gif" ALT="AT&T" BORDER=0 height=75 width=66 align=RIGHT></a></td>
+</tr>
+</table>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+<tr><td colspan=5 bgcolor="#eecc80"><img src="spacer.gif" height=3 vspace=0 hspace=1></td></tr>
+<tr><td bgcolor="#eecc80"><img src="spacer.gif" height=4 vspace=0 hspace=1></td><td colspan=4></td></tr>
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><a href="index.html"><img SRC="homebutton.gif" ALT="[Home]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="screenshots.html"><img SRC="screenbutton.gif" ALT="[screenshots]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+
+<tr>
+<td><a href="start.html"><img SRC="startbutton.gif" ALT="[getting started]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="docs.html"><img SRC="docbutton.gif" ALT="[documentation]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="faq.html"><img SRC="faqbutton.gif" ALT="FAQs" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="download.html"><img SRC="downloadbutton.gif" ALT="[download]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="intouch.html"><img SRC="intouchbutton.gif" ALT="[keep in touch]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="contribs.html"><img SRC="contribbutton.gif" ALT="Others' ports and add-ons etc" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="help.html"><img SRC="helpbutton.gif" ALT="Project ideas" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="vncpeople.html"><img SRC="vncpeoplebutton.gif" ALT="VNC people" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/search.html"><img SRC="searchbutton.gif" ALT="Search" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/"><img SRC="attbutton.gif" ALT="[AT&T Laboratories Cambridge]" BORDER=0 height=33 width=120></a></td>
+</tr>
+</table></center>
+</td>
+
+<td VALIGN=TOP WIDTH="8%">
+<center><a href="docs.html"><img SRC="backbutton.gif" ALT="back to docs" HSPACE=2 BORDER=0 height=20 width=20></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="100%">
+<h2>
+<b>VNCviewer for X (3.3.2r3 and earlier)</b></h2>
+
+Note: this page documents the Xlib-based viewer in the 3.3.2r3 and earlier
+releases.  For the current release, see the <a
+href="xvncviewer.html">documentation for the new Xt-based viewer.</a>
+<p>
+Run it and give the display as an argument:
+<center>
+<p><tt>vncviewer snoopy:2</tt></center>
+
+<p>where 'snoopy' is the name of the machine, and '2' is the display number
+of the VNC server on that machine. The <tt>-h</tt> argument will show you
+the other options. The important ones are as follows:
+<blockquote>
+<dl>
+<dt>
+<tt>-shared</tt></dt>
+
+<dd>
+When you make a connection to a VNC server, all other existing connections
+are normally closed.&nbsp; This option requests that they be left open,
+allowing you to share the desktop with someone already using it.</dd>
+
+<dt>
+<tt>-display</tt><i> Xdisplay</i></dt>
+
+<dd>
+This allows you to specify the X display on which the VNCviewer window
+should appear.</dd>
+
+<dt>
+<tt>-passwd</tt> <i>password-file</i></dt>
+
+<dd>
+If you are on a filesystem which gives you access to the password file
+used by the server, you can specify it here to avoid typing it in.</dd>
+
+<dt>
+<tt>-viewonly</tt></dt>
+
+<dd>
+Specifies that no keyboard or mouse events should be sent to the server.&nbsp;
+Useful if you want to view a desktop without interfering; often needs to
+be combined with <tt>-shared</tt>.</dd>
+
+<dt>
+<tt>-geometry </tt><i>geometry</i></dt>
+
+<dd>
+Standard X position and sizing specification.</dd>
+
+<dt>
+<tt>-bgr233</tt></dt>
+
+<dd>
+This tells the VNC server to send pixels which are only 8 bits deep.
+If your server desktop is deeper than this then it will translate the
+pixels before sending them. Less data will generally be sent over then
+network, which can be a big advantage on slow links, but the server
+may have to work a bit harder, and you may get some colour mismatches.
+This is the 8-bit true colour pixel format used by the java client,
+with the most significant two bits of each byte representing the blue
+component, the next three bits representing green and the least
+significant three representing red, hence 'bgr233'.
+</dd>
+
+<dt>
+<tt>-raw, -copyrect, -rre, -corre, -hextile, -nocopyrect, -norre, -nocorre,
+-nohextile</tt></dt>
+
+<dd>
+These options affect which encodings vncviewer tells the VNC server it
+can cope with.&nbsp; Normally it requests CopyRect, Hextile, CoRRE and
+RRE in that order.&nbsp; The options alter this behaviour in the obvious
+way, e.g. specifying just -raw means Raw will be requested before any of
+the others, specifying -norre means don't request RRE, etc.</dd>
+
+<dt>
+<tt>-depth</tt><i> d</i></dt>
+
+<dd>
+This is only useful on a (real) X server which supports multiple depths.&nbsp;
+On such a display vncviewer will try to find a Visual of the given depth.&nbsp;
+If successful this means that the appropriate pixel format will be requested
+from the VNC server.&nbsp; You cannot use this to force a particular depth
+from the VNC server.&nbsp; The only option which does this is -bgr233.&nbsp;</dd>
+
+<dt>
+<tt>-truecolour</tt></dt>
+
+<dd>
+vncviewer will try to find an X visual of the TrueColor class.</dd>
+
+<dt>
+<tt>-owncmap</tt></dt>
+
+<dd>
+vncviewer will try to find a PseudoColor visual and use its own Colormap.&nbsp;</dd>
+
+<dt>
+<tt>-period</tt><i> ms</i></dt>
+
+<dd>
+This tells vncviewer not to request incremental framebuffer updates more
+often than the given period in milliseconds.&nbsp; If you have a very fast
+client and server, you can use this option to limit the rate of updates
+- this can result in using less network bandwidth.&nbsp;</dd>
+
+<dt>
+<tt>-wmdecoration </tt><i>w</i><tt>x</tt><i>h</i></dt>
+
+<dd>
+Normally the viewer window will be the same size as the desktop you're
+connecting to, plus any decorations added by your local window manager.
+If your local screen is too small to display this then it will make the
+window as big as it can while still allowing room for decorations, and
+display scrollbars.&nbsp; This option allows you to specify how big your
+window manager's decorations are, so that it can make this decision correctly.&nbsp;&nbsp;
+In particular, some people run without a local window manager, and specifying
+-wmdecoration 0x0 will then allow a completely full-screen window.</dd>
+
+<dt>
+<tt>-rawdelay </tt><i>ms</i></dt>
+
+<dd>
+This is useful for checking exactly which parts of the screen are being
+updated.&nbsp; For each update rectangle vncviewer puts up a black rectangle
+for the given time before putting up the pixel data.&nbsp; This only highlights
+pixel data sent using the raw encoding.</dd>
+
+<dt>
+<tt>-copyrectdelay </tt><i>ms</i></dt>
+
+<dd>
+This works as with -rawdelay above, but highlights the areas copied using
+the copyrect encoding.</dd>
+
+<dt>
+<tt>-debug</tt></dt>
+
+<dd>
+This prints out all the data received from the VNC server in both hex and
+ASCII.&nbsp;</dd>
+
+<dt>
+<tt>-listen</tt></dt>
+
+<dd>
+This is used for AT&amp;T's internal version of VNC.&nbsp; It causes vncviewer
+to listen on port 5500+&lt;display-number> for reverse connections from
+a VNC server.&nbsp; See <a href="http://www.uk.research.att.com/vnc/internalversion.html">http://www.uk.research.att.com/vnc/internalversion.html</a>&nbsp;</dd>
+</dl>
+</blockquote>
+
+<div align=right><a href="docs.html"><img SRC="backbutton.gif" ALT="back to docs" HSPACE=5 BORDER=0 height=20 width=20></a><i>go
+back to <a href="docs.html">documentation</a></i></div>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+
+<tr>
+<td bgcolor="#eecc80">&nbsp;</td><td ALIGN=CENTER VALIGN=TOP COLSPAN="4" WIDTH="100%">
+<!-- Ruler here? -->
+<center>
+<p><i><font size=-1>For comments, feedback, etc, please see the '<a href="intouch.html">Keeping
+in touch</a>' page</font>.</i>
+<br><i><font size=-1>Copyright 1999 - AT&amp;T Laboratories Cambridge
+</font></i></center>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

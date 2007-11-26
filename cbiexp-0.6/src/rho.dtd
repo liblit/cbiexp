@@ -1,0 +1,7 @@
+<!ELEMENT table (tr)+>
+<!ATTLIST table xmlns CDATA #FIXED "http://www.w3.org/1999/xhtml">
+<!ELEMENT tr (td)+>
+<!ELEMENT td (#PCDATA)>
+<!ATTLIST td
+  style CDATA #REQUIRED
+  title CDATA #REQUIRED>

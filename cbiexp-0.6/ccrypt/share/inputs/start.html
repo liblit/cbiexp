@@ -1,0 +1,202 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.51 [en] (X11; I; Linux 2.2.6 i686) [Netscape]">
+   <meta name="keywords" content="VNC, AT&T Laboratories Cambridge, Virtual Network Computing, WinVNC, thin-client, hydra, citrix, ntrigue, ica">
+   <title>Getting Started with VNC</title>
+<link REL="stylesheet" HREF="styles.css" TYPE="text/css">
+</head>
+<body bgcolor="#FFFFFF" vlink="#000080" marginheight="0" topmargin="0" leftmargin="0" marginwidth="0">
+<!--webbot bot="Include" U-Include="_private/header.html" TAG="BODY" startspan -->
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><a href="index.html"><img SRC="sidelogo.gif" ALT="VNC logo" BORDER=0 height=113 width=120></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="20"><img SRC="spacer.gif" HSPACE=8 height=1 width=1></td>
+
+<td>
+<table BORDER=0 WIDTH="100%" >
+<tr>
+<td WIDTH="90%" valign="center">
+<center>
+<h1>
+<IMG SRC="vnctitle.gif"  WIDTH=370 HEIGHT=30 ALT="Virtual Network Computing"></h1></center>
+</td>
+
+<td WIDTH="10%"><a href="http://www.uk.research.att.com/"><img SRC="attlogo.gif" ALT="AT&T" BORDER=0 height=75 width=66 align=RIGHT></a></td>
+</tr>
+</table>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+<tr><td colspan=5 bgcolor="#eecc80"><img src="spacer.gif" height=3 vspace=0 hspace=1></td></tr>
+<tr><td bgcolor="#eecc80"><img src="spacer.gif" height=4 vspace=0 hspace=1></td><td colspan=4></td></tr>
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center>
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" ><tr><td><a href="index.html"><img SRC="homebutton.gif" ALT="[Home]" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="screenshots.html"><img SRC="screenbutton.gif" ALT="[screenshots]" BORDER=0 height=33 width=120></a>
+
+</td></tr><tr><td><a href="start.html"><img SRC="startbutton.gif" ALT="[getting started]" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="docs.html"><img SRC="docbutton.gif" ALT="[documentation]" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="faq.html"><img SRC="faqbutton.gif" ALT="FAQs" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="download.html"><img SRC="downloadbutton.gif" ALT="[download]" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="intouch.html"><img SRC="intouchbutton.gif" ALT="[keep in touch]" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="contribs.html"><img SRC="contribbutton.gif" ALT="Others' ports and add-ons etc" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="help.html"><img SRC="helpbutton.gif" ALT="Project ideas" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="vncpeople.html"><img SRC="vncpeoplebutton.gif" ALT="VNC people" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="http://www.uk.research.att.com/search.html"><img SRC="searchbutton.gif" ALT="Search" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="http://www.uk.research.att.com/"><img SRC="attbutton.gif" ALT="[AT&T Laboratories Cambridge]" BORDER=0 height=33 width=120></a></td></tr></table></center>
+</td>
+
+<td VALIGN=TOP WIDTH="5%"><img SRC="spacer.gif" HSPACE=8 height=1 width=1></td>
+
+<td VALIGN=TOP WIDTH="90%">
+<h2>
+Getting Started with VNC</h2>
+VNC consists of two types of component.&nbsp; A <i>server</i>, which generates
+a display, and a <i>viewer</i>, which actually draws the display on your
+screen.&nbsp;&nbsp; There are two important features of VNC:
+<ul>
+<li>
+The server and the viewer&nbsp; may be on different machines and on different
+architectures.&nbsp; We expect the most common use to be the display of
+a Unix X desktop on a PC, for example.&nbsp; The protocol which connects
+the server and viewer is simple, open, and platform- independent.</li>
+
+<li>
+No state is stored at the viewer. Breaking the viewer's connection to the
+server and then reconnecting will not result in any loss of data.&nbsp;
+Because the connection can be remade from somewhere else, you have easy
+mobility.</li>
+</ul>
+So, to get started with VNC you need to run a server, and then connect
+to it with a viewer.  Get the packages for the platforms you use from the
+<A HREF="download.html">download page</A>, if you haven't already, and install them.
+The current VNC software requires a TCP/IP connection
+between the server and the viewer, though there is no reason why the software
+couldn't be modified to use, for example, RS232 or Firewire.&nbsp; We have
+internal versions that use other network transport layers. But for now
+you'll need to know the name or the IP address of the server machine.
+<p>Most people will be running either a Unix server or a Windows server,
+though similar principles will apply to other platforms.
+<br>
+<hr WIDTH="100%">
+<TABLE WIDTH=100% BORDER=0 CELLSPACING=16 CELLPADDING=8>
+<TR>
+<TD BGCOLOR=#FFE0FF WIDTH="50%">
+<h3>Running a Unix server</h3>
+A VNC server appears, to the Unix applications which appear on it,&nbsp;
+to be a standard X display just like the one you sit in front of; but it
+doesn't have a physical screen attached.&nbsp; The applications don't know
+this.&nbsp; They just carry on running whether or not a viewer is connected,
+in the same way as they would regardless of whether you were actually looking
+at your physical screen.
+<p>You can start a new VNC server by typing:
+<blockquote><tt>vncserver</tt></blockquote>
+on a Unix machine.&nbsp; (If you're sitting at a PC you may need to telnet
+to the Unix machine to get a command shell into which you can type this.)&nbsp;
+The <tt>vncserver</tt> program is a Perl script which you may need to edit
+to set up the directories appropriate for your local installation.
+<p>If you haven't run a VNC server before you will be prompted for a password,
+which you will need to use when connecting to this server. All your servers
+will use the same password, and you can change it at a later date using&nbsp;
+<blockquote><tt>vncpasswd</tt></blockquote>
+With a normal X system, the main X display of a workstation called 'snoopy<i>'</i>
+is usually <b>snoopy:0.</b> You can also run as many VNC servers on a Unix
+machine as you like, and they will appear as <b>snoopy:1</b>, <b>snoopy:2</b>
+etc, as if they were just additional displays.&nbsp; You can cause applications
+to use them by setting the DISPLAY environment variable to the VNC server
+you want, or by starting the application with the <tt>-display</tt> option.
+For example:
+<blockquote><tt>xterm -display snoopy:2 &amp;</tt></blockquote>
+Normally <tt>vncserver</tt> will choose the first available display number
+and tell you what it is, but you can specify a display number if you always
+wish to use the same one:
+<blockquote><tt>vncserver :2</tt></blockquote>
+Nothing will appear immediately as a result of starting a server. To see
+anything you need to connect a viewer to the server. See below.&nbsp; The
+server will generate a log in your <tt>~/.vnc </tt>directory. If you have
+problems at this stage, see the full <a href="docs.html">documentation</a>
+and the <a href="faq.html">FAQ</a> .
+<h4>
+Killing a Unix server</h4>
+You can kill a Unix VNC server using, for example:
+<blockquote><tt>vncserver -kill :2</tt></blockquote>
+</TD>
+<TD VALIGN=TOP BGCOLOR=#E0E0FF WIDTH=50%>
+
+<h3>
+Running a Windows server</h3>
+<img SRC="winvnctray.GIF" HSPACE=4 VSPACE=4 height=118 width=199><BR>
+<p>Install
+the Windows server, WinVNC, by running the Setup program included in the
+distribution.&nbsp; This will create a VNC group in your Start Menu.</p>
+<p>Install the default registry settings using the option in the VNC group.</P>
+<p>Run the WinVNC server. If this is the first time you've used WinVNC
+on this machine you'll be prompted to set a password, which you'll need when you connect to the machine from a remote location.
+Normally you'll want to leave the other options on their default settings.&nbsp;
+(Note that the default display number is 0 on a PC.&nbsp; You'll need to
+specify this to the viewer when you connect.)&nbsp; Click OK and the server
+should be running.&nbsp; It will install a small icon on the system tray,
+and by right-clicking on this you can control most aspects of the server.&nbsp;
+(Full instructions for installing and running the <a href="winvnc.html">WinVNC
+server</a> can be found under the <a href="docs.html">main documentation</a>.)</p>
+<p>You can now go to another machine and connect a viewer to the server. (see below)</p>
+</TD></TR>
+</TABLE>
+<HR>
+<h3>Running a viewer</h3>
+When you run the viewer, you need to specify the name of the server and the number of the desktop. If, for example, you have started a server as display 2 on a machine called 'snoopy',
+you can start a viewer for it by typing:
+<blockquote><tt>vncviewer snoopy:2</tt></blockquote>
+With the Windows viewer, you can run it from the command line, but you
+will more typically run it from the VNC group on the Start Menu. In this case,  you will
+be prompted for the host name and display number:
+<center>
+<p><img SRC="conndlg.gif" ALT="Connection dialog" height=127 width=396 align=CENTER></center>
+
+<p>Enter it and click OK, and you will be prompted for your password, after
+which you should see the remote display.&nbsp; (If you are connecting to
+a Windows or Mac server, the display number will be 0, unless you have
+explicitly changed it).
+<p>If the machine running the server does not have a proper DNS entry,
+you probably won't be able to use the name and will have to replace <tt>snoopy:2</tt>
+with something like <tt>192.168.1.2:2</tt> .&nbsp; You can get round this
+on most platforms by creating a 'hosts' file which maps names onto IP addresses.&nbsp;
+Consult your local guru for help with this.
+<HR>
+<h3>
+Using a web browser as a viewer</h3>
+The VNC servers also contain a small web server.  If you connect to this with a web browser, you can download the Java version of the viewer, and use this to view the server.
+ You can then see your desktop from any Java-capable browser! (unless you are using a proxy to connect to the web).
+ The server listens for HTTP connections on port 5800+display
+number.&nbsp; So to view display 2 on machine 'snoopy', you would point
+your web browser at:
+<blockquote><tt>http://snoopy:5802/</tt></blockquote>
+The applet will prompt you for your password, and should then display the desktop.
+<p><i>That's it!&nbsp; For more details see <a href="docs.html">the documentation</a>.
+The answers to lots of common questions can be found in the <a href="faq.html">FAQ</a>
+.</i>
+<p>&nbsp;</td>
+
+<td WIDTH="5%"></td>
+</tr>
+
+<tr>
+<td bgcolor="#eecc80">&nbsp;</td><td ALIGN=CENTER VALIGN=TOP COLSPAN="4" WIDTH="100%"><!--webbot bot="Include" U-Include="_private/footer.html" TAG="BODY" startspan -->
+<!-- Ruler here? -->
+<center>
+<p><i><font size=-1>For comments, feedback, etc, please see the '<a href="intouch.html">Keeping
+in touch</a>' page</font>.</i>
+<br><i><font size=-1>Copyright 1999 - AT&amp;T Laboratories Cambridge</font></i></center>
+<!--webbot bot="Include" endspan i-checksum="25654" --></td>
+</tr>
+</table>
+
+</body>
+</html>

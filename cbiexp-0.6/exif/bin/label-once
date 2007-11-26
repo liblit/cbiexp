@@ -1,0 +1,27 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use FindBin;
+use lib "$FindBin::Bin/../../bin";
+
+use Check;
+
+
+########################################################################
+
+
+Check::stamp;
+
+
+sub label () {
+    # We treat normal completion with an error code as success.
+    # You might also treat it as failure, or as something to ignore.
+    # Depends on what kind of bugs you are looking for.
+    return
+	Check::outcome('outcome', 'success') ||
+	'success';
+}
+
+
+print label, "\n";

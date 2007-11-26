@@ -1,0 +1,281 @@
+Overview of Changes in Rhythmbox 0.6.5
+======================================
+
+* Work with session management [Matt Hughes]
+* Improved dashboard support [Lee Willis]
+* Fix length calculation for some VBR MP3s [Christophe Fergeau]
+* Jump to songs added via commandline [Colin Walters]
+* Avoid segfaults with some commandline bits [Colin Walters]
+* Fix volume popup near bottom of screen [Johnathan Taylor]
+* Update Bonobo interface for play order work [Colin Walters]
+* Avoid some unlikely but possible use of freed strings [Colin Walters]
+* Fix compilation with G_DISABLE_ASSERT [Colin Walters]
+* Correctly encode URIs when upgrading from 0.5.x [Colin Walters]
+* Fix changing sorting with active genre/artist filtering [Colin Walters]
+
+Overview of Changes in Rhythmbox 0.6.4
+======================================
+
+* Add audio/x-flac as a known MIME type for FLAC [Colin Walters]
+* Dashboard is disabled by default due to compilation problems on some machines [Colin Walters]
+* Remove applicable filtering when genre/artist/album filter is hidden in the prefs [Colin Walters]
+* Don't crash when using --print-playing with internet radio [Colin Walters]
+* Update GStreamer player to handle changes in GStreamer 0.7 [Colin Walters]
+* Don't send ourselves SIGINT on a g_warning if not in debug mode [Colin Walters]
+* Make file chooser dialog resizable [Colin Walters]
+* Don't try to use multimedia keys if we only have XSun [Colin Walters]
+
+Overview of Changes in Rhythmbox 0.6.3
+======================================
+
+* Dashboard integration [Lee Willis]
+* Fix crash with Xine backend [Bastien Nocera]
+* Don't require pkgconfig file for id3tag [Colin Walters]
+* Don't crash on trying to play directories [Colin Walters]
+* GCC-2.95 compile fixes [Kaj-Michael Lang]
+
+Overview of Changes in Rhythmbox 0.6.2
+======================================
+
+* Use better algorithms for Shuffle and Repeat [Jeffrey Yasskin]
+* Playlist fixes; make .m3u work [Colin Walters, Bastien Nocera]
+* Make Xine backend use less memory [Bastien Nocera]
+* Fix length parsing from variable-bitrate MP3s [Bastien Nocera]
+* Don't crash adding a station with a duplicate location [Colin Walters]
+* Fix race condition in library searching [Colin Walters]
+* Actually implement Quality column [Colin Walters]
+* Fix usage of G_PARAM_CONSTRUCT_ONLY [Jan Arne Petersen]
+* Change default Korean legacy charset to UHC [Cha Young-Ho]
+* Check libid3tag version [Bastien Nocera]
+* Work around scrollkeeper XML parsing bug [Jordi Mallach]
+* Distcheck fixes [Colin Walters]
+
+Overview of Changes in Rhythmbox 0.6.1
+======================================
+
+* Drag and drop onto source list can create playlists [Yann Rouillard]
+* Avoid crashes when metadata changes on disk [Colin Walters]
+* Xine backend fixes [Bastien Nocera]
+* Load playlists directly for internet radio [Bastien Nocera, Colin Walters]
+* Major rework of mp3 metadata reading [Bastien Nocera]
+* Handle mp3-in-wav files [Bastien Nocera]
+* Support for MP4 metadata [Bastien Nocera]
+* Don't crash on multiply added songs [Colin Walters]
+* Try legacy charsets for ID3V1 tags [Colin Walters]
+* Make editing playlist names nicer [Bastien Nocera]
+* Fix tray icon window restoration [Bastien Nocera]
+* Play from stopped state plays selected song [Jeffrey Yasskin]
+* Don't unnecessarily reset filters/search on jump to playing song [Colin Walters]
+* Don't crash when an iradio search is active and switching sources [Colin Walters]
+* Don't crash on jump to playing song [Colin Walters]
+* Translator comments [Jordi Mallach]
+* Fix bonobo reference counting [Gustavo J. A. M. Carneiro, Colin Walters]
+* Scroll wheel over tray icon controls volume [Jon Kinred]
+* Ensure Properties is disabled if there's no selected song [Colin Walters]
+* GCC 2.95 build fixes [Scott Wheeler, Danilo Segan]
+
+Overview of Changes in Rhythmbox 0.6.0
+======================================
+
+* Speed and incremental display of queries [Colin Walters]
+* Major source code refactoring and cleanup [Colin Walters]
+* Improved menu layout [Luca Ferretti, Colin Walters]
+* Shiny new icons [Jakub Steiner]
+* Use Name=Rhythmbox,GenericName=Music Player in .desktop [Colin Walters]
+* Numerous HIG spacing and usability fixes [Christian Neumair]
+* Playlists are now user-orderable [Colin Walters]
+* Automatic playlists [Colin Walters]
+* Allow selecting multiple genres/artists/albums [Colin Walters]
+* Direct editing of playlist names [Colin Walters]
+* Major Bonobo interface improvements [Christophe Fergeau, Rached Ben Mustapha]
+* Keep a playback history [Jeffrey Yasskin]
+* Major DND work [Yann Rouillard]
+* Use GnomeHRef for links [Mark Humphreys]
+* Tooltips, tooltips, tooltips everywhere! [Colin Walters]
+* Display time remaining in tray icon tooltip [Colin Walters]
+* Pass "make distcheck" [Colin Walters]
+* Squash various circular dependencies in the build system [Colin Walters]
+* Various other misc. bugfixes [Colin Walters, Yann Rouillard, Christophe Fergeau,
+                                Sean Harshbarger, Jeffrey Yasskin]
+
+Overview of Changes in Rhythmbox 0.5.4
+======================================
+
+* Updated documentation [Mark Humphreys]
+* Allow quitting even when Rhythmbox is busy [Colin Walters]
+* Handle long artist/album names in song display box [desrt]
+* Use Ogg Vorbis for internet radio if compiled without MP3 support [Colin Walters]
+* More default internet radio stations [Nadav Rotem]
+* Many more Bonobo methods [Rached Ben Mustapha]
+* Display time remaining in tray icon tooltip [Colin Walters]
+* Hardcode use of mad/vorbisfile/flacdec, until spider works [Colin Walters]
+* Don't distribute built CORBA files [Colin Walters]
+* Better explanations in druid [Colin Walters, Luca Ferretti]
+
+Overview of Changes in Rhythmbox 0.5.3
+======================================
+
+* Don't save the library periodically [Colin Walters]
+* Don't scroll the song view after double-clicking [James Willcox]
+* New small display option [desrt]
+* Restore tray icon to previous behavior [desrt]
+* Correctly sync statusbar visibility on startup [desrt]
+* UI improvments to playlist dialog and bugfixes [Yann Rouillard]
+* Context menu for the Library source [Paolo Borelli]
+* Make double-clicking on a source play it [Paolo Borelli]
+* Don't require xine-lib CVS [Bastien Nocera]
+
+Overview of Changes in Rhythmbox 0.5.2
+======================================
+
+* Help documentation is back [Mark Humphreys]
+* Tooltips on buttons [Colin Walters]
+* Don't lose completely on invalid UTF-8 in mp3 files [Colin Walters]
+* Better status feedback when loading the library [Colin Walters]
+* Volume slider behaves more nicely [Yann Rouillard]
+* More fixes to multimedia keys [Jan Arne Petersen]
+* Fix spelling of "Digitially Imported" [Paul M Edwards]
+* Ability to rename playlists [Sriram Ramkrishna,Colin Walters]
+* Tray icon usability fixes [Colin Walters, Christian Neumair]
+* Don't crash when deleting a playing song from another source [Colin Walters]
+* Release audio device on pause [Benjamin Otte (GStreamer) Bastien Nocera (xine)]
+* Only error out if GNOME sounds are enabled, and esdsink is used [Colin Walters]
+* Various cleanups [Colin Walters]
+
+Overview of Changes in Rhythmbox 0.5.1
+======================================
+
+* Fix multimedia keybinding so we don't grab other keys [Jan Arne Petersen]
+
+Overview of Changes in Rhythmbox 0.5.0
+======================================
+
+* Merge with netRhythmbox [Colin Walters]
+* Revamped UI [Jorn Baayen, Colin Walters]
+* Monkey Media is merged into the Rhythmbox tree [Colin Walters]
+* Internet Radio support [Colin Walters]
+* Xine backend support [Jorn Baayen, Bastien Nocera]
+* Make MP3/Vorbis/FLAC support individually optional [Colin Walters, Bastien Nocera]
+* Initial Sound Juicer integration [Bob Smith]
+* Refactored node system (improved stability) [Colin Walters, Jorn Baayen]
+* Refactored source system [Colin Walters]
+* Ability to save playlists in .pls format [Colin Walters]
+* Startup druid [Colin Walters]
+* Dialog HIGification [Christian Neumair]
+* Context menu for Nautilus [Mark Humphreys, Yann Rouillard]
+* Song load failure dialog [Colin Walters]
+* Slightly improved RTL locale support [Colin Walters]
+* Save the library/playlists periodically [Colin Walters]
+* Work around broken id3v2 tags [Christophe Fergeau, Colin Walters]
+* Read FLAC metadata [Joshua Haberman]
+* INTERNALS documentation [Colin Walters]
+* Work around GtkTreeModelSort bug [Yann Rouillard]
+* Work around GtkTreeView bug [Kristian Rietveld, Colin Walters]
+* Initial multimedia keys support [Jan Arne Petersen]
+* New --print-playing and --print-playing-path cmdline args [Colin Walters]
+* Some playlist support [Colin Walters]
+* Display watch cursor during long operations [Colin Walters]
+* Updated .spec file [William Jon McCann]
+* Many many bugs fixed [Colin Walters, Jorn Baayen, Yann Rouillard, Kristian Rietveld,
+                        Bastien Nocera, James Kahn, Benjamin Otte, Sean Harshbarger,
+			Christian Neumair, Carlos Perelló Marín, Christophe Fergeau,
+			Mason Kidd, Jan Arne Petersen, Douglas McMorris, and many
+			other people helped out, thank you all!]
+
+Overview of Changes in Rhythmbox 0.4.1
+======================================
+
+* New cool graphics [Jakub 'jimmac' Steiner]
+* Genre browsing [Marco Pesenti Gritti]
+* Context menu on songs view [Marco Pesenti Gritti]
+* Prelight stars in the rating columns [Xan Lopez]
+* Bugfixes  [Jorn Baayen, Olivier Martin, Marco Pesenti Gritti, Colin Walters, Christian Schaller]
+
+Overview of Changes in Rhythmbox 0.4
+====================================
+
+* Speeeed! [Jorn Baayen, Kristian Rietveld]
+* Lots of bugfixes [Jorn Baayen, Olivier Martin, Jan Arne Petersen, Xan Lopez, Marco Pesenti Gritti]
+* UI improvements [Jorn Baayen, Olivier Martin]
+* Improved song information dialog [Olivier Martin, Jorn Baayen]
+* Editable toolbar [Marco Pesenti Gritti]
+* Preferences window and visibility options [Jorn Baayen]
+* Library rewrite [Jorn Baayen, Olivier Martin, Kristian Rietveld]
+* Full DND Support (directories, files, songs in groups) [Olivier Martin, Jorn Baayen]
+* Support for searching is back [Olivier Martin, Jorn Baayen]
+* LIRC support [James Willcox]
+* Tray icon [Jorn Baayen]
+* Manual [Mark Finlay, Mark Humphreys, Luca Ferretti]
+* Translation updates
+* Rating songs support [Olivier Martin]
+* Columns visibility editing [Olivier Martin]
+* Play statistics [Mark Humphreys]
+
+Many translation, including:
+* Swedish [Christian Rose]
+* Italian [Luca Ferretti]
+* Korean [Changwoo Ryu]
+* Spanish [Xan Lopez]
+* Japanese [Norihiro UMEDA]
+* German [Christian Neumair, Christian Meyer]
+* Czech [Michal Bukovjan]
+* Norwegian (bokmål) [Kjartan Maraas]
+* Vietnamese [Pablo Saratxaga]
+* French [Christophe Merlet]
+* Russian [Nail Abdrahmanov]
+* Turkish [Fatih Demir]
+
+Overview of Changes in Rhythmbox 0.3
+====================================
+
+* Total rewrite [Jorn Baayen]
+* Danish translation [Kenneth Christiansen]
+* Swedish translation [Christian Rose]
+* Norwegian translation [Kjartan Maraas]
+* Italian translation [Luca Ferretti]
+* German translation [Christian Meyer]
+* French translation [Christophe Marlet]
+* Internationalization fixes [Kenneth Christiansen]
+* Volume slider controlling the system volume [Jeroen Zwartepoorte]
+* Ability to run uninstalled [Thomas Vander Stichele]
+* Song information dialog [Olivier Martin, Jorn Baayen]
+* Bugfixes [Jorn Baayen, Olivier Martin, Dennis Smit]
+
+Other contributors: Marco Pesenti Gritti
+
+Note that searching with the new library has not been implemented yet,
+and that the library is still rather buggy. Please don't file bugs on these.
+This is just an intermediate release to work with the new gstreamer.
+
+Also note that monitoring of the library directories has been disabled
+for this release due to instability problems.
+
+Overview of Changes in Rhythmbox 0.2.1
+======================================
+
+* Build fixes [Bastien Nocera]
+
+Overview of Changes in Rhythmbox 0.2
+====================================
+
+* Bugfixes [Seth Nickell, Jorn Baayen]
+* LCD widget [Jorn Baayen]
+* UI improvements [Seth Nickell]
+* Playlist columns configurable [Jorn Baayen]
+* Speed improvements [Seth Nickell, Jorn Baayen]
+* Searching [Seth Nickell, Jorn Baayen]
+* Smart Sorting of playlists [Jorn Baayen]
+* Shuffle/repeat [Jorn Baayen]
+* Splashscreen [Jakub Steiner, Olivier Martin]
+* Icons registered with the Gtk stock system [Jorn Baayen]
+* Statusbar [Jorn Baayen]
+* Proper support for "Various Artist" albums [Jorn Baayen]
+* Threaded song addition [Seth Nickell]
+* CORBA interface [Jorn Baayen]
+
+..and much more!
+
+Overview of Changes in Rhythmbox 0.1
+====================================
+
+* First release! [Jorn Baayen, Marco Pesenti Gritti, Bastien Nocera]

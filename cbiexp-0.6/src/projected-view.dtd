@@ -1,0 +1,6 @@
+<!ENTITY % predictor.extra-attrs "
+  initial NMTOKEN #REQUIRED
+  effective NMTOKEN #REQUIRED">
+
+<!ENTITY % view SYSTEM "view.dtd">
+%view;

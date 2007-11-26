@@ -1,0 +1,6 @@
+<!-- available sorting schemes -->
+<!ELEMENT sorts (sort)+>
+
+<!-- a single sorting scheme -->
+<!ELEMENT sort (#PCDATA)>
+<!ATTLIST sort code ID #REQUIRED>

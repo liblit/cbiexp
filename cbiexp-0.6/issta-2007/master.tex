@@ -1,0 +1,138 @@
+%% -*- TeX-master: t -*-
+
+% \documentclass{acm_proc_article-sp}
+\documentclass{sig-alternate}
+
+\newcommand{\thetitle}[0]{Statistical Debugging Using Compound Boolean Predicates}
+\newcommand{\wraptitle}[0]{Statistical Debugging Using \\ Compound Boolean Predicates}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% standard texmf packages
+%%
+
+% font selection
+\usepackage[T1]{fontenc}
+\usepackage{courier}
+\usepackage[scaled]{helvet}
+\usepackage{mathptmx}
+
+\usepackage{booktabs}
+\usepackage{fixltx2e}
+\usepackage{flushend}
+\usepackage{graphicx}
+\usepackage{hyphenat}
+\usepackage{nicefrac}
+\usepackage{paralist}
+\usepackage{subfig}
+\usepackage[dvips]{thumbpdf}
+\usepackage{xspace}
+
+\usepackage[
+bookmarks,
+breaklinks,
+letterpaper,
+pdftitle={\thetitle},
+pdfauthor={Piramanayagam Arumuga Nainar, Ting Chen, Jake Rosin, and Ben Liblit},
+% pdfsubject={D.2.4 [Software Engineering]: Software/Program Verification -- statistical methods; D.2.5 [Software Engineering]: Testing and Debugging -- debugging aids, distributed debugging, monitors, tracing; I.5.2 [Pattern Recognition]: Design Methodology -- feature evaluation and selection},
+% pdfkeywords={bug isolation, random sampling, invariants, feature selection, statistical debugging},
+]{hyperref}
+
+\captionsetup[table]{position=top}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% unique to this report
+%%
+
+\newcommand{\figurename}[0]{Figure}
+\newcommand{\tablename}[0]{Table}
+
+\newdef{defn}{Definition}
+\newcommand{\defnautorefname}[0]{Definition}
+
+\newcommand{\Importance}[0]{\mathit{Importance}\xspace}
+\newcommand{\Increase}[0]{\mathit{Increase}\xspace}
+\newcommand{\NumF}[0]{\mathit{NumF}\xspace}
+\newcommand{\effort}[0]{\mathit{effort}\xspace}
+
+\newcommand{\obs}[2]{#1(\text{$#2$ obs})}
+\newcommand{\obsFalse}[2]{#1(\text{$\bar{#2}$})}
+
+\newcommand{\ub}[1]{\uparrow#1}
+\newcommand{\lb}[1]{\downarrow#1}
+
+\newcommand{\prog}[1]{\texttt{#1}}
+\newcommand{\func}[1]{\texttt{#1}}
+
+\renewcommand{\sectionautorefname}[0]{Section}
+\renewcommand{\subsectionautorefname}[0]{\sectionautorefname}
+\renewcommand{\subsubsectionautorefname}[0]{\sectionautorefname}
+\newcommand{\subtableautorefname}[0]{\tableautorefname}
+
+\newcommand{\Max}[2]{\textbf{max(}#1, #2\textbf{)}}
+\newcommand{\Min}[2]{\textbf{min(}#1, #2\textbf{)}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% front matter
+%%
+
+\title{%
+  \wraptitle%
+  \thanks{This research was supported in part by AFOSR Grant
+    FA9550-07-1-0210 and NSF Grant CCF-0621487.}}
+
+\newcommand{\mailto}[1]{\href{mailto:#1@cs.wisc.edu}{#1}}
+
+\numberofauthors{1}
+\author{\alignauthor
+  Piramanayagam Arumuga Nainar \qquad Ting Chen \qquad Jake Rosin \qquad Ben Liblit \\
+  \affaddr{Computer Sciences Department} \\
+  \affaddr{University of Wisconsin--Madison} \\
+  \email{\{\mailto{arumuga},\mailto{tchen},\mailto{rosin},\mailto{liblit}\}@cs.wisc.edu}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  document body
+%%
+
+\begin{document}
+
+\conferenceinfo{ISSTA'07,} {July 9--12, 2007, London, England, United Kingdom.}
+\CopyrightYear{2007}
+\crdata{978-1-59593-734-6/07/0007} 
+
+\maketitle
+
+\input{abstract}
+
+\begin{sloppypar}
+  \category{D.2.4}{Software Engineering}{Software/Program Verification}[statistical methods]
+  \category{D.2.5}{Software Engineering}{Testing and Debugging}[debugging aids, distributed debugging, monitors, tracing]
+  \category{I.5.2}{Pattern Recognition}{Design Methodology}[feature evaluation and selection]
+\end{sloppypar}
+
+\terms{Experimentation, Reliability}
+
+\keywords{statistical bug isolation,
+          three-valued logic,
+          debugging effort metrics,
+          dynamic feedback analysis
+          }
+
+\input{introduction}
+\input{background}
+\input{complex-preds}
+\input{usability-metrics}
+\input{case-studies}
+\input{experiments}
+\input{related-work}
+\input{conclusion}
+\input{acknowledgments}
+
+\bibliographystyle{abbrv}
+\bibliography{local}
+
+\end{document}

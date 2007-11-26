@@ -1,0 +1,19 @@
+Find the source locations that contain instrumentation sites but which
+were never reached (observed) in any failed run.  Print a list of all
+such locations as tab-delimited fields:
+
+	<filename>	<line>	<function>
+
+If multiple sites appear on a line, that line is considered unreached
+only if every site on the line is unreached.
+
+Strictly speaking, we cannot guarantee that zero code was executed on
+a line appearing in the output.  If there's a convoluted mix of
+instrumented and non-instrumented code on the same line, some of the
+non-instrumented code may still have run.  Consider:
+
+	foo(); goto bar; baz: if (x) ...;
+
+If branches are instrumented but function calls are not, then even if
+the "if (x)" branch was never observed it's still possible that foo()
+was called.  I don't expect this to be a problem in practice, though.

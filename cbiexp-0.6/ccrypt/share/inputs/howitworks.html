@@ -1,0 +1,215 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (X11; I; Linux 2.0.35 i686) [Netscape]">
+   <meta name="keywords" content="VNC, AT&T Laboratories Cambridge, Virtual Network Computing, thin-client">
+
+
+   <title>VNC - How it works</title>
+<link REL="stylesheet" HREF="styles.css" TYPE="text/css">
+</head>
+<body bgcolor="#FFFFFF" vlink="#000080" marginheight="0" topmargin="0" leftmargin="0" marginwidth="0">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><a href="index.html"><img SRC="sidelogo.gif" ALT="VNC logo" BORDER=0 height=113 width=120></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="20"><img SRC="spacer.gif" HSPACE=8 height=1 width=1></td>
+
+<td>
+<table BORDER=0 WIDTH="100%" >
+<tr>
+<td WIDTH="90%" valign="center">
+<center>
+<h1>
+<IMG SRC="vnctitle.gif"  WIDTH=370 HEIGHT=30 ALT="Virtual Network Computing"></h1></center>
+</td>
+
+<td WIDTH="10%"><a href="http://www.uk.research.att.com/"><img SRC="attlogo.gif" ALT="AT&T" BORDER=0 height=75 width=66 align=RIGHT></a></td>
+</tr>
+</table>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+<tr><td colspan=5 bgcolor="#eecc80"><img src="spacer.gif" height=3 vspace=0 hspace=1></td></tr>
+<tr><td bgcolor="#eecc80"><img src="spacer.gif" height=4 vspace=0 hspace=1></td><td colspan=4></td></tr>
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center>
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" ><tr><td><a href="index.html"><img SRC="homebutton.gif" ALT="[Home]" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="screenshots.html"><img SRC="screenbutton.gif" ALT="[screenshots]" BORDER=0 height=33 width=120></a>
+
+</td></tr><tr><td><a href="start.html"><img SRC="startbutton.gif" ALT="[getting started]" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="docs.html"><img SRC="docbutton.gif" ALT="[documentation]" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="faq.html"><img SRC="faqbutton.gif" ALT="FAQs" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="download.html"><img SRC="downloadbutton.gif" ALT="[download]" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="intouch.html"><img SRC="intouchbutton.gif" ALT="[keep in touch]" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="contribs.html"><img SRC="contribbutton.gif" ALT="Others' ports and add-ons etc" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="help.html"><img SRC="helpbutton.gif" ALT="Project ideas" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="vncpeople.html"><img SRC="vncpeoplebutton.gif" ALT="VNC people" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="http://www.uk.research.att.com/search.html"><img SRC="searchbutton.gif" ALT="Search" BORDER=0 height=33 width=120></a>
+</td></tr><tr><td><a href="http://www.uk.research.att.com/"><img SRC="attbutton.gif" ALT="[AT&T Laboratories Cambridge]" BORDER=0 height=33 width=120></a></td></tr></table></center>
+</td>
+
+<td VALIGN=TOP WIDTH="8%">
+<center><a href="docs.html"><img SRC="backbutton.gif" ALT="back to docs" HSPACE=2 BORDER=0 height=20 width=20></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="100%">
+<h2>
+VNC - How it works</h2>
+
+<h3>
+The VNC Protocol</h3>
+The VNC protocol is a simple protocol for remote access to graphical user
+interfaces.&nbsp;&nbsp; It is based on the concept of a <i>remote framebuffer</i>
+or<i> RFB</i>. In the past we have tended to refer to the VNC protocol
+as the RFB protocol, so you may have seen this term in other publications.&nbsp;
+The protocol simply allows a server to update the framebuffer displayed
+on a viewer. Because it works at the framebuffer level it is potentially
+applicable to all operating systems, windowing systems and applications.
+This includes X/Unix, Windows 3.1/95/NT and Macintosh, but might also include
+PDAs, and indeed any device with some form of communications link. The
+protocol will operate over any reliable transport such as TCP/IP.&nbsp;
+<center>
+<p><a NAME="38"></a><a NAME="figrfbarch"></a><img SRC="clientserver.gif" ALT="" height=118 width=264 align=BOTTOM></center>
+
+<p>This is truly a "thin-client" protocol: it has been designed to make
+very few requirements of the viewer. In this way, clients can run on the
+widest range of hardware, and the task of implementing a client is made
+as simple as possible.&nbsp;
+<h3>
+Rectangular updates</h3>
+The display side of the protocol is based around a single graphics primitive:
+<i>"put
+a rectangle of pixel data at a given x,y position"</i>. This might seem
+an inefficient way of drawing arbitrary user interface components. But
+because we have a variety of different <i>encoding schemes</i> for the
+pixel data, we can select the appropriate scheme for each rectangle we
+send, and make the most of network bandwidth, client drawing speed and
+server processing speed.&nbsp;
+<p>The lowest common denominator is the so-called <i>raw</i> encoding,
+where the rectangle is simply pixel data sent in left-to-right scanline
+order. All clients and servers must support this encoding. However, the
+encodings actually used on any given VNC connection can be negotiated according
+to the abilities of the server, the client, and the connection between
+the two.&nbsp;
+<p>The <i>copy rectangle</i> encoding, for example, is very simple and
+efficient and can be used when the client already has the same pixel data
+elsewhere in its framebuffer. The server simply sends an X,Y coordinate
+giving the position&nbsp; from which the client can copy the rectangle
+of pixel data. This means that operations such as dragging or scrolling
+a window, which involve substantial changes to the screen, may only require
+a few bytes. Most clients will support this encoding, since it is generally
+simple to implement and saves bandwidth.&nbsp;
+<p>A typical workstation desktop has large areas of solid colour and of
+text. Some of our most effective encodings take advantage of this by efficiently
+describing rectangles consisting of one majority (background) colour and
+'sub-rectangles' of different colours. There are numerous other possible
+schemes.&nbsp; We might use a JPEG encoding for still images or MPEG for
+efficient transmission of moving images. An encoding which uses some kind
+of caching of pixel data would be good for rendering text, where the same
+character is drawn in the same font multiple times. Subsequent occurrences
+of the same character would be encoded simply by reference to the first
+occurrence.&nbsp;
+<h3>
+Adaptive update protocol</h3>
+A sequence of these rectangles makes a <i>framebuffer update</i> (or simply
+<i>update</i>).
+An update represents a change from one valid framebuffer state to another,
+so in some ways is similar to a frame of video, but it is usually only
+a small area of the framebuffer that will be affected by a given update.
+Each rectangle may be encoded using a different scheme.&nbsp; The server
+can therefore choose the best encoding for the particular screen content
+being transmitted and the network bandwidth available.
+<p>The update protocol is demand-driven by the client. That is, an update
+is only sent by the server in response to an explicit request from the
+client. This gives the protocol an adaptive quality. The slower the client
+and the network are, the lower the rate of updates becomes. Each update
+incorporates all the changes to the 'screen' since the last client request.
+With a slow client and/or network, transient states of the framebuffer
+are ignored, resulting in reduced network traffic and less drawing for
+the client.&nbsp; This also improves the apparent response speed.
+<h3>
+Input protocol</h3>
+The input side of the protocol is based on a standard workstation model
+of a keyboard and multi-button pointing device. Input events are sent to
+the server by the client whenever the user presses a key or pointer button,
+or whenever the pointing device is moved. These input events can also be
+synthesised from other non-standard I/O devices. On our <a href="http://www.uk.research.att.com/tile.html">Videotile</a>,
+for example, a pen-based handwriting recognition engine generates keyboard
+events.&nbsp;
+<h3>
+Connection Setup and Shutdown</h3>
+When the connection between a client and a server is first established,
+the server begins by requesting authentication from the client using a
+challenge-response scheme, which typically results in the user being prompted
+for a password at the client end.&nbsp;&nbsp;&nbsp; The server and client
+then exchange messages to negotiate desktop size, pixel format, and the
+encoding schemes to be used. The client then requests an update for the
+entire screen, and the session begins.&nbsp; Because of the stateless nature
+of the client, either side can close the connection at any time without
+adverse consequences.
+<h3>
+VNC Clients</h3>
+Writing an VNC viewer is a simple task, as it should be for any thin-client
+system. It requires only a reliable transport (usually TCP/IP), and a way
+of displaying pixels (either directly writing to the framebuffer, or going
+through a windowing system).&nbsp;
+<p>We have clients for all the networked display devices we have available
+at our lab. This includes the <a href="http://www.uk.research.att.com/tile.html">Videotile</a>
+(the original RFB client), an X-based client (which runs on Solaris, Linux
+and Digital Unix workstations), a Win32 client which runs on Windows NT
+and 95, a Macintosh client, and a Java client which runs on any Java-capable
+browser (including Sun's JavaStation). Members of our lab use these clients
+on a daily basis to access their personal computing environments.
+<h3>
+VNC Servers</h3>
+Writing an VNC server is slightly harder than writing a client for a number
+of reasons. The protocol is designed to make the client as simple as possible,
+so it is usually up to the server to perform any necessary translations.
+For example, the server must provide pixel data in the format the client
+wants. We have servers for our two main platforms, X (i.e. Unix) and Windows
+NT/95.&nbsp;
+<p>A Unix machine can run a number of Xvnc servers for different users,
+each of which represents a distinct VNC desktop. Each VNC desktop is like
+a virtual X display, with a root window on which several X applications
+can be displayed.&nbsp;
+<p>The Windows server (WinVNC) is a little more difficult to create, because
+there are fewer places to insert hooks into the system to monitor display
+updates, and a less clearly-defined model of multiuser operation. Our current
+server simply mirrors the real display to a remote client, which means
+that the server is not 'multiuser'. It does, however, provide the primary
+user of a PC with remote access to their desktop.&nbsp;
+<p><img SRC="cdplay.gif" ALT="VNC CD-player" HSPACE=4 height=79 width=288 align=LEFT>We
+have also created simple servers which produce displays other than desktops,
+using a simple toolkit. A "VNC CD player", for example, generates a CD
+player user interface using the protocol directly without any reference
+to a windows system or framebuffer.&nbsp; Such servers can run on very
+simple hardware, and can be accessed from any of the standard viewers.&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<div align=right><a href="docs.html"><img SRC="backbutton.gif" ALT="back to docs" HSPACE=5 BORDER=0 height=20 width=20></a><i>go
+back to <a href="docs.html">documentation</a></i></div>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+
+<tr>
+<td bgcolor="#eecc80">&nbsp;</td><td ALIGN=CENTER VALIGN=TOP COLSPAN="4" WIDTH="100%">
+<!-- Ruler here? -->
+<center>
+<p><i><font size=-1>For comments, feedback, etc, please see the '<a href="intouch.html">Keeping
+in touch</a>' page</font>.</i>
+<br><i><font size=-1>Copyright 1999 - AT&amp;T Laboratories Cambridge
+</font></i></center>
+<!--webbot bot="Include" endspan i-checksum="25654" --></td>
+</tr>
+</table>
+
+</body>
+</html>

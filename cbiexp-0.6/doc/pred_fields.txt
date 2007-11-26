@@ -1,0 +1,57 @@
+A predicate is displayed in the following format:
+
+<stats> <name> <fun> <file:line>
+
+<stats>     provides a graphical and textual summary of the behavior of
+            the predicate in the runs.
+
+            The graphical summary is in the form of a multi-colored band:
+
+            -- The length of the band denotes the total number of runs in
+               which the predicate is observed to be true.
+
+            -- The length of the black portion of the band denotes the
+               probability that the program will crash when the line of
+               code on which the predicate occurs is reached.
+
+            -- The length of the white portion of the band denotes
+               1 - (the probability that the program will crash when the
+               predicate is observed to be true).
+
+            -- The length of the (red+pink) portion of the band denotes
+               the increase in probability that the program will crash
+               when the predicate is observed to be true over the
+               probability that the program will crash when the line of
+               code on which the predicate occurs is reached.
+               Longer pink portions mean that there is more uncertainty
+               in how much the probability that the program will crash
+               increases when the predicate is observed to be true.
+
+            The textual summary is viewable by pointing the mouse cursor
+            anywhere on the band, for instance:
+
+            Context: 18% Lower Bound: 51%, Increase: 68%, Fail: 86%,
+            true in 3 S and 18 F runs
+
+            -- The predicate is observed to be true in 3 successful and
+               18 failing runs.  The number of such runs (21) corresponds
+               to the length of the band.
+
+            -- Context corresponds to the black portion of the band.
+
+            -- (100 - Fail) corresponds to the white portion of the band.
+
+            -- Increase = (Fail - Context) corresponds to the (red+pink)
+               portion of the band.
+
+            -- Lower Bound corresponds to the red portion of the band.
+
+<name>      is the name of the predicate (essentially a boolean C
+            expression).
+
+<fun>       is the name of the C function in which the predicate occurs.
+
+<file:line> is the name of the C source file and the line number within
+            that file on which the predicate occurs, and is hyperlinked
+            to it.
+

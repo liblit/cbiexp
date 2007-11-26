@@ -1,0 +1,18 @@
+%% -*- TeX-master: "../master.tex" -*-
+
+\newenvironment{view}[3][\small]{%
+  \begin{table}
+    \nocaptionrule
+    \caption{Predictors for #2}
+    \label{tab:views-#3}
+    \centering
+    #1
+    \begin{tabular}{lll}
+      \toprule
+      Initial & Effective & Predicate \\
+      \midrule}{%
+      \bottomrule
+    \end{tabular}
+  \end{table}}
+
+%% LocalWords:  lll

@@ -1,0 +1,12 @@
+\newbox\subfigbox
+\makeatletter
+
+\newenvironment{subtab}%
+{\def\caption##1{\gdef\subcapsave{\relax##1}}%
+  \let\subcapsave\@empty%
+  \setbox\subfigbox\hbox%
+  \bgroup}%
+{\egroup%
+  \subtable[\subcapsave]{\box\subfigbox}}%
+
+\makeatother

@@ -1,0 +1,32 @@
+-*- outline -*-
+
+Each run produces the following output files:
+
+
+* stamp
+
+Indicates that the run is complete.  Skip any run directory that does
+not have this file.
+
+
+* outcome
+
+The exit status or signal for the run.  0 indicates successful
+completion.  Values between 1 and 255 indicate crash due to a fatal
+signal, where the value is that signal number.  Values of 256 and up
+indicate completion with a nonzero exit status.  Divide by 256 to get
+the exact status.
+
+
+* reports
+
+Raw feedback reports.  This is complete data, with no downsampling.
+If you decide to downsample, you may want to save those files in this
+same subdirectory so that other people can use them too.
+
+The following recipe may be useful for downsampling raw reports:
+
+    % /moa/sc1/cbi/sampler/tools/decimate-samples 100 <reports >reports-100.gz
+
+The decimation tool takes an optional random number seed, but will
+select a good default from system entropy sources if none is provided.

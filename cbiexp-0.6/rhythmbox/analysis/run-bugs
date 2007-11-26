@@ -1,0 +1,97 @@
+#!/usr/bin/perl -w
+
+########################################################################
+##  Which bugs are triggered in each failing run?
+##  Output is a sequence of tab-delimited lines of the following form:
+##      <run-id> <bug-number> <bug-number> ...
+##  Thus each line summarizes exactly one run.  Run lines are in
+#  numeric order and bugs are in numeric order on each line.
+#
+
+use strict;
+
+my $datadir = shift;
+die "datadir not defined" unless defined $datadir;
+
+local ($,, $\) = ("\t", "\n");
+
+# predicate g_source_remove() > 0 for bug 1 (dangling pointer to timer event)
+my ($u1, $sch1, $s1, $p1) = ("178e2b04489c1df41d6fb5b67eb56dc4", "returns", 7, 2);
+# predicate (mp->priv)->timer is FALSE (surrogate predictor for bug 1?)
+my ($u4, $sch4, $s4, $p4) = ("12cb0d54e3e5f5c0a5a8490b867edc69", "branches", 4, 0);
+# predicate monkey_media_player_get_uri() == null for bug 2 (calling destroyed player)
+my ($u2, $sch2, $s2, $p2) = ("0c08f91c21433db361ecd2dbdc8a6e12", "returns", 356, 1);
+my ($s3, $p3) = (357, 1);
+
+open (FRUNS, "f.runs") || die "Open: $!";
+while (my $runId = <FRUNS>) {
+  chomp $runId;
+  my $subdir = int($runId / 10000);
+  my $reportfn = "$datadir/$subdir/$runId/reports";
+  my ($c1, $c2, $c3, $c4) = &find_predicates($reportfn);
+
+  if ($c1 > 0 || $c4 > 0) { # bug 1
+    print $runId, "1";
+  }
+  elsif ($c2 > 0 || $c3 > 0) { # bug 2
+    print $runId, "2";
+  }
+  else { # unknown bug
+    print $runId, "3";
+  }
+
+  if (($c1 > 0 || $c4 > 0) && ($c2 > 0 || $c3 > 0)) {
+    print STDERR "run $runId contains both bugs 1 and 2";
+  }
+}
+close (FRUNS);
+
+sub find_predicates {
+  my ($fn) = @_;
+  my ($c1, $c2, $c3, $c4) = (undef, undef, undef, undef);
+
+  open (REPORT, "$fn") || die "Open: $!";
+  while (<REPORT>) {
+    if (/^<samples unit="$u1" scheme="$sch1">/) {
+      my $ctr = 0;
+      while (<REPORT>) {
+        $ctr++;
+        if ($ctr == $s1) {
+          chomp;
+          (undef, undef, $c1) = split /\t/;
+          last;
+        }
+      }
+    }
+    elsif (/^<samples unit="$u2" scheme="$sch2">/) {
+      my $ctr = 0;
+      while (<REPORT>) {
+        $ctr++;
+        if ($ctr == $s2) {
+          chomp;
+          (undef, $c2, undef) = split /\t/;
+          $_ = <REPORT>;  # sites 2 and 3 are right next to each other
+          chomp;
+          (undef, $c3, undef) = split /\t/;
+          last;
+        }
+      }
+    }
+    elsif (/^<samples unit="$u4" scheme="$sch4">/) {
+      my $ctr = 0;
+      while (<REPORT>) {
+        $ctr++;
+        if ($ctr == $s4) {
+          chomp;
+          ($c4, undef) = split /\t/;
+          last;
+        }
+      }
+    }
+    last if defined $c1 && defined $c2 && defined $c3 && defined $c4;
+  }
+  close(REPORT);
+
+  die unless defined $c1 && defined $c2 && defined $c3 && defined $c4;
+  return ($c1, $c2, $c3, $c4);
+}

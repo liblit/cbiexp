@@ -1,0 +1,95 @@
+From http://www.cs.stanford.edu/people/alicez/kill-board/kill-board.html
+
+********************
+**** Exif bug 1 ****
+********************
+Synopsis:
+exif crashes when printing NULL string in -m mode
+
+Bug report:
+http://sourceforge.net/tracker/?func=detail&aid=1054321&group_id=12272&atid=112272
+
+Details:
+function show_entry_machine in file exif-0.6.9/exif/actions.c:
+
+show_entry_machine(...)
+{
+...
+fprintf (stdout, "%s", exif_entry_get_value (e, v, sizeof (v)));
+...
+}
+
+exif_entry_get_value returns NULL; gcc optimizes fprintf into fputs, which
+does not handle NULL values.
+
+did not use returns instrumentation because it causes gcc to behave
+differently and thereby cause the bug to disappear.
+
+best way to label failed run: 
+look for "-m" flag in input and outcome failure
+check that outcome is 11 (SIGSEGV)
+
+********************
+**** Exif bug 2 ****
+********************
+Synopsis:
+removing thumbnail from non-JPEG image causes crash
+
+Bug report:
+http://sourceforge.net/tracker/?func=detail&aid=1054322&group_id=12272&atid=112272
+
+Details:
+function jpeg_data_set_exif_data in file exif-0.6.9/libjpeg/jpeg-data.c:
+
+jpeg_data_set_exif_data(...)
+{
+...
+section = jpeg_data_get_section (data, JPEG_MARKER_APP1);
+if (!section) {
+jpeg_data_append_section (data);
+memmove (&data->sections[2], &data->sections[1],
+sizeof (JPEGSection) * (data->count - 2));
+...
+}
+...
+}
+
+memmove is given a negative count in the third argument.
+
+best way to label failed run:
+look for "-r" flag in input and outcome failure
+checked that outcome is 6
+
+********************
+**** Exif bug 3 ****
+********************
+Synopsis:
+manipulating thumbnail in Canon image causes crash
+
+Bug report:
+http://sourceforge.net/tracker/?func=detail&aid=1054323&group_id=12272&atid=112272
+
+Details:
+The code of exif_mnote_data_canon_load looks as follows:
+
+exif_mnote_data_canon_load(...)
+{
+...
+for (i = 0; i < c; i++) {
+...
+n->count = i + 1;
+...
+if (o + s > buf_size) return; 
+n->entries[i].data = malloc (sizeof (char) * s);
+...
+}
+...
+}
+
+Notice that whenever the predicate "o + s > buf_size" is true,
+n->entries[i].data is not malloc'ed.
+
+Best way to label failed runs:
+input '-r' flag, outcome is failure, and o + s > buf_size is true at line 230
+in exif_mnote_data_canon_load() in libexif/canon/exif-mnote-data-canon.c
+(41st site in <unit="332ebdb824ff8ac8616ac0a38439f7c6" scheme="branches">)

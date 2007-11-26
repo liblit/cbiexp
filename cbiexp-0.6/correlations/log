@@ -1,0 +1,27 @@
+# convert the data in /moa/sc3/mhn/for_alice/ to sparse matrix format like
+# that output by db2sparsemat.c in ../graphalgs
+
+./mhn2sparsemat.pl moss/data10 moss/data10
+
+
+## to be run in matlab
+./genMscript.pl rb/base
+./resolve-clusters_html.pl rb/base < rb/base/predlist-speccluster1-0.25.txt
+
+./genMscript.pl moss/data10 
+./resolveClusters.pl moss/data10 moss/data10/cluster-summary-1-0.25.txt moss/data10/cluster-predlist-1-0.25.txt
+
+./genMscript.pl moss/data11
+./resolve-clusters_html.pl moss/data11 < moss/data11/predlist-speccluster1-0.25.txt
+
+./genMscript.pl rb/fix1
+./resolve-clusters_html.pl rb/fix1 < rb/fix1/predlist-speccluster1-0.25.txt
+
+./genMscript.pl rb/fix2
+./resolve-clusters_html.pl rb/fix2 < rb/fix2/predlist-speccluster1-0.25.txt
+
+./genMscript.pl ccrypt
+./resolve-clusters_html.pl ccrypt < ccrypt/predlist-speccluster1-0.25.txt
+
+./genMscript.pl bc
+./resolve-clusters_html.pl bc < bc/predlist-speccluster1-0.25.txt
