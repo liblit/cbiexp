@@ -83,6 +83,22 @@ AM_CONDITIONAL(HAVE_MEX, test -n "$HAVE_MEX")
 AC_PATH_PROG(PERL, perl)
 
 
+AC_MSG_CHECKING(for CodeSurfer)
+AM_CONDITIONAL(HAVE_CODESURFER, test -n "$CSURF_ROOT")
+AC_ARG_WITH(codesurfer,
+  AC_HELP_STRING([--with-codesurfer=PREFIX],
+		 [look for CodeSurfer in PREFIX]),
+  CSURF_ROOT="$withval",
+  : ${CSURF_ROOT:=/p/cbi/public/codesurfer})
+
+if test -n "$CSURF_ROOT" -a -d "$CSURF_ROOT/api/include" -a -f "$CSURF_ROOT/lib/codesurfer.lib"; then
+  AC_MSG_RESULT($CSURF_ROOT)
+else
+  AC_MSG_RESULT(no)
+  CSURF_ROOT=
+fi
+
+
 ########################################################################
 #
 #  instrumenting compiler

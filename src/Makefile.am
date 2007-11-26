@@ -1,6 +1,9 @@
-SUBDIRS = corrective-ranking evaluateplsa fromplsa matlab never-reached Score symmetric effort
+SUBDIRS = corrective-ranking evaluateplsa fromplsa matlab never-reached Score symmetric
 if ENABLE_AMPLIFY
 SUBDIRS += amplify
+endif
+if HAVE_CODESURFER
+SUBDIRS += effort
 endif
 if ENABLE_PLSA
 SUBDIRS += plsa

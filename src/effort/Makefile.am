@@ -1,4 +1,3 @@
-CSURF_ROOT = /p/cbi/public/codesurfer
 # Set the location of the C API include files and codesurfer.lib (codesurfer.lib
 # is unnecessary when compiling with gcc).
 H_INCLUDE = $(CSURF_ROOT)/api/include
@@ -31,5 +30,5 @@ libeffort_la_SOURCES =				\
 
 libeffort_la_LIBADD =				\
 	../libanalyze.a
-        
+
 libeffort_la_CPPFLAGS = -W -Wall -Wformat -Werror -I$(H_INCLUDE) -I../..
