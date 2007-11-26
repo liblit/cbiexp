@@ -146,7 +146,7 @@ oracle_LDADD = libanalyze.a -ldl
 
 partial_order_SOURCES = partial_order.cc
 partial_order_LDADD = libanalyze.a -ldl
-partial_order_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
+partial_order_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized -Wno-unused
 
 prefilter_SOURCES = prefilter.cc
 prefilter_LDADD = libanalyze.a -ldl
