@@ -9,7 +9,7 @@ if ENABLE_PLSA
 SUBDIRS += plsa
 endif
 
-DIST_SUBDIRS = $(SUBDIRS)
+DIST_SUBDIRS = $(SUBDIRS) effort
 
 AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 $(BOOST_CPPFLAGS)
 
