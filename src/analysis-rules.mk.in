@@ -263,7 +263,7 @@ CLEANFILES += preds.txt
 
 $(datadir)/stamp-convert-reports: s.runs f.runs static-site-info.so $(call tool-deps, convert-reports)
 	test -w $@ -o ! -e $@
-	$(tooldir)/convert-reports --runs-directory=$(datadir) --raw-report-name=$(raw-report-name)
+	$(tooldir)/convert-reports --runs-directory=$(datadir) --raw-report-name=$(raw-report-name) $(convert_reports_flags)
 	touch $@
 
 $(datadir)/stamp-extract-timestamps: static-site-info.so $(call tool-deps, extract-timestamps)
