@@ -13,12 +13,13 @@ using namespace std;
 
 static FILE *ofp = NULL;
 
-static int get_unit_indx(char scheme_code, const string &signature, unsigned runId);
+static bool ignoreAlienUnits;
+static int get_unit_indx(char scheme_code, const string &signature);
 
 static string signature;
 static string scheme;
 
-static unsigned unitIndex;
+static int unitIndex;
 static unsigned sitesActual;
 static unsigned sitesExpected;
 
@@ -91,11 +92,26 @@ uint 0|[1-9][0-9]*
 	exit(1);
     }
 
-    unitIndex = get_unit_indx(schemeCode, signature, runId);
-    const unit_t &unit = staticSiteInfo->unit(unitIndex);
-    assert(unit.scheme_code == schemeCode);
-    sitesExpected = unit.num_sites;
-    sitesActual = 0;
+    unitIndex = get_unit_indx(schemeCode, signature);
+    if (unitIndex == -1) {
+
+	cerr << (ignoreAlienUnits ? "warning" : "error")
+	     << ": in report " << runId
+	     << ": cannot find unit index for unit " << signature
+	     << ", scheme " << scheme
+	     << '\n';
+
+	if (ignoreAlienUnits)
+	    BEGIN(INITIAL);
+	else
+	    exit(1);
+
+    } else {
+	const unit_t &unit = staticSiteInfo->unit(unitIndex);
+	assert(unit.scheme_code == schemeCode);
+	sitesExpected = unit.num_sites;
+	sitesActual = 0;
+    }
 }
 
 <INITIAL>[^<]+|< {
@@ -175,7 +191,8 @@ uint 0|[1-9][0-9]*
 #include "fopen.h"
 #include "utils.h"
 
-static int get_unit_indx(char scheme_code, const string &signature, unsigned runId)
+
+static int get_unit_indx(char scheme_code, const string &signature)
 {
     for (unsigned i = 0; i < staticSiteInfo->unitCount; i++) {
 	const unit_t &unit = staticSiteInfo->unit(i);
@@ -183,31 +200,55 @@ static int get_unit_indx(char scheme_code, const string &signature, unsigned run
 	    return i;
     }
 
-    cerr << "cannot find unit index\n"
-	 << "\treport: " << runId << '\n'
-	 << "\tunit: " << signature << '\n'
-	 << "\tscheme: " << scheme_code << '\n';
-    exit(1);
+    return -1;
 }
 
-void process_cmdline(int argc, char** argv)
+
+static int
+parse_flag(int key, char *, argp_state *)
 {
+  switch (key)
+    {
+    case 'i':
+      ignoreAlienUnits = true;
+      return 0;
+    default:
+      return ARGP_ERR_UNKNOWN;
+    }
+}
+
+
+void
+process_cmdline(int argc, char** argv)
+{
+    static const argp_option options[] = {
+	{
+	    "ignore-alien-units",
+	    'i', 0, 0,
+	    "discard data from unrecognized compilation units",
+	    0
+	},
+	{ 0, 0, 0, 0, 0, 0 }
+    };
+
     static const argp_child children[] = {
 	{ &NumRuns::argp, 0, 0, 0 },
 	{ &RawReport::argp, 0, 0, 0 },
-  { &CompactReport::argp, 0, 0, 0}, 
+	{ &CompactReport::argp, 0, 0, 0},
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
 
     static const argp argp = {
-	0, 0, 0, 0, children, 0, 0
+	options, parse_flag, 0, 0, children, 0, 0
     };
 
     argp_parse(&argp, argc, argv, 0, 0, 0);
 }
 
-int main(int argc, char** argv)
+
+int
+main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
 
