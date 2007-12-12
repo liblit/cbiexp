@@ -124,6 +124,7 @@ uint 0|[1-9][0-9]*
     /* Sanity check that we got as many sites as we expected. */
     if (sitesActual != sitesExpected) {
 	cerr << "site count mismatch: got " << sitesActual << ", expected " << sitesExpected << '\n'
+	     << "\treports: " << infile << '\n'
 	     << "\tunit: " << signature << '\n'
 	     << "\tscheme: " << scheme << '\n';
 	exit(1);
