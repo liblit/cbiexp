@@ -117,6 +117,13 @@ bool atleast_one = false;
 
 void read_pairs() {
   ifstream in("pairs.txt");
+
+  if (!in) {
+      const int code = errno;
+      cerr << "Cannot read pairs.txt: " << strerror(code) << '\n'; 
+      exit(code || 1); 
+  }
+
   int a, b;
   
   while(!in.eof()) {
