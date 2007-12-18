@@ -47,6 +47,7 @@ def createAppPage(indexedBuilds, overviewPageOutDir, appName):
     overviewPage.write('<head>' +
                         '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">' +
                         '<title>CBI Application Overview - ' + appName + '</title>' +
+                        '<link href="file://' + overviewPageOutDir + 'releases.css" rel="stylesheet" type="text/css"/>' +
                         '<a href="' + overviewPageOutDir + 'appOverview.html"> Up </a>' +  
                         '</head>')
 
@@ -60,13 +61,21 @@ def createAppPage(indexedBuilds, overviewPageOutDir, appName):
             distribution = indexedBuilds[month][day][0]
             version = indexedBuilds[month][day][1]
             release = indexedBuilds[month][day][2]
-            overviewPage.write('<tr>')
-            overviewPage.write('<a id="' + version + '-' + release + '">' +
+            if distribution in os.listdir(overviewPageOutDir) and (appName+'-'+version+'-'+release) in os.listdir(overviewPageOutDir+distribution) and 'all_hl_corrected-exact-complete.xml' in os.listdir(overviewPageOutDir+distribution+'/'+appName+'-'+version+'-'+release):
+                pldiLink = '<a href="../' + distribution + '/' + appName+'-'+version+'-'+release + '/all_hl_corrected-exact-complete.xml"><img src="' + overviewPageOutDir + 'favicon.png"></img></a>'
+            else:
+                pldiLink = '<img src="' + overviewPageOutDir + 'grayedFavicon.png"></img>'
+            if distribution in os.listdir(overviewPageOutDir) and (appName+'-'+version+'-'+release) in os.listdir(overviewPageOutDir+distribution) and 'src' in os.listdir(overviewPageOutDir+distribution+'/'+appName+'-'+version+'-'+release) and 'index.html' in os.listdir(overviewPageOutDir+distribution+'/'+appName+'-'+version+'-'+release+'/src'):
+                georgeLink = '<a href="../' + distribution + '/' + appName+'-'+version+'-'+release + '/src/index.html"><img src="' + overviewPageOutDir + 'georgeicon.png"></img></a>'
+            else:
+                georgeLink = '<img src="' + overviewPageOutDir + 'grayedGeorgeicon.png"></img>'
+
+            version_release = (version+'-'+release).replace('.','-')
+            overviewPage.write('<tr id="' + appName + '-' + version_release + '">' +
                                '<td>' + version + '</td><td>' + release + '</td>' +
-                               '<td><a href="../' + distribution + '/' + appName+'-'+version+'-'+release + '/summary.xml"><img src="' + overviewPageOutDir + '/favicon.png"></img></a></td>' +
-                               '<td><a href="../' + distribution + '/' + appName+'-'+version+'-'+release + '/src/index.html"><img src="' + overviewPageOutDir + '/favicon.png"></img></a></td>' +
-                               '</a>\n')
-            overviewPage.write('</tr>')
+                               '<td align="center">' + pldiLink + '</td>' +
+                               '<td align="center">' + georgeLink + '</td>' +
+                               '</tr>\n')
             
     overviewPage.write('</table>')
     overviewPage.write('</body>')
@@ -81,7 +90,7 @@ def createAppPage(indexedBuilds, overviewPageOutDir, appName):
 ######################################
 #
 # Creates the final HTML document with
-# links to each distribution-release
+# links to each application
 #
 ######################################
 def createAppOverview(indexedBuilds, overviewPageOutDir):
@@ -98,18 +107,15 @@ def createAppOverview(indexedBuilds, overviewPageOutDir):
     overviewPage.write('<head>' +
                         '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">' +
                         '<title>CBI Application Overview</title>' +
+                        '<link href="file://' + overviewPageOutDir + 'releases.css" rel="stylesheet" type="text/css"/>' +
                         '</head>')
 
     #Outputs links to each application, generates index pages for each application
     overviewPage.write('<body>')
     for app in indexedBuilds:
         overviewPage.write('<ul>')
-        overviewPage.write('<li><a href="' + app + '/index.html" id="' + app + '"><font size="4"><strong>' + app + '</strong></font></a></li>\n')
+        overviewPage.write('<li><a href="' + app + '/index.html" name="' + app + '"><font size="4"><strong>' + app + '</strong></font></a></li>\n')
         createAppPage(indexedBuilds[app], overviewPageOutDir, app)
-        #for release in linksArray[distribution]:
-        #    overviewPage.write('<li>' + linksArray[distribution][release][0])
-        #    if linksArray[distribution][release][1] > 0:
-        #        overviewPage.write('<img src="favicon.png"></img>' + '<strong>' + str(linksArray[distribution][release][1]) + '</strong></li>')
         overviewPage.write('</ul>')
     overviewPage.write('</body>')
 
@@ -117,13 +123,45 @@ def createAppOverview(indexedBuilds, overviewPageOutDir):
     overviewPage.write('</html>')
     overviewPage.close()
 
-    print "Wrote", overviewPageOutDir+"appOverview.html"            
+    print "Wrote", overviewPageOutDir+"appOverview.html"
+
+
+######################################
+#
+# Generates css highlighting for each
+# application release
+#   - the background color where any release
+#     is listed is set by its crash rate
+#
+######################################
+def generateCSS(overviewPageOutDir, interestingBuilds):
+
+    cssFile = open(overviewPageOutDir+"releases.css", "w")
+    for build in interestingBuilds:
+        appName = build[0]
+        version = build[2]
+        release = build[3]
+        version_release = (version+'-'+release).replace('.','-')
+        idTag = appName+'-'+version_release
+        crashRate = build[6]
+        if crashRate > 0.05:
+            color = "#ffa0a0"
+        elif crashRate > 0.02:
+            color = "#ffffa0"
+        else:
+            color = "#a0ffa0"
+        cssFile.write('#' + idTag + ' { background-color: ' + color + ' }\n')
+
+    cssFile.close()
+    
 
 ######################################
 #
 # Generates links for each summary page
 # in given summary array, and returns them
 # in the same array.
+#
+# Deprecated.
 #
 ######################################
 def generateLinks(summaryArray, analysisDir):
@@ -144,7 +182,7 @@ def generateLinks(summaryArray, analysisDir):
 #  appName, distribution, version, release, month(since year 0 A.D.), dayOfTheMonth
 #
 ######################################
-def query(queryname):
+def getInterestingBuilds(queryname):
     db = PgSQL.connect(host='postgresql.cs.wisc.edu', port=49173, database='cbi')
     db.autocommit = False
 
@@ -162,6 +200,86 @@ def query(queryname):
 
     db.rollback()
     db.close()
+
+######################################
+#
+# Queries the database for the number of runs
+# for each app release
+#
+# Ouput list row is of the form:
+#  appName, distribution, version, release, numRuns
+#
+######################################
+def getRuns(queryname):
+    db = PgSQL.connect(host='postgresql.cs.wisc.edu', port=49173, database='cbi')
+    db.autocommit = False
+
+    query = file(queryname).read()
+    cursor = db.cursor()
+    cursor.execute(query)
+
+    while True:
+        rows = cursor.fetchmany()
+        if rows:
+            for apName, version, release, distribution, numRuns in rows:
+                yield apName, distribution, version, release, numRuns
+        else:
+            break
+
+    db.rollback()
+    db.close()
+
+
+######################################
+#
+# Appends each build in interestingBuilds
+# with crash rate number
+#
+######################################
+def appendCrashRate(interestingBuilds, buildListAll, buildListFails):
+
+    #First index buildLists by appName => version => release
+    allBuilds = {}
+    for build in buildListAll:
+        #top index is by app
+        appName = build[0]
+        if appName not in allBuilds:
+            allBuilds[appName] = {}
+        #second index is by version
+        version = build[2]
+        if version not in allBuilds[appName]:
+            allBuilds[appName][version] = {}
+        #third index is by release
+        release = build[3]
+        if release not in allBuilds[appName][version]:
+            allBuilds[appName][version][release] = build[4]
+
+    failBuilds = {}
+    for build in buildListFails:
+        #top index is by app
+        appName = build[0]
+        if appName not in failBuilds:
+            failBuilds[appName] = {}
+        #second index is by version
+        version = build[2]
+        if version not in failBuilds[appName]:
+            failBuilds[appName][version] = {}
+        #third index is by release
+        release = build[3]
+        if release not in failBuilds[appName][version]:
+            failBuilds[appName][version][release] = build[4]
+
+    #Now append crash rate to each build
+    appendedBuildList = []
+    for build in interestingBuilds:
+        appName = build[0]
+        version = build[2]
+        release = build[3]
+        crashRate = (failBuilds[appName][version][release]+0.0) / (allBuilds[appName][version][release]+0.0)
+        appendedBuildList.append([build[0], build[1], build[2], build[3], build[4], build[5], crashRate])
+
+    return appendedBuildList
+        
 
 
 ######################################
@@ -243,6 +361,8 @@ def indexByDistribution_Date(interestingBuilds):
 # directory, and returns those in an array
 # indexed by build distribution, release.
 #
+# Deprecated.
+#
 ######################################
 def getSuccessfulSummaryPages(analysisDir, undo, backup):
 
@@ -310,6 +430,8 @@ def highlightSource(resultsDir):
 # all the html files back from a backup
 # directory.
 #
+# Deprecated.
+#
 ######################################
 def undoHighlight(resultsDir):
     if not resultsDir.endswith("/"):
@@ -321,16 +443,18 @@ def undoHighlight(resultsDir):
 
 ######################################
 #
-# Creates a backup of all the src html
-# files and stores them in srcBACKUP/
+# Creates a copy of all the src html
+# files and stores them in georgesrc/
+#
+# Deprecated.
 #
 ######################################
-def createBackup(resultsDir):
+def copyToGeorge(resultsDir):
     if not resultsDir.endswith("/"):
         resultsDir += "/"
-    if 'srcBACKUP' not in os.listdir(resultsDir):
-        commands.getoutput('mkdir ' + resultsDir + 'srcBACKUP')
-    copyToDir = resultsDir + "srcBACKUP/"
+    if 'georgesrc' not in os.listdir(resultsDir):
+        commands.getoutput('mkdir ' + resultsDir + 'georgesrc')
+    copyToDir = resultsDir + "georgesrc/"
     copyFromDir = resultsDir + "src/"
     commands.getoutput("../george/utils/copy_dir_files " + copyFromDir + " " + copyToDir) 
     
@@ -362,7 +486,12 @@ def main():
         elif option == "-b":
             backup = True
 
-    interestingBuilds = list(query("interesting_builds.sql"))
+    interestingBuilds = list(getInterestingBuilds("interesting_builds.sql"))
+    buildListAll = list(getRuns("runs.sql"))
+    buildListFails = list(getRuns("crashes.sql"))
+    interestingBuilds = appendCrashRate(interestingBuilds, buildListAll, buildListFails)
+
+    generateCSS(overviewPageOutDir, interestingBuilds)
     
     appName_indexedBuilds = indexByAppname_Date(interestingBuilds)
     createAppOverview(appName_indexedBuilds, overviewPageOutDir)
