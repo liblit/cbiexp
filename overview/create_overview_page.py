@@ -70,53 +70,53 @@ def createDistPage(indexedBuilds, overviewPageOutDir, distribution):
 
     overviewPage.write('<table border="1">\n')
     overviewPage.write('<tr><th> Application </th><th> Version </th><th> Release </th><th> Predicate View </th><th> George View </th></tr>\n')
-
+    
     recentBuilds = flatten(indexedBuilds)
-    mostRecentBuilds = getMostRecentBuilds(recentBuilds)
+    mostRecentBuilds = getMostRecentDistBuilds(recentBuilds)
     
     for appName in sorted(mostRecentBuilds, reverse=True):
-        version = mostRecentBuilds[appName][0]
-        release = mostRecentBuilds[appName][1]
+        version = mostRecentBuilds[appName][2]
+        release = mostRecentBuilds[appName][3]
         pldiLink = '<img src="' + overviewPageOutDir + 'grayedFavicon.png"></img>'
         if distribution in os.listdir(overviewPageOutDir) and (appName+'-'+version+'-'+release) in os.listdir(overviewPageOutDir+distribution) and 'all_hl_corrected-exact-complete.xml' in os.listdir(overviewPageOutDir+distribution+'/'+appName+'-'+version+'-'+release):
             numPreds = countPreds(overviewPageOutDir+distribution+'/'+appName+'-'+version+'-'+release+'/all_hl_corrected-exact-complete.xml')
             if numPreds > 0:
-                pldiLink = ''+str(numPreds)+'&nbsp;&nbsp;<a href="' + overviewOutPageDir + distribution + '/' + appName+'-'+version+'-'+release + '/all_hl_corrected-exact-complete.xml"><img src="' + overviewPageOutDir + 'favicon.png"></img></a> &nbsp;&nbsp;'
+                pldiLink = ''+str(numPreds)+'&nbsp;&nbsp;<a href="' + overviewPageOutDir + distribution + '/' + appName+'-'+version+'-'+release + '/all_hl_corrected-exact-complete.xml"><img src="' + overviewPageOutDir + 'favicon.png"></img></a> &nbsp;&nbsp;'
         if distribution in os.listdir(overviewPageOutDir) and (appName+'-'+version+'-'+release) in os.listdir(overviewPageOutDir+distribution) and 'src' in os.listdir(overviewPageOutDir+distribution+'/'+appName+'-'+version+'-'+release) and 'index.html' in os.listdir(overviewPageOutDir+distribution+'/'+appName+'-'+version+'-'+release+'/src'):
-            georgeLink = '<a href="' + overviewOutPageDir + distribution + '/' + appName+'-'+version+'-'+release + '/src/index.html"><img src="' + overviewPageOutDir + 'georgeicon.png"></img></a>'
+            georgeLink = '<a href="' + overviewPageOutDir + distribution + '/' + appName+'-'+version+'-'+release + '/src/index.html"><img src="' + overviewPageOutDir + 'georgeicon.png"></img></a>'
         else:
             georgeLink = '<img src="' + overviewPageOutDir + 'grayedGeorgeicon.png"></img>'
 
         version_release = (version+'-'+release).replace('.','-')
         overviewPage.write('<tr id="' + appName + '-' + version_release + '">' +
-                           '<td>' + version + '</td><td>' + release + '</td>' +
+                           '<td>' + appName + '</td><td>' + version + '</td><td>' + release + '</td>' +
                            '<td align="center" height="40" valign="middle">' + pldiLink + '</td>' +
                            '<td align="center">' + georgeLink + '</td>' +
                            '</tr>\n')
 
-    
+    overviewPage.write('<br/><br/>\n')
     overviewPage.write('<table border="1">\n')
     overviewPage.write('<tr><th> Application </th><th> Version </th><th> Release </th><th> Predicate View </th><th> George View </th></tr>\n')
-    
+
     for month in sorted(indexedBuilds, reverse=True):
         for day in sorted(indexedBuilds[month], reverse=True):
             for appName in sorted(indexedBuilds[month][day], reverse=True):
                 distribution = indexedBuilds[month][day][appName][0]
-                version = indexedBuilds[month][day][appName][1]
-                release = indexedBuilds[month][day][appName][2]
+                version = indexedBuilds[month][day][appName][0]
+                release = indexedBuilds[month][day][appName][1]
                 pldiLink = '<img src="' + overviewPageOutDir + 'grayedFavicon.png"></img>'
                 if distribution in os.listdir(overviewPageOutDir) and (appName+'-'+version+'-'+release) in os.listdir(overviewPageOutDir+distribution) and 'all_hl_corrected-exact-complete.xml' in os.listdir(overviewPageOutDir+distribution+'/'+appName+'-'+version+'-'+release):
                     numPreds = countPreds(overviewPageOutDir+distribution+'/'+appName+'-'+version+'-'+release+'/all_hl_corrected-exact-complete.xml')
                     if numPreds > 0:
-                        pldiLink = ''+str(numPreds)+'&nbsp;&nbsp;<a href="' + overviewOutPageDir + distribution + '/' + appName+'-'+version+'-'+release + '/all_hl_corrected-exact-complete.xml"><img src="' + overviewPageOutDir + 'favicon.png"></img></a> &nbsp;&nbsp;'
+                        pldiLink = ''+str(numPreds)+'&nbsp;&nbsp;<a href="' + overviewPageOutDir + distribution + '/' + appName+'-'+version+'-'+release + '/all_hl_corrected-exact-complete.xml"><img src="' + overviewPageOutDir + 'favicon.png"></img></a> &nbsp;&nbsp;'
                 if distribution in os.listdir(overviewPageOutDir) and (appName+'-'+version+'-'+release) in os.listdir(overviewPageOutDir+distribution) and 'src' in os.listdir(overviewPageOutDir+distribution+'/'+appName+'-'+version+'-'+release) and 'index.html' in os.listdir(overviewPageOutDir+distribution+'/'+appName+'-'+version+'-'+release+'/src'):
-                    georgeLink = '<a href="' + overviewOutPageDir + distribution + '/' + appName+'-'+version+'-'+release + '/src/index.html"><img src="' + overviewPageOutDir + 'georgeicon.png"></img></a>'
+                    georgeLink = '<a href="' + overviewPageOutDir + distribution + '/' + appName+'-'+version+'-'+release + '/src/index.html"><img src="' + overviewPageOutDir + 'georgeicon.png"></img></a>'
                 else:
                     georgeLink = '<img src="' + overviewPageOutDir + 'grayedGeorgeicon.png"></img>'
 
                     version_release = (version+'-'+release).replace('.','-')
                     overviewPage.write('<tr id="' + appName + '-' + version_release + '">' +
-                                       '<td>' + version + '</td><td>' + release + '</td>' +
+                                       '<td>' + appName + '</td><td>' + version + '</td><td>' + release + '</td>' +
                                        '<td align="center" height="40" valign="middle">' + pldiLink + '</td>' +
                                        '<td align="center">' + georgeLink + '</td>' +
                                        '</tr>\n')
@@ -172,9 +172,9 @@ def createAppPage(indexedBuilds, overviewPageOutDir, appName):
             if distribution in os.listdir(overviewPageOutDir) and (appName+'-'+version+'-'+release) in os.listdir(overviewPageOutDir+distribution) and 'all_hl_corrected-exact-complete.xml' in os.listdir(overviewPageOutDir+distribution+'/'+appName+'-'+version+'-'+release):
                 numPreds = countPreds(overviewPageOutDir+distribution+'/'+appName+'-'+version+'-'+release+'/all_hl_corrected-exact-complete.xml')
                 if numPreds > 0:
-                    pldiLink = ''+str(numPreds)+'&nbsp;&nbsp;<a href="' + overviewOutPageDir + distribution + '/' + appName+'-'+version+'-'+release + '/all_hl_corrected-exact-complete.xml"><img src="' + overviewPageOutDir + 'favicon.png"></img></a> &nbsp;&nbsp;'
+                    pldiLink = ''+str(numPreds)+'&nbsp;&nbsp;<a href="' + overviewPageOutDir + distribution + '/' + appName+'-'+version+'-'+release + '/all_hl_corrected-exact-complete.xml"><img src="' + overviewPageOutDir + 'favicon.png"></img></a> &nbsp;&nbsp;'
             if distribution in os.listdir(overviewPageOutDir) and (appName+'-'+version+'-'+release) in os.listdir(overviewPageOutDir+distribution) and 'src' in os.listdir(overviewPageOutDir+distribution+'/'+appName+'-'+version+'-'+release) and 'index.html' in os.listdir(overviewPageOutDir+distribution+'/'+appName+'-'+version+'-'+release+'/src'):
-                georgeLink = '<a href="' + overviewOutPageDir + distribution + '/' + appName+'-'+version+'-'+release + '/src/index.html"><img src="' + overviewPageOutDir + 'georgeicon.png"></img></a>'
+                georgeLink = '<a href="' + overviewPageOutDir + distribution + '/' + appName+'-'+version+'-'+release + '/src/index.html"><img src="' + overviewPageOutDir + 'georgeicon.png"></img></a>'
             else:
                 georgeLink = '<img src="' + overviewPageOutDir + 'grayedGeorgeicon.png"></img>'
 
@@ -236,6 +236,45 @@ def createAppOverview(indexedBuilds, overviewPageOutDir):
 
 ######################################
 #
+# Creates the final HTML document with
+# links to each distribution
+#
+######################################
+def createDistOverview(indexedBuilds, overviewPageOutDir):
+
+    #Opens the final html file for writing
+    overviewPage = open(overviewPageOutDir+"distOverview.html", "w")
+
+    #Generates some opening html tags
+    overviewPage.write('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"' +
+            '"http://www.w3.org/TR/html4/loose.dtd">' +
+            '<html>')
+
+    #Generates a header
+    overviewPage.write('<head>' +
+                        '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">' +
+                        '<title>CBI Distribution Overview</title>' +
+                        '<link href="file://' + overviewPageOutDir + 'releases.css" rel="stylesheet" type="text/css"/>' +
+                        '</head>')
+
+    #Outputs links to each application, generates index pages for each application
+    overviewPage.write('<body>')
+    for dist in sorted(indexedBuilds):
+        overviewPage.write('<ul>')
+        overviewPage.write('<li><a href="' + dist + '/index.html" id="' + dist + '"><font size="4"><strong>' + dist + '</strong></font></a></li>\n')
+        createDistPage(indexedBuilds[dist], overviewPageOutDir, dist)
+        overviewPage.write('</ul>')
+    overviewPage.write('</body>')
+
+    #Closes the document
+    overviewPage.write('</html>')
+    overviewPage.close()
+
+    print "Wrote", overviewPageOutDir+"distOverview.html"
+
+
+######################################
+#
 # Generates css highlighting for each
 # application release
 #   - the background color where any release
@@ -290,8 +329,10 @@ def flatten(indexedBuilds):
     for month in indexedBuilds:
         for day in indexedBuilds[month]:
             for appName in indexedBuilds[month][day]:
-                flattenedBuilds += [appName, version, release, month, day]
-
+                version = indexedBuilds[month][day][appName][0]
+                release = indexedBuilds[month][day][appName][1]
+                flattenedBuilds.append([appName, version, release, month, day])
+                
     return flattenedBuilds
 
 
@@ -690,6 +731,8 @@ def copyToGeorge(resultsDir):
 def main():
 
     ##TODO
+    # 0. Complete distribution view
+    # 0.1. Change SQL to run on every build, not just interesting ones
     # 1. Copy all things of interest to given output directory (summary.xml, supporting xmls, debug dir, etc.)
     # 2. Overview should go at top of that --- provide option to not copy everything (just place overview on top)
 
@@ -724,15 +767,15 @@ def main():
     appName_indexedBuilds = indexByAppname_Date(interestingBuilds)
     createAppOverview(appName_indexedBuilds, overviewPageOutDir)
     
-    #distribution_indexedBuilds = indexByDistribution_Date(interestingBuilds)
-    #createDistOverview(distribution_indexedBuilds)
+    distribution_indexedBuilds = indexByDistribution_Date(interestingBuilds)
+    createDistOverview(distribution_indexedBuilds, overviewPageOutDir)
 
     #summaryArray = getSuccessfulSummaryPages(analysisDir, undo, backup)
     #linksArray = generateLinks(summaryArray, analysisDir)
     #createOverviewPage(linksArray, overviewPageOutDir)
 
     if debug > 1:
-        commands.getoutput("firefox " + overviewPageOutDir + "appOverview.html")
+        commands.getoutput("firefox " + overviewPageOutDir + "distOverview.html")
 
 
 if __name__ == '__main__':
