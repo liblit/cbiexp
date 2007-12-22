@@ -1,0 +1,49 @@
+#!/bin/bash
+# Script to copy all the html files from the current
+# directory into a dirctory given directory 
+# While preserving the directory structure
+
+# usage copy_dir_files <source directory> <destination directory>
+${1?"Usage: copy_dir_files <source dir> <dest. dir>"}
+${2?"Usage: copy_dir_files <source dir> <dest. dir>"}
+
+home=$PWD # home directory
+hm=$1 # source directory
+cd $hm
+hm=$PWD # source directory full path
+cd $home
+dirname=$2 # destination directory
+if ! [[ -e $dirname ]]; then
+	mkdir $dirname
+fi
+cd $dirname
+dirname=$PWD # destination directory full path
+cd $hm 
+
+for di in $(find . -type d); do
+	odir=$di # old directory
+
+	# create the necessary directories 
+	ndir=$dirname/$di # new directory
+	if ! [[ -e $ndir ]]; then
+		mkdir $ndir
+	fi
+
+	# copy the html files
+	if [[ "$(ls $odir/*.html)" ]]; then
+		cp $odir/*.html $ndir
+	fi
+done
+
+# delete the directories that do not contain any files 
+# files in them or any of their subdirectories
+cd $dirname 
+for di in $(find . -type d); do
+	if [[ -e $di ]]; then
+		if ! [[ "$(find $di -type f)" ]]; then
+			rm -rf $di
+		fi
+	fi
+done
+cd $home
+
