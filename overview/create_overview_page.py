@@ -18,9 +18,6 @@ import os
 import sys
 import commands
 
-sys.path.append("/afs/cs.wisc.edu/u/f/l/fletchal/CBI/vizProject")
-import visualize_one
-
 debug = 2
 
 
@@ -68,7 +65,7 @@ def createDistPage(indexedBuilds, overviewPageOutDir, distribution):
     #Outputs [application, version, release, PLDI2005 link, George link] in order of build date in table format
     overviewPage.write('<body>\n')
 
-    overviewPage.write('<table border="1">\n')
+    overviewPage.write('<table border="1"><caption>Most recent release for each appliction</caption>\n')
     overviewPage.write('<tr><th> Application </th><th> Version </th><th> Release </th><th> Predicate View </th><th> George View </th></tr>\n')
     
     recentBuilds = flatten(indexedBuilds)
@@ -95,7 +92,7 @@ def createDistPage(indexedBuilds, overviewPageOutDir, distribution):
                            '</tr>\n')
 
     overviewPage.write('<br/><br/>\n')
-    overviewPage.write('<table border="1">\n')
+    overviewPage.write('<table border="1"><caption>All application releases</caption>\n')
     overviewPage.write('<tr><th> Application </th><th> Version </th><th> Release </th><th> Predicate View </th><th> George View </th></tr>\n')
 
     for month in sorted(indexedBuilds, reverse=True):
@@ -216,6 +213,7 @@ def createAppOverview(indexedBuilds, overviewPageOutDir):
                         '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">' +
                         '<title>CBI Application Overview</title>' +
                         '<link href="file://' + overviewPageOutDir + 'releases.css" rel="stylesheet" type="text/css"/>' +
+                        '<a href="' + overviewPageOutDir + 'distOverview.html">Distribution Overview</a><br/><br/>' +
                         '</head>')
 
     #Outputs links to each application, generates index pages for each application
@@ -255,6 +253,7 @@ def createDistOverview(indexedBuilds, overviewPageOutDir):
                         '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">' +
                         '<title>CBI Distribution Overview</title>' +
                         '<link href="file://' + overviewPageOutDir + 'releases.css" rel="stylesheet" type="text/css"/>' +
+                        '<a href="' + overviewPageOutDir + 'appOverview.html">Application Overview</a><br/><br/>' +
                         '</head>')
 
     #Outputs links to each application, generates index pages for each application
@@ -388,24 +387,6 @@ def getMostRecentDistBuilds(interestingBuilds):
                 mostRecentBuilds[appName] = [month, day, version, release]
 
     return mostRecentBuilds
-
-
-######################################
-#
-# Generates links for each summary page
-# in given summary array, and returns them
-# in the same array.
-#
-# Deprecated.
-#
-######################################
-def generateLinks(summaryArray, analysisDir):
-
-    for distribution in summaryArray:
-        for release in summaryArray[distribution]:
-            summaryArray[distribution][release][0] = '<a href="' + analysisDir + '/' + distribution + '/' + release + '/summary.xml">' + release + '</a>'
-
-    return summaryArray
 
 
 ######################################
@@ -624,155 +605,49 @@ def indexByApp(interestingBuilds):
         
 
 
-######################################
-#
-# Gets all the summary pages in the given
-# directory, and returns those in an array
-# indexed by build distribution, release.
-#
-# Deprecated.
-#
-######################################
-def getSuccessfulSummaryPages(analysisDir, undo, backup):
 
-    #Walks the given directory for summary.xml files
-    summaryArray = {}
-    for analysisPath, dirs, resultFiles in os.walk(analysisDir):
-        #Looking in any reports, src, or sites directories is a waste of time
-        if 'data' in dirs:
-            dirs.remove('data')
-        if 'debug' in dirs:
-            dirs.remove('debug')
-        if 'sites' in dirs:
-            dirs.remove('sites')
-        if 'src' in dirs:
-            dirs.remove('src')
-        #if len(analysisDir.split('/')) == 5:
-
-        for resultFile in resultFiles:
-            if (resultFile == "summary.xml"):
-                #Look in directory containing summary (analysis home) for preds.txt, count # predicates (if any)
-                preds = open(analysisPath + "/preds.txt", "r")
-                predList = preds.readlines()
-                numPreds = len(predList)
-                
-                #All paths take the form .../distribution/release/, so extract distribution & release names
-                splitPath = analysisPath.rsplit("/", 2)
-                distribution = splitPath[1]
-                release = splitPath[2]
-                if distribution not in summaryArray:
-                    summaryArray[distribution] = {}
-                summaryArray[distribution][release] = ["summary.xml", numPreds]
-
-                #Backup src htmls if requested
-                if backup == True:
-                    createBackup(analysisPath)
-                #Process html views to pretty them up
-                #highlightSource(analysisPath)
-                #Undo George highlighting
-                if undo == True:
-                    undoHighlight(analysisPath)
-
-                #Update links in predicate table to make what they link to more readable
-                #processPredicateLinks(analysisPath)
-                
-                print "Found summary page for", distribution + "/" + release
-
-    return summaryArray
-
-
-######################################
-#
-# Highlights all the src html files using
-# George.
-#
-######################################
-def highlightSource(resultsDir):
-    sys.argv = "junk","-esp",resultsDir
-    visualize_one.main()
-
-
-######################################
-#
-# "Undoes" the html highlighting done by
-# George.  This is really just copying
-# all the html files back from a backup
-# directory.
-#
-# Deprecated.
-#
-######################################
-def undoHighlight(resultsDir):
-    if not resultsDir.endswith("/"):
-        resultsDir += "/"
-    copyFromDir = resultsDir + "srcBACKUP/"
-    copyToDir = resultsDir + "src/"
-    commands.getoutput("../george/utils/copy_dir_files " + copyFromDir + " " + copyToDir)
-
-
-######################################
-#
-# Creates a copy of all the src html
-# files and stores them in georgesrc/
-#
-# Deprecated.
-#
-######################################
-def copyToGeorge(resultsDir):
-    if not resultsDir.endswith("/"):
-        resultsDir += "/"
-    if 'georgesrc' not in os.listdir(resultsDir):
-        commands.getoutput('mkdir ' + resultsDir + 'georgesrc')
-    copyToDir = resultsDir + "georgesrc/"
-    copyFromDir = resultsDir + "src/"
-    commands.getoutput("../george/utils/copy_dir_files " + copyFromDir + " " + copyToDir) 
     
 
 def main():
 
     ##TODO
-    # 0. Complete distribution view
-    # 0.1. Change SQL to run on every build, not just interesting ones
-    # 1. Copy all things of interest to given output directory (summary.xml, supporting xmls, debug dir, etc.)
-    # 2. Overview should go at top of that --- provide option to not copy everything (just place overview on top)
+    # 1. Change SQL to run on every build, not just interesting ones
 
-    if len(sys.argv) != 3 and len(sys.argv) != 4:
-        print "Usage: create_overview_page.py analysisDir overviewPageOutDir [-u -b]"
-        print "Where -u indicates that George highlighting should be undone."
-        print "Where -b indicates that a backup of src html should be made."
+    if len(sys.argv) != 3 and len(sys.argv) != 2:
+        print "Usage: create_overview_page.py analysisDir [overviewPageOutDir]"
+        print "Example: create_overview_page.py /tmp/fletchal/results"
+        print "It is recommended that you only specify analysisDir so that the overview html pages get placed at the home of the results."
         return
 
     analysisDir = sys.argv[1]
     if not analysisDir.endswith('/'):
         analysisDir += '/'
-    overviewPageOutDir = sys.argv[2]
-    if not overviewPageOutDir.endswith('/'):
-        overviewPageOutDir += '/'
-    undo = False
-    backup = False
-    if len(sys.argv) == 4:
-        option = sys.argv[3]
-        if option == "-u":
-            undo = True
-        elif option == "-b":
-            backup = True
+    if len(sys.argv) == 3:
+        overviewPageOutDir = sys.argv[2]
+        if not overviewPageOutDir.endswith('/'):
+            overviewPageOutDir += '/'
+    else:
+        overviewPageOutDir = analysisDir
 
+    #Gets list of builds we want to include
     interestingBuilds = list(getInterestingBuilds("interesting_builds.sql"))
+    #Gets number of runs for each build
     buildListAll = list(getRuns("runs.sql"))
+    #Gets number of crashes for each build
     buildListFails = list(getRuns("crashes.sql"))
+    #Calculates and adds crash rate stat to each build
     interestingBuilds = appendCrashRate(interestingBuilds, buildListAll, buildListFails)
 
+    #Generates a CSS file based on crash rate for each build
     generateCSS(overviewPageOutDir, interestingBuilds)
-    
+
+    #Creates an overview page organized by application
     appName_indexedBuilds = indexByAppname_Date(interestingBuilds)
     createAppOverview(appName_indexedBuilds, overviewPageOutDir)
-    
+
+    #Creates an overview page organized by distribution
     distribution_indexedBuilds = indexByDistribution_Date(interestingBuilds)
     createDistOverview(distribution_indexedBuilds, overviewPageOutDir)
-
-    #summaryArray = getSuccessfulSummaryPages(analysisDir, undo, backup)
-    #linksArray = generateLinks(summaryArray, analysisDir)
-    #createOverviewPage(linksArray, overviewPageOutDir)
 
     if debug > 1:
         commands.getoutput("firefox " + overviewPageOutDir + "distOverview.html")
