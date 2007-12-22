@@ -8,7 +8,7 @@
 # analyses for all application-releases in the
 # given directory.
 
-# Usage: create_overview_page.py analysisDir overviewPageOutDir
+# Usage: create_overview_page.py analysisDir [overviewPageOutDir]
 #
 ######################################
 
