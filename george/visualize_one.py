@@ -28,7 +28,7 @@ sys.path.append("./html")
 import wrapDiv
 from make_menu import make_menu
 
-debug = 2
+debug = 0
 
 
 def main():
@@ -66,7 +66,7 @@ def main():
     #Calculates statistics - creates a .viz file
     sys.argv ="junk",reportsDir,sitesDir,vizOutDir,srcHtmlDir,distribution,release  
     vizFileName = calculate_statistics.main()
-    #vizFileName = "/tmp/fletchal/results/fedora-5-i386/nautilus-2.14.1-1.fc5.1.sam.1/fedora-5-i386___nautilus-2.14.1-1.fc5.1.sam.1.viz"
+    #vizFileName = "/tmp/fletchal/results/fedora-8-i386/nautilus-2.20.0-6.fc8.sam.1/fedora-8-i386___nautilus-2.20.0-6.fc8.sam.1.viz"
 
     #Refreshes the source html files if needed
     if copySrcDir != "":
@@ -89,8 +89,8 @@ def main():
     wrapDiv.main()
     if 'george' not in os.listdir('/tmp'):
         commands.getoutput("mkdir /tmp/george")
-    if 'syleswitcher.js' not in os.listdir('/tmp/george'):
-        commands.getoutput("cp html/syleswitcher.js /tmp/george")
+    if 'styleswitcher.js' not in os.listdir('/tmp/george'):
+        commands.getoutput("cp html/styleswitcher.js /tmp/george")
     if 'menu.css' not in os.listdir('/tmp/george'):
         commands.getoutput("cp html/menu.css /tmp/george")
 
