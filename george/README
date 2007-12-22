@@ -1,0 +1,172 @@
+#########################################
+#					#
+#	     George Overview 		#
+#	  for future developers		#
+#					#
+#					#
+# Jason Fletchall			#
+# 12/2007				#
+# fletchal@cs.wisc.edu			#
+#					#
+#########################################
+
+
+#################################
+#				#
+#	1. Using this guide	#
+#				#
+#################################
+
+This guide follows the execution flow of George.  It starts with the highest-level main script, then delves into each other script or program as it is called.
+The next section of this guide talks about additional files that are not called during normal execution of George.
+The final section talks about known bugs and needed improvements.
+
+
+#################################
+#				#
+#   2. George execution flow	#
+#				#
+#################################
+
+To start up an execution of George, cd into cbiexp/george, and run this command:
+
+	main.py resultsDir
+
+Where resultsDir is the top-level location of the results dumped by sampler/mining/analysis/stamps.
+
+-------main.py-------
+
+main first queries the CBI database for all builds that have received at least two failing runs.  It then runs visualize_one on all of them.
+
+	-------visualize_one.py-------
+
+	visualize_one runs George on a single build.  This script has two methods of calling it - one where you must specify parameters for every one of the scripts
+	it calls, and another that requires just the build's home directory.  The latter method assumes all CBI defaults, and is the recommended way to call visualize_one.
+	The command is:
+		visualize_one.py -esp buildHomeDir
+
+	This version of visualize_one assumes that:
+		All sites files for the build are contained in buildHomeDir/sites.
+		All reports files for the build are contained in buildHomeDir/data.
+		All html-ified source code files for the build are contained in buildHomeDir/src.
+		The user wants the output of visualize_one (Highlighted source htmls and overview page) to go in buildHomeDir/src.
+
+	This script performs all the operations to run George on the given release in the following order:
+		1. Generate a .viz file mapping coverage, crash-impact, and crashiness scores to file/lineNumber -- statistics/calculate_statistics.py
+		2. Attach css references to all source code html files in buildHomeDir/src -- html/put_css
+		3. Generate css files to define coloring for each line of code in source code html files -- Main.java
+		4. Attach statistics toggling (Javascript) & coloring scale to the right frame of each source code html file -- html/wrapDiv.py
+		5. Create overview page (index.html) for build and place it in buildHomeDir/src -- html/make_menu.py
+
+		-------calculate_statistics.py-------
+
+		calculate_statistics takes in several parameters:
+			- reportsDir - location of the feedback reports
+			- sitesDir - location of the sites files
+			- vizOutDir - where to place the final .viz file
+			- srcHtmlDir - location of the source code html files
+			- distributionName - name of the distribution of this build
+			- releaseName - name of the release of this build
+
+		This script first concatenates all .sites files together to create a MEGA.sites file.
+		It then picks up MEGA.sites and creates an array representing the contents of the <sites> blocks.
+		Next it creates arrays representing coverage data and crash-impact data.  Here is a description of those:
+			- Create array of all report data (or just failure report data for crash-impact)
+			- Merge it with the given sites array to produce an "mega" array mapping raw report data to sites
+			- Percentilize the raw scores in the mega array
+			- Write the mega array to the final .viz file
+		Finally it calculates crashiness with this procedure:
+			- Divide each element in raw crash-impact score array by its corresponding war coverage score
+			- Percentilize crashiness scores
+			- Write scores to final .viz file
+
+		-------put_css-------
+
+		put_css takes in one parameter: the home directory of the source code html files.  It then finds all html files
+		in that directory and rewrites their headers to link to menu.css and syleswitcher.js, the css and Javascript files that control the
+		right-frame naviogation.
+
+		-------Main.java-------
+
+		Main.java takes in one parameter: the .viz file produced by calculate_statistics.  Based on source code file names given in the .viz file,
+		it generates three css files for each source code file to map line numbers to colors, one css file for each statistic.  It determines the colors
+		for each line number using a logarithmic scale.
+
+		-------wrapDiv.py-------
+
+		wrapDiv takes in one parameter: the home directory of the source code html files.  It then finds all html files in that directory and
+		adds Javascript effects to them to allow switching between statistics in the right-frame navigation.
+
+		-------make_menu.py-------
+
+		make_menu takes in four parameters: 
+			- vizOutDir - location of the .viz file
+			- srcHtmlDir - the home directory of the source code html files
+			- distribution - the distribution name of this build
+			- release - name of the release of this build
+		This script first calls generate_plots to create a plot showing the statistics for the crashiest files in this build.
+		Next it looks in the .viz file for all source code files that had scores > 0 for coverage, crash-impact, and crashiness, and generates
+		html tables listing them in order by score.  Tables for No-Coverage and No-Crashes are generated from the remaining files.
+		Highlighting for the file names is defined by adding id tags to the links to the files - the id tags indicate the statistic name and the score.
+		The css file controlling the coloring is maintable.css.
+		Note: The score of a file is defined as the highest score of any line of code contained in the file.
+
+			-------generate_plots.py-------
+
+			generate_plots takes in two parameters:
+				- vizFile - the name of the .viz file for this build
+				- outputFile - the name of the image file to be generated
+			This script first creates a list of the crashiest files, ordered by crashiness, from the data found in the .viz file.
+			It then generates a plot using PyChart of the statistics for each of these files.			
+
+
+
+#################################
+#				#
+#     3. Additional files	#
+#				#
+#################################
+
+-------html/styleswitcher.js-------
+
+This javascript file defines functions for switching between css files that define highlighting for each statistic.
+
+-------html/menu.css-------
+
+This css file defines the styles for the color scale located in the right-frame of each source code html file.
+
+-------html/maintable.css-------
+
+This css file defines the highlighting colors for each score (0-100) for each statistic.  It can be re-generated by running utils/CreateMainCSS.java.
+
+-------utils/CreateMainCSS.java-------
+
+Generates maintable.css.
+
+-------utils/copy_dir_files-------
+
+Takes two parameters: a copy_from directory and a copy_to directory.  It recursively copies all html files from copy_from to copy_to, preserving directory structure.
+
+-------utils/purge_empty_directories-------
+
+Utility used by copy_dir_files to remove empty directories.
+
+
+
+#########################################
+#					#
+# 4. Known bugs/suggested improvements	#
+#					#
+#########################################
+
+1. calculate_statistics currently assumes a certain structure to the source code tree of a build.  This works perfectly well in recent distributions, but can cause
+   404 errors in later ones, like redhat-9-i386.
+
+2. put_css currently assumes that menu.css and styleswitcher.js are in the directory /tmp/george.  visualize_one automatically copies them there, but a better location
+   should be decided for those files.
+
+3. All Python scripts that rely on any other scripts currently assume that you are running George from its home directory.  A good solution to this would be to define
+   an environment variable for George, and have each script look in there for resources.
+
+4. calculate_statistics can be a little picky when checking for malformed reports.  In fact, as long as Ben has added all malformed reports to the run_suppress table,
+   this script should not need to be doing any malformed report checking.
