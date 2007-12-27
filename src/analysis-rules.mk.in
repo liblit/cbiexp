@@ -499,7 +499,7 @@ force:
 
 ########################################################################
 pairs.txt: preds.txt
-ifdef CSURF
+ifdef COMPOUND
 	(cd .. && ln -sf analysis/static-site-info.so analysis/preds.txt .)
 	csurf -nogui ../$(program).exe.prj -l $(tooldir)/effort/effort.stk
 else
