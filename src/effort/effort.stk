@@ -1,2 +1,0 @@
-(load "/scratch/arumuga/cbi/cbiexp/src/effort/.libs/libeffort.so")
-(quit)
