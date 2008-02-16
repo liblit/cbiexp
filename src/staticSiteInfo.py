@@ -139,10 +139,6 @@ def main():
         for site in unit.sites:
             print '    %s' % siteStr(site)
 
-    print 'iterating by site, across all units:'
-    for site in unit.sites:
-        print '  %s' % siteStr(site)
-
 
 if __name__ == '__main__':
     main()
