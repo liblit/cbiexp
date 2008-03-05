@@ -209,7 +209,7 @@ all_hl_corrected-%_complex.xml: f.runs obs.txt tru.txt $(call tool-deps, correct
 CLEANFILES += all_hl_corrected-exact-complete_complex.xml corrected-exact-complete_complex.txt
 clean::
 	$(find-zooms) -exec rm '{}' ';'
-    
+
 ifndef report-series
 stamp-decimate := $(datadir)/stamp-convert-reports
 else
@@ -246,7 +246,7 @@ stamp-amplify := $(stamp-decimate)-amplify
 ifdef amplify-pred-counts
 report-series-amplify := $(if $(report-series),$(report-series).amplify,amplify)
 input-report := $(if $(report-series),reports.sparse.$(report-series),reports.sparse)
-amplify_flag := --amplify  
+amplify_flag := --amplify
 $(stamp-amplify): $(stamp-decimate) $(sites) $(implications)
 	test -w $@ -o ! -e $@
 	$(time) $(tooldir)/amplify/amplify $(implication-args) $(site-args) -runs-directory $(datadir) -begin-runs $(training-runs) -do-logging -input-report-name $(input-report) -output-report-name reports.sparse.$(report-series-amplify) -amplify-log-name $(amplify-log)
@@ -458,7 +458,7 @@ f.indices s.indices i.indices: f.runs s.runs $(datadir)/stamp-labels
 CLEANFILES += f.indices s.indices i.indices
 
 Xtru.sparse Xobs.sparse X.xml: preds.txt $(datadir)/stamp-labels
-	$(time) $(tooldir)/matlab/make-counts-matrix --runs-directory=$(datadir) --begin-runs=$(training-runs) --report-suffix=$(report-series) 
+	$(time) $(tooldir)/matlab/make-counts-matrix --runs-directory=$(datadir) --begin-runs=$(training-runs) --report-suffix=$(report-series)
 CLEANFILES += Xtru.sparse Xobs.sparse X.xml
 
 prerunsinfo.mat: f.indices s.indices i.indices X.xml $(matlab-counts)
