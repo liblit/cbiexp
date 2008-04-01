@@ -282,7 +282,9 @@ libanalyze_a_SOURCES =				\
 	timestamp.h				\
 	unit_t.h				\
 	utils.cc				\
-	utils.h
+	utils.h					\
+	xml.cc					\
+	xml.h
 
 
 ########################################################################
