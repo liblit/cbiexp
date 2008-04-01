@@ -8,8 +8,11 @@
 #include "fopen.h"
 #include "termination.h"
 #include "utils.h"
+#include "xml.h"
 
 using namespace std;
+
+using xml::escape;
 
 
 static list<string> prefixes;
@@ -127,11 +130,11 @@ int main(int argc, char *argv[])
 	case 'F':
 	case 'G':
 	case 'R':
-	  xml << "<operand source=\"" << site.args[0] << "\"/>";
+	  xml << "<operand source=\"" << escape(site.args[0]) << "\"/>";
 	  break;
 	case 'S':
-	  xml << "<operand source=\"" << site.args[0] << "\"/>"
-	      << "<operand source=\"" << site.args[1] << "\"/>";
+	  xml << "<operand source=\"" << escape(site.args[0]) << "\"/>"
+	      << "<operand source=\"" << escape(site.args[1]) << "\"/>";
 	  break;
 	}
 

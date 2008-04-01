@@ -22,11 +22,6 @@ sub cleanOperand {
   # backslash-escape quotation marks,
   s/\"/\\\"/g;
 
-  # entity-escape special XML characters
-  s/&/&amp;/g;
-  s/\</&lt;/g;
-  s/\>/&gt;/g;
-
   return "\"$_\"";
 }
 

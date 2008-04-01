@@ -7,8 +7,11 @@
 #include "StaticSiteInfo.h"
 #include "termination.h"
 #include "utils.h"
+#include "xml.h"
 
 using namespace std;
+
+using xml::escape;
 
 
 static auto_ptr<StaticSiteInfo> staticSiteInfo;
@@ -68,11 +71,11 @@ operator<<(ostream &out, const Predictor &predictor)
     case 'F':
     case 'G':
     case 'R':
-      out << "<operand source=\"" << site.args[0] << "\"/>";
+      out << "<operand source=\"" << escape(site.args[0]) << "\"/>";
       break;
     case 'S':
-      out << "<operand source=\"" << site.args[0] << "\"/>"
-	  << "<operand source=\"" << site.args[1] << "\"/>";
+      out << "<operand source=\"" << escape(site.args[0]) << "\"/>"
+	  << "<operand source=\"" << escape(site.args[1]) << "\"/>";
       break;
     }
 
