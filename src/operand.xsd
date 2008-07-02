@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="operand" type="operand.type" />
+
+  <xsd:complexType name="operand.type">
+    <xsd:attribute name="source" type="xsd:token" use="required" />
+    <xsd:attribute name="scope" type="scope.type" />
+    <xsd:attribute name="access" type="access.type" />
+  </xsd:complexType>
+
+  <xsd:simpleType name="scope.type">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="local" />
+      <xsd:enumeration value="global" />
+      <xsd:enumeration value="mem" />
+      <xsd:enumeration value="const" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="access.type">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="direct" />
+      <xsd:enumeration value="indirect" />
+      <xsd:enumeration value="field" />
+      <xsd:enumeration value="index" />
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>
