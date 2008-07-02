@@ -1,13 +1,15 @@
 #include "RunBugs.h"
 
 #include <cassert>
+#include <cstdlib>
+#include <cstring>
 #include "NumRuns.h"
 #include "fopen.h"
 
 namespace RunBugs
 {
   int numbugs = 10;
-  char * runbugsFilename = "run-bugs.txt";
+  const char * runbugsFilename = "run-bugs.txt";
   RunBugs runbugs;
   
   // read in the list of failed runs and their bugs

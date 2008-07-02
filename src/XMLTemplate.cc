@@ -45,7 +45,7 @@ const argp XMLTemplate::argp = {
 #endif // HAVE_ARGP_H
 
 std::string
-XMLTemplate::format(char * name)
+XMLTemplate::format(const char * name)
 {
   ostringstream collect;
   if (prefix == "moss")

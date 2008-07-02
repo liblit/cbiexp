@@ -1,4 +1,5 @@
 #include "CullPredicates.h"
+#include <cstring>
 #include <sstream>
 
 using namespace std;

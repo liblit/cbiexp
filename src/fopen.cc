@@ -1,4 +1,6 @@
 #include <cerrno>
+#include <cstdlib>
+#include <cstring>
 #include "fopen.h"
 
 using namespace std;

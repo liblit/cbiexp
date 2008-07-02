@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 $(BOOST_CPPFLAGS)
+AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 -Wno-deprecated $(BOOST_CPPFLAGS)
 
 EXTRA_DIST =					\
 	convertData.m				\
@@ -8,7 +8,7 @@ EXTRA_DIST =					\
 	removeAllZeroRuns.m			\
 	removeFractionSucceedingRuns.m		\
 	toDAformat.m
-	
+
 
 noinst_PROGRAMS =				\
 	make-classify-vectors			\

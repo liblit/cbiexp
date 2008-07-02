@@ -22,6 +22,7 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <numeric>
 #include <queue>
 #include "fopen.h"

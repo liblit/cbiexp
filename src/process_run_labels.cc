@@ -1,3 +1,4 @@
+#include <cstring>
 #include <iostream>
 #include <string>
 #include "arguments.h"

@@ -1,3 +1,5 @@
+#include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include "ClassifyRuns.h"

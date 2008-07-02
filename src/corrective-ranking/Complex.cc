@@ -1,4 +1,7 @@
+#include <algorithm>
 #include <cmath>
+#include <cstring>
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <sstream>

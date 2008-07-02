@@ -12,6 +12,7 @@
 #include <gsl/gsl_permute.h>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <math.h>
 #include <numeric>
 #include <sys/types.h>

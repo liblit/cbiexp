@@ -14,7 +14,7 @@ namespace RunBugs
   typedef std::vector<BugList> RunBugs;
   extern RunBugs runbugs;
   extern int numbugs;
-  extern char * runbugsFilename;
+  extern const char * runbugsFilename;
 
   extern void read_runbugs();
   extern void bug_hist (BugVec &bugs, const RunList &runs);

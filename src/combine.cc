@@ -30,7 +30,7 @@ void initialize() {
     read_pairs();
 }
 
-void xml_conj_info(list<Complex> &c, char *fname) {
+void xml_conj_info(list<Complex> &c, const char *fname) {
     ofstream out(fname);
     list<Complex>::iterator iter;
     
@@ -57,7 +57,7 @@ void xml_conj_info(list<Complex> &c, char *fname) {
     out.close();
 }
 
-void xml_conj_view(list<Complex> c, char *fname) {
+void xml_conj_view(list<Complex> c, const char *fname) {
     ofstream out(fname);
     list<Complex>::iterator iter;
     

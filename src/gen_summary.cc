@@ -1,4 +1,5 @@
 #include <argp.h>
+#include <cstdlib>
 #include <iostream>
 #include <map>
 #include "CompactReport.h"
@@ -69,12 +70,17 @@ print_summary(ostream &out, Tally &tally)
 {
   time_t now;
   time(&now);
+  char almost[sizeof("yyyy-mm-ddThh:mm:ss+hhmm")];
+  const size_t converted = strftime(almost, sizeof(almost), "%FT%T%z", localtime(&now));
+  assert(converted > 0);
+  string timestamp(almost);
+  timestamp.insert(22, ":");
 
   out << "<?xml version=\"1.0\"?>"
       << "<?xml-stylesheet type=\"text/xsl\" href=\"summary.xsl\"?>"
       << "<!DOCTYPE experiment SYSTEM \"summary.dtd\">"
 
-      << "<experiment date=\"" << ctime(&now)
+      << "<experiment date=\"" << timestamp
       << "\" source-dir=\"" << SourceDirectory::root
       << "\">"
 
