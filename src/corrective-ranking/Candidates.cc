@@ -1,5 +1,7 @@
 #include <cassert>
 #include <cerrno>
+#include <cstring>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 

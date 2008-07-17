@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -W -Wall -Werror -Wformat=2
+AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 -Wno-deprecated
 
 noinst_PROGRAMS = never-reached
 

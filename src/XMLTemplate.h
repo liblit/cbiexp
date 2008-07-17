@@ -10,7 +10,7 @@ namespace XMLTemplate
   extern const argp argp;
 
   extern std::string prefix;
-  extern std::string format(char * name);
+  extern std::string format(const char * name);
 }
 
 

@@ -1,5 +1,7 @@
 #include <cassert>
 #include <cmath>
+#include <cstdlib>
+#include <cstring>
 #include <ctype.h>
 #include <memory>
 #include <numeric>

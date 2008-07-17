@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cstring>
 
 #include "../ClassifyRuns.h"
 #include "../CompactReport.h"

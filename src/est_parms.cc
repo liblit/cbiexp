@@ -21,6 +21,7 @@
 #include <gsl/gsl_permutation.h>
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
+#include <limits>
 #include <math.h>
 #include <vector>
 #include "DiscreteDist.h"
@@ -214,7 +215,7 @@ read_stats(FILE * fp)
 }
 
 void 
-checkstatus(bool retval, char * errstr)
+checkstatus(bool retval, const char * errstr)
 {
     if (retval) {
 	logfp << "Pred " << currCoords << ": " << errstr << endl;
@@ -667,7 +668,7 @@ inline void free_gsl_generator ()
  * 4. repeat for next predicate
  ***************************************************************************/
 void
-driver (char *infn, char *outfn)
+driver (const char *infn, const char *outfn)
 {
     ofstream parmsfp (outfn, ios_base::trunc);
 

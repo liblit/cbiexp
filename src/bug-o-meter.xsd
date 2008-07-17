@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="bug-o-meter" type="bug-o-meter.type">
+    <xsd:annotation>
+      <xsd:documentation>
+        stats for building a Bug-O-Meter in predicate views
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:complexType name="bug-o-meter.type">
+    <xsd:attributeGroup ref="fundamental" />
+    <xsd:attributeGroup ref="derived" />
+  </xsd:complexType>
+
+  <xsd:attributeGroup name="fundamental">
+    <xsd:annotation>
+      <xsd:documentation>fundamental counts</xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="true-success" type="xsd:nonNegativeInteger"
+      use="required" />
+    <xsd:attribute name="true-failure" type="xsd:nonNegativeInteger"
+      use="required" />
+    <xsd:attribute name="seen-success" type="xsd:nonNegativeInteger"
+      use="required" />
+    <xsd:attribute name="seen-failure" type="xsd:nonNegativeInteger"
+      use="required" />
+  </xsd:attributeGroup>
+
+  <xsd:attributeGroup name="derived">
+    <xsd:annotation>
+      <xsd:documentation>derived quantities</xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="fail" type="xsd:double" use="required" />
+    <xsd:attribute name="context" type="xsd:double" use="required" />
+    <xsd:attribute name="increase" type="xsd:double" use="required" />
+    <xsd:attribute name="lower-bound" type="xsd:double" use="required" />
+    <xsd:attribute name="log10-true" type="xsd:double" use="required" />
+  </xsd:attributeGroup>
+</xsd:schema>

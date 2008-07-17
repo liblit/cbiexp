@@ -1,4 +1,5 @@
 #include <argp.h>
+#include <cstdlib>
 #include <sysexits.h>
 #include "../StaticSiteInfo.h"
 

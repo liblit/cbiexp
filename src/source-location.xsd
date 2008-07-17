@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="qualified"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:attribute name="file" type="file.type" />
+  <xsd:attribute name="line" type="xsd:positiveInteger" />
+  <xsd:attribute name="function" type="function.type" />
+  <xsd:attribute name="cfg-node" type="xsd:nonNegativeInteger" />
+
+  <xsd:attributeGroup name="location">
+    <xsd:attribute ref="file" use="required" />
+    <xsd:attribute ref="line" use="required" />
+    <xsd:attribute ref="function" use="required" />
+    <xsd:attribute ref="cfg-node" use="required" />
+  </xsd:attributeGroup>
+
+  <xsd:simpleType name="file.type">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="function.type">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[_\w]+" />
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>

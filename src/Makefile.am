@@ -11,7 +11,7 @@ endif
 
 DIST_SUBDIRS = $(SUBDIRS) effort
 
-AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 $(BOOST_CPPFLAGS)
+AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 -Wno-deprecated $(BOOST_CPPFLAGS)
 
 if HAVE_GSL_CDF
 chi2test = chi2test

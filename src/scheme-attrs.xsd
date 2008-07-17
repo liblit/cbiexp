@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="qualified"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:attribute name="unit" type="unit.type" />
+  <xsd:attribute name="scheme" type="scheme.type" />
+
+  <xsd:simpleType name="scheme.type">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="branches" />
+      <xsd:enumeration value="float-kinds" />
+      <xsd:enumeration value="g-object-unref" />
+      <xsd:enumeration value="returns" />
+      <xsd:enumeration value="scalar-pairs" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="unit.type">
+    <xsd:restriction base="xsd:hexBinary">
+      <xsd:pattern value="[0-9a-f]{32}" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:attributeGroup name="unit-scheme">
+    <xsd:attribute ref="unit" use="required" />
+    <xsd:attribute ref="scheme" use="required" />
+  </xsd:attributeGroup>
+</xsd:schema>
