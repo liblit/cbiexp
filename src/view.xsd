@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:include schemaLocation="scheme-attrs.xsd" />
+
+  <xsd:redefine schemaLocation="scores.xsd">
+    <xsd:complexType name="scores.type">
+      <xsd:complexContent>
+        <xsd:extension base="scores.type">
+          <xsd:attribute name="scheme" type="schemes.type" use="required" />
+          <xsd:attribute name="sort" type="sort.type" use="required" />
+          <xsd:attribute name="projection" type="projection.type" use="required" />
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="predictor.type">
+      <xsd:complexContent>
+        <xsd:extension base="predictor.type">
+          <xsd:attribute ref="index" use="required" />
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:redefine>
+
+  <xsd:simpleType name="schemes.type">
+    <xsd:union memberTypes="scheme.type">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="all" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:union>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="sort.type">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="fs" />
+      <xsd:enumeration value="hl" />
+      <xsd:enumeration value="hs" />
+      <xsd:enumeration value="is" />
+      <xsd:enumeration value="lbnf" />
+      <xsd:enumeration value="lb" />
+      <xsd:enumeration value="nf" />
+      <xsd:enumeration value="zoom" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="projection.type">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="none" />
+      <xsd:enumeration value="corrected-approximate-complete" />
+      <xsd:enumeration value="corrected-exact-complete" />
+      <xsd:enumeration value="corrected-exact-complete_complex" />
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>

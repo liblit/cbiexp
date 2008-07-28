@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:include schemaLocation="scheme-attrs.xsd" />
+  <xsd:include schemaLocation="source-location.xsd" />
+  <xsd:include schemaLocation="operand.xsd" />
+  <xsd:element name="logreg" type="logreg.type" />
+
+  <xsd:complexType name="logreg.type">
+    <xsd:sequence maxOccurs="unbounded" minOccurs="1">
+      <xsd:element ref="predictor" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:element name="predictor" type="predictor.type" />
+
+  <xsd:complexType name="predictor.type">
+    <xsd:sequence maxOccurs="unbounded" minOccurs="0">
+      <xsd:element ref="operand" />
+    </xsd:sequence>
+    <xsd:attribute ref="scheme" use="required" />
+    <xsd:attribute ref="file" use="required" />
+    <xsd:attribute ref="line" use="required" />
+    <xsd:attribute ref="function" use="required" />
+    <xsd:attribute name="predicate" type="xsd:nonNegativeInteger"
+      use="required" />
+
+    <xsd:attribute name="importance" type="xsd:double" use="required" />
+  </xsd:complexType>
+</xsd:schema>

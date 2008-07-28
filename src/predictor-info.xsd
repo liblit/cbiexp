@@ -41,13 +41,13 @@
       <xsd:element ref="bug-o-meter" />
       <xsd:element ref="operand" maxOccurs="unbounded" minOccurs="0" />
     </xsd:sequence>
-    <xsd:attributeGroup ref="unit-scheme" />
-    <xsd:attribute name="site" type="xsd:positiveInteger"
-      use="required" />
-
-    <xsd:attribute name="predicate" type="xsd:nonNegativeInteger"
-      use="required" />
-
     <xsd:attributeGroup ref="location" />
+    <xsd:attributeGroup ref="predicate-coords" />
   </xsd:complexType>
+
+  <xsd:attributeGroup name="predicate-coords">
+    <xsd:attributeGroup ref="unit-scheme" />
+    <xsd:attribute name="site" type="xsd:positiveInteger" use="required" />
+    <xsd:attribute name="predicate" type="xsd:nonNegativeInteger" use="required" />
+  </xsd:attributeGroup>
 </xsd:schema>
