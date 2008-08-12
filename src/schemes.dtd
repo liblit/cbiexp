@@ -1,4 +1,4 @@
-<!ELEMENT schemes (scheme*)>
+<!ELEMENT schemes (scheme+)>
 
 <!ELEMENT scheme (predicate+)>
 <!ATTLIST scheme

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified">
+
+  <xsd:element name="table">
+    <xsd:complexType>
+      <xsd:sequence maxOccurs="unbounded" minOccurs="1">
+        <xsd:element name="tr">
+          <xsd:complexType>
+            <xsd:sequence maxOccurs="unbounded" minOccurs="1">
+              <xsd:element name="td">
+                <xsd:complexType>
+                  <xsd:simpleContent>
+                    <xsd:extension base="xsd:string">
+                      <xsd:attribute name="title" type="xsd:string"
+                        use="required" />
+                      <xsd:attribute name="style" type="xsd:string"
+                        use="required" />
+                    </xsd:extension>
+                  </xsd:simpleContent>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
