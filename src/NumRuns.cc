@@ -14,14 +14,6 @@ unsigned NumRuns::end = 0;
 
 static const argp_option options[] = {
   {
-    "begin-runs",
-    'b',
-    "NUM",
-    0,
-    "begin counting runs from NUM (default 0)",
-    0,
-  },
-  {
     "end-runs",
     'e',
     "NUM",
@@ -59,10 +51,6 @@ parseFlag(int key, char *arg, argp_state *state)
 
   switch (key)
     {
-    case 'b':
-      begin = parseNum(arg, state);
-      return 0;
-
     case 'e':
       end = parseNum(arg, state);
       if (end == 0)

@@ -47,7 +47,6 @@ noinst_PROGRAMS =				\
 	process_run_flags                       \
 	process_run_labels			\
 	project					\
-	sampling-plans/uniform			\
 	sanity_check				\
 	sparsity-metrics			\
 	train_utillog				\
@@ -58,8 +57,6 @@ noinst_SCRIPTS =				\
 	decimate-all				\
 	htmlify-sources				\
 	map-sites				\
-	sampling-plans/inverse			\
-	sampling-plans/rare			\
 	static-site-info			\
 	top-rho
 
@@ -159,9 +156,6 @@ process_run_labels_LDADD = libanalyze.a
 
 project_SOURCES = project.cc
 project_LDADD = Score/libScore.a libanalyze.a -ldl
-
-sampling_plans_uniform_SOURCES = sampling-plans/uniform.cc
-sampling_plans_uniform_LDADD = libanalyze.a -ldl
 
 sanity_check_SOURCES = sanity_check.cc
 sanity_check_LDADD = libanalyze.a -ldl
