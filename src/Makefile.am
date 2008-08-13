@@ -42,7 +42,6 @@ noinst_PROGRAMS =				\
 	oracle					\
 	partial_order				\
 	prefilter				\
-	process_run_flags                       \
 	project					\
 	sanity_check				\
 	sparsity-metrics			\
@@ -135,9 +134,6 @@ partial_order_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized -Wno-unused
 
 prefilter_SOURCES = prefilter.cc
 prefilter_LDADD = libanalyze.a -ldl
-
-process_run_flags_SOURCES = process_run_flags.cc
-process_run_flags_LDADD = libanalyze.a
 
 project_SOURCES = project.cc
 project_LDADD = Score/libScore.a libanalyze.a -ldl
