@@ -11,10 +11,7 @@ raw-report-name ?= reports
 cull-predicates ?= yes
 matlab-counts ?= Xtru.sparse
 
-sitesdir ?= $(experiment)/share
-sitesglob := $(sitesdir)/*.sites
-sites ?= $(wildcard $(sitesglob))
-sites := $(if $(sites), $(sites), $(error no sites files in $(sitesglob)))
+sites := $(experiment)/../summaries/sites.txt 
 
 implicationsdir ?= $(experiment)/share
 implicationsglob := $(implicationsdir)/*.implications
