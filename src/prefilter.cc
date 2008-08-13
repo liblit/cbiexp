@@ -508,7 +508,6 @@ void process_cmdline(int argc, char** argv)
 	{ &Confidence::argp, 0, 0, 0 },
         { &CullPredicates::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
-	{ &ReportReader::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };

@@ -16,7 +16,6 @@ processCommandLine(int argc, char *argv[])
 {
   static const argp_child children[] = {
     { &NumRuns::argp, 0, 0, 0 },
-    { &ReportReader::argp, 0, 0, 0 },
     { &RunsDirectory::argp, 0, 0, 0 },
     { 0, 0, 0, 0 }
   };

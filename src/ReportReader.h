@@ -3,7 +3,6 @@
 
 #include <vector>
 #include "Counts.h"
-#include "arguments.h"
 
 class SiteCoords;
 
@@ -13,14 +12,11 @@ public:
   virtual ~ReportReader() { }
   void read(unsigned runId);
 
-  static const struct argp argp;
 
 protected:
   virtual void handleSite(const SiteCoords &, std::vector<count_tp> &) = 0;
   virtual const std::string format(const unsigned) const;
 
-private:
-  static bool selected(const SiteCoords &);
 };
 
 
