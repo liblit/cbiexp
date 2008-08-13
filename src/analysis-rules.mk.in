@@ -233,11 +233,6 @@ preds.txt: s.runs f.runs static-site-info.so $(call tool-deps, prefilter)
 	$(time) $(tooldir)/prefilter $(if $(end-runs), --end-runs=$(end-runs)) --runs-directory=$(datadir) --report-suffix=$(report-series) $(confidence:%=--confidence=%) --cull=$(cull-predicates)
 CLEANFILES += preds.txt
 
-$(datadir)/stamp-convert-reports: s.runs f.runs static-site-info.so $(call tool-deps, convert-reports)
-	test -w $@ -o ! -e $@
-	$(tooldir)/convert-reports --runs-directory=$(datadir) --raw-report-name=$(raw-report-name) $(convert_reports_flags)
-	touch $@
-
 $(datadir)/stamp-extract-timestamps: static-site-info.so $(call tool-deps, extract-timestamps)
 	test -w $@ -o ! -e $@
 	$(tooldir)/extract-timestamps --runs-directory=$(datadir)

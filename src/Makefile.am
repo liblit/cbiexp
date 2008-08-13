@@ -27,8 +27,6 @@ noinst_PROGRAMS =				\
 	collect_parmstats			\
 	compute_nonconst_preds			\
 	compute-obs-tru				\
-	convert-reports				\
-	decimate-sparse				\
 	est_parms				\
 	extract-timestamps			\
 	find_tsSCC				\
@@ -54,7 +52,6 @@ noinst_PROGRAMS =				\
 	xmlify-results
 
 noinst_SCRIPTS =				\
-	decimate-all				\
 	htmlify-sources				\
 	map-sites				\
 	static-site-info			\
@@ -92,14 +89,6 @@ compute_obs_tru_LDADD = libanalyze.a -ldl
 
 compute_nonconst_preds_SOURCES = compute_nonconst_preds.cc
 compute_nonconst_preds_LDADD = libanalyze.a -ldl $(GSL_LIBS)
-
-convert_reports_SOURCES = convert_reports.ll
-convert_reports_LDADD = libanalyze.a -ldl $(LEXLIB)
-
-decimate_sparse_SOURCES = decimate-sparse.ll
-decimate_sparse_INCLUDES = $(GSL_CFLAGS)
-decimate_sparse_CPPFLAGS = -Wno-sign-compare
-decimate_sparse_LDADD = libanalyze.a $(GSL_LIBS)
 
 est_parms_SOURCES = est_parms.cc
 est_parms_LDADD = libanalyze.a $(GSL_LIBS)
