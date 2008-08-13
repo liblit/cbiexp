@@ -43,7 +43,6 @@ noinst_PROGRAMS =				\
 	partial_order				\
 	prefilter				\
 	process_run_flags                       \
-	process_run_labels			\
 	project					\
 	sanity_check				\
 	sparsity-metrics			\
@@ -139,9 +138,6 @@ prefilter_LDADD = libanalyze.a -ldl
 
 process_run_flags_SOURCES = process_run_flags.cc
 process_run_flags_LDADD = libanalyze.a
-
-process_run_labels_SOURCES = process_run_labels.cc
-process_run_labels_LDADD = libanalyze.a
 
 project_SOURCES = project.cc
 project_LDADD = Score/libScore.a libanalyze.a -ldl

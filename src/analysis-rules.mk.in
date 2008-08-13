@@ -4,6 +4,7 @@ root ?= ../..
 experiment ?= ..
 name ?= $(error no name set)
 datadir ?= $(experiment)/data
+testsummaries := $(datadir)/summaries
 corrdir := $(root)/correlations
 tooldir := $(root)/src
 srcdir ?= $(experiment)/src
@@ -238,8 +239,9 @@ $(datadir)/stamp-extract-timestamps: static-site-info.so $(call tool-deps, extra
 	$(tooldir)/extract-timestamps --runs-directory=$(datadir)
 	touch $@
 
-s.runs f.runs: $(datadir)/stamp-labels $(call tool-deps, process_run_labels)
-	$(time) $(tooldir)/process_run_labels --runs-directory=$(datadir)
+s.runs f.runs: $(testsummaries)/f.runs $(testsummaries)/s.runs 
+	cp -f $(testsummaries)/f.runs . 
+	cp -f $(testsummaries)/s.runs . 
 CLEANFILES += s.runs f.runs
 
 logreg.xml: %.xml: %.txt static-site-info.so $(call tool-deps, %)
