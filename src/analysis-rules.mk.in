@@ -234,11 +234,6 @@ $(datadir)/stamp-extract-timestamps: static-site-info.so $(call tool-deps, extra
 	$(tooldir)/extract-timestamps --runs-directory=$(datadir)
 	touch $@
 
-s.runs f.runs: $(testsummaries)/f.runs $(testsummaries)/s.runs 
-	cp -f $(testsummaries)/f.runs . 
-	cp -f $(testsummaries)/s.runs . 
-CLEANFILES += s.runs f.runs
-
 logreg.xml: %.xml: %.txt static-site-info.so $(call tool-deps, %)
 	$(tooldir)/$* $*.txt >$@
 	$(build) links
