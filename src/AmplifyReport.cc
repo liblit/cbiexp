@@ -1,5 +1,4 @@
 #include <sstream>
-#include "CompactReport.h"
 #include "AmplifyReport.h"
 #include "RunsDirectory.h"
 
@@ -51,7 +50,7 @@ AmplifyReport::format(unsigned runId)
 {
   ostringstream collect;
   RunsDirectory::format(collect, runId, "amplify");
-  string suffix = CompactReport::suffix;
+  string suffix = "";
   if (!suffix.empty())
     collect << '.' << suffix;
   collect << ".log"; 

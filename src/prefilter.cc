@@ -7,7 +7,6 @@
 #include <numeric>
 #include <vector>
 #include "AmplifyReport.h"
-#include "CompactReport.h"
 #include "Confidence.h"
 #include "CullPredicates.h"
 #include "NumRuns.h"
@@ -503,7 +502,6 @@ void cull_preds_aggressively2()
 void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
-	{ &CompactReport::argp, 0, 0, 0 },
 	{ &AmplifyReport::argp, 0, 0, 0 },
 	{ &Confidence::argp, 0, 0, 0 },
         { &CullPredicates::argp, 0, 0, 0 },

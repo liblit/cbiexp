@@ -10,7 +10,6 @@
 #include <gsl/gsl_permutation.h>
 #include <gsl/gsl_permute.h>
 #include "fopen.h"
-#include "CompactReport.h"
 #include "NumRuns.h"
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
@@ -369,7 +368,6 @@ void print_results(const vector<double> &train_lls,
 void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
-	{ &CompactReport::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ &UtilLogReg::argp, 0, 0, 0 },

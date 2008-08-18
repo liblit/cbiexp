@@ -399,7 +399,6 @@ void print_results()
 void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
-	{ &CompactReport::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }

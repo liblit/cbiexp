@@ -7,7 +7,6 @@
 #include <fstream>
 #include <numeric>
 #include <queue>
-#include "CompactReport.h"
 #include "NumRuns.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
@@ -144,7 +143,6 @@ void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 static void process_cmdline(int argc, char **argv)
 {
     static const argp_child children[] = {
-	{ &CompactReport::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
