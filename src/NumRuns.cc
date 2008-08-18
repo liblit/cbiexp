@@ -60,16 +60,21 @@ parseFlag(int key, char *arg, argp_state *state)
     case ARGP_KEY_END:
       if (end == 0)
 	{
-	  string stampName(RunsDirectory::root);
-	  stampName += "/stamp-labels";
+	  ifstream runsfile("runs.txt");
+          char buf[1024];
+          int count = 0;
+          while(runsfile.peek() != EOF) {
+            // read a line until done
+            do {
+              runsfile.get(buf, 1024);
+            } while (runsfile.gcount() != 0);
 
-	  ifstream stampFile(stampName.c_str());
-	  stampFile >> end;
-	  if (!stampFile)
-	    {
-	      cerr << "cannot read run count from " << stampName << '\n';
-	      exit(1);
-	    }
+            // throw out end of line
+            if (runsfile.peek() != EOF)
+                runsfile.ignore(1);
+            count++; 
+          }
+          end = count;
 	}
 
       if (begin >= end)
