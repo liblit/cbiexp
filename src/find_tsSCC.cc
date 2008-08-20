@@ -15,7 +15,6 @@
 #include <vector>
 #include "fopen.h"
 #include "TsReportReader.h"
-#include "NumRuns.h"
 #include "Progress/Bounded.h"
 #include "RunsDirectory.h"
 #include "SiteCoords.h"
