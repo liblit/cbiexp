@@ -11,6 +11,9 @@ namespace NumRuns
   extern unsigned begin;
   extern unsigned end;
   inline unsigned count() { return end - begin; }
+
+  extern bool begin_is_set; 
+  extern bool end_is_set;
 }
 
 

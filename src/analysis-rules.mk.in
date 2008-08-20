@@ -149,7 +149,7 @@ CLEANFILES += predictor-info.xml
 
 ifdef HAVE_MEX
 $(filter-out %_none.xml, $(views)): preds.txt rho.bin static-site-info.so $(call tool-deps, project)
-	$(time) $(tooldir)/project --end-runs=$(end-runs) --runs-directory=$(datadir) $(projected_view_flags)
+	$(time) $(tooldir)/project --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(projected_view_flags)
 	$(build) links
 	xmllint --valid --noout $(filter-out %_none.xml, $(views))
 CLEANFILES += $(filter-out %_none.xml, $(views))
@@ -179,14 +179,14 @@ CLEANFILES += $(sparse)
 endif
 
 all_hl_corrected-approximate-complete.xml: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/approximate-complete)
-	$(time) $(tooldir)/corrective-ranking/approximate-complete --zoom=$(zoom) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
+	$(time) $(tooldir)/corrective-ranking/approximate-complete --zoom=$(zoom) --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
 	$(build) links
 	xmllint --valid --noout $@
 	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
 CLEANFILES += all_hl_corrected-approximate-complete.xml
 
 all_hl_corrected-exact-complete.xml elimination-clusters.txt: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/exact-complete)
-	$(time) $(tooldir)/corrective-ranking/exact-complete --zoom=$(zoom) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
+	$(time) $(tooldir)/corrective-ranking/exact-complete --zoom=$(zoom) --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
 	$(build) links
 	xmllint --valid --noout all_hl_corrected-exact-complete.xml
 	test -e elimination-clusters.txt
@@ -197,7 +197,7 @@ clean::
 	$(find-zooms) -exec rm '{}' ';'
 
 all_hl_corrected-%_complex.xml: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/%) pairs.txt
-	$(time) $(tooldir)/corrective-ranking/$* --zoom=$(zoom) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags) --complex-preds
+	$(time) $(tooldir)/corrective-ranking/$* --zoom=$(zoom) --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags) --complex-preds
 	$(build) links
 	xmllint --valid --noout $@
 	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
@@ -209,29 +209,29 @@ site-args := $(foreach site,$(sites),-sites-report $(site))
 implication-args := $(foreach implication,$(implications),-implications-report $(implication))
 
 obs.txt tru.txt: $(stamp-decimate) preds.txt s.runs f.runs static-site-info.so $(call tool-deps, compute-obs-tru)
-	$(time) $(tooldir)/compute-obs-tru --end-runs=$(end-runs) --runs-directory=$(datadir)
+	$(time) $(tooldir)/compute-obs-tru --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir)
 CLEANFILES += obs.txt tru.txt
 
 $(filter %_none.xml, $(views)): preds.txt static-site-info.so $(call tool-deps, gen-views) pairs.txt
 	$(build) links
-	$(tooldir)/gen-views --end-runs=$(end-runs) --runs-directory=$(datadir) $(schemes:%=--force-scheme=%) $(view_flags)
+	$(tooldir)/gen-views --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(schemes:%=--force-scheme=%) $(view_flags)
 	xmllint --valid --noout $(filter %_none.xml, $(views))
 CLEANFILES += $(filter %_none.xml, $(views))
 CLEANFILES += complex_hl_none.xml complex-info.xml complex_all.txt
 
 summary.xml: preds.txt s.runs f.runs static-site-info.so $(call tool-deps, gen-summary)
-	$(time) $(tooldir)/gen-summary --end-runs=$(end-runs) --runs-directory=$(datadir) --source-directory=src $(confidence:%=--confidence=%) >$@
+	$(time) $(tooldir)/gen-summary --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --source-directory=src $(confidence:%=--confidence=%) >$@
 	$(build) links
 	xmllint --valid --noout $@
 CLEANFILES += summary.xml
 
 preds.txt: s.runs f.runs static-site-info.so $(call tool-deps, prefilter)
-	$(time) $(tooldir)/prefilter --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) --cull=$(cull-predicates)
+	$(time) $(tooldir)/prefilter --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) --cull=$(cull-predicates)
 CLEANFILES += preds.txt
 
 $(datadir)/stamp-extract-timestamps: static-site-info.so $(call tool-deps, extract-timestamps)
 	test -w $@ -o ! -e $@
-	$(tooldir)/extract-timestamps --runs-directory=$(datadir) --end-runs=$(end-runs)
+	$(tooldir)/extract-timestamps --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 	touch $@
 
 logreg.xml: %.xml: %.txt static-site-info.so $(call tool-deps, %)
@@ -241,20 +241,20 @@ logreg.xml: %.xml: %.txt static-site-info.so $(call tool-deps, %)
 CLEANFILES += logreg.xml
 
 prior-dist: s.runs f.runs preds.txt static-site-info.so $(call tool-deps, gather_prior_dist)
-	$(time) $(tooldir)/gather_prior_dist --runs-directory=$(datadir) --end-runs=$(end-runs)
+	$(time) $(tooldir)/gather_prior_dist --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 	mv fpriors.dat fpriors-full.dat
 	mv spriors.dat spriors-full.dat
-	$(time) $(tooldir)/gather_prior_dist --runs-directory=$(datadir) --end-runs=$(end-runs)
+	$(time) $(tooldir)/gather_prior_dist --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 
 truth-dist: s.runs f.runs preds.txt static-site-info.so $(call tool-deps, gather_prior_truths)
-	$(time) $(tooldir)/gather_prior_truths --runs-directory=$(datadir) --end-runs=$(end-runs)
+	$(time) $(tooldir)/gather_prior_truths --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 
 nonconst-preds: s.runs f.runs static-site-info.so $(call tool-deps, compute_nonconst_preds)
-	$(time) $(tooldir)/compute_nonconst_preds --runs-directory=$(datadir) --end-runs=$(end-runs)
+	$(time) $(tooldir)/compute_nonconst_preds --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 CLEANFILES += train.runs val.runs nonconst_preds.txt
 
 theta: train.runs val.runs nonconst_preds.txt static-site-info.so $(call tool-deps, train_utillog)
-	$(time) $(tooldir)/train_utillog --end-runs=$(end-runs) --runs-directory=$(datadir) --delta1=10.0 --delta2=2.0 --delta3=1.0
+	$(time) $(tooldir)/train_utillog --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --delta1=10.0 --delta2=2.0 --delta3=1.0
 CLEANFILES += theta.txt train_lls.txt val_lls.txt confmat.txt
 
 static-site-info.so: %.so: %.cc
@@ -267,17 +267,17 @@ CLEANFILES += static-site-info.cc
 
 
 clusters: static-site-info.so $(call tool-deps, cluster_runs)
-	$(time) $(tooldir)/cluster_runs --end-runs=$(end-runs) --runs-directory=$(datadir) --nonconst-file=f_nonconst_preds.txt
+	$(time) $(tooldir)/cluster_runs --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --nonconst-file=f_nonconst_preds.txt
 
 viewclusters: static-site-info.so $(call tool-deps, view_clusters)
-	$(time) $(tooldir)/view_clusters --end-runs=$(end-runs) --runs-directory=$(datadir)
+	$(time) $(tooldir)/view_clusters --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir)
 
 ts_nodes.first.txt ts_edges.first.txt: static-site-info.so $(call tool-deps, build_tsgraph)
-	$(time) $(tooldir)/build_tsgraph --runs-directory=$(datadir) --timestamp-when=first --end-runs=$(end-runs)
+	$(time) $(tooldir)/build_tsgraph --runs-directory=$(datadir) --timestamp-when=first --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 CLEANFILES += ts_nodes.first.txt ts_edges.first.txt
 
 ts_nodes.last.txt ts_edges.last.txt: static-site-info.so $(call tool-deps, build_tsgraph)
-	$(time) $(tooldir)/build_tsgraph --runs-directory=$(datadir) --timestamp-when=last --end-runs=$(end-runs)
+	$(time) $(tooldir)/build_tsgraph --runs-directory=$(datadir) --timestamp-when=last --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 CLEANFILES += ts_nodes.last.txt ts_edges.last.txt
 
 sccgraph: ts_nodes.first.txt ts_edges.first.txt ts_nodes.last.txt ts_edges.last.txt $(call tool-deps, find_tsSCC)
@@ -285,10 +285,10 @@ sccgraph: ts_nodes.first.txt ts_edges.first.txt ts_nodes.last.txt ts_edges.last.
 	$(time) $(tooldir)/find_tsSCC --timestamp-when=last
 
 sanity_check: static-site-info.so $(call tool-deps, sanity_check)
-	$(time) $(tooldir)/sanity_check --runs-directory=$(datadir) --timestamp-when=first --end-runs=$(end-runs)
+	$(time) $(tooldir)/sanity_check --runs-directory=$(datadir) --timestamp-when=first --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 
 ts_sites.first.txt: static-site-info.so $(call tool-deps, partial_order)
-	$(time) $(tooldir)/partial_order --runs-directory=$(datadir) --timestamp-when=first --end-runs=$(end-runs)
+	$(time) $(tooldir)/partial_order --runs-directory=$(datadir) --timestamp-when=first --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 CLEANFILES += ts_sites.first.txt
 
 ts_sites.last.txt: static-site-info.so $(call tool-deps, partial_order)
@@ -296,11 +296,11 @@ ts_sites.last.txt: static-site-info.so $(call tool-deps, partial_order)
 CLEANFILES += ts_sites.last.txt
 
 W.dat: $(datadir)/stamp-extract-timestamps static-site-info.so $(call tool-deps, get_ts_ordering)
-	$(time) $(tooldir)/get_ts_ordering --end-runs=$(end-runs) --runs-directory=$(datadir) --timestamp-when=first
+	$(time) $(tooldir)/get_ts_ordering --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --timestamp-when=first
 
 ifndef omit-truth-probability-estimation
 parmstats.txt notp-parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)
-	$(time) $(tooldir)/collect_parmstats --end-runs=$(end-runs) --runs-directory=$(datadir) --sample-rates=$(stamp-decimate)
+	$(time) $(tooldir)/collect_parmstats --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --sample-rates=$(stamp-decimate)
 CLEANFILES += parmstats.txt notp-parmstats.txt
 
 parms.txt notp-parms.txt: parmstats.txt notp-parmstats.txt static-site-info.so $(call tool-deps, est_parms)
@@ -314,15 +314,15 @@ endif
 
 #truthprobs: calc_truthprobs parmstats.txt preds.txt
 truthprobs: static-site-info.so $(call tool-deps, calc_truthprobs)
-	$(time) $(tooldir)/calc_truthprobs --end-runs=$(end-runs) --runs-directory=$(datadir)
+	$(time) $(tooldir)/calc_truthprobs --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir)
 CLEANFILES += truthprobs.txt
 
 X.dat notX.dat : preds.txt parms.txt notp-parms.txt static-site-info.so $(call tool-deps, get_tp_weights)
-	$(time) $(tooldir)/get_tp_weights --end-runs=$(end-runs) --runs-directory=$(datadir)
+	$(time) $(tooldir)/get_tp_weights --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir)
 CLEANFILES += X.dat notX.dat truX.dat trunotX.dat truFreq.dat trunotFreq.dat
 else
 X.dat notX.dat : preds.txt static-site-info.so
-	$(time) $(tooldir)/get_truth_values --end-runs=$(end-runs) --runs-directory=$(datadir)
+	$(time) $(tooldir)/get_truth_values --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir)
 CLEANFILES += X.dat notX.dat
 endif
 
@@ -330,13 +330,13 @@ endif
 predscores: bicluster_votes.xml
 bicluster_votes.xml bicluster-preds.xml final-votes.txt: preds.txt $(truth-probs) $(not-truth-probs) $(call tool-deps, bicluster)
 	$(build) links
-	$(time) $(tooldir)/bicluster --end-runs=$(end-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name) --truth-probability-weights=$(truth-probs) --not-truth-probability-weights=$(not-truth-probs)
+	$(time) $(tooldir)/bicluster --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name) --truth-probability-weights=$(truth-probs) --not-truth-probability-weights=$(not-truth-probs)
 	xmllint --valid --noout bicluster_votes.xml
 CLEANFILES += bicluster_votes.xml bicluster-preds.xml final-votes.txt bicluster_votes.log list*.xml qualities.log notQualities.log
 
 sober.xml sober.txt: static-site-info.so preds.txt $(call tool-deps, calc_sober)
 	$(build) links
-	$(time) $(tooldir)/calc_sober --end-runs=$(end-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name)
+	$(time) $(tooldir)/calc_sober --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name)
 	xmllint --valid --noout sober.xml
 CLEANFILES += sober.xml sober.txt
 
@@ -348,7 +348,7 @@ CLEANFILES += symmetric.html
 
 symmetric.xml: %.xml: $(stamp-decimate) s.runs f.runs $(call tool-deps, symmetric/%)
 	$(build) links
-	$(time) $(tooldir)/symmetric/$* --runs-directory=$(datadir) --end-runs=$(end-runs) $(confidence:%=--confidence=%)
+	$(time) $(tooldir)/symmetric/$* --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs) $(confidence:%=--confidence=%)
 	xmllint --valid --noout $@
 CLEANFILES += symmetric.xml debug.xml
 
@@ -365,7 +365,7 @@ CLEANFILES += failure-points
 never-kinds := reached false true
 nevers := $(never-kinds:%=never-%.txt)
 $(nevers): $(stamp-decimate) f.runs static-site-info.so $(call tool-deps, never-reached/never-reached)
-	$(tooldir)/never-reached/never-reached --end-runs=$(end-runs) --runs-directory=$(datadir)
+	$(tooldir)/never-reached/never-reached --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir)
 	for goal in $(nevers); do test -r $$goal; done
 CLEANFILES += $(nevers)
 
@@ -373,11 +373,11 @@ bicluster: $(biclustering)
 .PHONY: bicluster
 
 f.indices s.indices i.indices: f.runs s.runs $(datadir)/stamp-labels
-	$(time) $(tooldir)/matlab/make-classify-vectors --runs-directory=$(datadir) --end-runs=$(end-runs)
+	$(time) $(tooldir)/matlab/make-classify-vectors --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 CLEANFILES += f.indices s.indices i.indices
 
 Xtru.sparse Xobs.sparse X.xml: preds.txt $(datadir)/stamp-labels
-	$(time) $(tooldir)/matlab/make-counts-matrix --runs-directory=$(datadir) --end-runs=$(end-runs)
+	$(time) $(tooldir)/matlab/make-counts-matrix --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 CLEANFILES += Xtru.sparse Xobs.sparse X.xml
 
 prerunsinfo.mat: f.indices s.indices i.indices X.xml $(matlab-counts)

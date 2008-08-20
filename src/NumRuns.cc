@@ -9,16 +9,27 @@ using namespace std;
 unsigned NumRuns::begin = 0;
 unsigned NumRuns::end = 0;
 
+bool NumRuns::end_is_set = false;
+bool NumRuns::begin_is_set = false;
+
 #ifdef HAVE_ARGP_H
 #include <sysexits.h>
 
 static const argp_option options[] = {
   {
+    "begin-runs",
+    'b',
+    "NUM",
+    0,
+    "begin counting runs at NUM",
+    0,
+  },
+  {
     "end-runs",
     'e',
     "NUM",
     0,
-    "end counting runs at NUM-1; default uses entire dataset",
+    "end counting runs at NUM-1",
     0,
   },
   { 0, 0, 0, 0, 0, 0 }
@@ -43,6 +54,14 @@ parseNum(const char *arg, argp_state *state)
   return converted;
 }
 
+static unsigned
+parseNumAndSetFlag(const char *arg, argp_state *state, bool* flag) 
+{
+  unsigned result = parseNum(arg, state);   
+  *flag = true;
+  return result;
+}
+
 
 static int
 parseFlag(int key, char *arg, argp_state *state)
@@ -51,31 +70,20 @@ parseFlag(int key, char *arg, argp_state *state)
 
   switch (key)
     {
+    case 'b':
+      begin = parseNumAndSetFlag(arg, state, &begin_is_set);
+      return 0;
+
     case 'e':
-      end = parseNum(arg, state);
+      end = parseNumAndSetFlag(arg, state, &end_is_set);
       if (end == 0)
-	invalid(arg, state);
+        invalid(arg, state);
       return 0;
 
     case ARGP_KEY_END:
-      if (end == 0)
-	{
-	  ifstream runsfile("runs.txt");
-          char buf[1024];
-          int count = 0;
-          while(runsfile.peek() != EOF) {
-            // read a line until done
-            do {
-              runsfile.get(buf, 1024);
-            } while (runsfile.gcount() != 0);
-
-            // throw out end of line
-            if (runsfile.peek() != EOF)
-                runsfile.ignore(1);
-            count++; 
-          }
-          end = count;
-	}
+      // make sure that both values are set on command line 
+      if (!NumRuns::end_is_set || !NumRuns::begin_is_set)
+        argp_error(state, "must set begin-runs and end-runs");
 
       if (begin >= end)
 	argp_failure(state, EX_USAGE, 0, "no runs to read (begin %d >= end %d)", begin, end);
