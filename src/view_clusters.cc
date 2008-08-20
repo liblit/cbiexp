@@ -33,7 +33,7 @@ void read_clusters ()
     group_sizes[k] = n;
   }
 
-  for (unsigned r = 0; r < NumRuns::end; r++) {
+  for (unsigned r = NumRuns::begin; r < NumRuns::end; r++) {
     got = fscanf(fp, "%u ", &n);
     assert(got == 1);
     assert(n < K);
