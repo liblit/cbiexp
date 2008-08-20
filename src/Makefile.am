@@ -38,7 +38,6 @@ noinst_PROGRAMS =				\
 	get_truth_values			\
 	get_ts_ordering				\
 	logreg					\
-	max-observed				\
 	oracle					\
 	partial_order				\
 	prefilter				\
@@ -121,9 +120,6 @@ get_ts_ordering_LDADD = libanalyze.a -ldl
 
 logreg_SOURCES = logreg.cc
 logreg_LDADD = libanalyze.a -ldl
-
-max_observed_SOURCES = max-observed.cc
-max_observed_LDADD = libanalyze.a -ldl
 
 oracle_SOURCES = oracle.cc
 oracle_LDADD = libanalyze.a -ldl
