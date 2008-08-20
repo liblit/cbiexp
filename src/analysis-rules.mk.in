@@ -149,7 +149,7 @@ CLEANFILES += predictor-info.xml
 
 ifdef HAVE_MEX
 $(filter-out %_none.xml, $(views)): preds.txt rho.bin static-site-info.so $(call tool-deps, project)
-	$(time) $(tooldir)/project $(if $(end-runs), --end-runs=$(end-runs)) --runs-directory=$(datadir) $(projected_view_flags)
+	$(time) $(tooldir)/project --end-runs=$(end-runs) --runs-directory=$(datadir) $(projected_view_flags)
 	$(build) links
 	xmllint --valid --noout $(filter-out %_none.xml, $(views))
 CLEANFILES += $(filter-out %_none.xml, $(views))
@@ -179,14 +179,14 @@ CLEANFILES += $(sparse)
 endif
 
 all_hl_corrected-approximate-complete.xml: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/approximate-complete)
-	$(time) $(tooldir)/corrective-ranking/approximate-complete --zoom=$(zoom) $(if $(end-runs), --end-runs=$(end-runs)) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
+	$(time) $(tooldir)/corrective-ranking/approximate-complete --zoom=$(zoom) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
 	$(build) links
 	xmllint --valid --noout $@
 	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
 CLEANFILES += all_hl_corrected-approximate-complete.xml
 
 all_hl_corrected-exact-complete.xml elimination-clusters.txt: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/exact-complete)
-	$(time) $(tooldir)/corrective-ranking/exact-complete --zoom=$(zoom) $(if $(end-runs), --end-runs=$(end-runs)) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
+	$(time) $(tooldir)/corrective-ranking/exact-complete --zoom=$(zoom) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
 	$(build) links
 	xmllint --valid --noout all_hl_corrected-exact-complete.xml
 	test -e elimination-clusters.txt
@@ -197,7 +197,7 @@ clean::
 	$(find-zooms) -exec rm '{}' ';'
 
 all_hl_corrected-%_complex.xml: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/%) pairs.txt
-	$(time) $(tooldir)/corrective-ranking/$* --zoom=$(zoom) $(if $(end-runs), --end-runs=$(end-runs)) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags) --complex-preds
+	$(time) $(tooldir)/corrective-ranking/$* --zoom=$(zoom) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags) --complex-preds
 	$(build) links
 	xmllint --valid --noout $@
 	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
@@ -209,7 +209,7 @@ site-args := $(foreach site,$(sites),-sites-report $(site))
 implication-args := $(foreach implication,$(implications),-implications-report $(implication))
 
 obs.txt tru.txt: $(stamp-decimate) preds.txt s.runs f.runs static-site-info.so $(call tool-deps, compute-obs-tru)
-	$(time) $(tooldir)/compute-obs-tru $(if $(end-runs), --end-runs=$(end-runs)) --runs-directory=$(datadir)
+	$(time) $(tooldir)/compute-obs-tru --end-runs=$(end-runs) --runs-directory=$(datadir)
 CLEANFILES += obs.txt tru.txt
 
 $(filter %_none.xml, $(views)): preds.txt static-site-info.so $(call tool-deps, gen-views) pairs.txt
