@@ -38,7 +38,6 @@ noinst_PROGRAMS =				\
 	get_truth_values			\
 	get_ts_ordering				\
 	logreg					\
-	oracle					\
 	partial_order				\
 	prefilter				\
 	project					\
@@ -120,9 +119,6 @@ get_ts_ordering_LDADD = libanalyze.a -ldl
 
 logreg_SOURCES = logreg.cc
 logreg_LDADD = libanalyze.a -ldl
-
-oracle_SOURCES = oracle.cc
-oracle_LDADD = libanalyze.a -ldl
 
 partial_order_SOURCES = partial_order.cc
 partial_order_LDADD = libanalyze.a -ldl
