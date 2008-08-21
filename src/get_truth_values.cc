@@ -205,7 +205,7 @@ int main(int argc, char** argv)
     notdatfp << scientific << setprecision(12);
 
     Progress::Bounded prog("Recording truth values", NumRuns::count());
-    for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+    for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
     	if (!is_srun[r] && !is_frun[r])
 		continue;
 

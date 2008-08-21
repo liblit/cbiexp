@@ -262,7 +262,7 @@ collect_stats ()
 {
   PredHash.clear();
   Progress::Bounded prog ("Collecting stats about nonconst preds", num_fruns);
-  for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+  for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
     if (!is_frun[r])
       continue;
     prog.step();
@@ -335,7 +335,7 @@ void init_centers() {
     runlist.resize(num_fruns);
 
     unsigned n = 0;
-    for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+    for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
       if (is_frun[r]) 
         runlist[n++] = r;
     }
@@ -442,7 +442,7 @@ int main(int argc, char** argv)
     vector<unsigned> group_sizes(K);
     vector<pred_hash_t> newcenters(K);
     vector<unsigned> groups;
-    groups.resize(NumRuns::end);
+    groups.resize(NumRuns::end());
     Progress::Unbounded iterProg("Clustering runs using K-means");
     do {
         fill(group_sizes.begin(), group_sizes.end(), 0);
@@ -455,7 +455,7 @@ int main(int argc, char** argv)
 	cout << '\n';
 
 	Progress::Bounded gProg("reading runs", num_fruns);
-	for (unsigned r = NumRuns::begin; r < NumRuns::end; r++) {
+	for (unsigned r = NumRuns::begin(); r < NumRuns::end(); r++) {
           if (!is_frun[r])
             continue;
  

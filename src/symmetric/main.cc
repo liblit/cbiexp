@@ -80,8 +80,8 @@ main(int argc, char *argv[])
     unsigned runId;
     open(runs, ClassifyRuns::failuresFilename);
 
-    while (runs >> runId && runId < NumRuns::end)
-      if (runId >= NumRuns::begin)
+    while (runs >> runId && runId < NumRuns::end())
+      if (runId >= NumRuns::begin())
 	++RunSet::universeSize;
 
     allFailures.resize(RunSet::universeSize, true);
@@ -94,10 +94,10 @@ main(int argc, char *argv[])
     unsigned failureId = 0;
     open(runs, ClassifyRuns::failuresFilename);
 
-    while (runs >> runId && runId < NumRuns::end)
-      if (runId >= NumRuns::begin)
+    while (runs >> runId && runId < NumRuns::end())
+      if (runId >= NumRuns::begin())
 	{
-	  progress.stepTo(runId - NumRuns::begin);
+	  progress.stepTo(runId - NumRuns::begin());
 	  FailureReader(candidates, boths, failureId).read(runId);
 	  ++failureId;
 	}
@@ -109,10 +109,10 @@ main(int argc, char *argv[])
     unsigned runId;
     open(runs, ClassifyRuns::successesFilename);
 
-    while (runs >> runId && runId < NumRuns::end)
-      if (runId >= NumRuns::begin)
+    while (runs >> runId && runId < NumRuns::end())
+      if (runId >= NumRuns::begin())
 	{
-	  progress.stepTo(runId - NumRuns::begin);
+	  progress.stepTo(runId - NumRuns::begin());
 	  SuccessReader(candidates).read(runId);
 	}
   }

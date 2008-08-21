@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 
   {
     Progress::Bounded progress("tabulating nonzeros", NumRuns::count());
-    for (unsigned runId = NumRuns::begin; runId < NumRuns::end; ++runId)
+    for (unsigned runId = NumRuns::begin(); runId < NumRuns::end(); ++runId)
       {
 	progress.step();
 	ifstream report(CompactReport::format(runId).c_str());

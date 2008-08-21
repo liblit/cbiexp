@@ -183,7 +183,7 @@ int main (int argc, char** argv)
   fclose(pfp);
 
   Progress::Bounded progress("Gathering empirical distribution", NumRuns::count());
-  for (cur_run = NumRuns::begin; cur_run < NumRuns::end; cur_run++) {
+  for (cur_run = NumRuns::begin(); cur_run < NumRuns::end(); cur_run++) {
     progress.step();
     Dist d;
     if (is_frun[cur_run])

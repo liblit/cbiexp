@@ -240,8 +240,8 @@ int main(int argc, char** argv)
 
     read_preds();
 
-    Progress::Bounded prog("Calculating SOBER scores", NumRuns::end);
-    for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+    Progress::Bounded prog("Calculating SOBER scores", NumRuns::end());
+    for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
 
 	if (is_srun[r]) {
 	    pptr = &PredInfoPair::s;

@@ -505,7 +505,7 @@ int main(int argc, char** argv)
     nfreqfp << scientific << setprecision(12);
 
     Progress::Bounded prog("Calculating truth probabilities", NumRuns::count());
-    for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+    for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
 	if (is_srun[r])
 	    pptr = &PredInfoPair::s;
 	else if (is_frun[r])

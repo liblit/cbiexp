@@ -173,7 +173,7 @@ void print_runsplit ()
 {
   ofstream tfp ("train.runs");
   ofstream vfp ("val.runs");
-  for (unsigned i = NumRuns::begin; i < NumRuns::end; i++) {
+  for (unsigned i = NumRuns::begin(); i < NumRuns::end(); i++) {
     assert(! (is_trainrun[i] && is_valrun[i]));
 
     if (is_trainrun[i])
@@ -239,10 +239,10 @@ inline void free_gsl_generator ()
  **********************************************************/
 void split_runs()
 {
-  is_trainrun.resize(NumRuns::end);
-  is_valrun.resize(NumRuns::end);
+  is_trainrun.resize(NumRuns::end());
+  is_valrun.resize(NumRuns::end());
 
-  for (unsigned r = NumRuns::begin; r < NumRuns::end; r++) {
+  for (unsigned r = NumRuns::begin(); r < NumRuns::end(); r++) {
     if (!is_srun[r] && !is_frun[r])  // skip discarded runs
       continue;
 
@@ -276,7 +276,7 @@ int main(int argc, char** argv)
 	site_info[u].resize(staticSiteInfo.unit(u).num_sites);
 
     Progress::Bounded progress("computing non-constant predicates", NumRuns::count());
-    for (cur_run = NumRuns::begin; cur_run < NumRuns::end; cur_run++) {
+    for (cur_run = NumRuns::begin(); cur_run < NumRuns::end(); cur_run++) {
 	progress.step();
 	if (!is_trainrun[cur_run])
 	  continue;

@@ -15,9 +15,9 @@ namespace RunBugs
   // read in the list of failed runs and their bugs
   void read_runbugs ()
   {
-    const unsigned numRuns = NumRuns::end;
+    const unsigned numRuns = NumRuns::end();
     runbugs.resize(numRuns);
-    for (unsigned i = 0; i < numRuns; ++i) {
+    for (unsigned i = NumRuns::begin(); i < numRuns; ++i) {
       runbugs[i].clear();
     }
   

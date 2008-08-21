@@ -6,8 +6,8 @@
 
 using namespace std;
 
-unsigned NumRuns::begin = 0;
-unsigned NumRuns::end = 0;
+unsigned NumRuns::begin_val = 0;
+unsigned NumRuns::end_val = 0;
 
 bool NumRuns::end_is_set = false;
 bool NumRuns::begin_is_set = false;
@@ -71,22 +71,22 @@ parseFlag(int key, char *arg, argp_state *state)
   switch (key)
     {
     case 'b':
-      begin = parseNumAndSetFlag(arg, state, &begin_is_set);
+      begin_val = parseNumAndSetFlag(arg, state, &begin_is_set);
       return 0;
 
     case 'e':
-      end = parseNumAndSetFlag(arg, state, &end_is_set);
-      if (end == 0)
+      end_val = parseNumAndSetFlag(arg, state, &end_is_set);
+      if (end_val == 0)
         invalid(arg, state);
       return 0;
 
     case ARGP_KEY_END:
       // make sure that both values are set on command line 
-      if (!NumRuns::end_is_set || !NumRuns::begin_is_set)
+      if (!end_is_set || !begin_is_set)
         argp_error(state, "must set begin-runs and end-runs");
 
-      if (begin >= end)
-	argp_failure(state, EX_USAGE, 0, "no runs to read (begin %d >= end %d)", begin, end);
+      if (begin_val >= end_val)
+	argp_failure(state, EX_USAGE, 0, "no runs to read (begin %d >= end %d)", begin_val, end_val);
 
     default:
       return ARGP_ERR_UNKNOWN;

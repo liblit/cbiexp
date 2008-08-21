@@ -157,10 +157,10 @@ int main(int argc, char** argv)
 
     {
 	Progress::Bounded progress("finding counts", NumRuns::count());
-	for (unsigned runId = NumRuns::begin; runId < NumRuns::end; ++runId) {
+	for (unsigned runId = NumRuns::begin(); runId < NumRuns::end(); ++runId) {
 	    progress.step();
             if (is_srun[runId] || is_frun[runId]) { 
-                Reader(runId + 1 - NumRuns::begin).read(runId);
+                Reader(runId + 1 - NumRuns::begin()).read(runId);
             }
 	}
     }

@@ -270,7 +270,7 @@ int main(int argc, char** argv)
     string pstr = "Examining " + TimestampReport::when + " timestamps";
     Progress::Bounded progress(pstr.c_str(), NumRuns::count());
     unsigned nmax = 1;
-    for (unsigned r = NumRuns::begin; r < NumRuns::end; r++) {
+    for (unsigned r = NumRuns::begin(); r < NumRuns::end(); r++) {
       progress.step();
       if (!is_srun[r] && !is_frun[r])
         continue;

@@ -211,7 +211,7 @@ int main(int argc, char** argv)
     bool failed = false;
     Progress::Bounded progress("extracting timestamps", NumRuns::count());
 
-    for (unsigned i = NumRuns::begin; i < NumRuns::end; i++) {
+    for (unsigned i = NumRuns::begin(); i < NumRuns::end(); i++) {
 	progress.step();
 	if (!is_srun[i] && !is_frun[i])
 	    continue;

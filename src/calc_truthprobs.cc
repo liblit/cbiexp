@@ -441,8 +441,8 @@ int main(int argc, char** argv)
 
     string report_suffix = CompactReport::suffix;
     unsigned nsruns = 0, nfruns = 0;
-    Progress::Bounded prog("Calculating truth probabilities", NumRuns::end);
-    for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+    Progress::Bounded prog("Calculating truth probabilities", NumRuns::end());
+    for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
 
 	if (is_srun[r]) {
 	    pptr = &PredInfoPair::s;

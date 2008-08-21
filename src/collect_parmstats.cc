@@ -409,7 +409,7 @@ int main(int argc, char** argv)
     set_rates();   // set sampling rates in predHash according to values read from file
 
     Progress::Bounded prog("Reading runs and collecting sufficient stats", NumRuns::count());
-    for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+    for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
       prog.step();
       // pipt is a pointer to the pred_info singleton for success or failure
       PredInfoPtr pipt = 0;

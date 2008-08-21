@@ -53,10 +53,10 @@ int main(int argc, char** argv)
     ofstream sfile("s.indices");
     ofstream ifile("i.indices"); 
      
-    for(unsigned int i = NumRuns::begin; i < NumRuns::end; i++) {
-        if(is_frun[i]) ffile << i + 1 - NumRuns::begin << "\n";   
-        else if(is_srun[i]) sfile << i + 1 - NumRuns::begin << "\n"; 
-        else ifile << i + 1 - NumRuns::begin << "\n";
+    for(unsigned int i = NumRuns::begin(); i < NumRuns::end(); i++) {
+        if(is_frun[i]) ffile << i + 1 - NumRuns::begin() << "\n";   
+        else if(is_srun[i]) sfile << i + 1 - NumRuns::begin() << "\n"; 
+        else ifile << i + 1 - NumRuns::begin() << "\n";
     }
 
     ffile.close();

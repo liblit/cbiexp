@@ -14,7 +14,7 @@ using namespace std;
 istream &
 operator>>(istream &in, RunSet &runs)
 {
-  runs.assign(NumRuns::end, false);
+  runs.assign(NumRuns::end(), false);
   runs.count = 0;
 
   unsigned runId;

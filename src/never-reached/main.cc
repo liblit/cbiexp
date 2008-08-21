@@ -49,8 +49,8 @@ int main(int argc, char *argv[])
     Progress::Bounded progress("scanning failed runs", NumRuns::count());
 
     // knock any location observed in sparse report from failed runs
-    while (runs >> runId && runId < NumRuns::end)
-      if (runId >= NumRuns::begin)
+    while (runs >> runId && runId < NumRuns::end())
+      if (runId >= NumRuns::begin())
 	{
 	  progress.stepTo(runId);
 	  reader.read(runId);

@@ -18,9 +18,9 @@ Disjunction::Disjunction(Predicate *pred1_t, Predicate *pred2_t, bool onlyEstima
 }
 
 void Disjunction::initialize() {
-  tru = RunSuite(NumRuns::end);
-  obs = RunSuite(NumRuns::end);
-  for(unsigned r = NumRuns::begin; r < NumRuns::end; r ++) {
+  tru = RunSuite(NumRuns::end());
+  obs = RunSuite(NumRuns::end());
+  for(unsigned r = NumRuns::begin(); r < NumRuns::end(); r ++) {
     RunOutcome p1obs, p1tru, p2obs, p2tru;
     
     p1obs = pred1->obs.get(r);

@@ -169,7 +169,7 @@ int main(int argc, char** argv)
 
     {
 	Progress::Bounded progress("computing obs and tru", NumRuns::count());
-	for (unsigned runId = NumRuns::begin; runId < NumRuns::end; ++runId) {
+	for (unsigned runId = NumRuns::begin(); runId < NumRuns::end(); ++runId) {
 	    progress.step();
 
 	    Outcome outcome = 0;

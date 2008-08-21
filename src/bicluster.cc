@@ -176,7 +176,7 @@ read_weights()
   FILE * notxfp = fopenRead(AdjWeightsOptions::not_adj_weights);
   int ctr;
   unsigned i = 0;
-  for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+  for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
     if (!is_srun[r] && !is_frun[r])  // skip the runs that were neither successful nor failing
       continue;
     
@@ -213,7 +213,7 @@ read_freqs ()
   FILE * wfp = fopenRead("truFreq.dat");
   int ctr; 
   unsigned i = 0;
-  for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+  for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
     if (!is_srun[r] && !is_frun[r])
       continue;
     for (unsigned j = 0; j < npreds; ++j) {
@@ -382,7 +382,7 @@ cast_finalvote(double * u, double * notu, double * v, double * notv,
   finalVotes.clear();
 
   unsigned j = 0;
-  for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+  for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
     if (!is_srun[r] && !is_frun[r])
       continue;
 
@@ -466,7 +466,7 @@ iterate_votes(double * u, double * notu, double * v, double * notv,
     memset(notpvotes, 0, sizeof(double)*2*npreds);
     memset(u, 0, sizeof(double)*npreds);
     unsigned j = 0;
-    for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+    for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
       if (!is_srun[r] && !is_frun[r])
 	continue;
 
@@ -539,7 +539,7 @@ collect_stats(double *m, double *v, unsigned npreds, const vector<bool> &collect
   memset(v, 0, sizeof(double)*npreds);
   double val;
   unsigned n = 0, j = 0; 
-  for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+  for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
     if (!is_srun[r] && !is_frun[r])
       continue;
     if (collect[r]) {
@@ -650,7 +650,7 @@ ttest_rank()
     if (contribRuns[pind].size() == 0)
       continue;
     collect.clear(); // collect is a binary vector that contains a 1 for every failed run that voted for the current predicate
-    collect.resize(NumRuns::end);
+    collect.resize(NumRuns::end());
     for (RunList::const_iterator c = contribRuns[pind].begin();
          c != contribRuns[pind].end(); ++c) {
       collect[(*c)] = 1;
