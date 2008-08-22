@@ -42,7 +42,6 @@ noinst_PROGRAMS =				\
 	prefilter				\
 	project					\
 	sanity_check				\
-	sparsity-metrics			\
 	train_utillog				\
 	view_clusters				\
 	xmlify-results
@@ -133,10 +132,6 @@ project_LDADD = Score/libScore.a libanalyze.a -ldl
 sanity_check_SOURCES = sanity_check.cc
 sanity_check_LDADD = libanalyze.a -ldl
 sanity_check_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
-
-sparsity_metrics_SOURCES = sparsity-metrics.cc
-sparsity_metrics_LDADD = libanalyze.a -ldl
-sparsity_metrics_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
 
 train_utillog_SOURCES = train_utillog.cc
 train_utillog_LDADD = libanalyze.a -ldl $(GSL_LIBS)
