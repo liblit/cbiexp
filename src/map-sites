@@ -44,6 +44,7 @@ print <<'EOT';
 extern const struct site_t sites[] = {
 EOT
 
+my $site = 0;
 
 while (<>) {
   $_ =~ /^\<sites unit="([0-9a-f]{32})" scheme="([-a-z]+)"\>\n$/
@@ -75,15 +76,17 @@ while (<>) {
 	      : undef;
     };
 
-    die 'unexpeted field count (', scalar @fields, ") for $scheme site"
+    die 'unexpected field count (', scalar @fields, ") for $scheme site"
       unless defined $cfg && @operands;
 
     @operands = map &cleanOperand, @operands;
     local $" = ', ';
-    print "\t{ \"$fields[0]\", $fields[1], \"$fields[2]\", $cfg, '$schemeCode', { @operands } },\n";
+    print "\t{ \"$fields[0]\", $fields[1], \"$fields[2]\", $cfg, '$schemeCode', { @operands }, $site, $sitesInUnit},\n";
     ++$sitesInUnit;
     ++$sites;
   }
+
+  ++$site;
 
   push @units, { signature => $signature,
 		 schemeCode => $schemeCode,
@@ -93,7 +96,7 @@ while (<>) {
 
 
 print <<'EOT';
-	{ 0, 0, 0, 0, 0, { 0, 0 } }
+	{ 0, 0, 0, 0, 0, { 0, 0 }, 0, 0 }
 };
 
 extern const unsigned NumSites = sizeof(sites) / sizeof(sites[0]) - 1;

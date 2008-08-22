@@ -9,6 +9,8 @@ struct site_t {
     int cfg_node;
     char scheme_code;
     char* args[2];
+    unsigned unit_index;
+    unsigned site_offset; 
 };
 
 
