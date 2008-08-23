@@ -229,11 +229,6 @@ preds.txt: s.runs f.runs static-site-info.so $(call tool-deps, prefilter)
 	$(time) $(tooldir)/prefilter --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) --cull=$(cull-predicates)
 CLEANFILES += preds.txt
 
-$(datadir)/stamp-extract-timestamps: static-site-info.so $(call tool-deps, extract-timestamps)
-	test -w $@ -o ! -e $@
-	$(tooldir)/extract-timestamps --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
-	touch $@
-
 logreg.xml: %.xml: %.txt static-site-info.so $(call tool-deps, %)
 	$(tooldir)/$* $*.txt >$@
 	$(build) links
@@ -271,32 +266,6 @@ clusters: static-site-info.so $(call tool-deps, cluster_runs)
 
 viewclusters: static-site-info.so $(call tool-deps, view_clusters)
 	$(time) $(tooldir)/view_clusters --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir)
-
-ts_nodes.first.txt ts_edges.first.txt: static-site-info.so $(call tool-deps, build_tsgraph)
-	$(time) $(tooldir)/build_tsgraph --runs-directory=$(datadir) --timestamp-when=first --begin-runs=$(begin-runs) --end-runs=$(end-runs)
-CLEANFILES += ts_nodes.first.txt ts_edges.first.txt
-
-ts_nodes.last.txt ts_edges.last.txt: static-site-info.so $(call tool-deps, build_tsgraph)
-	$(time) $(tooldir)/build_tsgraph --runs-directory=$(datadir) --timestamp-when=last --begin-runs=$(begin-runs) --end-runs=$(end-runs)
-CLEANFILES += ts_nodes.last.txt ts_edges.last.txt
-
-sccgraph: ts_nodes.first.txt ts_edges.first.txt ts_nodes.last.txt ts_edges.last.txt $(call tool-deps, find_tsSCC)
-	$(time) $(tooldir)/find_tsSCC --timestamp-when=first
-	$(time) $(tooldir)/find_tsSCC --timestamp-when=last
-
-sanity_check: static-site-info.so $(call tool-deps, sanity_check)
-	$(time) $(tooldir)/sanity_check --runs-directory=$(datadir) --timestamp-when=first --begin-runs=$(begin-runs) --end-runs=$(end-runs)
-
-ts_sites.first.txt: static-site-info.so $(call tool-deps, partial_order)
-	$(time) $(tooldir)/partial_order --runs-directory=$(datadir) --timestamp-when=first --begin-runs=$(begin-runs) --end-runs=$(end-runs)
-CLEANFILES += ts_sites.first.txt
-
-ts_sites.last.txt: static-site-info.so $(call tool-deps, partial_order)
-	$(time) $(tooldir)/partial_order --runs-directory=$(datadir) --timestamp-when=last
-CLEANFILES += ts_sites.last.txt
-
-W.dat: $(datadir)/stamp-extract-timestamps static-site-info.so $(call tool-deps, get_ts_ordering)
-	$(time) $(tooldir)/get_ts_ordering --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --timestamp-when=first
 
 ifndef omit-truth-probability-estimation
 parmstats.txt notp-parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)

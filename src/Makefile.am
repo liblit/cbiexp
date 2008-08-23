@@ -19,7 +19,6 @@ endif
 
 noinst_PROGRAMS =				\
 	bicluster				\
-	build_tsgraph				\
 	calc_sober				\
 	calc_truthprobs				\
 	$(chi2test)				\
@@ -28,20 +27,15 @@ noinst_PROGRAMS =				\
 	compute_nonconst_preds			\
 	compute-obs-tru				\
 	est_parms				\
-	extract-timestamps			\
-	find_tsSCC				\
 	gather_prior_dist			\
 	gather_prior_truths			\
 	gen-summary				\
 	gen-views				\
 	get_tp_weights				\
 	get_truth_values			\
-	get_ts_ordering				\
 	logreg					\
-	partial_order				\
 	prefilter				\
 	project					\
-	sanity_check				\
 	train_utillog				\
 	view_clusters				\
 	xmlify-results
@@ -59,10 +53,6 @@ all-local: analysis-rules.mk
 
 bicluster_SOURCES = bicluster.cc
 bicluster_LDADD = libanalyze.a
-
-build_tsgraph_SOURCES = build_tsgraph.cc
-build_tsgraph_LDADD = libanalyze.a -ldl
-build_tsgraph_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
 
 calc_sober_SOURCES = calc_sober.cc
 calc_sober_LDADD = libanalyze.a $(GSL_LIBS) -ldl
@@ -88,13 +78,6 @@ compute_nonconst_preds_LDADD = libanalyze.a -ldl $(GSL_LIBS)
 est_parms_SOURCES = est_parms.cc
 est_parms_LDADD = libanalyze.a $(GSL_LIBS)
 
-extract_timestamps_SOURCES = extract_timestamps.ll
-extract_timestamps_LDADD = libanalyze.a -ldl $(LEXLIB)
-
-find_tsSCC_SOURCES = find_tsSCC.cc
-find_tsSCC_LDADD = libanalyze.a -ldl
-find_tsSCC_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
-
 gather_prior_dist_SOURCES = gather_prior_dist.cc
 gather_prior_dist_LDADD = libanalyze.a -ldl
 
@@ -113,25 +96,14 @@ get_tp_weights_LDADD = libanalyze.a -ldl
 get_truth_values_SOURCES = get_truth_values.cc
 get_truth_values_LDADD = libanalyze.a -ldl
 
-get_ts_ordering_SOURCES = get_ts_ordering.cc
-get_ts_ordering_LDADD = libanalyze.a -ldl
-
 logreg_SOURCES = logreg.cc
 logreg_LDADD = libanalyze.a -ldl
-
-partial_order_SOURCES = partial_order.cc
-partial_order_LDADD = libanalyze.a -ldl
-partial_order_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized -Wno-unused
 
 prefilter_SOURCES = prefilter.cc
 prefilter_LDADD = libanalyze.a -ldl
 
 project_SOURCES = project.cc
 project_LDADD = Score/libScore.a libanalyze.a -ldl
-
-sanity_check_SOURCES = sanity_check.cc
-sanity_check_LDADD = libanalyze.a -ldl
-sanity_check_CPPFLAGS = $(AM_CPPFLAGS) -Wno-uninitialized
 
 train_utillog_SOURCES = train_utillog.cc
 train_utillog_LDADD = libanalyze.a -ldl $(GSL_LIBS)
@@ -212,12 +184,8 @@ libanalyze_a_SOURCES =				\
 	SourceDirectory.h			\
 	Stylesheet.cc				\
 	Stylesheet.h				\
-	TimestampReport.cc			\
-	TimestampReport.h			\
 	AdjWeightsOptions.cc			\
 	AdjWeightsOptions.h			\
-	TsReportReader.cc			\
-	TsReportReader.h			\
 	StaticSiteInfo.cc			\
 	StaticSiteInfo.h			\
 	UtilLogReg.cc				\
