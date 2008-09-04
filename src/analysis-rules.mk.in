@@ -114,8 +114,11 @@ web :=						\
 	predictor-info.xml			\
 	sober.xml				\
 	stamp-src				\
-	summary.xml				\
-	all_hl_corrected-exact-complete_complex.xml
+	summary.xml
+
+ifdef COMPOUND
+web += all_hl_corrected-exact-complete_complex.xml
+endif
 
 publish ?= $(HOME)/www/$(name)-new
 
