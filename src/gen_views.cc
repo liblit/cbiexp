@@ -72,17 +72,21 @@ gen_views(const string &scheme, Stats &stats)
 // map key "all" includes all schemes
 typedef map<string, Stats> StatsMap;
 static StatsMap statsMap;
-
+bool considerComplex = false;
 
 static int
 parseFlag(int key, char *arg, argp_state *)
 {
     switch (key) {
-    case 'f':
-	statsMap[arg];
-	return 0;
-    default:
-	return ARGP_ERR_UNKNOWN;
+       case 'f':
+           statsMap[arg];
+           return 0;
+
+       case 'c':
+           considerComplex = true;
+
+       default:
+           return ARGP_ERR_UNKNOWN;
     }
 }
 
@@ -99,6 +103,14 @@ process_cmdline(int argc, char *argv[])
 	    "always generate view for SCHEME sites; may be given multiple times",
 	    0
 	},
+    {
+      "complex-preds",
+      'c',
+      0,
+      0,
+      "generate views for complex predicates in complex_hl_none.xml",
+      0
+    },
 	{ 0, 0, 0, 0, 0, 0 }
     };
 
@@ -143,7 +155,8 @@ main(int argc, char** argv)
 	statsMap[scheme].push_back(indexed);
     }
 
-    gen_complex();
+    if(considerComplex)
+        gen_complex();
     // generate sorted views for each individual scheme
     for (StatsMap::iterator scheme = statsMap.begin(); scheme != statsMap.end(); ++scheme)
 	gen_views(scheme->first, scheme->second);

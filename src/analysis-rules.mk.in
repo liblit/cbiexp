@@ -233,7 +233,7 @@ CLEANFILES += obs.txt tru.txt
 
 $(filter %_none.xml, $(views)): preds.txt static-site-info.so $(call tool-deps, gen-views) pairs.txt
 	$(build) links
-	$(tooldir)/gen-views --begin-runs=$(training-runs) $(if $(end-runs), --end-runs=$(end-runs)) --runs-directory=$(datadir) $(schemes:%=--force-scheme=%) $(view_flags)
+	$(tooldir)/gen-views --begin-runs=$(training-runs) $(if $(end-runs), --end-runs=$(end-runs)) --runs-directory=$(datadir) $(schemes:%=--force-scheme=%) $(view_flags) $(if $(COMPOUND), --complex-preds)
 	xmllint --valid --noout $(filter %_none.xml, $(views))
 CLEANFILES += $(filter %_none.xml, $(views))
 CLEANFILES += complex_hl_none.xml complex-info.xml complex_all.txt
