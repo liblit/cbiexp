@@ -86,9 +86,7 @@ StaticSiteInfo::site(unsigned siteIndex) const
 inline const site_t &
 StaticSiteInfo::site(const SiteCoords &coords) const
 {
-  const unit_t &owner = unit(coords.unitIndex);
-  assert(coords.siteOffset < owner.num_sites);
-  return owner.sites[coords.siteOffset];
+  return sites[coords.siteIndex];
 }
 
 
