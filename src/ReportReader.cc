@@ -23,7 +23,7 @@ ReportReader::ReportReader(const char* filename)
     {
       const int code = errno;
       ostringstream message;
-      message << "cannot read" << filename << ": " << strerror(code);
+      message << "cannot read " << filename << ": " << strerror(code);
       throw runtime_error(message.str());
     }
     linepos = 0;
@@ -88,25 +88,31 @@ ReportReader::read(unsigned runId)
     //got site information, ready to handle
 
     stringstream line(info);
-    stringbuf itembuf; 
+    stringbuf indexbuf; 
 
     //reading index
-    line.get(itembuf, ':');
-    unsigned index = atoi(itembuf.str().c_str());
+    line.get(indexbuf, ':');
+    unsigned index = atoi(indexbuf.str().c_str());
+    line.get();
 
     //reading counts
     vector<count_tp> counts;
     counts.reserve(3);
     do //start reading numbers one by one
     {
-      line.get(itembuf, ':'); 
+      stringbuf itembuf;
+      line.get(itembuf, ':');
+      line.get();
       char *tail;
       counts.push_back(strtol(itembuf.str().c_str(), &tail, 0));
     } while(line.gcount() > 0);
 
     //got what we need, now handle 
     handleSite(SiteCoords(index), counts); 
+    summary.get();
 
   } while(reached_end == false && summary.gcount() > 0);
+
+  linepos++;
 
 }
