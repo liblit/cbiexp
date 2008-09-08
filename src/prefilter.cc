@@ -547,7 +547,7 @@ int main(int argc, char** argv)
 	progress.step();
 
 	reader.read(cur_run);
-        // if (AmplifyReport::amplify) amp.read(cur_run);
+        if (AmplifyReport::amplify) amp.read(cur_run);
     }
 
     if (CullPredicates::cull) {
