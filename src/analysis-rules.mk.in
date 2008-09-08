@@ -109,8 +109,11 @@ web :=						\
 	predictor-info.xml			\
 	sober.xml				\
 	stamp-src				\
-	summary.xml				\
-	all_hl_corrected-exact-complete_complex.xml
+	summary.xml
+
+ifdef COMPOUND
+web += all_hl_corrected-exact-complete_complex.xml
+endif
 
 publish ?= $(HOME)/www/$(name)-new
 
@@ -214,7 +217,7 @@ CLEANFILES += obs.txt tru.txt
 
 $(filter %_none.xml, $(views)): preds.txt static-site-info.so $(call tool-deps, gen-views) pairs.txt
 	$(build) links
-	$(tooldir)/gen-views --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(schemes:%=--force-scheme=%) $(view_flags)
+	$(tooldir)/gen-views --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(schemes:%=--force-scheme=%) $(view_flags) $(if $(COMPOUND), --complex-preds)
 	xmllint --valid --noout $(filter %_none.xml, $(views))
 CLEANFILES += $(filter %_none.xml, $(views))
 CLEANFILES += complex_hl_none.xml complex-info.xml complex_all.txt
