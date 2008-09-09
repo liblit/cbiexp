@@ -43,7 +43,7 @@ ReportReader::read(unsigned runId)
   if (linepos == runId); //at line position we want to read
   else //must reposition
   {
-    summary.seekg(0); //go to start of file and read until linepos is runId 
+    summary.seekg(0); //go to start of file and read until linepos is runId
     linepos = 0;
     char buf[1024];
     int lastchar = 0;
@@ -64,54 +64,69 @@ ReportReader::read(unsigned runId)
     } while (linepos < runId);
   }
 
-  //advanced to correct position, now reading report 
+  //advanced to correct position, now reading report
 
   bool reached_end  = false;
-  do //start reading sites one by one 
+  do //start reading sites one by one
   {
 
     //reading up to first tab
-    stringbuf buf; 
-    summary.get(buf, '\t'); 
+    stringbuf peek;
+    summary.get(peek, '\t');
 
-    string info = buf.str();  
+    string info = peek.str();
 
-    //if there's a newline in data need to back up 
+    //if there's a newline in data need to back up
     if (info.find_first_of("\n") != string::npos)
     {
-      //all this casting is to help gcc disambiguate seekg call 
+      stringbuf buf;
+      //all this casting is to help gcc disambiguate seekg call
       summary.seekg((streampos)((int)summary.tellg() - (int)summary.gcount()));
-      summary.get(buf, '\n');
+      if (summary.peek() != '\n')
+      {
+        summary.get(buf, '\n');
+        info = buf.str();
+      }
+      else
+      {
+        info = "";
+      }
       reached_end = true;
     }
 
-    //got site information, ready to handle
-
-    stringstream line(info);
-    stringbuf indexbuf; 
-
-    //reading index
-    line.get(indexbuf, ':');
-    unsigned index = atoi(indexbuf.str().c_str());
-    line.get();
-
-    //reading counts
-    vector<count_tp> counts;
-    counts.reserve(3);
-    do //start reading numbers one by one
-    {
-      stringbuf itembuf;
-      line.get(itembuf, ':');
-      line.get();
-      char *tail;
-      counts.push_back(strtol(itembuf.str().c_str(), &tail, 0));
-    } while(line.gcount() > 0);
-
-    //got what we need, now handle 
-    handleSite(SiteCoords(index), counts); 
+    //consume the remaining character whether tab or newline
     summary.get();
 
-  } while(reached_end == false && summary.gcount() > 0);
+    //got site information, ready to handle
+
+    if (info.length() != 0) //if there was some data for this run
+    {
+
+        stringstream line(info);
+        stringbuf indexbuf;
+ 
+        //reading index
+        line.get(indexbuf, ':');
+        unsigned index = atoi(indexbuf.str().c_str());
+        line.get();
+ 
+        //reading counts
+        vector<count_tp> counts;
+        do //start reading numbers one by one
+        {
+          stringbuf itembuf;
+          line.get(itembuf, ':');
+          line.get();
+          char *tail;
+          counts.push_back(strtol(itembuf.str().c_str(), &tail, 0));
+        } while(line.gcount() > 0);
+ 
+        //got what we need, now handle
+        handleSite(SiteCoords(index), counts);
+
+    }
+
+  } while(reached_end == false && summary.gcount() != 0);
 
   linepos++;
 

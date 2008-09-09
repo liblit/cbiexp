@@ -59,7 +59,7 @@ inline pred_stat get_pred_stat(int u, int c, int p)
     return compute_pred_stat(s, f, os, of, Confidence::level);
 }
 
-int num_preds(char scheme_code)
+unsigned int num_preds(char scheme_code)
 {
     switch (scheme_code) {
         case 'B':
@@ -102,7 +102,7 @@ static void print_pred(FILE* fp, int u, int c, int p, int site)
 static void print_retained_preds()
 {
     unsigned u, c;
-    int p, site = 0;
+    unsigned int p, site = 0;
 
     FILE* fp = fopenWrite(PredStats::filename);
     assert(fp);
@@ -207,9 +207,11 @@ void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
     assert(site.site_offset < staticSiteInfo->unit(site.unit_index).num_sites);
     assert(site.site_offset < site_info[site.unit_index].size());
 
+    const size_t size = counts.size();
+    assert (size == 2 || size == num_preds(site.scheme_code) / 2);
+
     obs(cur_run, site);
 
-    const size_t size = counts.size();
     if (size == 2)
 	for (unsigned predicate = 0; predicate < size; ++predicate) {
 	    if (counts[predicate])
@@ -245,6 +247,8 @@ void AmplifyReader::handleSite(const SiteCoords &coords, vector<count_tp> &count
     assert(site.site_offset < site_info[site.unit_index].size());
 
     const size_t size = counts.size();
+    assert (size == 2 || size == num_preds(site.scheme_code) / 2);
+
     if (size == 2) {
       for (unsigned predicate = 0; predicate < size; ++predicate)
           if (counts[predicate]) {
@@ -300,7 +304,7 @@ void foreach_pred(pfct thef)
     for (unsigned u = 0; u < staticSiteInfo->unitCount; u++) {
 	const unit_t &unit = staticSiteInfo->unit(u);
 	for (unsigned c = 0; c < unit.num_sites; c++) {
-	    for (int p = 0; p < num_preds(unit.scheme_code); p++)
+	    for (unsigned int p = 0; p < num_preds(unit.scheme_code); p++)
 		(*thef)(u, c, p);
 	}
     }
