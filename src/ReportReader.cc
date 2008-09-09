@@ -45,11 +45,9 @@ ReportReader::read(unsigned runId)
   {
     summary.seekg(0); //go to start of file and read until linepos is runId
     linepos = 0;
-    char buf[1024];
-    int lastchar = 0;
     do //keep reading lines until runId is linepos or EOF reached
     {
-      if (lastchar == EOF)
+      if (summary.peek() == EOF)
       {
           ostringstream message;
           message << "runId " << runId << " exceeds number of runs";
@@ -57,10 +55,13 @@ ReportReader::read(unsigned runId)
       }
       do
       {
+         char buf[1024];
          summary.get(buf, 1024);
-      } while(summary.gcount() > 0);
+      } while(summary.peek() != '\n');
+
+      summary.get();
       linepos++;
-      lastchar = summary.get();
+
     } while (linepos < runId);
   }
 
