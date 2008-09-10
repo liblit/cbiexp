@@ -1,15 +1,15 @@
-#SUBDIRS = corrective-ranking evaluateplsa fromplsa matlab never-reached Score symmetric
-#if ENABLE_AMPLIFY
-#SUBDIRS += amplify
-#endif
-#if HAVE_CODESURFER
-#SUBDIRS += effort
-#endif
-#if ENABLE_PLSA
-#SUBDIRS += plsa
-#endif
+SUBDIRS = corrective-ranking evaluateplsa fromplsa matlab never-reached Score symmetric
+if ENABLE_AMPLIFY
+SUBDIRS += amplify
+endif
+if HAVE_CODESURFER
+SUBDIRS += effort
+endif
+if ENABLE_PLSA
+SUBDIRS += plsa
+endif
 
-#DIST_SUBDIRS = $(SUBDIRS) effort
+DIST_SUBDIRS = $(SUBDIRS) effort
 
 AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 -Wno-deprecated $(BOOST_CPPFLAGS)
 
@@ -18,6 +18,22 @@ chi2test = chi2test
 endif
 
 noinst_PROGRAMS =				\
+	bicluster				\
+	calc_sober				\
+	calc_truthprobs				\
+	$(chi2test)				\
+	cluster_runs				\
+	collect_parmstats			\
+	compute_nonconst_preds			\
+	compute-obs-tru				\
+	est_parms				\
+	gather_prior_dist			\
+	gather_prior_truths			\
+	gen-summary				\
+	gen-views				\
+	get_tp_weights				\
+	get_truth_values			\
+	logreg					\
 	prefilter				\
 	project					\
 	train_utillog				\
