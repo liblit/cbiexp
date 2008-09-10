@@ -84,72 +84,70 @@ unsigned int num_preds(char scheme_code)
  * Procedures for printing retained predicates
  ***************************************************************************/
 
-static void print_pred(FILE* fp, int u, int c, int p, int site)
+static void print_pred(FILE* fp, int si, int p)
 {
 
-    pred_stat ps = get_pred_stat(u, c, p);
+    const site_t site = staticSiteInfo->site(si);
+    pred_stat ps = get_pred_stat(site.unit_index, site.site_offset, p);
 
-    fprintf(fp, "%c %d %d %d %d %g %g %g %g %d %d %d %d\n",
-	staticSiteInfo->unit(u).scheme_code,
-	u, c, p, site,
+    fprintf(fp, "%c %d %d %g %g %g %g %d %d %d %d\n",
+	staticSiteInfo->unit(site.unit_index).scheme_code,
+	si, p,
 	ps.lb, ps.in, ps.fs, ps.co,
-        site_info[u][c].S[p],
-        site_info[u][c].F[p],
-        site_info[u][c].OS[p],
-        site_info[u][c].OF[p]);
+        site_info[site.unit_index][site.site_offset].S[p],
+        site_info[site.unit_index][site.site_offset].F[p],
+        site_info[site.unit_index][site.site_offset].OS[p],
+        site_info[site.unit_index][site.site_offset].OF[p]);
 }
 
 static void print_retained_preds()
 {
-    unsigned u, c;
-    unsigned int p, site = 0;
+    unsigned int p, si = 0;
 
     FILE* fp = fopenWrite(PredStats::filename);
     assert(fp);
 
-    for (u = 0; u < staticSiteInfo->unitCount; u++) {
-	const unit_t &unit = staticSiteInfo->unit(u);
-	for (c = 0; c < unit.num_sites; c++, site++) {
-	    switch (unit.scheme_code) {
+    for (si = 0; si < staticSiteInfo->siteCount; si++) {
+        const site_t site = staticSiteInfo->site(si);
+        switch(site.scheme_code) {
 	    case 'S':
 		for (p = 0; p < num_preds('S'); p++)
-		    if (site_info[u][c].retain[p]) {
+		    if (site_info[site.unit_index][site.site_offset].retain[p]) {
 			num_s_preds++;
-			print_pred(fp, u, c, p, site);
+			print_pred(fp, si, p);
 		    }
 		break;
 	    case 'R':
 		for (p = 0; p < num_preds('R'); p++)
-		    if (site_info[u][c].retain[p]) {
+		    if (site_info[site.unit_index][site.site_offset].retain[p]) {
 			num_r_preds++;
-			print_pred(fp, u, c, p, site);
+			print_pred(fp, si, p);
 		    }
 		break;
 	    case 'B':
 		for (p = 0; p < num_preds('B'); p++)
-		    if (site_info[u][c].retain[p]) {
+		    if (site_info[site.unit_index][site.site_offset].retain[p]) {
 			num_b_preds++;
-			print_pred(fp, u, c, p, site);
+			print_pred(fp, si, p);
 		    }
 		break;
 	    case 'F':
 		for (p = 0; p < num_preds('F'); p++)
-		    if (site_info[u][c].retain[p]) {
+		    if (site_info[site.unit_index][site.site_offset].retain[p]) {
 			num_f_preds++;
-			print_pred(fp, u, c, p, site);
+			print_pred(fp, si, p);
 		    }
 		break;
 	    case 'G':
 		for (p = 0; p < num_preds('G'); p++)
-		    if (site_info[u][c].retain[p]) {
+		    if (site_info[site.unit_index][site.site_offset].retain[p]) {
 			num_g_preds++;
-			print_pred(fp, u, c, p, site);
+			print_pred(fp, si, p);
 		    }
 		break;
 	    default:
 		assert(0);
-	    }
-	}
+        }
     }
 
     fclose(fp);
