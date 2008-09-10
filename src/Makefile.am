@@ -1,3 +1,16 @@
+SUBDIRS = corrective-ranking evaluateplsa fromplsa matlab never-reached Score symmetric
+if ENABLE_AMPLIFY
+SUBDIRS += amplify
+endif
+if HAVE_CODESURFER
+SUBDIRS += effort
+endif
+if ENABLE_PLSA
+SUBDIRS += plsa
+endif
+
+DIST_SUBDIRS = $(SUBDIRS) effort
+
 AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 -Wno-deprecated $(BOOST_CPPFLAGS)
 
 if HAVE_GSL_CDF
@@ -5,6 +18,11 @@ chi2test = chi2test
 endif
 
 noinst_PROGRAMS =				\
+	bicluster				\
+	calc_sober				\
+	calc_truthprobs				\
+	$(chi2test)				\
+	cluster_runs				\
 	collect_parmstats			\
 	compute_nonconst_preds			\
 	compute-obs-tru				\
