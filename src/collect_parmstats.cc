@@ -1,17 +1,17 @@
 /****************************************************************
- * This program collects sufficient statistics for estimating the 
+ * This program collects sufficient statistics for estimating the
  * parameters of the truth probability model.  Statistics are
  * collected for all predicates that passed the pre-filtering test,
  * as well as the complements of those predicates.  Statistics for
  * failed runs are collected separately from those of successful
  * runs.
- * Input: 
+ * Input:
  * 1. file containing sampling rates (defined on the commandline)
  * 2. preds.txt (predicates retained after pre-filtering)
  * 3. all the program runs
  * 4. s.runs and f.runs
  * Output:
- * parmstats.txt and notp-parmstats.txt: sufficient stats for the 
+ * parmstats.txt and notp-parmstats.txt: sufficient stats for the
  *   list of predicates in preds.txt and their complements (in the
  *   same order as preds.txt)
  *
@@ -22,9 +22,11 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <limits>
 #include <numeric>
 #include <queue>
+#include <stdexcept>
 #include "fopen.h"
 #include "DiscreteDist.h"
 #include "NumRuns.h"
@@ -41,8 +43,7 @@ using namespace std;
 using __gnu_cxx::hash_map;
 
 string sampleRateFile;
-typedef hash_map<SiteCoords, double> site_hash_t;
-static site_hash_t sampleRates;
+static vector <double> sampleRates;
 
 typedef queue<PredCoords> Preds;
 Preds retainedPreds;
@@ -67,7 +68,7 @@ Preds retainedPreds;
 
 class pred_info_t {
 private:
-    unsigned N, Z; 
+    unsigned N, Z;
     count_tp S, Y;
     double a;
     double b;
@@ -106,14 +107,14 @@ void pred_info_t::update (const count_tp m, const count_tp y)
       } else { // m > y and y == 0 -> set B
 	  if (Bset.find(m) == Bset.end())
 	    Bset[m] = 1;
-          else 
+          else
 	    Bset[m] += 1;
 	  ++Bsize;
       }
   } else { // m == y > 0 -> set C
       if (Cset.find(m) == Cset.end())
         Cset[m] = 1;
-      else 
+      else
 	Cset[m] += 1;
       ++Csize;
   }
@@ -149,7 +150,7 @@ PredPair::update(PredInfoPtr pipt, count_tp nobs, count_tp ntrue)
     (this->*pipt).update(nobs, ntrue);
 }
 
-class pred_hash_t : public hash_map<PredCoords, PredPair> 
+class pred_hash_t : public hash_map<PredCoords, PredPair>
 {
 };
 static pred_hash_t predHash;
@@ -161,21 +162,31 @@ static pred_hash_t predHash;
 class Reader : public ReportReader
 {
 public:
-  Reader(PredInfoPtr);
+  Reader(const char* filename) : ReportReader(filename) {}
+  void setptr(unsigned);
 
 protected:
   void handleSite(const SiteCoords &, vector<count_tp> &);
 
 private:
     void update(const SiteCoords &, unsigned, count_tp, count_tp) const;
-    const PredInfoPtr pipt;
+    PredInfoPtr pipt;
 };
 
-inline
-Reader::Reader(PredInfoPtr _pipt)
-    : pipt(_pipt)
+inline void
+Reader::setptr(unsigned run)
 {
+  if (is_frun[run]) pipt = &PredPair::f;
+  else
+    if (is_srun[run]) pipt = &PredPair::s;
+    else
+    {
+        ostringstream message;
+        message << "Ill-formed run " << run;
+        throw runtime_error(message.str());
+    }
 }
+
 
 inline void
 Reader::update(const SiteCoords &coords, unsigned p, count_tp nobs, count_tp ntrue) const
@@ -215,7 +226,7 @@ Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 // if it was not observed in the training runs.)  The default behavior
 // of the decimator is to not do anything; therefore the default
 // sampling rate is 1.
-void 
+void
 read_rates()
 {
   if (sampleRateFile.empty()) {
@@ -223,18 +234,15 @@ read_rates()
   }
 
   FILE *const rates = fopenRead(sampleRateFile.c_str());
-  SiteCoords coords;
   double rho;
   unsigned ctr;
 
   while (true) {
-    ctr = fscanf(rates, "%u\t%u\t%lg\n", &coords.unitIndex, &coords.siteOffset, &rho);
-    if (ctr != 3)
-	break;
-
-    sampleRates[coords] = rho;
+    ctr = fscanf(rates, "%lg\n", &rho);
+    if (ctr != 1) break; //reached the end
+    sampleRates.push_back(rho);
   }
-  
+
   fclose(rates);
 }
 
@@ -247,12 +255,9 @@ void set_rates ()
     for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
 	const PredCoords &pc = c->first;
 	PredPair &pp = c->second;
-	const site_hash_t::iterator found = sampleRates.find(pc);
-	if (found != sampleRates.end()) {
-	    const double rho = found->second;
-	    pp.f.setrho(rho);
-	    pp.s.setrho(rho);
-        }
+        const double rho = sampleRates[pc.siteIndex];
+        pp.f.setrho(rho);
+        pp.s.setrho(rho);
     }
 }
 
@@ -393,10 +398,10 @@ int main(int argc, char** argv)
 
     FILE * const pfp = fopenRead(PredStats::filename);
     pred_info pi;
-    // read in the list of pre-filtered predicates, insert both the 
-    // predicate and its complement into the hashtable if they don't 
+    // read in the list of pre-filtered predicates, insert both the
+    // predicate and its complement into the hashtable if they don't
     // already exist
-    while (read_pred_full(pfp, pi)) { 
+    while (read_pred_full(pfp, pi)) {
 	PredPair &pp = predHash[pi];
 	PredPair &notpp = predHash[notP(pi)];
 	pp.init();
@@ -408,19 +413,12 @@ int main(int argc, char** argv)
     read_rates();  // read the sampling rates from file
     set_rates();   // set sampling rates in predHash according to values read from file
 
+    Reader reader("tru.txt");
     Progress::Bounded prog("Reading runs and collecting sufficient stats", NumRuns::count());
     for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
       prog.step();
-      // pipt is a pointer to the pred_info singleton for success or failure
-      PredInfoPtr pipt = 0;
-      if (is_srun[r])
-	pipt = &PredPair::s; 
-      else if (is_frun[r])
-        pipt = &PredPair::f;
-      else
-	continue;
-  
-      Reader(pipt).read(r);
+      reader.setptr(r);
+      reader.read(r);
     }
 
     set_min();
