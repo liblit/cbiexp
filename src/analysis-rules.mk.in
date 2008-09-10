@@ -272,7 +272,7 @@ viewclusters: static-site-info.so $(call tool-deps, view_clusters)
 
 ifndef omit-truth-probability-estimation
 parmstats.txt notp-parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)
-	$(time) $(tooldir)/collect_parmstats --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --sample-rates=$(stamp-decimate)
+	$(time) $(tooldir)/collect_parmstats --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --sample-rates=rates.txt
 CLEANFILES += parmstats.txt notp-parmstats.txt
 
 parms.txt notp-parms.txt: parmstats.txt notp-parmstats.txt static-site-info.so $(call tool-deps, est_parms)
