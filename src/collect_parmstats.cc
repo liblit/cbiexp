@@ -33,6 +33,7 @@
 #include "PredCoords.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
+#include "Rates.h"
 #include "ReportReader.h"
 #include "RunsDirectory.h"
 #include "SiteCoords.h"
@@ -42,7 +43,6 @@
 using namespace std;
 using __gnu_cxx::hash_map;
 
-string sampleRateFile;
 static vector <double> sampleRates;
 
 typedef queue<PredCoords> Preds;
@@ -220,20 +220,13 @@ Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
  * Utility functions
  ***************************************************************************/
 
-// This function reads down-sampling rates contained in a file if it
-// exists and is non-empty.  The non-uniform down-sampling rates file
-// may not contain sampling rates for all sites.  (A site is omitted
-// if it was not observed in the training runs.)  The default behavior
-// of the decimator is to not do anything; therefore the default
-// sampling rate is 1.
+// This function reads down-sampling rates contained in a file. There is a
+// rate for every site.
 void
 read_rates()
 {
-  if (sampleRateFile.empty()) {
-    return;
-  }
 
-  FILE *const rates = fopenRead(sampleRateFile.c_str());
+  FILE *const rates = fopenRead(Rates::filename);
   double rho;
   unsigned ctr;
 
@@ -345,41 +338,17 @@ void print_results()
  * Processing command line options
  ***************************************************************************/
 
-static const argp_option options[] = {
-  {
-    "sample-rates",
-    'd',
-    "FILE",
-    0,
-    "use \"FILE\" as the downsampling rate for each site",
-    0
-  },
-  { 0, 0, 0, 0, 0, 0 }
-};
-
-static int
-parseFlag(int key, char *arg, argp_state *)
-{
-  switch (key)
-    {
-    case 'd':
-      sampleRateFile = arg;
-      return 0;
-    default:
-      return ARGP_ERR_UNKNOWN;
-    }
-}
-
 void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
 	{ &NumRuns::argp, 0, 0, 0 },
+        { &Rates::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
 
     static const argp argp = {
-	options, parseFlag, 0, 0, children, 0, 0
+	0, 0, 0, 0, children, 0, 0
     };
 
     argp_parse(&argp, argc, argv, 0, 0, 0);
