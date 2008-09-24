@@ -1,9 +1,9 @@
 #include <sstream>
-#include "Rates.h"
+#include "SampleRatesFile.h"
 
 using namespace std;
 
-const char *Rates::filename = "rates.txt";
+const char *SampleRatesFile::filename = "rates.txt";
 
 
 #ifdef HAVE_ARGP_H
@@ -26,7 +26,7 @@ parseFlag(int key, char *arg, argp_state *)
 {
   switch (key) {
   case 'd':
-    Rates::filename = arg;
+    SampleRatesFile::filename = arg;
     return 0;
   default:
     return ARGP_ERR_UNKNOWN;
@@ -34,7 +34,7 @@ parseFlag(int key, char *arg, argp_state *)
 }
 
 
-const argp Rates::argp = {
+const argp SampleRatesFile::argp = {
     options, parseFlag, 0, 0, 0, 0, 0
 };
 

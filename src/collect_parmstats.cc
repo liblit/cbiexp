@@ -33,7 +33,7 @@
 #include "PredCoords.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
-#include "Rates.h"
+#include "SampleRatesFile.h"
 #include "ReportReader.h"
 #include "RunsDirectory.h"
 #include "SiteCoords.h"
@@ -226,7 +226,7 @@ void
 read_rates()
 {
 
-  FILE *const rates = fopenRead(Rates::filename);
+  FILE *const rates = fopenRead(SampleRatesFile::filename);
   double rho;
   unsigned ctr;
 
@@ -342,7 +342,7 @@ void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
 	{ &NumRuns::argp, 0, 0, 0 },
-        { &Rates::argp, 0, 0, 0 },
+        { &SampleRatesFile::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };

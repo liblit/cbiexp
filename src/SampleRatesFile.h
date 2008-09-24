@@ -1,14 +1,13 @@
-#ifndef INCLUDE_Rates_h
-#define INCLUDE_Rates_h
+#ifndef INCLUDE_SampleRatesFile_h
+#define INCLUDE_SampleRatesFile_h
 
 #include"arguments.h"
 
-
-namespace Rates
+namespace SampleRatesFile
 {
     extern const argp argp;
     extern const char* filename;
 }
 
 
-#endif //!INCLUDE_Rates_h
+#endif //!INCLUDE_SampleRatesFile_h
