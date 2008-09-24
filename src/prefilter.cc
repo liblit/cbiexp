@@ -200,10 +200,6 @@ void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 {
     const site_t site = staticSiteInfo->site(coords);
 
-    assert(site.unit_index < staticSiteInfo->unitCount);
-    assert(site.unit_index < site_info.size());
-    assert(site.site_offset < staticSiteInfo->unit(site.unit_index).num_sites);
-
     const size_t size = counts.size();
     assert (size == 2 || size == num_preds(site.scheme_code) / 2);
 
@@ -237,10 +233,6 @@ protected:
 void AmplifyReader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 {
     const site_t site = staticSiteInfo->site(coords);
-
-    assert(site.unit_index < staticSiteInfo->unitCount);
-    assert(site.unit_index < site_info.size());
-    assert(site.site_offset < staticSiteInfo->unit(site.unit_index).num_sites);
 
     const size_t size = counts.size();
     assert (size == 2 || size == num_preds(site.scheme_code) / 2);

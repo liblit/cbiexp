@@ -13,12 +13,6 @@ class StaticSiteInfo : private DynamicLibrary
 public:
   StaticSiteInfo();
 
-  typedef const unit_t *UnitIterator;
-  const unsigned unitCount;
-  UnitIterator unitsBegin() const;
-  UnitIterator unitsEnd() const;
-  const unit_t &unit(unsigned) const;
-
   typedef const site_t *SiteIterator;
   const unsigned siteCount;
   SiteIterator sitesBegin() const;
@@ -27,7 +21,6 @@ public:
   const site_t &site(const SiteCoords &) const;
 
 private:
-  const unit_t * const units;
   const site_t * const sites;
 };
 
@@ -37,28 +30,6 @@ private:
 
 #include <cassert>
 #include "SiteCoords.h"
-
-
-inline StaticSiteInfo::UnitIterator
-StaticSiteInfo::unitsBegin() const
-{
-  return units;
-}
-
-
-inline StaticSiteInfo::UnitIterator
-StaticSiteInfo::unitsEnd() const
-{
-  return units + unitCount;
-}
-
-
-inline const unit_t &
-StaticSiteInfo::unit(unsigned unitIndex) const
-{
-  assert(unitIndex < unitCount);
-  return units[unitIndex];
-}
 
 
 inline StaticSiteInfo::SiteIterator

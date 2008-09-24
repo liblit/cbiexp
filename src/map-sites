@@ -26,7 +26,6 @@ sub cleanOperand {
 }
 
 
-my @units;
 my $sites = 0;
 
 
@@ -50,9 +49,7 @@ while (<>) {
   $_ =~ /^\<sites unit="([0-9a-f]{32})" scheme="([-a-z]+)"\>\n$/
     or die "malformed sites tag";
   my ($signature, $scheme) = ($1, $2);
-  my $sitesInUnit = 0;
   my $schemeCode = $schemeCode{$scheme};
-  my $siteOffset = $sites;
 
   while (<>) {
     chomp;
@@ -81,40 +78,19 @@ while (<>) {
 
     @operands = map &cleanOperand, @operands;
     local $" = ', ';
-    print "\t{ \"$fields[0]\", $fields[1], \"$fields[2]\", $cfg, '$schemeCode', { @operands }, $site, $sitesInUnit},\n";
-    ++$sitesInUnit;
+    print "\t{ \"$fields[0]\", $fields[1], \"$fields[2]\", $cfg, '$schemeCode', { @operands } },\n";
     ++$sites;
   }
 
   ++$site;
 
-  push @units, { signature => $signature,
-		 schemeCode => $schemeCode,
-		 sitesInUnit => $sitesInUnit,
-		 siteOffset => $siteOffset };
 }
 
 
 print <<'EOT';
-	{ 0, 0, 0, 0, 0, { 0, 0 }, 0, 0 }
+	{ 0, 0, 0, 0, 0, { 0, 0 } }
 };
 
 extern const unsigned NumSites = sizeof(sites) / sizeof(sites[0]) - 1;
 
-EOT
-
-
-########################################################################
-#
-#  units array
-#
-
-print "\nextern const struct unit_t units[] = {\n";
-print "\t{ '$_->{schemeCode}', \"$_->{signature}\", $_->{sitesInUnit}, &sites[$_->{siteOffset}] },\n"
-  foreach @units;
-print <<'EOT'
-	{ 0, 0, 0, 0 }
-};
-
-extern const unsigned NumUnits = sizeof(units) / sizeof(units[0]) - 1;
 EOT
