@@ -1,9 +1,13 @@
 #include <sstream>
+#include <vector>
 #include "SampleRatesFile.h"
+#include "fopen.h"
 
 using namespace std;
 
 const char *SampleRatesFile::filename = "rates.txt";
+
+vector<double> SampleRatesFile::rates;
 
 
 #ifdef HAVE_ARGP_H
@@ -39,3 +43,20 @@ const argp SampleRatesFile::argp = {
 };
 
 #endif // HAVE_ARGP_H
+
+void
+SampleRatesFile::read_rates()
+{
+
+  FILE *const ratesfile = fopenRead(SampleRatesFile::filename);
+  double rho;
+  unsigned ctr;
+
+  while (true) {
+    ctr = fscanf(ratesfile, "%lg\n", &rho);
+    if (ctr != 1) break; //reached the end
+    SampleRatesFile::rates.push_back(rho);
+  }
+
+  fclose(ratesfile);
+}

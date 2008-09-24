@@ -43,8 +43,6 @@
 using namespace std;
 using __gnu_cxx::hash_map;
 
-static vector <double> sampleRates;
-
 typedef queue<PredCoords> Preds;
 Preds retainedPreds;
 
@@ -220,26 +218,7 @@ Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
  * Utility functions
  ***************************************************************************/
 
-// This function reads down-sampling rates contained in a file. There is a
-// rate for every site.
-void
-read_rates()
-{
-
-  FILE *const rates = fopenRead(SampleRatesFile::filename);
-  double rho;
-  unsigned ctr;
-
-  while (true) {
-    ctr = fscanf(rates, "%lg\n", &rho);
-    if (ctr != 1) break; //reached the end
-    sampleRates.push_back(rho);
-  }
-
-  fclose(rates);
-}
-
-/* For each interesting predicate, set rho according to sampleRates hash.
+/* For each interesting predicate, set rho according to the sites rate. 
  * rho is initialized to have a default value of 1.0. (See definition of
  * pred_info_t)
  */
@@ -248,7 +227,7 @@ void set_rates ()
     for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
 	const PredCoords &pc = c->first;
 	PredPair &pp = c->second;
-        const double rho = sampleRates[pc.siteIndex];
+        const double rho = SampleRatesFile::rates[pc.siteIndex];
         pp.f.setrho(rho);
         pp.s.setrho(rho);
     }
@@ -379,7 +358,7 @@ int main(int argc, char** argv)
     }
     fclose(pfp);
 
-    read_rates();  // read the sampling rates from file
+    SampleRatesFile::read_rates();  // read the sampling rates from file
     set_rates();   // set sampling rates in predHash according to values read from file
 
     Reader reader("tru.txt");
