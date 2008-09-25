@@ -300,9 +300,9 @@ endif
 
 
 predscores: bicluster_votes.xml
-bicluster_votes.xml bicluster-preds.xml final-votes.txt: preds.txt $(truth-probs) $(not-truth-probs) $(call tool-deps, bicluster)
+bicluster_votes.xml bicluster-preds.xml final-votes.txt: preds.txt X.dat notX.dat $(call tool-deps, bicluster)
 	$(build) links
-	$(time) $(tooldir)/bicluster --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name) --truth-probability-weights=$(truth-probs) --not-truth-probability-weights=$(not-truth-probs)
+	$(time) $(tooldir)/bicluster --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name) --truth-probability-weights=X.dat --not-truth-probability-weights=notX.dat
 	xmllint --valid --noout bicluster_votes.xml
 CLEANFILES += bicluster_votes.xml bicluster-preds.xml final-votes.txt bicluster_votes.log list*.xml qualities.log notQualities.log
 
