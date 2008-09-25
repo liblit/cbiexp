@@ -41,7 +41,6 @@
 #include "PredStats.h"
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
-#include "RunsDirectory.h"
 #include "SiteCoords.h"
 #include "utils.h"
 
@@ -49,9 +48,6 @@ using namespace std;
 using __gnu_cxx::hash_map;
 
 
-bool full = 0;  // whether we are looking at downsampled or full reports
-static double score = 0.0, score_n = 0.0; // sum of absolute difference between inferred probs and full (binarized) counts
-static double score_ds = 0.0; // sum of absolute difference between full and downsampled counts (binarized)
 static ofstream datfp("X.dat", ios_base::trunc);
 static ofstream notdatfp("notX.dat", ios_base::trunc);
 static ofstream gdatfp("truX.dat", ios_base::trunc);
@@ -75,8 +71,6 @@ static vector<PredCoords> notpredVec;
  * tp_n = inferred truth probability P(X > 0 | n, m, y)
  * dst = truth count in downsampled run
  * dso = num times observed in downsampled run
- * realt = truth count in full run
- * realo = num times observed in full run
  ***************************************************************/
 
 struct PredInfo
@@ -87,16 +81,16 @@ struct PredInfo
     double beta[3];
     double lambda, gamma;
     double tp, tp_n; // truth probabilities
-    count_tp dst, dso, realt, realo;
+    count_tp dst, dso;
     PredInfo() {
 	tru = obs = 0;
 	rho = alpha = beta[0] = beta[1] = beta[2] = lambda = gamma = 0.0;
 	tp = tp_n = 0.0;
-	dst = dso = realt = realo = 0;
+	dst = dso = 0;
     }
     void reinit_probs() {
 	tp = tp_n = 0.0;
-	dst = dso = realt = realo = 0;
+	dst = dso = 0;
     }
     void update_stats(count_tp _tru, count_tp _obs) {
 	tru += _tru;
@@ -106,21 +100,6 @@ struct PredInfo
     void calc_prob(count_tp t, count_tp o);
     void calc_prob_n(count_tp t, count_tp o, count_tp n);
     void calc_zero_prob() {  calc_prob(0,0);    }
-    void record_vals (count_tp t, count_tp o) {
-        realt = t;
-        realo = o;
-    }
-    // compare ground truth against inferred probabilities
-    void compare_prob (count_tp t, count_tp o) {
-        realt = t;
-        realo = o;
-	calc_prob_n(dst, dso, realo);
-        double realt_bin = (realt > 0) ? 1.0 : 0.0;
-	double dst_bin = (dst > 0) ? 1.0 : 0.0;
-        score += abs(realt_bin - tp);
-        score_n += abs(realt_bin - tp_n);
-	score_ds += abs(realt_bin - dst_bin);
-    }
     void print_groundtruth (ostream &, ostream &);
 };
 
@@ -148,18 +127,22 @@ PredInfo::calc_prob(count_tp t, count_tp o)
     if (t > 0)
 	tp = 1.0;
     else {
-	double numer, denom;
-	if (o > 0) { // t = 0, m > 0
-	    numer = beta[0]*exp((double)o*log(1.0-alpha) - lambda*alpha*(1.0-rho)) + beta[1];
-	    denom = beta[0]*exp((double)o*log(1.0-alpha)) + beta[1];
-	}
-	else { // t = 0, m = 0
-	    numer = (beta[0]*exp(-lambda*alpha*(1.0-rho)) + beta[1] + beta[2]*exp(-lambda*(1.0-rho))) * gamma * exp(-lambda*rho) + 1.0 - gamma;
-	    denom = gamma*exp(-lambda*rho) + 1.0 - gamma;
-	}
-	tp = 1.0 - numer / denom;
-        if (tp < 0.0)  // small numerical errors may cause tp to be negative
-          tp = 0.0;
+        if (rho == 1.0)
+            tp = 0;
+        else {
+    	    double numer, denom;
+    	    if (o > 0) { // t = 0, m > 0
+    	        numer = beta[0]*exp((double)o*log(1.0-alpha) - lambda*alpha*(1.0-rho)) + beta[1];
+    	        denom = beta[0]*exp((double)o*log(1.0-alpha)) + beta[1];
+    	    }
+    	    else { // t = 0, m = 0
+    	        numer = (beta[0]*exp(-lambda*alpha*(1.0-rho)) + beta[1] + beta[2]*exp(-lambda*(1.0-rho))) * gamma * exp(-lambda*rho) + 1.0 - gamma;
+    	        denom = gamma*exp(-lambda*rho) + 1.0 - gamma;
+    	    }
+    	    tp = 1.0 - numer / denom;
+            if (tp < 0.0)  // small numerical errors may cause tp to be negative
+              tp = 0.0;
+        }
     }
 }
 
@@ -170,14 +153,18 @@ PredInfo::calc_prob_n(count_tp t, count_tp o, count_tp n)
 {
     if (t > 0)
 	tp_n = 1.0;
-    else { // t = 0, n > 0
-	double numerator = beta[0]*exp((double)n*log(1.0-alpha)) + beta[1];
-	if (o > 0) { // t = 0, m > 0, n > 0
-	    double denominator = beta[0]*exp((double)o*log(1.0-alpha)) + beta[1];
-	    tp_n = 1.0 - numerator/denominator;
-	}
-	else // t = 0, m = 0, n > 0
-	    tp_n = 1.0 - numerator;
+    else {
+        if (rho == 1.0)
+            tp_n = 0;
+        else { // t = 0, n > 0
+    	    double numerator = beta[0]*exp((double)n*log(1.0-alpha)) + beta[1];
+    	    if (o > 0) { // t = 0, m > 0, n > 0
+    	        double denominator = beta[0]*exp((double)o*log(1.0-alpha)) + beta[1];
+    	        tp_n = 1.0 - numerator/denominator;
+    	    }
+    	    else // t = 0, m = 0, n > 0
+    	        tp_n = 1.0 - numerator;
+        }
     }
 }
 
@@ -223,7 +210,7 @@ void calc_zero_prob(piptr pp)
     {
 	(PP.*pp).calc_zero_prob();
     }
- 
+
   }
 }
 
@@ -252,10 +239,6 @@ Reader::update(const SiteCoords &coords, unsigned p, count_tp obs, count_tp tru)
     const pred_hash_t::iterator found = predHash.find(pc);
     if (found != predHash.end()) {
 	PredInfoPair &pp = found->second;
-        if ((pp.*pptr).rho == 1.0) { //did not downsample for this site 
-            (pp.*pptr).realt = tru;
-            (pp.*pptr).realo = obs;
-        }
         (pp.*pptr).dst = tru;
         (pp.*pptr).dso = obs;
 	(pp.*pptr).calc_prob(tru, obs);
@@ -349,13 +332,7 @@ operator<< (ostream &out, const vector<PredCoords> &pv)
     for (unsigned i = 0; i < pv.size(); ++i) {
 	pred_hash_t::iterator found = predHash.find(pv[i]);
 	assert(found != predHash.end());
-        if ((found->second.*pptr).rho == 1.0) { //if not sampled
-          int t = (found->second.*pptr).realt > (count_tp) 0 ? 1 : 0;
-          out << t << ' ';
-        }
-        else {
-	  out << (found->second.*pptr).tp << ' ';
-        }
+	out << (found->second.*pptr).tp << ' ';
     }
     return out;
 }
@@ -364,7 +341,6 @@ operator<< (ostream &out, const vector<PredCoords> &pv)
 void
 PredInfo::print_groundtruth(ostream &gfp, ostream &ffp)
 {
-  if (rho == 1.0) return;
   double freq = (dso > 0) ? (double) dst/dso : 0.0;
   gfp << dst << ' ';
   ffp << freq << ' ';
@@ -409,7 +385,6 @@ void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
 	{ &NumRuns::argp, 0, 0, 0 },
-	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
 

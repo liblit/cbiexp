@@ -290,7 +290,7 @@ truthprobs: static-site-info.so $(call tool-deps, calc_truthprobs)
 CLEANFILES += truthprobs.txt
 
 X.dat notX.dat : preds.txt parms.txt notp-parms.txt static-site-info.so $(call tool-deps, get_tp_weights)
-	$(time) $(tooldir)/get_tp_weights --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir)
+	$(time) $(tooldir)/get_tp_weights --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 CLEANFILES += X.dat notX.dat truX.dat trunotX.dat truFreq.dat trunotFreq.dat
 else
 X.dat notX.dat : preds.txt static-site-info.so
