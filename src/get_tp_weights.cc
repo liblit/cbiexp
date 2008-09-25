@@ -413,7 +413,7 @@ int main(int argc, char** argv)
     freqfp << scientific << setprecision(12);
     nfreqfp << scientific << setprecision(12);
 
-    Reader reader("tru.txt");
+    Reader reader("counts.txt");
     Progress::Bounded prog("Calculating truth probabilities", NumRuns::count());
     for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
 	if (is_srun[r])

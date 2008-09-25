@@ -524,8 +524,8 @@ int main(int argc, char** argv)
     staticSiteInfo.reset(new StaticSiteInfo());
     site_info.resize(staticSiteInfo->siteCount);
 
-    Reader reader("tru.txt");
-    AmplifyReader amp("tru.txt");
+    Reader reader("counts.txt");
+    AmplifyReader amp("counts.txt");
     Progress::Bounded progress("computing results", NumRuns::count());
     for (cur_run = NumRuns::begin(); cur_run < NumRuns::end(); cur_run++) {
 	progress.step();

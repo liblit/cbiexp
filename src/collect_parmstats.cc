@@ -361,7 +361,7 @@ int main(int argc, char** argv)
     SampleRatesFile::read_rates();  // read the sampling rates from file
     set_rates();   // set sampling rates in predHash according to values read from file
 
-    Reader reader("tru.txt");
+    Reader reader("counts.txt");
     Progress::Bounded prog("Reading runs and collecting sufficient stats", NumRuns::count());
     for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
       prog.step();
