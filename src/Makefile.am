@@ -20,7 +20,6 @@ endif
 noinst_PROGRAMS =				\
 	bicluster				\
 	calc_sober				\
-	calc_truthprobs				\
 	$(chi2test)				\
 	cluster_runs				\
 	collect_parmstats			\
@@ -56,9 +55,6 @@ bicluster_LDADD = libanalyze.a
 
 calc_sober_SOURCES = calc_sober.cc
 calc_sober_LDADD = libanalyze.a $(GSL_LIBS) -ldl
-
-calc_truthprobs_SOURCES = calc_truthprobs.cc
-calc_truthprobs_LDADD = libanalyze.a -ldl
 
 chi2test_SOURCES = chi2test.cc
 chi2test_LDADD = libanalyze.a $(GSL_LIBS)
