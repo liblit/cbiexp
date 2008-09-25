@@ -91,9 +91,8 @@ int main(int argc, char *argv[])
   pred_info stats;
   while (read_pred_full(raw, stats))
     {
-      const unit_t &unit = staticSiteInfo.unit(stats.unitIndex);
       const site_t &site = staticSiteInfo.site(stats.siteIndex);
-      const string &scheme = scheme_name(unit.scheme_code);
+      const string &scheme = scheme_name(site.scheme_code);
 
       string filename(site.file);
       for (list<string>::const_iterator prefix = prefixes.begin(); prefix != prefixes.end(); ++prefix)
@@ -103,8 +102,7 @@ int main(int argc, char *argv[])
 	    break;
 	  }
 
-      xml << "<info unit=\"" << unit.signature
-	  << "\" scheme=\"" << scheme
+      xml << "<info scheme=\"" << scheme
 	  << "\" site=\"" << stats.siteIndex + 1
 	  << "\" predicate=\"" << stats.predicate
 	  << "\" file=\"" << filename
@@ -124,7 +122,7 @@ int main(int argc, char *argv[])
 	  << "\" log10-true=\"" << log10(double(stats.s + stats.f))
 	  << "\"/>";
 
-      switch (unit.scheme_code)
+      switch (site.scheme_code)
 	{
 	case 'B':
 	case 'F':
