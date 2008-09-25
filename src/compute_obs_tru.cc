@@ -4,6 +4,7 @@
 #include <ext/hash_map>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <numeric>
 #include <queue>
 #include <vector>
@@ -59,7 +60,8 @@ static PredInfos predInfos;
 class Reader : public ReportReader
 {
 public:
-    Reader(Outcome, unsigned);
+    Reader(const char* filename) : ReportReader(filename) {}
+    void setstate(unsigned);
 
 protected:
     void handleSite(const SiteCoords &, vector<count_tp> &);
@@ -67,16 +69,23 @@ protected:
 private:
     void notice(const SiteCoords &coords, unsigned, bool) const;
 
-    const Outcome outcome;
-    const unsigned runId;
+    Outcome outcome;
+    unsigned runId;
 };
 
 
-inline
-Reader::Reader(Outcome outcome, unsigned runId)
-    : outcome(outcome),
-      runId(runId)
+inline void
+Reader::setstate(unsigned run)
 {
+  runId = run;
+  if (is_frun[run]) outcome = &OutcomeRunSets::failure;
+  else
+      if (is_srun[run]) outcome = &OutcomeRunSets::success;
+      else {
+          ostringstream message;
+          message << "Ill-formed run " << run;
+          throw runtime_error(message.str());
+      }
 }
 
 
@@ -168,19 +177,12 @@ int main(int argc, char** argv)
     }
 
     {
+        Reader reader("counts.txt");
 	Progress::Bounded progress("computing obs and tru", NumRuns::count());
 	for (unsigned runId = NumRuns::begin(); runId < NumRuns::end(); ++runId) {
 	    progress.step();
-
-	    Outcome outcome = 0;
-	    if (is_srun[runId])
-		outcome = &OutcomeRunSets::success;
-	    else if (is_frun[runId])
-		outcome = &OutcomeRunSets::failure;
-	    else
-		continue;
-
-	    Reader(outcome, runId).read(runId);
+            reader.setstate(runId);
+	    reader.read(runId);
 	}
     }
 
