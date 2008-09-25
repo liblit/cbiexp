@@ -2,7 +2,6 @@
 #include <fstream>
 #include <iostream>
 #include "NumRuns.h"
-#include "RunsDirectory.h"
 
 using namespace std;
 
