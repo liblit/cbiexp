@@ -17,7 +17,7 @@
  * See cbiexp/doc/truth_prob_estimation.pdf (under the sections for
  * Alternative Model) for detailed explantion of the derivations
  * for the posterior truth probabilities.
- * 
+ *
  * -- documented by alicez 4/07
  ***************************************************************/
 
@@ -28,6 +28,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <numeric>
 #include <queue>
 #include <string>
@@ -51,7 +52,6 @@ using __gnu_cxx::hash_map;
 bool full = 0;  // whether we are looking at downsampled or full reports
 static double score = 0.0, score_n = 0.0; // sum of absolute difference between inferred probs and full (binarized) counts
 static double score_ds = 0.0; // sum of absolute difference between full and downsampled counts (binarized)
-static int score_ctr = 0; // number of runs used to compute score
 static ofstream datfp("X.dat", ios_base::trunc);
 static ofstream notdatfp("notX.dat", ios_base::trunc);
 static ofstream gdatfp("truX.dat", ios_base::trunc);
@@ -132,8 +132,8 @@ PredInfo::set_parms (FILE * fp)
   double a, b;
   unsigned Asize, Bsize, Csize;
   count_tp Asumtrue, Asumobs;
-  int ctr = fscanf(fp, "%Lu %u %Lu %u %lg %lg %lg %u %Lu %Lu %u %u %lg %lg %lg %lg %lg %lg\n", 
-		   &S, &N, &Y, &Z, &a, &b, &rho, 
+  int ctr = fscanf(fp, "%Lu %u %Lu %u %lg %lg %lg %u %Lu %Lu %u %u %lg %lg %lg %lg %lg %lg\n",
+		   &S, &N, &Y, &Z, &a, &b, &rho,
 		   &Asize, &Asumtrue, &Asumobs, &Bsize, &Csize,
 		   &alpha, beta, beta+1, beta+2, &lambda, &gamma);
   assert(ctr == 18);
@@ -171,7 +171,7 @@ PredInfo::calc_prob_n(count_tp t, count_tp o, count_tp n)
     if (t > 0)
 	tp_n = 1.0;
     else { // t = 0, n > 0
-	double numerator = beta[0]*exp((double)n*log(1.0-alpha)) + beta[1]; 
+	double numerator = beta[0]*exp((double)n*log(1.0-alpha)) + beta[1];
 	if (o > 0) { // t = 0, m > 0, n > 0
 	    double denominator = beta[0]*exp((double)o*log(1.0-alpha)) + beta[1];
 	    tp_n = 1.0 - numerator/denominator;
@@ -215,7 +215,7 @@ static pred_hash_t predHash;
 static piptr pptr = 0;
 
 // Calculate truthprobs of predicates we didn't see in this run
-void calc_zero_prob(piptr pp) 
+void calc_zero_prob(piptr pp)
 {
   for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
     PredInfoPair &PP = c->second;
@@ -223,7 +223,7 @@ void calc_zero_prob(piptr pp)
     {
 	(PP.*pp).calc_zero_prob();
     }
-    
+ 
   }
 }
 
@@ -231,26 +231,17 @@ void calc_zero_prob(piptr pp)
  * Report reader, records and makes of of information from each run
  ***************************************************************/
 
-enum { READ_DS, READ_FULL, RECORD_FULL }; // different reader modes
-
 class Reader : public ReportReader
 {
 public:
-  Reader(int);
+  Reader(const char* filename) : ReportReader (filename) {}
 
 protected:
   void handleSite(const SiteCoords &, vector<count_tp> &);
 
 private:
   void update(const SiteCoords &, unsigned, count_tp, count_tp) const;
-  const int mode;
 };
-
-inline
-Reader::Reader(int _mode)
-    : mode(_mode)
-{
-}
 
 // record the right information from this run, according to reader mode
 inline void
@@ -261,22 +252,13 @@ Reader::update(const SiteCoords &coords, unsigned p, count_tp obs, count_tp tru)
     const pred_hash_t::iterator found = predHash.find(pc);
     if (found != predHash.end()) {
 	PredInfoPair &pp = found->second;
-	switch (mode) {
-	case READ_DS: // record down-sampled counts and calculate post prob
-	    (pp.*pptr).dst = tru;
-	    (pp.*pptr).dso = obs;
-	    (pp.*pptr).calc_prob(tru, obs);
-	    break;
-	case READ_FULL: // compare against inferred prob
-            score_ctr++;
-	    (pp.*pptr).compare_prob(tru, obs);
-	    break;
-        case RECORD_FULL: // just record full counts
-            (pp.*pptr).record_vals(tru, obs);
-            break;
-	default:
-	    assert(0);
-	}
+        if ((pp.*pptr).rho == 1.0) { //did not downsample for this site 
+            (pp.*pptr).realt = tru;
+            (pp.*pptr).realo = obs;
+        }
+        (pp.*pptr).dst = tru;
+        (pp.*pptr).dso = obs;
+	(pp.*pptr).calc_prob(tru, obs);
     }
 }
 
@@ -300,45 +282,6 @@ void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
  * I/O utilities
  ***************************************************************************/
 
-// Read and store the list of predicates in preds.txt, as well as the
-// complements of those predicates.  This function is only called when
-// we are looking at full (non-downsampled) data.
-void
-read_preds()
-{
-  queue<PredCoords> predQueue;
-  queue<PredCoords> notpredQueue;
-  PredInfoPair pp;
-  pred_info pi;
-
-  FILE * const pfp = fopenRead(PredStats::filename);
-  while (read_pred_full(pfp,pi)) {
-      predQueue.push(pi);
-      predHash[pi] = pp;
-
-      PredCoords notp = notP(pi);
-      notpredQueue.push(notp);
-      predHash[notp] = pp;
-  }
-  fclose(pfp);
-
-  predVec.resize(predQueue.size());
-  int i = 0;
-  while (!predQueue.empty()) {
-      predVec[i++] = predQueue.front();
-      predQueue.pop();
-  }
-
-  notpredVec.resize(notpredQueue.size());
-  i = 0;
-  while (!notpredQueue.empty()) {
-      notpredVec[i++] = notpredQueue.front();
-      notpredQueue.pop();
-  }
-
-  assert(notpredVec.size() == predVec.size());
-}
-
 // Read in the estimated parameters of all interesting predicates
 void
 read_parms()
@@ -359,28 +302,25 @@ read_parms()
   PredCoords coords;
   PredInfoPair pp;
   int ctr;
-  
+
   while (true) {
       // read info for predicate p
-      ctr = fscanf(fp, "%u\t%u\t%u\n", 
-		   &coords.unitIndex, &coords.siteOffset, &coords.predicate);
+      ctr = fscanf(fp, "%u\t%u\n", &coords.siteIndex, &coords.predicate);
       if (feof(fp))
 	  break;
-      assert(ctr == 3);
+      assert(ctr == 2);
       predQueue.push(coords);
       pp.f.set_parms(fp);
       pp.s.set_parms(fp);
       predHash[coords] = pp;
 
       // read info for the predicate's complement
-      ctr = fscanf(notpfp, "%u\t%u\t%u\n", 
-		   &coords.unitIndex, &coords.siteOffset, &coords.predicate);
-      assert(ctr == 3);
+      ctr = fscanf(notpfp, "%u\t%u\n", &coords.siteIndex, &coords.predicate);
+      assert(ctr == 2);
       notpredQueue.push(coords);
       pp.f.set_parms(notpfp);
       pp.s.set_parms(notpfp);
       predHash[coords] = pp;
-
   }
 
   fclose(fp);
@@ -409,7 +349,7 @@ operator<< (ostream &out, const vector<PredCoords> &pv)
     for (unsigned i = 0; i < pv.size(); ++i) {
 	pred_hash_t::iterator found = predHash.find(pv[i]);
 	assert(found != predHash.end());
-        if (full) {
+        if ((found->second.*pptr).rho == 1.0) { //if not sampled
           int t = (found->second.*pptr).realt > (count_tp) 0 ? 1 : 0;
           out << t << ' ';
         }
@@ -421,9 +361,10 @@ operator<< (ostream &out, const vector<PredCoords> &pv)
 }
 
 // Print the groundtruth counts from the down-sampled runs
-void 
+void
 PredInfo::print_groundtruth(ostream &gfp, ostream &ffp)
 {
+  if (rho == 1.0) return;
   double freq = (dso > 0) ? (double) dst/dso : 0.0;
   gfp << dst << ' ';
   ffp << freq << ' ';
@@ -456,8 +397,7 @@ void print_results()
 {
   datfp << predVec << endl;
   notdatfp << notpredVec << endl;
-  if (!full)
-    print_groundtruth();
+  print_groundtruth();
 }
 
 
@@ -489,44 +429,33 @@ int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
 
-    string report_suffix = CompactReport::suffix;
-    full = report_suffix.empty();  // are we using non-downsampled data
-
     classify_runs();
 
-    if (full) 
-      read_preds();
-    else 
-      read_parms();
+    read_parms();
 
     datfp << scientific << setprecision(12);
     notdatfp << scientific << setprecision(12);
     freqfp << scientific << setprecision(12);
     nfreqfp << scientific << setprecision(12);
 
+    Reader reader("tru.txt");
     Progress::Bounded prog("Calculating truth probabilities", NumRuns::count());
     for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
 	if (is_srun[r])
 	    pptr = &PredInfoPair::s;
 	else if (is_frun[r])
 	    pptr = &PredInfoPair::f;
-	else
-	    continue;
+	else {
+            ostringstream message;
+            message << "Ill-formed run " << r;
+            throw runtime_error(message.str());
+        }
 
 	prog.step();
         predHash.reinit_probs(pptr);  // reinitialize predicate probabilities for each new run
 
-        if (!full) { // looking at downsampled data
-	  Reader(READ_DS).read(r); // read in down-sampled counts and compute posterior truth probabilities for all observed predicates
-	  calc_zero_prob(pptr); // calculate the posterior truth probability for predicates that were not observed
-  
-	  CompactReport::suffix = "";
-	  Reader(READ_FULL).read(r);  // read in the full data for comparison
-	  CompactReport::suffix = report_suffix;
-        }
-        else { // record full data
-          Reader(RECORD_FULL).read(r);
-        }
+	reader.read(r); // read in down-sampled counts and compute posterior truth probabilities for all observed predicates
+	calc_zero_prob(pptr); // calculate the posterior truth probability for predicates that were not observed
 
         print_results();
     }
