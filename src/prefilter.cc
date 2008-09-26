@@ -461,8 +461,6 @@ int main(int argc, char** argv)
 {
     process_cmdline(argc, argv);
 
-    classify_runs();
-
     staticSiteInfo.reset(new StaticSiteInfo());
     site_info.resize(staticSiteInfo->siteCount);
 

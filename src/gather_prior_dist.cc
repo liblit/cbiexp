@@ -170,8 +170,6 @@ int main (int argc, char** argv)
 {
   process_cmdline (argc, argv);
 
-  classify_runs();
-
   ofstream ffp("fpriors.dat");
   ofstream sfp("spriors.dat");
 

@@ -174,8 +174,6 @@ int main (int argc, char** argv)
 {
   process_cmdline (argc, argv);
 
-  classify_runs();
-
   ofstream ffp("ftruthfreq.dat");
   ofstream sfp("struthfreq.dat");
 

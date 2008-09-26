@@ -27,7 +27,6 @@
 #include "DiscreteDist.h"
 #include "fopen.h"
 #include "PredCoords.h"
-#include "classify_runs.h"
 
 using namespace std;
 using __gnu_cxx::hash_map;

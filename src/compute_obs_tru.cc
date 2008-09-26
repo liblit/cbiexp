@@ -154,8 +154,6 @@ int main(int argc, char** argv)
     set_terminate_verbose();
     process_cmdline(argc, argv);
 
-    classify_runs();
-
     ofstream ofp("obs.txt");
     ofstream tfp("tru.txt");
 

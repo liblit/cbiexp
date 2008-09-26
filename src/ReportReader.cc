@@ -17,6 +17,8 @@ using namespace std;
 
 ReportReader::ReportReader(const char* filename)
 {
+    classify_runs();
+
     summary.exceptions(ios::badbit);
     summary.open(filename);
     if (!summary)
@@ -39,6 +41,7 @@ ReportReader::read(unsigned runId)
     message << "Ill-formed run " << runId;
     throw runtime_error(message.str());
   }
+
 
   if (linepos == runId); //at line position we want to read
   else //must reposition
