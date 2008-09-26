@@ -2,6 +2,7 @@
 #include <ctype.h>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <math.h>
 #include <gsl/gsl_rng.h>
@@ -46,30 +47,32 @@ struct site_info_t {
   }
 };
 
-static vector<vector<site_info_t> > site_info;
+static vector<site_info_t> site_info;
 
 /**********************
  * Reader
  *********************/
 class Reader : public ReportReader
 {
+public:
+  Reader(const char* filename) : ReportReader(filename) {}
 protected:
   void handleSite(const SiteCoords &, vector<count_tp> &);
 };
 
-inline void obs (const SiteCoords &coords) 
+inline void obs (const SiteCoords &coords)
 {
-    site_info_t &site = site_info[coords.unitIndex][coords.siteOffset];
+    site_info_t &site = site_info[coords.siteIndex];
     site.ntallied += 1;
 }
 
 inline void inc (const SiteCoords &coords, unsigned p, count_tp count)
 {
-  site_info_t &site = site_info[coords.unitIndex][coords.siteOffset];
+  site_info_t &site = site_info[coords.siteIndex];
   unsigned n = site.ntallied;  // n should have just been increased by obs()
-  site.mean[p] = site.mean[p] * ((double) (n-1.0) / n) 
+  site.mean[p] = site.mean[p] * ((double) (n-1.0) / n)
       + (double) count / n;
-  site.var[p] = site.var[p] * ((double) (n-1.0)/n) 
+  site.var[p] = site.var[p] * ((double) (n-1.0)/n)
       + (double) count / n * count;
   site.min[p] = (count < site.min[p]) ? count : site.min[p];
   site.max[p] = (count > site.max[p]) ? count : site.max[p];
@@ -86,8 +89,8 @@ void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
  * Procedures for deciding whether to retain/discard
  * each instrumented predicate
  ***************************************************************************/
-inline void adj_for_zeros(int u, int c, int p) {
-    site_info_t &site = site_info[u][c];
+inline void adj_for_zeros(int si, int p) {
+    site_info_t &site = site_info[si];
     unsigned n = site.ntallied;
     // (num_trainruns - ntallied) is the number of omitted zeros
     double adj = (double)  n/num_train_runs;
@@ -99,49 +102,47 @@ inline void adj_for_zeros(int u, int c, int p) {
     // the maximum is set to zero by default
 }
 
-inline void cull(int u, int c, int p) {
+inline void cull(unsigned si, unsigned p) {
   // adjust the stats for the zeros omitted in the compact report
-  adj_for_zeros(u,c,p);
+  adj_for_zeros(si,p);
 
-  double var = site_info[u][c].var[p];
+  double var = site_info[si].var[p];
   if (var < 0.0) {
-    cerr << "Variance is negative: " << u << ' ' << c << ' ' << p << ' ' << var << '\n';
+    cerr << "Variance is negative: " << si << ' ' << p << ' ' << var << '\n';
   }
 
   if (isinf(var) || isnan(var)) {
-    cerr << "Variance is infinite or nan: " << u << ' ' << c << ' ' << p << ' ' << var << '\n';
+    cerr << "Variance is infinite or nan: " << si << ' ' << p << ' ' << var << '\n';
   }
 
   if (var > 0.0)
-    site_info[u][c].retain[p] = true;
+    site_info[si].retain[p] = true;
 }
 
 static void cull_preds(const StaticSiteInfo &staticSiteInfo)
 {
-    for (unsigned u = 0; u < staticSiteInfo.unitCount; u++) {
-	const unit_t &unit = staticSiteInfo.unit(u);
-	for (unsigned c = 0; c < unit.num_sites; c++) {
-	    int numPreds;
-	    switch (unit.scheme_code) {
-	    case 'B':
-		numPreds = 2;
-		break;
-	    case 'F':
-		numPreds = 9;
-		break;
-	    case 'G':
-		numPreds = 4;
-		break;
-	    case 'R':
-	    case 'S':
-		numPreds = 3;
-		break;
-	    default:
-		assert(0);
-	    }
-	    for (int p = 0; p < numPreds; p++)
-		cull(u, c, p);
+    for (unsigned si = 0; si < staticSiteInfo.siteCount; si++) {
+	const site_t &site = staticSiteInfo.site(si);
+	unsigned numPreds;
+	switch (site.scheme_code) {
+	case 'B':
+	    numPreds = 2;
+	    break;
+	case 'F':
+	    numPreds = 9;
+	    break;
+	case 'G':
+	    numPreds = 4;
+	    break;
+	case 'R':
+	case 'S':
+	    numPreds = 3;
+	    break;
+	default:
+	    assert(0);
 	}
+	for (unsigned p = 0; p < numPreds; p++)
+	    cull(si, p);
     }
 }
 
@@ -152,17 +153,15 @@ static void cull_preds(const StaticSiteInfo &staticSiteInfo)
 void print_retained_preds()
 {
   ofstream fp("nonconst_preds.txt");
-  for (unsigned u = 0; u < site_info.size(); u++) {
-    for (unsigned c = 0; c < site_info[u].size(); c++) {
-      const site_info_t &site = site_info[u][c];
-      for (int p = 0; p < 4; p++) {
+  for (unsigned si = 0; si < site_info.size(); si++) {
+    const site_info_t &site = site_info[si];
+    for (int p = 0; p < 4; p++) {
 	if (site.retain[p]) {
-	  fp << u << ' ' << c << ' ' << p << ' ' << site.mean[p] << ' '
-	     << site.var[p] << ' ' << site.min[p] << ' ' << site.max[p] 
-	     << ' ' << site.ntallied 
+	  fp << si << ' ' << p << ' ' << site.mean[p] << ' '
+	     << site.var[p] << ' ' << site.min[p] << ' ' << site.max[p]
+	     << ' ' << site.ntallied
 	     << '\n';
 	}
-      }
     }
   }
 
@@ -244,7 +243,11 @@ void split_runs()
 
   for (unsigned r = NumRuns::begin(); r < NumRuns::end(); r++) {
     if (!is_srun[r] && !is_frun[r])  // skip discarded runs
-      continue;
+    {
+        ostringstream message;
+        message << "Ill-formed run " << r;
+        throw runtime_error(message.str());
+    }
 
     double prob = gsl_rng_uniform(generator);
     if (prob < 0.9) {
@@ -271,17 +274,16 @@ int main(int argc, char** argv)
     split_runs();
 
     static StaticSiteInfo staticSiteInfo;
-    site_info.resize(staticSiteInfo.unitCount);
-    for (unsigned u = 0; u < staticSiteInfo.unitCount; u++)
-	site_info[u].resize(staticSiteInfo.unit(u).num_sites);
+    site_info.resize(staticSiteInfo.siteCount);
 
+    Reader reader("counts.txt");
     Progress::Bounded progress("computing non-constant predicates", NumRuns::count());
     for (cur_run = NumRuns::begin(); cur_run < NumRuns::end(); cur_run++) {
 	progress.step();
 	if (!is_trainrun[cur_run])
 	  continue;
 
-	Reader().read(cur_run);
+	reader.read(cur_run);
     }
 
     cull_preds(staticSiteInfo);
