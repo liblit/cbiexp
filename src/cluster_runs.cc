@@ -79,7 +79,7 @@ operator<< (ostream &out, const pred_hash_t &ph)
 	const PredCoords pc = c->first;
 	const pred_info_t pi = c->second;
         if (pi.var > 0.0)
-	  out << pc.unitIndex << ' ' << pc.siteOffset << ' ' << pc.predicate << ' '
+	  out << pc.siteIndex << ' ' << pc.predicate << ' '
               << pi.mean << ' ' << pi.var << ' ' << pi.min << ' '
               << pi.max << ' ' << pi.ntallied << endl;
     }
@@ -139,12 +139,20 @@ struct run_info_t {
 
 static run_info_t curr_run;
 
+void
+reset_curr_run(unsigned r, unsigned m)
+{
+    curr_run.preds.clear();
+    curr_run.runId = r;
+    curr_run.mode = m;
+}
+
 enum {CHECK, NO_CHECK};
 
 class Reader : public ReportReader
 {
 public:
-  Reader(unsigned, unsigned);
+  Reader(const char* filename) : ReportReader (filename) {}
 
 protected:
   void handleSite(const SiteCoords &, vector<count_tp> &);
@@ -153,13 +161,6 @@ private:
   void insert_val(const SiteCoords &, unsigned, count_tp) const;
 };
 
-inline
-Reader::Reader(unsigned r, unsigned m)
-{
-    curr_run.preds.clear();
-    curr_run.runId = r;
-    curr_run.mode = m;
-}
 
 void
 Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
@@ -219,7 +220,7 @@ void Reader::insert_val(const SiteCoords &coords, unsigned offset, count_tp val)
 bool read_nonconst_pred (FILE *fp, PredCoords &pc, pred_info_t &pi) 
 {
     unsigned ntallied;
-    const int got = fscanf(fp, "%u %u %u %g %g %Lu %Lu %u\n", &pc.unitIndex, &pc.siteOffset,
+    const int got = fscanf(fp, "%u %u %g %g %Lu %Lu %u\n", &pc.siteIndex,
 			   &pc.predicate, &pi.mean, &pi.var, &pi.min, &pi.max, &ntallied);
     
     pi.std = sqrt(pi.var);
@@ -261,12 +262,14 @@ void
 collect_stats () 
 {
   PredHash.clear();
+  Reader reader("counts.txt");
   Progress::Bounded prog ("Collecting stats about nonconst preds", num_fruns);
   for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
     if (!is_frun[r])
       continue;
     prog.step();
-    Reader(r, NO_CHECK).read(r);
+    reset_curr_run(r, NO_CHECK);
+    reader.read(r);
   }
 
   adjust_stats();
@@ -356,9 +359,11 @@ void init_centers() {
     // this setting fails at run 5160/5333 of the failed runs
     //unsigned runlist[] = { 25775, 11276, 16890, 1316, 31777, 1750, 11005, 12525 };
     centers.clear();
+    Reader reader("counts.txt");
     for (unsigned i = 0; i < K; ++i) {
       unsigned r = runlist[i];
-      Reader(r, CHECK).read(r);
+      reset_curr_run(r, CHECK);
+      reader.read(r);
       cout << "Using run " << r << " for center " << i << endl;
       centers.push_back(curr_run.preds);
     }
@@ -454,13 +459,15 @@ int main(int argc, char** argv)
 	iterProg.step();
 	cout << '\n';
 
+        Reader reader("counts.txt");
 	Progress::Bounded gProg("reading runs", num_fruns);
 	for (unsigned r = NumRuns::begin(); r < NumRuns::end(); r++) {
           if (!is_frun[r])
             continue;
  
 	  gProg.step();
-	  Reader(r, CHECK).read(r);
+          reset_curr_run(r, CHECK);
+          reader.read(r);
 
           unsigned label;
           double dist;
