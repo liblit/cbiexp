@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
 
-  Reader reader;
+  Reader reader("counts.txt");
 
   {
     unsigned runId;

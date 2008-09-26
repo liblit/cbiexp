@@ -10,7 +10,7 @@
 class Reader : public ReportReader
 {
 public:
-  Reader();
+  Reader(const char* filename);
 
   Locations neverReached;
   Locations neverFalse;
