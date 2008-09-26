@@ -64,7 +64,7 @@ operator<< (ostream &out, const site_info_t &si)
 /****************************************************************************
  * Utilities
  ***************************************************************************/
-double rexp(const site_info_t &si, count_tp r, count_tp n) 
+double rexp(const site_info_t &si, count_tp r, count_tp n)
 {
   const double lambda = si.lambda;
   const double beta = si.beta;
@@ -95,9 +95,9 @@ read_parms()
   count_tp S;
   double a, b;
   int ctr;
-  
+
   while (true) {
-    ctr = fscanf(fp, "%u\t%u\n", &coords.unitIndex, &coords.siteOffset);
+    ctr = fscanf(fp, "%u\n", &coords.siteIndex);
     if (feof(fp))
       break;
     assert(ctr == 2);
@@ -105,7 +105,7 @@ read_parms()
     ctr = fscanf(fp, "%Lu\t%u\t%u\t%lg\t%lg\t%lg\t%lg\t%lg\n", &S, &N, &Z, &a, &b, &sp.f.rho, &sp.f.lambda, &sp.f.beta);
     assert(ctr == 8);
 
-    ctr = fscanf(fp, "%Lu\t%u\t%u\t%lg\t%lg\t%lg\t%lg\t%lg\n", 
+    ctr = fscanf(fp, "%Lu\t%u\t%u\t%lg\t%lg\t%lg\t%lg\t%lg\n",
            &S, &N, &Z, &a, &b, &sp.s.rho, &sp.s.lambda, &sp.s.beta);
     assert(ctr == 8);
 
@@ -115,7 +115,7 @@ read_parms()
   fclose(fp);
 }
 
-bool read_dist (FILE * const fp, SiteInfo si, bool push) 
+bool read_dist (FILE * const fp, SiteInfo si, bool push)
 {
   SiteCoords coords;
   unsigned nvals, of;
@@ -124,7 +124,7 @@ bool read_dist (FILE * const fp, SiteInfo si, bool push)
   double chi2stat = 0.0;
   int ctr;
 
-  ctr = fscanf(fp, "%u\t%u\n", &coords.unitIndex, &coords.siteOffset);
+  ctr = fscanf(fp, "%u\n", &coords.siteIndex);
   if (feof(fp))
     return true;
   assert(ctr == 2);
@@ -150,7 +150,7 @@ bool read_dist (FILE * const fp, SiteInfo si, bool push)
     dist[val] = of;
     N += of;
   }
-  
+
   // calculate expected frequencies and compute chi2 stats
   for (DiscreteDist::iterator c = dist.begin(); c != dist.end(); ++c)
   {
@@ -165,8 +165,8 @@ bool read_dist (FILE * const fp, SiteInfo si, bool push)
   (sp.*si).chi2critval = gsl_cdf_chisq_Pinv(alpha, nvals-3); // two parameters + 1
   (sp.*si).chi2stat = chi2stat;
   (sp.*si).chi2resid = (sp.*si).chi2stat - (sp.*si).chi2critval;
-   
-  if (push) 
+
+  if (push)
     siteSel.push(coords);
 
   return false;
@@ -178,7 +178,7 @@ void read_true_dists()
 {
   FILE * const ffp = fopenRead("fpriors-full.dat");
   FILE * const sfp = fopenRead("spriors-full.dat");
-  
+
   while (true) {
     if (read_dist(ffp, &SiteInfoPair::f, true))
       break;
