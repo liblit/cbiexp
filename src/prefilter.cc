@@ -6,7 +6,6 @@
 #include <memory>
 #include <numeric>
 #include <vector>
-#include "AmplifyReport.h"
 #include "Confidence.h"
 #include "CullPredicates.h"
 #include "NumRuns.h"
@@ -221,55 +220,6 @@ void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
     }
 }
 
-class AmplifyReader : public ReportReader
-{
-public:
-    AmplifyReader(const char* filename) : ReportReader(filename) {}
-protected:
-    void handleSite(const SiteCoords &, vector<count_tp> &);
-    const std::string format(const unsigned) const;
-};
-
-void AmplifyReader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
-{
-    const site_t site = staticSiteInfo->site(coords);
-
-    const size_t size = counts.size();
-    assert (size == 2 || size == num_preds(site.scheme_code) / 2);
-
-    if (size == 2) {
-      for (unsigned predicate = 0; predicate < size; ++predicate)
-          if (counts[predicate]) {
-	      inc(cur_run, coords, predicate);
-          }
-    }
-    else {
-	for (unsigned predicate = 0; predicate < size; ++predicate) {
-	    if (counts[predicate]) {
-	        inc(cur_run, coords, 2 * predicate);
-	    	switch(predicate) {
-		    case 0:			//unsynthesized LT
-			inc(cur_run, coords, LEQ);
-			break;
-		    case 1:			//unsynthesized EQ
-		    	inc(cur_run, coords, LEQ);
-		    	inc(cur_run, coords, GEQ);
-			break;
- 		    case 2:			//unsynthesized GT
-		    	inc(cur_run, coords, GEQ);
-			break;
-	  	    default:		
-		        assert(0);
-		}
-            }
-	}
-    }
-}
-
-const string AmplifyReader::format(const unsigned runId) const
-{
-  return AmplifyReport::format(runId);
-}
 
 inline void retain(int si, int p)
 {
@@ -496,7 +446,6 @@ void cull_preds_aggressively2()
 void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
-	{ &AmplifyReport::argp, 0, 0, 0 },
 	{ &Confidence::argp, 0, 0, 0 },
         { &CullPredicates::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
@@ -525,13 +474,10 @@ int main(int argc, char** argv)
     site_info.resize(staticSiteInfo->siteCount);
 
     Reader reader("counts.txt");
-    AmplifyReader amp("counts.txt");
     Progress::Bounded progress("computing results", NumRuns::count());
     for (cur_run = NumRuns::begin(); cur_run < NumRuns::end(); cur_run++) {
 	progress.step();
-
 	reader.read(cur_run);
-        if (AmplifyReport::amplify) amp.read(cur_run);
     }
 
     if (CullPredicates::cull) {

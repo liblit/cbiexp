@@ -115,8 +115,6 @@ xmlify_results_LDADD = libanalyze.a -ldl
 
 
 libanalyze_a_SOURCES =				\
-	AmplifyReport.cc			\
-	AmplifyReport.h				\
 	AutoFD.cc				\
 	AutoFD.h				\
 	Bugs.cc					\
