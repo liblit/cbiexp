@@ -128,8 +128,6 @@ libanalyze_a_SOURCES =				\
 	Confidence.cc				\
 	Confidence.h				\
 	Counts.h				\
-	CullPredicates.cc			\
-	CullPredicates.h			\
 	Dilute.cc				\
 	Dilute.h				\
 	DiscreteDist.h				\

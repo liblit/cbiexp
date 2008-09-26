@@ -9,7 +9,6 @@ corrdir := $(root)/correlations
 tooldir := $(root)/src
 srcdir ?= $(experiment)/src
 raw-report-name ?= reports
-cull-predicates ?= yes
 matlab-counts ?= Xtru.sparse
 
 implicationsdir ?= $(experiment)/share
@@ -229,7 +228,7 @@ summary.xml: preds.txt s.runs f.runs static-site-info.so $(call tool-deps, gen-s
 CLEANFILES += summary.xml
 
 preds.txt: s.runs f.runs static-site-info.so $(call tool-deps, prefilter)
-	$(time) $(tooldir)/prefilter --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) --cull=$(cull-predicates)
+	$(time) $(tooldir)/prefilter --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%)
 CLEANFILES += preds.txt
 
 logreg.xml: %.xml: %.txt static-site-info.so $(call tool-deps, %)

@@ -7,7 +7,6 @@
 #include <numeric>
 #include <vector>
 #include "Confidence.h"
-#include "CullPredicates.h"
 #include "NumRuns.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
@@ -246,11 +245,6 @@ void foreach_pred(pfct thef)
     }
 }
 
-void retain_all_preds()
-{
-    foreach_pred(&retain);
-}
-
 void cull_preds()
 {
     foreach_pred(&cull);
@@ -447,7 +441,6 @@ void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
 	{ &Confidence::argp, 0, 0, 0 },
-        { &CullPredicates::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
@@ -480,14 +473,9 @@ int main(int argc, char** argv)
 	reader.read(cur_run);
     }
 
-    if (CullPredicates::cull) {
-        cull_preds();
-        cull_preds_aggressively1();
-        cull_preds_aggressively2();
-    }
-    else {
-        retain_all_preds();
-    }
+    cull_preds();
+    cull_preds_aggressively1();
+    cull_preds_aggressively2();
 
     print_retained_preds();
 
