@@ -35,6 +35,7 @@
 #include <vector>
 #include "classify_runs.h"
 #include "CompactReport.h"
+#include "EstimateTPs.h"
 #include "fopen.h"
 #include "NumRuns.h"
 #include "PredCoords.h"
@@ -127,7 +128,7 @@ PredInfo::calc_prob(count_tp t, count_tp o)
     if (t > 0)
 	tp = 1.0;
     else {
-        if (rho == 1.0)
+        if (rho == 1.0 || !EstimateTPs::estimate)
             tp = 0;
         else {
     	    double numer, denom;
@@ -154,7 +155,7 @@ PredInfo::calc_prob_n(count_tp t, count_tp o, count_tp n)
     if (t > 0)
 	tp_n = 1.0;
     else {
-        if (rho == 1.0)
+        if (rho == 1.0 || !EstimateTPs::estimate)
             tp_n = 0;
         else { // t = 0, n > 0
     	    double numerator = beta[0]*exp((double)n*log(1.0-alpha)) + beta[1];
@@ -264,6 +265,43 @@ void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 /****************************************************************************
  * I/O utilities
  ***************************************************************************/
+void
+read_preds()
+{
+  queue<PredCoords> predQueue;
+  queue<PredCoords> notpredQueue;
+  PredInfoPair pp;
+  pred_info pi;
+
+  FILE * const pfp = fopenRead(PredStats::filename);
+  while (read_pred_full(pfp,pi)) {
+      PredCoords p(pi.siteIndex, pi.predicate);
+      predQueue.push(p);
+      predHash[p] = pp;
+
+      PredCoords notp(pi.siteIndex, pi.predicate);
+      notpredQueue.push(notp);
+      predHash[notp] = pp; 
+  }
+  fclose(pfp);
+
+  predVec.resize(predQueue.size());
+  int i = 0;
+  while (!predQueue.empty()) {
+      predVec[i++] = predQueue.front();
+      predQueue.pop();
+  }
+
+  notpredVec.resize(notpredQueue.size());
+  i = 0;
+  while (!notpredQueue.empty()) {
+      notpredVec[i++] = notpredQueue.front();
+      notpredQueue.pop();
+  }
+
+  assert(notpredVec.size() == predVec.size());
+}
+
 
 // Read in the estimated parameters of all interesting predicates
 void
@@ -385,6 +423,7 @@ void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
 	{ &NumRuns::argp, 0, 0, 0 },
+        { &EstimateTPs::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
 
@@ -406,7 +445,8 @@ int main(int argc, char** argv)
 
     classify_runs();
 
-    read_parms();
+    if (EstimateTPs::estimate) read_parms();
+    else read_preds();
 
     datfp << scientific << setprecision(12);
     notdatfp << scientific << setprecision(12);

@@ -31,7 +31,6 @@ noinst_PROGRAMS =				\
 	gen-summary				\
 	gen-views				\
 	get_tp_weights				\
-	get_truth_values			\
 	logreg					\
 	prefilter				\
 	project					\
@@ -134,6 +133,8 @@ libanalyze_a_SOURCES =				\
 	DynamicLibrary.h			\
 	DynamicLibrary-dl.cc			\
 	DynamicLibrary-dl.h			\
+	EstimateTPs.cc                          \
+	EstimateTPs.h                           \
 	IndexedPredInfo.cc			\
 	IndexedPredInfo.h			\
 	MappedArray.h				\
