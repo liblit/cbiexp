@@ -314,7 +314,7 @@ CLEANFILES += symmetric.html
 
 symmetric.xml: %.xml: $(stamp-decimate) s.runs f.runs $(call tool-deps, symmetric/%)
 	$(build) links
-	$(time) $(tooldir)/symmetric/$* --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs) $(confidence:%=--confidence=%)
+	$(time) $(tooldir)/symmetric/$* --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 	xmllint --valid --noout $@
 CLEANFILES += symmetric.xml debug.xml
 
