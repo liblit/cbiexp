@@ -17,9 +17,6 @@
     />
 
 
-  <xsl:key name="sites" match="sites" use="concat(@unit, ':', @scheme)"/>
-
-
   <xsl:template match="/" mode="css">
     symmetric.css
   </xsl:template>
@@ -48,37 +45,19 @@
 
 
   <xsl:template match="predictor" mode="static-cells">
-    <xsl:variable name="unit-id" select="@unit"/>
-    <xsl:variable name="scheme-id" select="@scheme"/>
     <xsl:variable name="site-id" select="number(@site)"/>
     <xsl:variable name="pred-id" select="@predicate"/>
-    <xsl:variable name="coords" select="concat($unit-id, ':', $scheme-id)"/>
+    <xsl:variable name="sites" select="document('static-site-info.xml')//site"/>
+    <xsl:variable name="info" select="$sites[number($site-id)]"/>
 
-    <xsl:for-each select="document('static-site-info.xml')">
-      <xsl:variable name="unit" select="key('sites', $coords)[1]"/>
-      <xsl:variable name="info" select="$unit/site[$site-id]"/>
-
-      <xsl:if test="count($unit) != 1">
-	<xsl:message terminate="yes">
-	  <xsl:text>Cannot retrieve static site information for unit="</xsl:text>
-	  <xsl:value-of select="$unit-id"/>
-	  <xsl:text>" scheme="</xsl:text>
-	  <xsl:value-of select="$scheme-id"/>
-	  <xsl:text>" site="</xsl:text>
-	  <xsl:value-of select="$site-id"/>
-	  <xsl:text>": expected 1 node but got </xsl:text>
-	  <xsl:value-of select="count($unit)"/>
-	</xsl:message>
-      </xsl:if>
-
-      <td>
-	<xsl:apply-templates select="$info" mode="operands">
-	  <xsl:with-param name="predicate" select="$pred-id"/>
+    <td>
+        <xsl:apply-templates select="$info" mode="operands">
+	    <xsl:with-param name="predicate" select="$pred-id"/>
 	</xsl:apply-templates>
-      </td>
+    </td>
 
       <xsl:apply-templates select="$info" mode="static-cells"/>
-    </xsl:for-each>
+
   </xsl:template>
 
 

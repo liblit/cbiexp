@@ -9,7 +9,7 @@ class Candidates;
 class SuccessReader : public Reader
 {
 public:
-  SuccessReader(const Candidates &);
+  SuccessReader(const char*, const Candidates &);
 
 private:
   const Candidates &candidates;

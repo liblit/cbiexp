@@ -94,12 +94,13 @@ main(int argc, char *argv[])
     unsigned failureId = 0;
     open(runs, ClassifyRuns::failuresFilename);
 
+    FailureReader reader("counts.txt", candidates, boths);
     while (runs >> runId && runId < NumRuns::end())
       if (runId >= NumRuns::begin())
 	{
 	  progress.stepTo(runId - NumRuns::begin());
-	  FailureReader(candidates, boths, failureId).read(runId);
-	  ++failureId;
+          reader.setid(failureId++);
+          reader.read(runId);
 	}
   }
 
@@ -109,11 +110,12 @@ main(int argc, char *argv[])
     unsigned runId;
     open(runs, ClassifyRuns::successesFilename);
 
+    SuccessReader reader("counts.txt", candidates); 
     while (runs >> runId && runId < NumRuns::end())
       if (runId >= NumRuns::begin())
 	{
 	  progress.stepTo(runId - NumRuns::begin());
-	  SuccessReader(candidates).read(runId);
+	  reader.read(runId);
 	}
   }
 

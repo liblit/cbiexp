@@ -1,6 +1,6 @@
 <!ENTITY % predictor.content "(self, inverse, both, bug-o-meter)">
 <!ENTITY % predictor.coordinates "
-  unit NMTOKEN #REQUIRED
+  unit NMTOKEN #IMPLIED
   scheme NMTOKEN #REQUIRED
   site NMTOKEN #REQUIRED
   predicate NMTOKEN #REQUIRED

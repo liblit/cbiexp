@@ -11,7 +11,7 @@ using namespace std;
 
 
 static StaticSiteInfo staticSiteInfo;
-static const unit_t *units = staticSiteInfo.unitsBegin();
+static const site_t *sites = staticSiteInfo.sitesBegin();
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -72,8 +72,8 @@ better(const Candidates::value_type &challenger, double challengerScore,
 
   // !!!: deviation from formal definitions:
   //   prefer non-scalar-pairs predictors
-  if (units[challenger.first.unitIndex].scheme_code != 'S' &&
-      units[leader    .first.unitIndex].scheme_code == 'S')
+  if (sites[challenger.first.siteIndex].scheme_code != 'S' &&
+      sites[leader    .first.siteIndex].scheme_code == 'S')
     return NonScalarPairs;
 
   // !!!: deviation from formal definitions:
@@ -127,12 +127,11 @@ Candidates::best() const
 ostream &operator<<(ostream &out, const Candidates::value_type &winner)
 {
   const PredCoords &coords = winner.first;
-  const unit_t &unit = units[coords.unitIndex];
+  const site_t &site = sites[coords.siteIndex];
   const Predicate &pred = *winner.second;
 
-  out << "<predictor unit=\"" << unit.signature
-      << "\" scheme=\"" << scheme_name(unit.scheme_code)
-      << "\" site=\"" << coords.siteOffset + 1
+  out << "<predictor scheme=\"" << scheme_name(site.scheme_code)
+      << "\" site=\"" << coords.siteIndex + 1
       << "\" predicate=\"" << coords.predicate + 1
       << "\" score=\"" << pred.score() << "\">";
   pred.print(out);

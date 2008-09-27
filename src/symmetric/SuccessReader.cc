@@ -8,8 +8,9 @@
 using namespace std;
 
 
-SuccessReader::SuccessReader(const Candidates &candidates)
-  : candidates(candidates)
+SuccessReader::SuccessReader(const char* filename, const Candidates &candidates)
+  : Reader(filename),
+    candidates(candidates)
 {
 }
 

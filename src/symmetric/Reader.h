@@ -8,6 +8,8 @@ class PredCoords;
 
 class Reader : public ReportReader
 {
+public:
+  Reader(const char* filename) : ReportReader(filename) {}
 protected:
   void handleSite(const SiteCoords &, std::vector<count_tp> &);
 

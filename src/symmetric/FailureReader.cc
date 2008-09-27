@@ -8,14 +8,20 @@
 using namespace std;
 
 
-FailureReader::FailureReader(Candidates &candidates, Boths &boths, unsigned failureId)
-  : candidates(candidates),
-    boths(boths),
-    failureId(failureId)
+FailureReader::FailureReader(const char* filename, Candidates &candidates, Boths &boths)
+  : Reader(filename), 
+    candidates(candidates),
+    boths(boths)
 {
-  assert(failureId < RunSet::universeSize);
 }
 
+
+void
+FailureReader::setid(unsigned id)
+{
+  assert (id < RunSet::universeSize);
+  failureId = id;
+}
 
 void
 FailureReader::tallyPair(const PredCoords &aCoords, bool a,
