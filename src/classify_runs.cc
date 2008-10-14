@@ -14,6 +14,7 @@ using namespace std;
 // global information provided by classify_runs()
 unsigned num_sruns, num_fruns;
 vector<bool> is_srun, is_frun;
+bool set = false;
 
 
 static void
@@ -43,6 +44,7 @@ read_runs(const char message[], const char filename[], vector<bool> &bits, unsig
 
 void classify_runs()
 {
+    if (set) return;
     read_runs("reading success list", ClassifyRuns::successesFilename, is_srun, num_sruns);
     read_runs("reading failure list", ClassifyRuns:: failuresFilename, is_frun, num_fruns);
 
@@ -51,6 +53,8 @@ void classify_runs()
 	    cerr << "Run " << runId << " is both successful and failing\n";
 	    exit(1);
 	}
+
+    set = true;
 }
 
 
