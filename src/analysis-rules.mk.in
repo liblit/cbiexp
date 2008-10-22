@@ -333,16 +333,25 @@ CLEANFILES += $(nevers)
 bicluster: $(biclustering)
 .PHONY: bicluster
 
-f.indices s.indices i.indices: f.runs s.runs $(datadir)/stamp-labels
+##############################################################################
+# generate lots of data files for input to pLSA analysis
+# --- this data is all post culling, i.e., the only features are those that
+#     appear in preds.txt
+#
+# the plsa algorithm itself could be run on complete data, but this
+#     functionality was not implemented
+##############################################################################
+
+f.indices s.indices: f.runs s.runs $(datadir)/stamp-labels
 	$(time) $(tooldir)/matlab/make-classify-vectors --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
-CLEANFILES += f.indices s.indices i.indices
+CLEANFILES += f.indices s.indices
 
 Xtru.sparse Xobs.sparse X.xml: preds.txt $(datadir)/stamp-labels
 	$(time) $(tooldir)/matlab/make-counts-matrix --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 CLEANFILES += Xtru.sparse Xobs.sparse X.xml
 
 prerunsinfo.mat: f.indices s.indices i.indices X.xml $(matlab-counts)
-	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); convertData('$(matlab-counts)', 'prerunsinfo.mat', 'f.indices', 's.indices', 'i.indices', 'X.xml'); quit()"
+	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); convertData('$(matlab-counts)', 'prerunsinfo.mat', 'f.indices', 's.indices', 'X.xml'); quit()"
 CLEANFILES += prerunsinfo.mat
 
 runsinfo.mat: prerunsinfo.mat

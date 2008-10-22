@@ -159,10 +159,10 @@ int main(int argc, char** argv)
     {
         Reader reader("counts.txt");
 	Progress::Bounded progress("finding counts", NumRuns::count());
-	for (unsigned runId = NumRuns::begin(); runId < NumRuns::end(); ++runId) {
+	for (unsigned runId = 0; runId < NumRuns::end(); ++runId) {
 	    progress.step();
             if (is_srun[runId] || is_frun[runId]) {
-                reader.setrow(runId + 1 - NumRuns::begin());
+                reader.setrow(runId + 1);
                 reader.read(runId);
             }
 	}
@@ -188,14 +188,12 @@ int main(int argc, char** argv)
     //We record the dimensions of the data matrix. We don't want zero
     //entries on the right hand side to cause the matrix to be truncated.
     //count() returns exactly the difference between the start and end
-    //specified, so the matrix may include all zero columns corresponding
-    //to discarded runs.
+    //specified.
     {
         ofstream out("X.xml");
         out << "<data "
             << "numpreds=\"" << PredStats::count() << "\" "
-            << "numruns=\"" << NumRuns::count() << "\" "
-            << "runoffset=\"" << NumRuns::begin << "\"/>\n";
+            << "numruns=\"" << NumRuns::count() << "\"/>\n";
         out.close();
     }
 

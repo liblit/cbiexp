@@ -1,4 +1,4 @@
-#!/s/std/bin/python
+#!/usr/bin/python
 # -*- python -*-
 
 import sys

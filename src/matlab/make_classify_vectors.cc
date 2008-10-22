@@ -4,9 +4,6 @@
 *
 * Indices of failing runs and successful run are one indexed rather
 * zero indexed. 
-*
-* The indices are offset by the number of runs used to train the
-* instrumentation sampler.
 ******************************************************************************/
 
 

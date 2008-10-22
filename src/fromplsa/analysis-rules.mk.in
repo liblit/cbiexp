@@ -4,64 +4,18 @@ analysisdir ?= ../../analysis
 tooldir := $(root)/src/fromplsa
 idtooldir := $(root)/src/line-ids
 
-# where the original data, processed by plsa analysis can be found 
+# where the original data, processed by plsa analysis can be found
 datadir ?= ..
 
-# where the results of the plsa analysis can be found 
+# where the results of the plsa analysis can be found
 resultsdir ?= ../best
 
 MATLAB = matlab -nodisplay
 XSLTPROC = xsltproc --path $(tooldir)/toxml --path . --path $(analysisdir)
 time := /usr/bin/time
 
-normalized_counts_coloring: results.mat votes.mat
-	$(time) $(MATLAB) -r "path('$(tooldir)', path); makeBaseFiles('$<', 'buggy'); quit" 
-	$(MAKE) aspectcounts
-	$(MAKE) aspectsrc
-
-aspect_%_counts.txt: aspect_%.base votes.mat runsinfo.mat
-	$(time) $(MATLAB) -r "path('$(tooldir)/line-colorings', path); makeCountsFile('runsinfo.mat', 'votes.mat', '$@', `cat $<`); quit"
-
-aspectcounts: $(addsuffix _counts.txt, $(basename $(wildcard aspect*.base)))
-.PHONY: aspectcounts
-
-votes.mat: results.mat
-	$(time) $(MATLAB) -r "path('$(tooldir)/line-colorings', path); generateVotes('$<', '$@'); quit" 
-
-Pz_w_colorings: results.mat 
-	$(time) $(MATLAB) -r "path('$(tooldir)', path); makeBaseFiles('$<', 'all'); quit" 
-	$(MAKE) aspectprobs
-	$(MAKE) aspectsrc
-
-pred_sites.txt: $(analysisdir)/pred_sites.txt
-	$(tooldir)/line-colorings/stripCommonDirs.py --force $< $@
-
-aspect_%_probs.txt: aspect_%.base results.mat 
-	$(time) $(MATLAB) -r "path('$(tooldir)/line-colorings', path); makeProbabilityFile('results.mat', `cat $<`, '$@'); quit" 
-
-aspectprobs: $(addsuffix _probs.txt, $(basename $(wildcard aspect*.base)))
-.PHONY: aspectprobs
-
-aspect_%_table.txt: aspect_%_probs.txt pred_sites.txt
-	$(time) paste -d "," pred_sites.txt $< > $@
-
-aspect_%_table.txt: aspect_%_counts.txt pred_sites.txt
-	$(time) paste -d "," pred_sites.txt $< > $@
-
-aspect_%_src: aspect_%_table.txt summary.xml
-	mkdir $@
-	$(time) $(idtooldir)/makeIdfiles.py --force $(idtooldir) $(analysisdir)/src/ $@
-	$(time) $(tooldir)/line-colorings/separateScoreFiles.py --force $< $@
-	$(time) $(tooldir)/line-colorings/transformLinesScores.py --force --transformation=$(transformation) $@
-	$(time) $(tooldir)/line-colorings/makeCSSFiles.py --force $@
-	$(time) $(tooldir)/line-colorings/makeExplanation.py --force $@
-	$(time) $(tooldir)/line-colorings/makeExplanationFile.py --force $@ $(analysisdir) $(tooldir)/line-colorings `pwd`
-
-aspectsrc: $(addsuffix _src, $(basename $(wildcard aspect*.base)))
-.PHONY: aspectsrc
-
 xml: results.mat summary.html aspects.xml
-	$(time) $(MATLAB) -r "path('$(tooldir)', path); makeBaseFiles('$<', 'all'); quit" 
+	$(time) $(MATLAB) -r "path('$(tooldir)', path); makeBaseFiles('$<', 'all'); quit"
 	$(MAKE) aspectspredictiveruns aspectspredictivefeatures aspectsprobablefeatures
 
 runsinfo.mat: $(datadir)/runsinfo.mat

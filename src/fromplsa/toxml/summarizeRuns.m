@@ -6,7 +6,7 @@ function summarizeRuns(inputfile, analysisfile, outputfile)
     X = Data.X;
     clear Data;
     load(inputfile)
-    printruns(outputfile, Data.Indices, Data.Findices, Data.Sindices, Data.offset, X); 
+    printruns(outputfile, Data.Indices, Data.Findices, Data.Sindices, X); 
 
 function o = outcome(F, S, i)
     if F;
@@ -22,7 +22,7 @@ function O = outcomeVector(Fs,Ss)
       O{i,1} = outcome(Fs(i), Ss(i), i);
     end;
 
-function printruns(outputfile, Indices, Findices, Sindices, offset, OldX);
+function printruns(outputfile, Indices, Findices, Sindices, OldX);
     numruns = numel(Indices); 
     Fs(1,numruns) = 0;
     Fs(find(Findices(Indices))) = 1;
@@ -31,6 +31,6 @@ function printruns(outputfile, Indices, Findices, Sindices, offset, OldX);
     OldX = OldX(:, Indices);
     doc = com.mathworks.xml.XMLUtils.createDocument('runinfos');
     docRoot = doc.getDocumentElement();
-    M = {outcomeVector(Fs, Ss) num2cell(Indices - 1 + offset) num2cell(sum(OldX,1)')};
+    M = {outcomeVector(Fs, Ss) num2cell(Indices - 1) num2cell(sum(OldX,1)')};
     xmlify(doc, docRoot, M, 'run', {'outcome' 'runid' 'sum'});
     xmlwrite(outputfile, doc);
