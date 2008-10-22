@@ -40,7 +40,6 @@ noinst_PROGRAMS =				\
 
 noinst_SCRIPTS =				\
 	htmlify-sources				\
-	map-sites				\
 	static-site-info			\
 	top-rho
 
