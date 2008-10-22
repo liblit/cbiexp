@@ -88,9 +88,6 @@ gen_views_LDADD = Score/libScore.a libanalyze.a corrective-ranking/libcorrective
 get_tp_weights_SOURCES = get_tp_weights.cc
 get_tp_weights_LDADD = libanalyze.a -ldl
 
-get_truth_values_SOURCES = get_truth_values.cc
-get_truth_values_LDADD = libanalyze.a -ldl
-
 logreg_SOURCES = logreg.cc
 logreg_LDADD = libanalyze.a -ldl
 
