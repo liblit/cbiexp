@@ -253,8 +253,8 @@ static-site-info.so: %.so: %.cc
 	$(LINK.cc) -shared -fpic -o $@ $<
 CLEANFILES += static-site-info.so
 
-static-site-info.cc: $(sites) $(call tool-deps, map-sites)
-	$(tooldir)/map-sites $(sites) >$@
+static-site-info.cc: $(sites)
+	$(tooldir)/applyTemplateToSites.py $(sites) $@ $(tooldir)/static_site_info.tmpl --filter=CppFilter
 CLEANFILES += static-site-info.cc
 
 
