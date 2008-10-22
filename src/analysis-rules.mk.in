@@ -11,10 +11,6 @@ srcdir ?= $(experiment)/src
 raw-report-name ?= reports
 matlab-counts ?= Xtru.sparse
 
-implicationsdir ?= $(experiment)/share
-implicationsglob := $(implicationsdir)/*.implications
-implications ?= $(wildcard $(implicationsglob))
-
 xmlify-add-suffix := .html
 
 time := /usr/bin/time
@@ -208,7 +204,6 @@ clean::
 	$(find-zooms) -exec rm '{}' ';'
 
 site-args := $(foreach site,$(sites),-sites-report $(site))
-implication-args := $(foreach implication,$(implications),-implications-report $(implication))
 
 obs.txt tru.txt: $(stamp-decimate) preds.txt s.runs f.runs static-site-info.so $(call tool-deps, compute-obs-tru)
 	$(time) $(tooldir)/compute-obs-tru --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir)
