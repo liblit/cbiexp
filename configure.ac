@@ -210,12 +210,6 @@ if test "$enable_plsa" = yes; then
    ])
 fi
 
-if test "$enable_line_coloring" = yes; then
-  AC_CONFIG_FILES([
-  src/fromplsa/line-colorings/Makefile
-  ])
-fi
-
 if test "$enable_mining" = yes; then
    AC_CONFIG_FILES([
    src/amplify/Makefile

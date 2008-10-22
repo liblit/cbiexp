@@ -5,9 +5,6 @@ endif
 if HAVE_CODESURFER
 SUBDIRS += effort
 endif
-if ENABLE_PLSA
-SUBDIRS += plsa
-endif
 
 DIST_SUBDIRS = $(SUBDIRS) effort
 
