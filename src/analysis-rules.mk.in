@@ -306,10 +306,6 @@ static-site-info.xml: %.xml: $(sites) $(call tool-deps, %)
 	xmllint --valid --noout $@
 CLEANFILES += static-site-info.xml
 
-failure-points: %: f.runs $(call tool-deps, find-%)
-	$(tooldir)/find-$* $(datadir)
-CLEANFILES += failure-points
-
 bicluster: $(biclustering)
 .PHONY: bicluster
 
