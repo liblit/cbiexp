@@ -11,11 +11,7 @@ EXTRA_DIST =					\
 
 
 noinst_PROGRAMS =				\
-	make-classify-vectors			\
 	make-counts-matrix
-
-make_classify_vectors_SOURCES = make_classify_vectors.cc
-make_classify_vectors_LDADD = ../libanalyze.a -ldl
 
 make_counts_matrix_SOURCES = make_counts_matrix.cc
 make_counts_matrix_LDADD = ../libanalyze.a -ldl

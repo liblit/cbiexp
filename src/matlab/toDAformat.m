@@ -6,11 +6,11 @@ function toDAformat(inputfile, outputfile)
     load(inputfile);
 
     X = Data.X;
-    Findices = Data.Findices;
+    Fvector = Data.Fvector;
 
     out = fopen(outputfile, 'w');
     for i = 1:size(X,2)
-        fprintf(out, '%u ', Findices(i));    
+        fprintf(out, '%u ', Fvector(i));    
         for j = 0:size(X,1) - 1
           fprintf(out, '%u:%u ', j, X(j + 1, i));
         end
