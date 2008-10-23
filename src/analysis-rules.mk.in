@@ -222,10 +222,6 @@ summary.xml: preds.txt s.runs f.runs static-site-info.so $(call tool-deps, gen-s
 	xmllint --valid --noout $@
 CLEANFILES += summary.xml
 
-preds.txt: s.runs f.runs static-site-info.so $(call tool-deps, prefilter)
-	$(time) $(tooldir)/prefilter --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%)
-CLEANFILES += preds.txt
-
 logreg.xml: %.xml: %.txt static-site-info.so $(call tool-deps, %)
 	$(tooldir)/$* $*.txt >$@
 	$(build) links
@@ -248,18 +244,6 @@ CLEANFILES += train.runs val.runs nonconst_preds.txt
 theta: train.runs val.runs nonconst_preds.txt static-site-info.so $(call tool-deps, train_utillog)
 	$(time) $(tooldir)/train_utillog --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --delta1=10.0 --delta2=2.0 --delta3=1.0
 CLEANFILES += theta.txt train_lls.txt val_lls.txt confmat.txt
-
-static-site-info.so: %.so: %.cc
-	$(LINK.cc) -shared -fpic -o $@ $<
-CLEANFILES += static-site-info.so
-
-static-site-info.cc: $(sites)
-	$(tooldir)/applyTemplateToSites.py $(sites) $@ $(tooldir)/static_site_info.tmpl --filter=CppFilter
-CLEANFILES += static-site-info.cc
-
-f.runs s.runs: outcomes.txt
-	$(tooldir)/genOutcomeIndices.py outcomes.txt f.runs s.runs
-CLEANFILES += s.runs f.runs
 
 clusters: static-site-info.so $(call tool-deps, cluster_runs)
 	$(time) $(tooldir)/cluster_runs --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --nonconst-file=f_nonconst_preds.txt
@@ -328,6 +312,27 @@ CLEANFILES += failure-points
 
 bicluster: $(biclustering)
 .PHONY: bicluster
+
+#############################################################################
+# Shared goals, i.e., goals on which many other goals are dependent
+#############################################################################
+
+static-site-info.so: %.so: %.cc
+	$(LINK.cc) -shared -fpic -o $@ $<
+CLEANFILES += static-site-info.so
+
+static-site-info.cc: $(sites)
+	$(tooldir)/applyTemplateToSites.py $(sites) $@ $(tooldir)/static_site_info.tmpl --filter=CppFilter
+CLEANFILES += static-site-info.cc
+
+f.runs s.runs: outcomes.txt
+	$(tooldir)/genOutcomeIndices.py outcomes.txt f.runs s.runs
+CLEANFILES += s.runs f.runs
+
+preds.txt: s.runs f.runs static-site-info.so $(call tool-deps, prefilter)
+	$(time) $(tooldir)/prefilter --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%)
+CLEANFILES += preds.txt
+
 
 #############################################################################
 # gathers some very simple statistics about a program's executions
