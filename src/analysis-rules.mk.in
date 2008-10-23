@@ -326,6 +326,17 @@ failure-points: %: f.runs $(call tool-deps, find-%)
 	$(tooldir)/find-$* $(datadir)
 CLEANFILES += failure-points
 
+bicluster: $(biclustering)
+.PHONY: bicluster
+
+#############################################################################
+# gathers some very simple statistics about a program's executions
+# generates three files:
+#   never-reached.txt
+#   never-false.txt
+#   never-true.txt
+# see never-reached/README for more information 
+############################################################################
 never-kinds := reached false true
 nevers := $(never-kinds:%=never-%.txt)
 $(nevers): $(stamp-decimate) f.runs static-site-info.so $(call tool-deps, never-reached/never-reached)
@@ -333,8 +344,6 @@ $(nevers): $(stamp-decimate) f.runs static-site-info.so $(call tool-deps, never-
 	for goal in $(nevers); do test -r $$goal; done
 CLEANFILES += $(nevers)
 
-bicluster: $(biclustering)
-.PHONY: bicluster
 
 ##############################################################################
 # generate lots of data files for input to pLSA analysis
