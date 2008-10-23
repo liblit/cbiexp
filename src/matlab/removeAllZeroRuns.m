@@ -9,5 +9,6 @@ function D = removeAllZeroRuns(Data)
     NonZeros = find(sum(Data.X,1));
     D.Fvector = Data.Fvector(NonZeros',:); 
     D.Svector = Data.Svector(NonZeros',:); 
+    D.Causes = Data.Causes(NonZeros',:);
     D.X = Data.X(:, NonZeros);
     D.Indices = Data.Indices(NonZeros',:);

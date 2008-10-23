@@ -347,7 +347,7 @@ Xtru.sparse Xobs.sparse X.xml: preds.txt
 CLEANFILES += Xtru.sparse Xobs.sparse X.xml
 
 prerunsinfo.mat: outcomes.txt X.xml $(matlab-counts)
-	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); convertData('$(matlab-counts)', 'prerunsinfo.mat', 'outcomes.txt', 'X.xml'); quit()"
+	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); convertData('$(matlab-counts)', 'prerunsinfo.mat', 'outcomes.txt', 'causes.txt', 'X.xml'); quit()"
 CLEANFILES += prerunsinfo.mat
 
 runsinfo.mat: prerunsinfo.mat
