@@ -294,7 +294,7 @@ symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml
 	xmllint --valid --noout --catalogs $@
 CLEANFILES += symmetric.html
 
-symmetric.xml: %.xml: $(stamp-decimate) s.runs f.runs $(call tool-deps, symmetric/%)
+symmetric.xml: %.xml: $(stamp-decimate) s.runs f.runs $(call tool-deps, symmetric/%) static-site-info.so
 	$(build) links
 	$(time) $(tooldir)/symmetric/$* --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 	xmllint --valid --noout $@
