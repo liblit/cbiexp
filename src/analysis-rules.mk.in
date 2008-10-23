@@ -257,6 +257,9 @@ static-site-info.cc: $(sites)
 	$(tooldir)/applyTemplateToSites.py $(sites) $@ $(tooldir)/static_site_info.tmpl --filter=CppFilter
 CLEANFILES += static-site-info.cc
 
+f.runs s.runs: outcomes.txt
+	$(tooldir)/genOutcomeIndices.py outcomes.txt f.runs s.runs
+CLEANFILES += s.runs f.runs
 
 clusters: static-site-info.so $(call tool-deps, cluster_runs)
 	$(time) $(tooldir)/cluster_runs --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --nonconst-file=f_nonconst_preds.txt
