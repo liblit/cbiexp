@@ -10,14 +10,10 @@ DIST_SUBDIRS = $(SUBDIRS) effort
 
 AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 -Wno-deprecated $(BOOST_CPPFLAGS)
 
-if HAVE_GSL_CDF
-chi2test = chi2test
-endif
-
 noinst_PROGRAMS =				\
 	bicluster				\
 	calc_sober				\
-	$(chi2test)				\
+	chi2test				\
 	cluster_runs				\
 	collect_parmstats			\
 	compute_nonconst_preds			\

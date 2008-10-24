@@ -18,7 +18,6 @@ CXX := @CXX@
 CPPFLAGS := @CPPFLAGS@ -I$(tooldir)
 CXXFLAGS := @CXXFLAGS@ -W -Wall -Werror
 LEXLIB := @LEXLIB@
-HAVE_GSL_CDF := @HAVE_GSL_CDF@
 
 ifeq ($(strip $(update-tools)),)
 tool-deps =
@@ -252,10 +251,8 @@ parms.txt notp-parms.txt: parmstats.txt notp-parmstats.txt static-site-info.so $
 	$(time) $(tooldir)/est_parms
 CLEANFILES += parms.txt notp-parms.txt est_parms.log
 
-ifdef $(HAVE_GSL_CDF)
 chi2stats.txt: parmstats.txt fpriors.dat fpriors-full.dat spriors.dat spriors-full.dat $(call tool-deps, chi2test)
 	$(time) $(tooldir)/chi2test
-endif
 
 X.dat notX.dat : preds.txt parms.txt notp-parms.txt static-site-info.so $(call tool-deps, get_tp_weights)
 	$(time) $(tooldir)/get_tp_weights --begin-runs=$(begin-runs) --end-runs=$(end-runs) --estimate-tps=true
