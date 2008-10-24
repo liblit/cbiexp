@@ -245,12 +245,6 @@ theta: train.runs val.runs nonconst_preds.txt static-site-info.so $(call tool-de
 	$(time) $(tooldir)/train_utillog --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --delta1=10.0 --delta2=2.0 --delta3=1.0
 CLEANFILES += theta.txt train_lls.txt val_lls.txt confmat.txt
 
-clusters: static-site-info.so $(call tool-deps, cluster_runs)
-	$(time) $(tooldir)/cluster_runs --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --nonconst-file=f_nonconst_preds.txt
-
-viewclusters: static-site-info.so $(call tool-deps, view_clusters)
-	$(time) $(tooldir)/view_clusters --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir)
-
 ifndef omit-truth-probability-estimation
 parmstats.txt notp-parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)
 	$(time) $(tooldir)/collect_parmstats --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --sample-rates=rates.txt
@@ -331,12 +325,20 @@ CLEANFILES += preds.txt
 
 
 #############################################################################
+# does K-means clustering of runs
+############################################################################
+clusters : f_nonconst_preds.txt kmeans_group.txt
+f_nonconst_preds.txt kmeans_group.txt: static-site-info.so $(call tool-deps, cluster_runs) s.runs f.runs
+	$(time) $(tooldir)/cluster_runs --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --nonconst-file=f_nonconst_preds.txt
+CLEANFILES += f_nonconst_preds.txt kmeans_groups.txt
+
+#############################################################################
 # gathers some very simple statistics about a program's executions
 # generates three files:
 #   never-reached.txt
 #   never-false.txt
 #   never-true.txt
-# see never-reached/README for more information 
+# see never-reached/README for more information
 ############################################################################
 never-kinds := reached false true
 nevers := $(never-kinds:%=never-%.txt)

@@ -225,7 +225,7 @@ bool read_nonconst_pred (FILE *fp, PredCoords &pc, pred_info_t &pi)
     
     pi.std = sqrt(pi.var);
 
-    if (got == 8)
+    if (got == 7)
 	return true;
     else
 	return false;
