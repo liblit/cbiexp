@@ -46,6 +46,7 @@ ReportReader::read(unsigned runId)
   if (linepos == runId); //at line position we want to read
   else //must reposition
   {
+    summary.clear();  //don't want summary.peek() to return old value
     summary.seekg(0); //go to start of file and read until linepos is runId
     linepos = 0;
     do //keep reading lines until runId is linepos or EOF reached
@@ -53,7 +54,7 @@ ReportReader::read(unsigned runId)
       if (summary.peek() == EOF)
       {
           ostringstream message;
-          message << "runId " << runId << " exceeds number of runs";
+          message << "runId " << runId << " exceeds number of runs. Line position is " << linepos;
           throw runtime_error(message.str());
       }
       do
