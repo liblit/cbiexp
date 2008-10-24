@@ -13,7 +13,6 @@ AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 -Wno-deprecated $(BOOST_CPPFLAGS)
 noinst_PROGRAMS =				\
 	bicluster				\
 	calc_sober				\
-	chi2test				\
 	cluster_runs				\
 	collect_parmstats			\
 	compute_nonconst_preds			\
@@ -45,9 +44,6 @@ bicluster_LDADD = libanalyze.a
 
 calc_sober_SOURCES = calc_sober.cc
 calc_sober_LDADD = libanalyze.a $(GSL_LIBS) -ldl
-
-chi2test_SOURCES = chi2test.cc
-chi2test_LDADD = libanalyze.a $(GSL_LIBS)
 
 cluster_runs_SOURCES = cluster_runs.cc
 cluster_runs_LDADD = libanalyze.a $(GSL_LIBS) -ldl

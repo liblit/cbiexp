@@ -234,14 +234,6 @@ prior-dist: s.runs f.runs preds.txt static-site-info.so $(call tool-deps, gather
 truth-dist: s.runs f.runs preds.txt static-site-info.so $(call tool-deps, gather_prior_truths)
 	$(time) $(tooldir)/gather_prior_truths --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 
-nonconst-preds: s.runs f.runs static-site-info.so $(call tool-deps, compute_nonconst_preds)
-	$(time) $(tooldir)/compute_nonconst_preds --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
-CLEANFILES += train.runs val.runs nonconst_preds.txt
-
-theta: train.runs val.runs nonconst_preds.txt static-site-info.so $(call tool-deps, train_utillog)
-	$(time) $(tooldir)/train_utillog --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --delta1=10.0 --delta2=2.0 --delta3=1.0
-CLEANFILES += theta.txt train_lls.txt val_lls.txt confmat.txt
-
 ifndef omit-truth-probability-estimation
 parmstats.txt notp-parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)
 	$(time) $(tooldir)/collect_parmstats --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --sample-rates=rates.txt
@@ -250,9 +242,6 @@ CLEANFILES += parmstats.txt notp-parmstats.txt
 parms.txt notp-parms.txt: parmstats.txt notp-parmstats.txt static-site-info.so $(call tool-deps, est_parms)
 	$(time) $(tooldir)/est_parms
 CLEANFILES += parms.txt notp-parms.txt est_parms.log
-
-chi2stats.txt: parmstats.txt fpriors.dat fpriors-full.dat spriors.dat spriors-full.dat $(call tool-deps, chi2test)
-	$(time) $(tooldir)/chi2test
 
 X.dat notX.dat : preds.txt parms.txt notp-parms.txt static-site-info.so $(call tool-deps, get_tp_weights)
 	$(time) $(tooldir)/get_tp_weights --begin-runs=$(begin-runs) --end-runs=$(end-runs) --estimate-tps=true
@@ -317,6 +306,34 @@ CLEANFILES += s.runs f.runs
 preds.txt: s.runs f.runs static-site-info.so $(call tool-deps, prefilter)
 	$(time) $(tooldir)/prefilter --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%)
 CLEANFILES += preds.txt
+
+#############################################################################
+# Logistic Regression --- early CBI analysis 
+# 1. Computes a set of interesting predicates into nonconst_preds.txt 
+# 2. Chops up all runs into a set of training runs and a validation set 
+# 3. Iteratively computes a predictor for failure and success
+#    At each iteration
+#        computes the value for every predicate's coefficient 
+#            and stores it in theta.txt
+#        stores the results of applying the logistic regression formula to
+#            every training run in train_lls.txt 
+#        stores the results of applying the logistic regression formula to
+#            every validation run in val_lls.txt
+#        evaluates by calculating a confusion matrix on the results
+#            of the prediction for every validation run and storing this
+#            in confmat.txt
+############################################################################
+nonconst-preds: train.runs val.runs nonconst_preds.txt 
+train.runs val.runs nonconst_preds.txt : s.runs f.runs static-site-info.so $(call tool-deps, compute_nonconst_preds)
+	$(time) $(tooldir)/compute_nonconst_preds --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
+CLEANFILES += train.runs val.runs nonconst_preds.txt
+
+
+theta: theta.txt train_lls.txt val_lls.txt confmat.txt
+theta.txt train_lls.txt val_lls.txt confmat.txt: train.runs val.runs nonconst_preds.txt static-site-info.so $(call tool-deps, train_utillog)
+	$(time) $(tooldir)/train_utillog --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --delta1=10.0 --delta2=2.0 --delta3=1.0
+CLEANFILES += theta.txt train_lls.txt val_lls.txt confmat.txt
+
 
 
 #############################################################################
