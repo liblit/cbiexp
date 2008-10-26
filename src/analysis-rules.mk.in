@@ -87,14 +87,7 @@ corrected :=						\
 	all_hl_corrected-exact-complete.xml		\
 	all_hl_corrected-approximate-complete.xml
 
-biclustering :=					\
-	preds.txt				\
-	s.runs f.runs				\
-	X.dat					\
-	predscores
-
 web :=						\
-	$(biclustering)				\
 	$(corrected)				\
 	$(links)				\
 	$(topRho)				\
@@ -253,13 +246,6 @@ CLEANFILES += X.dat notX.dat truX.dat trunotX.dat truFreq.dat trunotFreq.dat
 endif
 
 
-predscores: bicluster_votes.xml
-bicluster_votes.xml bicluster-preds.xml final-votes.txt: preds.txt X.dat notX.dat $(call tool-deps, bicluster)
-	$(build) links
-	$(time) $(tooldir)/bicluster --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name) --truth-probability-weights=X.dat --not-truth-probability-weights=notX.dat
-	xmllint --valid --noout bicluster_votes.xml
-CLEANFILES += bicluster_votes.xml bicluster-preds.xml final-votes.txt bicluster_votes.log list*.xml qualities.log notQualities.log
-
 sober.xml sober.txt: static-site-info.so preds.txt $(call tool-deps, calc_sober)
 	$(build) links
 	$(time) $(tooldir)/calc_sober --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name)
@@ -284,9 +270,6 @@ static-site-info.xml: %.xml: $(sites) $(call tool-deps, %)
 	xmllint --valid --noout $@
 CLEANFILES += static-site-info.xml
 
-bicluster: $(biclustering)
-.PHONY: bicluster
-
 #############################################################################
 # Shared goals, i.e., goals on which many other goals are dependent
 #############################################################################
@@ -306,6 +289,18 @@ CLEANFILES += s.runs f.runs
 preds.txt: s.runs f.runs static-site-info.so $(call tool-deps, prefilter)
 	$(time) $(tooldir)/prefilter --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%)
 CLEANFILES += preds.txt
+
+#############################################################################
+# Biclustering
+# ECML 2007 algorithm for simultaneously clustering runs and predicates
+#############################################################################
+
+bicluster: bicluster_votes.xml bicluster_preds.xml final-votes.txt
+bicluster_votes.xml bicluster_preds.xml final-votes.txt: preds.txt X.dat notX.dat $(call tool-deps, bicluster)
+	$(build) links
+	$(time) $(tooldir)/bicluster --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name) --truth-probability-weights=X.dat --not-truth-probability-weights=notX.dat
+	xmllint --valid --noout bicluster_votes.xml
+CLEANFILES += bicluster_votes.xml bicluster_preds.xml final-votes.txt bicluster_votes.log list*.xml qualities.log notQualities.log
 
 #############################################################################
 # Logistic Regression --- early CBI analysis 
