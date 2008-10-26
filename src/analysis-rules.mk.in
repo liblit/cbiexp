@@ -292,7 +292,7 @@ CLEANFILES += preds.txt
 
 #############################################################################
 # Biclustering
-# ECML 2007 algorithm for simultaneously clustering runs and predicates
+# ICML 2006 algorithm for simultaneously clustering runs and predicates
 #############################################################################
 
 bicluster: bicluster_votes.xml bicluster_preds.xml final-votes.txt
