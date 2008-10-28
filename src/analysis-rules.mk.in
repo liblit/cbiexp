@@ -39,7 +39,6 @@ views := $(foreach scheme, $(schemes), $(foreach sort, $(sorts), $(foreach proje
 zoom ?= all
 
 find-zooms := find . -maxdepth 1 -name 'zoom-corrected-*.xml'
-find-xmls  := find . -name '*.xml'
 
 links :=					\
 	$(extra-links)				\
