@@ -211,23 +211,6 @@ summary.xml: preds.txt s.runs f.runs static-site-info.so $(call tool-deps, gen-s
 	xmllint --valid --noout $@
 CLEANFILES += summary.xml
 
-ifndef omit-truth-probability-estimation
-parmstats.txt notp-parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)
-	$(time) $(tooldir)/collect_parmstats --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --sample-rates=rates.txt
-CLEANFILES += parmstats.txt notp-parmstats.txt
-
-parms.txt notp-parms.txt: parmstats.txt notp-parmstats.txt static-site-info.so $(call tool-deps, est_parms)
-	$(time) $(tooldir)/est_parms
-CLEANFILES += parms.txt notp-parms.txt est_parms.log
-
-X.dat notX.dat : preds.txt parms.txt notp-parms.txt static-site-info.so $(call tool-deps, get_tp_weights)
-	$(time) $(tooldir)/get_tp_weights --begin-runs=$(begin-runs) --end-runs=$(end-runs) --estimate-tps=true
-CLEANFILES += X.dat notX.dat truX.dat trunotX.dat truFreq.dat trunotFreq.dat
-else
-X.dat notX.dat : preds.txt static-site-info.so
-	$(time) $(tooldir)/get_tp_weights --begin-runs=$(begin-runs) --end-runs=$(end-runs) --estimate-tps=false
-CLEANFILES += X.dat notX.dat truX.dat trunotX.dat truFreq.dat trunotFreq.dat
-endif
 
 symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml
 	$(build) links
@@ -266,6 +249,34 @@ CLEANFILES += s.runs f.runs
 preds.txt: s.runs f.runs static-site-info.so $(call tool-deps, prefilter)
 	$(time) $(tooldir)/prefilter --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%)
 CLEANFILES += preds.txt
+
+#############################################################################
+# Truth probability estimation
+# Estimate truth probabilities for every predicate in preds.txt for every run
+# using the algorithm in the ICML 2006 paper
+#
+# In theory, any analysis done only on the culled predicates in preds.txt
+# could use the estimated truth probabilities as a starting point
+#
+# If omit-truth-probability-estimation flag is set do not estimate
+# probabilties, just report actual values 
+#############################################################################
+ifndef omit-truth-probability-estimation
+parmstats.txt notp-parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)
+	$(time) $(tooldir)/collect_parmstats --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --sample-rates=rates.txt
+CLEANFILES += parmstats.txt notp-parmstats.txt
+
+parms.txt notp-parms.txt: parmstats.txt notp-parmstats.txt static-site-info.so $(call tool-deps, est_parms)
+	$(time) $(tooldir)/est_parms
+CLEANFILES += parms.txt notp-parms.txt est_parms.log
+
+X.dat notX.dat : preds.txt parms.txt notp-parms.txt static-site-info.so $(call tool-deps, get_tp_weights)
+	$(time) $(tooldir)/get_tp_weights --begin-runs=$(begin-runs) --end-runs=$(end-runs) --estimate-tps=true
+else
+X.dat notX.dat : preds.txt static-site-info.so
+	$(time) $(tooldir)/get_tp_weights --begin-runs=$(begin-runs) --end-runs=$(end-runs) --estimate-tps=false
+endif
+CLEANFILES += X.dat notX.dat truX.dat trunotX.dat truFreq.dat trunotFreq.dat
 
 #############################################################################
 # For every site corresponding to a predicate in preds.txt yields a histogram
