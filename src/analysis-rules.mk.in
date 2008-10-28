@@ -217,12 +217,6 @@ logreg.xml: %.xml: %.txt static-site-info.so $(call tool-deps, %)
 	xmllint --valid --noout $@
 CLEANFILES += logreg.xml
 
-prior-dist: s.runs f.runs preds.txt static-site-info.so $(call tool-deps, gather_prior_dist)
-	$(time) $(tooldir)/gather_prior_dist --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
-	mv fpriors.dat fpriors-full.dat
-	mv spriors.dat spriors-full.dat
-	$(time) $(tooldir)/gather_prior_dist --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
-
 ifndef omit-truth-probability-estimation
 parmstats.txt notp-parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)
 	$(time) $(tooldir)/collect_parmstats --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --sample-rates=rates.txt
@@ -280,7 +274,17 @@ preds.txt: s.runs f.runs static-site-info.so $(call tool-deps, prefilter)
 CLEANFILES += preds.txt
 
 #############################################################################
-# For every predicate in preds.txt yields a histogram of the ratios of the 
+# For every site corresponding to a predicate in preds.txt yields a histogram
+# of the number of times a predicate associated with the site is observed true
+# in a run. Done separately for failing and for succeeding runs.
+#############################################################################
+prior-dist: fpriors.dat spriors.dat
+fpriors.dat spriors.dat: s.runs f.runs preds.txt static-site-info.so $(call tool-deps, gather_prior_dist)
+	$(time) $(tooldir)/gather_prior_dist --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
+CLEANFILES += fpriors.dat spriors.dat
+
+#############################################################################
+# For every predicate in preds.txt yields a histogram of the ratios of the
 # counts of a predicate to its compliment in a given run.
 # Done separately for failing and for succeeding runs.
 #############################################################################
@@ -290,7 +294,7 @@ struthfreq.dat ftruthfreq.dat: s.runs f.runs preds.txt static-site-info.so $(cal
 CLEANFILES += struthfreq.dat ftruthfreq.dat
 
 #############################################################################
-# SOBER analysis 
+# SOBER analysis
 # implementation of the SOBER algorithm on predicates in preds.txt
 #############################################################################
 sober: sober.xml sober.txt
@@ -313,22 +317,22 @@ bicluster_votes.xml bicluster_preds.xml final-votes.txt: preds.txt X.dat notX.da
 CLEANFILES += bicluster_votes.xml bicluster_preds.xml final-votes.txt bicluster_votes.log list*.xml qualities.log notQualities.log
 
 #############################################################################
-# Logistic Regression --- early CBI analysis 
-# 1. Computes a set of interesting predicates into nonconst_preds.txt 
-# 2. Chops up all runs into a set of training runs and a validation set 
+# Logistic Regression --- early CBI analysis
+# 1. Computes a set of interesting predicates into nonconst_preds.txt
+# 2. Chops up all runs into a set of training runs and a validation set
 # 3. Iteratively computes a predictor for failure and success
 #    At each iteration
-#        computes the value for every predicate's coefficient 
+#        computes the value for every predicate's coefficient
 #            and stores it in theta.txt
 #        stores the results of applying the logistic regression formula to
-#            every training run in train_lls.txt 
+#            every training run in train_lls.txt
 #        stores the results of applying the logistic regression formula to
 #            every validation run in val_lls.txt
 #        evaluates by calculating a confusion matrix on the results
 #            of the prediction for every validation run and storing this
 #            in confmat.txt
 ############################################################################
-nonconst-preds: train.runs val.runs nonconst_preds.txt 
+nonconst-preds: train.runs val.runs nonconst_preds.txt
 train.runs val.runs nonconst_preds.txt : s.runs f.runs static-site-info.so $(call tool-deps, compute_nonconst_preds)
 	$(time) $(tooldir)/compute_nonconst_preds --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
 CLEANFILES += train.runs val.runs nonconst_preds.txt
