@@ -211,12 +211,6 @@ summary.xml: preds.txt s.runs f.runs static-site-info.so $(call tool-deps, gen-s
 	xmllint --valid --noout $@
 CLEANFILES += summary.xml
 
-logreg.xml: %.xml: %.txt static-site-info.so $(call tool-deps, %)
-	$(tooldir)/$* $*.txt >$@
-	$(build) links
-	xmllint --valid --noout $@
-CLEANFILES += logreg.xml
-
 ifndef omit-truth-probability-estimation
 parmstats.txt notp-parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)
 	$(time) $(tooldir)/collect_parmstats --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --sample-rates=rates.txt
@@ -324,6 +318,8 @@ CLEANFILES += bicluster_votes.xml bicluster_preds.xml final-votes.txt bicluster_
 #    At each iteration
 #        computes the value for every predicate's coefficient
 #            and stores it in theta.txt
+#            the intercept is indexed as -1, -1 
+#        stores the values for the last iteration in logreg.txt
 #        stores the results of applying the logistic regression formula to
 #            every training run in train_lls.txt
 #        stores the results of applying the logistic regression formula to
@@ -339,10 +335,15 @@ CLEANFILES += train.runs val.runs nonconst_preds.txt
 
 
 theta: theta.txt train_lls.txt val_lls.txt confmat.txt
-theta.txt train_lls.txt val_lls.txt confmat.txt: train.runs val.runs nonconst_preds.txt static-site-info.so $(call tool-deps, train_utillog)
+theta.txt train_lls.txt val_lls.txt confmat.txt logreg.txt: train.runs val.runs nonconst_preds.txt static-site-info.so $(call tool-deps, train_utillog)
 	$(time) $(tooldir)/train_utillog --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --delta1=10.0 --delta2=2.0 --delta3=1.0
-CLEANFILES += theta.txt train_lls.txt val_lls.txt confmat.txt
+CLEANFILES += theta.txt train_lls.txt val_lls.txt confmat.txt logreg.txt
 
+logreg.xml: %.xml: %.txt static-site-info.so $(call tool-deps, %)
+	$(tooldir)/$* < $*.txt >$@
+	$(build) links
+	xmllint --valid --noout $@
+CLEANFILES += logreg.xml
 
 
 #############################################################################

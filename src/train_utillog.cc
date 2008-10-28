@@ -333,7 +333,6 @@ operator<< (ostream &out, const confusion_matrix &cm)
 inline ostream &
 operator<< (ostream &out, const pred_hash_t &ph)
 {
-    out << "-1 -1 " << theta0 << '\n';
     for (pred_hash_t::const_iterator c = ph.begin(); c != ph.end(); c++) {
 	const PredCoords pc = c->first;
 	const pred_info_t pi = c->second;
@@ -351,16 +350,20 @@ void print_results(const vector<double> &train_lls,
     ofstream valfp("val_lls.txt", ios_base::app);
     ofstream cmfp("confmat.txt", ios_base::app);
     ofstream thetafp("theta.txt", ios_base::app);
+    ofstream logregfp("logreg.txt");
 
     trainfp << train_lls;
     valfp << val_lls;
     cmfp << cm;
+    thetafp << "-1 -1 " << theta0 << '\n';
     thetafp << pred_hash;
+    logregfp << pred_hash;
 
     trainfp.close();
     valfp.close();
     cmfp.close();
     thetafp.close();
+    logregfp.close();
 }
 
 
