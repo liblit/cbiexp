@@ -18,6 +18,7 @@ CXX := @CXX@
 CPPFLAGS := @CPPFLAGS@ -I$(tooldir)
 CXXFLAGS := @CXXFLAGS@ -W -Wall -Werror
 LEXLIB := @LEXLIB@
+HAVE_MEX = @HAVE_MEX@
 
 ifeq ($(strip $(update-tools)),)
 tool-deps =
