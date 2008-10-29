@@ -76,9 +76,6 @@ links :=					\
 	summary.css				\
 	summary.dtd				\
 	summary.xsl				\
-	symmetric.css				\
-	symmetric.dtd				\
-	symmetric.xsl				\
 	view.css				\
 	view.dtd				\
 	view.xsl
@@ -232,27 +229,6 @@ preds.txt: s.runs f.runs static-site-info.so $(call tool-deps, prefilter)
 	$(time) $(tooldir)/prefilter --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%)
 CLEANFILES += preds.txt
 
-#############################################################################
-# Symmetric algorithm
-# Early version of PLDI2005 algorithm
-#############################################################################
-symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml summary.xml
-	$(build) links
-	xsltproc --output $@ $<
-	xmllint --valid --noout --catalogs $@
-CLEANFILES += symmetric.html
-
-symmetric.xml: %.xml: $(stamp-decimate) s.runs f.runs $(call tool-deps, symmetric/%) static-site-info.so
-	$(build) links
-	$(time) $(tooldir)/symmetric/$* --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
-	xmllint --valid --noout $@
-CLEANFILES += symmetric.xml debug.xml
-
-static-site-info.xml: $(sites) $(call tool-deps, %)
-	$(build) links
-	$(tooldir)/applyTemplateToSites.py $(sites) $@ $(tooldir)/static_site_info_xml.tmpl --filter SchemeTagXMLFilter
-	xmllint --valid --noout $@
-CLEANFILES += static-site-info.xml
 
 #############################################################################
 # Truth probability estimation

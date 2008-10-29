@@ -192,7 +192,6 @@ src/fromplsa/Makefile
 src/fromplsa/toxml/Makefile
 src/matlab/Makefile
 src/never-reached/Makefile
-src/symmetric/Makefile
 src/Score/Makefile
 src/analysis-rules.mk
 ])

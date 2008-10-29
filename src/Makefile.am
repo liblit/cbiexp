@@ -1,4 +1,4 @@
-SUBDIRS = corrective-ranking evaluateplsa fromplsa matlab never-reached Score symmetric
+SUBDIRS = corrective-ranking evaluateplsa fromplsa matlab never-reached Score
 if ENABLE_AMPLIFY
 SUBDIRS += amplify
 endif
@@ -232,9 +232,6 @@ EXTRA_DIST =					\
 	summary.css				\
 	summary.dtd				\
 	summary.xsl				\
-	symmetric.css				\
-	symmetric.dtd				\
-	symmetric.xsl				\
 	view.css				\
 	view.dtd				\
 	view.xsl
