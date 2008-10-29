@@ -201,6 +201,10 @@ $(filter %_none.xml, $(views)): preds.txt static-site-info.so $(call tool-deps, 
 CLEANFILES += $(filter %_none.xml, $(views))
 CLEANFILES += complex_hl_none.xml complex-info.xml complex_all.txt
 
+#############################################################################
+# Shared XML goals, i.e., XML goals on which many other goals are dependent
+#############################################################################
+
 summary.xml: preds.txt s.runs f.runs static-site-info.so $(call tool-deps, gen-summary)
 	$(time) $(tooldir)/gen-summary --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --source-directory=src $(confidence:%=--confidence=%) >$@
 	$(build) links
