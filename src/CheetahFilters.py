@@ -1,6 +1,24 @@
-# Filters for Cheetah templates 
+# Filters for Cheetah templates
 
 from Cheetah.Filters import Filter
+
+def tagToScheme(val):
+    return {'B':'branches', 'F':'float-kinds', 'G':'g-object-unref', 'R':'returns','S':'scalar-pairs'}[val]
+
+class SchemeTagXMLFilter(Filter):
+    """Do XML filtering, converting a scheme tag to a scheme string"""
+
+    def filter(self, val, **kw):
+        """converts val to a properly escaped XML formatted string"""
+        if 'format' in kw:
+            if kw['format'] == 'scheme':
+                val = tagToScheme(val);
+
+        val = val.replace('&','&amp;')
+        val = val.replace('<','&lt;')
+        val = val.replace('>','&gt;')
+        val = val.replace('"','&#34;')
+        return '"' + val + '"'
 
 class CppFilter(Filter):
     """Convert strings for C++ source code"""
@@ -26,24 +44,25 @@ class CppFilter(Filter):
             if kw['format'] == 'string':
 
                 return handleString(val)
- 
+
             if kw['format'] == 'char':
 
                 return "'" + val + "'"
- 
+
             if kw['format'] == 'stringlist':
 
                 return ' ,'.join(map(lambda x : handleString(x), val))
 
         else:
-            return Filter.filter(self, val, **kw)
+            return Filter.filter(self, val, kw)
 
         return val
 
 
 # any class defined above should have an entry here
 filters = {
-  'CppFilter' : CppFilter
+  'CppFilter' : CppFilter,
+  'SchemeTagXMLFilter':SchemeTagXMLFilter
 }
 
 def factory(name):

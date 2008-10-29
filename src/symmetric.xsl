@@ -61,7 +61,7 @@
   </xsl:template>
 
 
-  <xsl:template match="site[../@scheme = 'g-object-unref']" mode="operands">
+  <xsl:template match="site[@scheme = 'g-object-unref']" mode="operands">
     <xsl:param name="predicate"/>
     <xsl:text>old_refcount(</xsl:text>
     <xsl:value-of select="operand[1]/@source"/>
@@ -70,10 +70,10 @@
     <xsl:value-of select="document('schemes.xml')/schemes/scheme[@id = 'g-object-unref']/predicate[number($predicate)]"/>
   </xsl:template>
 
-  <xsl:template match="site[../@scheme = 'returns']" mode="operands">
+  <xsl:template match="site[@scheme = 'returns']" mode="operands">
     <xsl:param name="predicate"/>
     <xsl:value-of select="operand[1]/@source"/>
-    <xsl:variable name="operator" select="document('schemes.xml')/schemes/scheme[@id = current()/../@scheme]/predicate[number($predicate)]/@text"/>
+    <xsl:variable name="operator" select="document('schemes.xml')/schemes/scheme[@id = current()/@scheme]/predicate[number($predicate)]/@text"/>
     <xsl:text>() </xsl:text>
     <xsl:value-of select="$operator"/>
     <xsl:text> 0</xsl:text>
@@ -82,7 +82,7 @@
   <xsl:template match="site" mode="operands">
     <xsl:param name="predicate"/>
     <xsl:value-of select="operand[1]/@source"/>
-    <xsl:variable name="operator" select="document('schemes.xml')/schemes/scheme[@id = current()/../@scheme]/predicate[number($predicate)]/@text"/>
+    <xsl:variable name="operator" select="document('schemes.xml')/schemes/scheme[@id = current()/@scheme]/predicate[number($predicate)]/@text"/>
     <xsl:text> </xsl:text>
     <xsl:value-of select="$operator"/>
     <xsl:text> </xsl:text>

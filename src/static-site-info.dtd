@@ -1,13 +1,8 @@
-<!ELEMENT static-site-info (sites*)>
-
-<!ELEMENT sites (site*)>
-<!ATTLIST sites
-  unit NMTOKEN #REQUIRED
-  scheme NMTOKEN #REQUIRED
->
+<!ELEMENT static-site-info (site*)>
 
 <!ELEMENT site (operand*)>
 <!ATTLIST site
+  scheme CDATA #REQUIRED
   file CDATA #REQUIRED
   line NMTOKEN #REQUIRED
   function NMTOKEN #REQUIRED
@@ -17,6 +12,4 @@
 <!ELEMENT operand EMPTY>
 <!ATTLIST operand
   source CDATA #REQUIRED
-  scope (local|global|mem|const) #IMPLIED
-  access (direct|indirect|field|index) #IMPLIED
 >

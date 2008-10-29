@@ -212,24 +212,6 @@ summary.xml: preds.txt s.runs f.runs static-site-info.so $(call tool-deps, gen-s
 CLEANFILES += summary.xml
 
 
-symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml
-	$(build) links
-	xsltproc --output $@ $<
-	xmllint --valid --noout --catalogs $@
-CLEANFILES += symmetric.html
-
-symmetric.xml: %.xml: $(stamp-decimate) s.runs f.runs $(call tool-deps, symmetric/%) static-site-info.so
-	$(build) links
-	$(time) $(tooldir)/symmetric/$* --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
-	xmllint --valid --noout $@
-CLEANFILES += symmetric.xml debug.xml
-
-static-site-info.xml: %.xml: $(sites) $(call tool-deps, %)
-	$(build) links
-	$(tooldir)/$* $(source-strip-prefixes:%=--strip-prefix=%) $(sites) >$@
-	xmllint --valid --noout $@
-CLEANFILES += static-site-info.xml
-
 #############################################################################
 # Shared goals, i.e., goals on which many other goals are dependent
 #############################################################################
@@ -251,6 +233,27 @@ preds.txt: s.runs f.runs static-site-info.so $(call tool-deps, prefilter)
 CLEANFILES += preds.txt
 
 #############################################################################
+# Symmetric algorithm
+#############################################################################
+symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml
+	$(build) links
+	xsltproc --output $@ $<
+	xmllint --valid --noout --catalogs $@
+CLEANFILES += symmetric.html
+
+symmetric.xml: %.xml: $(stamp-decimate) s.runs f.runs $(call tool-deps, symmetric/%) static-site-info.so
+	$(build) links
+	$(time) $(tooldir)/symmetric/$* --runs-directory=$(datadir) --begin-runs=$(begin-runs) --end-runs=$(end-runs)
+	xmllint --valid --noout $@
+CLEANFILES += symmetric.xml debug.xml
+
+static-site-info.xml: $(sites) $(call tool-deps, %)
+	$(build) links
+	$(tooldir)/applyTemplateToSites.py $(sites) $@ $(tooldir)/static_site_info_xml.tmpl --filter SchemeTagXMLFilter
+	xmllint --valid --noout $@
+CLEANFILES += static-site-info.xml
+
+#############################################################################
 # Truth probability estimation
 # Estimate truth probabilities for every predicate in preds.txt for every run
 # using the algorithm in the ICML 2006 paper
@@ -259,7 +262,7 @@ CLEANFILES += preds.txt
 # could use the estimated truth probabilities as a starting point
 #
 # If omit-truth-probability-estimation flag is set do not estimate
-# probabilties, just report actual values 
+# probabilties, just report actual values
 #############################################################################
 ifndef omit-truth-probability-estimation
 parmstats.txt notp-parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)
@@ -329,7 +332,7 @@ CLEANFILES += bicluster_votes.xml bicluster_preds.xml final-votes.txt bicluster_
 #    At each iteration
 #        computes the value for every predicate's coefficient
 #            and stores it in theta.txt
-#            the intercept is indexed as -1, -1 
+#            the intercept is indexed as -1, -1
 #        stores the values for the last iteration in logreg.txt
 #        stores the results of applying the logistic regression formula to
 #            every training run in train_lls.txt
