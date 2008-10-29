@@ -234,8 +234,9 @@ CLEANFILES += preds.txt
 
 #############################################################################
 # Symmetric algorithm
+# Early version of PLDI2005 algorithm
 #############################################################################
-symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml
+symmetric.html: %.html: %.xml %.dtd %.xsl static-site-info.xml summary.xml
 	$(build) links
 	xsltproc --output $@ $<
 	xmllint --valid --noout --catalogs $@
