@@ -148,7 +148,6 @@ buildView(Candidates candidates, const char projection[], Foci *foci = 0)
           fprintf(fout, "$$$$ Simple %d\n", winner->isPerfect());
         }
 	view << *winner;
-    cout << *winner;
 	if (foci)
 	  foci->insert(winner->index);
 	
