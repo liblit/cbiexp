@@ -31,7 +31,6 @@ noinst_PROGRAMS =				\
 
 noinst_SCRIPTS =				\
 	htmlify-sources				\
-	static-site-info			\
 	top-rho
 
 noinst_LIBRARIES = libanalyze.a
