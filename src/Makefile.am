@@ -228,7 +228,6 @@ EXTRA_DIST =					\
 	scores.xsl				\
 	sorts.dtd				\
 	sorts.xml				\
-	static-site-info.dtd			\
 	summary.css				\
 	summary.dtd				\
 	summary.xsl				\
