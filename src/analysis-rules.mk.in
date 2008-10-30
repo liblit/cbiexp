@@ -7,7 +7,6 @@ datadir ?= $(experiment)/data
 testsummaries := $(datadir)/summaries
 corrdir := $(root)/correlations
 tooldir := $(root)/src
-srcdir ?= $(experiment)/src
 raw-report-name ?= reports
 matlab-counts ?= Xtru.sparse
 
