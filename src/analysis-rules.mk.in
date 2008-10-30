@@ -10,8 +10,6 @@ tooldir := $(root)/src
 raw-report-name ?= reports
 matlab-counts ?= Xtru.sparse
 
-xmlify-add-suffix := .html
-
 time := /usr/bin/time
 CXX := @CXX@
 CPPFLAGS := @CPPFLAGS@ -I$(tooldir)
