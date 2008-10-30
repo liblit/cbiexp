@@ -153,14 +153,6 @@ endif
 clean::
 	$(find-zooms) -exec rm '{}' ';'
 
-all_hl_corrected-%_complex.xml: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/%) pairs.txt
-	$(time) $(tooldir)/corrective-ranking/$* --zoom=$(zoom) --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags) --complex-preds
-	$(build) links
-	xmllint --valid --noout $@
-	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
-CLEANFILES += all_hl_corrected-exact-complete_complex.xml corrected-exact-complete_complex.txt
-clean::
-	$(find-zooms) -exec rm '{}' ';'
 
 #############################################################################
 # Shared XML goals, i.e., XML goals on which many other goals are dependent
@@ -237,6 +229,15 @@ all_hl_corrected-approximate-complete.xml corrected-approximate-complete.txt: f.
 	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
 CLEANFILES += all_hl_corrected-approximate-complete.xml corrected-approximate-complete.txt
 .PHONY : pldi2005approx
+
+# ISSTA 2007 algorithm
+issta2007: all_hl_corrected-exact-complete_complex.xml corrected-exact-complete_complex.txt
+all_hl_corrected-%_complex.xml: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/%) pairs.txt
+	$(time) $(tooldir)/corrective-ranking/$* --zoom=$(zoom) --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags) --complex-preds
+	$(build) links
+	xmllint --valid --noout $@
+	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
+CLEANFILES += all_hl_corrected-exact-complete_complex.xml corrected-exact-complete_complex.txt
 
 obs.txt tru.txt: $(stamp-decimate) preds.txt s.runs f.runs static-site-info.so $(call tool-deps, compute-obs-tru)
 	$(time) $(tooldir)/compute-obs-tru --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir)
