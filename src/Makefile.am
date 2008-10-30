@@ -30,7 +30,6 @@ noinst_PROGRAMS =				\
 	xmlify-results
 
 noinst_SCRIPTS =				\
-	htmlify-sources				\
 	top-rho
 
 noinst_LIBRARIES = libanalyze.a

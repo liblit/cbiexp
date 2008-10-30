@@ -14,69 +14,15 @@ using namespace std;
 
 using xml::escape;
 
-
-static list<string> prefixes;
-
-
-////////////////////////////////////////////////////////////////////////
-//
-//  command line processing
-//
-
-
-#ifdef HAVE_ARGP_H
-#include <sysexits.h>
-
-static int
-parseFlag(int key, char *arg, argp_state *)
-{
-  switch (key)
-    {
-    case 'p':
-      prefixes.push_back(arg);
-      return 0;
-
-    default:
-      return ARGP_ERR_UNKNOWN;
-    }
-}
-
-
-static void
-processCommandLine(int argc, char *argv[])
-{
-  static const argp_option options[] = {
-    { "strip-prefix", 'p', "TEXT", 0, "remove TEXT from the start of file names; may be given multiple times", 0 },
-    { 0, 0, 0, 0, 0, 0 }
-  };
-
-  static const argp argp = {
-    options, parseFlag, 0, 0, 0, 0, 0
-  };
-
-  argp_parse(&argp, argc, argv, 0, 0, 0);
-}
-
-#else // !HAVE_ARGP_H
-
-inline void
-processCommandLine(int, char *[])
-{
-}
-
-#endif // !HAVE_ARGP_H
-
-
 ////////////////////////////////////////////////////////////////////////
 //
 //  The main event
 //
 
 
-int main(int argc, char *argv[])
+int main()
 {
   set_terminate_verbose();
-  processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
 
   const StaticSiteInfo staticSiteInfo;
@@ -95,12 +41,6 @@ int main(int argc, char *argv[])
       const string &scheme = scheme_name(site.scheme_code);
 
       string filename(site.file);
-      for (list<string>::const_iterator prefix = prefixes.begin(); prefix != prefixes.end(); ++prefix)
-	if (filename.compare(0, prefix->size(), *prefix) == 0)
-	  {
-	    filename.erase(0, prefix->size());
-	    break;
-	  }
 
       xml << "<info scheme=\"" << scheme
 	  << "\" site=\"" << stats.siteIndex + 1
