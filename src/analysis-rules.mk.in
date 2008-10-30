@@ -162,13 +162,6 @@ CLEANFILES += all_hl_corrected-exact-complete_complex.xml corrected-exact-comple
 clean::
 	$(find-zooms) -exec rm '{}' ';'
 
-$(filter %_none.xml, $(views)): preds.txt static-site-info.so $(call tool-deps, gen-views) pairs.txt
-	$(build) links
-	$(tooldir)/gen-views --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(schemes:%=--force-scheme=%) $(view_flags) $(if $(COMPOUND), --complex-preds)
-	xmllint --valid --noout $(filter %_none.xml, $(views))
-CLEANFILES += $(filter %_none.xml, $(views))
-CLEANFILES += complex_hl_none.xml complex-info.xml complex_all.txt
-
 #############################################################################
 # Shared XML goals, i.e., XML goals on which many other goals are dependent
 #############################################################################
@@ -206,6 +199,19 @@ preds.txt: s.runs f.runs static-site-info.so $(call tool-deps, prefilter)
 	$(time) $(tooldir)/prefilter --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%)
 CLEANFILES += preds.txt
 
+
+#############################################################################
+# Many measures, no elimination
+# See subdirectory Scores for a description of the different measures
+#############################################################################
+noelim: $(filter %_none.xml, $(views))
+$(filter %_none.xml, $(views)): preds.txt static-site-info.so $(call tool-deps, gen-views) pairs.txt
+	$(build) links
+	$(tooldir)/gen-views --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(schemes:%=--force-scheme=%) $(view_flags) $(if $(COMPOUND), --complex-preds)
+	xmllint --valid --noout $(filter %_none.xml, $(views))
+CLEANFILES += $(filter %_none.xml, $(views))
+CLEANFILES += complex_hl_none.xml complex-info.xml complex_all.txt
+.PHONY : noelim
 
 #############################################################################
 # PLDI 2005 algorithm and related algorithms
