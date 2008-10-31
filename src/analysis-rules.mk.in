@@ -112,20 +112,18 @@ $(publish)/%: %
 	[ -d $(@D) ] || mkdir $(@D)
 	cp $< $@
 
+
+#############################################################################
+# Shared XML goals, i.e., XML goals on which many other goals are dependent
+#############################################################################
+
+# copies xml dtds and xslt scripts from tools directory to analysis directory
 links: $(links)
 $(links): %: $(call tool-deps, %)
 	if [ -L $@ ]; then rm -f $@; fi
 	cp $(tooldir)/$* $@
 CLEANFILES += $(links)
 .PHONY: links
-
-clean::
-	$(find-zooms) -exec rm '{}' ';'
-
-
-#############################################################################
-# Shared XML goals, i.e., XML goals on which many other goals are dependent
-#############################################################################
 
 summary.xml: preds.txt s.runs f.runs static-site-info.so $(call tool-deps, gen-summary)
 	$(time) $(tooldir)/gen-summary --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --source-directory=src $(confidence:%=--confidence=%) >$@
@@ -426,7 +424,8 @@ runsinfo.dat: runsinfo.mat
 CLEANFILES += runsinfo.dat
 
 ########################################################################
-
+# Administrative commands and directives
+########################################################################
 
 ifneq ($(strip $(update-tools)),)
 $(tooldir)/%:
@@ -434,6 +433,9 @@ $(tooldir)/%:
 $(tooldir)/analysis-rules.mk: force
 	$(MAKE) -C $(tooldir)
 endif
+
+clean::
+	$(find-zooms) -exec rm '{}' ';'
 
 clean::
 	rm -rf $(CLEANFILES)
