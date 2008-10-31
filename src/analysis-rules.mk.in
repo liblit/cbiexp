@@ -427,28 +427,18 @@ CLEANFILES += runsinfo.dat
 # Diagnostic commands
 ########################################################################
 
-# echos all the variables defined in any analysis scripts
+# echos all the variables defined for this execution of make
+# really, it uses grep to identify output from make -p that looks like
+# variable definitions, so is dependent on make's format for printing
+# this information
 echovars:
-	echo "begin-runs" $(begin-runs)
-	echo "confidence" $(confidence)
-	echo "end-runs" $(end-runs)
-	echo "executable" $(executable)
-	echo "corrdir" $(corrdir)
-	echo "datadir" $(datadir)
-	echo "experiment" $(experiment)
-	echo "instrumentor" $(instrumentor)
-	echo "matlab" $(matlab)
-	echo "matlab-counts" $(matlab-counts)
-	echo "name" $(name)
-	echo "program" $(program)
-	echo "root" $(root)
-	echo "sites" $(sites)
-	echo "sliver" $(sliver)
-	echo "tooldir" $(tooldir)
-	echo "update-tools" $(update-tools)
-	echo "version" $(version)
-	echo "zoom" $(zoom)
+	$(MAKE) --question --print-data-base | grep '.*= .*' | grep -v '^[_#<@%\.\?\*\^\+]' | sort
 .PHONY : echovars
+
+# warns about any variables that are used but undefined
+echoundefs:
+	$(MAKE) --question --warn-undefined-variables || test -z
+.PHONY : echoundefs
 
 ########################################################################
 # Administrative commands and directives
@@ -472,7 +462,7 @@ force:
 .PHONY: force
 
 .DELETE_ON_ERROR:
-.SILENT: echovars
+.SILENT: echovars echoundefs
 
 ########################################################################
 pairs.txt: preds.txt
