@@ -462,7 +462,6 @@ force:
 .PHONY: force
 
 .DELETE_ON_ERROR:
-.SILENT: echovars echoundefs
 
 ########################################################################
 pairs.txt: preds.txt
