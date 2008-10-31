@@ -424,6 +424,33 @@ runsinfo.dat: runsinfo.mat
 CLEANFILES += runsinfo.dat
 
 ########################################################################
+# Diagnostic commands
+########################################################################
+
+# echos all the variables defined in any analysis scripts
+echovars:
+	echo "begin-runs" $(begin-runs)
+	echo "confidence" $(confidence)
+	echo "end-runs" $(end-runs)
+	echo "executable" $(executable)
+	echo "corrdir" $(corrdir)
+	echo "datadir" $(datadir)
+	echo "experiment" $(experiment)
+	echo "instrumentor" $(instrumentor)
+	echo "matlab" $(matlab)
+	echo "matlab-counts" $(matlab-counts)
+	echo "name" $(name)
+	echo "program" $(program)
+	echo "root" $(root)
+	echo "sites" $(sites)
+	echo "sliver" $(sliver)
+	echo "tooldir" $(tooldir)
+	echo "update-tools" $(update-tools)
+	echo "version" $(version)
+	echo "zoom" $(zoom)
+.PHONY : echovars
+
+########################################################################
 # Administrative commands and directives
 ########################################################################
 
@@ -445,6 +472,7 @@ force:
 .PHONY: force
 
 .DELETE_ON_ERROR:
+.SILENT: echovars
 
 ########################################################################
 pairs.txt: preds.txt
