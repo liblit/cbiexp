@@ -94,32 +94,30 @@ ifdef COMPOUND
 web += all_hl_corrected-exact-complete_complex.xml
 endif
 
-publish ?= $(HOME)/www/$(name)-new
 
 all: $(web)
 .PHONY: all
 
-publish: $(web:%=$(publish)/%)
-	$(find-zooms) -exec cp '{}' $(publish) ';'
-.PHONY: publish
-
-src: ;
-$(publish)/src: src
-	rm -rf $(publish)/src
-	-cp -r $< $(publish)
-
-$(publish)/%: %
-	[ -d $(@D) ] || mkdir $(@D)
-	cp $< $@
-
+#############################################################################
+# Copy all web friendly files to a separate directory for viewing
+# Don't copy if publish directory has not already been created
+#############################################################################
+publish ?= $(HOME)/www/$(name)-new
+publish: $(links)
+	test -e $(publish)
+	-rm -Rf $(publish)/*
+	find . -name '*.xml' -print0 -or -name '*.html' -print0 | xargs -t --null --no-run-if-empty -i cp --parents {} $(publish)
+	cp --parents $(links) $(publish)
+.PHONY : publish
 
 #############################################################################
 # Shared XML goals, i.e., XML goals on which many other goals are dependent
 #############################################################################
 
 # copies xml dtds and xslt scripts from tools directory to analysis directory
+# depends on .xml files on which any xsl file explicitly depends 
 links: $(links)
-$(links): %: $(call tool-deps, %)
+$(links): %: $(call tool-deps, %) summary.xml predictor-info.xml
 	if [ -L $@ ]; then rm -f $@; fi
 	cp $(tooldir)/$* $@
 CLEANFILES += $(links)
@@ -364,7 +362,7 @@ elimschemes: preds.txt rho.bin static-site-info.so $(call tool-deps, project)
 	touch elimschemes
 CLEANFILES += $(filter-out %_none.xml, $(views)) elimschemes
 
-# transforms correlation coefficient information into a web readable format 
+# transforms correlation coefficient information into a web readable format
 corrcoefs: $(topRho)
 $(topRho): top-rho_%: elimschemes rho.bin $(call tool-deps, top-rho) elimschemes
 	$(tooldir)/top-rho
