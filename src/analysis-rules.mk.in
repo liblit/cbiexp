@@ -38,7 +38,6 @@ find-linears := find . -maxdepth 1 -name '*_linear.xml'
 find-circulars := find . -maxdepth 1 -name '*_circulars'
 
 links :=  					\
-	$(extra-links)				\
 	bug-o-meter.css				\
 	bug-o-meter.dtd				\
 	bug-o-meter.js				\
@@ -86,7 +85,6 @@ web :=  					\
 	$(links)				\
 	$(topRho)				\
 	$(views)				\
-	$(web_extras)				\
 	predictor-info.xml			\
 	summary.xml
 
@@ -205,7 +203,7 @@ all_hl_corrected-%_complex.xml: f.runs obs.txt tru.txt $(call tool-deps, correct
 CLEANFILES += all_hl_corrected-exact-complete_complex.xml corrected-exact-complete_complex.txt
 .PHONY : issta2007
 
-obs.txt tru.txt: $(stamp-decimate) preds.txt s.runs f.runs static-site-info.so $(call tool-deps, compute-obs-tru)
+obs.txt tru.txt: preds.txt s.runs f.runs static-site-info.so $(call tool-deps, compute-obs-tru)
 	$(time) $(tooldir)/compute-obs-tru --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir)
 CLEANFILES += obs.txt tru.txt
 
@@ -222,7 +220,7 @@ CLEANFILES += obs.txt tru.txt
 # probabilties, just report actual values
 #############################################################################
 ifndef omit-truth-probability-estimation
-parmstats.txt notp-parmstats.txt: $(stamp-decimate) s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)
+parmstats.txt notp-parmstats.txt: s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)
 	$(time) $(tooldir)/collect_parmstats --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --sample-rates=rates.txt
 CLEANFILES += parmstats.txt notp-parmstats.txt
 
@@ -342,7 +340,7 @@ CLEANFILES += f_nonconst_preds.txt kmeans_groups.txt
 ############################################################################
 never-kinds := reached false true
 nevers := $(never-kinds:%=never-%.txt)
-$(nevers): $(stamp-decimate) f.runs static-site-info.so $(call tool-deps, never-reached/never-reached)
+$(nevers): f.runs static-site-info.so $(call tool-deps, never-reached/never-reached)
 	$(tooldir)/never-reached/never-reached --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir)
 	for goal in $(nevers); do test -r $$goal; done
 CLEANFILES += $(nevers)
