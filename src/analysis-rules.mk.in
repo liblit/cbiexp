@@ -30,12 +30,14 @@ sparse := $(sparsebase:=.) $(sparsebase:=.ir) $(sparsebase:=.jc) $(sparsebase:=.
 
 schemes ?= all branches float-kinds g-object-unref returns scalar-pairs
 sorts := lb is fs nf hl hs lbnf
-projections := none #circular linear
+projections := none circular linear
 views := $(foreach scheme, $(schemes), $(foreach sort, $(sorts), $(foreach projection, $(projections), $(scheme)_$(sort)_$(projection).xml)))
-#topRho := $(foreach sort, hl hs, $(foreach proj, circular linear, top-rho_$(sort)_$(proj).xml))
+topRho := $(foreach sort, hl hs, $(foreach proj, circular linear, top-rho_$(sort)_$(proj).xml))
 zoom ?= all
 
 find-zooms := find . -maxdepth 1 -name 'zoom-corrected-*.xml'
+find-linears := find . -maxdepth 1 -name '*_linear.xml'
+find-circulars := find . -maxdepth 1 -name '*_circulars'
 
 links :=  					\
 	$(extra-links)				\
@@ -118,37 +120,6 @@ $(links): %: $(call tool-deps, %)
 	cp $(tooldir)/$* $@
 CLEANFILES += $(links)
 .PHONY: links
-
-ifdef HAVE_MEX
-$(filter-out %_none.xml, $(views)): preds.txt rho.bin static-site-info.so $(call tool-deps, project)
-	$(time) $(tooldir)/project --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(projected_view_flags)
-	$(build) links
-	xmllint --valid --noout $(filter-out %_none.xml, $(views))
-CLEANFILES += $(filter-out %_none.xml, $(views))
-
-$(topRho): top-rho_%: all_% rho.bin $(call tool-deps, top-rho)
-	$(tooldir)/top-rho
-	$(build) links
-	xmllint --valid --noout $(topRho)
-CLEANFILES += $(topRho)
-
-rho.bin: $(corrdir)/readsp.mexglx calculate.m $(sparse)
-	echo "fwrite(fopen('$@','w'), rho, 'double');" | $(time) matlab -nodisplay -nojvm -r calculate
-	test -s $@
-CLEANFILES += rho.bin mats
-
-$(corrdir)/readsp.mexglx: force
-	$(MAKE) -C $(@D) $(@F)
-
-calculate.m: $(corrdir)/genMscript.pl $(sparsebase:=.meta)
-	$(time) $< .
-CLEANFILES += calculate.m
-
-$(sparse): $(corrdir)/mhn2sparsemat.pl f.runs s.runs obs.txt tru.txt
-	$(time) $< . .
-	for goal in $(sparse); do test -r $$goal; done
-CLEANFILES += $(sparse)
-endif
 
 clean::
 	$(find-zooms) -exec rm '{}' ';'
@@ -382,6 +353,53 @@ $(nevers): $(stamp-decimate) f.runs static-site-info.so $(call tool-deps, never-
 	for goal in $(nevers); do test -r $$goal; done
 CLEANFILES += $(nevers)
 
+##############################################################################
+# These analyses are grouped not because they are related by what they do
+# but because they are related by the infrastructure that supports them.
+# Comments next to each goal indicates what they actually do
+##############################################################################
+ifdef HAVE_MEX
+# calculates scores information for the linear and circular projection schemes
+elimschemes: preds.txt rho.bin static-site-info.so $(call tool-deps, project)
+	$(time) $(tooldir)/project --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir)
+	$(build) links
+	$(find-linears) -exec xmllint --valid --noout '{}' ';'
+	$(find-circulars) -exec xmllint --valid --noout '{}' ';'
+	touch elimschemes
+CLEANFILES += $(filter-out %_none.xml, $(views)) elimschemes
+
+# transforms correlation coefficient information into a web readable format 
+corrcoefs: $(topRho)
+$(topRho): top-rho_%: elimschemes rho.bin $(call tool-deps, top-rho) elimschemes
+	$(tooldir)/top-rho
+	$(build) links
+	xmllint --valid --noout $(topRho)
+CLEANFILES += $(topRho)
+.PHONY : corrcoefs
+
+# calculates correlation coefficients for predicates in preds.txt
+# writes many matlab output files to mats subdirectory
+# writes the correlation coefficients as a binary file to rho.bin
+rho.bin: $(corrdir)/readsp.mexglx calculate.m $(sparse)
+	echo "fwrite(fopen('$@','w'), rho, 'double');" | $(time) matlab -nodisplay -nojvm -r calculate
+	test -s $@
+CLEANFILES += rho.bin mats
+
+# builds a file to read some inputs into matlabs sparse matrix format
+$(corrdir)/readsp.mexglx: force
+	$(MAKE) -C $(@D) $(@F)
+
+# automatically generates a file to calculate correlation coefficients
+calculate.m: $(corrdir)/genMscript.pl $(sparsebase:=.meta)
+	$(time) $< .
+CLEANFILES += calculate.m
+
+# converts data from standard format to a matlab friendly format (ascii)
+$(sparse): $(corrdir)/mhn2sparsemat.pl f.runs s.runs obs.txt tru.txt
+	$(time) $< . .
+	for goal in $(sparse); do test -r $$goal; done
+CLEANFILES += $(sparse)
+endif
 
 ##############################################################################
 # generate lots of data files for input to pLSA analysis
