@@ -168,8 +168,6 @@ libanalyze_a_SOURCES =				\
 	Verbose.h				\
 	ViewPrinter.cc				\
 	ViewPrinter.h				\
-	XMLTemplate.cc				\
-	XMLTemplate.h				\
 	arguments.h				\
 	classify_runs.cc			\
 	classify_runs.h				\

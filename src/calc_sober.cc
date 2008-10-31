@@ -22,7 +22,6 @@
 #include "Score/Importance.h"
 #include "sorts.h"
 #include "utils.h"
-#include "XMLTemplate.h"
 
 
 using namespace std;
@@ -185,7 +184,7 @@ void print_results()
   ofstream outfp ("sober.xml");
   outfp << "<?xml version=\"1.0\"?>" << endl
         << "<?xml-stylesheet type=\"text/xsl\" href=\""
-        << XMLTemplate::format("pred-scores") << ".xsl\"?>" << endl
+        << string("pred-scores") << ".xsl\"?>" << endl
         << "<!DOCTYPE scores SYSTEM \"pred-scores.dtd\">" << endl
         << "<scores>" << endl;
  
@@ -212,7 +211,6 @@ void process_cmdline(int argc, char** argv)
     static const argp_child children[] = {
 	{ &NumRuns::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
-	{ &XMLTemplate::argp, 0, 0, 0},
 	{ 0, 0, 0, 0 }
     };
 

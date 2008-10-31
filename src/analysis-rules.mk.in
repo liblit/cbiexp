@@ -4,10 +4,8 @@ root ?= ../..
 experiment ?= ..
 name ?= $(error no name set)
 datadir ?= $(experiment)/data
-testsummaries := $(datadir)/summaries
 corrdir := $(root)/correlations
 tooldir := $(root)/src
-raw-report-name ?= reports
 matlab-counts ?= Xtru.sparse
 
 time := /usr/bin/time
@@ -273,7 +271,7 @@ CLEANFILES += struthfreq.dat ftruthfreq.dat
 sober: sober.xml sober.txt
 sober.xml sober.txt: static-site-info.so preds.txt $(call tool-deps, calc_sober)
 	$(build) links
-	$(time) $(tooldir)/calc_sober --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name)
+	$(time) $(tooldir)/calc_sober --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir)
 	xmllint --valid --noout sober.xml
 CLEANFILES += sober.xml sober.txt
 .PHONY : sober
@@ -286,7 +284,7 @@ CLEANFILES += sober.xml sober.txt
 bicluster: bicluster_votes.xml bicluster_preds.xml final-votes.txt
 bicluster_votes.xml bicluster_preds.xml final-votes.txt: preds.txt X.dat notX.dat $(call tool-deps, bicluster)
 	$(build) links
-	$(time) $(tooldir)/bicluster --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --xmltemplate-prefix=$(name) --truth-probability-weights=X.dat --not-truth-probability-weights=notX.dat
+	$(time) $(tooldir)/bicluster --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) --truth-probability-weights=X.dat --not-truth-probability-weights=notX.dat
 	xmllint --valid --noout bicluster_votes.xml
 CLEANFILES += bicluster_votes.xml bicluster_preds.xml final-votes.txt bicluster_votes.log list*.xml qualities.log notQualities.log
 .PHONY : bicluster

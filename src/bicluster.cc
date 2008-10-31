@@ -36,7 +36,6 @@
 #include "RunBugs.h"
 #include "RunsDirectory.h"
 #include "Score/Importance.h"
-#include "XMLTemplate.h"
 #include "classify_runs.h"
 #include "fopen.h"
 #include "sorts.h"
@@ -227,31 +226,6 @@ read_freqs ()
   fclose(wfp);
 }
 
-// Print the bug histogram of the list of interesting predicates
-void
-print_histograms()
-{
-  RunBugs::BugVec bugs;
-
-  RunBugs::read_runbugs();
-  ofstream outfp ("pred_histograms.xml");
-  outfp << "<?xml version=\"1.0\"?>" << endl
-        << "<!DOCTYPE histograms SYSTEM \"histograms.dtd\">" << endl
-        << "<histograms>" << endl;
-
-  unsigned npreds = predList.size();
-  for (unsigned i = 0; i < npreds; ++i) {
-    RunBugs::bug_hist(bugs, contribRuns[i]);
-    outfp << "<predictor>" << endl;
-    for (unsigned j = 0; j < bugs.size(); ++j) {
-      outfp << "<bug count=\"" << bugs[j] << "\"/>" << endl; 
-    }
-    outfp << "</predictor>" << endl;
-  }
-  
-  outfp << "</histograms>" << endl;
-  outfp.close();
-}
 
 // Print which run voted for which predicate
 static void
@@ -273,7 +247,7 @@ print_scores(const char *outfn)
   ofstream outfp (outfn);
   outfp << "<?xml version=\"1.0\"?>" << endl
         << "<?xml-stylesheet type=\"text/xsl\" href=\"" 
-	<< XMLTemplate::format("pred-scores") << ".xsl\"?>" << endl
+	<< string("pred-scores") << ".xsl\"?>" << endl
 	<< "<!DOCTYPE scores SYSTEM \"pred-scores.dtd\">" << endl
 	<< "<scores>" << endl;
 
@@ -619,7 +593,7 @@ ttest_rank()
   ofstream bestfp ("bicluster_preds.xml");
   bestfp << "<?xml version=\"1.0\"?>" << endl
          << "<?xml-stylesheet type=\"text/xsl\" href=\"" 
-	 << XMLTemplate::format("pred-scores") << ".xsl\"?>" << endl
+	 << string("pred-scores") << ".xsl\"?>" << endl
 	 << "<!DOCTYPE scores SYSTEM \"pred-scores.dtd\">" << endl
 	 << "<scores>" << endl;
   
@@ -686,7 +660,6 @@ static void process_cmdline(int argc, char **argv)
     static const argp_child children[] = {
 	{ &NumRuns::argp, 0, 0, 0 },
 	{ &RunsDirectory::argp, 0, 0, 0 },
-	{ &XMLTemplate::argp, 0, 0, 0},
 	{ &AdjWeightsOptions::argp, 0, 0, 0},
 	{ 0, 0, 0, 0 }
     };
@@ -716,12 +689,6 @@ int main (int argc, char** argv)
 
     compute_scores();
 
-    // must print out bug histograms before the scores,
-    // because print_scores alters the ordering of predicates
-    // through sorting
-    if (XMLTemplate::prefix == "moss")
-      print_histograms();
-  
     print_final_votes("final-votes.txt"); // print which run voted for which predicate
     print_scores("bicluster_votes.xml"); // print the final bi-clustering ranking
   
