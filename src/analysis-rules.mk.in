@@ -78,6 +78,7 @@ all ?=						\
 	noelim					\
 	pldi2005				\
 	pldi2005approx				\
+	issta2007				\
 	prior-dist				\
 	truth-dist				\
 	sober					\
@@ -90,6 +91,8 @@ all ?=						\
 	runsinfo.dat
 all: $(all)
 .PHONY: all
+
+COMPOUND = $(findstring issta2007, $(all))
 
 #############################################################################
 # Copy all web friendly files to a separate directory for viewing
