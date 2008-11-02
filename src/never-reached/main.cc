@@ -4,7 +4,6 @@
 #include "../ClassifyRuns.h"
 #include "../NumRuns.h"
 #include "../Progress/Bounded.h"
-#include "../RunsDirectory.h"
 #include "../termination.h"
 #include "Reader.h"
 
@@ -16,7 +15,6 @@ processCommandLine(int argc, char *argv[])
 {
   static const argp_child children[] = {
     { &NumRuns::argp, 0, 0, 0 },
-    { &RunsDirectory::argp, 0, 0, 0 },
     { 0, 0, 0, 0 }
   };
 

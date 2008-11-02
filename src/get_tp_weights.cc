@@ -34,7 +34,6 @@
 #include <string>
 #include <vector>
 #include "classify_runs.h"
-#include "CompactReport.h"
 #include "EstimateTPs.h"
 #include "fopen.h"
 #include "NumRuns.h"

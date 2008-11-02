@@ -6,7 +6,6 @@
 #include "../Confidence.h"
 #include "../NumRuns.h"
 #include "../Progress/Bounded.h"
-#include "../RunsDirectory.h"
 #include "../Stylesheet.h"
 #include "../ViewPrinter.h"
 #include "../termination.h"
@@ -228,7 +227,6 @@ processCommandLine(int argc, char *argv[])
   static const argp_child children[] = {
     { &Confidence::argp, 0, 0, 0 },
     { &NumRuns::argp, 0, 0, 0 },
-    { &RunsDirectory::argp, 0, 0, 0 },
     { &Stylesheet::argp, 0, 0, 0 },
     { 0, 0, 0, 0 }
   };

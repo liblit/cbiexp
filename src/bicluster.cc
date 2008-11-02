@@ -34,7 +34,6 @@
 #include "PredStats.h"
 #include "Progress/Bounded.h"
 #include "RunBugs.h"
-#include "RunsDirectory.h"
 #include "Score/Importance.h"
 #include "classify_runs.h"
 #include "fopen.h"
@@ -659,7 +658,6 @@ static void process_cmdline(int argc, char **argv)
 {
     static const argp_child children[] = {
 	{ &NumRuns::argp, 0, 0, 0 },
-	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ &AdjWeightsOptions::argp, 0, 0, 0},
 	{ 0, 0, 0, 0 }
     };

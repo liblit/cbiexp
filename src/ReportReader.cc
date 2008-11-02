@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cerrno>
 #include <cstring>
 #include <cstdio>
 #include <fstream>
@@ -6,7 +7,6 @@
 #include <set>
 #include <sstream>
 #include <stdexcept>
-#include "CompactReport.h"
 #include "ReportReader.h"
 #include "SiteCoords.h"
 #include "StaticSiteInfo.h"

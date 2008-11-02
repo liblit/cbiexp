@@ -9,7 +9,6 @@
 #include "NumRuns.h"
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
-#include "RunsDirectory.h"
 #include "StaticSiteInfo.h"
 #include "classify_runs.h"
 #include "utils.h"
@@ -195,7 +194,6 @@ void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
 	{ &NumRuns::argp, 0, 0, 0 },
-	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
 

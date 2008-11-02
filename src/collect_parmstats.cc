@@ -35,7 +35,6 @@
 #include "Progress/Bounded.h"
 #include "SampleRatesFile.h"
 #include "ReportReader.h"
-#include "RunsDirectory.h"
 #include "SiteCoords.h"
 #include "classify_runs.h"
 #include "utils.h"
@@ -322,7 +321,6 @@ void process_cmdline(int argc, char** argv)
     static const argp_child children[] = {
 	{ &NumRuns::argp, 0, 0, 0 },
         { &SampleRatesFile::argp, 0, 0, 0 },
-	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
 

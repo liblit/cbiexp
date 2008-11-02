@@ -101,8 +101,6 @@ libanalyze_a_SOURCES =				\
 	Candidate.h				\
 	ClassifyRuns.cc				\
 	ClassifyRuns.h				\
-	CompactReport.cc			\
-	CompactReport.h				\
 	Confidence.cc				\
 	Confidence.h				\
 	Counts.h				\
@@ -134,16 +132,12 @@ libanalyze_a_SOURCES =				\
 	Progress/Unbounded.h			\
 	Progress/tty.cc				\
 	Progress/tty.h				\
-	RawReport.cc				\
-	RawReport.h				\
 	ReportReader.cc				\
 	ReportReader.h				\
 	Rho.cc					\
 	Rho.h					\
 	RunBugs.cc				\
 	RunBugs.h				\
-	RunsDirectory.cc			\
-	RunsDirectory.h				\
 	RunSet.cc				\
 	RunSet.h				\
 	RunsSplit.cc				\
