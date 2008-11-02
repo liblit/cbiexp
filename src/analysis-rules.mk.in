@@ -75,23 +75,6 @@ links :=  					\
 	view.dtd				\
 	view.xsl
 
-corrected :=  					\
-	all_hl_corrected-exact-complete.xml		\
-	all_hl_corrected-approximate-complete.xml
-
-web :=  					\
-	src					\
-	$(corrected)				\
-	$(links)				\
-	$(topRho)				\
-	$(views)				\
-	predictor-info.xml			\
-	summary.xml
-
-ifdef COMPOUND
-web += all_hl_corrected-exact-complete_complex.xml
-endif
-
 
 all: $(web)
 .PHONY: all
@@ -113,7 +96,7 @@ publish: $(links)
 #############################################################################
 
 # copies xml dtds and xslt scripts from tools directory to analysis directory
-# depends on .xml files on which any xsl file explicitly depends 
+# depends on .xml files on which any xsl file explicitly depends
 links: $(links)
 $(links): %: $(call tool-deps, %) summary.xml predictor-info.xml
 	if [ -L $@ ]; then rm -f $@; fi
@@ -160,7 +143,7 @@ CLEANFILES += preds.txt
 # See subdirectory Scores for a description of the different measures
 #############################################################################
 noelim: $(filter %_none.xml, $(views))
-$(filter %_none.xml, $(views)): preds.txt static-site-info.so $(call tool-deps, gen-views) pairs.txt
+$(filter %_none.xml, $(views)): preds.txt static-site-info.so $(call tool-deps, gen-views) $(if $(COMPOUND), pairs.txt)
 	$(build) links
 	$(tooldir)/gen-views --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(schemes:%=--force-scheme=%) $(view_flags) $(if $(COMPOUND), --complex-preds)
 	xmllint --valid --noout $(filter %_none.xml, $(views))
@@ -173,7 +156,7 @@ CLEANFILES += complex_hl_none.xml complex-info.xml complex_all.txt
 #############################################################################
 
 # PLDI 2005 algorithm
-pldi2005: all_hl_corrected-exact-complete.xml elimination-clusters.txt corrected-exact-complete.txt
+pldi2005: all_hl_corrected-exact-complete.xml elimination-clusters.txt corrected-exact-complete.txt noelim
 all_hl_corrected-exact-complete.xml elimination-clusters.txt corrected-exact-complete.txt: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/exact-complete)
 	$(time) $(tooldir)/corrective-ranking/exact-complete --zoom=$(zoom) --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
 	$(build) links
@@ -184,7 +167,7 @@ CLEANFILES += all_hl_corrected-exact-complete.xml elimination-clusters.txt corre
 .PHONY : pldi2005
 
 # Variation on PLDI 2005 algorithm
-pldi2005approx: all_hl_corrected-approximate-complete.xml
+pldi2005approx: all_hl_corrected-approximate-complete.xml corrected-approximate-complete.txt noelim
 all_hl_corrected-approximate-complete.xml corrected-approximate-complete.txt: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/approximate-complete)
 	$(time) $(tooldir)/corrective-ranking/approximate-complete --zoom=$(zoom) --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags)
 	$(build) links
@@ -194,7 +177,7 @@ CLEANFILES += all_hl_corrected-approximate-complete.xml corrected-approximate-co
 .PHONY : pldi2005approx
 
 # ISSTA 2007 algorithm
-issta2007: all_hl_corrected-exact-complete_complex.xml corrected-exact-complete_complex.txt
+issta2007: all_hl_corrected-exact-complete_complex.xml corrected-exact-complete_complex.txt noelim
 all_hl_corrected-%_complex.xml: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/%) pairs.txt
 	$(time) $(tooldir)/corrective-ranking/$* --zoom=$(zoom) --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir) $(confidence:%=--confidence=%) $(corrected_view_flags) --complex-preds
 	$(build) links
@@ -202,6 +185,11 @@ all_hl_corrected-%_complex.xml: f.runs obs.txt tru.txt $(call tool-deps, correct
 	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
 CLEANFILES += all_hl_corrected-exact-complete_complex.xml corrected-exact-complete_complex.txt
 .PHONY : issta2007
+
+pairs.txt: preds.txt
+	(cd .. && ln -sf analysis/static-site-info.so analysis/preds.txt .)
+	csurf -nogui ../$(program).exe.prj -l $(tooldir)/effort/effort.stk
+CLEANFILES += pairs.txt
 
 obs.txt tru.txt: preds.txt s.runs f.runs static-site-info.so $(call tool-deps, compute-obs-tru)
 	$(time) $(tooldir)/compute-obs-tru --begin-runs=$(begin-runs) --end-runs=$(end-runs) --runs-directory=$(datadir)
@@ -458,13 +446,3 @@ force:
 .PHONY: force
 
 .DELETE_ON_ERROR:
-
-########################################################################
-pairs.txt: preds.txt
-ifdef COMPOUND
-	(cd .. && ln -sf analysis/static-site-info.so analysis/preds.txt .)
-	csurf -nogui ../$(program).exe.prj -l $(tooldir)/effort/effort.stk
-else
-	touch pairs.txt
-endif
-CLEANFILES += pairs.txt
