@@ -91,7 +91,6 @@ all ?=						\
 	runsinfo.dat
 all: $(all)
 .PHONY: all
-
 COMPOUND = $(findstring issta2007, $(all))
 
 #############################################################################
@@ -200,11 +199,6 @@ all_hl_corrected-%_complex.xml: f.runs obs.txt tru.txt $(call tool-deps, correct
 	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
 CLEANFILES += all_hl_corrected-exact-complete_complex.xml corrected-exact-complete_complex.txt
 .PHONY : issta2007
-
-pairs.txt: preds.txt
-	(cd .. && ln -sf analysis/static-site-info.so analysis/preds.txt .)
-	csurf -nogui ../$(program).exe.prj -l $(tooldir)/effort/effort.stk
-CLEANFILES += pairs.txt
 
 obs.txt tru.txt: preds.txt s.runs f.runs static-site-info.so $(call tool-deps, compute-obs-tru)
 	$(time) $(tooldir)/compute-obs-tru --begin-runs=$(begin-runs) --end-runs=$(end-runs)
