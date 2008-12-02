@@ -83,6 +83,7 @@ parseFlag(int key, char *arg, argp_state *)
 
        case 'c':
            considerComplex = true;
+           return 0;
 
        default:
            return ARGP_ERR_UNKNOWN;

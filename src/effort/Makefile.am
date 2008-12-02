@@ -1,5 +1,5 @@
 # Set the location of the CodeSurfer C API include files.
-H_INCLUDE = $(CSURF_ROOT)/api/include
+H_INCLUDE = $(CSURF_ROOT)/csurf/include
 
 pkglib_LTLIBRARIES = libeffort.la
 
@@ -24,4 +24,4 @@ effort.stk:
 
 libeffort_la_SOURCES = effort.cc
 libeffort_la_LIBADD = ../libanalyze.a
-libeffort_la_CPPFLAGS = -W -Wall -Wformat -Werror -I$(H_INCLUDE) -I../..
+libeffort_la_CPPFLAGS = -W -Wall -Wformat -I$(H_INCLUDE) -I../..
