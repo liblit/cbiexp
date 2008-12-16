@@ -275,7 +275,7 @@ void libeffort()
         add_close_pair(src, dst);
     }
 
-  ofstream out("analysis/pairs.txt");
+  ofstream out("pairs.txt");
   for(src = 0; src < total; src ++) {
     set<int>::iterator iter = close_predicates[src].begin();
     for(; iter != close_predicates[src].end(); iter ++)
