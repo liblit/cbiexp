@@ -86,7 +86,6 @@ all ?=						\
 	theta					\
 	clusters				\
 	allnevers				\
-	elimschemes				\
 	corrcoefs				\
 	runsinfo.dat
 all: $(all)
@@ -349,6 +348,16 @@ CLEANFILES += $(nevers)
 # Comments next to each goal indicates what they actually do
 ##############################################################################
 ifdef HAVE_MEX
+
+# transforms correlation coefficient information into a web readable format
+corrcoefs: $(topRho)
+$(topRho): rho.bin $(call tool-deps, top-rho) elimschemes
+	$(tooldir)/top-rho
+	$(build) links
+	xmllint --valid --noout $(topRho)
+CLEANFILES += $(topRho)
+.PHONY : corrcoefs
+
 # calculates scores information for the linear and circular projection schemes
 elimschemes: preds.txt rho.bin static-site-info.so $(call tool-deps, project)
 	$(time) $(tooldir)/project --begin-runs=$(begin-runs) --end-runs=$(end-runs)
@@ -357,15 +366,6 @@ elimschemes: preds.txt rho.bin static-site-info.so $(call tool-deps, project)
 	$(find-circulars) -exec xmllint --valid --noout '{}' ';'
 	touch elimschemes
 CLEANFILES += $(filter-out %_none.xml, $(views)) elimschemes
-
-# transforms correlation coefficient information into a web readable format
-corrcoefs: $(topRho)
-$(topRho): top-rho_%: elimschemes rho.bin $(call tool-deps, top-rho) elimschemes
-	$(tooldir)/top-rho
-	$(build) links
-	xmllint --valid --noout $(topRho)
-CLEANFILES += $(topRho)
-.PHONY : corrcoefs
 
 # calculates correlation coefficients for predicates in preds.txt
 # writes many matlab output files to mats subdirectory
