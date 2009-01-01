@@ -5,7 +5,7 @@ double UtilLogReg::lambda = 0.1;
 double UtilLogReg::delta1 = 1.0; 
 double UtilLogReg::delta2 = 1.0;
 double UtilLogReg::delta3 = 0.0;
-unsigned UtilLogReg::niters = 40;
+unsigned UtilLogReg::niters = 4;
 
 static const argp_option options[] = {
   {
