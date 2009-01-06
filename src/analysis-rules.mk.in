@@ -156,7 +156,7 @@ CLEANFILES += preds.txt
 # See subdirectory Scores for a description of the different measures
 #############################################################################
 noelim: $(filter %_none.xml, $(views))
-$(filter %_none.xml, $(views)): preds.txt static-site-info.so $(call tool-deps, gen-views) $(if $(COMPOUND), pairs.txt)
+$(filter %_none.xml, $(views)): preds.txt static-site-info.so tru.txt obs.txt $(call tool-deps, gen-views) $(if $(COMPOUND), pairs.txt)
 	$(build) links
 	$(tooldir)/gen-views --begin-runs=$(begin-runs) --end-runs=$(end-runs) $(schemes:%=--force-scheme=%) $(view_flags) $(if $(COMPOUND), --complex-preds)
 	xmllint --valid --noout $(filter %_none.xml, $(views))
