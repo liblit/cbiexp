@@ -14,7 +14,7 @@ def readSites(filepath):
     ifile.close()
 
 def main():
-    """reads sites.txt and applies a template, storing the output in dest""" 
+    """reads sites.txt and applies a template, storing the output in dest"""
     parser = OptionParser(usage='%prog sitesfile dest templatefile')
 
     parser.add_option('-f', '--filter', action='store', default=None,
@@ -29,7 +29,7 @@ def main():
         filter = CheetahFilters.factory(options.filter)
 
     ofile =  open(args[1], 'w')
-    print >>ofile, Template(file=args[2], searchList=[{'filepath':args[0]}], filter=filter)
+    print >>ofile, Template(file=args[2], searchList=[{'filepath':args[0], 'readSites' : readSites}], filter=filter)
     ofile.close()
 
 
