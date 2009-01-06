@@ -225,3 +225,5 @@ EXTRA_DIST =					\
 	view.css				\
 	view.dtd				\
 	view.xsl
+
+CLEANFILES = *.pyo
