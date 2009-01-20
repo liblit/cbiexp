@@ -255,7 +255,7 @@ combine(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
     fprintf(fout, "%u %u\n", total, total - afterCSURF); // Total possible complex predicates
     fprintf(fout, "%u %u %u\n", prunedC, computedC, interestingC);
     fprintf(fout, "%u %u %u\n", prunedD, computedD, interestingD);
-    fprintf(fout, "%u\n", exec_time);
+    fprintf(fout, "%lu\n", exec_time);
     
     if(result.size() > 0)
       fprintf(fout, "%lf %lf\n", result.front().score(), result.back().score());
@@ -289,17 +289,16 @@ fast_estimate(Candidates &candidates) {
   time(&finish);
   time_t exec_time = finish - begin;
   
-  printf("FAST ESTIMATE:: Time: %u\n", exec_time);
+  printf("FAST ESTIMATE:: Time: %lu\n", exec_time);
   return exec_time;
 }
 
 std::list<Complex>
-combine1(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
+combine1(Candidates &candidates, unsigned limit, double, FILE * fout) {
 
   time_t begin, finish; 
 
   std::list<Complex> result;
-  double minMax = lb;
   
   unsigned total = candidates.size() * candidates.size() - candidates.size();
   unsigned prunedC = 0, computedC = 0, interestingC = 0;
@@ -386,7 +385,7 @@ combine1(Candidates &candidates, unsigned limit, double lb, FILE * fout) {
     fprintf(fout, "%u %u %u\n", prunedD, computedD, interestingD);
     
     unsigned fe = fast_estimate(candidates);
-    fprintf(fout, "%u %u\n", exec_time, fe);
+    fprintf(fout, "%lu %u\n", exec_time, fe);
     
     if(result.size() > 0)
       fprintf(fout, "%lf %lf\n", result.front().score(), result.back().score());
