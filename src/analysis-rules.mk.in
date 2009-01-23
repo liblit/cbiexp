@@ -389,6 +389,10 @@ $(sparse): $(corrdir)/mhn2sparsemat.pl f.runs s.runs obs.txt tru.txt
 	$(time) $< . .
 	for goal in $(sparse); do test -r $$goal; done
 CLEANFILES += $(sparse)
+else
+corrcoefs:
+	$(warning request to buld corrcoefs target, but MEX not available)
+.PHONY : corrcoefs
 endif
 
 ##############################################################################
