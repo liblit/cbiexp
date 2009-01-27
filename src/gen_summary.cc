@@ -2,11 +2,9 @@
 #include <cstdlib>
 #include <iostream>
 #include <map>
-#include "CompactReport.h"
 #include "Confidence.h"
 #include "NumRuns.h"
 #include "PredStats.h"
-#include "RunsDirectory.h"
 #include "SourceDirectory.h"
 #include "StaticSiteInfo.h"
 #include "classify_runs.h"
@@ -32,10 +30,8 @@ static void
 processCommandLine(int argc, char *argv[])
 {
   static const argp_child children[] = {
-    { &CompactReport::argp, 0, 0, 0 },
     { &Confidence::argp, 0, 0, 0 },
     { &NumRuns::argp, 0, 0, 0 },
-    { &RunsDirectory::argp, 0, 0, 0 },
     { &SourceDirectory::argp, 0, 0, 0 },
     { 0, 0, 0, 0 }
   };

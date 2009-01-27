@@ -3,16 +3,16 @@
 * sparse matrix format.
 *
 * It looks like: row# col# count
-* Which corresponds to: (predicate index) (run index) (count) 
+* Which corresponds to: (predicate index) (run index) (count)
 *
 * We do not read any data from runs that were not classified, i.e., are neither
 * failures or successes. This saves us trouble and leaves zero columns as place
 * holders for these runs.
 *
-* The files produced are Xtru.sparse which contains tru counts, Xobs.sparse 
-* which contains observed counts, and X.xml which contains miscellaneous info. 
+* The files produced are Xtru.sparse which contains tru counts, Xobs.sparse
+* which contains observed counts, and X.xml which contains miscellaneous info.
 *
-* Currently counts are only taken for predicates in preds.txt. 
+* Currently counts are only taken for predicates in preds.txt.
 ******************************************************************************/
 
 #include <argp.h>
@@ -24,12 +24,10 @@
 #include <numeric>
 #include <queue>
 #include <vector>
-#include "../CompactReport.h"
 #include "../NumRuns.h"
 #include "../PredStats.h"
 #include "../Progress/Bounded.h"
 #include "../ReportReader.h"
-#include "../RunsDirectory.h"
 #include "../SiteCoords.h"
 #include "../classify_runs.h"
 #include "../fopen.h"
@@ -56,7 +54,8 @@ static PredInfos predInfos;
 class Reader : public ReportReader
 {
 public:
-    Reader(unsigned);
+    Reader(const char* filename) : ReportReader(filename) {}
+    void setrow(unsigned);
 
 protected:
     void handleSite(const SiteCoords &, vector<count_tp> &);
@@ -64,14 +63,14 @@ protected:
 private:
     void notice(const SiteCoords &coords, unsigned, unsigned, unsigned) const;
 
-    const unsigned index;
+    unsigned index;
 };
 
 
-inline
-Reader::Reader(unsigned index)
-    : index(index)
+inline void
+Reader::setrow(unsigned row)
 {
+    index = row;
 }
 
 
@@ -112,10 +111,7 @@ Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 static void process_cmdline(int argc, char **argv)
 {
     static const argp_child children[] = {
-	{ &CompactReport::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
-	{ &ReportReader::argp, 0, 0, 0 },
-	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
 
@@ -159,11 +155,13 @@ int main(int argc, char** argv)
     }
 
     {
+        Reader reader("counts.txt");
 	Progress::Bounded progress("finding counts", NumRuns::count());
-	for (unsigned runId = NumRuns::begin; runId < NumRuns::end; ++runId) {
+	for (unsigned runId = 0; runId < NumRuns::end(); ++runId) {
 	    progress.step();
-            if (is_srun[runId] || is_frun[runId]) { 
-                Reader(runId + 1 - NumRuns::begin).read(runId);
+            if (is_srun[runId] || is_frun[runId]) {
+                reader.setrow(runId + 1);
+                reader.read(runId);
             }
 	}
     }
@@ -186,16 +184,14 @@ int main(int argc, char** argv)
     }
 
     //We record the dimensions of the data matrix. We don't want zero
-    //entries on the right hand side to cause the matrix to be truncated. 
+    //entries on the right hand side to cause the matrix to be truncated.
     //count() returns exactly the difference between the start and end
-    //specified, so the matrix may include all zero columns corresponding
-    //to discarded runs.
+    //specified.
     {
         ofstream out("X.xml");
         out << "<data "
-            << "numpreds=\"" << PredStats::count() << "\" " 
-            << "numruns=\"" << NumRuns::count() << "\" "
-            << "runoffset=\"" << NumRuns::begin << "\"/>\n";
+            << "numpreds=\"" << PredStats::count() << "\" "
+            << "numruns=\"" << NumRuns::count() << "\"/>\n";
         out.close();
     }
 

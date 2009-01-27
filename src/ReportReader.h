@@ -3,24 +3,26 @@
 
 #include <vector>
 #include "Counts.h"
-#include "arguments.h"
+#include <iostream>
+#include <fstream>
+
+using namespace std;
 
 class SiteCoords;
 
 class ReportReader
 {
 public:
+  ReportReader(const char* filename);
+  ifstream summary; //the summary file from which reports are read
+  unsigned linepos; //the line position within the file
   virtual ~ReportReader() { }
   void read(unsigned runId);
 
-  static const struct argp argp;
 
 protected:
   virtual void handleSite(const SiteCoords &, std::vector<count_tp> &) = 0;
-  virtual const std::string format(const unsigned) const;
 
-private:
-  static bool selected(const SiteCoords &);
 };
 
 

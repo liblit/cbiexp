@@ -192,7 +192,6 @@ src/fromplsa/Makefile
 src/fromplsa/toxml/Makefile
 src/matlab/Makefile
 src/never-reached/Makefile
-src/symmetric/Makefile
 src/Score/Makefile
 src/analysis-rules.mk
 ])
@@ -201,12 +200,6 @@ if test "$enable_plsa" = yes; then
    AC_CONFIG_FILES([
    src/plsa/analysis-rules.mk
    ])
-fi
-
-if test "$enable_line_coloring" = yes; then
-  AC_CONFIG_FILES([
-  src/fromplsa/line-colorings/Makefile
-  ])
 fi
 
 if test "$enable_mining" = yes; then

@@ -17,7 +17,6 @@ struct pred_stat {
 };
 
 struct pred_info : public PredCoords {
-    int siteIndex;
     pred_stat ps;
     int s, f, os, of;
 };

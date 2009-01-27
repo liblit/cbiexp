@@ -5,8 +5,10 @@
 #include "Reader.h"
 
 
-Reader::Reader()
+Reader::Reader(const char* filename):
+  ReportReader(filename)
 {
+
   for (StaticSiteInfo::SiteIterator site = staticSiteInfo.sitesBegin();
        site != staticSiteInfo.sitesEnd(); ++site)
     {

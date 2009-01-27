@@ -3,16 +3,15 @@
 #include <cmath>
 #include <cstdio>
 #include <iostream>
+#include <sstream>
 #include <ext/hash_map>
 #include <fstream>
 #include <numeric>
 #include <queue>
-#include "CompactReport.h"
 #include "NumRuns.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
-#include "RunsDirectory.h"
 #include "SiteCoords.h"
 #include "PredCoords.h"
 #include "classify_runs.h"
@@ -65,7 +64,7 @@ PredInfo::notice(Dist d, count_tp n, count_tp x){
   DiscreteDist::iterator found = disthash.find(ratio);
   if (found == disthash.end())
     disthash[ratio] = 1;
-  else 
+  else
     disthash[ratio] += 1;
 }
 
@@ -83,21 +82,30 @@ static PredCounter predCount;
 class Reader : public ReportReader
 {
 public:
-  Reader(Dist);
+  Reader(const char* filename) : ReportReader(filename) {}
+  void setd(unsigned);
 
 protected:
   void handleSite(const SiteCoords &, vector<count_tp> &);
 
 private:
   void notice(const SiteCoords &, unsigned, count_tp, count_tp);
-  const Dist d;
+  Dist d;
 };
 
-inline
-Reader::Reader(Dist _d)
-  : d(_d)
+inline void
+Reader::setd(unsigned run)
 {
   predCount.clear();
+  if (is_frun[run]) d = &DistPair::first;
+  else
+    if (is_srun[run]) d = &DistPair::second;
+    else
+    {
+         ostringstream message;
+         message << "Ill-formed run " << run;
+         throw runtime_error(message.str());
+    }
 }
 
 void
@@ -144,10 +152,7 @@ void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 static void process_cmdline(int argc, char **argv)
 {
     static const argp_child children[] = {
-	{ &CompactReport::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
-	{ &ReportReader::argp, 0, 0, 0 },
-	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
 
@@ -166,8 +171,6 @@ static void process_cmdline(int argc, char **argv)
 int main (int argc, char** argv)
 {
   process_cmdline (argc, argv);
-
-  classify_runs();
 
   ofstream ffp("ftruthfreq.dat");
   ofstream sfp("struthfreq.dat");
@@ -189,19 +192,12 @@ int main (int argc, char** argv)
 
   fclose(pfp);
 
+  Reader reader("counts.txt");
   Progress::Bounded progress("Gathering empirical distribution", NumRuns::count());
-  for (cur_run = NumRuns::begin; cur_run < NumRuns::end; cur_run++) {
+  for (cur_run = NumRuns::begin(); cur_run < NumRuns::end(); cur_run++) {
     progress.step();
-    Dist d;
-    if (is_frun[cur_run])
-      d = &DistPair::first;
-    else if (is_srun[cur_run])
-      d = &DistPair::second;
-    else
-      continue;
-
-    Reader r(d);
-    r.read(cur_run);
+    reader.setd(cur_run);
+    reader.read(cur_run);
 
   }
 
@@ -209,14 +205,14 @@ int main (int argc, char** argv)
     const PredCoords &coords = retainedPreds.front();
     const PredSeen::iterator found = predSeen.find(coords);
     if (found == predSeen.end())
-      cerr << "Error: Cannot find pred " << coords.unitIndex << ' ' 
-	   << coords.siteOffset << ' ' << coords.predicate << '\n';
+      cerr << "Error: Cannot find pred " << coords.siteIndex
+	   << ' ' << coords.predicate << '\n';
     else {
       const PredInfo &info = found->second;
-      ffp << coords.unitIndex << ' ' << coords.siteOffset << ' '
+      ffp << coords.siteIndex << ' '
 	  << coords.predicate << '\n';
       ffp << info.reached.first;
-      sfp << coords.unitIndex << ' ' << coords.siteOffset << ' ' 
+      sfp << coords.siteIndex << ' '
 	  << coords.predicate << '\n';
       sfp << info.reached.second;
     }

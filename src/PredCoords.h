@@ -8,7 +8,7 @@ struct PredCoords : public SiteCoords
 {
   PredCoords();
   PredCoords(const SiteCoords &, unsigned pred);
-  PredCoords(unsigned unit, unsigned site, unsigned pred);
+  PredCoords(unsigned site, unsigned pred);
   unsigned predicate;
 
   size_t hash() const;
@@ -49,8 +49,8 @@ PredCoords::PredCoords(const SiteCoords &siteCoords, unsigned pred)
 
 
 inline
-PredCoords::PredCoords(unsigned unit, unsigned site, unsigned pred)
-  : SiteCoords(unit, site),
+PredCoords::PredCoords(unsigned site, unsigned pred)
+  : SiteCoords(site),
     predicate(pred)
 {
 }

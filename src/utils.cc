@@ -31,14 +31,14 @@ bool read_pred_full(FILE* fp, pred_info &pi)
 {
     char scheme_code;
 
-    const int got = fscanf(fp, "%c %d %d %d %d %lf %lf %lf %lf %d %d %d %d\n",
+    const int got = fscanf(fp, "%c %d %d %lf %lf %lf %lf %d %d %d %d\n",
 			   &scheme_code,
-			   &pi.unitIndex, &pi.siteOffset, &pi.predicate,
 			   &pi.siteIndex,
+			   &pi.predicate,
 			   &pi.ps.lb, &pi.ps.in, &pi.ps.fs, &pi.ps.co,
 			   &pi.s, &pi.f, &pi.os, &pi.of);
 
-    return got == 13;
+    return got == 11;
 }
 
 

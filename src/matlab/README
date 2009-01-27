@@ -1,0 +1,3 @@
+This subdirectory generates matlab format files to be read by our plsa code.
+All this data is post-culled data, i.e., it only generates values for
+predicates in preds.txt. 

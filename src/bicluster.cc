@@ -34,9 +34,7 @@
 #include "PredStats.h"
 #include "Progress/Bounded.h"
 #include "RunBugs.h"
-#include "RunsDirectory.h"
 #include "Score/Importance.h"
-#include "XMLTemplate.h"
 #include "classify_runs.h"
 #include "fopen.h"
 #include "sorts.h"
@@ -176,7 +174,7 @@ read_weights()
   FILE * notxfp = fopenRead(AdjWeightsOptions::not_adj_weights);
   int ctr;
   unsigned i = 0;
-  for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+  for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
     if (!is_srun[r] && !is_frun[r])  // skip the runs that were neither successful nor failing
       continue;
     
@@ -213,7 +211,7 @@ read_freqs ()
   FILE * wfp = fopenRead("truFreq.dat");
   int ctr; 
   unsigned i = 0;
-  for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+  for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
     if (!is_srun[r] && !is_frun[r])
       continue;
     for (unsigned j = 0; j < npreds; ++j) {
@@ -227,31 +225,6 @@ read_freqs ()
   fclose(wfp);
 }
 
-// Print the bug histogram of the list of interesting predicates
-void
-print_histograms()
-{
-  RunBugs::BugVec bugs;
-
-  RunBugs::read_runbugs();
-  ofstream outfp ("pred_histograms.xml");
-  outfp << "<?xml version=\"1.0\"?>" << endl
-        << "<!DOCTYPE histograms SYSTEM \"histograms.dtd\">" << endl
-        << "<histograms>" << endl;
-
-  unsigned npreds = predList.size();
-  for (unsigned i = 0; i < npreds; ++i) {
-    RunBugs::bug_hist(bugs, contribRuns[i]);
-    outfp << "<predictor>" << endl;
-    for (unsigned j = 0; j < bugs.size(); ++j) {
-      outfp << "<bug count=\"" << bugs[j] << "\"/>" << endl; 
-    }
-    outfp << "</predictor>" << endl;
-  }
-  
-  outfp << "</histograms>" << endl;
-  outfp.close();
-}
 
 // Print which run voted for which predicate
 static void
@@ -273,7 +246,7 @@ print_scores(const char *outfn)
   ofstream outfp (outfn);
   outfp << "<?xml version=\"1.0\"?>" << endl
         << "<?xml-stylesheet type=\"text/xsl\" href=\"" 
-	<< XMLTemplate::format("pred-scores") << ".xsl\"?>" << endl
+	<< string("pred-scores") << ".xsl\"?>" << endl
 	<< "<!DOCTYPE scores SYSTEM \"pred-scores.dtd\">" << endl
 	<< "<scores>" << endl;
 
@@ -382,7 +355,7 @@ cast_finalvote(double * u, double * notu, double * v, double * notv,
   finalVotes.clear();
 
   unsigned j = 0;
-  for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+  for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
     if (!is_srun[r] && !is_frun[r])
       continue;
 
@@ -466,7 +439,7 @@ iterate_votes(double * u, double * notu, double * v, double * notv,
     memset(notpvotes, 0, sizeof(double)*2*npreds);
     memset(u, 0, sizeof(double)*npreds);
     unsigned j = 0;
-    for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+    for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
       if (!is_srun[r] && !is_frun[r])
 	continue;
 
@@ -539,7 +512,7 @@ collect_stats(double *m, double *v, unsigned npreds, const vector<bool> &collect
   memset(v, 0, sizeof(double)*npreds);
   double val;
   unsigned n = 0, j = 0; 
-  for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+  for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
     if (!is_srun[r] && !is_frun[r])
       continue;
     if (collect[r]) {
@@ -619,7 +592,7 @@ ttest_rank()
   ofstream bestfp ("bicluster_preds.xml");
   bestfp << "<?xml version=\"1.0\"?>" << endl
          << "<?xml-stylesheet type=\"text/xsl\" href=\"" 
-	 << XMLTemplate::format("pred-scores") << ".xsl\"?>" << endl
+	 << string("pred-scores") << ".xsl\"?>" << endl
 	 << "<!DOCTYPE scores SYSTEM \"pred-scores.dtd\">" << endl
 	 << "<scores>" << endl;
   
@@ -650,7 +623,7 @@ ttest_rank()
     if (contribRuns[pind].size() == 0)
       continue;
     collect.clear(); // collect is a binary vector that contains a 1 for every failed run that voted for the current predicate
-    collect.resize(NumRuns::end);
+    collect.resize(NumRuns::end());
     for (RunList::const_iterator c = contribRuns[pind].begin();
          c != contribRuns[pind].end(); ++c) {
       collect[(*c)] = 1;
@@ -685,8 +658,6 @@ static void process_cmdline(int argc, char **argv)
 {
     static const argp_child children[] = {
 	{ &NumRuns::argp, 0, 0, 0 },
-	{ &RunsDirectory::argp, 0, 0, 0 },
-	{ &XMLTemplate::argp, 0, 0, 0},
 	{ &AdjWeightsOptions::argp, 0, 0, 0},
 	{ 0, 0, 0, 0 }
     };
@@ -716,12 +687,6 @@ int main (int argc, char** argv)
 
     compute_scores();
 
-    // must print out bug histograms before the scores,
-    // because print_scores alters the ordering of predicates
-    // through sorting
-    if (XMLTemplate::prefix == "moss")
-      print_histograms();
-  
     print_final_votes("final-votes.txt"); // print which run voted for which predicate
     print_scores("bicluster_votes.xml"); // print the final bi-clustering ranking
   

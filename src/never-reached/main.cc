@@ -4,7 +4,6 @@
 #include "../ClassifyRuns.h"
 #include "../NumRuns.h"
 #include "../Progress/Bounded.h"
-#include "../RunsDirectory.h"
 #include "../termination.h"
 #include "Reader.h"
 
@@ -16,8 +15,6 @@ processCommandLine(int argc, char *argv[])
 {
   static const argp_child children[] = {
     { &NumRuns::argp, 0, 0, 0 },
-    { &ReportReader::argp, 0, 0, 0 },
-    { &RunsDirectory::argp, 0, 0, 0 },
     { 0, 0, 0, 0 }
   };
 
@@ -35,7 +32,7 @@ int main(int argc, char *argv[])
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
 
-  Reader reader;
+  Reader reader("counts.txt");
 
   {
     unsigned runId;
@@ -50,8 +47,8 @@ int main(int argc, char *argv[])
     Progress::Bounded progress("scanning failed runs", NumRuns::count());
 
     // knock any location observed in sparse report from failed runs
-    while (runs >> runId && runId < NumRuns::end)
-      if (runId >= NumRuns::begin)
+    while (runs >> runId && runId < NumRuns::end())
+      if (runId >= NumRuns::begin())
 	{
 	  progress.stepTo(runId);
 	  reader.read(runId);

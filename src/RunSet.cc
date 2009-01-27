@@ -14,5 +14,5 @@ using namespace std;
 
 RunSet::RunSet()
 {
-    resize(NumRuns::end);
+    resize(NumRuns::end());
 }

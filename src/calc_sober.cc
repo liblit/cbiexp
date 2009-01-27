@@ -10,7 +10,6 @@
 #include <numeric>
 #include <string>
 #include "classify_runs.h"
-#include "CompactReport.h"
 #include "fopen.h"
 #include "IndexedPredInfo.h"
 #include "NumRuns.h"
@@ -18,12 +17,10 @@
 #include "PredStats.h"
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
-#include "RunsDirectory.h"
 #include "SiteCoords.h"
 #include "Score/Importance.h"
 #include "sorts.h"
 #include "utils.h"
-#include "XMLTemplate.h"
 
 
 using namespace std;
@@ -94,7 +91,7 @@ static piptr pptr = 0;
 class Reader : public ReportReader
 {
 public:
-  Reader();
+  Reader(const char* filename) : ReportReader(filename) {}
 
 protected:
   void handleSite(const SiteCoords &, vector<count_tp> &);
@@ -103,10 +100,6 @@ private:
     void update(const SiteCoords &, unsigned, count_tp, count_tp) const;
 };
 
-inline
-Reader::Reader()
-{
-}
 
 inline void
 Reader::update(const SiteCoords &coords, unsigned p, count_tp obs, count_tp tru) const
@@ -171,8 +164,8 @@ void compute_stats() {
     c->ps.imp = pp.set_score();
     c->ps.fdenom = pp.f.mean;
     c->ps.sdenom = pp.s.mean;
-    outfp << pp.f.mean << " " << pp.f.std << " " 
-          << pp.s.mean << " " << pp.s.std << " " 
+    outfp << pp.f.mean << " " << pp.f.std << " "
+          << pp.s.mean << " " << pp.s.std << " "
           << pp.zval << " " << pp.score << endl;
   }
   outfp.close();
@@ -186,14 +179,14 @@ void compute_stats() {
 void print_results()
 {
   predList.sort(Sort::Descending<Score::Importance>());
-  
+ 
   ofstream outfp ("sober.xml");
   outfp << "<?xml version=\"1.0\"?>" << endl
         << "<?xml-stylesheet type=\"text/xsl\" href=\""
-        << XMLTemplate::format("pred-scores") << ".xsl\"?>" << endl
+        << string("pred-scores") << ".xsl\"?>" << endl
         << "<!DOCTYPE scores SYSTEM \"pred-scores.dtd\">" << endl
         << "<scores>" << endl;
-  
+ 
   for (Stats::iterator c = predList.begin(); c != predList.end(); ++c) {
     outfp << "<predictor index=\"" << (*c).index+1
           << "\" score=\"" << setprecision(10) << (*c).ps.imp
@@ -215,10 +208,7 @@ void print_results()
 void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
-	{ &CompactReport::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
-	{ &RunsDirectory::argp, 0, 0, 0 },
-	{ &XMLTemplate::argp, 0, 0, 0},
 	{ 0, 0, 0, 0 }
     };
 
@@ -242,8 +232,9 @@ int main(int argc, char** argv)
 
     read_preds();
 
-    Progress::Bounded prog("Calculating SOBER scores", NumRuns::end);
-    for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+    Reader reader("counts.txt");
+    Progress::Bounded prog("Calculating SOBER scores", NumRuns::end());
+    for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
 
 	if (is_srun[r]) {
 	    pptr = &PredInfoPair::s;
@@ -258,7 +249,7 @@ int main(int argc, char** argv)
 
 	prog.step();
 
-	Reader().read(r);
+	reader.read(r);
 
     }
 

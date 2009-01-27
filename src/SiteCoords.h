@@ -9,9 +9,8 @@ class SiteCoords
 {
 public:
   SiteCoords();
-  SiteCoords(unsigned unit, unsigned site);
-  unsigned unitIndex;
-  unsigned siteOffset;
+  SiteCoords(unsigned site);
+  unsigned siteIndex;
 
   size_t hash() const;
 };
@@ -50,9 +49,8 @@ SiteCoords::SiteCoords()
 
 
 inline
-SiteCoords::SiteCoords(unsigned unit, unsigned site)
-  : unitIndex(unit),
-    siteOffset(site)
+SiteCoords::SiteCoords(unsigned site)
+  : siteIndex(site)
 {
 }
 
@@ -60,35 +58,33 @@ SiteCoords::SiteCoords(unsigned unit, unsigned site)
 inline size_t
 SiteCoords::hash() const
 {
-  return unitIndex ^ siteOffset;
+  return siteIndex;
 }
 
 
 inline bool
 operator==(const SiteCoords &a, const SiteCoords &b)
 {
-  return a.unitIndex == b.unitIndex
-    && a.siteOffset == b.siteOffset;
+  return a.siteIndex == b.siteIndex;
 }
 
 inline bool
 operator!=(const SiteCoords &a, const SiteCoords &b)
 {
-  return a.unitIndex != b.unitIndex
-    || a.siteOffset != b.siteOffset;
+  return a.siteIndex != b.siteIndex;
 }
 
 inline std::istream &
 operator>>(std::istream &in, SiteCoords &coords)
 {
-  return in >> coords.unitIndex >> coords.siteOffset;
+  return in >> coords.siteIndex;
 }
 
 
 inline std::ostream &
 operator<<(std::ostream &out, const SiteCoords &coords)
 {
-  return out << coords.unitIndex << '\t' << coords.siteOffset;
+  return out << coords.siteIndex;
 }
 
 

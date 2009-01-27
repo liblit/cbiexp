@@ -27,7 +27,6 @@
 #include "DiscreteDist.h"
 #include "fopen.h"
 #include "PredCoords.h"
-#include "classify_runs.h"
 
 using namespace std;
 using __gnu_cxx::hash_map;
@@ -203,10 +202,10 @@ read_stats(FILE * fp)
 {
   int res;
   
-  res = fscanf(fp, "%u\t%u\t%u\n", &currCoords.unitIndex, &currCoords.siteOffset, &currCoords.predicate);
+  res = fscanf(fp, "%u\t%u\n", &currCoords.siteIndex, &currCoords.predicate);
   if (feof(fp))
       return false;
-  assert(res == 3);
+  assert(res == 2);
   
   currPred.f.read_stats(fp);
   currPred.s.read_stats(fp);

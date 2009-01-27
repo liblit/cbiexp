@@ -10,11 +10,9 @@
 #include <gsl/gsl_permutation.h>
 #include <gsl/gsl_permute.h>
 #include "fopen.h"
-#include "CompactReport.h"
 #include "NumRuns.h"
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
-#include "RunsDirectory.h"
 #include "classify_runs.h"
 #include "split_runs.h"
 #include "PredCoords.h"
@@ -71,12 +69,12 @@ static pred_hash_t pred_hash;
 bool read_nonconst_pred (FILE *fp, PredCoords &pc, pred_info_t &pi) 
 {
     unsigned ntallied;
-    const int got = fscanf(fp, "%u %u %u %g %g %Lu %Lu %u\n", &pc.unitIndex, &pc.siteOffset,
+    const int got = fscanf(fp, "%u %u %g %g %Lu %Lu %u\n", &pc.siteIndex,
 			   &pc.predicate, &pi.mean, &pi.var, &pi.min, &pi.max, &ntallied);
     
     pi.std = sqrt(pi.var);
 
-    if (got == 8)
+    if (got == 7)
 	return true;
     else
 	return false;
@@ -133,21 +131,22 @@ struct run_info_t {
 
 static run_info_t curr_run;
 
+void
+reset_curr_run(unsigned r)
+{
+    curr_run.preds.clear();
+    curr_run.runId = r;
+}
+
 class Reader : public ReportReader
 {
 public:
-  Reader(unsigned);
+  Reader(const char* filename) : ReportReader(filename) {} 
 
 protected:
   void handleSite(const SiteCoords &, vector<count_tp> &);
 };
 
-inline
-Reader::Reader(unsigned r)
-{
-    curr_run.preds.clear();
-    curr_run.runId = r;
-}
 
 void Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 {
@@ -263,12 +262,14 @@ double utillog_update()
 void utillog_validate(vector<double> &lls, confusion_matrix &cm) {
     cm.tn = cm.tp = cm.fn = cm.fp = 0;
 
+    Reader reader("counts.txt");
     Progress::Bounded valProg ("validating", num_valruns);
     for (unsigned i = 0; i < num_valruns; i++) {
 	valProg.step();
 	unsigned r = val_runs[i];
 
-	Reader(r).read(r);
+        reset_curr_run(r);
+	reader.read(r);
 
         double z = calc_z();
 	double mu = calc_mu(z);
@@ -331,11 +332,10 @@ operator<< (ostream &out, const confusion_matrix &cm)
 inline ostream &
 operator<< (ostream &out, const pred_hash_t &ph)
 {
-    out << "-1 -1 -1 " << theta0 << '\n';
     for (pred_hash_t::const_iterator c = ph.begin(); c != ph.end(); c++) {
 	const PredCoords pc = c->first;
 	const pred_info_t pi = c->second;
-	out << pc.unitIndex << ' ' << pc.siteOffset << ' ' << pc.predicate << ' '
+	out << pc.siteIndex << ' ' << pc.predicate << ' '
 	    << pi.theta << '\n';
     }
     return out;
@@ -349,16 +349,20 @@ void print_results(const vector<double> &train_lls,
     ofstream valfp("val_lls.txt", ios_base::app);
     ofstream cmfp("confmat.txt", ios_base::app);
     ofstream thetafp("theta.txt", ios_base::app);
+    ofstream logregfp("logreg.txt");
 
     trainfp << train_lls;
     valfp << val_lls;
     cmfp << cm;
+    thetafp << "-1 -1 " << theta0 << '\n';
     thetafp << pred_hash;
+    logregfp << pred_hash;
 
     trainfp.close();
     valfp.close();
     cmfp.close();
     thetafp.close();
+    logregfp.close();
 }
 
 
@@ -369,10 +373,7 @@ void print_results(const vector<double> &train_lls,
 void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
-	{ &CompactReport::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
-	{ &ReportReader::argp, 0, 0, 0 },
-	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ &UtilLogReg::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
@@ -459,12 +460,14 @@ int main(int argc, char** argv)
 	gsl_ran_shuffle (generator, order->data, num_trainruns, sizeof(size_t));
 	gsl_permute_uint (gsl_permutation_data(order), &(train_runs.front()), 1, (size_t) num_trainruns);
 
+        Reader reader("counts.txt");
 	Progress::Bounded trainProg("reading runs", num_trainruns);
 	for (unsigned i = 0; i < num_trainruns; i++) {
 	  trainProg.step();
 	  unsigned r = train_runs[i];
 	  
-	  Reader(r).read(r);
+          reset_curr_run(r);
+	  reader.read(r);
 
 	  double ll = utillog_update();
 	  train_lls[i] = ll;

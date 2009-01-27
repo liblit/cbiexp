@@ -12,7 +12,7 @@ function mostPredictiveRuns(resultsfile, datafile, outputfile)
     end;
     xmlwrite(outputfile, doc);
 
-function printruns(doc, node, i, X, Indices, offset);
+function printruns(doc, node, i, X);
     [S, Is] = sortMinDiffs(X, i);
     pos = find(S > 0); 
     M = {num2cell(S(1,pos)') num2cell(Is(1,pos)')};

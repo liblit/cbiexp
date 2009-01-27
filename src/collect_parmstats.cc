@@ -1,17 +1,17 @@
 /****************************************************************
- * This program collects sufficient statistics for estimating the 
+ * This program collects sufficient statistics for estimating the
  * parameters of the truth probability model.  Statistics are
  * collected for all predicates that passed the pre-filtering test,
  * as well as the complements of those predicates.  Statistics for
  * failed runs are collected separately from those of successful
  * runs.
- * Input: 
+ * Input:
  * 1. file containing sampling rates (defined on the commandline)
  * 2. preds.txt (predicates retained after pre-filtering)
  * 3. all the program runs
  * 4. s.runs and f.runs
  * Output:
- * parmstats.txt and notp-parmstats.txt: sufficient stats for the 
+ * parmstats.txt and notp-parmstats.txt: sufficient stats for the
  *   list of predicates in preds.txt and their complements (in the
  *   same order as preds.txt)
  *
@@ -22,28 +22,25 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <limits>
 #include <numeric>
 #include <queue>
+#include <stdexcept>
 #include "fopen.h"
-#include "CompactReport.h"
 #include "DiscreteDist.h"
 #include "NumRuns.h"
 #include "PredCoords.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
+#include "SampleRatesFile.h"
 #include "ReportReader.h"
-#include "RunsDirectory.h"
 #include "SiteCoords.h"
 #include "classify_runs.h"
 #include "utils.h"
 
 using namespace std;
 using __gnu_cxx::hash_map;
-
-string sampleRateFile;
-typedef hash_map<SiteCoords, double> site_hash_t;
-static site_hash_t sampleRates;
 
 typedef queue<PredCoords> Preds;
 Preds retainedPreds;
@@ -68,7 +65,7 @@ Preds retainedPreds;
 
 class pred_info_t {
 private:
-    unsigned N, Z; 
+    unsigned N, Z;
     count_tp S, Y;
     double a;
     double b;
@@ -107,14 +104,14 @@ void pred_info_t::update (const count_tp m, const count_tp y)
       } else { // m > y and y == 0 -> set B
 	  if (Bset.find(m) == Bset.end())
 	    Bset[m] = 1;
-          else 
+          else
 	    Bset[m] += 1;
 	  ++Bsize;
       }
   } else { // m == y > 0 -> set C
       if (Cset.find(m) == Cset.end())
         Cset[m] = 1;
-      else 
+      else
 	Cset[m] += 1;
       ++Csize;
   }
@@ -150,7 +147,7 @@ PredPair::update(PredInfoPtr pipt, count_tp nobs, count_tp ntrue)
     (this->*pipt).update(nobs, ntrue);
 }
 
-class pred_hash_t : public hash_map<PredCoords, PredPair> 
+class pred_hash_t : public hash_map<PredCoords, PredPair>
 {
 };
 static pred_hash_t predHash;
@@ -162,21 +159,31 @@ static pred_hash_t predHash;
 class Reader : public ReportReader
 {
 public:
-  Reader(PredInfoPtr);
+  Reader(const char* filename) : ReportReader(filename) {}
+  void setptr(unsigned);
 
 protected:
   void handleSite(const SiteCoords &, vector<count_tp> &);
 
 private:
     void update(const SiteCoords &, unsigned, count_tp, count_tp) const;
-    const PredInfoPtr pipt;
+    PredInfoPtr pipt;
 };
 
-inline
-Reader::Reader(PredInfoPtr _pipt)
-    : pipt(_pipt)
+inline void
+Reader::setptr(unsigned run)
 {
+  if (is_frun[run]) pipt = &PredPair::f;
+  else
+    if (is_srun[run]) pipt = &PredPair::s;
+    else
+    {
+        ostringstream message;
+        message << "Ill-formed run " << run;
+        throw runtime_error(message.str());
+    }
 }
+
 
 inline void
 Reader::update(const SiteCoords &coords, unsigned p, count_tp nobs, count_tp ntrue) const
@@ -210,36 +217,7 @@ Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
  * Utility functions
  ***************************************************************************/
 
-// This function reads down-sampling rates contained in a file if it
-// exists and is non-empty.  The non-uniform down-sampling rates file
-// may not contain sampling rates for all sites.  (A site is omitted
-// if it was not observed in the training runs.)  The default behavior
-// of the decimator is to not do anything; therefore the default
-// sampling rate is 1.
-void 
-read_rates()
-{
-  if (sampleRateFile.empty()) {
-    return;
-  }
-
-  FILE *const rates = fopenRead(sampleRateFile.c_str());
-  SiteCoords coords;
-  double rho;
-  unsigned ctr;
-
-  while (true) {
-    ctr = fscanf(rates, "%u\t%u\t%lg\n", &coords.unitIndex, &coords.siteOffset, &rho);
-    if (ctr != 3)
-	break;
-
-    sampleRates[coords] = rho;
-  }
-  
-  fclose(rates);
-}
-
-/* For each interesting predicate, set rho according to sampleRates hash.
+/* For each interesting predicate, set rho according to the sites rate. 
  * rho is initialized to have a default value of 1.0. (See definition of
  * pred_info_t)
  */
@@ -248,12 +226,9 @@ void set_rates ()
     for (pred_hash_t::iterator c = predHash.begin(); c != predHash.end(); ++c) {
 	const PredCoords &pc = c->first;
 	PredPair &pp = c->second;
-	const site_hash_t::iterator found = sampleRates.find(pc);
-	if (found != sampleRates.end()) {
-	    const double rho = found->second;
-	    pp.f.setrho(rho);
-	    pp.s.setrho(rho);
-        }
+        const double rho = SampleRatesFile::rates[pc.siteIndex];
+        pp.f.setrho(rho);
+        pp.s.setrho(rho);
     }
 }
 
@@ -341,43 +316,16 @@ void print_results()
  * Processing command line options
  ***************************************************************************/
 
-static const argp_option options[] = {
-  {
-    "sample-rates",
-    'd',
-    "FILE",
-    0,
-    "use \"FILE\" as the downsampling rate for each site",
-    0
-  },
-  { 0, 0, 0, 0, 0, 0 }
-};
-
-static int
-parseFlag(int key, char *arg, argp_state *)
-{
-  switch (key)
-    {
-    case 'd':
-      sampleRateFile = arg;
-      return 0;
-    default:
-      return ARGP_ERR_UNKNOWN;
-    }
-}
-
 void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
-	{ &CompactReport::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
-	{ &ReportReader::argp, 0, 0, 0 },
-	{ &RunsDirectory::argp, 0, 0, 0 },
+        { &SampleRatesFile::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
 
     static const argp argp = {
-	options, parseFlag, 0, 0, children, 0, 0
+	0, 0, 0, 0, children, 0, 0
     };
 
     argp_parse(&argp, argc, argv, 0, 0, 0);
@@ -396,10 +344,10 @@ int main(int argc, char** argv)
 
     FILE * const pfp = fopenRead(PredStats::filename);
     pred_info pi;
-    // read in the list of pre-filtered predicates, insert both the 
-    // predicate and its complement into the hashtable if they don't 
+    // read in the list of pre-filtered predicates, insert both the
+    // predicate and its complement into the hashtable if they don't
     // already exist
-    while (read_pred_full(pfp, pi)) { 
+    while (read_pred_full(pfp, pi)) {
 	PredPair &pp = predHash[pi];
 	PredPair &notpp = predHash[notP(pi)];
 	pp.init();
@@ -408,22 +356,15 @@ int main(int argc, char** argv)
     }
     fclose(pfp);
 
-    read_rates();  // read the sampling rates from file
+    SampleRatesFile::read_rates();  // read the sampling rates from file
     set_rates();   // set sampling rates in predHash according to values read from file
 
+    Reader reader("counts.txt");
     Progress::Bounded prog("Reading runs and collecting sufficient stats", NumRuns::count());
-    for (unsigned r = NumRuns::begin; r < NumRuns::end; ++r) {
+    for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
       prog.step();
-      // pipt is a pointer to the pred_info singleton for success or failure
-      PredInfoPtr pipt = 0;
-      if (is_srun[r])
-	pipt = &PredPair::s; 
-      else if (is_frun[r])
-        pipt = &PredPair::f;
-      else
-	continue;
-  
-      Reader(pipt).read(r);
+      reader.setptr(r);
+      reader.read(r);
     }
 
     set_min();

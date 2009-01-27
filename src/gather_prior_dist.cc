@@ -2,17 +2,16 @@
 #include <cassert>
 #include <cstdio>
 #include <iostream>
+#include <sstream>
 #include <ext/hash_map>
 #include <fstream>
 #include <numeric>
 #include <queue>
-#include "CompactReport.h"
 #include "DiscreteDist.h"
 #include "NumRuns.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
-#include "RunsDirectory.h"
 #include "SiteCoords.h"
 #include "classify_runs.h"
 #include "fopen.h"
@@ -64,7 +63,7 @@ SiteInfo::notice(Dist d, count_tp n){
   DiscreteDist::iterator found = disthash.find(n);
   if (found == disthash.end())
     disthash[n] = 1;
-  else 
+  else
     disthash[n] += 1;
 }
 
@@ -82,22 +81,31 @@ static SiteCounter siteCount;
 class Reader : public ReportReader
 {
 public:
-  Reader(Dist);
+  Reader(const char* filename) : ReportReader(filename) {}
 
+  void setd(unsigned);
   void countZeros();
 
 protected:
   void handleSite(const SiteCoords &, vector<count_tp> &);
 
 private:
-  const Dist d;
+  Dist d;
 };
 
-inline
-Reader::Reader(Dist _d)
-  : d(_d)
+inline void
+Reader::setd(unsigned run)
 {
   siteCount.clear();
+  if (is_frun[run]) d = &DistPair::first;
+  else
+    if (is_srun[run]) d = &DistPair::second;
+    else
+    {
+         ostringstream message;
+         message << "Ill-formed run " << run;
+         throw runtime_error(message.str());
+    }
 }
 
 void
@@ -140,10 +148,7 @@ void Reader::countZeros()
 static void process_cmdline(int argc, char **argv)
 {
     static const argp_child children[] = {
-	{ &CompactReport::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
-	{ &ReportReader::argp, 0, 0, 0 },
-	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
 
@@ -162,8 +167,6 @@ static void process_cmdline(int argc, char **argv)
 int main (int argc, char** argv)
 {
   process_cmdline (argc, argv);
-
-  classify_runs();
 
   ofstream ffp("fpriors.dat");
   ofstream sfp("spriors.dat");
@@ -185,34 +188,25 @@ int main (int argc, char** argv)
 
   fclose(pfp);
 
+  Reader reader("counts.txt");
   Progress::Bounded progress("Gathering empirical distribution", NumRuns::count());
-  for (cur_run = NumRuns::begin; cur_run < NumRuns::end; cur_run++) {
+  for (cur_run = NumRuns::begin(); cur_run < NumRuns::end(); cur_run++) {
     progress.step();
-    Dist d;
-    if (is_frun[cur_run])
-      d = &DistPair::first;
-    else if (is_srun[cur_run])
-      d = &DistPair::second;
-    else
-      continue;
-
-    Reader r(d);
-    r.read(cur_run);
-    r.countZeros();
-
+    reader.setd(cur_run);
+    reader.read(cur_run);
+    reader.countZeros();
   }
 
   while (!retainedSites.empty()) {
     const SiteCoords &coords = retainedSites.front();
     const SiteSeen::iterator found = siteSeen.find(coords);
     if (found == siteSeen.end())
-      cerr << "Error: Cannot find site " << coords.unitIndex << ' ' 
-	<< coords.siteOffset << '\n';
+      cerr << "Error: Cannot find site " << coords.siteIndex << '\n';
     else {
       const SiteInfo &info = found->second;
-      ffp << coords.unitIndex << ' ' << coords.siteOffset << '\n';
+      ffp << coords.siteIndex << '\n';
       ffp << info.reached.first;
-      sfp << coords.unitIndex << ' ' << coords.siteOffset << '\n';
+      sfp << coords.siteIndex << '\n';
       sfp << info.reached.second;
     }
     retainedSites.pop();

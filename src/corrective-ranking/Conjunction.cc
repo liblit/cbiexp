@@ -20,8 +20,8 @@ Conjunction::Conjunction(Predicate *pred1_t, Predicate *pred2_t, bool onlyEstima
 
 void Conjunction::initialize() {
   tru = RunSuite(pred1->tru, pred2->tru);
-  obs = RunSuite(NumRuns::end);
-  for(unsigned r = NumRuns::begin; r < NumRuns::end; r ++) {        
+  obs = RunSuite(NumRuns::end());
+  for(unsigned r = NumRuns::begin(); r < NumRuns::end(); r ++) {        
     if(pred1->obs.get(r) != Neither && pred1->tru.get(r) == Neither)
       obs.set(r, pred1->obs.get(r));
     else if (pred2->obs.get(r) != Neither  && pred2->tru.get(r) == Neither)

@@ -4,15 +4,14 @@
 #include <ext/hash_map>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <numeric>
 #include <queue>
 #include <vector>
-#include "CompactReport.h"
 #include "NumRuns.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
-#include "RunsDirectory.h"
 #include "RunSet.h"
 #include "OutcomeRunSets.h"
 #include "SiteCoords.h"
@@ -60,7 +59,8 @@ static PredInfos predInfos;
 class Reader : public ReportReader
 {
 public:
-    Reader(Outcome, unsigned);
+    Reader(const char* filename) : ReportReader(filename) {}
+    void setstate(unsigned);
 
 protected:
     void handleSite(const SiteCoords &, vector<count_tp> &);
@@ -68,16 +68,23 @@ protected:
 private:
     void notice(const SiteCoords &coords, unsigned, bool) const;
 
-    const Outcome outcome;
-    const unsigned runId;
+    Outcome outcome;
+    unsigned runId;
 };
 
 
-inline
-Reader::Reader(Outcome outcome, unsigned runId)
-    : outcome(outcome),
-      runId(runId)
+inline void
+Reader::setstate(unsigned run)
 {
+  runId = run;
+  if (is_frun[run]) outcome = &OutcomeRunSets::failure;
+  else
+      if (is_srun[run]) outcome = &OutcomeRunSets::success;
+      else {
+          ostringstream message;
+          message << "Ill-formed run " << run;
+          throw runtime_error(message.str());
+      }
 }
 
 
@@ -122,10 +129,7 @@ Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 static void process_cmdline(int argc, char **argv)
 {
     static const argp_child children[] = {
-	{ &CompactReport::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
-	{ &ReportReader::argp, 0, 0, 0 },
-	{ &RunsDirectory::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
 
@@ -148,8 +152,6 @@ int main(int argc, char** argv)
     set_terminate_verbose();
     process_cmdline(argc, argv);
 
-    classify_runs();
-
     ofstream ofp("obs.txt");
     ofstream tfp("tru.txt");
 
@@ -171,19 +173,12 @@ int main(int argc, char** argv)
     }
 
     {
+        Reader reader("counts.txt");
 	Progress::Bounded progress("computing obs and tru", NumRuns::count());
-	for (unsigned runId = NumRuns::begin; runId < NumRuns::end; ++runId) {
+	for (unsigned runId = NumRuns::begin(); runId < NumRuns::end(); ++runId) {
 	    progress.step();
-
-	    Outcome outcome = 0;
-	    if (is_srun[runId])
-		outcome = &OutcomeRunSets::success;
-	    else if (is_frun[runId])
-		outcome = &OutcomeRunSets::failure;
-	    else
-		continue;
-
-	    Reader(outcome, runId).read(runId);
+            reader.setstate(runId);
+	    reader.read(runId);
 	}
     }
 

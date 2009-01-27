@@ -5,6 +5,8 @@
   <scheme id="branches">
     <predicate text="is FALSE"/>
     <predicate text="is TRUE"/>
+    <predicate text="is TRUE"/>
+    <predicate text="is FALSE"/>
   </scheme>
   <scheme id="float-kinds">
     <predicate text="== -inf"/>

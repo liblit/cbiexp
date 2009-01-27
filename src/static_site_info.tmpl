@@ -1,0 +1,15 @@
+#*
+    Cheetah Template File to Generate static-site-info.cc file
+*#
+
+\#include <site_t.h>
+\#include <unit_t.h>
+
+extern const struct site_t sites[] = {
+#for $siteinfo in $readSites($filepath)
+	{${siteinfo.filepath, format='string'}, $siteinfo.lineno, ${siteinfo.functionname, format='string'}, $siteinfo.cfgnode, ${siteinfo.schemetag, format='char'}, { ${siteinfo.description, format='stringlist'} } },
+#end for
+	{ 0, 0, 0, 0, 0, { 0, 0 } }
+};
+
+extern const unsigned NumSites = sizeof(sites) / sizeof(sites[0]) - 1;

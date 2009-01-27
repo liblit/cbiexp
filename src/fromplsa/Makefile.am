@@ -1,7 +1,3 @@
-if ENABLE_LINECOLORING
-SUBDIRS = line-colorings
-endif
-
 DIST_SUBDIRS = toxml
 
 EXTRA_DIST =				\

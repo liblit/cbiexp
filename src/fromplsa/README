@@ -1,0 +1,8 @@
+This subdirectory handles post-processing of results from our plsa analysis.
+
+It uses Bayes' rule to calculate derived probabilities. 
+
+The subdirectory, toxml, handles presenting the data in a web friendly format. 
+
+It even goes so far as to use matlab to generate little graphs in .png format as
+representations of the data.

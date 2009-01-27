@@ -9,7 +9,7 @@
 <!ELEMENT info (bug-o-meter, operand*)>
 
 <!-- compilation unit signature expressed as 32 hex digits -->
-<!ATTLIST info unit NMTOKEN #REQUIRED>
+<!ATTLIST info unit NMTOKEN #IMPLIED>
 
 <!-- name of instrumentation scheme -->
 <!ATTLIST info scheme (branches|float-kinds|g-object-unref|returns|scalar-pairs) #REQUIRED>
