@@ -8,7 +8,7 @@ endif
 
 DIST_SUBDIRS = $(SUBDIRS) effort
 
-AM_CPPFLAGS = -W -Wall -Werror -Wformat=2 -Wno-deprecated $(BOOST_CPPFLAGS)
+AM_CPPFLAGS = -Wall -Wextra -Werror -Wformat=2 -Wno-deprecated $(BOOST_CPPFLAGS)
 
 noinst_PROGRAMS =				\
 	bicluster				\
