@@ -33,6 +33,18 @@ AC_COMPILE_IFELSE(
 ,
   AC_MSG_RESULT(no))
 
+AC_MSG_CHECKING(for C++ link command)
+case "$CXX" in
+  (/s/gcc-*/bin/g++)
+    AC_SUBST(CXXLIBDIR, ['$(CXX:/bin/g++=/lib)'])
+    AC_SUBST(CXXLD, ['$(CXX) -Wl,-rpath,$(CXXLIBDIR) -L$(CXXLIBDIR)'])
+    AC_MSG_RESULT($CXXLD)
+  ;;
+  (*)
+    AC_MSG_RESULT(using default)
+  ;;
+esac
+
 
 ########################################################################
 #
