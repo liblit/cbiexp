@@ -1,5 +1,6 @@
 #include <sstream>
 #include "EstimateTPs.h"
+#include <string.h>
 #include "fopen.h"
 
 using namespace std;

@@ -3,12 +3,12 @@
 
 
 struct site_t {
-    char* file;
+    const char* file;
     int line;
-    char* fun;
+    const char* fun;
     int cfg_node;
     char scheme_code;
-    char* args[2];
+    const char* args[2];
 };
 
 
