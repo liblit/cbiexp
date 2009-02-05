@@ -119,7 +119,7 @@ elif test -n "$with_sampler_prefix"; then
 else
   AC_PATH_PROG(sampler_cc, sampler-cc)
   if test -n "$sampler_cc"; then
-    sampler_tooldir="`cd \`dirname \"$sampler_cc\"\`/../lib/sampler/tools; pwd`"
+    sampler_tooldir="`cd \`dirname \"$sampler_cc\"\`/../build/sampler/tools; pwd`"
   fi
 fi
 
