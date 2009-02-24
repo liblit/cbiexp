@@ -46,6 +46,9 @@ static int num_r_preds = 0;
 static int num_b_preds = 0;
 static int num_f_preds = 0;
 static int num_g_preds = 0;
+static int num_y_preds = 0; 
+static int num_a_preds = 0; 
+
 
 inline pred_stat get_pred_stat(int si, int p)
 {
@@ -141,6 +144,20 @@ static void print_retained_preds()
 		for (p = 0; p < num_preds('G'); p++)
 		    if (site_info[si].retain[p]) {
 			num_g_preds++;
+			print_pred(fp, si, p);
+		    }
+		break;
+	    case 'A':
+		for (p = 0; p < num_preds('A'); p++)
+		    if (site_info[si].retain[p]) {
+			num_a_preds++;
+			print_pred(fp, si, p);
+		    }
+		break;
+	    case 'Y':
+		for (p = 0; p < num_preds('Y'); p++)
+		    if (site_info[si].retain[p]) {
+			num_y_preds++;
 			print_pred(fp, si, p);
 		    }
 		break;
@@ -357,9 +374,11 @@ void cull_preds_aggressively1()
 		}
 		break;
 	    }
+	    case 'A': 
 	    case 'B':
 	    case 'F':
 	    case 'G':
+	    case 'Y': 
 		break;
 	    default:
 		assert(0);
