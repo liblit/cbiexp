@@ -52,6 +52,13 @@ uint 0|[1-9][0-9]*
 <REPORT_SKIP>.*\n {
 }
 
+<REPORT><samples\ unit=\"[0-9a-f]{32}\"\ scheme=\"yields\">\n {
+    BEGIN(SITES_2);
+}
+
+<REPORT><samples\ unit=\"[0-9a-f]{32}\"\ scheme=\"atoms\">\n {
+    BEGIN(SITES_2);
+}
 
 <REPORT><samples\ unit=\"[0-9a-f]{32}\"\ scheme=\"branches\">\n {
     BEGIN(SITES_2);

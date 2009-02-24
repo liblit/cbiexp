@@ -96,7 +96,9 @@ print_summary(ostream &out, Tally &tally)
       unsigned predsPerSite;
       switch (site->scheme_code)
 	{
+	case 'A':
 	case 'B':
+	case 'Y':
 	  predsPerSite = 2;
 	  break;
 	case 'R':
@@ -118,11 +120,13 @@ print_summary(ostream &out, Tally &tally)
       total[site->scheme_code] += predsPerSite;
     }
 
+  print_summary_scheme(out, "atoms", total, tally, 'A'); /*cci*/
   print_summary_scheme(out, "branches", total, tally, 'B');
   print_summary_scheme(out, "float-kinds", total, tally, 'F');
   print_summary_scheme(out, "g-object-unref", total, tally, 'G');
   print_summary_scheme(out, "returns", total, tally, 'R');
   print_summary_scheme(out, "scalar-pairs", total, tally, 'S');
+  print_summary_scheme(out, "yields", total, tally, 'Y'); /*cci*/
 
   out << "</schemes></experiment>\n";
 }

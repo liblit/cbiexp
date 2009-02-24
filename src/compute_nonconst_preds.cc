@@ -124,7 +124,9 @@ static void cull_preds(const StaticSiteInfo &staticSiteInfo)
 	const site_t &site = staticSiteInfo.site(si);
 	unsigned numPreds;
 	switch (site.scheme_code) {
+	case 'A':
 	case 'B':
+	case 'Y':
 	    numPreds = 2;
 	    break;
 	case 'F':

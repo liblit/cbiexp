@@ -2,7 +2,7 @@
 
 <!ELEMENT predictor (operand*)>
 <!ATTLIST predictor
-  scheme (branches|g-object-unref|returns|scalar-pairs) #REQUIRED
+  scheme (atoms|branches|g-object-unref|returns|scalar-pairs|yields) #REQUIRED
   file CDATA #REQUIRED
   line NMTOKEN #REQUIRED
   function NMTOKEN #REQUIRED

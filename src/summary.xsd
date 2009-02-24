@@ -74,6 +74,7 @@
 
   <xsd:simpleType name="name.type">
     <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="atoms" />
       <xsd:enumeration value="bounds" />
       <xsd:enumeration value="branches" />
       <xsd:enumeration value="float-kinds" />
@@ -81,6 +82,7 @@
       <xsd:enumeration value="g-object-unref" />
       <xsd:enumeration value="returns" />
       <xsd:enumeration value="scalar-pairs" />
+      <xsd:enumeration value="yields" />
     </xsd:restriction>
   </xsd:simpleType>
 </xsd:schema>

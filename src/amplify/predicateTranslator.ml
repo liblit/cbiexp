@@ -11,20 +11,24 @@ module Index = Hashtbl.Make (
 
 let schemeName code =
   match code with
+  | 'A' -> "atoms"
   | 'B' -> "branches"
   | 'F' ->  "float-kinds"
   | 'G' -> "g-object-unref"
   | 'R' -> "returns"
   | 'S' -> "scalar-pairs"
+  | 'Y' -> "yields"
   |  _ -> raise (Failure (Printf.sprintf "unrecognized scheme code: %c" code))
 
 let schemeCode name =
   match name with
+  | "atoms" -> 'A'
   | "branches" -> 'B'
   | "float-kinds" -> 'F'
   | "g-object-unref" -> 'G'
   | "returns" -> 'R'
   | "scalar-pairs" -> 'S'
+  | "yields" -> 'Y'
   | _ -> raise (Failure ("unrecognized scheme name: "^name))
 
 let ground_to_synth g = 

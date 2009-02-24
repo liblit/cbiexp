@@ -46,6 +46,10 @@ const string &
 scheme_name(char code)
 {
     switch (code) {
+    case 'A': { 
+	static const string name("atoms");
+	return name;
+    }
     case 'B': {
 	static const string name("branches");
 	return name;
@@ -64,6 +68,10 @@ scheme_name(char code)
     }
     case 'S': {
 	static const string name("scalar-pairs");
+	return name;
+    }
+    case 'Y': { 
+	static const string name("yields");
 	return name;
     }
     default:

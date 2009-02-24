@@ -59,7 +59,9 @@ inline pred_stat get_pred_stat(int si, int p)
 unsigned int num_preds(char scheme_code)
 {
     switch (scheme_code) {
+        case 'A':
         case 'B':
+        case 'Y':
             return 2;
             break;
         case 'F':

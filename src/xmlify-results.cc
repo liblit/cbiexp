@@ -64,10 +64,12 @@ int main()
 
       switch (site.scheme_code)
 	{
+	case 'A':
 	case 'B':
 	case 'F':
 	case 'G':
 	case 'R':
+	case 'Y':
 	  xml << "<operand source=\"" << escape(site.args[0]) << "\"/>";
 	  break;
 	case 'S':

@@ -2,6 +2,10 @@
 <!DOCTYPE schemes SYSTEM "schemes.dtd">
 
 <schemes>
+  <scheme id="atoms">
+    <predicate text="atomic"/>
+    <predicate text="not atomic"/>
+  </scheme>
   <scheme id="branches">
     <predicate text="is FALSE"/>
     <predicate text="is TRUE"/>
@@ -53,5 +57,9 @@
     <predicate text="!="/>
     <predicate text="&gt;"/>
     <predicate text="&lt;="/>
+  </scheme>
+  <scheme id="yields">
+    <predicate text="not yielded"/>
+    <predicate text="yielded"/>
   </scheme>
 </schemes>
