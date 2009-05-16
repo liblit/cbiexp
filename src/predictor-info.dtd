@@ -27,7 +27,7 @@
 <!ATTLIST info
   file CDATA #REQUIRED
   line NMTOKEN #REQUIRED
-  function NMTOKEN #REQUIRED>
+  function CDATA #REQUIRED>
 
 <!-- static control flow graph node number as given in ".sites" -->
 <!-- Nodes are numbered from 0, not from 1.  This is an exception to the general policy of using 1-based numbering in XML.  CFG node numbers here exactly match the node numbers as given in ".sites". Do not apply any +1 or -1 offset. -->

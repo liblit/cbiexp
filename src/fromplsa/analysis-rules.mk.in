@@ -11,7 +11,7 @@ datadir ?= ..
 resultsdir ?= ../best
 
 MATLAB = matlab -nodisplay
-XSLTPROC = xsltproc --path $(tooldir)/toxml --path . --path $(analysisdir)
+XSLTPROC = xsltproc --path $(tooldir)/toxml --path . --path $(analysisdir) --path $(root)/src
 time := /usr/bin/time
 
 xml: results.mat summary.html aspects.xml

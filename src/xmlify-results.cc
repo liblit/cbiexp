@@ -47,7 +47,7 @@ int main()
 	  << "\" predicate=\"" << stats.predicate
 	  << "\" file=\"" << filename
 	  << "\" line=\"" << site.line
-	  << "\" function=\"" << site.fun
+	  << "\" function=\"" << escape(site.fun)
 	  << "\" cfg-node=\"" << site.cfg_node
 	  << "\">"
 
