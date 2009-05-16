@@ -18,20 +18,14 @@
 
 function convertData(inputfile, outputfile, outcomes, causes, dimfile)
 
-    % get miscellaneous info about experiment
-    dims = xmlread(dimfile);
-    data = dims.getDocumentElement();
-    numpreds = str2num(data.getAttribute('numpreds'));
-    numruns = str2num(data.getAttribute('numruns'));
-
     % load data
     Outcomes = int8(load(outcomes));
     Fvector = Outcomes > 0;
     Svector = Outcomes == 0;
     Indices = find(sum([Fvector Svector], 2));
-    Causes = int8(load(causes)); 
+    Causes = int8(load(causes));
     X = load(inputfile);
-    X = convertCounts(X, [numpreds numruns]);
+    X = spconvert(X);
 
     % save data
     Data.X = X;
@@ -40,16 +34,4 @@ function convertData(inputfile, outputfile, outcomes, causes, dimfile)
     Data.Indices = Indices;
     Data.Causes = Causes;
     Data.inputfile = inputfile;
-    save('-mat', outputfile, 'Data'); 
-
-% Pads the matrix to the appropriate length
-function X = convertCounts(X,dimensions)
-    if numel(X) == 0;
-        X = sparse(dimensions(1), dimensions(2));
-        warning('counts matrix  has only zero entries.')
-    else
-        X = spconvert(X);
-        if not(all(dimensions == size(X)));
-            X(dimensions(1), dimensions(2)) = 0;
-        end;
-    end;
+    save('-mat', outputfile, 'Data');

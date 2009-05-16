@@ -9,8 +9,8 @@
 * failures or successes. This saves us trouble and leaves zero columns as place
 * holders for these runs.
 *
-* The files produced are Xtru.sparse which contains tru counts, Xobs.sparse
-* which contains observed counts, and X.xml which contains miscellaneous info.
+* The files produced are Xtru.sparse which contains tru counts, and Xobs.sparse
+* which contains observed counts.
 *
 * Currently counts are only taken for predicates in preds.txt.
 ******************************************************************************/
@@ -123,12 +123,18 @@ static void process_cmdline(int argc, char **argv)
 };
 
 
-void print_sparse(ostream & out, unsigned int row, vector <pair <unsigned int, unsigned int> > cols)
+void print_sparse(ostream & out, unsigned int row, vector <pair <unsigned int,
+unsigned int> > cols, unsigned int lastrun)
 {
+    bool found = false;
     for(unsigned int i = 0; i < cols.size(); i++) {
+        if(cols[i].first == lastrun) found = true;
         out << row << " " << cols[i].first << " " << cols[i].second << "\n";
     }
+    if(found) return;
+    out << row << " " << lastrun << " 0 \n";
 }
+
 
 int main(int argc, char** argv)
 {
@@ -137,12 +143,14 @@ int main(int argc, char** argv)
 
     classify_runs();
 
+    const unsigned int numruns = NumRuns::count();
+
     // interesting predicates in "preds.txt" order
     typedef queue<const PredInfo *> InterestingPreds;
     InterestingPreds interesting;
 
     {
-	const unsigned numPreds = PredStats::count();
+        const unsigned numPreds = PredStats::count();
 	Progress::Bounded progress("reading interesting predicate list", numPreds);
 	FILE * const pfp = fopenRead(PredStats::filename);
 	pred_info pi;
@@ -156,7 +164,7 @@ int main(int argc, char** argv)
 
     {
         Reader reader("counts.txt");
-	Progress::Bounded progress("finding counts", NumRuns::count());
+	Progress::Bounded progress("finding counts", numruns);
 	for (unsigned runId = 0; runId < NumRuns::end(); ++runId) {
 	    progress.step();
             if (is_srun[runId] || is_frun[runId]) {
@@ -175,24 +183,12 @@ int main(int argc, char** argv)
             row++;
 	    progress.step();
 	    const PredInfo * const info = interesting.front();
-            print_sparse(outtru, row, info->tru);
-            print_sparse(outobs, row, info->obs);
+            print_sparse(outtru, row, info->tru, numruns);
+            print_sparse(outobs, row, info->obs, numruns);
 	    interesting.pop();
 	}
         outtru.close();
         outobs.close();
-    }
-
-    //We record the dimensions of the data matrix. We don't want zero
-    //entries on the right hand side to cause the matrix to be truncated.
-    //count() returns exactly the difference between the start and end
-    //specified.
-    {
-        ofstream out("X.xml");
-        out << "<data "
-            << "numpreds=\"" << PredStats::count() << "\" "
-            << "numruns=\"" << NumRuns::count() << "\"/>\n";
-        out.close();
     }
 
     return 0;
