@@ -14,7 +14,7 @@ function runOnce(inputfile, outputfile, logfile, numaspects, numbugaspects, maxi
     Results.seed = seed;
     rand('state',seed);
 
-    [Results.Pw_z,Results.Pd_z,Results.Pz,Results.Li] = pLSA_EM(Data.X, Learn, find(Data.Sindices));
+    [Results.Pw_z,Results.Pd_z,Results.Pz,Results.Li] = pLSA_EM(Data.X, Learn, find(Data.Svector));
     Results.Learn.Max_Iterations = maxiterations;
     Results.Learn.Min_Likelihood_Change = minlikelihoodchange;
     Results.Learn.UsageIndices = [1:numaspects - numbugaspects]';
