@@ -7,6 +7,7 @@
 #include <numeric>
 #include <vector>
 #include "Confidence.h"
+#include "CullPredicates.h"
 #include "NumRuns.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
@@ -247,7 +248,7 @@ inline void cull(int si, int p)
 {
     pred_stat ps = get_pred_stat(si, p);
 
-    if (retain_pred(site_info[si].S[p], site_info[si].F[p], ps.lb)) {
+    if (!CullPredicates::cull || retain_pred(site_info[si].S[p], site_info[si].F[p], ps.lb)) {
 	site_info[si].retain[p] = true;
     }
 }
@@ -278,6 +279,8 @@ inline bool have_equal_increase(int s1, int p1, int s2, int p2)
 
 void cull_preds_aggressively1()
 {
+    if (!CullPredicates::cull) return;
+
     unsigned si;
 
     for (si = 0; si < staticSiteInfo->siteCount; si++) {
@@ -435,6 +438,8 @@ void checkL(unsigned si, int p)
 
 void cull_preds_aggressively2()
 {
+    if (!CullPredicates::cull) return;
+
     unsigned si;
 
     for (si = 0; si < staticSiteInfo->siteCount; si ++) {
@@ -462,6 +467,7 @@ void process_cmdline(int argc, char** argv)
     static const argp_child children[] = {
 	{ &Confidence::argp, 0, 0, 0 },
 	{ &NumRuns::argp, 0, 0, 0 },
+        { &CullPredicates::argp, 0, 0, 0 },
 	{ 0, 0, 0, 0 }
     };
 
