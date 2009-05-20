@@ -183,8 +183,8 @@ int main(int argc, char** argv)
             row++;
 	    progress.step();
 	    const PredInfo * const info = interesting.front();
-            print_sparse(outtru, row, info->tru, numruns);
-            print_sparse(outobs, row, info->obs, numruns);
+            print_sparse(outtru, row, info->tru, numruns + 1);
+            print_sparse(outobs, row, info->obs, numruns + 1);
 	    interesting.pop();
 	}
         outtru.close();
