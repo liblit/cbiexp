@@ -13,10 +13,17 @@ using std::string;
 pred_stat compute_pred_stat(int s, int f, int os, int of, int confidence)
 {
     pred_stat p;
-    p.fs = ((double)  f) / ( s +  f);
-    p.co = ((double) of) / (os + of);
-    p.in = p.fs - p.co;
-    p.lb = p.in - Confidence::critical(confidence) * sqrt(((p.fs * (1 - p.fs)) / (f + s)) + ((p.co * (1 - p.co))/(of + os)));
+    int s_f = s + f;
+    int os_of = os + of;
+
+    p.fs = s_f == 0 ? 0.0 : ((double) f) / s_f;
+    p.co = os_of == 0 ? 0.0 : ((double) of) / os_of;
+
+    p.in = s == os && of == os ? 0.0 : p.fs - p.co;
+
+    p.lb = p.in - Confidence::critical(confidence) *
+      sqrt(s_f == 0 ? 0.0 : ((p.fs * (1 - p.fs)) / s_f) +
+          (os_of == 0 ? 0.0 : (p.co * (1 - p.co))/ os_of));
     return p;
 }
 
