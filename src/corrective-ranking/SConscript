@@ -18,6 +18,8 @@ env.StaticLibrary('corrective', [
 	'zoom.cc',
         ])
 
-env.Program('exact-complete.cc')
-env.Program('approximate-complete.cc')
-env.Program('adaptive-sampled.cc')
+Default([
+        env.Program('exact-complete.cc'),
+        env.Program('approximate-complete.cc'),
+        env.Program('adaptive-sampled.cc'),
+        ])

@@ -7,9 +7,9 @@ sources = [
     'main.cc',
     ]
 
-env.Program(
-    'never-reached', sources,
-    LIBS=['analyze', 'dl'],
+Default(
+    env.Program(
+        'never-reached', sources,
+        LIBS=['analyze', 'dl'],
+        )
     )
-
-#never_reached_LDADD = -L.. -lanalyze -ldl
