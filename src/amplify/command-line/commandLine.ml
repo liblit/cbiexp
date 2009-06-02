@@ -1,7 +1,7 @@
 open Arg
 
 class ['a] box default =
-  object(self)
+  object
     val mutable x : 'a = default 
     val mutable wasSet = false
 
@@ -40,7 +40,7 @@ class parser p c =
       List.iter (fun x -> x#cleanup ()) parsers
 
     method parseCommandLine () =
-      Arg.parse (self#argActions ()) (fun x -> ()) (self#usage_msg ());
+      Arg.parse (self#argActions ()) (fun _ -> ()) (self#usage_msg ());
       self#cleanup ()
 
   end
