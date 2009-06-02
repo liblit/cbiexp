@@ -171,8 +171,8 @@ __lib_builder = Builder(
     emitter=__lib_emitter,
     action=__lib_action,
     src_builder=__obj_builder,
-    src_suffix='$_OCAML_CMO',
-    suffix='$_OCAML_CMA',
+    src_suffix='$OCAML_CMO',
+    suffix='$OCAML_CMA',
     )
 
 
@@ -334,6 +334,8 @@ def generate(env):
         OCAMLDEP=env.Detect(['ocamldep.opt', 'ocamldep']),
         OCAMLLEX=env.Detect(['ocamllex.opt', 'ocamllex']),
         OCAMLOPT=env.Detect(['ocamlopt.opt', 'ocamlopt']),
+        OCAML_CMA=__var_ocaml_cma,
+        OCAML_CMO=__var_ocaml_cmo,
         OCAML_DEBUG=False,
         OCAML_DTYPES=False,
         OCAML_LIBS=[],
@@ -344,8 +346,6 @@ def generate(env):
         OCAML_WARN='',
         OCAML_WARN_ERROR='',
         _OCAMLC=__var_ocamlc,
-        _OCAML_CMA=__var_ocaml_cma,
-        _OCAML_CMO=__var_ocaml_cmo,
         _OCAML_DEBUG=__var_ocaml_debug,
         _OCAML_DTYPES=__var_ocaml_dtypes,
         _OCAML_LIBS='${_concat("", OCAML_LIBS, _OCAML_CMA, __env__)}',

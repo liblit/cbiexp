@@ -5,6 +5,7 @@ Import('env')
 env.Tool('ocaml', toolpath=['#scons-tools'])
 env.AppendUnique(OCAML_PATH=Dir('.'))
 env['OCAML_DTYPES'] = True
+env['OCAML_NATIVE'] = env['optimize']
 env['OCAML_WARN'] = 'A'
 env['OCAML_WARN_ERROR'] = 'A'
 
@@ -20,9 +21,9 @@ for source in chain(Glob('*.ml'), Glob('*.mli')):
     env.OcamlObject(source, OCAML_WARN=warnings)
 
 Default([
-        env.OcamlProgram('amplify', 'runner.cmo'),
-        env.OcamlProgram('logreader', 'logReader.cmo'),
-        env.OcamlProgram('amplify-truth-probs', 'amplifyTruthProbs.cmo'),
+        env.OcamlProgram('amplify', 'runner$_OCAML_CMO'),
+        env.OcamlProgram('logreader', 'logReader$_OCAML_CMO'),
+        env.OcamlProgram('amplify-truth-probs', 'amplifyTruthProbs$_OCAML_CMO'),
         ])
 
 SConscript(dirs=['command-line'])
