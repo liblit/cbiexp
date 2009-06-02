@@ -1,5 +1,5 @@
 Import('env')
 env.AppendUnique(OCAML_PATH=Dir('.'))
 
+env.OcamlObject(Glob('*.ml'))
 env.OcamlObject(Glob('*.mli'))
-env.OcamlLibrary('commandLine', Glob('*.ml'))
