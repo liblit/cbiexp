@@ -1,0 +1,19 @@
+Import('env')
+
+env.Tool('ocaml', toolpath=['#scons-tools'])
+env.AppendUnique(OCAML_PATH=Dir('.'))
+env['OCAML_DTYPES'] = True
+env['OCAML_WARN'] = 'Ax'
+env['OCAML_WARN_ERROR'] = 'Ax'
+
+env.OcamlLex(Glob('*.mll'))
+sources = Glob('*.ml') + Glob('*.mli')
+env.OcamlObject(sources)
+
+Default([
+        env.OcamlProgram('amplify', 'runner.ml'),
+        env.OcamlProgram('logreader', 'logReader.ml'),
+        env.OcamlProgram('amplify-truth-probs', 'amplifyTruthProbs.ml'),
+        ])
+
+SConscript(dirs=['command-line'])
