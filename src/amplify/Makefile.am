@@ -1,3 +1,4 @@
+
 SUBDIRS = command-line
 ENABLE_AMPLIFY_NATIVE=1
 
@@ -13,7 +14,6 @@ amplify_lexers =				\
 
 amplify_others =				\
 	predicate.ml				\
-	schemes.ml				\
 	predicateTranslator.ml			\
 	siteInfoAccumulator.ml			\
 	implicationAccumulator.ml		\
@@ -25,7 +25,6 @@ amplify_others =				\
 
 amplify_objects =				\
 	predicate.$(cmo)			\
-	schemes.$(cmo)				\
 	predicateTranslator.$(cmo)		\
 	siteInfoAccumulator.$(cmo)		\
 	sitesLexer.$(cmo)			\
@@ -56,7 +55,6 @@ amplify_truth_probs_lexers = predsLexer.mll	\
 	implLexer.mll
 
 amplify_truth_probs_others = predicate.ml	\
-	schemes.ml				\
 	logger.ml				\
 	implicationAccumulator.ml		\
 	siteInfoAccumulator.ml			\
@@ -68,7 +66,6 @@ amplify_truth_probs_others = predicate.ml	\
 	amplifyTruthProbs.ml
 
 amplify_truth_probs_objects = predicate.$(cmo)	\
-	schemes.$(cmo)				\
 	logger.$(cmo)				\
 	implicationAccumulator.$(cmo)		\
 	implLexer.$(cmo)			\
