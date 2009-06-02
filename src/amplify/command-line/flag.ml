@@ -11,7 +11,7 @@ class type c =
 
 
 class c_impl (default : bool) (usage : string) (flag : string) (description : string) =
-  object (self)
+  object
     val on = ref default 
 
     method shouldDo () = !on

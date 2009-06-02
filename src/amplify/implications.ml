@@ -5,7 +5,7 @@ module PredicateSet = Predicate.Set
 module PredicateTable = Predicate.Table
 
 class c =
-  object (self)
+  object
     val table = PredicateTable.create 37
   
     method add (l : predicate) (r : predicate) = 
@@ -60,7 +60,7 @@ class impliesRelationImpl : impliesRelation =
   end
 
 class impliesSynthRelationImpl : impliesRelation =
-  object (self)
+  object
     inherit impliesRelationImpl as super
 
     method add (l : predicate) (r : predicate) =

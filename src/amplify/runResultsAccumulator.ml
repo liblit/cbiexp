@@ -155,19 +155,19 @@ class virtual base t =
       in
 
       let sorted = self#sortAux () in
-      List.iter (fun (l,r) -> printSorted outchannel r) sorted
+      List.iter (fun (_, r) -> printSorted outchannel r) sorted
 
   end 
 
 class core t =
-  object (self)
+  object
     inherit base t
     method xArray arr = arr
     method makeSitesArray () = Array.make 3 0.0 
   end 
 
 class synth t =
-  object (self)
+  object
     inherit base t
     method xArray arr = Predicate.core_to_synth_array arr 
     method makeSitesArray () = Array.make 6 0.0
