@@ -41,6 +41,7 @@ case "$CXX" in
     AC_MSG_RESULT($CXXLD)
   ;;
   (*)
+    AC_SUBST(CXXLD, ['$(CXX)'])
     AC_MSG_RESULT(using default)
   ;;
 esac
