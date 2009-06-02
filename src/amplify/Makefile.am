@@ -87,8 +87,12 @@ objects = $(amplify_objects) 			\
 	$(logreader_objects)			\
 	$(amplify_truth_probs_objects)
 
-mlis = $(amplify_others:=.mli) 			\
+mlis =						\
+	$(amplify_lexers:=.mli)			\
+	$(amplify_others:=.mli) 		\
+	$(logreader_lexers:=.mli)		\
 	$(logreader_others:=.mli)     		\
+	$(amplify_truth_probs_lexers:=.mli)	\
 	$(amplify_truth_probs_others:=.mli)
 
 depends = $(objects:.$(cmo)=.do) $(mlis:.mli=.di)
