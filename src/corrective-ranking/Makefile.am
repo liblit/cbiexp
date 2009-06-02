@@ -1,4 +1,4 @@
-_CPPFLAGS = -W -Wall -Werror -Wformat
+AM_CPPFLAGS = -W -Wall -Werror -Wformat
 
 noinst_LIBRARIES =				\
 	libcorrective.a
