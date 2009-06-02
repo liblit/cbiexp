@@ -13,7 +13,7 @@ class type c =
   end
 
 class c_impl out =
-  object (self)
+  object
     val outchannel = out 
 
     method logImplications (left : predicate)  (rights : PredicateSet.t) =
@@ -36,13 +36,13 @@ class c_impl out =
 
   end
 
-class c_null out =
-  object (self)
-    val outchannel : out_channel = out
+class c_null out : c =
+  object
+    val outchannel = out
 
-    method logImplications (left : predicate) (rights : PredicateSet.t)  = ()
-    method logImplication (left : predicate) (right : predicate)  = ()
-    method logPredicate (p : predicate) = ()
+    method logImplications _ _  = ()
+    method logImplication _ _  = ()
+    method logPredicate _ = ()
     method advance () = () 
   end
 

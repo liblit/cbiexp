@@ -22,7 +22,7 @@ class type translator =
   end
 
 class c t =
-  object (self)
+  object
     val preds : p list ref = ref [] 
     val trans : translator = t 
 
