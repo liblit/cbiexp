@@ -21,9 +21,9 @@ for source in chain(Glob('*.ml'), Glob('*.mli')):
     env.OcamlObject(source, OCAML_WARN=warnings)
 
 Default([
-        env.OcamlProgram('amplify', 'runner$_OCAML_CMO'),
-        env.OcamlProgram('logreader', 'logReader$_OCAML_CMO'),
-        env.OcamlProgram('amplify-truth-probs', 'amplifyTruthProbs$_OCAML_CMO'),
+        env.OcamlProgram('amplify', 'runner$OCAML_CMO'),
+        env.OcamlProgram('logreader', 'logReader$OCAML_CMO'),
+        env.OcamlProgram('amplify-truth-probs', 'amplifyTruthProbs$OCAML_CMO'),
         ])
 
 SConscript(dirs=['command-line'])
