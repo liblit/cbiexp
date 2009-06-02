@@ -1,0 +1,23 @@
+Import('env')
+env = env.Clone(
+    LIBS=['corrective', 'analyze', 'dl'],
+    LIBPATH=['..', '.'],
+)
+
+env.StaticLibrary('corrective', [
+	'Complex.cc',
+	'Candidates.cc',
+	'Conjunction.cc',
+	'Disjunction.cc',
+	'Outcome.cc',
+	'Predicate.cc',
+	'RunSet.cc',
+	'RunSuite.cc',
+	'allFailures.cc',
+	'main.cc',
+	'zoom.cc',
+        ])
+
+env.Program('exact-complete.cc')
+env.Program('approximate-complete.cc')
+env.Program('adaptive-sampled.cc')

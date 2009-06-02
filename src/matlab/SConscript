@@ -1,0 +1,3 @@
+Import('env')
+
+env.Program('make-counts-matrix', 'make_counts_matrix.cc', LIBS='analyze')

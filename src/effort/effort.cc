@@ -54,7 +54,7 @@ extern "C" void cs_plug_main(void)
   check_cs_error(cs_cleanup());
 }
 
-cs_pdg_vertex_set CBI_pred_to_pdg_nodes(char *fun, int line) {
+cs_pdg_vertex_set CBI_pred_to_pdg_nodes(const char *fun, int line) {
   cs_uid uid;
   cs_sfid sfid;
   cs_pdg pdg;
@@ -248,7 +248,7 @@ void libeffort()
   unsigned index = 0;
   while (read_pred_full(statsFile, info)) {
     site_t site = staticSiteInfo.site(info.siteIndex);
-    char *func = site.fun;
+    const char *func = site.fun;
     int line = site.line;
 
     details[index] = info;

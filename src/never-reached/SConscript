@@ -1,0 +1,15 @@
+Import('env')
+
+sources = [
+    'Location.cc',
+    'Locations.cc',
+    'Reader.cc',
+    'main.cc',
+    ]
+
+env.Program(
+    'never-reached', sources,
+    LIBS=['analyze', 'dl'],
+    )
+
+#never_reached_LDADD = -L.. -lanalyze -ldl
