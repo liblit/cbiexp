@@ -1,3 +1,4 @@
+from __future__ import with_statement
 from os.path import realpath
 from sys import stderr
 
@@ -9,11 +10,19 @@ Import('env')
 class MissingCodeSurferWarning(Warnings.Warning):
     pass
 
-
-if env.get('csurf'):
-    csurf = realpath(env['csurf'])
-    include = File(csurf).dir.dir.Dir('include')
-    env.SharedLibrary('effort.cc', CPPPATH=['$CPPPATH', include], LIBS='analyze')
-else:
+if not env.get('csurf'):
     Warnings.enableWarningClass(MissingCodeSurferWarning)
     Warnings.warn(MissingCodeSurferWarning, 'cannot find CodeSurfer, so skipping effort plugin')
+    Return()
+
+
+csurf = realpath(env['csurf'])
+include = File(csurf).dir.dir.Dir('include')
+[plugin] = env.SharedLibrary('effort.cc', CPPPATH=['$CPPPATH', include], LIBS='analyze')
+
+def build_effort_stk(target, source, env):
+    with open(target[0].path, 'w') as target:
+        print >>target, '(load "%s")' % source[0]
+        print >>target, '(quit)'
+
+env.Command('effort.stk', Value(plugin.abspath), build_effort_stk)

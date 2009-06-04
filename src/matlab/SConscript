@@ -1,5 +1,8 @@
 Import('env')
 
+Glob('*.m')
+File('process.xml')
+
 Default(
     env.Program(
         'make-counts-matrix',

@@ -18,8 +18,5 @@ env.StaticLibrary('corrective', [
 	'zoom.cc',
         ])
 
-Default([
-        env.Program('exact-complete.cc'),
-        env.Program('approximate-complete.cc'),
-        env.Program('adaptive-sampled.cc'),
-        ])
+for variant in ['exact-complete', 'approximate-complete', 'adaptive-sampled']:
+    Default(env.Program('%s.cc' % variant))

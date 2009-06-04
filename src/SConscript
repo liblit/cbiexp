@@ -97,6 +97,8 @@ SConscript(dirs=[
         'amplify',
         'corrective-ranking',
         'effort',
+        'evaluateplsa',
+        'fromplsa',
         'matlab',
         'never-reached',
         'Score',

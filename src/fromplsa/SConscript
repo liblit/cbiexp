@@ -1,0 +1,3 @@
+Glob('*.m')
+
+SConscript(dirs=['toxml'])
