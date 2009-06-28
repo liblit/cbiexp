@@ -77,7 +77,7 @@ Default([
 ########################################################################
 
 
-env['HAVE_MEX'] = '1' if env['mex'] else ''
+env['HAVE_MEX'] = ('', '1')[bool(env['mex'])]
 
 rules = env.Template(
     'analysis-rules.mk.in',

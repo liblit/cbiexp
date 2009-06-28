@@ -3,9 +3,9 @@ from SCons.Script import *
 
 mex_builder = Builder(
     single_source=True,
-    src_suffix='mexglx',
-    suffix='c',
-    action='$mex $SOURCE',
+    src_suffix='c',
+    suffix='mexglx',
+    action='$mex $mex_flags -output $TARGET $SOURCE',
 )
 
 

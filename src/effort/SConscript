@@ -1,4 +1,3 @@
-from __future__ import with_statement
 from os.path import realpath
 from sys import stderr
 
@@ -18,11 +17,18 @@ if not env.get('csurf'):
 
 csurf = realpath(env['csurf'])
 include = File(csurf).dir.dir.Dir('include')
-[plugin] = env.SharedLibrary('effort.cc', CPPPATH=['$CPPPATH', include], LIBS='analyze')
+[plugin] = env.SharedLibrary(
+    'effort.cc',
+    CPPPATH=['$CPPPATH', include],
+    LIBPATH='..',
+    LIBS='analyze',
+    )
+Default(plugin)
 
 def build_effort_stk(target, source, env):
-    with open(target[0].path, 'w') as target:
-        print >>target, '(load "%s")' % source[0]
-        print >>target, '(quit)'
+    target = open(target[0].path, 'w')
+    print >>target, '(load "%s")' % source[0]
+    print >>target, '(quit)'
+    target.close()
 
-env.Command('effort.stk', Value(plugin.abspath), build_effort_stk)
+Default(env.Command('effort.stk', Value(plugin.abspath), build_effort_stk))

@@ -14,7 +14,7 @@ saved_vars = 'scons-config.py'
 vars = Variables(saved_vars, ARGUMENTS)
 vars.AddVariables(
     PathVariable('sampler_prefix', 'use sampler tools installed under this directory', '/usr/local', PathVariable.PathIsDir),
-    PathVariable('sampler_build', 'use sampler tools from build tree in this directory', None, validate_sampler_build),
+    PathVariable('sampler_build', 'use sampler tools from build tree in this directory', '/p/cbi/public/build/sampler', validate_sampler_build),
     BoolVariable('debug', 'compile with debugging information', False),
     BoolVariable('optimize', 'compile with optimization', True),
     PathVariable('csurf', 'path to CodeSurfer executable', WhereIs('csurf'), validate_csurf),

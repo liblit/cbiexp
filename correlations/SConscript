@@ -2,6 +2,7 @@ import SCons.Warnings as Warnings
 
 Import('env')
 
+env.PrependENVPath('PATH', '/s/std/bin')
 env.Tool('mex', toolpath='.')
 
 
@@ -14,4 +15,5 @@ if not env['mex']:
     Return()
 
 
-env.Program(env.Mex('readsp.mexglx'))
+env.SetDefault(mex_flags=['$__ccflags_debug', '$__ccflags_optimize'])
+Default(env.Mex('readsp.c'))

@@ -2,6 +2,7 @@ from itertools import chain
 
 Import('env')
 
+env.PrependENVPath('PATH', '/unsup/ocaml/bin')
 env.Tool('ocaml', toolpath=['#scons-tools'])
 env.AppendUnique(OCAML_PATH=Dir('.'))
 env['OCAML_DTYPES'] = True
