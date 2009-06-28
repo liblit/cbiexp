@@ -5,7 +5,6 @@
 #include <set>
 #include "PredCoords.h"
 #include "StaticSiteInfo.h"
-#include "termination.h"
 #include "utils.h"
 #include "xml.h"
 
@@ -103,7 +102,6 @@ int
 main(int argc, char** argv)
 {
   // command line processing and other initialization
-  set_terminate_verbose();
   argp_parse(0, argc, argv, 0, 0, 0);
   ios::sync_with_stdio(false);
   staticSiteInfo.reset(new StaticSiteInfo());

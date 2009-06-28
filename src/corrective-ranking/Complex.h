@@ -12,7 +12,6 @@
 #include "../SiteCoords.h"
 #include "../arguments.h"
 #include "../fopen.h"
-#include "../termination.h"
 #include "../utils.h"
 #include <vector>
 

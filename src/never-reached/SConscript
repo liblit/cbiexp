@@ -11,5 +11,6 @@ Default(
     env.Program(
         'never-reached', sources,
         LIBS=['analyze', 'dl'],
+        LIBPATH='..',
         )
     )

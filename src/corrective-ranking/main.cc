@@ -8,13 +8,11 @@
 #include "../Progress/Bounded.h"
 #include "../Stylesheet.h"
 #include "../ViewPrinter.h"
-#include "../termination.h"
 #include "../StaticSiteInfo.h"
 #include "../PredStats.h"
 #include "../SiteCoords.h"
 #include "../arguments.h"
 #include "../fopen.h"
-#include "../termination.h"
 #include "../utils.h"
 
 
@@ -249,7 +247,6 @@ void
 initialize(int argc, char *argv[])
 {
   // command line processing and other initialization
-  set_terminate_verbose();
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
   // feenableexcept(FE_DIVBYZERO | FE_INVALID);

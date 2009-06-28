@@ -1,0 +1,15 @@
+Import('cbienv')
+
+cbienv.VariantDir('build', 'src', False)
+
+[executable] = cbienv.Program(
+    'build/sanity', 'build/sanity.c',
+    CC=[
+        '$sampler_cc',
+        '--no-sample',
+        '--sampler-scheme=branches',
+        '--relative-paths',
+        ],
+    )
+
+cbienv.ExtractSites(executable)

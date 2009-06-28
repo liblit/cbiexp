@@ -1,0 +1,17 @@
+import SCons.Warnings as Warnings
+
+Import('env')
+
+env.Tool('mex', toolpath='.')
+
+
+class MissingMexWarning(Warnings.Warning):
+    pass
+
+if not env['mex']:
+    Warnings.enableWarningClass(MissingMexWarning)
+    Warnings.warn(MissingMexWarning, 'cannot find mex, so skipping correlations code')
+    Return()
+
+
+env.Program(env.Mex('readsp.mexglx'))

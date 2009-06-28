@@ -1,5 +1,3 @@
-# @configure_input@
-
 root ?= ../..
 name ?= $(error no name set)
 corrdir := $(root)/correlations
@@ -9,9 +7,8 @@ cull-predicates ?= true
 
 time := /usr/bin/time
 CXX := @CXX@
-CPPFLAGS := @CPPFLAGS@ -I$(tooldir)
+CPPFLAGS := -I$(tooldir)
 CXXFLAGS := @CXXFLAGS@ -W -Wall -Werror
-LEXLIB := @LEXLIB@
 HAVE_MEX = @HAVE_MEX@
 
 ifeq ($(strip $(update-tools)),)

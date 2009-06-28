@@ -4,7 +4,6 @@
 #include "../ClassifyRuns.h"
 #include "../NumRuns.h"
 #include "../Progress/Bounded.h"
-#include "../termination.h"
 #include "Reader.h"
 
 using namespace std;
@@ -28,7 +27,6 @@ processCommandLine(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-  set_terminate_verbose();
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
 
