@@ -14,15 +14,16 @@ makefile = cbienv.Makefile(
 
 executable = cbienv.Command(
     'build/src/ccrypt',
-    Dir('src'),
+    [Dir('src'), makefile],
     'make -C $TARGET.dir.dir',
     source_scanner=DirScanner,
     )
 
 #cbienv.ExtractImplications(executable)
-cbienv.ExtractSites(executable)
+sites = cbienv.ExtractSites(executable)
 
-Clean('.', ['build', 'share'])
+Alias('subjects', [executable, sites])
+Clean('.', 'build')
 
 
 ########################################################################

@@ -12,4 +12,6 @@ cbienv.VariantDir('build', 'src', False)
         ],
     )
 
-cbienv.ExtractSites(executable)
+sites = cbienv.ExtractSites(executable)
+
+Alias('subjects', [executable, sites])

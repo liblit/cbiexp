@@ -28,7 +28,9 @@ library = pkgenv.Command(
     )
 
 #pkgenv.ExtractImplications(executable)
-pkgenv.ExtractSites(library)
+sites = pkgenv.ExtractSites(library)
+
+Alias('subjects', [library, sites])
 
 
 ########################################################################
@@ -47,7 +49,9 @@ executable = pkgenv.Command(
     )
 
 #pkgenv.ExtractImplications(executable)
-pkgenv.ExtractSites(executable)
+sites = pkgenv.ExtractSites(executable)
+
+Alias('subjects', [executable, sites])
 
 
 ########################################################################

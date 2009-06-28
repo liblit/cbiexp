@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[] __attribute__((unused)))
 {
   if (argc == 1)
     abort();

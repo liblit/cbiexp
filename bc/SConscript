@@ -14,7 +14,7 @@ makefile = cbienv.Makefile(
 
 executable = cbienv.Command(
     'build/bc/bc',
-    Dir('src'),
+    [Dir('src'), makefile],
     [
         'make -C $TARGET.dir.dir/lib',
         'make -C $TARGET.dir',
@@ -23,8 +23,9 @@ executable = cbienv.Command(
     )
 
 #cbienv.ExtractImplications(executable)
-cbienv.ExtractSites(executable)
+sites = cbienv.ExtractSites(executable)
 
+Alias('subjects', [executable, sites])
 Clean('.', ['build', 'share'])
 
 
