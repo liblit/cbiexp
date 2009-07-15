@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -W -Wall -Werror -Wformat
+AM_CPPFLAGS = -W -Wall -Werror -Wformat -Wno-deprecated
 
 noinst_LIBRARIES =				\
 	libcorrective.a

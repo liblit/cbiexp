@@ -13,7 +13,7 @@ AM_INIT_AUTOMAKE
 #  compilation basics
 #
 
-: ${CXX:=`ls /s/gcc-*/bin/g++ 2>/dev/null | sort --numeric-sort --reverse | head -1`}
+: ${CXX:=`ls /s/gcc-4.3*/bin/g++ 2>/dev/null | sort --numeric-sort --reverse | head -1`}
 
 AC_PROG_LIBTOOL
 AC_PROG_CXX
