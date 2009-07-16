@@ -42,13 +42,13 @@ def generate(sort, proj):
 
     input = file('all_%s_%s.xml' % (sort, proj))
     parser.ParseFile(input)
-    topcount = min(11, len(ranked))
+    topcount = min(10, len(ranked))
 
     output = file('top-rho_%s_%s.xml' % (sort, proj), 'w')
     print >>output, '<?xml version="1.0"?><?xml-stylesheet type="text/xsl" href="rho.xsl" xmlns="http://www.w3.org/1999/xhtml"?><!DOCTYPE table SYSTEM "rho.dtd"><table xmlns="http://www.w3.org/1999/xhtml">'
-    for a in range(topcount - 1):
+    for a in range(topcount):
 	print >>output, '<tr>'
-        for b in range(topcount - 1):
+        for b in range(topcount):
 	    correlation = rho(ranked[a] - 1, ranked[b] - 1)
 	    hue = (1. - abs(correlation)) * 2 / 3
 	    rgb = [ int(channel * 255) for channel in colorsys.hsv_to_rgb(hue, 0.26, 1) ]
