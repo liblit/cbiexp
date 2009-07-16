@@ -1,4 +1,4 @@
-<!ELEMENT table (tr)+>
+<!ELEMENT table (tr)*>
 <!ATTLIST table xmlns CDATA #FIXED "http://www.w3.org/1999/xhtml">
 <!ELEMENT tr (td)+>
 <!ELEMENT td (#PCDATA)>
