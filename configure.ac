@@ -217,6 +217,5 @@ CBI_CONFIG_APP(ccrypt, [ccrypt/bin/run-once ccrypt/Makefile ccrypt/config.site],
 CBI_CONFIG_APP(exif, [exif/bin/run-once exif/Makefile exif/config.site], [chmod +x exif/bin/run-once])
 CBI_CONFIG_APP(mossexp, [mossexp/bin/run-once mossexp/Makefile], [chmod +x mossexp/bin/run-once])
 CBI_CONFIG_APP(rhythmbox, [rhythmbox/bin/run-client rhythmbox/Makefile rhythmbox/config.site], [chmod +x rhythmbox/bin/run-client])
-CBI_CONFIG_APP(sanity, [sanity/bin/run-once sanity/Makefile], [chmod +x sanity/bin/run-once])
 
 AC_OUTPUT

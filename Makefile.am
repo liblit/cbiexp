@@ -7,7 +7,7 @@ if HAVE_MEX
 SUBDIRS += correlations
 endif
 
-DIST_SUBDIRS = correlations sanity src
+DIST_SUBDIRS = correlations src
 
 EXTRA_DIST =					\
 	bin/Check.pm				\
@@ -18,7 +18,7 @@ EXTRA_DIST =					\
 	doc
 
 check-local:
-	$(MAKE) -C sanity check
+	$(MAKE) -C check
 
 dist-hook:
 	rm -rf $(distdir)/bc $(distdir)/ccrypt $(distdir)/exif $(distdir)/mossexp $(distdir)/rhythmbox
