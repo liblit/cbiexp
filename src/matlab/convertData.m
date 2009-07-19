@@ -25,7 +25,10 @@ function convertData(inputfile, outputfile, outcomes, causes, dimfile)
     Indices = find(sum([Fvector Svector], 2));
     Causes = int8(load(causes));
     X = load(inputfile);
-    X = spconvert(X);
+
+    if ~isempty(X)
+      X = spconvert(X);
+    end
 
     % save data
     Data.X = X;
