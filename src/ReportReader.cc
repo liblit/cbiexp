@@ -2,12 +2,11 @@
 #include <cassert>
 #include <cerrno>
 #include <cstring>
-#include <cstdio>
 #include <fstream>
 #include <string>
-#include <set>
 #include <sstream>
 #include <stdexcept>
+#include <vector>
 #include "ReportReader.h"
 #include "SiteCoords.h"
 #include "StaticSiteInfo.h"
@@ -19,9 +18,11 @@ using namespace std;
 ReportReader::ReportReader(const char* filename)
 {
     classify_runs();
+    countfile = string(filename);
 
+    ifstream summary;
     summary.exceptions(ios::badbit);
-    summary.open(filename);
+    summary.open(countfile.c_str());
     if (!summary)
     {
       const int code = errno;
@@ -29,7 +30,23 @@ ReportReader::ReportReader(const char* filename)
       message << "cannot read " << filename << ": " << strerror(code);
       throw runtime_error(message.str());
     }
-    linepos = 0;
+
+    //build vector of positions
+    while (summary.peek() != EOF)
+    {
+
+      positions.push_back(summary.tellg());
+
+      while(summary.peek() != '\n' && summary.peek() != EOF)
+      {
+        char buf[1024];
+        summary.get(buf, 1024);
+      }
+
+      if (summary.peek() != EOF) summary.get();
+
+    }
+    summary.close();
 }
 
 void
@@ -43,97 +60,80 @@ ReportReader::read(unsigned runId)
     throw runtime_error(message.str());
   }
 
-
-  if (linepos == runId); //at line position we want to read
-  else //must reposition
+  if (runId >= positions.size())
   {
-    summary.clear();  //don't want summary.peek() to return old value
-    summary.seekg(0); //go to start of file and read until linepos is runId
-    linepos = 0;
-    do //keep reading lines until runId is linepos or EOF reached
-    {
-      if (summary.peek() == EOF)
-      {
-          ostringstream message;
-          message << "runId " << runId << " exceeds number of runs. Line position is " << linepos;
-          throw runtime_error(message.str());
-      }
-      do
-      {
-         char buf[1024];
-         summary.get(buf, 1024);
-      } while(summary.peek() != '\n');
-
-      summary.get();
-      linepos++;
-
-    } while (linepos < runId);
+    ostringstream message;
+    message << runId << " too large.";
+    throw runtime_error(message.str());
   }
 
+  ifstream summary;
+  summary.exceptions(ios::badbit);
+  summary.open(countfile.c_str());
+
+  // move to correct line position
+  summary.seekg(positions[runId]);
+
   //advanced to correct position, now reading report
+  stringbuf runbuf;
+  summary.get(runbuf);
 
-  bool reached_end  = false;
-  do //start reading sites one by one
-  {
+  string runinfo = runbuf.str();
 
-    //reading up to first tab
-    stringbuf peek;
-    summary.get(peek, '\t');
+  if (runinfo.length() != 0) { //if there is some info for this run
 
-    string info = peek.str();
+      stringstream line(runinfo);
 
-    //if there's a newline in data need to back up
-    if (info.find_first_of("\n") != string::npos)
-    {
-      stringbuf buf;
-      //all this casting is to help gcc disambiguate seekg call
-      summary.seekg((streampos)((int)summary.tellg() - (int)summary.gcount()));
-      if (summary.peek() != '\n')
+      bool reached_end  = false;
+      do //start reading sites one by one
       {
-        summary.get(buf, '\n');
-        info = buf.str();
-      }
-      else
-      {
-        info = "";
-      }
-      reached_end = true;
-    }
 
-    //consume the remaining character whether tab or newline
-    summary.get();
+        stringbuf peek;
+        line.get(peek, '\t');
+        string info = peek.str();
 
-    //got site information, ready to handle
+        if (line.peek() != '\t')
+            reached_end = true; //reached end
+        else
+            line.get(); //throw the '\t' away
 
-    if (info.length() != 0) //if there was some data for this run
-    {
+        //got site information, ready to handle
 
-        stringstream line(info);
-        stringbuf indexbuf;
- 
-        //reading index
-        line.get(indexbuf, ':');
-        unsigned index = atoi(indexbuf.str().c_str());
-        line.get();
- 
-        //reading counts
-        vector<count_tp> counts;
-        do //start reading numbers one by one
+        if (info.length() != 0) //if the site had some data
         {
-          stringbuf itembuf;
-          line.get(itembuf, ':');
-          line.get();
-          char *tail;
-          counts.push_back(strtol(itembuf.str().c_str(), &tail, 0));
-        } while(line.gcount() > 0);
- 
-        //got what we need, now handle
-        handleSite(SiteCoords(index), counts);
 
-    }
+            stringstream site(info);
+            stringbuf indexbuf;
 
-  } while(reached_end == false && summary.gcount() != 0);
+            //reading index
+            site.get(indexbuf, ':');
+            unsigned index = atoi(indexbuf.str().c_str());
+            site.get();
 
-  linepos++;
+            //reading counts
+            vector<count_tp> counts;
+            do //start reading numbers one by one
+            {
+              stringbuf itembuf;
+              site.get(itembuf, ':');
+              site.get();
+              char *tail;
+              counts.push_back(strtol(itembuf.str().c_str(), &tail, 0));
+            } while(site.gcount() > 0);
+
+            //got what we need, now handle
+            handleSite(SiteCoords(index), counts);
+
+        }
+        else
+        {
+            reached_end = true;
+        }
+
+      } while(reached_end == false);
+
+  }
+
+  summary.close();
 
 }

@@ -72,7 +72,6 @@ SConscript(
         'ccrypt',
         'correlations',
         'exif',
-        'sanity',
         'src',
         ],
     exports=['cbienv', 'env'],
