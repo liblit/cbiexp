@@ -17,7 +17,6 @@
 #include "SiteCoords.h"
 #include "classify_runs.h"
 #include "fopen.h"
-#include "termination.h"
 #include "utils.h"
 
 using namespace std;
@@ -149,7 +148,6 @@ static void process_cmdline(int argc, char **argv)
 
 int main(int argc, char** argv)
 {
-    set_terminate_verbose();
     process_cmdline(argc, argv);
 
     ofstream ofp("obs.txt");

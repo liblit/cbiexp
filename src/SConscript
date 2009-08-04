@@ -1,28 +1,9 @@
-def validateCsurf(key, value, env):
-    if not value: return
-    PathVariable.PathIsFile(key, value, env)
+Import('env')
+#env.CacheDir(Dir('#.scons-cache').path)
 
-vars = Variables('.scons-config.py', ARGUMENTS)
-vars.AddVariables(
-    BoolVariable('debug', 'compile with debugging information', False),
-    BoolVariable('optimize', 'compile with optimization', True),
-    PathVariable('csurf', 'path to CodeSurfer executable', WhereIs('csurf'), validateCsurf),
-    )
 
-for item in vars.UnknownVariables():
-    print 'unknown variable: %s=%s' % item
+########################################################################
 
-env = Environment(
-    variables=vars,
-    __ccflags_debug='${("", "-g")[debug]}',
-    __ccflags_optimize='${("", "-O")[optimize]}',
-    CPPPATH=['.', '#'],
-    CCFLAGS=['$__ccflags_debug', '$__ccflags_optimize', '-Werror', '-Wall', '-Wextra', '-Wformat=2', '-Wno-deprecated'],
-    LIBPATH=Dir('.'),
-    )
-
-Help(vars.GenerateHelpText(env))
-vars.Save(File('#.scons-config.py').abspath, env)
 
 lib = env.StaticLibrary('analyze', [
 	'AdjWeightsOptions.cc',
@@ -66,7 +47,7 @@ lib = env.StaticLibrary('analyze', [
 	'xml.cc',
         ])
 
-aenv = env.Clone(LIBS=['analyze'])
+aenv = env.Clone(LIBS=['analyze'], LIBPATH='.')
 denv = aenv.Clone(LIBS=['$LIBS', 'dl'])
 senv = aenv.Clone(LIBS=['$LIBS', 'Score', 'dl'], LIBPATH=['$LIBPATH', 'Score'])
 genv = aenv.Clone()
@@ -91,6 +72,27 @@ Default([
         genv.Program('train_utillog.cc'),
         denv.Program('xmlify-results.cc'),
         ])
+
+
+########################################################################
+
+
+env['HAVE_MEX'] = ('', '1')[bool(env['mex'])]
+
+rules = env.Template(
+    'analysis-rules.mk.in',
+    varlist=[
+        'CXX',
+        'CXXFLAGS',
+        'HAVE_MEX'
+        ],
+    )
+
+Default(rules)
+
+
+########################################################################
+
 
 Export('env')
 SConscript(dirs=[

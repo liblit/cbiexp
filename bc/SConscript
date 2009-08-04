@@ -1,0 +1,35 @@
+Import('cbienv', 'env')
+
+
+########################################################################
+
+
+[config] = cbienv.Template('config.site.in', varlist=['sampler_cc'])
+
+makefile = cbienv.Makefile(
+    'build/Makefile',
+    Dir('src'),
+    config_site=config,
+)
+
+executable = cbienv.Command(
+    'build/bc/bc',
+    [Dir('src'), makefile],
+    [
+        'make -C $TARGET.dir.dir/lib',
+        'make -C $TARGET.dir',
+        ],
+    source_scanner=DirScanner,
+    )
+
+#cbienv.ExtractImplications(executable)
+sites = cbienv.ExtractSites(executable)
+
+Alias('subjects', [executable, sites])
+Clean('.', ['build', 'share'])
+
+
+########################################################################
+
+
+env.Program('bin/fuzz.c')

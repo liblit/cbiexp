@@ -6,7 +6,6 @@
 #include "StaticSiteInfo.h"
 #include "arguments.h"
 #include "fopen.h"
-#include "termination.h"
 #include "utils.h"
 #include "xml.h"
 
@@ -22,7 +21,6 @@ using xml::escape;
 
 int main()
 {
-  set_terminate_verbose();
   ios::sync_with_stdio(false);
 
   const StaticSiteInfo staticSiteInfo;

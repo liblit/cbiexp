@@ -1,13 +1,11 @@
-using namespace std;
-
-#include <iostream>
+#include <cassert>
+#include <cmath>
+#include <cstdlib>
 #include <fstream>
-#include <assert.h>
-#include <stdlib.h>
-#include <math.h>
-#include "config.h"
+#include <iostream>
 #include <map>
 #include <set>
+#include "../config.h"
 
 extern "C" {
 /* Include public header files from the C API. */
@@ -224,6 +222,8 @@ cs_pdg_vertex_set bfs(cs_pdg_vertex_set &start) {
 #include "../StaticSiteInfo.h"
 #include "../fopen.h"
 #include "../utils.h"
+
+using namespace std;
 
 map<int, pred_info> details;
 map<int, set<int> > close_predicates;

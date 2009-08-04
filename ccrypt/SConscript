@@ -1,0 +1,41 @@
+Import('cbienv')
+
+
+########################################################################
+
+
+[config] = cbienv.Template('config.site.in', varlist=['sampler_cc'])
+
+makefile = cbienv.Makefile(
+    'build/Makefile',
+    Dir('src'),
+    config_site=config,
+)
+
+executable = cbienv.Command(
+    'build/src/ccrypt',
+    [Dir('src'), makefile],
+    'make -C $TARGET.dir.dir',
+    source_scanner=DirScanner,
+    )
+
+#cbienv.ExtractImplications(executable)
+sites = cbienv.ExtractSites(executable)
+
+Alias('subjects', [executable, sites])
+Clean('.', 'build')
+
+
+########################################################################
+
+
+cleartext = set(Glob('share/inputs/*'))
+cyphertext = set(Glob('share/inputs/*.cpt'))
+cleartext -= cyphertext
+cleartext = sorted(cleartext)
+
+for clear in cleartext:
+    cbienv.Command(
+        '%s.cpt' % clear, clear,
+        '%s -e -K good <$SOURCE >$TARGET' % executable[0].abspath,
+        )
