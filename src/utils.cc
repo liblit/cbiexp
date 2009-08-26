@@ -61,6 +61,10 @@ scheme_name(char code)
 	static const string name("branches");
 	return name;
     }
+    case 'C': {
+	static const string name("compare-swap");
+	return name;
+    }
     case 'F': {
 	static const string name("float-kinds");
 	return name;
@@ -77,8 +81,16 @@ scheme_name(char code)
 	static const string name("scalar-pairs");
 	return name;
     }
+    case 'W': {
+	static const string name("atoms-rw");
+	return name;
+    }
     case 'Y': { 
 	static const string name("yields");
+	return name;
+    }
+    case 'Z': {
+	static const string name("fun-reentries");
 	return name;
     }
     default:

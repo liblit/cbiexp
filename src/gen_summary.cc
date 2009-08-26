@@ -99,6 +99,9 @@ print_summary(ostream &out, Tally &tally)
 	case 'A':
 	case 'B':
 	case 'Y':
+	case 'Z':
+	case 'C':
+	case 'W':
 	  predsPerSite = 2;
 	  break;
 	case 'R':
@@ -127,6 +130,9 @@ print_summary(ostream &out, Tally &tally)
   print_summary_scheme(out, "returns", total, tally, 'R');
   print_summary_scheme(out, "scalar-pairs", total, tally, 'S');
   print_summary_scheme(out, "yields", total, tally, 'Y'); /*cci*/
+  print_summary_scheme(out, "fun-reentries", total, tally, 'Z'); /*cci*/
+  print_summary_scheme(out, "compare-swap", total, tally, 'C'); /*cci*/
+  print_summary_scheme(out, "atoms-rw", total, tally, 'W'); /*cci*/
 
   out << "</schemes></experiment>\n";
 }

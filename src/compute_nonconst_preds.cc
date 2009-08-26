@@ -127,6 +127,9 @@ static void cull_preds(const StaticSiteInfo &staticSiteInfo)
 	case 'A':
 	case 'B':
 	case 'Y':
+	case 'Z':
+	case 'C':
+	case 'W':
 	    numPreds = 2;
 	    break;
 	case 'F':

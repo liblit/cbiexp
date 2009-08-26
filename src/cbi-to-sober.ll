@@ -60,6 +60,18 @@ uint 0|[1-9][0-9]*
     BEGIN(SITES_2);
 }
 
+<REPORT><samples\ unit=\"[0-9a-f]{32}\"\ scheme=\"fun-reentries\">\n {
+    BEGIN(SITES_2);
+}
+
+<REPORT><samples\ unit=\"[0-9a-f]{32}\"\ scheme=\"compare-swap\">\n {
+    BEGIN(SITES_2);
+}
+
+<REPORT><samples\ unit=\"[0-9a-f]{32}\"\ scheme=\"atoms-rw\">\n {
+    BEGIN(SITES_2);
+}
+
 <REPORT><samples\ unit=\"[0-9a-f]{32}\"\ scheme=\"branches\">\n {
     BEGIN(SITES_2);
 }

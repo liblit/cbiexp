@@ -68,6 +68,9 @@ int main()
 	case 'G':
 	case 'R':
 	case 'Y':
+	case 'Z':
+	case 'C':
+	case 'W':
 	  xml << "<operand source=\"" << escape(site.args[0]) << "\"/>";
 	  break;
 	case 'S':

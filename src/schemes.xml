@@ -62,4 +62,16 @@
     <predicate text="not yielded"/>
     <predicate text="yielded"/>
   </scheme>
+  <scheme id="fun-reentries">
+    <predicate text="function not re-entered"/>
+    <predicate text="function re-entered"/>
+  </scheme>
+  <scheme id="compare-swap">
+    <predicate text="compare-swap 1"/>
+    <predicate text="compare-swap 2"/>
+  </scheme>
+  <scheme id="atoms-rw">
+    <predicate text="atoms-rw 1"/>
+    <predicate text="atoms-rw 2"/>
+  </scheme>
 </schemes>

@@ -53,6 +53,11 @@ operator<<(ostream &out, const Predictor &predictor)
     case 'B':
     case 'F':
     case 'G':
+    case 'Y': /*cci*/
+    case 'A': /*cci*/
+    case 'Z': /*cci fun-reentries*/
+    case 'C': /*cci compare-swap*/
+    case 'W': /*cci WODA-RW*/
       out << "\" predicate=\"" << predictor.predicate;
       break;
     case 'S':
@@ -70,6 +75,11 @@ operator<<(ostream &out, const Predictor &predictor)
     case 'F':
     case 'G':
     case 'R':
+    case 'Y': /*cci*/
+    case 'A': /*cci*/
+    case 'Z': /*cci fun-reentries*/
+    case 'C': /*cci compare-swap*/
+    case 'W': /*cci WODA-RW*/
       out << "<operand source=\"" << escape(site.args[0]) << "\"/>";
       break;
     case 'S':

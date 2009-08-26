@@ -18,6 +18,9 @@ let schemeName code =
   | 'R' -> "returns"
   | 'S' -> "scalar-pairs"
   | 'Y' -> "yields"
+  | 'Z' -> "fun-reentries"
+  | 'C' -> "compare-swap"
+  | 'W' -> "atoms-rw"
   |  _ -> raise (Failure (Printf.sprintf "unrecognized scheme code: %c" code))
 
 let schemeCode name =
@@ -29,6 +32,9 @@ let schemeCode name =
   | "returns" -> 'R'
   | "scalar-pairs" -> 'S'
   | "yields" -> 'Y'
+  | "fun-reentries" -> 'Z'
+  | "compare-swap" -> 'C'
+  | "atoms-rw" -> 'W' 
   | _ -> raise (Failure ("unrecognized scheme name: "^name))
 
 let ground_to_synth g = 

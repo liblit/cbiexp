@@ -49,6 +49,9 @@ static int num_f_preds = 0;
 static int num_g_preds = 0;
 static int num_y_preds = 0; 
 static int num_a_preds = 0; 
+static int num_z_preds = 0; 
+static int num_c_preds = 0; 
+static int num_w_preds = 0; 
 
 
 inline pred_stat get_pred_stat(int si, int p)
@@ -66,6 +69,9 @@ unsigned int num_preds(char scheme_code)
         case 'A':
         case 'B':
         case 'Y':
+        case 'Z':
+        case 'C':
+        case 'W':
             return 2;
             break;
         case 'F':
@@ -159,6 +165,27 @@ static void print_retained_preds()
 		for (p = 0; p < num_preds('Y'); p++)
 		    if (site_info[si].retain[p]) {
 			num_y_preds++;
+			print_pred(fp, si, p);
+		    }
+		break;
+	    case 'Z':
+		for (p = 0; p < num_preds('Z'); p++)
+		    if (site_info[si].retain[p]) {
+			num_z_preds++;
+			print_pred(fp, si, p);
+		    }
+		break;
+	    case 'C':
+		for (p = 0; p < num_preds('C'); p++)
+		    if (site_info[si].retain[p]) {
+			num_c_preds++;
+			print_pred(fp, si, p);
+		    }
+		break;
+	    case 'W':
+		for (p = 0; p < num_preds('W'); p++)
+		    if (site_info[si].retain[p]) {
+			num_w_preds++;
 			print_pred(fp, si, p);
 		    }
 		break;
@@ -382,6 +409,9 @@ void cull_preds_aggressively1()
 	    case 'F':
 	    case 'G':
 	    case 'Y': 
+	    case 'Z':
+	    case 'C':
+	    case 'W':
 		break;
 	    default:
 		assert(0);

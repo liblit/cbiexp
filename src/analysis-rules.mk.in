@@ -22,7 +22,7 @@ build = $(MAKE) update-tools=
 sparsebase := fobs sobs ftr str
 sparse := $(sparsebase:=.) $(sparsebase:=.ir) $(sparsebase:=.jc) $(sparsebase:=.meta)
 
-schemes ?= all atoms branches float-kinds g-object-unref returns scalar-pairs yields
+schemes ?= all atoms branches float-kinds g-object-unref returns scalar-pairs yields fun-reentries compare-swap atoms-rw
 sorts := lb is fs nf hl hs lbnf
 projections := none circular linear
 views := $(foreach scheme, $(schemes), $(foreach sort, $(sorts), $(foreach projection, $(projections), $(scheme)_$(sort)_$(projection).xml)))
