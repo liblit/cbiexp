@@ -341,7 +341,7 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv
 
-    parser = optparse.OptionParser(usage='%prog <database>.')
+    parser = optparse.OptionParser(usage='%prog [options] <database>.')
     parser.add_option('-f', '--force', action='store_true', default=False, 
                       help = 'append to existing database')
     parser.add_option('-v', '--version', action='store', default=1,
