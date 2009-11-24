@@ -51,7 +51,7 @@ def readSites(filepath):
     SiteID = count()
     SchemeID = None
     with file(filepath, 'r') as ifile:
-        for lineNum, line in enumerate(ifile):
+        for line in ifile:
             match = matcher.match(line)
             if match:
                 Scheme = match.group('sch')
