@@ -85,6 +85,7 @@ EnumerationTables = {
         (1, 'local'),
         (2, 'global'),
         (3, 'mem'),
+        (4, 'const'),
     ],
 }
 
