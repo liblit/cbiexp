@@ -1,4 +1,4 @@
-#!/bin/env/python
+#!/s/python-2.5/bin/python -O
 
 """Initialize the database schema creating all relevant tables
 """
