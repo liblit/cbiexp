@@ -40,7 +40,7 @@ numTableColumns = {
 
 def readSites(filepath):
     keys = ('SiteID',
-            'SchemeID',
+            'SchemeName',
             'FileName',
             'Line',
             'FunctionIdentifier',
@@ -49,19 +49,16 @@ def readSites(filepath):
     matcher = re.compile('<sites unit="(?P<sig>[0-9a-f]{32})" scheme="(?P<sch>[a-zA-Z\-]*)">')
 
     SiteID = count()
-    SchemeID = None
+    SchemeName = None
     with file(filepath, 'r') as ifile:
         for line in ifile:
             match = matcher.match(line)
             if match:
-                Scheme = match.group('sch')
-                SchemeID = filter(lambda x: x[1]==Scheme, 
-                                    EnumerationTables['Schemes'])[0][0]
+                SchemeName = match.group('sch')
             elif line.startswith('</sites>'):
-                # closing sites tag
-                SchemeID = None
+                SchemeName = None
             else:
-                vals = [SiteID.next(), SchemeID] + line.strip().split(None, 4)
+                vals = [SiteID.next(), SchemeName] + line.strip().split(None, 4)
                 yield dict(zip(keys, vals))
 
 
@@ -69,14 +66,17 @@ def process(sitesFile, dbname):
     con = sqlite3.connect(dbname)
     cursor = con.cursor()
 
+    schemeEnum = dict((t[1], t[0]) for t in EnumerationTables['Schemes'])
+
     for site in readSites(sitesFile):
+        site['SchemeID'] = schemeEnum[site['SchemeName']]
+
         cursor.execute("INSERT INTO Sites VALUES(\
                             :SiteID, :FileName, :Line, :FunctionIdentifier,\
                             :CFGNode, :SchemeID);",
                         site)
 
-        scheme = filter(lambda x: x[0] == site['SchemeID'],
-                            EnumerationTables['Schemes'])[0][1]
+        scheme = site['SchemeName']
         if schemeTables[scheme]:
             table = schemeTables[scheme]
             numCols = numTableColumns[scheme]
@@ -90,6 +90,7 @@ def process(sitesFile, dbname):
 def main():
     if len(sys.argv) != 3:
         print 'Usage: %s <sites-file> <sqlite-database>' % sys.argv[0]
+        sys.exit(1)
     process(*sys.argv[1:])
 
 if __name__ == '__main__': main()
