@@ -7,7 +7,8 @@ import re
 import sqlite3
 import sys
 
-from itertools import imap, count
+from itertools import count
+
 from initializeSchema import EnumerationTables
 
 # Assuming all tables have already been created by initializeSchema.py
