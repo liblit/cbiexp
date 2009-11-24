@@ -11,7 +11,6 @@ from itertools import count
 
 from initializeSchema import EnumerationTables
 
-# Assuming all tables have already been created by initializeSchema.py
 ###############################################################################
 
 schemeTables = {
@@ -26,16 +25,30 @@ schemeTables = {
         'scalar-pairs': 'ScalarPairsSiteDescriptors'
         }
 
-numTableColumns = {
-        'atoms': 3,
-        'bounds': 4,
-        'branches': 2,
-        'compare-swap': 2,
-        'float-kinds': 4,
+def getEnumEvaluator(enumName):
+    enum = dict((t[1], t[0]) for t in EnumerationTables[enumName])
+    def evaluator(key):
+        return enum[key]
+    return evaluator
+
+convertors = {
+        'AccessType': getEnumEvaluator('AccessTypes'),
+        'AssignmentType': getEnumEvaluator('AssignmentTypes'),
+        'VariableType': getEnumEvaluator('VariableTypes'),
+        'Text': lambda x: x
+        }
+
+SchemeDescriptions = {
+        'atoms': ('Text', 'AccessType',),
+        'bounds': ('Text', 'VariableType', 'AccessType',),
+        'branches': ('Text',),
+        'compare-swap': ('Text',),
+        'float-kinds': ('Text', 'VariableType', 'AccessType',),
         'function-entries': None,
-        'g-object-unref': 2,
-        'returns': 2,
-        'scalar-pairs': 6
+        'g-object-unref': ('Text',),
+        'returns': ('Text',),
+        'scalar-pairs': ('Text', 'VariableType', 'AssignmentType',\
+                         'Text', 'VariableType',),
         }
 
 ###############################################################################
@@ -81,11 +94,14 @@ def process(sitesFile, dbname):
         scheme = site['SchemeName']
         if schemeTables[scheme]:
             table = schemeTables[scheme]
-            numCols = numTableColumns[scheme]
-            entries = ', '.join('?' * numCols)
 
+            funcs = map(convertors.get, SchemeDescriptions[scheme])
+            args = site['Descriptors'].split('\t')
+            values = [site['SiteID']] + map(lambda x, y: x(y), funcs, args)
+
+            entries = ', '.join('?' * len(values))
             query = "INSERT INTO %s VALUES (%s);" % (table, entries)
-            cursor.execute(query, [site['SiteID']] + site['Descriptors'].split('\t'))
+            cursor.execute(query, values)
 
     con.commit()
 
