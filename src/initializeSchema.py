@@ -138,7 +138,7 @@ def setupTables(conn, version):
 
         CREATE TABLE IF NOT EXISTS
             Fields(
-                FieldsID INTEGER NOT NULL
+                FieldID INTEGER NOT NULL
                         CONSTRAINT Fields_pk PRIMARY KEY ASC AUTOINCREMENT,
                 SchemeID INTEGER NOT NULL,
                 Name TEXT NOT NULL,
