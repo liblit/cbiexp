@@ -107,9 +107,23 @@ def setupTables(conn, version):
     
     # Get the cursor
     c = conn.cursor()
+
+    # Prepare SQLite PRAGMAs
+    # NOTE: Most of these are listed here with their default values and only
+    #       mentioned as objects of interest which may need to be tweaked in
+    #       case of dismal DB performance etc. For more information as to what
+    #       each PRAGMA affects see http://www.sqlite.org/pragma.html
+    # TODO: Tweak PRAGMA values
+    _sqlPragmas = '''
+        PRAGMA foreign_keys = ON;
+        PRAGMA default_cache_size = 2000;
+        PRAGMA count_changes = False;
+        PRAGMA page_size = 1024;
+        PRAGMA synchronous = FULL;
+    '''
     
     # Prepare SQL commands -- Create tables
-    _sqlCommand = '''
+    _sqlQuery = '''
         CREATE TABLE IF NOT EXISTS
             SchemaVersion(
                 SchemaID INTEGER NOT NULL
@@ -274,6 +288,30 @@ def setupTables(conn, version):
                     (SiteID) REFERENCES Sites(SiteID));
 
         CREATE TABLE IF NOT EXISTS
+            Plans(
+                PlanID INTEGER NOT NULL
+                    CONSTRAINT Plans_pk PRIMARY KEY);
+
+        CREATE TABLE IF NOT EXISTS
+            RunsInPlans(
+                PlanID INTEGER NOT NULL,
+                RunID INTEGER NOT NULL UNIQUE,
+                CONSTRAINT RunsInPlans_PlanID_fk FOREIGN KEY (PlanID)
+                    REFERENCES Plans(PlanID),
+                CONSTRAINT RunInPlans_RunID_fk FOREIGN KEY (RunID)
+                    REFERENCES Runs(RunID));
+
+        CREATE TABLE IF NOT EXISTS
+            SitesInPlans(
+                PlanID INTEGER NOT NULL,
+                SiteID INTEGER NOT NULL,
+                CONSTRAINT SitesInPlans_PlanID_fk FOREIGN KEY (PlanID)
+                    REFERENCES Plans(PlanID),
+                CONSTRAINT SitesInPlans_SiteID_fk FOREIGN KEY (SiteID)
+                    REFERENCES Sites(SiteID),
+                CONSTRAINT SitesInPlans_un UNIQUE (PlanID, SiteID));
+
+        CREATE TABLE IF NOT EXISTS
             SampleValues(
                 SiteID INTEGER NOT NULL,
                 FieldID INTEGER NOT NULL,
@@ -314,8 +352,11 @@ def setupTables(conn, version):
     #       when phases aren't being used we denote this by having a default 
     #       value of '-1' inserted into the appropriate column.
 
+    # Set PRAGMAs
+    map(c.execute, _sqlPragmas.split('\n'))
+
     # Create TABLES
-    map(c.execute, _sqlCommand.split(';'))
+    map(c.execute, _sqlQuery.split(';'))
    
     # Initialize SchemaVersion
     if isTableEmpty(conn, 'SchemaVersion'):
