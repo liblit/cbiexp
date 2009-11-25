@@ -21,17 +21,17 @@ EnumerationTables = {
     ],
  
     'Schemes':[
-        (1, 'atoms'),
-        (2, 'fun-reentries'),
-        (3, 'compare-swap'),
-        (4, 'atoms-rw',),
-        (5, 'branches',),
-        (6, 'returns',),
-        (7, 'scalar-pairs',),
-        (8, 'float-kinds',),
-        (9, 'bounds'),
-        (10, 'g-object-unref'),
-        (11, 'function-entries'),
+        (1, 'atoms', 'A',),
+        (2, 'fun-reentries', 'Z',),
+        (3, 'compare-swap', 'C',),
+        (4, 'atoms-rw', 'W'),
+        (5, 'branches', 'B',),
+        (6, 'returns', 'R',),
+        (7, 'scalar-pairs', 'S',),
+        (8, 'float-kinds', 'F',),
+        (9, 'bounds', 'D',),
+        (10, 'g-object-unref', 'G',),
+        (11, 'function-entries', 'E'),
     ],
 
     'Fields':[
@@ -135,7 +135,8 @@ def setupTables(conn, version):
                 SchemeID INTEGER NOT NULL
                         CONSTRAINT Schemes_pk PRIMARY KEY ASC
                             AUTOINCREMENT,
-                Name TEXT NOT NULL UNIQUE);
+                Name TEXT NOT NULL UNIQUE,
+                SchemeCode TEXT NOT NULL UNIQUE);
 
         CREATE TABLE IF NOT EXISTS
             Fields(
