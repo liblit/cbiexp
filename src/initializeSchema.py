@@ -182,7 +182,8 @@ def setupTables(conn, version):
 
         CREATE TABLE IF NOT EXISTS
             AtomsSiteDescriptors(
-                SiteID INTEGER NOT NULL,
+                SiteID INTEGER NOT NULL
+                        CONSTRAINT AtomsSiteDescriptors_pk PRIMARY KEY,
                 Variable TEXT NOT NULL,
                 AccessTypeID INTEGER NOT NULL,
                 CONSTRAINT AtomsSiteDescriptors_SiteID_fk FOREIGN KEY (SiteID)
@@ -192,7 +193,8 @@ def setupTables(conn, version):
 
         CREATE TABLE IF NOT EXISTS
             BoundsSiteDescriptors(
-                SiteID INTEGER NOT NULL,
+                SiteID INTEGER NOT NULL
+                        CONSTRAINT BoundsSiteDescriptors_pk PRIMARY KEY,
                 Variable TEXT NOT NULL,
                 VariableTypeID INTEGER NOT NULL,
                 AccessTypeID INTEGER NOT NULL,
@@ -205,14 +207,16 @@ def setupTables(conn, version):
        
         CREATE TABLE IF NOT EXISTS
             BranchesSiteDescriptors(
-                SiteId INTEGER NOT NULL,
+                SiteId INTEGER NOT NULL
+                        CONSTRAINT BranchesSiteDescriptors_pk PRIMARY KEY,
                 Predicate TEXT NOT NULL,
                 CONSTRAINT BranchesSiteDescriptors_SiteID_fk FOREIGN KEY
                     (SiteID) REFERENCES Sites(SiteID));
 
         CREATE TABLE IF NOT EXISTS
             FloatKindsSiteDescriptors(
-                SiteID INTEGER NOT NULL,
+                SiteID INTEGER NOT NULL
+                        CONSTRAINT FloatKindsSiteDescriptors_pk PRIMARY KEY,
                 Variable TEXT NOT NULL,
                 VariableTypeID INTEGER NOT NULL,
                 AccessTypeID INTEGER NOT NULL,
@@ -226,21 +230,24 @@ def setupTables(conn, version):
 
         CREATE TABLE IF NOT EXISTS
             GObjectUnrefSiteDescriptors(
-                SiteID INTEGER NOT NULL,
+                SiteID INTEGER NOT NULL
+                        CONSTRAINT GObjectUnrefSiteDescriptors_pk PRIMARY KEY,
                 OBJECT TEXT NOT NULL,
                 CONSTRAINT GObjectUnrefSiteDescriptors_SiteID_fk FOREIGN
                     KEY (SiteID) REFERENCES Sites(SiteID));
 
         CREATE TABLE IF NOT EXISTS
             ReturnsSiteDescriptors(
-                SiteID INTEGER NOT NULL,
+                SiteID INTEGER NOT NULL
+                        CONSTRAINT ReturnsSiteDescriptors_pk PRIMARY KEY,
                 Callee TEXT NOT NULL,
                 CONSTRAINT ReturnsSiteDescriptors_SiteID_fk FOREIGN KEY
                     (SiteID) REFERENCES Sites(SiteID));
 
         CREATE TABLE IF NOT EXISTS
             ScalarPairsSiteDescriptors(
-                SiteID INTEGER NOT NULL,
+                SiteID INTEGER NOT NULL
+                        CONSTRAINT ScalarPairsSiteDescriptors_pk PRIMARY KEY,
                 LHSVariable TEXT NOT NULL,
                 LHSVariableTypeID INTEGER NOT NULL,
                 LHSAssignmentTypeID INTEGER NOT NULL,
@@ -260,11 +267,52 @@ def setupTables(conn, version):
         
         CREATE TABLE IF NOT EXISTS
             CompareSwapSiteDescriptors(
-                SiteID INTEGER NOT NULL,
+                SiteID INTEGER NOT NULL
+                        CONSTRAINT CompareSwapSiteDescriptors_pk PRIMARY KEY,
                 Variable TEXT NOT NULL,
                 CONSTRAINT CompareSwapSiteDescriptors_SiteID_fk FOREIGN KEY
-                    (SiteID) REFERENCES Sites(SiteID));                   
+                    (SiteID) REFERENCES Sites(SiteID));
+
+        CREATE TABLE IF NOT EXISTS
+            SampleValues(
+                SiteID INTEGER NOT NULL,
+                FieldID INTEGER NOT NULL,
+                RunID INTEGER NOT NULL, 
+                Value INTEGER NOT NULL,
+                Phase INTEGER DEFAULT -1,
+                CONSTRAINT SampleValues_SiteID_fk FOREIGN KEY (SiteID)
+                    REFERENCES Sites(SiteID),
+                CONSTRAINT SampleValues_FieldID_fk FOREIGN KEY (FieldID)
+                    REFERENCES Fields(FieldID),
+                CONSTRAINT SampleValues_RunID_fk FOREIGN KEY (RunID)
+                    REFERENCES Runs(RunID),
+                CONSTRAINT SampleValues_un UNIQUE (SiteID, FieldID, RunID,
+                    Phase));
+
+        CREATE TABLE IF NOT EXISTS
+            SampleCounts(
+                SiteID INTEGER NOT NULL,
+                FieldID INTEGER NOT NULL,
+                RunID INTEGER NOT NULL,
+                Count INTEGER NOT NULL,
+                Phase INTEGER DEFAULT -1,
+                CONSTRAINT SampleCounts_SiteID_fk FOREIGN KEY (SiteID)
+                    REFERENCES Sites(SiteID),
+                CONSTRAINT SampleCounts_FieldID_fk FOREIGN KEY (FieldID)
+                    REFERENCES Fields(FieldID),
+                CONSTRAINT SampleCounts_RunID_fk FOREIGN KEY (RunID)
+                    REFERENCES Runs(RunID),
+                CONSTRAINT SampleCounts_un UNIQUE (SiteID, FieldID, RunID,
+                    Phase),
+                CONSTRAINT SampleCounts_chk CHECK (Count > 0));
     '''
+    # NOTE: The UNIQUE constraint if applied on a set of columns one more of
+    #       which may have null values (the 'Phase' column in the case of 
+    #       SampleCounts) will not work as intended for most implementations of
+    #       SQL (eg. SQLite, PostGreSQL etc.), in fact it would only function
+    #       as intended with Informix and Microsoft SQL Server. As a workaround
+    #       when phases aren't being used we denote this by having a default 
+    #       value of '-1' inserted into the appropriate column.
 
     # Create TABLES
     map(c.execute, _sqlCommand.split(';'))
