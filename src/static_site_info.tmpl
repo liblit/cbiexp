@@ -7,7 +7,7 @@
 
 extern const struct site_t sites[] = {
 #for $siteinfo in $readSites($filepath)
-	{${siteinfo.filepath, format='string'}, $siteinfo.lineno, ${siteinfo.functionname, format='string'}, $siteinfo.cfgnode, ${siteinfo.schemetag, format='char'}, { ${siteinfo.description, format='stringlist'} } },
+	{${siteinfo.FileName, format='string'}, $siteinfo.Line, ${siteinfo.FunctionIdentifier, format='string'}, $siteinfo.CFGNode, ${siteinfo.SchemeCode, format='char'}, { ${siteinfo.Descriptions, format='stringlist'} } },
 #end for
 	{ 0, 0, 0, 0, 0, { 0, 0 } }
 };

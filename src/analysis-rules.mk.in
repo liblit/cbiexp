@@ -136,12 +136,12 @@ static-site-info.so: %.so: %.cc
 	$(LINK.cc) -shared -fpic -o $@ $<
 CLEANFILES += static-site-info.so
 
-static-site-info.cc: $(sites)
-	$(tooldir)/applyTemplateToSites.py $(sites) $@ $(tooldir)/static_site_info.tmpl --filter=CppFilter
+static-site-info.cc: $(database)
+	$(tooldir)/extractStaticSiteInfo.py $(database) $(tooldir)/static_site_info.tmpl $@ --filter=CppFilter
 CLEANFILES += static-site-info.cc
 
-f.runs s.runs: outcomes.txt
-	$(tooldir)/genOutcomeIndices.py outcomes.txt f.runs s.runs
+f.runs s.runs: $(database)
+	$(tooldir)/genOutcomeIndices.py $(database) f.runs s.runs
 CLEANFILES += s.runs f.runs
 
 preds.txt: s.runs f.runs static-site-info.so $(call tool-deps, prefilter)
