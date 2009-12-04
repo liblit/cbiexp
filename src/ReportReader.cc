@@ -1,6 +1,4 @@
 #include <stdlib.h>
-#include <cassert>
-#include <cerrno>
 #include <cstring>
 #include <fstream>
 #include <string>
@@ -17,7 +15,7 @@
 using namespace std;
 
 /****************************************************************
- * Scheme specific information and callback
+ * Scheme specific information
  ***************************************************************/
 
 class SchemeData {
@@ -32,11 +30,17 @@ public:
 
 SchemeData *SchemeMap = NULL;
 
-ReportReader::ReportReader(const char* filename) {
-    classify_runs();
-    dbfile = string(filename);
 
+/****************************************************************
+ * ReportReader functions
+ ***************************************************************/
+
+ReportReader::ReportReader(const char* filename) {
     int rc;
+
+    classify_runs();
+
+    dbfile = string(filename);
     rc = sqlite3_open(filename, &db);
     if(rc)
         throwError(sqlite3_errmsg(db), __FILE__, __LINE__);
@@ -78,8 +82,8 @@ void ReportReader::read(unsigned runId) {
         throwError(message.str().c_str(), __FILE__, __LINE__);
     }
 
-    /*  TODO Check this error condition from the database
-    if (runId >= FieldCounts.size()) {
+    /*  TODO Check this error condition using the database
+    if (runId >= TotalRuns.size()) {
         ostringstream message;
         message << runId << " too large.";
         throwError(message.str().c_str(), __FILE__, __LINE__);
@@ -118,7 +122,7 @@ void ReportReader::read(unsigned runId) {
         int count = atoi(result[base + 3]);
 
         if(siteID != cur_site) {
-            // finalize previous site
+            // handle previous site
             if(cur_site != -1)
                 handleSite(SiteCoords(cur_site), counts);
 
@@ -141,8 +145,8 @@ void ReportReader::read(unsigned runId) {
 void ReportReader::throwError(const char *msg, const char *file, int line) {
     sqlite3_close(db);
     ostringstream message;
-    message << "sqlite3 error at " << file << ":" << line;
-    message << ".  Error message: " << msg;
+    message << "Error at " << file << ":" << line;
+    message << ".  Message: " << msg;
     throw runtime_error(message.str());
 }
 
