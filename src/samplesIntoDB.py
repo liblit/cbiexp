@@ -5,27 +5,16 @@ from __future__ import with_statement
 
 import sqlite3
 import sys
+import optparse
 import os
 
+from collections import defaultdict
 from itertools import count
 
 from initializeSchema import EnumerationTables
 
 
-SchemeToTable = {
-    'atoms': 'SampleCounts',
-    'fun-reentries': 'SampleCounts',
-    'compare-swap': 'SampleCounts',
-    'atoms-rw': 'SampleCounts',
-    'branches': 'SampleCounts',
-    'returns': 'SampleCounts',
-    'scalar-pairs': 'SampleCounts',
-    'float-kinds': 'SampleCounts',
-    'bounds': 'SampleValues',
-    'g-object-unref': 'SampleCounts',
-    'function-entries': 'SampleCounts',
-}
-
+ValueRecordingSchemes = frozenset(('bounds',))
 
 def getSchemeIDForSite(siteID, cursor, siteIDToSchemeCache = {}):
     """Get the SchemeID corresponding to a particular Site.
@@ -39,8 +28,8 @@ def getSchemeIDForSite(siteID, cursor, siteIDToSchemeCache = {}):
     if siteID in siteIDToSchemeCache:
         return siteIDToSchemeCache[siteID]
     else:
-        query = 'SELECT SchemeID FROM SITES WHERE SiteID = ' + siteID
-        cursor.execute(query)
+        query = 'SELECT SchemeID FROM SITES WHERE SiteID=?'
+        cursor.execute(query, (siteID,))
         r = cursor.fetchone()
         siteIDToSchemeCache[siteID] = r[0]
         return r[0]
@@ -58,38 +47,37 @@ def inputSamples(conn, countsTxt, phase, version):
     """
 
     def getSchemeIDToFieldMapping():
-        R = {}
+        R = defaultdict(list)
         for t in EnumerationTables['Fields']:
-            if t[1] in R:
-                R[t[1]].append(t[0])
-            else:
-                R[t[1]] = [t[0]]
-        
+            R[t[1]].append(t[0])
+
         return R
 
     def getSchemeIDToTableMapping():
         R = {}
         for t in  EnumerationTables['Schemes']:
-            if t[1] in SchemeToTable:
-                R[t[0]] = SchemeToTable[t[1]]
+            if t[1] in ValueRecordingSchemes:
+                R[t[0]] = 'SampleValues'
+            else:
+                R[t[0]] = 'SampleCounts'
 
         return R
-            
 
-    def inputSamplesForSingleRun(conn, phase, runID, samplesForRun):
+
+    def inputSamplesForSingleRun(conn, runID, samplesForRun):
         """Input sample counts/values for a single run.
 
             ARGUMENTS:
                 conn: sqlite3 connection object
                 runID: The runID (starting with 0) for which the counts will be
                         inserted into the database
-                samplesForRun: str object corresponding to one line from the 
+                samplesForRun: str object corresponding to one line from the
                                 counts.txt file
         """
         c = conn.cursor()
-        
+
         for site in samplesForRun.strip().split('\t'):
-            samples = site.split(':')
+            samples = map(int, site.split(':'))
             siteID = samples[0]
             samples = samples[1:]
             schemeID = getSchemeIDForSite(siteID, c)
@@ -105,25 +93,23 @@ def inputSamples(conn, countsTxt, phase, version):
                         c.execute(query, (siteID,fieldID,runID,sample,phase))
 
         c.close()
-            
-        
+
+
     SchemeIDToFields = getSchemeIDToFieldMapping()
     SchemeIDToTable = getSchemeIDToTableMapping()
     runID = count()
 
     with file(countsTxt, 'r') as countsFile:
         for line in countsFile:
-            inputSamplesForSingleRun(conn, phase, runID.next(), line)
+            inputSamplesForSingleRun(conn, runID.next(), line)
 
-        conn.commit()
+    conn.commit()
 
-
- 
 
 def main(argv=None):
     """Insert sampled counts/values into appropriate tables.
     """
-    
+
     if argv is None:
         argv = sys.argv
 
@@ -137,23 +123,21 @@ def main(argv=None):
 
     options, args = parser.parse_args(argv[1:])
     if len(args) != 1: parser.error('wrong number of positional arguments')
-    
+
     cbi_db = args[0]
     if os.path.exists(cbi_db):
         if options.version != 1:
             return ('CBI database schema version ' + options.version +
                     ' is currently not supported')
         else:
-            if os.path.exists(options.counts): 
+            if os.path.exists(options.counts_file):
                 conn = sqlite3.connect(cbi_db)
             else:
                 return 'Make sure the path to counts-file is correct'
     else:
         return 'Make sure the path to database file is correct'
-    
-    inputSamples(conn, options.counts, options.phase, options.version)
-    
 
+    inputSamples(conn, options.counts_file, options.phase, options.version)
 
 
 if __name__ == '__main__':
