@@ -13,6 +13,7 @@ lib = env.StaticLibrary('analyze', [
 	'ClassifyRuns.cc',
 	'Confidence.cc',
 	'CullPredicates.cc',
+    'DatabaseFile.cc',
 	'Dilute.cc',
 	'DynamicLibrary-dl.cc',
 	'EstimateTPs.cc',
