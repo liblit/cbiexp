@@ -29,7 +29,7 @@ def writeRunIDs(conn, outcome, output):
 
     cursor.close()
 
-def genOutcomeIndices(cbi_db, sFile, fFile):
+def genOutcomeIndices(cbi_db, fFile, sFile):
     """read outcomes from database and generate f.runs + s.runs"""
 
     if not exists(cbi_db):
@@ -43,7 +43,7 @@ def genOutcomeIndices(cbi_db, sFile, fFile):
     conn.close()
 
 def main():
-    parser = OptionParser(usage='%prog <database> <s.runs-file> <f.runs-file>')
+    parser = OptionParser(usage='%prog <database> <f.runs-file> <s.runs-file>')
     options, args = parser.parse_args()
     if len(args) != 3: parser.error('wrong number of positional arguments')
 
