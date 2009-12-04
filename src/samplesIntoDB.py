@@ -42,6 +42,8 @@ def inputSamples(conn, countsTxt, phase, version):
         ARGUMENTS:
             conn: sqlite3 connection object
             countsTxt: Path to the counts.txt file
+            phase: The phase number (default= -1) corrsponding to the data
+                    being recorded for the given set of runs
             version: Version of the schema supported. Currently only supports
                     version 1.
     """
