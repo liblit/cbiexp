@@ -21,7 +21,7 @@ include = File(csurf).dir.dir.Dir('include')
     'effort.cc',
     CPPPATH=['$CPPPATH', include],
     LIBPATH='..',
-    LIBS='analyze',
+    LIBS=['analyze', 'sqlite3'],
     )
 Default(plugin)
 
