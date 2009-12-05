@@ -24,6 +24,7 @@
 #include <numeric>
 #include <queue>
 #include <vector>
+#include "../DatabaseFile.h"
 #include "../NumRuns.h"
 #include "../PredStats.h"
 #include "../Progress/Bounded.h"
@@ -110,12 +111,13 @@ Reader::handleSite(const SiteCoords &coords, vector<count_tp> &counts)
 static void process_cmdline(int argc, char **argv)
 {
     static const argp_child children[] = {
-	{ &NumRuns::argp, 0, 0, 0 },
-	{ 0, 0, 0, 0 }
+        { &DatabaseFile::argp, 0, 0, 0 },
+        { &NumRuns::argp, 0, 0, 0 },
+        { 0, 0, 0, 0 }
     };
 
     static const argp argp = {
-	0, 0, 0, 0, children, 0, 0
+        0, 0, 0, 0, children, 0, 0
     };
 
     argp_parse(&argp, argc, argv, 0, 0, 0);
@@ -161,7 +163,7 @@ int main(int argc, char** argv)
     }
 
     {
-        Reader reader("counts.txt");
+        Reader reader(DatabaseFile::DatabaseName);
 	Progress::Bounded progress("finding counts", numruns);
 	for (unsigned runId = 0; runId < NumRuns::end(); ++runId) {
 	    progress.step();

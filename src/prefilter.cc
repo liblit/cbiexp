@@ -8,6 +8,7 @@
 #include <vector>
 #include "Confidence.h"
 #include "CullPredicates.h"
+#include "DatabaseFile.h"
 #include "NumRuns.h"
 #include "PredStats.h"
 #include "Progress/Bounded.h"
@@ -522,6 +523,7 @@ void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
         { &Confidence::argp, 0, 0, 0 },
+        { &DatabaseFile::argp, 0, 0, 0 },
         { &NumRuns::argp, 0, 0, 0 },
         { &CullPredicates::argp, 0, 0, 0 },
         { 0, 0, 0, 0 }
@@ -545,7 +547,7 @@ int main(int argc, char** argv)
     staticSiteInfo.reset(new StaticSiteInfo());
     site_info.resize(staticSiteInfo->siteCount);
 
-    Reader reader("counts.txt");
+    Reader reader(DatabaseFile::DatabaseName);
     Progress::Bounded progress("computing results", NumRuns::count());
     for (cur_run = NumRuns::begin(); cur_run < NumRuns::end(); cur_run++) {
         progress.step();

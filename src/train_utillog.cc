@@ -9,6 +9,7 @@
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_permutation.h>
 #include <gsl/gsl_permute.h>
+#include "DatabaseFile.h"
 #include "fopen.h"
 #include "NumRuns.h"
 #include "Progress/Bounded.h"
@@ -262,7 +263,7 @@ double utillog_update()
 void utillog_validate(vector<double> &lls, confusion_matrix &cm) {
     cm.tn = cm.tp = cm.fn = cm.fp = 0;
 
-    Reader reader("counts.txt");
+    Reader reader(DatabaseFile::DatabaseName);
     Progress::Bounded valProg ("validating", num_valruns);
     for (unsigned i = 0; i < num_valruns; i++) {
 	valProg.step();
@@ -373,13 +374,14 @@ void print_results(const vector<double> &train_lls,
 void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
-	{ &NumRuns::argp, 0, 0, 0 },
-	{ &UtilLogReg::argp, 0, 0, 0 },
-	{ 0, 0, 0, 0 }
+        { &DatabaseFile::argp, 0, 0, 0 },
+        { &NumRuns::argp, 0, 0, 0 },
+        { &UtilLogReg::argp, 0, 0, 0 },
+        { 0, 0, 0, 0 }
     };
 
     static const argp argp = {
-	0, 0, 0, 0, children, 0, 0
+        0, 0, 0, 0, children, 0, 0
     };
 
     argp_parse(&argp, argc, argv, 0, 0, 0);
@@ -460,7 +462,7 @@ int main(int argc, char** argv)
 	gsl_ran_shuffle (generator, order->data, num_trainruns, sizeof(size_t));
 	gsl_permute_uint (gsl_permutation_data(order), &(train_runs.front()), 1, (size_t) num_trainruns);
 
-        Reader reader("counts.txt");
+        Reader reader(DatabaseFile::DatabaseName);
 	Progress::Bounded trainProg("reading runs", num_trainruns);
 	for (unsigned i = 0; i < num_trainruns; i++) {
 	  trainProg.step();
