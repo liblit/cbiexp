@@ -124,19 +124,19 @@ def setupTables(conn, version):
     
     # Prepare SQL commands -- Create tables
     _sqlQuery = '''
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             SchemaVersion(
                 SchemaID INTEGER NOT NULL
                         CONSTRAINT SchemaVersion_pk PRIMARY KEY);
         
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             Outcomes(
                 OutcomeID INTEGER NOT NULL 
                             CONSTRAINT Outcomes_pk PRIMARY KEY ASC 
                                 AUTOINCREMENT,
                 Name TEXT NOT NULL UNIQUE);
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             Runs(
                 RunID INTEGER NOT NULL
                         CONSTRAINT Runs_pk PRIMARY KEY, 
@@ -144,7 +144,7 @@ def setupTables(conn, version):
                         CONSTRAINT Runs_OutcomeID_fk FOREIGN KEY (OutcomeID)
                             REFERENCES Outcomes(OutcomeID));
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             Schemes(
                 SchemeID INTEGER NOT NULL
                         CONSTRAINT Schemes_pk PRIMARY KEY ASC
@@ -152,7 +152,7 @@ def setupTables(conn, version):
                 Name TEXT NOT NULL UNIQUE,
                 SchemeCode TEXT NOT NULL UNIQUE);
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             Fields(
                 FieldID INTEGER NOT NULL
                         CONSTRAINT Fields_pk PRIMARY KEY ASC AUTOINCREMENT,
@@ -161,28 +161,28 @@ def setupTables(conn, version):
                 CONSTRAINT Fields_SchemeID_fk FOREIGN KEY (SchemeID)
                     REFERENCES Schemes(SchemeID));
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             AccessTypes(
                 AccessTypeID INTEGER NOT NULL
                             CONSTRAINT AccessTypes_pk PRIMARY KEY ASC
                                 AUTOINCREMENT,
                 AccessType TEXT NOT NULL UNIQUE);
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             AssignmentTypes(
                 AssignmentTypeID INTEGER NOT NULL
                                 CONSTRAINT AssignmentTypes_pk PRIMARY KEY ASC
                                     AUTOINCREMENT,
                 AssignmentType TEXT NOT NULL UNIQUE);
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             VariableTypes(
                 VariableTypeID INTEGER NOT NULL
                                 CONSTRAINT VariableTypes_pk PRIMARY KEY ASC
                                     AUTOINCREMENT,
                 VariableType TEXT NOT NULL UNIQUE);
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             Sites(
                 SiteID INTEGER NOT NULL
                         CONSTRAINT Sites_pk PRIMARY KEY ASC AUTOINCREMENT,
@@ -194,7 +194,7 @@ def setupTables(conn, version):
                 CONSTRAINT Sites_SchemeID_fk FOREIGN KEY (SchemeID)
                     REFERENCES Schemes(SchemeID));
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             AtomsSiteDescriptors(
                 SiteID INTEGER NOT NULL
                         CONSTRAINT AtomsSiteDescriptors_pk PRIMARY KEY,
@@ -205,7 +205,7 @@ def setupTables(conn, version):
                 CONSTRAINT AtomsSiteDescriptors_AccessTypeID_fk FOREIGN KEY
                     (AccessTypeID) REFERENCES AccessTypes(AccessTypeID));
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             BoundsSiteDescriptors(
                 SiteID INTEGER NOT NULL
                         CONSTRAINT BoundsSiteDescriptors_pk PRIMARY KEY,
@@ -219,7 +219,7 @@ def setupTables(conn, version):
                 CONSTRAINT BoundsSiteDescriptors_AccessTypeID_fk FOREIGN KEY
                     (AccessTypeID) REFERENCES AccessType(AccessTypeID));
        
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             BranchesSiteDescriptors(
                 SiteId INTEGER NOT NULL
                         CONSTRAINT BranchesSiteDescriptors_pk PRIMARY KEY,
@@ -227,7 +227,7 @@ def setupTables(conn, version):
                 CONSTRAINT BranchesSiteDescriptors_SiteID_fk FOREIGN KEY
                     (SiteID) REFERENCES Sites(SiteID));
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             FloatKindsSiteDescriptors(
                 SiteID INTEGER NOT NULL
                         CONSTRAINT FloatKindsSiteDescriptors_pk PRIMARY KEY,
@@ -242,7 +242,7 @@ def setupTables(conn, version):
                 CONSTRAINT FloatKindsSiteDescriptors_AccessTypeID_fk FOREIGN
                     KEY (AccessTypeID) REFERENCES AccessTypes(AccessTypeID));
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             GObjectUnrefSiteDescriptors(
                 SiteID INTEGER NOT NULL
                         CONSTRAINT GObjectUnrefSiteDescriptors_pk PRIMARY KEY,
@@ -250,7 +250,7 @@ def setupTables(conn, version):
                 CONSTRAINT GObjectUnrefSiteDescriptors_SiteID_fk FOREIGN
                     KEY (SiteID) REFERENCES Sites(SiteID));
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             ReturnsSiteDescriptors(
                 SiteID INTEGER NOT NULL
                         CONSTRAINT ReturnsSiteDescriptors_pk PRIMARY KEY,
@@ -258,7 +258,7 @@ def setupTables(conn, version):
                 CONSTRAINT ReturnsSiteDescriptors_SiteID_fk FOREIGN KEY
                     (SiteID) REFERENCES Sites(SiteID));
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             ScalarPairsSiteDescriptors(
                 SiteID INTEGER NOT NULL
                         CONSTRAINT ScalarPairsSiteDescriptors_pk PRIMARY KEY,
@@ -279,7 +279,7 @@ def setupTables(conn, version):
                     FOREIGN KEY (RHSVariableTypeID) REFERENCES
                     VariableTypes(VariableTypeID));                
         
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             CompareSwapSiteDescriptors(
                 SiteID INTEGER NOT NULL
                         CONSTRAINT CompareSwapSiteDescriptors_pk PRIMARY KEY,
@@ -287,12 +287,12 @@ def setupTables(conn, version):
                 CONSTRAINT CompareSwapSiteDescriptors_SiteID_fk FOREIGN KEY
                     (SiteID) REFERENCES Sites(SiteID));
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             Plans(
                 PlanID INTEGER NOT NULL
                     CONSTRAINT Plans_pk PRIMARY KEY);
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             RunsInPlans(
                 PlanID INTEGER NOT NULL,
                 RunID INTEGER NOT NULL UNIQUE,
@@ -301,7 +301,7 @@ def setupTables(conn, version):
                 CONSTRAINT RunInPlans_RunID_fk FOREIGN KEY (RunID)
                     REFERENCES Runs(RunID));
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             SitesInPlans(
                 PlanID INTEGER NOT NULL,
                 SiteID INTEGER NOT NULL,
@@ -311,7 +311,7 @@ def setupTables(conn, version):
                     REFERENCES Sites(SiteID),
                 CONSTRAINT SitesInPlans_un UNIQUE (PlanID, SiteID));
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             SampleValues(
                 SiteID INTEGER NOT NULL,
                 FieldID INTEGER NOT NULL,
@@ -327,7 +327,7 @@ def setupTables(conn, version):
                 CONSTRAINT SampleValues_un UNIQUE (SiteID, FieldID, RunID,
                     Phase));
 
-        CREATE TABLE IF NOT EXISTS
+        CREATE TABLE
             SampleCounts(
                 SiteID INTEGER NOT NULL,
                 FieldID INTEGER NOT NULL,
@@ -444,8 +444,9 @@ def main(argv=None):
     cbi_db = args[0]
     if os.path.exists(cbi_db):
         if not options.force:
-            return 'Use --force to append to a pre-existing database.'
+            return 'Use --force to re-initialize a pre-existing database.'
         else:
+            os.remove(cbi_db)
             conn = sqlite3.connect(cbi_db)
             c = conn.cursor()
             c.execute('SELECT SchemaID from SchemaVersion')
