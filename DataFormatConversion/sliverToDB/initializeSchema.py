@@ -19,7 +19,7 @@ EnumerationTables = {
         (1, 'FAILURE'),
         (2, 'UNKNOWN'),
     ],
- 
+
     'Schemes':[
         (1, 'atoms', 'A',),
         (2, 'fun-reentries', 'Z',),
@@ -70,12 +70,12 @@ EnumerationTables = {
     ],
 
 
-    'AccessTypes': [ 
+    'AccessTypes': [
         (1, 'read'),
         (2, 'write'),
     ],
- 
-    'AssignmentTypes':[ 
+
+    'AssignmentTypes':[
         (1, 'direct'),
         (2, 'field'),
         (3, 'index'),
@@ -95,16 +95,16 @@ EnumerationTables = {
 
 def setupTables(conn, version):
     """Create initial tables in database
-    
+
     The setup step will not fail if the tables already exist
-    
+
     Args:
         conn: sqlite3 connection object
-        version: Schema version number to be implemented. Currently only 
+        version: Schema version number to be implemented. Currently only
                 supports version 1
-                
+
     """
-    
+
     # Get the cursor
     c = conn.cursor()
 
@@ -121,25 +121,25 @@ def setupTables(conn, version):
         PRAGMA page_size = 1024;
         PRAGMA synchronous = FULL;
     '''
-    
+
     # Prepare SQL commands -- Create tables
     _sqlQuery = '''
         CREATE TABLE
             SchemaVersion(
                 SchemaID INTEGER NOT NULL
                         CONSTRAINT SchemaVersion_pk PRIMARY KEY);
-        
+
         CREATE TABLE
             Outcomes(
-                OutcomeID INTEGER NOT NULL 
-                            CONSTRAINT Outcomes_pk PRIMARY KEY ASC 
+                OutcomeID INTEGER NOT NULL
+                            CONSTRAINT Outcomes_pk PRIMARY KEY ASC
                                 AUTOINCREMENT,
                 Name TEXT NOT NULL UNIQUE);
 
         CREATE TABLE
             Runs(
                 RunID INTEGER NOT NULL
-                        CONSTRAINT Runs_pk PRIMARY KEY, 
+                        CONSTRAINT Runs_pk PRIMARY KEY,
                 OutcomeID INTEGER NOT NULL,
                         CONSTRAINT Runs_OutcomeID_fk FOREIGN KEY (OutcomeID)
                             REFERENCES Outcomes(OutcomeID));
@@ -218,7 +218,7 @@ def setupTables(conn, version):
                     (VariableTypeID) REFERENCES VariableType(VariableTypeID),
                 CONSTRAINT BoundsSiteDescriptors_AccessTypeID_fk FOREIGN KEY
                     (AccessTypeID) REFERENCES AccessType(AccessTypeID));
-       
+
         CREATE TABLE
             BranchesSiteDescriptors(
                 SiteId INTEGER NOT NULL
@@ -237,7 +237,7 @@ def setupTables(conn, version):
                 CONSTRAINT FloatKindsSiteDescriptors_SiteID_fk FOREIGN KEY
                     (SiteID) REFERENCES Sites(SiteID),
                 CONSTRAINT FloatKindsSiteDescriptors_VariableTypeID_fk FOREIGN
-                    KEY (VariableTypeID) REFERENCES 
+                    KEY (VariableTypeID) REFERENCES
                     VariableTypes(VariableTypeID),
                 CONSTRAINT FloatKindsSiteDescriptors_AccessTypeID_fk FOREIGN
                     KEY (AccessTypeID) REFERENCES AccessTypes(AccessTypeID));
@@ -270,15 +270,15 @@ def setupTables(conn, version):
                 CONSTRAINT ScalarPairsSiteDescriptors_SiteID_fk FOREIGN KEY
                     (SiteID) REFERENCES Sites(SiteID),
                 CONSTRAINT ScalarPairsSiteDescriptors_LHSVariableTypeID_fk
-                    FOREIGN KEY (LHSVariableTypeID) REFERENCES 
+                    FOREIGN KEY (LHSVariableTypeID) REFERENCES
                     VariableTypes(VariableTypeID),
                 CONSTRAINT ScalarPairsSiteDescriptors_LHSAssignmentTypeID_fk
                     FOREIGN KEY (LHSAssignmentTypeID) REFERENCES
                     AssignmentTypes(AssignmentTypeID),
                 CONSTRAINT ScalarPairsSiteDescriptors_RHSVariableTypeID_fk
                     FOREIGN KEY (RHSVariableTypeID) REFERENCES
-                    VariableTypes(VariableTypeID));                
-        
+                    VariableTypes(VariableTypeID));
+
         CREATE TABLE
             CompareSwapSiteDescriptors(
                 SiteID INTEGER NOT NULL
@@ -315,7 +315,7 @@ def setupTables(conn, version):
             SampleValues(
                 SiteID INTEGER NOT NULL,
                 FieldID INTEGER NOT NULL,
-                RunID INTEGER NOT NULL, 
+                RunID INTEGER NOT NULL,
                 Value INTEGER NOT NULL,
                 Phase INTEGER DEFAULT -1,
                 CONSTRAINT SampleValues_SiteID_fk FOREIGN KEY (SiteID)
@@ -345,11 +345,11 @@ def setupTables(conn, version):
                 CONSTRAINT SampleCounts_chk CHECK (Count > 0));
     '''
     # NOTE: The UNIQUE constraint if applied on a set of columns one more of
-    #       which may have null values (the 'Phase' column in the case of 
+    #       which may have null values (the 'Phase' column in the case of
     #       SampleCounts) will not work as intended for most implementations of
     #       SQL (eg. SQLite, PostGreSQL etc.), in fact it would only function
     #       as intended with Informix and Microsoft SQL Server. As a workaround
-    #       when phases aren't being used we denote this by having a default 
+    #       when phases aren't being used we denote this by having a default
     #       value of '-1' inserted into the appropriate column.
 
     # Set PRAGMAs
@@ -357,20 +357,20 @@ def setupTables(conn, version):
 
     # Create TABLES
     map(c.execute, _sqlQuery.split(';'))
-   
+
     # Initialize SchemaVersion
     if isTableEmpty(conn, 'SchemaVersion'):
-        c.execute('INSERT INTO SchemaVersion (SchemaID) Values (1)')    
- 
+        c.execute('INSERT INTO SchemaVersion (SchemaID) Values (1)')
+
     # Initialize Enumeration tables
     for table in EnumerationTables:
         SafeInsert(conn, table, EnumerationTables[table])
 
     # Save and commit
     conn.commit()
-    
+
     # Close cursor
-    c.close()   
+    c.close()
 
 
 def SafeInsert(conn, table, data, commit=False):
@@ -390,19 +390,19 @@ def SafeInsert(conn, table, data, commit=False):
         c = conn.cursor()
         entries = ', '.join('?' * len(data[0]))
         query = 'INSERT INTO %s VALUES (%s);' % (table, entries)
-        
+
         for t in data:
             c.execute(query, t)
-        
+
         if commit:
             conn.commit()
-        
+
         c.close()
         return True
 
     else:
         return False
-    
+
 
 
 def isTableEmpty(conn, table):
@@ -413,7 +413,7 @@ def isTableEmpty(conn, table):
             table: Name of the table
 
         RETURNS:
-            bool 
+            bool
     """
     c = conn.cursor()
     c.execute('SELECT COUNT(*) FROM ' + table)
@@ -433,24 +433,24 @@ def main(argv=None):
         argv = sys.argv
 
     parser = optparse.OptionParser(usage='%prog [options] <database>.')
-    parser.add_option('-f', '--force', action='store_true', default=False, 
+    parser.add_option('-f', '--force', action='store_true', default=False,
                       help = 'append to existing database')
     parser.add_option('-v', '--version', action='store', default=1,
                       help = 'version of schema to implement')
-    
+
     options, args = parser.parse_args(argv[1:])
     if len(args) != 1: parser.error('wrong number of positional arguments')
-    
+
     cbi_db = args[0]
     if os.path.exists(cbi_db):
         if not options.force:
             return 'Use --force to re-initialize a pre-existing database.'
         else:
             os.remove(cbi_db)
-    
+
     conn = sqlite3.connect(cbi_db)
     setupTables(conn, options.version)
-    
+
 
 if __name__ == '__main__':
     sys.exit(main())
