@@ -3,6 +3,7 @@
 
 from __future__ import with_statement
 
+import optparse
 import re
 import sqlite3
 import sys
@@ -77,13 +78,11 @@ def readSites(filepath):
                 yield dict(zip(keys, vals))
 
 
-def process(sitesFile, dbname):
-    con = sqlite3.connect(dbname)
-    cursor = con.cursor()
+def writeSitesIntoDB(conn, sitesTxt):
+    cursor = conn.cursor()
 
     schemeEnum = dict((t[1], t[0]) for t in EnumerationTables['Schemes'])
-
-    for site in readSites(sitesFile):
+    for site in readSites(sitesTxt):
         site['SchemeID'] = schemeEnum[site['SchemeName']]
 
         cursor.execute("INSERT INTO Sites VALUES(\
@@ -103,12 +102,24 @@ def process(sitesFile, dbname):
             query = "INSERT INTO %s VALUES (%s);" % (table, entries)
             cursor.execute(query, values)
 
-    con.commit()
+    conn.commit()
 
 def main():
-    if len(sys.argv) != 3:
-        print 'Usage: %s <sites-file> <sqlite-database>' % sys.argv[0]
-        sys.exit(1)
-    process(*sys.argv[1:])
+    parser = optparse.OptionParser(usage='%prog <database> <sites-file>')
+    parser.add_option('-v', '--version', action='store', default=1,
+                      help = 'version of schema to implement')
+
+    option, args = parser.parse_args(sys.argv[1:])
+    if len(args) != 2:
+        parser.error('wrong number of positional arguments')
+    if options.version != 1:
+        parser.error('CBI database schema version ' + options.version +
+                     ' is currently not supported')
+
+    cbi_db, sitesTxt = args
+
+    conn = sqlite3.connect(cbi_db)
+    writeSitesIntoDB(conn, sitesTxt)
+    conn.close()
 
 if __name__ == '__main__': main()
