@@ -447,17 +447,8 @@ def main(argv=None):
             return 'Use --force to re-initialize a pre-existing database.'
         else:
             os.remove(cbi_db)
-            conn = sqlite3.connect(cbi_db)
-            c = conn.cursor()
-            c.execute('SELECT SchemaID from SchemaVersion')
-            r = c.fetchall()
-            c.close()
-            if (len(r) != 1) or (r[0][0] != 1):
-                return ('Incompatible schema version in pre-existing ' +
-                        'database')
-    else:
-        conn = sqlite3.connect(cbi_db)
     
+    conn = sqlite3.connect(cbi_db)
     setupTables(conn, options.version)
     
 
