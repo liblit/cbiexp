@@ -78,7 +78,7 @@ def readSites(filepath):
                 yield dict(zip(keys, vals))
 
 
-def writeSitesIntoDB(conn, sitesTxt):
+def writeSitesIntoDB(conn, sitesTxt, version):
     cursor = conn.cursor()
 
     schemeEnum = dict((t[1], t[0]) for t in EnumerationTables['Schemes'])
@@ -119,7 +119,7 @@ def main():
     cbi_db, sitesTxt = args
 
     conn = sqlite3.connect(cbi_db)
-    writeSitesIntoDB(conn, sitesTxt)
+    writeSitesIntoDB(conn, sitesTxt, options.version)
     conn.close()
 
 if __name__ == '__main__': main()

@@ -17,7 +17,7 @@ from initializeSchema import EnumerationTables
 # Insert runs and outcomes from outcomes.txt
 ###############################################################################
 
-def writeRunsIntoDB(conn, outcomesTxt):
+def writeRunsIntoDB(conn, outcomesTxt, version):
     """ Populate Runs table from file 'outcomesTxt'.  The file
         contains one integer per line, representing the outcome
         of runs, starting at index 0.
@@ -172,7 +172,7 @@ def main(argv=None):
 
     conn = sqlite3.connect(cbi_db)
 
-    writeRunsIntoDB(conn, outcomesTxt)
+    writeRunsIntoDB(conn, outcomesTxt, options.version)
     writeSamplesIntoDB(conn, countsTxt, options.phase, options.version)
 
     conn.close()
