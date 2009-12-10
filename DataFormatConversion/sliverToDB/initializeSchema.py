@@ -162,6 +162,16 @@ def setupTables(conn, version):
                     REFERENCES Schemes(SchemeID));
 
         CREATE TABLE
+            Units(
+                UnitID INTEGER NOT NULL
+                        CONSTRAINT Units_pk PRIMARY KEY ASC AUTOINCREMENT,
+                Signature TEXT NOT NULL,
+                SchemeID INTEGER NOT NULL,
+                CONSTRAINT Units_SchemeID_fk FOREIGN KEY (SchemeID)
+                    REFERENCES Schemes(SchemeID),
+                CONSTRAINT Units_un UNIQUE (Signature, SchemeID));
+
+        CREATE TABLE
             AccessTypes(
                 AccessTypeID INTEGER NOT NULL
                             CONSTRAINT AccessTypes_pk PRIMARY KEY ASC
@@ -190,9 +200,9 @@ def setupTables(conn, version):
                 Line INTEGER NOT NULL,
                 FunctionIdentifier TEST NOT NULL,
                 CFGNode INTEGER NOT NULL,
-                SchemeID INTEGER NOT NULL,
-                CONSTRAINT Sites_SchemeID_fk FOREIGN KEY (SchemeID)
-                    REFERENCES Schemes(SchemeID));
+                UnitID INTEGER NOT NULL,
+                CONSTRAINT Sites_UnitID_fk FOREIGN KEY (UnitID)
+                    REFERENCES Units(UnitID));
 
         CREATE TABLE
             AtomsSiteDescriptors(
