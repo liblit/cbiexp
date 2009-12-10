@@ -54,47 +54,74 @@ SchemeDescriptions = {
 
 ###############################################################################
 
-def readSites(filepath):
-    keys = ('SiteID',
-            'SchemeName',
-            'FileName',
+def readSitesFile(filepath):
+    keys = ('FileName',
             'Line',
             'FunctionIdentifier',
             'CFGNode',
             'Descriptors')
-    matcher = re.compile('<sites unit="(?P<sig>[0-9a-f]{32})" scheme="(?P<sch>[a-zA-Z\-]*)">')
 
-    SiteID = count()
-    SchemeName = None
+    matcher = re.compile('<sites unit="(?P<Signature>[0-9a-f]{32})" scheme="(?P<SchemeName>[a-zA-Z\-]*)">')
+
     with file(filepath, 'r') as ifile:
         for line in ifile:
             match = matcher.match(line)
             if match:
-                SchemeName = match.group('sch')
+                yield match.groupdict()
             elif line.startswith('</sites>'):
-                SchemeName = None
+                yield None
             else:
-                vals = [SiteID.next(), SchemeName] + line.strip().split(None, 4)
+                vals = line.strip().split(None, 4)
                 yield dict(zip(keys, vals))
 
 
 def writeSitesIntoDB(conn, sitesTxt, version):
-    cursor = conn.cursor()
+    """ Read units and sites from <sitesTxt> and insert into
+        sqlite3 database connection <conn>.  CBI database schema
+        version <version> is assumed.  Currently <version> is
+        unused
+    """
 
-    schemeEnum = dict((t[1], t[0]) for t in EnumerationTables['Schemes'])
-    for site in readSites(sitesTxt):
-        site['SchemeID'] = schemeEnum[site['SchemeName']]
+    cursor = conn.cursor()
+    schemeNameToID = getEnumEvaluator('Schemes')
+
+    SiteID = count()
+    UnitID = count()
+
+    curUnit, curScheme = None, None
+
+    for line in readSitesFile(sitesTxt):
+        if line is None:
+            # end of unit
+            curUnit, curScheme = None, None
+            continue
+
+        elif line.has_key('Signature'):
+            # insert a new unit
+            curUnit = UnitID.next()
+            curScheme = line['SchemeName']
+
+            line['UnitID'] = curUnit
+            line['SchemeID'] = schemeNameToID(curScheme)
+            cursor.execute("INSERT INTO Units VALUES(\
+                                :UnitID, :Signature, :SchemeID);",
+                           line)
+            continue
+
+        # else insert a site
+        site = line
+        site['SiteID'] = SiteID.next()
+        site['UnitID'] = curUnit
 
         cursor.execute("INSERT INTO Sites VALUES(\
                             :SiteID, :FileName, :Line, :FunctionIdentifier,\
-                            :CFGNode, :SchemeID);",
+                            :CFGNode, :UnitID);",
                         site)
 
-        scheme = site['SchemeName']
-        if schemeTables[scheme]:
-            table = schemeTables[scheme]
+        if schemeTables[curScheme]:
+            table = schemeTables[curScheme]
 
-            funcs = map(convertors.get, SchemeDescriptions[scheme])
+            funcs = map(convertors.get, SchemeDescriptions[curScheme])
             args = site['Descriptors'].split('\t')
             values = [site['SiteID']] + map(lambda x, y: x(y), funcs, args)
 
@@ -105,11 +132,13 @@ def writeSitesIntoDB(conn, sitesTxt, version):
     conn.commit()
 
 def main():
+    """ Insert units and sites into appropriate tables"""
+
     parser = optparse.OptionParser(usage='%prog <database> <sites-file>')
     parser.add_option('-v', '--version', action='store', default=1,
                       help = 'version of schema to implement')
 
-    option, args = parser.parse_args(sys.argv[1:])
+    options, args = parser.parse_args(sys.argv[1:])
     if len(args) != 2:
         parser.error('wrong number of positional arguments')
     if options.version != 1:

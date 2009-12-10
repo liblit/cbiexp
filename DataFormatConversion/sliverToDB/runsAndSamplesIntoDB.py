@@ -45,24 +45,16 @@ def writeRunsIntoDB(conn, outcomesTxt, version):
 
 ValueRecordingSchemes = frozenset(('bounds',))
 
-def getSchemeIDForSite(siteID, cursor, siteIDToSchemeCache = {}):
-    """Get the SchemeID corresponding to a particular Site.
+def getSiteIDToSchemeMapping(conn):
+    """ Get a dictionary mapping SiteIDs to SchemeIDs """
 
-        ARGUMENTS:
-            siteID: Non-negative integer corresponding to the ID of the site
-            cursor: sqlite3 cursor object
-            siteIDToSchemeCache: Used to cache the results of queries. Do NOT
-                                assign it a value when calling method.
-    """
-    if siteID in siteIDToSchemeCache:
-        return siteIDToSchemeCache[siteID]
-    else:
-        query = 'SELECT SchemeID FROM SITES WHERE SiteID=?'
-        cursor.execute(query, (siteID,))
-        r = cursor.fetchone()
-        siteIDToSchemeCache[siteID] = r[0]
-        return r[0]
+    cursor = conn.cursor()
+    cursor.execute('SELECT SiteID, SchemeID FROM \
+                        Sites JOIN Units ON Units.UnitID=Sites.UnitID')
+    mapping = dict(cursor.fetchall())
+    cursor.close()
 
+    return mapping
 
 
 def writeSamplesIntoDB(conn, countsTxt, phase, version):
@@ -111,7 +103,7 @@ def writeSamplesIntoDB(conn, countsTxt, phase, version):
             samples = map(int, site.split(':'))
             siteID = samples[0]
             samples = samples[1:]
-            schemeID = getSchemeIDForSite(siteID, c)
+            schemeID = SiteIDToSchemeID[siteID]
             table = SchemeIDToTable[schemeID]
             entries = ', '.join('?' * 5)
             query = 'INSERT INTO %s VALUES (%s);' % (table, entries)
@@ -126,6 +118,7 @@ def writeSamplesIntoDB(conn, countsTxt, phase, version):
         c.close()
 
 
+    SiteIDToSchemeID = getSiteIDToSchemeMapping(conn)
     SchemeIDToFields = getSchemeIDToFieldMapping()
     SchemeIDToTable = getSchemeIDToTableMapping()
     runID = count()
@@ -146,7 +139,7 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv
 
-    parser = optparse.OptionParser(usage='%prog [options] <counts.txt-file> <outcomes.txt-file> <database>.')
+    parser = optparse.OptionParser(usage='%prog [options] <database> <counts.txt-file> <outcomes.txt-file>')
     parser.add_option('-v', '--version', action='store', default=1,
                       help = 'version of schema to implement')
     parser.add_option('-p', '--phase', action='store', default=-1,
@@ -156,7 +149,7 @@ def main(argv=None):
     if len(args) != 3:
         parser.error('wrong number of positional arguments')
 
-    countsTxt, outcomesTxt, cbi_db = args
+    cbi_db, countsTxt, outcomesTxt = args
 
     def checkExists(kind, name):
         if not os.path.exists(name):

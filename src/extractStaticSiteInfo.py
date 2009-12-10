@@ -50,7 +50,9 @@ def readSites(cbi_db):
     query = 'SELECT \
                 SiteID, FileName, Line, FunctionIdentifier, CFGNode, SchemeCode \
             FROM \
-                Sites JOIN Schemes ON Sites.SchemeID=Schemes.SchemeID'
+                Sites JOIN Units JOIN Schemes ON\
+                    Sites.UnitID=Units.UnitID AND\
+                    Units.SchemeID=Schemes.SchemeID'
 
     cursor = conn.cursor().execute(query)
     keys = [t[0] for t in cursor.description] + ['Descriptions']

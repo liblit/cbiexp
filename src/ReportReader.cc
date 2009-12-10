@@ -95,8 +95,9 @@ void ReportReader::read(unsigned runId) {
 
     query = sqlite3_mprintf("SELECT SampleCounts.SiteID, SchemeID, FieldID, Count\
                              FROM\
-                                 SampleCounts JOIN Sites ON\
-                                     SampleCounts.SiteID=Sites.SiteID\
+                                 SampleCounts JOIN Sites JOIN Units ON\
+                                     SampleCounts.SiteID=Sites.SiteID AND\
+                                     Sites.UnitID=Units.UnitID\
                              WHERE\
                                  RunID=%d\
                              ORDER BY\
