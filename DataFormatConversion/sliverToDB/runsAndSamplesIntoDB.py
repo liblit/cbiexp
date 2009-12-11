@@ -8,10 +8,10 @@ import sys
 import optparse
 import os
 
-from collections import defaultdict
 from itertools import count, izip, imap
 
-from initializeSchema import EnumerationTables
+from DBConstants import EnumerationTables
+from utils import getSchemeIDToFieldMapping, getSchemeIDToTableMapping, getSiteIDToSchemeMapping
 
 ###############################################################################
 # Insert runs and outcomes from outcomes.txt
@@ -43,20 +43,6 @@ def writeRunsIntoDB(conn, outcomesTxt, version):
 # Insert samples from counts.txt
 ###############################################################################
 
-ValueRecordingSchemes = frozenset(('bounds',))
-
-def getSiteIDToSchemeMapping(conn):
-    """ Get a dictionary mapping SiteIDs to SchemeIDs """
-
-    cursor = conn.cursor()
-    cursor.execute('SELECT SiteID, SchemeID FROM \
-                        Sites JOIN Units ON Units.UnitID=Sites.UnitID')
-    mapping = dict(cursor.fetchall())
-    cursor.close()
-
-    return mapping
-
-
 def writeSamplesIntoDB(conn, countsTxt, phase, version):
     """Input sample counts/values into the database.
 
@@ -68,24 +54,6 @@ def writeSamplesIntoDB(conn, countsTxt, phase, version):
             version: Version of the schema supported. Currently only supports
                     version 1.
     """
-
-    def getSchemeIDToFieldMapping():
-        R = defaultdict(list)
-        for t in EnumerationTables['Fields']:
-            R[t[1]].append(t[0])
-
-        return R
-
-    def getSchemeIDToTableMapping():
-        R = {}
-        for t in  EnumerationTables['Schemes']:
-            if t[1] in ValueRecordingSchemes:
-                R[t[0]] = 'SampleValues'
-            else:
-                R[t[0]] = 'SampleCounts'
-
-        return R
-
 
     def inputSamplesForSingleRun(conn, runID, samplesForRun):
         """Input sample counts/values for a single run.

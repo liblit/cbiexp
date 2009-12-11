@@ -10,7 +10,7 @@ import sys
 
 from itertools import count
 
-from initializeSchema import EnumerationTables
+from DBConstants import EnumerationTables
 
 ###############################################################################
 
