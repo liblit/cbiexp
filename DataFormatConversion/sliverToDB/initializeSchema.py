@@ -11,6 +11,38 @@ import sys
 
 from DBConstants import EnumerationTables
 
+def setupPragmas(conn, memory):
+    """Setup SQLite pragmas.
+
+    Args:
+        memory: Cache size in MB
+    """
+    
+    # Prepare SQLite PRAGMAs
+    # NOTE: Most of these are listed here with their default values and only
+    #       mentioned as objects of interest which may need to be tweaked in
+    #       case of dismal DB performance etc. For more information as to what
+    #       each PRAGMA affects see http://www.sqlite.org/pragma.html
+    # TODO: Tweak PRAGMA values
+    _sqlPragmas = '''
+        PRAGMA foreign_keys = ON;
+        PRAGMA default_cache_size = %d;
+        PRAGMA count_changes = False;
+        PRAGMA page_size = 1024;
+        PRAGMA synchronous = FULL;
+    ''' % (memory * 1024, )
+
+    cursor = conn.cursor()
+    
+    # Set PRAGMAs
+    map(cursor.execute, _sqlPragmas.split('\n'))
+
+    conn.commit()
+    cursor.close()
+
+
+
+
 def setupTables(conn, version):
     """Create initial tables in database
 
@@ -25,20 +57,6 @@ def setupTables(conn, version):
 
     # Get the cursor
     c = conn.cursor()
-
-    # Prepare SQLite PRAGMAs
-    # NOTE: Most of these are listed here with their default values and only
-    #       mentioned as objects of interest which may need to be tweaked in
-    #       case of dismal DB performance etc. For more information as to what
-    #       each PRAGMA affects see http://www.sqlite.org/pragma.html
-    # TODO: Tweak PRAGMA values
-    _sqlPragmas = '''
-        PRAGMA foreign_keys = ON;
-        PRAGMA default_cache_size = 2000;
-        PRAGMA count_changes = False;
-        PRAGMA page_size = 1024;
-        PRAGMA synchronous = FULL;
-    '''
 
     # Prepare SQL commands -- Create tables
     _sqlQuery = '''
@@ -280,8 +298,6 @@ def setupTables(conn, version):
     #       when phases aren't being used we denote this by having a default
     #       value of '-1' inserted into the appropriate column.
 
-    # Set PRAGMAs
-    map(c.execute, _sqlPragmas.split('\n'))
 
     # Create TABLES
     map(c.execute, _sqlQuery.split(';'))
@@ -354,8 +370,8 @@ def isTableEmpty(conn, table):
 
 
 def main(argv=None):
-    """Generate an sqlite database and creating any tables which may not already
-        exist
+    """Generate an sqlite database and creating any tables which may not 
+        already exist
     """
     if argv is None:
         argv = sys.argv
@@ -365,6 +381,9 @@ def main(argv=None):
                       help = 'append to existing database')
     parser.add_option('-v', '--version', action='store', default=1,
                       help = 'version of schema to implement')
+
+    parser.add_option('-m', '--memory', action='store', type='int', default=20,
+                      help = 'SQLite cache size in MB')
 
     options, args = parser.parse_args(argv[1:])
     if len(args) != 1: parser.error('wrong number of positional arguments')
@@ -377,6 +396,8 @@ def main(argv=None):
             os.remove(cbi_db)
 
     conn = sqlite3.connect(cbi_db)
+
+    setupPragmas(conn, options.memory)
     setupTables(conn, options.version)
 
 
