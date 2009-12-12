@@ -108,9 +108,9 @@ def main(argv=None):
         argv = sys.argv
 
     parser = optparse.OptionParser(usage='%prog [options] <database> <counts.txt-file> <outcomes.txt-file>')
-    parser.add_option('-v', '--version', action='store', default=1,
+    parser.add_option('-v', '--version', action='store', default=1, type='int',
                       help = 'version of schema to implement')
-    parser.add_option('-p', '--phase', action='store', default=-1,
+    parser.add_option('-p', '--phase', action='store', default=-1, type='int',
                         help = 'phase number associated with runs')
 
     options, args = parser.parse_args(argv[1:])

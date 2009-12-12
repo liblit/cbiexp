@@ -379,7 +379,7 @@ def main(argv=None):
     parser = optparse.OptionParser(usage='%prog [options] <database>.')
     parser.add_option('-f', '--force', action='store_true', default=False,
                       help = 'append to existing database')
-    parser.add_option('-v', '--version', action='store', default=1,
+    parser.add_option('-v', '--version', action='store', default=1, type='int',
                       help = 'version of schema to implement')
 
     parser.add_option('-m', '--memory', action='store', type='int', default=20,
