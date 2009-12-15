@@ -1,14 +1,15 @@
 #!/s/python-2.5/bin/python -O
 # -*- python -*-
 
+import glob
+import optparse
 import sqlite3
 import sys
-import optparse
-import os
 
 from itertools import count, izip, imap
+from os.path import basename, exists, join
 
-def writeRunsIntoDB(conn, outcomesTxt, version):
+def processOutcomesFile(conn, outcomesTxt, version):
     """ Populate Runs table from file 'outcomesTxt'.  The file
         contains one integer per line, representing the outcome
         of runs, starting at index 0.
@@ -16,10 +17,8 @@ def writeRunsIntoDB(conn, outcomesTxt, version):
 
     def getOutcome(line):
         outcome = int(line.strip())
-        if outcome == 0:
-            return 0
-        else:
-            return 1
+        # Outcomes file has -1 for 'IGNORE'
+        return {0: 0, 1: 1, -1: 2}[outcome]
 
     runID = count()
     values = izip(runID, imap(getOutcome, file(outcomesTxt)))
@@ -30,35 +29,73 @@ def writeRunsIntoDB(conn, outcomesTxt, version):
     conn.commit()
 
 
-def main(argv=None):
+def processLabels(conn, runDirs, version):
+    """ Populate Runs table by iterating over run directories
+        and reading 'label' files.
+    """
+
+    def getOutcome(line):
+        outcome = line.strip()
+        return {'success': 0, 'failure': 1, 'ignore': 2}[outcome]
+
+    cursor = conn.cursor()
+    for runDir in runDirs:
+        try:
+            runID = int(basename(runDir))
+            labelFile = join(runDir, 'label')
+            label = getOutcome(file(labelFile).read())
+            cursor.execute('INSERT INTO Runs VALUES (?,?)', (runID, label))
+        except Exception, e:
+            print 'Following error while reading runDir %s.\n\t%s' % (runDir, e)
+            raise
+
+    conn.commit()
+    cursor.close()
+
+
+def main():
     """ Insert runs and their outcomes into the Runs table. """
 
-    if argv is None:
-        argv = sys.argv
+    parser = optparse.OptionParser(usage='%prog [options] <database>')
+    parser.add_option('-o', '--outcomes-file', action='store', type='str',
+                      help='file containing outcomes of runs')
+    parser.add_option('-r', '--runs-dir', action='store', type='str',
+                      help='CBI runs directory')
+    parser.add_option('-v', '--version', action='store', default=1, type='int',
+                      help='version of schema to implement')
 
-    parser = optparse.OptionParser(usage='%prog [options] <database> <outcomes.txt-file>')
-    parser.add_option('-v', '--version', action='store', default=1,
-                      help = 'version of schema to implement')
-
-    options, args = parser.parse_args(argv[1:])
-    if len(args) != 2:
+    options, args = parser.parse_args()
+    if len(args) != 1:
         parser.error('wrong number of positional arguments')
-
-    cbi_db, outcomesTxt = args
-
-    def checkExists(kind, name):
-        if not os.path.exists(name):
-            parser.error('%s %s does not exist' % (kind, name))
-
-    checkExists('outcomes-file', outcomesTxt)
-    checkExists('database', cbi_db)
 
     if options.version != 1:
         parser.error('CBI database schema version ' + options.version +
                      ' is currently not supported')
 
+    cbi_db = args[0]
+    outcomesTxt = options.outcomes_file
+    runsDir = options.runs_dir
+
+    def checkExists(kind, name):
+        if not exists(name):
+            parser.error('%s %s does not exist' % (kind, name))
+
+    checkExists('database', cbi_db)
     conn = sqlite3.connect(cbi_db)
-    writeRunsIntoDB(conn, outcomesTxt, options.version)
+
+    if outcomesTxt:
+        if runsDir:
+            parser.error('set exactly one of --outcomes-file and --run-dirs')
+
+        checkExists('outcomes-file', outcomesTxt)
+        processOutcomesFile(conn, outcomesTxt, options.version)
+    elif runsDir:
+        checkExists('runs-dir', runsDir)
+        dirs = glob.iglob(join(runsDir, '[0-9]*/[0-9]*'))
+        processLabels(conn, dirs, options.version)
+    else:
+        parser.error('must set either --outcomes-file or --run-dirs')
+
     conn.close()
 
 
