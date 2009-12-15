@@ -11,7 +11,7 @@ import os
 from DBConstants import EnumerationTables
 from utils import getSchemeIDToFieldMapping, getSchemeIDToTableMapping, getSiteIDToSchemeMapping
 
-def writeSamplesIntoDB(conn, countsTxt, phase, version):
+def processCountsFile(conn, countsTxt, phase, version):
     """Input sample counts/values into the database.
 
         ARGUMENTS:
@@ -99,7 +99,7 @@ def main(argv=None):
                      ' is currently not supported')
 
     conn = sqlite3.connect(cbi_db)
-    writeSamplesIntoDB(conn, countsTxt, options.phase, options.version)
+    processCountsFile(conn, countsTxt, options.phase, options.version)
     conn.close()
 
 
