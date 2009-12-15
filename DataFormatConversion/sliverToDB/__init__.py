@@ -2,11 +2,13 @@ import sqlite3
 import os
 
 from initializeSchema import setupTables
-from runsAndSamplesIntoDB import writeRunsIntoDB, writeSamplesIntoDB
+from readCountsFile import writeSamplesIntoDB
+from readReports import processReportFiles
+from runsIntoDB import writeRunsIntoDB
 from sitesIntoDB import writeSitesIntoDB
 
 
-def sliverToDB(cbi_db, sitesTxt, outcomesTxt, countsTxt, phase=None, version=1):
+def setupDatabase(cbi_db, sitesTxt, outcomesTxt, version=1)
     if version != 1:
         raise ValueError('Incompatible version %d' % version)
 
@@ -18,4 +20,3 @@ def sliverToDB(cbi_db, sitesTxt, outcomesTxt, countsTxt, phase=None, version=1):
     setupTables(conn, version)
     writeSitesIntoDB(conn, sitesTxt, version)
     writeRunsIntoDB(conn, outcomesTxt, version)
-    writeSamplesIntoDB(conn, countsTxt, phase, version)
