@@ -358,8 +358,11 @@ int main(int argc, char** argv)
     }
     fclose(pfp);
 
-    SampleRatesFile::read_rates();  // read the sampling rates from file
-    set_rates();   // set sampling rates in predHash according to values read from file
+    if(SampleRatesFile::filename != NULL) {
+      // read the sampling rates from file and set rates in predHash
+      SampleRatesFile::read_rates();
+      set_rates();
+    }
 
     Reader reader(DatabaseFile::DatabaseName);
     Progress::Bounded prog("Reading runs and collecting sufficient stats", NumRuns::count());

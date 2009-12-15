@@ -215,7 +215,7 @@ CLEANFILES += obs.txt tru.txt
 #############################################################################
 ifndef omit-truth-probability-estimation
 parmstats.txt notp-parmstats.txt: s.runs f.runs preds.txt static-site-info.so $(database) $(call tool-deps, collect_parmstats)
-	$(time) $(tooldir)/collect_parmstats --begin-runs=$(begin-runs) --end-runs=$(end-runs) --sample-rates=rates.txt --database-filename=$(database)
+	$(time) $(tooldir)/collect_parmstats --begin-runs=$(begin-runs) --end-runs=$(end-runs) $(if $(rates-txt), --sample-rates=$(rates-txt)) --database-filename=$(database)
 CLEANFILES += parmstats.txt notp-parmstats.txt
 
 parms.txt notp-parms.txt: parmstats.txt notp-parmstats.txt static-site-info.so $(call tool-deps, est_parms)
