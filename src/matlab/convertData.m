@@ -23,7 +23,12 @@ function convertData(inputfile, outputfile, outcomes, causes, dimfile)
     Fvector = Outcomes > 0;
     Svector = Outcomes == 0;
     Indices = find(sum([Fvector Svector], 2));
-    Causes = int8(load(causes));
+    if causes
+        Causes = int8(load(causes));
+    else
+        Causes = zeros(length(Outcomes), 1);
+    end
+
     X = load(inputfile);
 
     if ~isempty(X)
