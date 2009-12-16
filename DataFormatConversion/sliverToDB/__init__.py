@@ -1,6 +1,8 @@
 import sqlite3
 import os
 
+import utils
+
 from initializeSchema import setupTables
 from readCountsFile import processCountsFile
 from readReports import processReports
