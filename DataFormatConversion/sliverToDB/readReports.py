@@ -179,7 +179,7 @@ def processReportFile(conn, runID, fname, phase=-1):
             ensureAllCountersAreRead(curSampleInfo, siteIDCounter)
 
 
-def processReports(conn, runDirs):
+def processReports(conn, runDirs, version):
     """ Arguments:
             conn: A database connection
             runDirs: A list (or iterator) that generates run directories
@@ -196,7 +196,6 @@ def processReports(conn, runDirs):
             print 'Following error while reading report file %s.\n\t%s' % (reportFile, ve)
             raise
 
-    conn.execute('CREATE INDEX IndexByRunID ON SampleCounts(RunID)')
     conn.commit()
 
 def main():
@@ -219,7 +218,7 @@ def main():
     runDirs = glob.iglob(join(testsDir, '[0-9]*/[0-9]*'))
 
     conn = sqlite3.connect(cbi_db)
-    processReports(conn, runDirs)
+    processReports(conn, runDirs, options.version)
     conn.close()
 
 

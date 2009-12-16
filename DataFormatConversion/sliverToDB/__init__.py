@@ -2,13 +2,13 @@ import sqlite3
 import os
 
 from initializeSchema import setupTables
-from readCountsFile import writeSamplesIntoDB
-from readReports import processReportFiles
-from runsIntoDB import writeRunsIntoDB
+from readCountsFile import processCountsFile
+from readReports import processReports
+from runsIntoDB import processLabels, processOutcomesFile
 from sitesIntoDB import writeSitesIntoDB
 
 
-def setupDatabase(cbi_db, version=1)
+def setupDatabase(cbi_db, version=1):
     if version != 1:
         raise ValueError('Incompatible version %d' % version)
 
