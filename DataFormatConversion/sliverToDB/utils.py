@@ -26,8 +26,51 @@ def getSchemeIDToFieldMapping():
     return R
 
 
+def getRangeForField(fieldID, store={}):
+    """ Returns a list representing the range of FieldIDs for given FieldID.
+
+        Args:
+            fieldID: The FieldID whose range we want to determine
+            store: A dictionary used to cache the results of previous calls
+                    to the method. No value should be passed to it during a
+                    call to the method.
+
+        Returns:
+            A list representing the range of FieldIDs for the scheme that the 
+            fieldID corresponds to.
+            If invalid fieldID is provided the return value is None
+    """
+
+    start = None
+    end = None
+    scheme = None
+    foundScheme = False
+
+    if fieldID in store:
+        return range(*store[fieldID])
+    else:
+        for t in EnumerationTables['Fields']:
+            if (scheme != t[1]):
+                if not foundScheme:
+                    start, scheme = t[0:2]
+                    end = t[0]
+                else:
+                    break
+            else:
+                end = t[0]
+            if end == fieldID:
+                foundScheme = True
+    
+        if foundScheme:
+            if fieldID not in store:
+                store[fieldID] = start, end+1
+            return range(start, end+1)
+        else:
+            return None     
+
+
 def getSchemeIDToTableMapping():
-    """ Reutns a map from instrumentation schemes to the
+    """ Returns a map from instrumentation schemes to the
         table that holds its observed values.
     """
 
