@@ -8,7 +8,7 @@ from runsIntoDB import writeRunsIntoDB
 from sitesIntoDB import writeSitesIntoDB
 
 
-def setupDatabase(cbi_db, sitesTxt, outcomesTxt, version=1)
+def setupDatabase(cbi_db, version=1)
     if version != 1:
         raise ValueError('Incompatible version %d' % version)
 
