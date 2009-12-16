@@ -8,7 +8,7 @@ import re
 import sqlite3
 import sys
 
-from itertools import count
+from itertools import count, chain, imap
 
 from DBConstants import EnumerationTables
 
@@ -75,7 +75,7 @@ def readSitesFile(filepath):
                 yield dict(zip(keys, vals))
 
 
-def writeSitesIntoDB(conn, sitesTxt, version):
+def writeSitesIntoDB(conn, sitesFiles, version):
     """ Read units and sites from <sitesTxt> and insert into
         sqlite3 database connection <conn>.  CBI database schema
         version <version> is assumed.  Currently <version> is
@@ -90,7 +90,7 @@ def writeSitesIntoDB(conn, sitesTxt, version):
 
     curUnit, curScheme = None, None
 
-    for line in readSitesFile(sitesTxt):
+    for line in chain(*imap(readSitesFile, sitesFiles)):
         if line is None:
             # end of unit
             curUnit, curScheme = None, None
@@ -98,6 +98,9 @@ def writeSitesIntoDB(conn, sitesTxt, version):
 
         elif line.has_key('Signature'):
             # insert a new unit
+            if curUnit is not None:
+                raise ValueError('</sites> not found before %s' % line)
+
             curUnit = UnitID.next()
             curScheme = line['SchemeName']
 
@@ -128,27 +131,28 @@ def writeSitesIntoDB(conn, sitesTxt, version):
             entries = ', '.join('?' * len(values))
             query = "INSERT INTO %s VALUES (%s);" % (table, entries)
             cursor.execute(query, values)
-
     conn.commit()
+
 
 def main():
     """ Insert units and sites into appropriate tables"""
 
-    parser = optparse.OptionParser(usage='%prog <database> <sites-file>')
+    parser = optparse.OptionParser(usage='%prog <database> <sites-files>')
     parser.add_option('-v', '--version', action='store', default=1,
                       help = 'version of schema to implement')
 
     options, args = parser.parse_args(sys.argv[1:])
-    if len(args) != 2:
+    if len(args) < 2:
         parser.error('wrong number of positional arguments')
     if options.version != 1:
         parser.error('CBI database schema version ' + options.version +
                      ' is currently not supported')
 
-    cbi_db, sitesTxt = args
+    cbi_db = args[0]
+    sitesFiles = args[1:]
 
     conn = sqlite3.connect(cbi_db)
-    writeSitesIntoDB(conn, sitesTxt, options.version)
+    writeSitesIntoDB(conn, sitesFiles, options.version)
     conn.close()
 
 if __name__ == '__main__': main()
