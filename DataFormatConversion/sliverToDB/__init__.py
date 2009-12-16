@@ -16,7 +16,4 @@ def setupDatabase(cbi_db, sitesTxt, outcomesTxt, version=1)
         raise ValueError('File exists: %s' % cbi_db)
 
     conn = sqlite3.connect(cbi_db)
-
     setupTables(conn, version)
-    writeSitesIntoDB(conn, sitesTxt, version)
-    writeRunsIntoDB(conn, outcomesTxt, version)
