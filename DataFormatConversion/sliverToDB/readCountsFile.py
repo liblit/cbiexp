@@ -8,8 +8,10 @@ import sys
 import optparse
 import os
 
+from itertools import count
+
 from DBConstants import EnumerationTables
-from utils import getSchemeIDToFieldMapping, getSchemeIDToTableMapping, getSiteIDToSchemeMapping
+from utils import getSiteIDToSchemeMapping, InsertQueryConstructor
 
 def processCountsFile(conn, countsTxt, phase, version):
     """Input sample counts/values into the database.
@@ -40,23 +42,18 @@ def processCountsFile(conn, countsTxt, phase, version):
             siteID = samples[0]
             samples = samples[1:]
             schemeID = SiteIDToSchemeID[siteID]
-            table = SchemeIDToTable[schemeID]
-            entries = ', '.join('?' * 5)
-            query = 'INSERT INTO %s VALUES (%s);' % (table, entries)
-            if table == 'SampleValues':
-                for sample, fieldID in zip(samples, SchemeIDToFields[schemeID]):
-                    c.execute(query, (siteID, fieldID, runID, sample, phase))
-            elif table == 'SampleCounts':
-                for sample, fieldID in zip(samples, SchemeIDToFields[schemeID]):
-                    if sample != 0:
-                        c.execute(query, (siteID,fieldID,runID,sample,phase))
+
+            queries = qg.generateQueries(siteID, runID, schemeID,
+                                         samples, phase)
+
+            for query, values in queries:
+                c.execute(query, values)
 
         c.close()
 
 
     SiteIDToSchemeID = getSiteIDToSchemeMapping(conn)
-    SchemeIDToFields = getSchemeIDToFieldMapping()
-    SchemeIDToTable = getSchemeIDToTableMapping()
+    qg = InsertQueryConstructor()
     runID = count()
 
     with file(countsTxt, 'r') as countsFile:

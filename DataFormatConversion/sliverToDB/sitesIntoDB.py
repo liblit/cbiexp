@@ -75,7 +75,7 @@ def readSitesFile(filepath):
                 yield dict(zip(keys, vals))
 
 
-def writeSitesIntoDB(conn, sitesFiles, version):
+def writeSitesIntoDB(conn, sitesFiles, version, wantedSchemes=None):
     """ Read units and sites from <sitesTxt> and insert into
         sqlite3 database connection <conn>.  CBI database schema
         version <version> is assumed.  Currently <version> is
@@ -84,22 +84,30 @@ def writeSitesIntoDB(conn, sitesFiles, version):
 
     cursor = conn.cursor()
     schemeNameToID = getEnumEvaluator('Schemes')
+    if wantedSchemes is None:
+        wantedSchemes = tuple(t[1] for t in EnumerationTables['Schemes'])
 
     SiteID = count()
     UnitID = count()
 
     curUnit, curScheme = None, None
+    isFilteredScheme = False
 
     for line in chain(*imap(readSitesFile, sitesFiles)):
         if line is None:
             # end of unit
             curUnit, curScheme = None, None
+            isFilteredScheme = False
             continue
 
         elif line.has_key('Signature'):
             # insert a new unit
             if curUnit is not None:
                 raise ValueError('</sites> not found before %s' % line)
+
+            if line['SchemeName'] not in wantedSchemes:
+                isFilteredScheme = True
+                continue
 
             curUnit = UnitID.next()
             curScheme = line['SchemeName']
@@ -109,6 +117,9 @@ def writeSitesIntoDB(conn, sitesFiles, version):
             cursor.execute("INSERT INTO Units VALUES(\
                                 :UnitID, :Signature, :SchemeID);",
                            line)
+            continue
+
+        elif isFilteredScheme:
             continue
 
         # else insert a site
@@ -138,6 +149,10 @@ def main():
     """ Insert units and sites into appropriate tables"""
 
     parser = optparse.OptionParser(usage='%prog <database> <sites-files>')
+    parser.add_option('-s', '--scheme', action='append', dest='schemes',
+                      choices=[t[1] for t in EnumerationTables['Schemes']],
+                      help = 'add sites with scheme SCHEME.  All schemes\
+                              will be processed if this flag is omitted')
     parser.add_option('-v', '--version', action='store', default=1,
                       help = 'version of schema to implement')
 
@@ -152,7 +167,7 @@ def main():
     sitesFiles = args[1:]
 
     conn = sqlite3.connect(cbi_db)
-    writeSitesIntoDB(conn, sitesFiles, options.version)
+    writeSitesIntoDB(conn, sitesFiles, options.version, options.schemes)
     conn.close()
 
 if __name__ == '__main__': main()

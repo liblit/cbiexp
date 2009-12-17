@@ -13,7 +13,7 @@ from itertools import count
 from os.path import basename, join
 
 from DBConstants import EnumerationTables
-from utils import getSchemeIDToFieldMapping, getSchemeIDToTableMapping
+from utils import InsertQueryConstructor
 
 # regular expressions
 reportOpen = re.compile(r'<report id="([a-zA-Z-]+)">')
@@ -113,33 +113,15 @@ def getUnitInfo(conn):
 
     return result
 
-def processReportFile(conn, runID, fname, phase=-1):
+def processReportFile(conn, runID, fname, phase=-1, wantedSchemes=None):
     UnitInfoMap = getUnitInfo(conn)
     SchemeNameToID = dict((t[1], t[0]) for t in EnumerationTables['Schemes'])
-    SchemeIDToFields = getSchemeIDToFieldMapping()
-    SchemeIDToTable = getSchemeIDToTableMapping()
+    qg = InsertQueryConstructor()
+
+    if wantedSchemes is None:
+        wantedSchemes = SchemeNameToID.keys()
 
     cursor = conn.cursor()
-
-    def insertCounts(runID, phase, siteID, schemeID, counts):
-        samples = map(int, info.counts)
-        table = SchemeIDToTable[schemeID]
-        entries = ', '.join('?' * 5)
-        query = 'INSERT INTO %s VALUES (%s);' % (table, entries)
-
-        fields = SchemeIDToFields[schemeID]
-        if len(fields) != len(samples):
-            raise ValueError('Got %d samples while expecting %d samples '
-                              'for site %d with scheme %d'
-                              % (len(samples), len(fields), siteID, schemeID))
-
-        if table == 'SampleValues':
-            for sample, fieldID in zip(samples, fields):
-                cursor.execute(query, (siteID, fieldID, runID, sample, phase))
-        elif table == 'SampleCounts':
-            for sample, fieldID in zip(samples, fields):
-                if sample != 0:
-                    cursor.execute(query, (siteID, fieldID, runID, sample, phase))
 
     def ensureAllCountersAreRead(sample, counter):
         try:
@@ -155,16 +137,26 @@ def processReportFile(conn, runID, fname, phase=-1):
         curSampleInfo = None
         curSchemeID = None
         siteIDCounter = None
+        isFilteredScheme = False
 
         for info in readReport(ifile):
             if isinstance(info, SampleInfo):
                 if siteIDCounter:
                     ensureAllCountersAreRead(curSampleInfo, siteIDCounter)
 
+                if info.scheme not in wantedSchemes:
+                    isFilteredScheme = True
+                    continue
+                else:
+                    isFilteredScheme = False
+
                 curSampleInfo = info
                 curSchemeID = SchemeNameToID[info.scheme]
                 key = (info.signature, curSchemeID)
                 siteIDCounter = iter(UnitInfoMap[key])
+
+            elif isFilteredScheme:
+                continue
 
             elif isinstance(info, CountInfo):
                 try:
@@ -173,13 +165,16 @@ def processReportFile(conn, runID, fname, phase=-1):
                     raise ValueError('Found too many samples while reading '
                                      'unit "%s".' % str(curSampleInfo))
 
-                insertCounts(runID, phase, siteID, curSchemeID, info.counts)
+                queries = qg.generateQueries(siteID, runID, curSchemeID,
+                                             info.counts, phase)
+                for query, values in queries:
+                    cursor.execute(query, values)
 
         if siteIDCounter:
             ensureAllCountersAreRead(curSampleInfo, siteIDCounter)
 
 
-def processReports(conn, runDirs, version):
+def processReports(conn, runDirs, version, schemes=None):
     """ Arguments:
             conn: A database connection
             runDirs: A list (or iterator) that generates run directories
@@ -191,7 +186,7 @@ def processReports(conn, runDirs, version):
 
         reportFile = join(runDir, 'reports')
         try:
-            processReportFile(conn, runID, reportFile)
+            processReportFile(conn, runID, reportFile, wantedSchemes=schemes)
         except ValueError, ve:
             print 'Following error while reading report file %s.\n\t%s' % (reportFile, ve)
             raise
@@ -205,6 +200,10 @@ def main():
     """
 
     parser = optparse.OptionParser(usage='%prog [options] <database> <tests-dir>')
+    parser.add_option('-s', '--scheme', action='append', dest='schemes',
+                      choices=[t[1] for t in EnumerationTables['Schemes']],
+                      help = 'add sites with scheme SCHEME.  All schemes\
+                              will be processed if this flag is omitted')
     parser.add_option('-v', '--version', action='store', default=1,
                       help = 'version of schema to implement')
 
@@ -219,7 +218,7 @@ def main():
     runDirs = glob.iglob(join(testsDir, '[0-9]*/[0-9]*'))
 
     conn = sqlite3.connect(cbi_db)
-    processReports(conn, runDirs, options.version)
+    processReports(conn, runDirs, options.version, options.schemes)
     conn.close()
 
 
