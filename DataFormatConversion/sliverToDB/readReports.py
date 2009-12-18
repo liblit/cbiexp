@@ -174,15 +174,25 @@ def processReportFile(conn, runID, fname, phase=-1, wantedSchemes=None):
             ensureAllCountersAreRead(curSampleInfo, siteIDCounter)
 
 
-def processReports(conn, runDirs, version, schemes=None):
+def processReports(conn, runDirs, version, schemes=None, filtered=False):
     """ Arguments:
             conn: A database connection
             runDirs: A list (or iterator) that generates run directories
                      to be processed
     """
 
+    outcomeEnum = EnumerationTables['Outcomes']
+    UNKNOWN = [t[0] for t in outcomeEnum if t[1] == 'UNKNOWN'][0]
+
+    ignoredRuns = set()
+    for row in conn.execute('SELECT RunID, OutcomeID FROM Runs'):
+        if row[1] == UNKNOWN:
+            ignoredRuns.insert(row[0])
+
     for runDir in runDirs:
         runID = int(basename(runDir))
+        if filtered and runID in ignoredRuns:
+            continue
 
         reportFile = join(runDir, 'reports')
         try:
