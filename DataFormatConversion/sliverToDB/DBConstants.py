@@ -78,7 +78,6 @@ EnumerationTables = {
 
 # Schemes whose instrumentation records some type of values
 # instead of incrementing a counter.  Values go to the
-# 'SampleValues' tables and counters to 'SampleCounters'.
-# Also, zero count are not inserted into the table.
+# 'SampleValues' tables and counters to 'SampleCounts'.
+# Also, zero counts are not inserted into the 'SampleCounts' table.
 ValueRecordingSchemes = frozenset(('bounds',))
-

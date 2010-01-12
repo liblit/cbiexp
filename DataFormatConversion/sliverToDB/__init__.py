@@ -19,3 +19,5 @@ def setupDatabase(cbi_db, version=1):
 
     conn = sqlite3.connect(cbi_db)
     setupTables(conn, version)
+
+    conn.close()

@@ -214,7 +214,7 @@ def main():
                       choices=[t[1] for t in EnumerationTables['Schemes']],
                       help = 'add sites with scheme SCHEME.  All schemes\
                               will be processed if this flag is omitted')
-    parser.add_option('-v', '--version', action='store', default=1,
+    parser.add_option('-v', '--version', action='store', default=1, type='int',
                       help = 'version of schema to implement')
 
     options, args = parser.parse_args()

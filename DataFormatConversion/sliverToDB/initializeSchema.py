@@ -400,6 +400,8 @@ def main(argv=None):
     setupPragmas(conn, options.memory)
     setupTables(conn, options.version)
 
+    conn.close()
+
 
 if __name__ == '__main__':
     sys.exit(main())
