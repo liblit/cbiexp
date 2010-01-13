@@ -34,20 +34,37 @@ def processLabels(conn, runDirs, version):
         and reading 'label' files.
     """
 
-    def getOutcome(line):
-        outcome = line.strip()
-        return {'success': 0, 'failure': 1, 'ignore': 2}[outcome]
-
     cursor = conn.cursor()
+    runIDCounter = count()
+    testCaseMap = []
+
     for runDir in runDirs:
         try:
-            runID = int(basename(runDir))
             labelFile = join(runDir, 'label')
-            label = getOutcome(file(labelFile).read())
+            label = file(labelFile).read().strip()
+            if label == 'ignore':
+                continue
+
+            label = {'success': 0, 'failure': 1}[label]
+            runID = runIDCounter.next()
             cursor.execute('INSERT INTO Runs VALUES (?,?)', (runID, label))
+
+            testCase = int(basename(runDir))
+            testCaseMap.append((testCase, runID))
+
         except Exception, e:
             print 'Following error while reading runDir %s.\n\t%s' % (runDir, e)
             raise
+
+    conn.execute("""CREATE TABLE
+                        TestCaseToRunID(
+                            TestCase INTEGER NOT NULL
+                                CONSTRAINT TestCaseToRunID_pk PRIMARY KEY,
+                            RunID INTEGER NOT NULL UNIQUE,
+                                CONSTRAINT TestCaseToRunID_fk FOREIGN KEY (RunID)
+                                    REFERENCES Runs(RunID));
+                """)
+    conn.executemany('INSERT INTO TestCaseToRunID VALUES (?,?)', testCaseMap)
 
     conn.commit()
     cursor.close()
