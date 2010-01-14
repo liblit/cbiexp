@@ -50,21 +50,22 @@ def processLabels(conn, runDirs, version):
             cursor.execute('INSERT INTO Runs VALUES (?,?)', (runID, label))
 
             testCase = int(basename(runDir))
-            testCaseMap.append((testCase, runID))
+            testCaseMap.append((runID, testCase))
 
         except Exception, e:
             print 'Following error while reading runDir %s.\n\t%s' % (runDir, e)
             raise
 
     conn.execute("""CREATE TABLE
-                        TestCaseToRunID(
-                            TestCase INTEGER NOT NULL
-                                CONSTRAINT TestCaseToRunID_pk PRIMARY KEY,
-                            RunID INTEGER NOT NULL UNIQUE,
-                                CONSTRAINT TestCaseToRunID_fk FOREIGN KEY (RunID)
-                                    REFERENCES Runs(RunID));
+                        RunIDToTestCase(
+                            RunID INTEGER NOT NULL
+                                CONSTRAINT RunIDToTestCase_pk PRIMARY KEY,
+                            TestCase INTEGER NOT NULL UNIQUE,
+                            CONSTRAINT RunIDToTestCase_RunID_fk FOREIGN KEY
+                                (RunID) REFERENCES Runs(RunID));
                 """)
-    conn.executemany('INSERT INTO TestCaseToRunID VALUES (?,?)', testCaseMap)
+
+    conn.executemany('INSERT INTO RunIDToTestCase VALUES (?,?)', testCaseMap)
 
     conn.commit()
     cursor.close()
