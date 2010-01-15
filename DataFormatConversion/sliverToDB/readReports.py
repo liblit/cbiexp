@@ -186,7 +186,7 @@ def processReports(conn, runDirs, version, schemes=None):
     UNKNOWN = [t[0] for t in outcomeEnum if t[1] == 'UNKNOWN'][0]
 
     testCaseMap = {}
-    for row in conn.execute('SELECT TestCase, RunID from TestCaseToRunID'):
+    for row in conn.execute('SELECT TestCase, RunID from RunIDToTestCase'):
         testCaseMap[row[0]] = row[1]
 
     for runDir in runDirs:
