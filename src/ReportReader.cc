@@ -93,6 +93,9 @@ void ReportReader::read(unsigned runId) {
     char *query, **result, *errMsg;
     int nRows, nCols, rc;
 
+    /* TODO Cache the SiteID to SchemeID mappings so that
+     * the query will use a 2 table JOIN instead of 3.
+     */
     query = sqlite3_mprintf("SELECT SampleCounts.SiteID, SchemeID, FieldID, Count\
                              FROM\
                                  SampleCounts JOIN Sites JOIN Units ON\
@@ -109,7 +112,7 @@ void ReportReader::read(unsigned runId) {
     rc = sqlite3_get_table(db, query, &result, &nRows, &nCols, &errMsg);
     if(rc)
         throwError(errMsg, __FILE__, __LINE__);
-    if(nCols != 4)
+    if(nCols != 4 && nCols != 0)
         throwError("Unexpected number of columns", __FILE__, __LINE__);
 
     vector<count_tp> counts;
