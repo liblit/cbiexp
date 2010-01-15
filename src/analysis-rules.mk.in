@@ -140,8 +140,8 @@ static-site-info.cc: $(database) $(call tool-deps, extractStaticSiteInfo.py)
 	$(tooldir)/extractStaticSiteInfo.py $(database) $(tooldir)/static_site_info.tmpl $@ --filter=CppFilter
 CLEANFILES += static-site-info.cc
 
-f.runs s.runs: $(database) $(call tool-deps, genOutcomeIndices.py)
-	$(tooldir)/genOutcomeIndices.py $(database) f.runs s.runs
+f.runs s.runs outcomes.txt: $(database) $(call tool-deps, genOutcomeIndices.py)
+	$(tooldir)/genOutcomeIndices.py $(database) f.runs s.runs outcomes.txt
 CLEANFILES += s.runs f.runs
 
 preds.txt: s.runs f.runs static-site-info.so $(database) $(call tool-deps, prefilter)
@@ -303,8 +303,8 @@ CLEANFILES += train.runs val.runs nonconst_preds.txt
 
 
 theta: theta.txt train_lls.txt val_lls.txt confmat.txt
-theta.txt train_lls.txt val_lls.txt confmat.txt logreg.txt: train.runs val.runs nonconst_preds.txt static-site-info.so $(call tool-deps, train_utillog)
-	$(time) $(tooldir)/train_utillog --begin-runs=$(begin-runs) --end-runs=$(end-runs) --delta1=10.0 --delta2=2.0 --delta3=1.0
+theta.txt train_lls.txt val_lls.txt confmat.txt logreg.txt: train.runs val.runs nonconst_preds.txt static-site-info.so $(database) $(call tool-deps, train_utillog)
+	$(time) $(tooldir)/train_utillog --begin-runs=$(begin-runs) --end-runs=$(end-runs) --delta1=10.0 --delta2=2.0 --delta3=1.0 --database-filename=$(database)
 CLEANFILES += theta.txt train_lls.txt val_lls.txt confmat.txt logreg.txt
 .PHONY : theta
 

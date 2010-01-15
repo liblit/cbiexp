@@ -29,25 +29,37 @@ def writeRunIDs(conn, outcome, output):
 
     cursor.close()
 
-def genOutcomeIndices(cbi_db, fFile, sFile):
-    """read outcomes from database and generate f.runs + s.runs"""
-
-    if not exists(cbi_db):
-        parser.error('sqlite database %s does not exist' % cbi_db)
+def extractRunOutcomes(cbi_db, fFile, sFile, outcomesFile):
+    """ read outcomes from database and write
+            1. IDs of failing runs to <fFile>
+            2. IDs of successful runs to <sFile>
+            3. Vector of run outcomes (0 = success, 1 = failure)
+                to <outcomesFile>
+    """
 
     conn = sqlite3.connect(cbi_db)
 
     OutcomeIDs = queryOutcomeEnum(conn)
     writeRunIDs(conn, OutcomeIDs['SUCCESS'], sFile)
     writeRunIDs(conn, OutcomeIDs['FAILURE'], fFile)
+
+    cursor = conn.cursor()
+    with file(outcomesFile, 'w') as ofile:
+        for row in cursor.execute('SELECT OutcomeID from Runs ORDER BY RunID'):
+            print >>ofile, row[0]
+
+    cursor.close()
     conn.close()
 
 def main():
-    parser = OptionParser(usage='%prog <database> <f.runs-file> <s.runs-file>')
-    options, args = parser.parse_args()
-    if len(args) != 3: parser.error('wrong number of positional arguments')
+    parser = OptionParser(usage='%prog <database> <f.runs-file> <s.runs-file> <outcomes-txt>')
 
-    genOutcomeIndices(*args)
+    options, args = parser.parse_args()
+    if len(args) != 4: parser.error('wrong number of positional arguments')
+    if not exists(args[0]):
+        parser.error('sqlite database %s does not exist' % args[0])
+
+    extractRunOutcomes(*args)
 
 if __name__ == "__main__":
     main()
