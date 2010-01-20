@@ -44,7 +44,7 @@ SchemeDescriptions = {
         'bounds': ('Text', 'VariableType', 'AccessType',),
         'branches': ('Text',),
         'compare-swap': ('Text',),
-        'float-kinds': ('Text', 'VariableType', 'AccessType',),
+        'float-kinds': ('Text', 'VariableType', 'AssignmentType',),
         'function-entries': None,
         'g-object-unref': ('Text',),
         'returns': ('Text',),
