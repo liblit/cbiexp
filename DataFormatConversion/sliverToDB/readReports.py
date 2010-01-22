@@ -11,6 +11,7 @@ import sys
 
 from itertools import count
 from os.path import basename, join
+from collections import defaultdict
 
 from DBConstants import EnumerationTables
 from utils import InsertQueryConstructor
@@ -99,7 +100,7 @@ def getUnitInfo(conn):
              FROM Units JOIN Sites ON Units.UnitID=Sites.UnitID\
              GROUP BY Units.UnitID'
 
-    result = {}
+    result = defaultdict(list)
     cursor = conn.cursor()
     for row in cursor.execute(query):
         # NOTE The cast to 'str' below is required because
@@ -153,6 +154,8 @@ def processReportFile(conn, runID, fname, phase=-1, wantedSchemes=None):
                 curSampleInfo = info
                 curSchemeID = SchemeNameToID[info.scheme]
                 key = (info.signature, curSchemeID)
+                #if key==("8ce54dbb6e720545deb58617d1696d1c",6) or key==("a176f8fdced2427b6178932908557cb2",6):
+                #print info
                 siteIDCounter = iter(UnitInfoMap[key])
 
             elif isFilteredScheme:
