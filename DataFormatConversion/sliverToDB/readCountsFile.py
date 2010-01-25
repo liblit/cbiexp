@@ -60,7 +60,8 @@ def processCountsFile(conn, countsTxt, phase, version):
         for line in countsFile:
             inputSamplesForSingleRun(conn, runID.next(), line)
 
-    conn.execute('CREATE INDEX IndexByRunID ON SampleCounts(RunID)')
+    conn.execute('CREATE INDEX IndexSampleCountsByRunID ON SampleCounts(RunID)')
+    conn.execute('CREATE INDEX IndexSampleValuesByRunID ON SampleValues(RunID)')
     conn.commit()
 
 
