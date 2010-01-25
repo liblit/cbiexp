@@ -82,14 +82,6 @@ void ReportReader::read(unsigned runId) {
         throwError(message.str().c_str(), __FILE__, __LINE__);
     }
 
-    /*  TODO Check this error condition using the database
-    if (runId >= TotalRuns.size()) {
-        ostringstream message;
-        message << runId << " too large.";
-        throwError(message.str().c_str(), __FILE__, __LINE__);
-    }
-    */
-
     char *query, **result, *errMsg;
     int nRows, nCols, rc;
 
