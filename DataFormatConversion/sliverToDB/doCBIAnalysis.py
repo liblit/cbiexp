@@ -23,11 +23,12 @@ makeTemplate = """
 database := cbi.sqlite3
 begin-runs := 0
 end-runs := %(end)d
+root := %(cbiexpDir)s
 
 include %(cbiexpDir)s/src/analysis-rules.mk
 """
 
-def doCBIAnalysis(sitesDir, reportsDir, analysisDir, version):
+def doCBIAnalysis(sitesDir, reportsDir, analysisDir, csurfPrj, version):
     if version != 1:
         raise ValueError('Incompatible version %d' % version)
 
@@ -56,6 +57,8 @@ def doCBIAnalysis(sitesDir, reportsDir, analysisDir, version):
     # Setup Makefile
     with file(join(analysisDir, 'GNUmakefile'), 'w') as mFile:
         cbiexpDir = abspath(join(dirname(__file__), '../..'))
+        if csurfPrj is not None:
+            print >>mFile, 'issta-csurf-project := csurfPrj'
         print >>mFile, makeTemplate % {'cbiexpDir': cbiexpDir, 'end': runCount}
 
     print "To start analysis, run 'make' in", analysisDir
@@ -63,6 +66,8 @@ def doCBIAnalysis(sitesDir, reportsDir, analysisDir, version):
 def main():
     parser = optparse.OptionParser(usage='%prog [options] <sites-dir> <reports-dir> <analysis-dir>')
 
+    parser.add_option('-c', '--csurf-prj', action='store', default=None,
+                      help = 'enable ISSTA analysis and use CSURF-PRJ')
     parser.add_option('-v', '--version', action='store', default=1, type='int',
                       help = 'version of schema to implement')
 
@@ -72,8 +77,9 @@ def main():
 
     sitesDir, reportsDir, analysisDir = args
     version = options.version
+    csurfPrj = options.csurfPrj
 
-    doCBIAnalysis(sitesDir, reportsDir, analysisDir, version)
+    doCBIAnalysis(sitesDir, reportsDir, analysisDir, csurfPrj, version)
 
 ################################################################################
 
