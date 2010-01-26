@@ -86,6 +86,11 @@ all ?=						\
 	allnevers				\
 	corrcoefs				\
 	runsinfo.dat
+
+ifndef issta-csurf-project
+all := $(filter-out issta2007, $(all))
+endif
+
 all: $(all)
 .PHONY: all
 COMPOUND = $(findstring issta2007, $(all))
@@ -200,6 +205,20 @@ CLEANFILES += all_hl_corrected-exact-complete_complex.xml corrected-exact-comple
 obs.txt tru.txt: preds.txt s.runs f.runs static-site-info.so $(database) $(call tool-deps, compute-obs-tru)
 	$(time) $(tooldir)/compute-obs-tru --begin-runs=$(begin-runs) --end-runs=$(end-runs) --database-filename=$(database)
 CLEANFILES += obs.txt tru.txt
+
+ifdef issta-csurf-project
+csurf-dir := $(shell dirname $(issta-csurf-project))
+pairs.txt: static-site-info.so preds.txt
+	touch $(csurf-dir)/pairs.txt
+	ln -sf $(CURDIR)/static-site-info.so $(csurf-dir)
+	ln -sf $(CURDIR)/preds.txt $(csurf-dir)
+	-cd $(csurf-dir) && csurf -nogui  $(issta-csurf-project) -l $(tooldir)/effort/effort.stk
+	cp $(csurf-dir)/pairs.txt $@
+else
+pairs.txt:
+	touch $@
+endif
+CLEANFILES += pairs.txt
 
 
 #############################################################################
