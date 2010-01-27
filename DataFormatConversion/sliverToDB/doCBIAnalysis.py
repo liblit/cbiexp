@@ -13,7 +13,7 @@ from shutil import rmtree
 
 import utils
 
-from initializeSchema import setupTables
+from initializeSchema import setupPragmas, setupTables
 from readReports import processReports
 from runsIntoDB import processLabels
 from sitesIntoDB import writeSitesIntoDB
@@ -44,6 +44,7 @@ def doCBIAnalysis(sitesDir, reportsDir, analysisDir, csurfPrj, version):
     database = join(analysisDir, 'cbi.sqlite3')
     conn = sqlite3.connect(database)
 
+    setupPragmas(conn)
     setupTables(conn, version)
     writeSitesIntoDB(conn, sitesFiles, version)
     processLabels(conn, runDirs, version)
