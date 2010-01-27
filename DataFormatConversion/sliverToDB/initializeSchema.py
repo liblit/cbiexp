@@ -11,7 +11,7 @@ import sys
 
 from DBConstants import EnumerationTables
 
-def setupPragmas(conn, memory):
+def setupPragmas(conn, memory=100):
     """Setup SQLite pragmas.
 
     Args:
@@ -382,7 +382,7 @@ def main(argv=None):
     parser.add_option('-v', '--version', action='store', default=1, type='int',
                       help = 'version of schema to implement')
 
-    parser.add_option('-m', '--memory', action='store', type='int', default=20,
+    parser.add_option('-m', '--memory', action='store', type='int', default=100,
                       help = 'SQLite cache size in MB')
 
     options, args = parser.parse_args(argv[1:])
