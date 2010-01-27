@@ -25,7 +25,7 @@ def processCountsFile(conn, countsTxt, phase, version):
                     version 1.
     """
 
-    def inputSamplesForSingleRun(conn, runID, samplesForRun):
+    def inputSamplesForSingleRun(cursor, runID, samplesForRun):
         """Input sample counts/values for a single run.
 
             ARGUMENTS:
@@ -35,33 +35,28 @@ def processCountsFile(conn, countsTxt, phase, version):
                 samplesForRun: str object corresponding to one line from the
                                 counts.txt file
         """
-        c = conn.cursor()
-
         for site in samplesForRun.strip().split('\t'):
             samples = map(int, site.split(':'))
             siteID = samples[0]
             samples = samples[1:]
             schemeID = SiteIDToSchemeID[siteID]
 
-            queries = qg.generateQueries(siteID, runID, schemeID,
+            query = qg.generateQuery(schemeID)
+            values = qg.generateQueries(siteID, runID, schemeID,
                                          samples, phase)
-
-            for query, values in queries:
-                c.execute(query, values)
-
-        c.close()
-
+            cursor.executemany(query, values)
 
     SiteIDToSchemeID = getSiteIDToSchemeMapping(conn)
     qg = InsertQueryConstructor()
     runID = count()
 
+    cursor = conn.cursor()
     with file(countsTxt, 'r') as countsFile:
         for line in countsFile:
-            inputSamplesForSingleRun(conn, runID.next(), line)
+            inputSamplesForSingleRun(cursor, runID.next(), line)
 
-    conn.execute('CREATE INDEX IndexSampleCountsByRunID ON SampleCounts(RunID)')
-    conn.execute('CREATE INDEX IndexSampleValuesByRunID ON SampleValues(RunID)')
+    cursor.execute('CREATE INDEX IndexSampleCountsByRunID ON SampleCounts(RunID)')
+    cursor.execute('CREATE INDEX IndexSampleValuesByRunID ON SampleValues(RunID)')
     conn.commit()
 
 

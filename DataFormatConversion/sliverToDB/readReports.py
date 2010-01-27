@@ -114,15 +114,12 @@ def getUnitInfo(conn):
 
     return result
 
-def processReportFile(conn, runID, fname, phase=-1, wantedSchemes=None):
-    UnitInfoMap = getUnitInfo(conn)
+def processReportFile(cursor, UnitInfoMap, runID, fname, phase=-1, wantedSchemes=None):
     SchemeNameToID = dict((t[1], t[0]) for t in EnumerationTables['Schemes'])
     qg = InsertQueryConstructor()
 
     if wantedSchemes is None:
         wantedSchemes = SchemeNameToID.keys()
-
-    cursor = conn.cursor()
 
     def ensureAllCountersAreRead(sample, counter):
         try:
@@ -139,11 +136,14 @@ def processReportFile(conn, runID, fname, phase=-1, wantedSchemes=None):
         curSchemeID = None
         siteIDCounter = None
         isFilteredScheme = False
+        query = None
+        values = None
 
         for info in readReport(ifile):
             if isinstance(info, SampleInfo):
                 if siteIDCounter:
                     ensureAllCountersAreRead(curSampleInfo, siteIDCounter)
+                    cursor.executemany(query, values)
 
                 if info.scheme not in wantedSchemes:
                     isFilteredScheme = True
@@ -154,9 +154,9 @@ def processReportFile(conn, runID, fname, phase=-1, wantedSchemes=None):
                 curSampleInfo = info
                 curSchemeID = SchemeNameToID[info.scheme]
                 key = (info.signature, curSchemeID)
-                #if key==("8ce54dbb6e720545deb58617d1696d1c",6) or key==("a176f8fdced2427b6178932908557cb2",6):
-                #print info
                 siteIDCounter = iter(UnitInfoMap[key])
+                query = qg.generateQuery(curSchemeID)
+                values = []
 
             elif isFilteredScheme:
                 continue
@@ -168,13 +168,13 @@ def processReportFile(conn, runID, fname, phase=-1, wantedSchemes=None):
                     raise ValueError('Found too many samples while reading '
                                      'unit "%s".' % str(curSampleInfo))
 
-                queries = qg.generateQueries(siteID, runID, curSchemeID,
-                                             info.counts, phase)
-                for query, values in queries:
-                    cursor.execute(query, values)
+                values += qg.generateValues(siteID, runID, curSchemeID,
+                                            info.counts, phase)
 
         if siteIDCounter:
             ensureAllCountersAreRead(curSampleInfo, siteIDCounter)
+        if len(values) > 0:
+            cursor.executemany(query, values)
 
 
 def processReports(conn, runDirs, version, schemes=None):
@@ -192,6 +192,8 @@ def processReports(conn, runDirs, version, schemes=None):
     for row in conn.execute('SELECT TestCase, RunID from RunIDToTestCase'):
         testCaseMap[row[0]] = row[1]
 
+    UnitInfoMap = getUnitInfo(conn)
+    cursor = conn.cursor()
     for runDir in runDirs:
         testCase = int(basename(runDir))
         if testCase not in testCaseMap:
@@ -200,13 +202,13 @@ def processReports(conn, runDirs, version, schemes=None):
 
         reportFile = join(runDir, 'reports')
         try:
-            processReportFile(conn, runID, reportFile, wantedSchemes=schemes)
+            processReportFile(cursor, UnitInfoMap, runID, reportFile, wantedSchemes=schemes)
         except ValueError, ve:
             print 'Following error while reading report file %s.\n\t%s' % (reportFile, ve)
             raise
 
-    conn.execute('CREATE INDEX IndexSampleCountsByRunID ON SampleCounts(RunID)')
-    conn.execute('CREATE INDEX IndexSampleValuesByRunID ON SampleValues(RunID)')
+    cursor.execute('CREATE INDEX IndexSampleCountsByRunID ON SampleCounts(RunID)')
+    cursor.execute('CREATE INDEX IndexSampleValuesByRunID ON SampleValues(RunID)')
     conn.commit()
 
 def main():

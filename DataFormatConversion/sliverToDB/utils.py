@@ -92,14 +92,15 @@ class InsertQueryConstructor(object):
         self.SchemeIDToFields = getSchemeIDToFieldMapping()
         self.SchemeIDToTable = getSchemeIDToTableMapping()
 
-    def generateQueries(self, siteID, runID, schemeID, sample, phase):
+    def generateQuery(self, schemeID):
+        table = self.SchemeIDToTable[schemeID]
+        entries = ', '.join('?' * 5)
+        return 'INSERT INTO %s VALUES (%s);' % (table, entries)
+
+    def generateValues(self, siteID, runID, schemeID, sample, phase):
         """ Constructs query from input arguments and member
             dictionaries and yields (query, values-to-bind) pairs
         """
-
-        table = self.SchemeIDToTable[schemeID]
-        entries = ', '.join('?' * 5)
-        query = 'INSERT INTO %s VALUES (%s);' % (table, entries)
 
         samples = map(int, sample)
         fields = self.SchemeIDToFields[schemeID]
@@ -108,10 +109,11 @@ class InsertQueryConstructor(object):
                               'for site %d with scheme %d'
                               % (len(samples), len(fields), siteID, schemeID))
 
+        table = self.SchemeIDToTable[schemeID]
         ignoreZeros = (table == 'SampleCounts')
 
         for sample, fieldID in zip(samples, fields):
             if ignoreZeros and sample == 0:
                 continue
-            yield (query, (siteID, fieldID, runID, sample, phase))
+            yield (siteID, fieldID, runID, sample, phase)
 
