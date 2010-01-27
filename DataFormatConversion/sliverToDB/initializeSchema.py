@@ -17,7 +17,7 @@ def setupPragmas(conn, memory):
     Args:
         memory: Cache size in MB
     """
-    
+
     # Prepare SQLite PRAGMAs
     # NOTE: Most of these are listed here with their default values and only
     #       mentioned as objects of interest which may need to be tweaked in
@@ -27,13 +27,13 @@ def setupPragmas(conn, memory):
     _sqlPragmas = '''
         PRAGMA foreign_keys = ON;
         PRAGMA default_cache_size = %d;
-        PRAGMA count_changes = False;
+        PRAGMA count_changes = false;
         PRAGMA page_size = 1024;
         PRAGMA synchronous = FULL;
     ''' % (memory * 1024, )
 
     cursor = conn.cursor()
-    
+
     # Set PRAGMAs
     map(cursor.execute, _sqlPragmas.split('\n'))
 
@@ -370,7 +370,7 @@ def isTableEmpty(conn, table):
 
 
 def main(argv=None):
-    """Generate an sqlite database and creating any tables which may not 
+    """Generate an sqlite database and creating any tables which may not
         already exist
     """
     if argv is None:
