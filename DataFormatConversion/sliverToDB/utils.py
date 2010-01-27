@@ -62,8 +62,7 @@ def getRangeForField(fieldID, store={}):
                 foundScheme = True
     
         if foundScheme:
-            if fieldID not in store:
-                store[fieldID] = start, end+1
+            store[fieldID] = start, end+1
             return range(start, end+1)
         else:
             return None     
