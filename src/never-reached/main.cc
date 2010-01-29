@@ -1,6 +1,7 @@
 #include <argp.h>
 #include <fstream>
 #include <iostream>
+#include "../DatabaseFile.h"
 #include "../ClassifyRuns.h"
 #include "../NumRuns.h"
 #include "../Progress/Bounded.h"
@@ -13,6 +14,7 @@ static void
 processCommandLine(int argc, char *argv[])
 {
   static const argp_child children[] = {
+    { &DatabaseFile::argp, 0, 0, 0 },
     { &NumRuns::argp, 0, 0, 0 },
     { 0, 0, 0, 0 }
   };
@@ -30,7 +32,7 @@ int main(int argc, char *argv[])
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
 
-  Reader reader("counts.txt");
+  Reader reader(DatabaseFile::DatabaseName);
 
   {
     unsigned runId;

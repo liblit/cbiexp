@@ -7,6 +7,7 @@
 #include <fstream>
 #include <numeric>
 #include <queue>
+#include "DatabaseFile.h"
 #include "DiscreteDist.h"
 #include "NumRuns.h"
 #include "PredStats.h"
@@ -148,8 +149,9 @@ void Reader::countZeros()
 static void process_cmdline(int argc, char **argv)
 {
     static const argp_child children[] = {
-	{ &NumRuns::argp, 0, 0, 0 },
-	{ 0, 0, 0, 0 }
+        { &DatabaseFile::argp, 0, 0, 0 },
+        { &NumRuns::argp, 0, 0, 0 },
+        { 0, 0, 0, 0 }
     };
 
     static const argp argp = {
@@ -188,7 +190,7 @@ int main (int argc, char** argv)
 
   fclose(pfp);
 
-  Reader reader("counts.txt");
+  Reader reader(DatabaseFile::DatabaseName);
   Progress::Bounded progress("Gathering empirical distribution", NumRuns::count());
   for (cur_run = NumRuns::begin(); cur_run < NumRuns::end(); cur_run++) {
     progress.step();

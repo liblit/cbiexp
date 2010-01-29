@@ -1,6 +1,6 @@
 Import('env')
 env = env.Clone(
-    LIBS=['corrective', 'analyze', 'dl'],
+    LIBS=['corrective', 'analyze', 'sqlite3', 'dl'],
     LIBPATH=['..', '.'],
 )
 

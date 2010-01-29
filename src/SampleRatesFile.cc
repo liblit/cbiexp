@@ -5,7 +5,7 @@
 
 using namespace std;
 
-const char *SampleRatesFile::filename = "rates.txt";
+const char *SampleRatesFile::filename = NULL;
 
 vector<double> SampleRatesFile::rates;
 

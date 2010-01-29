@@ -28,6 +28,7 @@
 #include <queue>
 #include <stdexcept>
 #include "fopen.h"
+#include "DatabaseFile.h"
 #include "DiscreteDist.h"
 #include "NumRuns.h"
 #include "PredCoords.h"
@@ -319,13 +320,14 @@ void print_results()
 void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
-	{ &NumRuns::argp, 0, 0, 0 },
+        { &DatabaseFile::argp, 0, 0, 0 },
+        { &NumRuns::argp, 0, 0, 0 },
         { &SampleRatesFile::argp, 0, 0, 0 },
-	{ 0, 0, 0, 0 }
+        { 0, 0, 0, 0 }
     };
 
     static const argp argp = {
-	0, 0, 0, 0, children, 0, 0
+        0, 0, 0, 0, children, 0, 0
     };
 
     argp_parse(&argp, argc, argv, 0, 0, 0);
@@ -356,10 +358,13 @@ int main(int argc, char** argv)
     }
     fclose(pfp);
 
-    SampleRatesFile::read_rates();  // read the sampling rates from file
-    set_rates();   // set sampling rates in predHash according to values read from file
+    if(SampleRatesFile::filename != NULL) {
+      // read the sampling rates from file and set rates in predHash
+      SampleRatesFile::read_rates();
+      set_rates();
+    }
 
-    Reader reader("counts.txt");
+    Reader reader(DatabaseFile::DatabaseName);
     Progress::Bounded prog("Reading runs and collecting sufficient stats", NumRuns::count());
     for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
       prog.step();

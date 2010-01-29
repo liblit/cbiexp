@@ -86,6 +86,11 @@ all ?=						\
 	allnevers				\
 	corrcoefs				\
 	runsinfo.dat
+
+ifndef issta-csurf-project
+all := $(filter-out issta2007, $(all))
+endif
+
 all: $(all)
 .PHONY: all
 COMPOUND = $(findstring issta2007, $(all))
@@ -136,16 +141,16 @@ static-site-info.so: %.so: %.cc
 	$(LINK.cc) -shared -fpic -o $@ $<
 CLEANFILES += static-site-info.so
 
-static-site-info.cc: $(sites)
-	$(tooldir)/applyTemplateToSites.py $(sites) $@ $(tooldir)/static_site_info.tmpl --filter=CppFilter
+static-site-info.cc: $(database) $(call tool-deps, extractStaticSiteInfo.py)
+	$(tooldir)/extractStaticSiteInfo.py $(database) $(tooldir)/static_site_info.tmpl $@ --filter=CppFilter
 CLEANFILES += static-site-info.cc
 
-f.runs s.runs: outcomes.txt
-	$(tooldir)/genOutcomeIndices.py outcomes.txt f.runs s.runs
+f.runs s.runs outcomes.txt: $(database) $(call tool-deps, genOutcomeIndices.py)
+	$(tooldir)/genOutcomeIndices.py $(database) f.runs s.runs outcomes.txt
 CLEANFILES += s.runs f.runs
 
-preds.txt: s.runs f.runs static-site-info.so $(call tool-deps, prefilter)
-	$(time) $(tooldir)/prefilter --cull=$(cull-predicates) --begin-runs=$(begin-runs) --end-runs=$(end-runs) $(confidence:%=--confidence=%)
+preds.txt: s.runs f.runs static-site-info.so $(database) $(call tool-deps, prefilter)
+	$(time) $(tooldir)/prefilter --cull=$(cull-predicates) --begin-runs=$(begin-runs) --end-runs=$(end-runs) $(confidence:%=--confidence=%) --database-filename=$(database)
 CLEANFILES += preds.txt
 
 
@@ -197,9 +202,23 @@ all_hl_corrected-%_complex.xml: f.runs obs.txt tru.txt $(call tool-deps, correct
 CLEANFILES += all_hl_corrected-exact-complete_complex.xml corrected-exact-complete_complex.txt
 .PHONY : issta2007
 
-obs.txt tru.txt: preds.txt s.runs f.runs static-site-info.so $(call tool-deps, compute-obs-tru)
-	$(time) $(tooldir)/compute-obs-tru --begin-runs=$(begin-runs) --end-runs=$(end-runs)
+obs.txt tru.txt: preds.txt s.runs f.runs static-site-info.so $(database) $(call tool-deps, compute-obs-tru)
+	$(time) $(tooldir)/compute-obs-tru --begin-runs=$(begin-runs) --end-runs=$(end-runs) --database-filename=$(database)
 CLEANFILES += obs.txt tru.txt
+
+ifdef issta-csurf-project
+csurf-dir := $(shell dirname $(issta-csurf-project))
+pairs.txt: static-site-info.so preds.txt
+	touch $(csurf-dir)/pairs.txt
+	ln -sf $(CURDIR)/static-site-info.so $(csurf-dir)
+	ln -sf $(CURDIR)/preds.txt $(csurf-dir)
+	-cd $(csurf-dir) && csurf -nogui  $(issta-csurf-project) -l $(tooldir)/effort/effort.stk
+	cp $(csurf-dir)/pairs.txt $@
+else
+pairs.txt:
+	touch $@
+endif
+CLEANFILES += pairs.txt
 
 
 #############################################################################
@@ -214,19 +233,19 @@ CLEANFILES += obs.txt tru.txt
 # probabilties, just report actual values
 #############################################################################
 ifndef omit-truth-probability-estimation
-parmstats.txt notp-parmstats.txt: s.runs f.runs preds.txt static-site-info.so $(call tool-deps, collect_parmstats)
-	$(time) $(tooldir)/collect_parmstats --begin-runs=$(begin-runs) --end-runs=$(end-runs) --sample-rates=rates.txt
+parmstats.txt notp-parmstats.txt: s.runs f.runs preds.txt static-site-info.so $(database) $(call tool-deps, collect_parmstats)
+	$(time) $(tooldir)/collect_parmstats --begin-runs=$(begin-runs) --end-runs=$(end-runs) $(if $(rates-txt), --sample-rates=$(rates-txt)) --database-filename=$(database)
 CLEANFILES += parmstats.txt notp-parmstats.txt
 
 parms.txt notp-parms.txt: parmstats.txt notp-parmstats.txt static-site-info.so $(call tool-deps, est_parms)
 	$(time) $(tooldir)/est_parms
 CLEANFILES += parms.txt notp-parms.txt est_parms.log
 
-X.dat notX.dat : preds.txt parms.txt notp-parms.txt static-site-info.so $(call tool-deps, get_tp_weights)
-	$(time) $(tooldir)/get_tp_weights --begin-runs=$(begin-runs) --end-runs=$(end-runs) --estimate-tps=true
+X.dat notX.dat : preds.txt parms.txt notp-parms.txt static-site-info.so $(database) $(call tool-deps, get_tp_weights)
+	$(time) $(tooldir)/get_tp_weights --begin-runs=$(begin-runs) --end-runs=$(end-runs) --estimate-tps=true --database-filename=$(database)
 else
-X.dat notX.dat : preds.txt static-site-info.so
-	$(time) $(tooldir)/get_tp_weights --begin-runs=$(begin-runs) --end-runs=$(end-runs) --estimate-tps=false
+X.dat notX.dat : preds.txt static-site-info.so $(database) $(call tool-deps, get_tp_weights)
+	$(time) $(tooldir)/get_tp_weights --begin-runs=$(begin-runs) --end-runs=$(end-runs) --estimate-tps=false --database-filename=$(database)
 endif
 CLEANFILES += X.dat notX.dat truX.dat trunotX.dat truFreq.dat trunotFreq.dat
 
@@ -236,8 +255,8 @@ CLEANFILES += X.dat notX.dat truX.dat trunotX.dat truFreq.dat trunotFreq.dat
 # in a run. Done separately for failing and for succeeding runs.
 #############################################################################
 prior-dist: fpriors.dat spriors.dat
-fpriors.dat spriors.dat: s.runs f.runs preds.txt static-site-info.so $(call tool-deps, gather_prior_dist)
-	$(time) $(tooldir)/gather_prior_dist --begin-runs=$(begin-runs) --end-runs=$(end-runs)
+fpriors.dat spriors.dat: s.runs f.runs preds.txt static-site-info.so $(database) $(call tool-deps, gather_prior_dist)
+	$(time) $(tooldir)/gather_prior_dist --begin-runs=$(begin-runs) --end-runs=$(end-runs) --database-filename=$(database)
 CLEANFILES += fpriors.dat spriors.dat
 .PHONY : prior-dist
 
@@ -247,8 +266,8 @@ CLEANFILES += fpriors.dat spriors.dat
 # Done separately for failing and for succeeding runs.
 #############################################################################
 truth-dist: struthfreq.dat ftruthfreq.dat
-struthfreq.dat ftruthfreq.dat: s.runs f.runs preds.txt static-site-info.so $(call tool-deps, gather_prior_truths)
-	$(time) $(tooldir)/gather_prior_truths --begin-runs=$(begin-runs) --end-runs=$(end-runs)
+struthfreq.dat ftruthfreq.dat: s.runs f.runs preds.txt static-site-info.so $(database) $(call tool-deps, gather_prior_truths)
+	$(time) $(tooldir)/gather_prior_truths --begin-runs=$(begin-runs) --end-runs=$(end-runs) --database-filename=$(database)
 CLEANFILES += struthfreq.dat ftruthfreq.dat
 .PHONY : truth-dist
 
@@ -257,9 +276,9 @@ CLEANFILES += struthfreq.dat ftruthfreq.dat
 # implementation of the SOBER algorithm on predicates in preds.txt
 #############################################################################
 sober: sober.xml sober.txt
-sober.xml sober.txt: static-site-info.so preds.txt $(call tool-deps, calc_sober)
+sober.xml sober.txt: static-site-info.so preds.txt $(database) $(call tool-deps, calc_sober)
 	$(build) links
-	$(time) $(tooldir)/calc_sober --begin-runs=$(begin-runs) --end-runs=$(end-runs)
+	$(time) $(tooldir)/calc_sober --begin-runs=$(begin-runs) --end-runs=$(end-runs) --database-filename=$(database)
 	xmllint --valid --noout sober.xml
 CLEANFILES += sober.xml sober.txt
 .PHONY : sober
@@ -296,15 +315,15 @@ CLEANFILES += bicluster_votes.xml bicluster_preds.xml final-votes.txt bicluster_
 #            in confmat.txt
 ############################################################################
 nonconst-preds: train.runs val.runs nonconst_preds.txt
-train.runs val.runs nonconst_preds.txt : s.runs f.runs static-site-info.so $(call tool-deps, compute_nonconst_preds)
-	$(time) $(tooldir)/compute_nonconst_preds --begin-runs=$(begin-runs) --end-runs=$(end-runs)
+train.runs val.runs nonconst_preds.txt : s.runs f.runs static-site-info.so $(database) $(call tool-deps, compute_nonconst_preds)
+	$(time) $(tooldir)/compute_nonconst_preds --begin-runs=$(begin-runs) --end-runs=$(end-runs) --database-filename=$(database)
 CLEANFILES += train.runs val.runs nonconst_preds.txt
 .PHONY : nonconst-preds
 
 
 theta: theta.txt train_lls.txt val_lls.txt confmat.txt
-theta.txt train_lls.txt val_lls.txt confmat.txt logreg.txt: train.runs val.runs nonconst_preds.txt static-site-info.so $(call tool-deps, train_utillog)
-	$(time) $(tooldir)/train_utillog --begin-runs=$(begin-runs) --end-runs=$(end-runs) --delta1=10.0 --delta2=2.0 --delta3=1.0
+theta.txt train_lls.txt val_lls.txt confmat.txt logreg.txt: train.runs val.runs nonconst_preds.txt static-site-info.so $(database) $(call tool-deps, train_utillog)
+	$(time) $(tooldir)/train_utillog --begin-runs=$(begin-runs) --end-runs=$(end-runs) --delta1=10.0 --delta2=2.0 --delta3=1.0 --database-filename=$(database)
 CLEANFILES += theta.txt train_lls.txt val_lls.txt confmat.txt logreg.txt
 .PHONY : theta
 
@@ -319,8 +338,8 @@ CLEANFILES += logreg.xml
 # does K-means clustering of runs
 ############################################################################
 clusters : f_nonconst_preds.txt kmeans_group.txt
-f_nonconst_preds.txt kmeans_group.txt: static-site-info.so $(call tool-deps, cluster_runs) s.runs f.runs
-	$(time) $(tooldir)/cluster_runs --begin-runs=$(begin-runs) --end-runs=$(end-runs) --nonconst-file=f_nonconst_preds.txt
+f_nonconst_preds.txt kmeans_group.txt: static-site-info.so $(call tool-deps, cluster_runs) s.runs f.runs $(database)
+	$(time) $(tooldir)/cluster_runs --begin-runs=$(begin-runs) --end-runs=$(end-runs) --nonconst-file=f_nonconst_preds.txt --database-filename=$(database)
 CLEANFILES += f_nonconst_preds.txt kmeans_groups.txt
 .PHONY : clusters
 
@@ -335,8 +354,8 @@ CLEANFILES += f_nonconst_preds.txt kmeans_groups.txt
 never-kinds := reached false true
 nevers := $(never-kinds:%=never-%.txt)
 allnevers : $(nevers)
-$(nevers): f.runs static-site-info.so $(call tool-deps, never-reached/never-reached)
-	$(tooldir)/never-reached/never-reached --begin-runs=$(begin-runs) --end-runs=$(end-runs)
+$(nevers): f.runs static-site-info.so $(database) $(call tool-deps, never-reached/never-reached)
+	$(tooldir)/never-reached/never-reached --begin-runs=$(begin-runs) --end-runs=$(end-runs) --database-filename=$(database)
 	for goal in $(nevers); do test -r $$goal; done
 CLEANFILES += $(nevers)
 
@@ -402,12 +421,12 @@ endif
 #     functionality was not implemented
 ##############################################################################
 
-Xtru.sparse Xobs.sparse X.xml: preds.txt
-	$(time) $(tooldir)/matlab/make-counts-matrix --begin-runs=$(begin-runs) --end-runs=$(end-runs)
+Xtru.sparse Xobs.sparse X.xml: preds.txt $(database) $(call tool-deps, make-counts-matrix)
+	$(time) $(tooldir)/matlab/make-counts-matrix --begin-runs=$(begin-runs) --end-runs=$(end-runs) --database-filename=$(database)
 CLEANFILES += Xtru.sparse Xobs.sparse X.xml
 
 prerunsinfo.mat: outcomes.txt X.xml $(matlab-counts)
-	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); convertData('$(matlab-counts)', 'prerunsinfo.mat', 'outcomes.txt', 'causes.txt', 'X.xml'); quit()"
+	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); convertData('$(matlab-counts)', 'prerunsinfo.mat', 'outcomes.txt', '$(causes-txt)', 'X.xml'); quit()"
 CLEANFILES += prerunsinfo.mat
 
 runsinfo.mat: prerunsinfo.mat

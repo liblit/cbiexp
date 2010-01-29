@@ -13,6 +13,7 @@ lib = env.StaticLibrary('analyze', [
 	'ClassifyRuns.cc',
 	'Confidence.cc',
 	'CullPredicates.cc',
+    'DatabaseFile.cc',
 	'Dilute.cc',
 	'DynamicLibrary-dl.cc',
 	'EstimateTPs.cc',
@@ -47,7 +48,7 @@ lib = env.StaticLibrary('analyze', [
 	'xml.cc',
         ])
 
-aenv = env.Clone(LIBS=['analyze'], LIBPATH='.')
+aenv = env.Clone(LIBS=['analyze', 'sqlite3'], LIBPATH='.')
 denv = aenv.Clone(LIBS=['$LIBS', 'dl'])
 senv = aenv.Clone(LIBS=['$LIBS', 'Score', 'dl'], LIBPATH=['$LIBPATH', 'Score'])
 genv = aenv.Clone()

@@ -10,6 +10,7 @@
 #include <numeric>
 #include <string>
 #include "classify_runs.h"
+#include "DatabaseFile.h"
 #include "fopen.h"
 #include "IndexedPredInfo.h"
 #include "NumRuns.h"
@@ -208,12 +209,13 @@ void print_results()
 void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
-	{ &NumRuns::argp, 0, 0, 0 },
-	{ 0, 0, 0, 0 }
+        { &DatabaseFile::argp, 0, 0, 0 },
+        { &NumRuns::argp, 0, 0, 0 },
+        { 0, 0, 0, 0 }
     };
 
     static const argp argp = {
-	0, 0, 0, 0, children, 0, 0
+        0, 0, 0, 0, children, 0, 0
     };
 
     argp_parse(&argp, argc, argv, 0, 0, 0);
@@ -232,7 +234,7 @@ int main(int argc, char** argv)
 
     read_preds();
 
-    Reader reader("counts.txt");
+    Reader reader(DatabaseFile::DatabaseName);
     Progress::Bounded prog("Calculating SOBER scores", NumRuns::end());
     for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
 

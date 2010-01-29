@@ -10,7 +10,7 @@ sources = [
 Default(
     env.Program(
         'never-reached', sources,
-        LIBS=['analyze', 'dl'],
+        LIBS=['analyze', 'sqlite3', 'dl'],
         LIBPATH='..',
         )
     )

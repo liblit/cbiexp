@@ -6,6 +6,7 @@
 #include <vector>
 #include <math.h>
 #include <gsl/gsl_rng.h>
+#include "DatabaseFile.h"
 #include "NumRuns.h"
 #include "Progress/Bounded.h"
 #include "ReportReader.h"
@@ -198,12 +199,13 @@ void print_runsplit ()
 void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
-	{ &NumRuns::argp, 0, 0, 0 },
-	{ 0, 0, 0, 0 }
+        { &DatabaseFile::argp, 0, 0, 0 },
+        { &NumRuns::argp, 0, 0, 0 },
+        { 0, 0, 0, 0 }
     };
 
     static const argp argp = {
-	0, 0, 0, 0, children, 0, 0
+        0, 0, 0, 0, children, 0, 0
     };
 
     argp_parse(&argp, argc, argv, 0, 0, 0);
@@ -279,7 +281,7 @@ int main(int argc, char** argv)
     static StaticSiteInfo staticSiteInfo;
     site_info.resize(staticSiteInfo.siteCount);
 
-    Reader reader("counts.txt");
+    Reader reader(DatabaseFile::DatabaseName);
     Progress::Bounded progress("computing non-constant predicates", NumRuns::count());
     for (cur_run = NumRuns::begin(); cur_run < NumRuns::end(); cur_run++) {
 	progress.step();

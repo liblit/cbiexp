@@ -34,6 +34,7 @@
 #include <string>
 #include <vector>
 #include "classify_runs.h"
+#include "DatabaseFile.h"
 #include "EstimateTPs.h"
 #include "fopen.h"
 #include "NumRuns.h"
@@ -421,13 +422,14 @@ void print_results()
 void process_cmdline(int argc, char** argv)
 {
     static const argp_child children[] = {
-	{ &NumRuns::argp, 0, 0, 0 },
+        { &DatabaseFile::argp, 0, 0, 0 },
+        { &NumRuns::argp, 0, 0, 0 },
         { &EstimateTPs::argp, 0, 0, 0 },
-	{ 0, 0, 0, 0 }
+        { 0, 0, 0, 0 }
     };
 
     static const argp argp = {
-	0, 0, 0, 0, children, 0, 0
+        0, 0, 0, 0, children, 0, 0
     };
 
     argp_parse(&argp, argc, argv, 0, 0, 0);
@@ -452,7 +454,7 @@ int main(int argc, char** argv)
     freqfp << scientific << setprecision(12);
     nfreqfp << scientific << setprecision(12);
 
-    Reader reader("counts.txt");
+    Reader reader(DatabaseFile::DatabaseName);
     Progress::Bounded prog("Calculating truth probabilities", NumRuns::count());
     for (unsigned r = NumRuns::begin(); r < NumRuns::end(); ++r) {
 	if (is_srun[r])
