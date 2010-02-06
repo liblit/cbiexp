@@ -30,8 +30,9 @@ env = Environment(
     CCFLAGS=['$__ccflags_debug', '$__ccflags_optimize', '-Werror', '-Wall', '-Wextra', '-Wformat=2'],
     CXXFLAGS=['-Wno-deprecated'],
     LIBPATH=Dir('.'),
-    tools=['ar', 'c++', 'cc', 'link', 'template'],
+    tools=['ar', 'c++', 'cc', 'filesystem', 'link', 'packaging', 'tar', 'template'],
     toolpath=['scons-tools'],
+    TARCOMSTR='$TAR $TARFLAGS -f $TARGET $$SOURCES',
     )
 
 Help(vars.GenerateHelpText(env))
@@ -53,8 +54,9 @@ else:
     cbienv['extract_section'] = cbienv.WhereIs('extract-section', '$sampler_prefix/lib/sampler/tools')
 
 
-cbienv.Tool('autotools', toolpath='.')
-cbienv.Tool('extract', toolpath='.')
+for tool in ['autotools', 'extract']:
+    cbienv.Tool(tool, toolpath='.')
+    File('%s.py' % tool)
 
 
 sconf = env.Configure(config_h='src/config.h', clean=False, help=False)
@@ -66,13 +68,48 @@ sconf.Finish()
 ########################################################################
 
 
-SConscript(
-    dirs=[
+appdirs = map(Dir, [
         'bc',
         'ccrypt',
-        'correlations',
         'exif',
-        'src',
-        ],
+        ])
+
+subdirs = [
+    'correlations',
+    'src',
+    ]
+
+subdirs += [appdir for appdir in appdirs if appdir.exists()]
+
+SConscript(
+    dirs=subdirs,
     exports=['cbienv', 'env'],
     )
+
+
+########################################################################
+
+
+File([
+        'COPYING',
+        'scons-tools/ocaml.py',
+        'scons-tools/template.py',
+        ])
+
+def included(source):
+    for appdir in appdirs:
+        if source.is_under(appdir):
+            return False
+    return True
+
+sources = env.FindSourceFiles()
+sources = set(filter(included, sources))
+sources.remove(File('config.log'))
+sources = list(sources)
+
+package = env.Package(
+    NAME='cbiexp',
+    VERSION='1.0',
+    PACKAGETYPE='src_targz',
+    source=sources,
+    )[0]

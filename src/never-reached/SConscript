@@ -1,5 +1,11 @@
 Import('env')
 
+File([
+        'Location.h',
+        'Locations.h',
+        'Reader.h',
+        ])
+
 sources = [
     'Location.cc',
     'Locations.cc',

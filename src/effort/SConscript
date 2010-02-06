@@ -5,6 +5,8 @@ import SCons.Warnings as Warnings
 
 Import('env')
 
+File('effort.cc')
+
 
 class MissingCodeSurferWarning(Warnings.Warning):
     pass

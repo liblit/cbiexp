@@ -3,7 +3,11 @@ import SCons.Warnings as Warnings
 Import('env')
 
 env.PrependENVPath('PATH', '/s/std/bin')
-env.Tool('mex', toolpath='.')
+mex = env.Tool('mex', toolpath='.')
+File([
+        'mex.py',
+        'readsp.c',
+        ])
 
 
 class MissingMexWarning(Warnings.Warning):

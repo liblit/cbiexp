@@ -4,6 +4,22 @@ env = env.Clone(
     LIBPATH=['..', '.'],
 )
 
+File([
+        'Candidates.h',
+        'Complex.h',
+        'Conjunction.h',
+        'Disjunction.h',
+        'Foci.h',
+        'Outcome.h',
+        'Predicate.h',
+        'Predicates.h',
+        'RunSet.h',
+        'RunSuite.h',
+        'allFailures.h',
+        'main.h',
+        'zoom.h',
+        ])
+
 env.StaticLibrary('corrective', [
 	'Complex.cc',
 	'Candidates.cc',
