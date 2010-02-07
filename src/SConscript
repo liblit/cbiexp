@@ -120,6 +120,7 @@ File([
         'Verbose.h',
         'ViewPrinter.h',
         'arguments.h',
+        'bug-o-meter.js',
         'classify_runs.h',
         'combine.h',
         'fopen.h',
@@ -132,6 +133,10 @@ File([
         'utils.h',
         'xml.h',
         ])
+
+for suffix in ['css', 'dtd', 'xml', 'xsd', 'xsl']:
+    Glob('*.' + suffix)
+
 
 ########################################################################
 
