@@ -92,6 +92,11 @@ SConscript(
 
 File([
         'COPYING',
+        'DataFormatConversion/cbiSchema.edmx',
+        'DataFormatConversion/cbiSchema.pdf',
+        'doc/downsampling.txt',
+        'doc/pred_fields.txt',
+        'doc/truth_prob_estimation.pdf',
         'scons-tools/ocaml.py',
         'scons-tools/template.py',
         ])
