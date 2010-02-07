@@ -247,9 +247,6 @@
 				RelativePath="PredCoords.h">
 			</File>
 			<File
-				RelativePath="preds.h">
-			</File>
-			<File
 				RelativePath="PredStats.h">
 			</File>
 			<File
@@ -287,9 +284,6 @@
 			</File>
 			<File
 				RelativePath=".\termination.h">
-			</File>
-			<File
-				RelativePath="timestamp.h">
 			</File>
 			<File
 				RelativePath="TimestampReport.h">
