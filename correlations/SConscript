@@ -5,7 +5,10 @@ Import('env')
 env.PrependENVPath('PATH', '/s/std/bin')
 mex = env.Tool('mex', toolpath='.')
 File([
+        'calcCorr.m',
+        'genMscript.pl',
         'mex.py',
+        'mhn2sparsemat.pl',
         'readsp.c',
         ])
 

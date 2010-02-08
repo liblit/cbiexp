@@ -101,6 +101,8 @@ File([
         'scons-tools/template.py',
         ])
 
+Glob('DataFormatConversion/sliverToDB/*.py')
+
 def included(source):
     for appdir in appdirs:
         if source.is_under(appdir):
