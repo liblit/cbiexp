@@ -101,7 +101,7 @@ File([
         'scons-tools/template.py',
         ])
 
-Glob('DataFormatConversion/sliverToDB/*.py')
+Glob('DataFormatConversion/samplerToDB/*.py')
 
 def included(source):
     for appdir in appdirs:
