@@ -54,7 +54,7 @@ SchemeDescriptions = {
 
 ###############################################################################
 
-def readSitesFile(filepath):
+def readSitesFile(filepath, fileNameModifier):
     keys = ('FileName',
             'Line',
             'FunctionIdentifier',
@@ -72,14 +72,20 @@ def readSitesFile(filepath):
                 yield None
             else:
                 vals = line.strip().split(None, 4)
+                if fileNameModifier:
+                    vals[0] = fileNameModifier(vals[0])
                 yield dict(zip(keys, vals))
 
 
-def writeSitesIntoDB(conn, sitesFiles, version, wantedSchemes=None):
-    """ Read units and sites from <sitesTxt> and insert into
+def writeSitesIntoDB(conn, sitesFiles, version, fileNameModifier=None, wantedSchemes=None):
+    """ Read units and sites from <sitesFiles> and insert into
         sqlite3 database connection <conn>.  CBI database schema
         version <version> is assumed.  Currently <version> is
         unused
+
+        Optionally, you can also provide a <fileNameModifier> function to 
+        modify the filenames (corresponding to the sites) being stored eg. 
+        to strip the build/compilation directory path from the filename
     """
 
     cursor = conn.cursor()
@@ -93,7 +99,7 @@ def writeSitesIntoDB(conn, sitesFiles, version, wantedSchemes=None):
     curUnit, curScheme = None, None
     isFilteredScheme = False
 
-    for line in chain(*imap(readSitesFile, sitesFiles)):
+    for line in chain(*imap(readSitesFile, sitesFiles, (lambda : (yield fileNameModifier))())):
         if line is None:
             # end of unit
             curUnit, curScheme = None, None
