@@ -9,34 +9,7 @@ from SCons.Action import Action
 from SCons.Builder import Builder
 from SCons.Script import Exit
 
-
-########################################################################
-
-
-class AtTemplate(Template):
-
-    delimiter = '@'
-
-    pattern = r"""
-    (?:
-    (?P<escaped>@@) |
-    (?P<named>(?!)) |
-    @(?P<braced>%(id)s)@ |
-    (?P<invalid>(?!))
-    )
-    """ % {'id': Template.idpattern}
-
-
-def Instantiate(self, source, target, **kwargs):
-    source = open(str(source))
-    target = open(str(target), 'w')
-    for line in source:
-        target.write(AtTemplate(line).substitute(kwargs))
-    target.close()
-    source.close()
-
-
-########################################################################
+from utils import instantiate
 
 
 def __instantiate_exec(target, source, env):
@@ -48,7 +21,7 @@ def __instantiate_exec(target, source, env):
         Exit(1)
 
     keywords = dict((key, env.subst('$' + key)) for key in varlist)
-    Instantiate(env, source[0], target[0], **keywords)
+    instantiate(str(source[0]), str(target[0]), **keywords)
 
 def __instantiate_show(target, source, env):
     __pychecker__ = 'no-argsused'
@@ -84,7 +57,6 @@ __template_builder = Builder(
 
 
 def generate(env):
-    env.AddMethod(Instantiate)
     env.AppendUnique(BUILDERS={'Template': __template_builder})
     env.SetDefault(template_copy_mode=True)
 
