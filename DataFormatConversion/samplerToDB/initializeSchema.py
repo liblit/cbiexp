@@ -23,6 +23,7 @@ def setupPragmas(conn, memory=100):
     #       mentioned as objects of interest which may need to be tweaked in
     #       case of dismal DB performance etc. For more information as to what
     #       each PRAGMA affects see http://www.sqlite.org/pragma.html
+    # TAGS: SQLITE_SPECIFIC, PERFORMANCE
     # TODO: Tweak PRAGMA values
     _sqlPragmas = '''
         PRAGMA foreign_keys = ON;
@@ -241,7 +242,8 @@ def setupTables(conn, version):
         CREATE TABLE
             RunsInPlans(
                 PlanID INTEGER NOT NULL,
-                RunID INTEGER NOT NULL UNIQUE,
+                RunID INTEGER NOT NULL
+                    CONSTRAINT RunsInPlans_pk PRIMARY KEY,
                 CONSTRAINT RunsInPlans_PlanID_fk FOREIGN KEY (PlanID)
                     REFERENCES Plans(PlanID),
                 CONSTRAINT RunInPlans_RunID_fk FOREIGN KEY (RunID)
@@ -255,7 +257,7 @@ def setupTables(conn, version):
                     REFERENCES Plans(PlanID),
                 CONSTRAINT SitesInPlans_SiteID_fk FOREIGN KEY (SiteID)
                     REFERENCES Sites(SiteID),
-                CONSTRAINT SitesInPlans_un UNIQUE (PlanID, SiteID));
+                CONSTRAINT SitesInPlans_pk PRIMARY KEY (PlanID, SiteID));
 
         CREATE TABLE
             SampleValues(
@@ -264,14 +266,15 @@ def setupTables(conn, version):
                 RunID INTEGER NOT NULL,
                 Value INTEGER NOT NULL,
                 Phase INTEGER DEFAULT -1,
+                Thread INTEGER DEFAULT -1,
                 CONSTRAINT SampleValues_SiteID_fk FOREIGN KEY (SiteID)
                     REFERENCES Sites(SiteID),
                 CONSTRAINT SampleValues_FieldID_fk FOREIGN KEY (FieldID)
                     REFERENCES Fields(FieldID),
                 CONSTRAINT SampleValues_RunID_fk FOREIGN KEY (RunID)
                     REFERENCES Runs(RunID),
-                CONSTRAINT SampleValues_un UNIQUE (SiteID, FieldID, RunID,
-                    Phase));
+                CONSTRAINT SampleValues_pk PRIMARY KEY (Phase, RunID, Thread, 
+                    SiteID, FieldID));
 
         CREATE TABLE
             SampleCounts(
@@ -280,14 +283,15 @@ def setupTables(conn, version):
                 RunID INTEGER NOT NULL,
                 Count INTEGER NOT NULL,
                 Phase INTEGER DEFAULT -1,
+                Thread INTEGER DEFAULT -1,
                 CONSTRAINT SampleCounts_SiteID_fk FOREIGN KEY (SiteID)
                     REFERENCES Sites(SiteID),
                 CONSTRAINT SampleCounts_FieldID_fk FOREIGN KEY (FieldID)
                     REFERENCES Fields(FieldID),
                 CONSTRAINT SampleCounts_RunID_fk FOREIGN KEY (RunID)
                     REFERENCES Runs(RunID),
-                CONSTRAINT SampleCounts_un UNIQUE (SiteID, FieldID, RunID,
-                    Phase),
+                CONSTRAINT SampleCounts_pk PRIMARY KEY (Phase, RunID, Thread, 
+                    SiteID, FieldID),
                 CONSTRAINT SampleCounts_chk CHECK (Count > 0));
     '''
     # NOTE: The UNIQUE constraint if applied on a set of columns one more of
@@ -297,6 +301,12 @@ def setupTables(conn, version):
     #       as intended with Informix and Microsoft SQL Server. As a workaround
     #       when phases aren't being used we denote this by having a default
     #       value of '-1' inserted into the appropriate column.
+    #       
+    #       Also, since we are already eliminating the cases where entries may 
+    #       have null values, it makes more sense to be using a composite 
+    #       PRIMARY KEY. You also get the added benefit of an index 
+    #       automatically being generated on the primary key (at least in 
+    #       SQLite) 
 
 
     # Create TABLES

@@ -16,22 +16,23 @@ from collections import defaultdict
 from DBConstants import EnumerationTables
 from utils import InsertQueryConstructor
 
-# regular expressions
 reportOpen = re.compile(r'<report id="([a-zA-Z-]+)">')
 reportClose = re.compile(r'</report>')
-samplesOpen = re.compile(r'<samples unit="([0-9a-f]{32})" scheme="([a-zA-Z-]+)">')
+samplesOpen = re.compile(r'<samples unit="([0-9a-f]{32})" scheme="([a-zA-Z-]+)"(?: phase="([0-9]+)")?(?: threadid="([0-9]+)")?>')
 samplesClose = re.compile(r'</samples>')
 
 class SampleInfo(object):
 
-    __slots__ = ['signature', 'scheme']
+    __slots__ = ['signature', 'scheme', 'phase', 'thread']
 
-    def __init__(self, signature, scheme):
+    def __init__(self, signature, scheme, phase, thread):
         self.signature = signature
         self.scheme = scheme
+        self.phase = phase if phase else -1
+        self.thread = thread if thread else -1
 
     def __str__(self):
-        return '%s %s' % (self.signature, self.scheme)
+        return '%s %s %d %d' % (self.signature, self.scheme, self.phase, self.thread)
 
 
 class CountInfo(object):
@@ -114,7 +115,7 @@ def getUnitInfo(conn):
 
     return result
 
-def processReportFile(cursor, UnitInfoMap, runID, fname, phase=-1, wantedSchemes=None):
+def processReportFile(cursor, UnitInfoMap, runID, fname, wantedSchemes=None):
     SchemeNameToID = dict((t[1], t[0]) for t in EnumerationTables['Schemes'])
     qg = InsertQueryConstructor()
 
@@ -134,16 +135,28 @@ def processReportFile(cursor, UnitInfoMap, runID, fname, phase=-1, wantedSchemes
     with file(fname) as ifile:
         curSampleInfo = None
         curSchemeID = None
+        curPhase = None
+        curThread = None
         siteIDCounter = None
         isFilteredScheme = False
-        query = None
+        insertQuery = None
         values = None
+        # store the keys for the observed units, to accommodate the use case 
+        # for shared libraries where the same unit signature and schemeid 
+        # may be observed multiple times. In such a scenario we are supposed 
+        # to add the counts together (instead of simply inserting records in 
+        # the database we need to update the pre-existing ones)
+        unitsObserved = {}
+        isSharedLibrary = False
+        updateQuery = None
 
         for info in readReport(ifile):
             if isinstance(info, SampleInfo):
                 if siteIDCounter:
                     ensureAllCountersAreRead(curSampleInfo, siteIDCounter)
-                    cursor.executemany(query, values)
+                    if isSharedLibrary:
+                        cursor.executemany(updateQuery, values)
+                    cursor.executemany(insertQuery, values)
 
                 if info.scheme not in wantedSchemes:
                     isFilteredScheme = True
@@ -153,9 +166,18 @@ def processReportFile(cursor, UnitInfoMap, runID, fname, phase=-1, wantedSchemes
 
                 curSampleInfo = info
                 curSchemeID = SchemeNameToID[info.scheme]
+                curPhase = info.phase
+                curThread = info.thread
                 key = (info.signature, curSchemeID)
                 siteIDCounter = iter(UnitInfoMap[key])
-                query = qg.generateQuery(curSchemeID)
+                insertQuery = qg.generateInsertQuery(curSchemeID)
+                if unitsObserved.has_key(key):
+                    isSharedLibrary = True
+                    updateQuery = qg.generateUpdateQuery(curSchemeID) 
+                else:
+                    unitsObserved[key] = None
+                    isSharedLibrary = False
+                    updateQuery = None 
                 values = []
 
             elif isFilteredScheme:
@@ -169,12 +191,14 @@ def processReportFile(cursor, UnitInfoMap, runID, fname, phase=-1, wantedSchemes
                                      'unit "%s".' % str(curSampleInfo))
 
                 values += qg.generateValues(siteID, runID, curSchemeID,
-                                            info.counts, phase)
+                                            info.counts, curPhase, curThread)
 
         if siteIDCounter:
             ensureAllCountersAreRead(curSampleInfo, siteIDCounter)
         if len(values) > 0:
-            cursor.executemany(query, values)
+            if isSharedLibrary:
+                cursor.executemany(updateQuery, values)
+            cursor.executemany(insertQuery, values)
 
 
 def processReports(conn, runDirs, version, schemes=None):
@@ -209,6 +233,12 @@ def processReports(conn, runDirs, version, schemes=None):
 
     cursor.execute('CREATE INDEX IndexSampleCountsByRunID ON SampleCounts(RunID)')
     cursor.execute('CREATE INDEX IndexSampleValuesByRunID ON SampleValues(RunID)')
+    # These analyze commands are specific to SQLite and are needed so that
+    # the correct index (there is a second latent index due to primary keys) 
+    # is chosen when querying the tables.
+    # TAGS: SQLITE_SPECIFIC, PERFORMANCE
+    cursor.execute('ANALYZE SampleCounts;')
+    cursor.execute('ANALYZE SampleValues;')
     conn.commit()
 
 def main():

@@ -91,13 +91,22 @@ class InsertQueryConstructor(object):
     def __init__(self):
         self.SchemeIDToFields = getSchemeIDToFieldMapping()
         self.SchemeIDToTable = getSchemeIDToTableMapping()
+        self.Cols = ('Count', 'Phase', 'RunID', 'Thread', 'SiteID', 'FieldID')
 
-    def generateQuery(self, schemeID):
+    def generateInsertQuery(self, schemeID):
         table = self.SchemeIDToTable[schemeID]
-        entries = ', '.join('?' * 5)
-        return 'INSERT INTO %s VALUES (%s);' % (table, entries)
+        cols = ', '.join(self.Cols)
+        entries = ', '.join('?' * len(self.Cols))
+        return 'INSERT OR IGNORE INTO %s (%s) VALUES (%s);' % (table, cols, entries)
 
-    def generateValues(self, siteID, runID, schemeID, sample, phase):
+    # This function is needed for the case of shared libraries where we may 
+    # have multiple sample reports being generated for a single unit. 
+    def generateUpdateQuery(self, schemeID):
+        table = self.SchemeIDToTable[schemeID]
+        return 'UPDATE %s SET Count = Count + ? WHERE Phase=? AND RunID=? AND Thread=? AND SiteID=? AND FieldID=?;' % (table, )
+
+
+    def generateValues(self, siteID, runID, schemeID, sample, phase, thread):
         """ Constructs query from input arguments and member
             dictionaries and yields (query, values-to-bind) pairs
         """
@@ -115,5 +124,4 @@ class InsertQueryConstructor(object):
         for sample, fieldID in zip(samples, fields):
             if ignoreZeros and sample == 0:
                 continue
-            yield (siteID, fieldID, runID, sample, phase)
-
+            yield (sample, phase, runID, thread, siteID, fieldID)

@@ -24,6 +24,10 @@ def processCountsFile(conn, countsTxt, phase, version):
             version: Version of the schema supported. Currently only supports
                     version 1.
     """
+    # NOTE:
+    # This assumes that the counts are *NOT* thread local and so uses the 
+    # default value of -1 for 'thread' while inserting the counts into the
+    # database
 
     def inputSamplesForSingleRun(cursor, runID, samplesForRun):
         """Input sample counts/values for a single run.
@@ -41,9 +45,9 @@ def processCountsFile(conn, countsTxt, phase, version):
             samples = samples[1:]
             schemeID = SiteIDToSchemeID[siteID]
 
-            query = qg.generateQuery(schemeID)
-            values = qg.generateQueries(siteID, runID, schemeID,
-                                         samples, phase)
+            query = qg.generateInsertQuery(schemeID)
+            values = qg.generateValues(siteID, runID, schemeID,
+                                         samples, phase, -1)
             cursor.executemany(query, values)
 
     SiteIDToSchemeID = getSiteIDToSchemeMapping(conn)
@@ -57,6 +61,12 @@ def processCountsFile(conn, countsTxt, phase, version):
 
     cursor.execute('CREATE INDEX IndexSampleCountsByRunID ON SampleCounts(RunID)')
     cursor.execute('CREATE INDEX IndexSampleValuesByRunID ON SampleValues(RunID)')
+    # These analyze commands are specific to SQLite and are needed so that
+    # the correct index (there is a second latent index due to primary keys) 
+    # is chosen when querying the tables.
+    # TAGS: SQLITE_SPECIFIC, PERFORMANCE
+    cursor.execute('ANALYZE SampleCounts;')
+    cursor.execute('ANALYZE SampleValues;')
     conn.commit()
 
 
