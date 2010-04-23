@@ -135,7 +135,7 @@ def setupTables(conn, version):
                         CONSTRAINT Sites_pk PRIMARY KEY ASC AUTOINCREMENT,
                 FileName TEXT NOT NULL,
                 Line INTEGER NOT NULL,
-                FunctionIdentifier TEST NOT NULL,
+                FunctionIdentifier TEXT NOT NULL,
                 CFGNode INTEGER NOT NULL,
                 UnitID INTEGER NOT NULL,
                 CONSTRAINT Sites_UnitID_fk FOREIGN KEY (UnitID)
