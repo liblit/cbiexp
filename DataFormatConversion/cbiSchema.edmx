@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
   <!-- EF Runtime content -->
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="cbiModel.Store" Alias="Self" Provider="System.Data.SQLite" ProviderManifestToken="ISO8601" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2006/04/edm/ssdl">
+      <Schema Namespace="cbiModel.Store" Alias="Self" Provider="System.Data.SQLite" ProviderManifestToken="ISO8601" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="cbiModelStoreContainer">
           <EntitySet Name="AccessTypes" EntityType="cbiModel.Store.AccessTypes" store:Type="Tables" />
           <EntitySet Name="AssignmentTypes" EntityType="cbiModel.Store.AssignmentTypes" store:Type="Tables" />
@@ -20,40 +20,14 @@
           <EntitySet Name="ReturnsSiteDescriptors" EntityType="cbiModel.Store.ReturnsSiteDescriptors" store:Type="Tables" />
           <EntitySet Name="RunIDToTestCase" EntityType="cbiModel.Store.RunIDToTestCase" store:Type="Tables" />
           <EntitySet Name="Runs" EntityType="cbiModel.Store.Runs" store:Type="Tables" />
-          <EntitySet Name="RunsInPlans" EntityType="cbiModel.Store.RunsInPlans" store:Type="Tables" store:Name="RunsInPlans">
-            <DefiningQuery>SELECT 
-      [RunsInPlans].[PlanID] AS [PlanID], 
-      [RunsInPlans].[RunID] AS [RunID]
-      FROM [RunsInPlans] AS [RunsInPlans]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="SampleCounts" EntityType="cbiModel.Store.SampleCounts" store:Type="Tables" store:Name="SampleCounts">
-            <DefiningQuery>SELECT 
-      [SampleCounts].[SiteID] AS [SiteID], 
-      [SampleCounts].[FieldID] AS [FieldID], 
-      [SampleCounts].[RunID] AS [RunID], 
-      [SampleCounts].[Count] AS [Count], 
-      [SampleCounts].[Phase] AS [Phase]
-      FROM [SampleCounts] AS [SampleCounts]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="SampleValues" EntityType="cbiModel.Store.SampleValues" store:Type="Tables" store:Name="SampleValues">
-            <DefiningQuery>SELECT 
-      [SampleValues].[SiteID] AS [SiteID], 
-      [SampleValues].[FieldID] AS [FieldID], 
-      [SampleValues].[RunID] AS [RunID], 
-      [SampleValues].[Value] AS [Value], 
-      [SampleValues].[Phase] AS [Phase]
-      FROM [SampleValues] AS [SampleValues]</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="RunsInPlans" EntityType="cbiModel.Store.RunsInPlans" store:Type="Tables" />
+          <EntitySet Name="SampleCounts" EntityType="cbiModel.Store.SampleCounts" store:Type="Tables" />
+          <EntitySet Name="SampleValues" EntityType="cbiModel.Store.SampleValues" store:Type="Tables" />
           <EntitySet Name="ScalarPairsSiteDescriptors" EntityType="cbiModel.Store.ScalarPairsSiteDescriptors" store:Type="Tables" />
           <EntitySet Name="SchemaVersion" EntityType="cbiModel.Store.SchemaVersion" store:Type="Tables" />
           <EntitySet Name="Schemes" EntityType="cbiModel.Store.Schemes" store:Type="Tables" />
           <EntitySet Name="Sites" EntityType="cbiModel.Store.Sites" store:Type="Tables" />
-          <EntitySet Name="SitesInPlans" EntityType="cbiModel.Store.SitesInPlans" store:Type="Tables" store:Name="SitesInPlans">
-            <DefiningQuery>SELECT 
-      [SitesInPlans].[PlanID] AS [PlanID], 
-      [SitesInPlans].[SiteID] AS [SiteID]
-      FROM [SitesInPlans] AS [SitesInPlans]</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="SitesInPlans" EntityType="cbiModel.Store.SitesInPlans" store:Type="Tables" />
           <EntitySet Name="Units" EntityType="cbiModel.Store.Units" store:Type="Tables" />
           <EntitySet Name="VariableTypes" EntityType="cbiModel.Store.VariableTypes" store:Type="Tables" />
           <AssociationSet Name="FK_AtomsSiteDescriptors_0" Association="cbiModel.Store.FK_AtomsSiteDescriptors_0">
@@ -104,10 +78,6 @@
             <End Role="Runs" EntitySet="Runs" />
             <End Role="RunIDToTestCase" EntitySet="RunIDToTestCase" />
           </AssociationSet>
-          <AssociationSet Name="FK_Runs_0" Association="cbiModel.Store.FK_Runs_0">
-            <End Role="Outcomes" EntitySet="Outcomes" />
-            <End Role="Runs" EntitySet="Runs" />
-          </AssociationSet>
           <AssociationSet Name="FK_RunsInPlans_0" Association="cbiModel.Store.FK_RunsInPlans_0">
             <End Role="Runs" EntitySet="Runs" />
             <End Role="RunsInPlans" EntitySet="RunsInPlans" />
@@ -115,6 +85,10 @@
           <AssociationSet Name="FK_RunsInPlans_1" Association="cbiModel.Store.FK_RunsInPlans_1">
             <End Role="Plans" EntitySet="Plans" />
             <End Role="RunsInPlans" EntitySet="RunsInPlans" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Runs_0" Association="cbiModel.Store.FK_Runs_0">
+            <End Role="Outcomes" EntitySet="Outcomes" />
+            <End Role="Runs" EntitySet="Runs" />
           </AssociationSet>
           <AssociationSet Name="FK_SampleCounts_0" Association="cbiModel.Store.FK_SampleCounts_0">
             <End Role="Runs" EntitySet="Runs" />
@@ -156,10 +130,6 @@
             <End Role="Sites" EntitySet="Sites" />
             <End Role="ScalarPairsSiteDescriptors" EntitySet="ScalarPairsSiteDescriptors" />
           </AssociationSet>
-          <AssociationSet Name="FK_Sites_0" Association="cbiModel.Store.FK_Sites_0">
-            <End Role="Units" EntitySet="Units" />
-            <End Role="Sites" EntitySet="Sites" />
-          </AssociationSet>
           <AssociationSet Name="FK_SitesInPlans_0" Association="cbiModel.Store.FK_SitesInPlans_0">
             <End Role="Sites" EntitySet="Sites" />
             <End Role="SitesInPlans" EntitySet="SitesInPlans" />
@@ -167,6 +137,10 @@
           <AssociationSet Name="FK_SitesInPlans_1" Association="cbiModel.Store.FK_SitesInPlans_1">
             <End Role="Plans" EntitySet="Plans" />
             <End Role="SitesInPlans" EntitySet="SitesInPlans" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sites_0" Association="cbiModel.Store.FK_Sites_0">
+            <End Role="Units" EntitySet="Units" />
+            <End Role="Sites" EntitySet="Sites" />
           </AssociationSet>
           <AssociationSet Name="FK_Units_0" Association="cbiModel.Store.FK_Units_0">
             <End Role="Schemes" EntitySet="Schemes" />
@@ -276,48 +250,42 @@
           <Property Name="RunID" Type="integer" Nullable="false" />
           <Property Name="OutcomeID" Type="integer" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'main.RunsInPlans' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
         <EntityType Name="RunsInPlans">
           <Key>
-            <PropertyRef Name="PlanID" />
             <PropertyRef Name="RunID" />
           </Key>
           <Property Name="PlanID" Type="integer" Nullable="false" />
           <Property Name="RunID" Type="integer" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'main.SampleCounts' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
         <EntityType Name="SampleCounts">
           <Key>
             <PropertyRef Name="SiteID" />
             <PropertyRef Name="FieldID" />
             <PropertyRef Name="RunID" />
-            <PropertyRef Name="Count" />
+            <PropertyRef Name="Phase" />
+            <PropertyRef Name="Thread" />
           </Key>
           <Property Name="SiteID" Type="integer" Nullable="false" />
           <Property Name="FieldID" Type="integer" Nullable="false" />
           <Property Name="RunID" Type="integer" Nullable="false" />
           <Property Name="Count" Type="integer" Nullable="false" />
-          <Property Name="Phase" Type="integer" />
+          <Property Name="Phase" Type="integer" Nullable="false" />
+          <Property Name="Thread" Type="integer" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'main.SampleValues' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
         <EntityType Name="SampleValues">
           <Key>
             <PropertyRef Name="SiteID" />
             <PropertyRef Name="FieldID" />
             <PropertyRef Name="RunID" />
-            <PropertyRef Name="Value" />
+            <PropertyRef Name="Phase" />
+            <PropertyRef Name="Thread" />
           </Key>
           <Property Name="SiteID" Type="integer" Nullable="false" />
           <Property Name="FieldID" Type="integer" Nullable="false" />
           <Property Name="RunID" Type="integer" Nullable="false" />
           <Property Name="Value" Type="integer" Nullable="false" />
-          <Property Name="Phase" Type="integer" />
+          <Property Name="Phase" Type="integer" Nullable="false" />
+          <Property Name="Thread" Type="integer" Nullable="false" />
         </EntityType>
         <EntityType Name="ScalarPairsSiteDescriptors">
           <Key>
@@ -344,9 +312,6 @@
           <Property Name="Name" Type="nvarchar" Nullable="false" />
           <Property Name="SchemeCode" Type="nvarchar" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6005: The data type '' is not supported, the column 'FunctionIdentifier' in table 'main.Sites' was excluded.
-      -->
         <EntityType Name="Sites">
           <Key>
             <PropertyRef Name="SiteID" />
@@ -354,12 +319,10 @@
           <Property Name="SiteID" Type="integer" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="FileName" Type="nvarchar" Nullable="false" />
           <Property Name="Line" Type="integer" Nullable="false" />
+          <Property Name="FunctionIdentifier" Type="nvarchar" Nullable="false" />
           <Property Name="CFGNode" Type="integer" Nullable="false" />
           <Property Name="UnitID" Type="integer" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'main.SitesInPlans' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
         <EntityType Name="SitesInPlans">
           <Key>
             <PropertyRef Name="PlanID" />
@@ -527,21 +490,9 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Runs_0">
-          <End Role="Outcomes" Type="cbiModel.Store.Outcomes" Multiplicity="1" />
-          <End Role="Runs" Type="cbiModel.Store.Runs" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Outcomes">
-              <PropertyRef Name="OutcomeID" />
-            </Principal>
-            <Dependent Role="Runs">
-              <PropertyRef Name="OutcomeID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_RunsInPlans_0">
           <End Role="Runs" Type="cbiModel.Store.Runs" Multiplicity="1" />
-          <End Role="RunsInPlans" Type="cbiModel.Store.RunsInPlans" Multiplicity="*" />
+          <End Role="RunsInPlans" Type="cbiModel.Store.RunsInPlans" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="Runs">
               <PropertyRef Name="RunID" />
@@ -560,6 +511,18 @@
             </Principal>
             <Dependent Role="RunsInPlans">
               <PropertyRef Name="PlanID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Runs_0">
+          <End Role="Outcomes" Type="cbiModel.Store.Outcomes" Multiplicity="1" />
+          <End Role="Runs" Type="cbiModel.Store.Runs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Outcomes">
+              <PropertyRef Name="OutcomeID" />
+            </Principal>
+            <Dependent Role="Runs">
+              <PropertyRef Name="OutcomeID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -683,18 +646,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Sites_0">
-          <End Role="Units" Type="cbiModel.Store.Units" Multiplicity="1" />
-          <End Role="Sites" Type="cbiModel.Store.Sites" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Units">
-              <PropertyRef Name="UnitID" />
-            </Principal>
-            <Dependent Role="Sites">
-              <PropertyRef Name="UnitID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_SitesInPlans_0">
           <End Role="Sites" Type="cbiModel.Store.Sites" Multiplicity="1" />
           <End Role="SitesInPlans" Type="cbiModel.Store.SitesInPlans" Multiplicity="*" />
@@ -719,6 +670,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Sites_0">
+          <End Role="Units" Type="cbiModel.Store.Units" Multiplicity="1" />
+          <End Role="Sites" Type="cbiModel.Store.Sites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Units">
+              <PropertyRef Name="UnitID" />
+            </Principal>
+            <Dependent Role="Sites">
+              <PropertyRef Name="UnitID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Units_0">
           <End Role="Schemes" Type="cbiModel.Store.Schemes" Multiplicity="1" />
           <End Role="Units" Type="cbiModel.Store.Units" Multiplicity="*" />
@@ -731,33 +694,34 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="cbiModel" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2006/04/edm">
-        <EntityContainer Name="cbiEntities">
-          <EntitySet Name="AccessTypes" EntityType="cbiModel.AccessTypes" />
-          <EntitySet Name="AssignmentTypes" EntityType="cbiModel.AssignmentTypes" />
-          <EntitySet Name="AtomsSiteDescriptors" EntityType="cbiModel.AtomsSiteDescriptors" />
-          <EntitySet Name="BoundsSiteDescriptors" EntityType="cbiModel.BoundsSiteDescriptors" />
-          <EntitySet Name="BranchesSiteDescriptors" EntityType="cbiModel.BranchesSiteDescriptors" />
-          <EntitySet Name="CompareSwapSiteDescriptors" EntityType="cbiModel.CompareSwapSiteDescriptors" />
-          <EntitySet Name="Fields" EntityType="cbiModel.Fields" />
-          <EntitySet Name="FloatKindsSiteDescriptors" EntityType="cbiModel.FloatKindsSiteDescriptors" />
-          <EntitySet Name="GObjectUnrefSiteDescriptors" EntityType="cbiModel.GObjectUnrefSiteDescriptors" />
-          <EntitySet Name="Outcomes" EntityType="cbiModel.Outcomes" />
-          <EntitySet Name="Plans" EntityType="cbiModel.Plans" />
-          <EntitySet Name="ReturnsSiteDescriptors" EntityType="cbiModel.ReturnsSiteDescriptors" />
-          <EntitySet Name="RunIDToTestCase" EntityType="cbiModel.RunIDToTestCase" />
-          <EntitySet Name="Runs" EntityType="cbiModel.Runs" />
-          <EntitySet Name="SampleCounts" EntityType="cbiModel.SampleCounts" />
-          <EntitySet Name="SampleValues" EntityType="cbiModel.SampleValues" />
-          <EntitySet Name="ScalarPairsSiteDescriptors" EntityType="cbiModel.ScalarPairsSiteDescriptors" />
-          <EntitySet Name="SchemaVersion" EntityType="cbiModel.SchemaVersion" />
-          <EntitySet Name="Schemes" EntityType="cbiModel.Schemes" />
-          <EntitySet Name="Sites" EntityType="cbiModel.Sites" />
-          <EntitySet Name="Units" EntityType="cbiModel.Units" />
-          <EntitySet Name="VariableTypes" EntityType="cbiModel.VariableTypes" />
+      <Schema Namespace="cbiModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="cbiEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AccessTypes" EntityType="cbiModel.AccessType" />
+          <EntitySet Name="AssignmentTypes" EntityType="cbiModel.AssignmentType" />
+          <EntitySet Name="AtomsSiteDescriptors" EntityType="cbiModel.AtomsSiteDescriptor" />
+          <EntitySet Name="BoundsSiteDescriptors" EntityType="cbiModel.BoundsSiteDescriptor" />
+          <EntitySet Name="BranchesSiteDescriptors" EntityType="cbiModel.BranchesSiteDescriptor" />
+          <EntitySet Name="CompareSwapSiteDescriptors" EntityType="cbiModel.CompareSwapSiteDescriptor" />
+          <EntitySet Name="Fields" EntityType="cbiModel.Field" />
+          <EntitySet Name="FloatKindsSiteDescriptors" EntityType="cbiModel.FloatKindsSiteDescriptor" />
+          <EntitySet Name="GObjectUnrefSiteDescriptors" EntityType="cbiModel.GObjectUnrefSiteDescriptor" />
+          <EntitySet Name="Outcomes" EntityType="cbiModel.Outcome" />
+          <EntitySet Name="Plans" EntityType="cbiModel.Plan" />
+          <EntitySet Name="ReturnsSiteDescriptors" EntityType="cbiModel.ReturnsSiteDescriptor" />
+          <EntitySet Name="RunIDToTestCases" EntityType="cbiModel.RunIDToTestCase" />
+          <EntitySet Name="Runs" EntityType="cbiModel.Run" />
+          <EntitySet Name="SampleCounts" EntityType="cbiModel.SampleCount" />
+          <EntitySet Name="SampleValues" EntityType="cbiModel.SampleValue" />
+          <EntitySet Name="ScalarPairsSiteDescriptors" EntityType="cbiModel.ScalarPairsSiteDescriptor" />
+          <EntitySet Name="SchemaVersions" EntityType="cbiModel.SchemaVersion" />
+          <EntitySet Name="Schemes" EntityType="cbiModel.Scheme" />
+          <EntitySet Name="Sites" EntityType="cbiModel.Site" />
+          <EntitySet Name="Units" EntityType="cbiModel.Unit" />
+          <EntitySet Name="VariableTypes" EntityType="cbiModel.VariableType" />
           <AssociationSet Name="FK_AtomsSiteDescriptors_0" Association="cbiModel.FK_AtomsSiteDescriptors_0">
             <End Role="AccessTypes" EntitySet="AccessTypes" />
             <End Role="AtomsSiteDescriptors" EntitySet="AtomsSiteDescriptors" />
@@ -820,7 +784,7 @@
           </AssociationSet>
           <AssociationSet Name="FK_RunIDToTestCase_0" Association="cbiModel.FK_RunIDToTestCase_0">
             <End Role="Runs" EntitySet="Runs" />
-            <End Role="RunIDToTestCase" EntitySet="RunIDToTestCase" />
+            <End Role="RunIDToTestCase" EntitySet="RunIDToTestCases" />
           </AssociationSet>
           <AssociationSet Name="FK_SampleCounts_0" Association="cbiModel.FK_SampleCounts_0">
             <End Role="Runs" EntitySet="Runs" />
@@ -866,34 +830,35 @@
             <End Role="Sites" EntitySet="Sites" />
             <End Role="Plans" EntitySet="Plans" />
           </AssociationSet>
-          </EntityContainer>
-        <EntityType Name="AccessTypes">
+        </EntityContainer>
+        <EntityType Name="AccessType">
           <Key>
             <PropertyRef Name="AccessTypeID" />
           </Key>
-          <Property Name="AccessTypeID" Type="Int64" Nullable="false" />
-          <Property Name="AccessType" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
+          <Property Name="AccessTypeID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AccessType1" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="AtomsSiteDescriptors" Relationship="cbiModel.FK_AtomsSiteDescriptors_0" FromRole="AccessTypes" ToRole="AtomsSiteDescriptors" />
           <NavigationProperty Name="FloatKindsSiteDescriptors" Relationship="cbiModel.FK_FloatKindsSiteDescriptors_0" FromRole="AccessTypes" ToRole="FloatKindsSiteDescriptors" />
         </EntityType>
-        <EntityType Name="AssignmentTypes">
+        <EntityType Name="AssignmentType">
           <Key>
             <PropertyRef Name="AssignmentTypeID" />
           </Key>
-          <Property Name="AssignmentTypeID" Type="Int64" Nullable="false" />
-          <Property Name="AssignmentType" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
+          <Property Name="AssignmentTypeID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AssignmentType1" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="ScalarPairsSiteDescriptors" Relationship="cbiModel.FK_ScalarPairsSiteDescriptors_1" FromRole="AssignmentTypes" ToRole="ScalarPairsSiteDescriptors" />
         </EntityType>
-        <EntityType Name="AtomsSiteDescriptors">
+        <EntityType Name="AtomsSiteDescriptor">
           <Key>
             <PropertyRef Name="SiteID" />
           </Key>
           <Property Name="SiteID" Type="Int64" Nullable="false" />
           <Property Name="Variable" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="AccessTypes" Relationship="cbiModel.FK_AtomsSiteDescriptors_0" FromRole="AtomsSiteDescriptors" ToRole="AccessTypes" />
-          <NavigationProperty Name="Sites" Relationship="cbiModel.FK_AtomsSiteDescriptors_1" FromRole="AtomsSiteDescriptors" ToRole="Sites" />
+          <Property Name="AccessTypeID" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="AccessType" Relationship="cbiModel.FK_AtomsSiteDescriptors_0" FromRole="AtomsSiteDescriptors" ToRole="AccessTypes" />
+          <NavigationProperty Name="Site" Relationship="cbiModel.FK_AtomsSiteDescriptors_1" FromRole="AtomsSiteDescriptors" ToRole="Sites" />
         </EntityType>
-        <EntityType Name="BoundsSiteDescriptors">
+        <EntityType Name="BoundsSiteDescriptor">
           <Key>
             <PropertyRef Name="SiteID" />
           </Key>
@@ -901,75 +866,78 @@
           <Property Name="Variable" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
           <Property Name="VariableTypeID" Type="Int64" Nullable="false" />
           <Property Name="AccessTypeID" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="Sites" Relationship="cbiModel.FK_BoundsSiteDescriptors_2" FromRole="BoundsSiteDescriptors" ToRole="Sites" />
+          <NavigationProperty Name="Site" Relationship="cbiModel.FK_BoundsSiteDescriptors_2" FromRole="BoundsSiteDescriptors" ToRole="Sites" />
         </EntityType>
-        <EntityType Name="BranchesSiteDescriptors">
+        <EntityType Name="BranchesSiteDescriptor">
           <Key>
             <PropertyRef Name="SiteId" />
           </Key>
           <Property Name="SiteId" Type="Int64" Nullable="false" />
           <Property Name="Predicate" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="Sites" Relationship="cbiModel.FK_BranchesSiteDescriptors_0" FromRole="BranchesSiteDescriptors" ToRole="Sites" />
+          <NavigationProperty Name="Site" Relationship="cbiModel.FK_BranchesSiteDescriptors_0" FromRole="BranchesSiteDescriptors" ToRole="Sites" />
         </EntityType>
-        <EntityType Name="CompareSwapSiteDescriptors">
+        <EntityType Name="CompareSwapSiteDescriptor">
           <Key>
             <PropertyRef Name="SiteID" />
           </Key>
           <Property Name="SiteID" Type="Int64" Nullable="false" />
           <Property Name="Variable" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="Sites" Relationship="cbiModel.FK_CompareSwapSiteDescriptors_0" FromRole="CompareSwapSiteDescriptors" ToRole="Sites" />
+          <NavigationProperty Name="Site" Relationship="cbiModel.FK_CompareSwapSiteDescriptors_0" FromRole="CompareSwapSiteDescriptors" ToRole="Sites" />
         </EntityType>
-        <EntityType Name="Fields">
+        <EntityType Name="Field">
           <Key>
             <PropertyRef Name="FieldID" />
           </Key>
-          <Property Name="FieldID" Type="Int64" Nullable="false" />
+          <Property Name="FieldID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SchemeID" Type="Int64" Nullable="false" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="Schemes" Relationship="cbiModel.FK_Fields_0" FromRole="Fields" ToRole="Schemes" />
+          <NavigationProperty Name="Scheme" Relationship="cbiModel.FK_Fields_0" FromRole="Fields" ToRole="Schemes" />
           <NavigationProperty Name="SampleCounts" Relationship="cbiModel.FK_SampleCounts_1" FromRole="Fields" ToRole="SampleCounts" />
           <NavigationProperty Name="SampleValues" Relationship="cbiModel.FK_SampleValues_1" FromRole="Fields" ToRole="SampleValues" />
         </EntityType>
-        <EntityType Name="FloatKindsSiteDescriptors">
+        <EntityType Name="FloatKindsSiteDescriptor">
           <Key>
             <PropertyRef Name="SiteID" />
           </Key>
           <Property Name="SiteID" Type="Int64" Nullable="false" />
           <Property Name="Variable" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="AccessTypes" Relationship="cbiModel.FK_FloatKindsSiteDescriptors_0" FromRole="FloatKindsSiteDescriptors" ToRole="AccessTypes" />
-          <NavigationProperty Name="VariableTypes" Relationship="cbiModel.FK_FloatKindsSiteDescriptors_1" FromRole="FloatKindsSiteDescriptors" ToRole="VariableTypes" />
-          <NavigationProperty Name="Sites" Relationship="cbiModel.FK_FloatKindsSiteDescriptors_2" FromRole="FloatKindsSiteDescriptors" ToRole="Sites" />
+          <Property Name="VariableTypeID" Type="Int64" Nullable="false" />
+          <Property Name="AccessTypeID" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="AccessType" Relationship="cbiModel.FK_FloatKindsSiteDescriptors_0" FromRole="FloatKindsSiteDescriptors" ToRole="AccessTypes" />
+          <NavigationProperty Name="VariableType" Relationship="cbiModel.FK_FloatKindsSiteDescriptors_1" FromRole="FloatKindsSiteDescriptors" ToRole="VariableTypes" />
+          <NavigationProperty Name="Site" Relationship="cbiModel.FK_FloatKindsSiteDescriptors_2" FromRole="FloatKindsSiteDescriptors" ToRole="Sites" />
         </EntityType>
-        <EntityType Name="GObjectUnrefSiteDescriptors">
+        <EntityType Name="GObjectUnrefSiteDescriptor">
           <Key>
             <PropertyRef Name="SiteID" />
           </Key>
           <Property Name="SiteID" Type="Int64" Nullable="false" />
           <Property Name="OBJECT" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="Sites" Relationship="cbiModel.FK_GObjectUnrefSiteDescriptors_0" FromRole="GObjectUnrefSiteDescriptors" ToRole="Sites" />
+          <NavigationProperty Name="Site" Relationship="cbiModel.FK_GObjectUnrefSiteDescriptors_0" FromRole="GObjectUnrefSiteDescriptors" ToRole="Sites" />
         </EntityType>
-        <EntityType Name="Outcomes">
+        <EntityType Name="Outcome">
           <Key>
             <PropertyRef Name="OutcomeID" />
           </Key>
-          <Property Name="OutcomeID" Type="Int64" Nullable="false" />
+          <Property Name="OutcomeID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="Runs" Relationship="cbiModel.FK_Runs_0" FromRole="Outcomes" ToRole="Runs" />
         </EntityType>
-        <EntityType Name="Plans">
+        <EntityType Name="Plan">
           <Key>
             <PropertyRef Name="PlanID" />
           </Key>
           <Property Name="PlanID" Type="Int64" Nullable="false" />
           <NavigationProperty Name="Runs" Relationship="cbiModel.RunsInPlans" FromRole="Plans" ToRole="Runs" />
           <NavigationProperty Name="Sites" Relationship="cbiModel.SitesInPlans" FromRole="Plans" ToRole="Sites" />
-          </EntityType>
-        <EntityType Name="ReturnsSiteDescriptors">
+        </EntityType>
+        <EntityType Name="ReturnsSiteDescriptor">
           <Key>
             <PropertyRef Name="SiteID" />
           </Key>
           <Property Name="SiteID" Type="Int64" Nullable="false" />
           <Property Name="Callee" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="Sites" Relationship="cbiModel.FK_ReturnsSiteDescriptors_0" FromRole="ReturnsSiteDescriptors" ToRole="Sites" />
+          <NavigationProperty Name="Site" Relationship="cbiModel.FK_ReturnsSiteDescriptors_0" FromRole="ReturnsSiteDescriptors" ToRole="Sites" />
         </EntityType>
         <EntityType Name="RunIDToTestCase">
           <Key>
@@ -977,62 +945,70 @@
           </Key>
           <Property Name="RunID" Type="Int64" Nullable="false" />
           <Property Name="TestCase" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="Runs" Relationship="cbiModel.FK_RunIDToTestCase_0" FromRole="RunIDToTestCase" ToRole="Runs" />
+          <NavigationProperty Name="Run" Relationship="cbiModel.FK_RunIDToTestCase_0" FromRole="RunIDToTestCase" ToRole="Runs" />
         </EntityType>
-        <EntityType Name="Runs">
+        <EntityType Name="Run">
           <Key>
             <PropertyRef Name="RunID" />
           </Key>
           <Property Name="RunID" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="Outcomes" Relationship="cbiModel.FK_Runs_0" FromRole="Runs" ToRole="Outcomes" />
+          <Property Name="OutcomeID" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="Outcome" Relationship="cbiModel.FK_Runs_0" FromRole="Runs" ToRole="Outcomes" />
           <NavigationProperty Name="RunIDToTestCase" Relationship="cbiModel.FK_RunIDToTestCase_0" FromRole="Runs" ToRole="RunIDToTestCase" />
           <NavigationProperty Name="SampleCounts" Relationship="cbiModel.FK_SampleCounts_0" FromRole="Runs" ToRole="SampleCounts" />
           <NavigationProperty Name="SampleValues" Relationship="cbiModel.FK_SampleValues_0" FromRole="Runs" ToRole="SampleValues" />
-          <NavigationProperty Name="Plans" Relationship="cbiModel.RunsInPlans" FromRole="Runs" ToRole="Plans" />
-          </EntityType>
-        <EntityType Name="SampleCounts">
+          <NavigationProperty Name="Plan" Relationship="cbiModel.RunsInPlans" FromRole="Runs" ToRole="Plans" />
+        </EntityType>
+        <EntityType Name="SampleCount">
           <Key>
             <PropertyRef Name="SiteID" />
             <PropertyRef Name="FieldID" />
             <PropertyRef Name="RunID" />
-            <PropertyRef Name="Count" />
+            <PropertyRef Name="Phase" />
+            <PropertyRef Name="Thread" />
           </Key>
           <Property Name="SiteID" Type="Int64" Nullable="false" />
           <Property Name="FieldID" Type="Int64" Nullable="false" />
           <Property Name="RunID" Type="Int64" Nullable="false" />
           <Property Name="Count" Type="Int64" Nullable="false" />
-          <Property Name="Phase" Type="Int64" />
-          <NavigationProperty Name="Fields" Relationship="cbiModel.FK_SampleCounts_1" FromRole="SampleCounts" ToRole="Fields" />
-          <NavigationProperty Name="Runs" Relationship="cbiModel.FK_SampleCounts_0" FromRole="SampleCounts" ToRole="Runs" />
-          <NavigationProperty Name="Sites" Relationship="cbiModel.FK_SampleCounts_2" FromRole="SampleCounts" ToRole="Sites" />
+          <Property Name="Phase" Type="Int64" Nullable="false" />
+          <Property Name="Thread" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="Field" Relationship="cbiModel.FK_SampleCounts_1" FromRole="SampleCounts" ToRole="Fields" />
+          <NavigationProperty Name="Run" Relationship="cbiModel.FK_SampleCounts_0" FromRole="SampleCounts" ToRole="Runs" />
+          <NavigationProperty Name="Site" Relationship="cbiModel.FK_SampleCounts_2" FromRole="SampleCounts" ToRole="Sites" />
         </EntityType>
-        <EntityType Name="SampleValues">
+        <EntityType Name="SampleValue">
           <Key>
             <PropertyRef Name="SiteID" />
             <PropertyRef Name="FieldID" />
             <PropertyRef Name="RunID" />
-            <PropertyRef Name="Value" />
+            <PropertyRef Name="Phase" />
+            <PropertyRef Name="Thread" />
           </Key>
           <Property Name="SiteID" Type="Int64" Nullable="false" />
           <Property Name="FieldID" Type="Int64" Nullable="false" />
           <Property Name="RunID" Type="Int64" Nullable="false" />
           <Property Name="Value" Type="Int64" Nullable="false" />
-          <Property Name="Phase" Type="Int64" />
-          <NavigationProperty Name="Fields" Relationship="cbiModel.FK_SampleValues_1" FromRole="SampleValues" ToRole="Fields" />
-          <NavigationProperty Name="Runs" Relationship="cbiModel.FK_SampleValues_0" FromRole="SampleValues" ToRole="Runs" />
-          <NavigationProperty Name="Sites" Relationship="cbiModel.FK_SampleValues_2" FromRole="SampleValues" ToRole="Sites" />
+          <Property Name="Phase" Type="Int64" Nullable="false" />
+          <Property Name="Thread" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="Field" Relationship="cbiModel.FK_SampleValues_1" FromRole="SampleValues" ToRole="Fields" />
+          <NavigationProperty Name="Run" Relationship="cbiModel.FK_SampleValues_0" FromRole="SampleValues" ToRole="Runs" />
+          <NavigationProperty Name="Site" Relationship="cbiModel.FK_SampleValues_2" FromRole="SampleValues" ToRole="Sites" />
         </EntityType>
-        <EntityType Name="ScalarPairsSiteDescriptors">
+        <EntityType Name="ScalarPairsSiteDescriptor">
           <Key>
             <PropertyRef Name="SiteID" />
           </Key>
           <Property Name="SiteID" Type="Int64" Nullable="false" />
           <Property Name="LHSVariable" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
+          <Property Name="LHSVariableTypeID" Type="Int64" Nullable="false" />
+          <Property Name="LHSAssignmentTypeID" Type="Int64" Nullable="false" />
           <Property Name="RHSVariable" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="AssignmentTypes" Relationship="cbiModel.FK_ScalarPairsSiteDescriptors_1" FromRole="ScalarPairsSiteDescriptors" ToRole="AssignmentTypes" />
-          <NavigationProperty Name="VariableTypes" Relationship="cbiModel.FK_ScalarPairsSiteDescriptors_0" FromRole="ScalarPairsSiteDescriptors" ToRole="VariableTypes" />
-          <NavigationProperty Name="VariableTypes1" Relationship="cbiModel.FK_ScalarPairsSiteDescriptors_2" FromRole="ScalarPairsSiteDescriptors" ToRole="VariableTypes" />
-          <NavigationProperty Name="Sites" Relationship="cbiModel.FK_ScalarPairsSiteDescriptors_3" FromRole="ScalarPairsSiteDescriptors" ToRole="Sites" />
+          <Property Name="RHSVariableTypeID" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="AssignmentType" Relationship="cbiModel.FK_ScalarPairsSiteDescriptors_1" FromRole="ScalarPairsSiteDescriptors" ToRole="AssignmentTypes" />
+          <NavigationProperty Name="VariableType" Relationship="cbiModel.FK_ScalarPairsSiteDescriptors_0" FromRole="ScalarPairsSiteDescriptors" ToRole="VariableTypes" />
+          <NavigationProperty Name="VariableType1" Relationship="cbiModel.FK_ScalarPairsSiteDescriptors_2" FromRole="ScalarPairsSiteDescriptors" ToRole="VariableTypes" />
+          <NavigationProperty Name="Site" Relationship="cbiModel.FK_ScalarPairsSiteDescriptors_3" FromRole="ScalarPairsSiteDescriptors" ToRole="Sites" />
         </EntityType>
         <EntityType Name="SchemaVersion">
           <Key>
@@ -1040,71 +1016,98 @@
           </Key>
           <Property Name="SchemaID" Type="Int64" Nullable="false" />
         </EntityType>
-        <EntityType Name="Schemes">
+        <EntityType Name="Scheme">
           <Key>
             <PropertyRef Name="SchemeID" />
           </Key>
-          <Property Name="SchemeID" Type="Int64" Nullable="false" />
+          <Property Name="SchemeID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
           <Property Name="SchemeCode" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="Fields" Relationship="cbiModel.FK_Fields_0" FromRole="Schemes" ToRole="Fields" />
           <NavigationProperty Name="Units" Relationship="cbiModel.FK_Units_0" FromRole="Schemes" ToRole="Units" />
         </EntityType>
-        <EntityType Name="Sites">
+        <EntityType Name="Site">
           <Key>
             <PropertyRef Name="SiteID" />
           </Key>
-          <Property Name="SiteID" Type="Int64" Nullable="false" />
+          <Property Name="SiteID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="FileName" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
           <Property Name="Line" Type="Int64" Nullable="false" />
+          <Property Name="FunctionIdentifier" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
           <Property Name="CFGNode" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="AtomsSiteDescriptors" Relationship="cbiModel.FK_AtomsSiteDescriptors_1" FromRole="Sites" ToRole="AtomsSiteDescriptors" />
-          <NavigationProperty Name="BoundsSiteDescriptors" Relationship="cbiModel.FK_BoundsSiteDescriptors_2" FromRole="Sites" ToRole="BoundsSiteDescriptors" />
-          <NavigationProperty Name="BranchesSiteDescriptors" Relationship="cbiModel.FK_BranchesSiteDescriptors_0" FromRole="Sites" ToRole="BranchesSiteDescriptors" />
-          <NavigationProperty Name="CompareSwapSiteDescriptors" Relationship="cbiModel.FK_CompareSwapSiteDescriptors_0" FromRole="Sites" ToRole="CompareSwapSiteDescriptors" />
-          <NavigationProperty Name="FloatKindsSiteDescriptors" Relationship="cbiModel.FK_FloatKindsSiteDescriptors_2" FromRole="Sites" ToRole="FloatKindsSiteDescriptors" />
-          <NavigationProperty Name="GObjectUnrefSiteDescriptors" Relationship="cbiModel.FK_GObjectUnrefSiteDescriptors_0" FromRole="Sites" ToRole="GObjectUnrefSiteDescriptors" />
-          <NavigationProperty Name="ReturnsSiteDescriptors" Relationship="cbiModel.FK_ReturnsSiteDescriptors_0" FromRole="Sites" ToRole="ReturnsSiteDescriptors" />
+          <Property Name="UnitID" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="AtomsSiteDescriptor" Relationship="cbiModel.FK_AtomsSiteDescriptors_1" FromRole="Sites" ToRole="AtomsSiteDescriptors" />
+          <NavigationProperty Name="BoundsSiteDescriptor" Relationship="cbiModel.FK_BoundsSiteDescriptors_2" FromRole="Sites" ToRole="BoundsSiteDescriptors" />
+          <NavigationProperty Name="BranchesSiteDescriptor" Relationship="cbiModel.FK_BranchesSiteDescriptors_0" FromRole="Sites" ToRole="BranchesSiteDescriptors" />
+          <NavigationProperty Name="CompareSwapSiteDescriptor" Relationship="cbiModel.FK_CompareSwapSiteDescriptors_0" FromRole="Sites" ToRole="CompareSwapSiteDescriptors" />
+          <NavigationProperty Name="FloatKindsSiteDescriptor" Relationship="cbiModel.FK_FloatKindsSiteDescriptors_2" FromRole="Sites" ToRole="FloatKindsSiteDescriptors" />
+          <NavigationProperty Name="GObjectUnrefSiteDescriptor" Relationship="cbiModel.FK_GObjectUnrefSiteDescriptors_0" FromRole="Sites" ToRole="GObjectUnrefSiteDescriptors" />
+          <NavigationProperty Name="ReturnsSiteDescriptor" Relationship="cbiModel.FK_ReturnsSiteDescriptors_0" FromRole="Sites" ToRole="ReturnsSiteDescriptors" />
           <NavigationProperty Name="SampleCounts" Relationship="cbiModel.FK_SampleCounts_2" FromRole="Sites" ToRole="SampleCounts" />
           <NavigationProperty Name="SampleValues" Relationship="cbiModel.FK_SampleValues_2" FromRole="Sites" ToRole="SampleValues" />
-          <NavigationProperty Name="ScalarPairsSiteDescriptors" Relationship="cbiModel.FK_ScalarPairsSiteDescriptors_3" FromRole="Sites" ToRole="ScalarPairsSiteDescriptors" />
-          <NavigationProperty Name="Units" Relationship="cbiModel.FK_Sites_0" FromRole="Sites" ToRole="Units" />
+          <NavigationProperty Name="ScalarPairsSiteDescriptor" Relationship="cbiModel.FK_ScalarPairsSiteDescriptors_3" FromRole="Sites" ToRole="ScalarPairsSiteDescriptors" />
+          <NavigationProperty Name="Unit" Relationship="cbiModel.FK_Sites_0" FromRole="Sites" ToRole="Units" />
           <NavigationProperty Name="Plans" Relationship="cbiModel.SitesInPlans" FromRole="Sites" ToRole="Plans" />
         </EntityType>
-        <EntityType Name="Units">
+        <EntityType Name="Unit">
           <Key>
             <PropertyRef Name="UnitID" />
           </Key>
-          <Property Name="UnitID" Type="Int64" Nullable="false" />
+          <Property Name="UnitID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Signature" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="Schemes" Relationship="cbiModel.FK_Units_0" FromRole="Units" ToRole="Schemes" />
+          <Property Name="SchemeID" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="Scheme" Relationship="cbiModel.FK_Units_0" FromRole="Units" ToRole="Schemes" />
           <NavigationProperty Name="Sites" Relationship="cbiModel.FK_Sites_0" FromRole="Units" ToRole="Sites" />
         </EntityType>
-        <EntityType Name="VariableTypes">
+        <EntityType Name="VariableType">
           <Key>
             <PropertyRef Name="VariableTypeID" />
           </Key>
-          <Property Name="VariableTypeID" Type="Int64" Nullable="false" />
-          <Property Name="VariableType" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
+          <Property Name="VariableTypeID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VariableType1" Type="String" Nullable="false" MaxLength="2147483647" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="FloatKindsSiteDescriptors" Relationship="cbiModel.FK_FloatKindsSiteDescriptors_1" FromRole="VariableTypes" ToRole="FloatKindsSiteDescriptors" />
           <NavigationProperty Name="ScalarPairsSiteDescriptors" Relationship="cbiModel.FK_ScalarPairsSiteDescriptors_0" FromRole="VariableTypes" ToRole="ScalarPairsSiteDescriptors" />
           <NavigationProperty Name="ScalarPairsSiteDescriptors1" Relationship="cbiModel.FK_ScalarPairsSiteDescriptors_2" FromRole="VariableTypes" ToRole="ScalarPairsSiteDescriptors" />
         </EntityType>
         <Association Name="FK_AtomsSiteDescriptors_0">
-          <End Role="AccessTypes" Type="cbiModel.AccessTypes" Multiplicity="1" />
-          <End Role="AtomsSiteDescriptors" Type="cbiModel.AtomsSiteDescriptors" Multiplicity="*" />
+          <End Role="AccessTypes" Type="cbiModel.AccessType" Multiplicity="1" />
+          <End Role="AtomsSiteDescriptors" Type="cbiModel.AtomsSiteDescriptor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AccessTypes">
+              <PropertyRef Name="AccessTypeID" />
+            </Principal>
+            <Dependent Role="AtomsSiteDescriptors">
+              <PropertyRef Name="AccessTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         <Association Name="FK_FloatKindsSiteDescriptors_0">
-          <End Role="AccessTypes" Type="cbiModel.AccessTypes" Multiplicity="1" />
-          <End Role="FloatKindsSiteDescriptors" Type="cbiModel.FloatKindsSiteDescriptors" Multiplicity="*" />
+          <End Role="AccessTypes" Type="cbiModel.AccessType" Multiplicity="1" />
+          <End Role="FloatKindsSiteDescriptors" Type="cbiModel.FloatKindsSiteDescriptor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AccessTypes">
+              <PropertyRef Name="AccessTypeID" />
+            </Principal>
+            <Dependent Role="FloatKindsSiteDescriptors">
+              <PropertyRef Name="AccessTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         <Association Name="FK_ScalarPairsSiteDescriptors_1">
-          <End Role="AssignmentTypes" Type="cbiModel.AssignmentTypes" Multiplicity="1" />
-          <End Role="ScalarPairsSiteDescriptors" Type="cbiModel.ScalarPairsSiteDescriptors" Multiplicity="*" />
+          <End Role="AssignmentTypes" Type="cbiModel.AssignmentType" Multiplicity="1" />
+          <End Role="ScalarPairsSiteDescriptors" Type="cbiModel.ScalarPairsSiteDescriptor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AssignmentTypes">
+              <PropertyRef Name="AssignmentTypeID" />
+            </Principal>
+            <Dependent Role="ScalarPairsSiteDescriptors">
+              <PropertyRef Name="LHSAssignmentTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         <Association Name="FK_AtomsSiteDescriptors_1">
-          <End Role="Sites" Type="cbiModel.Sites" Multiplicity="1" />
-          <End Role="AtomsSiteDescriptors" Type="cbiModel.AtomsSiteDescriptors" Multiplicity="0..1" />
+          <End Role="Sites" Type="cbiModel.Site" Multiplicity="1" />
+          <End Role="AtomsSiteDescriptors" Type="cbiModel.AtomsSiteDescriptor" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="Sites">
               <PropertyRef Name="SiteID" />
@@ -1115,8 +1118,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_BoundsSiteDescriptors_2">
-          <End Role="Sites" Type="cbiModel.Sites" Multiplicity="1" />
-          <End Role="BoundsSiteDescriptors" Type="cbiModel.BoundsSiteDescriptors" Multiplicity="0..1" />
+          <End Role="Sites" Type="cbiModel.Site" Multiplicity="1" />
+          <End Role="BoundsSiteDescriptors" Type="cbiModel.BoundsSiteDescriptor" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="Sites">
               <PropertyRef Name="SiteID" />
@@ -1127,8 +1130,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_BranchesSiteDescriptors_0">
-          <End Role="Sites" Type="cbiModel.Sites" Multiplicity="1" />
-          <End Role="BranchesSiteDescriptors" Type="cbiModel.BranchesSiteDescriptors" Multiplicity="0..1" />
+          <End Role="Sites" Type="cbiModel.Site" Multiplicity="1" />
+          <End Role="BranchesSiteDescriptors" Type="cbiModel.BranchesSiteDescriptor" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="Sites">
               <PropertyRef Name="SiteID" />
@@ -1139,8 +1142,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_CompareSwapSiteDescriptors_0">
-          <End Role="Sites" Type="cbiModel.Sites" Multiplicity="1" />
-          <End Role="CompareSwapSiteDescriptors" Type="cbiModel.CompareSwapSiteDescriptors" Multiplicity="0..1" />
+          <End Role="Sites" Type="cbiModel.Site" Multiplicity="1" />
+          <End Role="CompareSwapSiteDescriptors" Type="cbiModel.CompareSwapSiteDescriptor" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="Sites">
               <PropertyRef Name="SiteID" />
@@ -1151,12 +1154,20 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Fields_0">
-          <End Role="Schemes" Type="cbiModel.Schemes" Multiplicity="1" />
-          <End Role="Fields" Type="cbiModel.Fields" Multiplicity="*" />
+          <End Role="Schemes" Type="cbiModel.Scheme" Multiplicity="1" />
+          <End Role="Fields" Type="cbiModel.Field" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schemes">
+              <PropertyRef Name="SchemeID" />
+            </Principal>
+            <Dependent Role="Fields">
+              <PropertyRef Name="SchemeID" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         <Association Name="FK_SampleCounts_1">
-          <End Role="Fields" Type="cbiModel.Fields" Multiplicity="1" />
-          <End Role="SampleCounts" Type="cbiModel.SampleCounts" Multiplicity="*" />
+          <End Role="Fields" Type="cbiModel.Field" Multiplicity="1" />
+          <End Role="SampleCounts" Type="cbiModel.SampleCount" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Fields">
               <PropertyRef Name="FieldID" />
@@ -1167,8 +1178,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_SampleValues_1">
-          <End Role="Fields" Type="cbiModel.Fields" Multiplicity="1" />
-          <End Role="SampleValues" Type="cbiModel.SampleValues" Multiplicity="*" />
+          <End Role="Fields" Type="cbiModel.Field" Multiplicity="1" />
+          <End Role="SampleValues" Type="cbiModel.SampleValue" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Fields">
               <PropertyRef Name="FieldID" />
@@ -1179,12 +1190,20 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_FloatKindsSiteDescriptors_1">
-          <End Role="VariableTypes" Type="cbiModel.VariableTypes" Multiplicity="1" />
-          <End Role="FloatKindsSiteDescriptors" Type="cbiModel.FloatKindsSiteDescriptors" Multiplicity="*" />
+          <End Role="VariableTypes" Type="cbiModel.VariableType" Multiplicity="1" />
+          <End Role="FloatKindsSiteDescriptors" Type="cbiModel.FloatKindsSiteDescriptor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VariableTypes">
+              <PropertyRef Name="VariableTypeID" />
+            </Principal>
+            <Dependent Role="FloatKindsSiteDescriptors">
+              <PropertyRef Name="VariableTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         <Association Name="FK_FloatKindsSiteDescriptors_2">
-          <End Role="Sites" Type="cbiModel.Sites" Multiplicity="1" />
-          <End Role="FloatKindsSiteDescriptors" Type="cbiModel.FloatKindsSiteDescriptors" Multiplicity="0..1" />
+          <End Role="Sites" Type="cbiModel.Site" Multiplicity="1" />
+          <End Role="FloatKindsSiteDescriptors" Type="cbiModel.FloatKindsSiteDescriptor" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="Sites">
               <PropertyRef Name="SiteID" />
@@ -1195,8 +1214,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_GObjectUnrefSiteDescriptors_0">
-          <End Role="Sites" Type="cbiModel.Sites" Multiplicity="1" />
-          <End Role="GObjectUnrefSiteDescriptors" Type="cbiModel.GObjectUnrefSiteDescriptors" Multiplicity="0..1" />
+          <End Role="Sites" Type="cbiModel.Site" Multiplicity="1" />
+          <End Role="GObjectUnrefSiteDescriptors" Type="cbiModel.GObjectUnrefSiteDescriptor" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="Sites">
               <PropertyRef Name="SiteID" />
@@ -1207,12 +1226,20 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Runs_0">
-          <End Role="Outcomes" Type="cbiModel.Outcomes" Multiplicity="1" />
-          <End Role="Runs" Type="cbiModel.Runs" Multiplicity="*" />
+          <End Role="Outcomes" Type="cbiModel.Outcome" Multiplicity="1" />
+          <End Role="Runs" Type="cbiModel.Run" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Outcomes">
+              <PropertyRef Name="OutcomeID" />
+            </Principal>
+            <Dependent Role="Runs">
+              <PropertyRef Name="OutcomeID" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         <Association Name="FK_ReturnsSiteDescriptors_0">
-          <End Role="Sites" Type="cbiModel.Sites" Multiplicity="1" />
-          <End Role="ReturnsSiteDescriptors" Type="cbiModel.ReturnsSiteDescriptors" Multiplicity="0..1" />
+          <End Role="Sites" Type="cbiModel.Site" Multiplicity="1" />
+          <End Role="ReturnsSiteDescriptors" Type="cbiModel.ReturnsSiteDescriptor" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="Sites">
               <PropertyRef Name="SiteID" />
@@ -1223,7 +1250,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_RunIDToTestCase_0">
-          <End Role="Runs" Type="cbiModel.Runs" Multiplicity="1" />
+          <End Role="Runs" Type="cbiModel.Run" Multiplicity="1" />
           <End Role="RunIDToTestCase" Type="cbiModel.RunIDToTestCase" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="Runs">
@@ -1235,8 +1262,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_SampleCounts_0">
-          <End Role="Runs" Type="cbiModel.Runs" Multiplicity="1" />
-          <End Role="SampleCounts" Type="cbiModel.SampleCounts" Multiplicity="*" />
+          <End Role="Runs" Type="cbiModel.Run" Multiplicity="1" />
+          <End Role="SampleCounts" Type="cbiModel.SampleCount" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Runs">
               <PropertyRef Name="RunID" />
@@ -1247,8 +1274,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_SampleValues_0">
-          <End Role="Runs" Type="cbiModel.Runs" Multiplicity="1" />
-          <End Role="SampleValues" Type="cbiModel.SampleValues" Multiplicity="*" />
+          <End Role="Runs" Type="cbiModel.Run" Multiplicity="1" />
+          <End Role="SampleValues" Type="cbiModel.SampleValue" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Runs">
               <PropertyRef Name="RunID" />
@@ -1259,8 +1286,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_SampleCounts_2">
-          <End Role="Sites" Type="cbiModel.Sites" Multiplicity="1" />
-          <End Role="SampleCounts" Type="cbiModel.SampleCounts" Multiplicity="*" />
+          <End Role="Sites" Type="cbiModel.Site" Multiplicity="1" />
+          <End Role="SampleCounts" Type="cbiModel.SampleCount" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Sites">
               <PropertyRef Name="SiteID" />
@@ -1271,8 +1298,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_SampleValues_2">
-          <End Role="Sites" Type="cbiModel.Sites" Multiplicity="1" />
-          <End Role="SampleValues" Type="cbiModel.SampleValues" Multiplicity="*" />
+          <End Role="Sites" Type="cbiModel.Site" Multiplicity="1" />
+          <End Role="SampleValues" Type="cbiModel.SampleValue" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Sites">
               <PropertyRef Name="SiteID" />
@@ -1283,16 +1310,32 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ScalarPairsSiteDescriptors_0">
-          <End Role="VariableTypes" Type="cbiModel.VariableTypes" Multiplicity="1" />
-          <End Role="ScalarPairsSiteDescriptors" Type="cbiModel.ScalarPairsSiteDescriptors" Multiplicity="*" />
+          <End Role="VariableTypes" Type="cbiModel.VariableType" Multiplicity="1" />
+          <End Role="ScalarPairsSiteDescriptors" Type="cbiModel.ScalarPairsSiteDescriptor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VariableTypes">
+              <PropertyRef Name="VariableTypeID" />
+            </Principal>
+            <Dependent Role="ScalarPairsSiteDescriptors">
+              <PropertyRef Name="RHSVariableTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         <Association Name="FK_ScalarPairsSiteDescriptors_2">
-          <End Role="VariableTypes" Type="cbiModel.VariableTypes" Multiplicity="1" />
-          <End Role="ScalarPairsSiteDescriptors" Type="cbiModel.ScalarPairsSiteDescriptors" Multiplicity="*" />
+          <End Role="VariableTypes" Type="cbiModel.VariableType" Multiplicity="1" />
+          <End Role="ScalarPairsSiteDescriptors" Type="cbiModel.ScalarPairsSiteDescriptor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VariableTypes">
+              <PropertyRef Name="VariableTypeID" />
+            </Principal>
+            <Dependent Role="ScalarPairsSiteDescriptors">
+              <PropertyRef Name="LHSVariableTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         <Association Name="FK_ScalarPairsSiteDescriptors_3">
-          <End Role="Sites" Type="cbiModel.Sites" Multiplicity="1" />
-          <End Role="ScalarPairsSiteDescriptors" Type="cbiModel.ScalarPairsSiteDescriptors" Multiplicity="0..1" />
+          <End Role="Sites" Type="cbiModel.Site" Multiplicity="1" />
+          <End Role="ScalarPairsSiteDescriptors" Type="cbiModel.ScalarPairsSiteDescriptor" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="Sites">
               <PropertyRef Name="SiteID" />
@@ -1303,430 +1346,153 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Units_0">
-          <End Role="Schemes" Type="cbiModel.Schemes" Multiplicity="1" />
-          <End Role="Units" Type="cbiModel.Units" Multiplicity="*" />
+          <End Role="Schemes" Type="cbiModel.Scheme" Multiplicity="1" />
+          <End Role="Units" Type="cbiModel.Unit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schemes">
+              <PropertyRef Name="SchemeID" />
+            </Principal>
+            <Dependent Role="Units">
+              <PropertyRef Name="SchemeID" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         <Association Name="FK_Sites_0">
-          <End Role="Units" Type="cbiModel.Units" Multiplicity="1" />
-          <End Role="Sites" Type="cbiModel.Sites" Multiplicity="*" />
+          <End Role="Units" Type="cbiModel.Unit" Multiplicity="1" />
+          <End Role="Sites" Type="cbiModel.Site" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Units">
+              <PropertyRef Name="UnitID" />
+            </Principal>
+            <Dependent Role="Sites">
+              <PropertyRef Name="UnitID" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         <Association Name="RunsInPlans">
-          <End Role="Runs" Type="cbiModel.Runs" Multiplicity="*" />
-          <End Role="Plans" Type="cbiModel.Plans" Multiplicity="*" />
+          <End Role="Runs" Type="cbiModel.Run" Multiplicity="*" />
+          <End Role="Plans" Type="cbiModel.Plan" Multiplicity="0..1" />
         </Association>
         <Association Name="SitesInPlans">
-          <End Role="Sites" Type="cbiModel.Sites" Multiplicity="*" />
-          <End Role="Plans" Type="cbiModel.Plans" Multiplicity="*" />
+          <End Role="Sites" Type="cbiModel.Site" Multiplicity="*" />
+          <End Role="Plans" Type="cbiModel.Plan" Multiplicity="*" />
         </Association>
-        </Schema>
+      </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
-      <Mapping Space="C-S" xmlns="urn:schemas-microsoft-com:windows:storage:mapping:CS">
-        <EntityContainerMapping StorageEntityContainer="cbiModelStoreContainer" CdmEntityContainer="cbiEntities">
-          <EntitySetMapping Name="AccessTypes">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.AccessTypes)">
-              <MappingFragment StoreEntitySet="AccessTypes">
-                <ScalarProperty Name="AccessTypeID" ColumnName="AccessTypeID" />
-                <ScalarProperty Name="AccessType" ColumnName="AccessType" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AssignmentTypes">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.AssignmentTypes)">
-              <MappingFragment StoreEntitySet="AssignmentTypes">
-                <ScalarProperty Name="AssignmentTypeID" ColumnName="AssignmentTypeID" />
-                <ScalarProperty Name="AssignmentType" ColumnName="AssignmentType" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AtomsSiteDescriptors">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.AtomsSiteDescriptors)">
-              <MappingFragment StoreEntitySet="AtomsSiteDescriptors">
-                <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-                <ScalarProperty Name="Variable" ColumnName="Variable" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="BoundsSiteDescriptors">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.BoundsSiteDescriptors)">
-              <MappingFragment StoreEntitySet="BoundsSiteDescriptors">
-                <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-                <ScalarProperty Name="Variable" ColumnName="Variable" />
-                <ScalarProperty Name="VariableTypeID" ColumnName="VariableTypeID" />
-                <ScalarProperty Name="AccessTypeID" ColumnName="AccessTypeID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="BranchesSiteDescriptors">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.BranchesSiteDescriptors)">
-              <MappingFragment StoreEntitySet="BranchesSiteDescriptors">
-                <ScalarProperty Name="SiteId" ColumnName="SiteId" />
-                <ScalarProperty Name="Predicate" ColumnName="Predicate" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="CompareSwapSiteDescriptors">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.CompareSwapSiteDescriptors)">
-              <MappingFragment StoreEntitySet="CompareSwapSiteDescriptors">
-                <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-                <ScalarProperty Name="Variable" ColumnName="Variable" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Fields">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.Fields)">
-              <MappingFragment StoreEntitySet="Fields">
-                <ScalarProperty Name="FieldID" ColumnName="FieldID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="FloatKindsSiteDescriptors">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.FloatKindsSiteDescriptors)">
-              <MappingFragment StoreEntitySet="FloatKindsSiteDescriptors">
-                <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-                <ScalarProperty Name="Variable" ColumnName="Variable" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="GObjectUnrefSiteDescriptors">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.GObjectUnrefSiteDescriptors)">
-              <MappingFragment StoreEntitySet="GObjectUnrefSiteDescriptors">
-                <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-                <ScalarProperty Name="OBJECT" ColumnName="OBJECT" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Outcomes">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.Outcomes)">
-              <MappingFragment StoreEntitySet="Outcomes">
-                <ScalarProperty Name="OutcomeID" ColumnName="OutcomeID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Plans">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.Plans)">
-              <MappingFragment StoreEntitySet="Plans">
-                <ScalarProperty Name="PlanID" ColumnName="PlanID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ReturnsSiteDescriptors">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.ReturnsSiteDescriptors)">
-              <MappingFragment StoreEntitySet="ReturnsSiteDescriptors">
-                <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-                <ScalarProperty Name="Callee" ColumnName="Callee" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RunIDToTestCase">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.RunIDToTestCase)">
-              <MappingFragment StoreEntitySet="RunIDToTestCase">
-                <ScalarProperty Name="RunID" ColumnName="RunID" />
-                <ScalarProperty Name="TestCase" ColumnName="TestCase" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Runs">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.Runs)">
-              <MappingFragment StoreEntitySet="Runs">
-                <ScalarProperty Name="RunID" ColumnName="RunID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SampleCounts">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.SampleCounts)">
-              <MappingFragment StoreEntitySet="SampleCounts">
-                <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-                <ScalarProperty Name="FieldID" ColumnName="FieldID" />
-                <ScalarProperty Name="RunID" ColumnName="RunID" />
-                <ScalarProperty Name="Count" ColumnName="Count" />
-                <ScalarProperty Name="Phase" ColumnName="Phase" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SampleValues">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.SampleValues)">
-              <MappingFragment StoreEntitySet="SampleValues">
-                <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-                <ScalarProperty Name="FieldID" ColumnName="FieldID" />
-                <ScalarProperty Name="RunID" ColumnName="RunID" />
-                <ScalarProperty Name="Value" ColumnName="Value" />
-                <ScalarProperty Name="Phase" ColumnName="Phase" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ScalarPairsSiteDescriptors">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.ScalarPairsSiteDescriptors)">
-              <MappingFragment StoreEntitySet="ScalarPairsSiteDescriptors">
-                <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-                <ScalarProperty Name="LHSVariable" ColumnName="LHSVariable" />
-                <ScalarProperty Name="RHSVariable" ColumnName="RHSVariable" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SchemaVersion">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.SchemaVersion)">
-              <MappingFragment StoreEntitySet="SchemaVersion">
-                <ScalarProperty Name="SchemaID" ColumnName="SchemaID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Schemes">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.Schemes)">
-              <MappingFragment StoreEntitySet="Schemes">
-                <ScalarProperty Name="SchemeID" ColumnName="SchemeID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="SchemeCode" ColumnName="SchemeCode" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Sites">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.Sites)">
-              <MappingFragment StoreEntitySet="Sites">
-                <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-                <ScalarProperty Name="FileName" ColumnName="FileName" />
-                <ScalarProperty Name="Line" ColumnName="Line" />
-                <ScalarProperty Name="CFGNode" ColumnName="CFGNode" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Units">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.Units)">
-              <MappingFragment StoreEntitySet="Units">
-                <ScalarProperty Name="UnitID" ColumnName="UnitID" />
-                <ScalarProperty Name="Signature" ColumnName="Signature" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="VariableTypes">
-            <EntityTypeMapping TypeName="IsTypeOf(cbiModel.VariableTypes)">
-              <MappingFragment StoreEntitySet="VariableTypes">
-                <ScalarProperty Name="VariableTypeID" ColumnName="VariableTypeID" />
-                <ScalarProperty Name="VariableType" ColumnName="VariableType" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <AssociationSetMapping Name="FK_AtomsSiteDescriptors_0" TypeName="cbiModel.FK_AtomsSiteDescriptors_0" StoreEntitySet="AtomsSiteDescriptors">
-            <EndProperty Name="AccessTypes">
-              <ScalarProperty Name="AccessTypeID" ColumnName="AccessTypeID" />
-            </EndProperty>
-            <EndProperty Name="AtomsSiteDescriptors">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_FloatKindsSiteDescriptors_0" TypeName="cbiModel.FK_FloatKindsSiteDescriptors_0" StoreEntitySet="FloatKindsSiteDescriptors">
-            <EndProperty Name="AccessTypes">
-              <ScalarProperty Name="AccessTypeID" ColumnName="AccessTypeID" />
-            </EndProperty>
-            <EndProperty Name="FloatKindsSiteDescriptors">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_ScalarPairsSiteDescriptors_1" TypeName="cbiModel.FK_ScalarPairsSiteDescriptors_1" StoreEntitySet="ScalarPairsSiteDescriptors">
-            <EndProperty Name="AssignmentTypes">
-              <ScalarProperty Name="AssignmentTypeID" ColumnName="LHSAssignmentTypeID" />
-            </EndProperty>
-            <EndProperty Name="ScalarPairsSiteDescriptors">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_AtomsSiteDescriptors_1" TypeName="cbiModel.FK_AtomsSiteDescriptors_1" StoreEntitySet="AtomsSiteDescriptors">
-            <EndProperty Name="Sites">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-            <EndProperty Name="AtomsSiteDescriptors">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_BoundsSiteDescriptors_2" TypeName="cbiModel.FK_BoundsSiteDescriptors_2" StoreEntitySet="BoundsSiteDescriptors">
-            <EndProperty Name="Sites">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-            <EndProperty Name="BoundsSiteDescriptors">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_BranchesSiteDescriptors_0" TypeName="cbiModel.FK_BranchesSiteDescriptors_0" StoreEntitySet="BranchesSiteDescriptors">
-            <EndProperty Name="Sites">
-              <ScalarProperty Name="SiteID" ColumnName="SiteId" />
-            </EndProperty>
-            <EndProperty Name="BranchesSiteDescriptors">
-              <ScalarProperty Name="SiteId" ColumnName="SiteId" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_CompareSwapSiteDescriptors_0" TypeName="cbiModel.FK_CompareSwapSiteDescriptors_0" StoreEntitySet="CompareSwapSiteDescriptors">
-            <EndProperty Name="Sites">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-            <EndProperty Name="CompareSwapSiteDescriptors">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_Fields_0" TypeName="cbiModel.FK_Fields_0" StoreEntitySet="Fields">
-            <EndProperty Name="Schemes">
-              <ScalarProperty Name="SchemeID" ColumnName="SchemeID" />
-            </EndProperty>
-            <EndProperty Name="Fields">
-              <ScalarProperty Name="FieldID" ColumnName="FieldID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_SampleCounts_1" TypeName="cbiModel.FK_SampleCounts_1" StoreEntitySet="SampleCounts">
-            <EndProperty Name="Fields">
-              <ScalarProperty Name="FieldID" ColumnName="FieldID" />
-            </EndProperty>
-            <EndProperty Name="SampleCounts">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-              <ScalarProperty Name="FieldID" ColumnName="FieldID" />
-              <ScalarProperty Name="RunID" ColumnName="RunID" />
-              <ScalarProperty Name="Count" ColumnName="Count" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_SampleValues_1" TypeName="cbiModel.FK_SampleValues_1" StoreEntitySet="SampleValues">
-            <EndProperty Name="Fields">
-              <ScalarProperty Name="FieldID" ColumnName="FieldID" />
-            </EndProperty>
-            <EndProperty Name="SampleValues">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-              <ScalarProperty Name="FieldID" ColumnName="FieldID" />
-              <ScalarProperty Name="RunID" ColumnName="RunID" />
-              <ScalarProperty Name="Value" ColumnName="Value" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_FloatKindsSiteDescriptors_1" TypeName="cbiModel.FK_FloatKindsSiteDescriptors_1" StoreEntitySet="FloatKindsSiteDescriptors">
-            <EndProperty Name="VariableTypes">
-              <ScalarProperty Name="VariableTypeID" ColumnName="VariableTypeID" />
-            </EndProperty>
-            <EndProperty Name="FloatKindsSiteDescriptors">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_FloatKindsSiteDescriptors_2" TypeName="cbiModel.FK_FloatKindsSiteDescriptors_2" StoreEntitySet="FloatKindsSiteDescriptors">
-            <EndProperty Name="Sites">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-            <EndProperty Name="FloatKindsSiteDescriptors">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_GObjectUnrefSiteDescriptors_0" TypeName="cbiModel.FK_GObjectUnrefSiteDescriptors_0" StoreEntitySet="GObjectUnrefSiteDescriptors">
-            <EndProperty Name="Sites">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-            <EndProperty Name="GObjectUnrefSiteDescriptors">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_Runs_0" TypeName="cbiModel.FK_Runs_0" StoreEntitySet="Runs">
-            <EndProperty Name="Outcomes">
-              <ScalarProperty Name="OutcomeID" ColumnName="OutcomeID" />
-            </EndProperty>
-            <EndProperty Name="Runs">
-              <ScalarProperty Name="RunID" ColumnName="RunID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_ReturnsSiteDescriptors_0" TypeName="cbiModel.FK_ReturnsSiteDescriptors_0" StoreEntitySet="ReturnsSiteDescriptors">
-            <EndProperty Name="Sites">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-            <EndProperty Name="ReturnsSiteDescriptors">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_RunIDToTestCase_0" TypeName="cbiModel.FK_RunIDToTestCase_0" StoreEntitySet="RunIDToTestCase">
-            <EndProperty Name="Runs">
-              <ScalarProperty Name="RunID" ColumnName="RunID" />
-            </EndProperty>
-            <EndProperty Name="RunIDToTestCase">
-              <ScalarProperty Name="RunID" ColumnName="RunID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_SampleCounts_0" TypeName="cbiModel.FK_SampleCounts_0" StoreEntitySet="SampleCounts">
-            <EndProperty Name="Runs">
-              <ScalarProperty Name="RunID" ColumnName="RunID" />
-            </EndProperty>
-            <EndProperty Name="SampleCounts">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-              <ScalarProperty Name="FieldID" ColumnName="FieldID" />
-              <ScalarProperty Name="RunID" ColumnName="RunID" />
-              <ScalarProperty Name="Count" ColumnName="Count" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_SampleValues_0" TypeName="cbiModel.FK_SampleValues_0" StoreEntitySet="SampleValues">
-            <EndProperty Name="Runs">
-              <ScalarProperty Name="RunID" ColumnName="RunID" />
-            </EndProperty>
-            <EndProperty Name="SampleValues">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-              <ScalarProperty Name="FieldID" ColumnName="FieldID" />
-              <ScalarProperty Name="RunID" ColumnName="RunID" />
-              <ScalarProperty Name="Value" ColumnName="Value" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_SampleCounts_2" TypeName="cbiModel.FK_SampleCounts_2" StoreEntitySet="SampleCounts">
-            <EndProperty Name="Sites">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-            <EndProperty Name="SampleCounts">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-              <ScalarProperty Name="FieldID" ColumnName="FieldID" />
-              <ScalarProperty Name="RunID" ColumnName="RunID" />
-              <ScalarProperty Name="Count" ColumnName="Count" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_SampleValues_2" TypeName="cbiModel.FK_SampleValues_2" StoreEntitySet="SampleValues">
-            <EndProperty Name="Sites">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-            <EndProperty Name="SampleValues">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-              <ScalarProperty Name="FieldID" ColumnName="FieldID" />
-              <ScalarProperty Name="RunID" ColumnName="RunID" />
-              <ScalarProperty Name="Value" ColumnName="Value" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_ScalarPairsSiteDescriptors_0" TypeName="cbiModel.FK_ScalarPairsSiteDescriptors_0" StoreEntitySet="ScalarPairsSiteDescriptors">
-            <EndProperty Name="VariableTypes">
-              <ScalarProperty Name="VariableTypeID" ColumnName="RHSVariableTypeID" />
-            </EndProperty>
-            <EndProperty Name="ScalarPairsSiteDescriptors">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_ScalarPairsSiteDescriptors_2" TypeName="cbiModel.FK_ScalarPairsSiteDescriptors_2" StoreEntitySet="ScalarPairsSiteDescriptors">
-            <EndProperty Name="VariableTypes">
-              <ScalarProperty Name="VariableTypeID" ColumnName="LHSVariableTypeID" />
-            </EndProperty>
-            <EndProperty Name="ScalarPairsSiteDescriptors">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_ScalarPairsSiteDescriptors_3" TypeName="cbiModel.FK_ScalarPairsSiteDescriptors_3" StoreEntitySet="ScalarPairsSiteDescriptors">
-            <EndProperty Name="Sites">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-            <EndProperty Name="ScalarPairsSiteDescriptors">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_Units_0" TypeName="cbiModel.FK_Units_0" StoreEntitySet="Units">
-            <EndProperty Name="Schemes">
-              <ScalarProperty Name="SchemeID" ColumnName="SchemeID" />
-            </EndProperty>
-            <EndProperty Name="Units">
-              <ScalarProperty Name="UnitID" ColumnName="UnitID" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_Sites_0" TypeName="cbiModel.FK_Sites_0" StoreEntitySet="Sites">
-            <EndProperty Name="Units">
-              <ScalarProperty Name="UnitID" ColumnName="UnitID" />
-            </EndProperty>
-            <EndProperty Name="Sites">
-              <ScalarProperty Name="SiteID" ColumnName="SiteID" />
-            </EndProperty>
-          </AssociationSetMapping>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="cbiModelStoreContainer" CdmEntityContainer="cbiEntities1">
+          <EntitySetMapping Name="AccessTypes"><EntityTypeMapping TypeName="cbiModel.AccessType"><MappingFragment StoreEntitySet="AccessTypes">
+            <ScalarProperty Name="AccessTypeID" ColumnName="AccessTypeID" />
+            <ScalarProperty Name="AccessType1" ColumnName="AccessType" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="AssignmentTypes"><EntityTypeMapping TypeName="cbiModel.AssignmentType"><MappingFragment StoreEntitySet="AssignmentTypes">
+            <ScalarProperty Name="AssignmentTypeID" ColumnName="AssignmentTypeID" />
+            <ScalarProperty Name="AssignmentType1" ColumnName="AssignmentType" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="AtomsSiteDescriptors"><EntityTypeMapping TypeName="cbiModel.AtomsSiteDescriptor"><MappingFragment StoreEntitySet="AtomsSiteDescriptors">
+            <ScalarProperty Name="SiteID" ColumnName="SiteID" />
+            <ScalarProperty Name="Variable" ColumnName="Variable" />
+            <ScalarProperty Name="AccessTypeID" ColumnName="AccessTypeID" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="BoundsSiteDescriptors"><EntityTypeMapping TypeName="cbiModel.BoundsSiteDescriptor"><MappingFragment StoreEntitySet="BoundsSiteDescriptors">
+            <ScalarProperty Name="SiteID" ColumnName="SiteID" />
+            <ScalarProperty Name="Variable" ColumnName="Variable" />
+            <ScalarProperty Name="VariableTypeID" ColumnName="VariableTypeID" />
+            <ScalarProperty Name="AccessTypeID" ColumnName="AccessTypeID" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="BranchesSiteDescriptors"><EntityTypeMapping TypeName="cbiModel.BranchesSiteDescriptor"><MappingFragment StoreEntitySet="BranchesSiteDescriptors">
+            <ScalarProperty Name="SiteId" ColumnName="SiteId" />
+            <ScalarProperty Name="Predicate" ColumnName="Predicate" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="CompareSwapSiteDescriptors"><EntityTypeMapping TypeName="cbiModel.CompareSwapSiteDescriptor"><MappingFragment StoreEntitySet="CompareSwapSiteDescriptors">
+            <ScalarProperty Name="SiteID" ColumnName="SiteID" />
+            <ScalarProperty Name="Variable" ColumnName="Variable" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Fields"><EntityTypeMapping TypeName="cbiModel.Field"><MappingFragment StoreEntitySet="Fields">
+            <ScalarProperty Name="FieldID" ColumnName="FieldID" />
+            <ScalarProperty Name="SchemeID" ColumnName="SchemeID" />
+            <ScalarProperty Name="Name" ColumnName="Name" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="FloatKindsSiteDescriptors"><EntityTypeMapping TypeName="cbiModel.FloatKindsSiteDescriptor"><MappingFragment StoreEntitySet="FloatKindsSiteDescriptors">
+            <ScalarProperty Name="SiteID" ColumnName="SiteID" />
+            <ScalarProperty Name="Variable" ColumnName="Variable" />
+            <ScalarProperty Name="VariableTypeID" ColumnName="VariableTypeID" />
+            <ScalarProperty Name="AccessTypeID" ColumnName="AccessTypeID" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="GObjectUnrefSiteDescriptors"><EntityTypeMapping TypeName="cbiModel.GObjectUnrefSiteDescriptor"><MappingFragment StoreEntitySet="GObjectUnrefSiteDescriptors">
+            <ScalarProperty Name="SiteID" ColumnName="SiteID" />
+            <ScalarProperty Name="OBJECT" ColumnName="OBJECT" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Outcomes"><EntityTypeMapping TypeName="cbiModel.Outcome"><MappingFragment StoreEntitySet="Outcomes">
+            <ScalarProperty Name="OutcomeID" ColumnName="OutcomeID" />
+            <ScalarProperty Name="Name" ColumnName="Name" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Plans"><EntityTypeMapping TypeName="cbiModel.Plan"><MappingFragment StoreEntitySet="Plans">
+            <ScalarProperty Name="PlanID" ColumnName="PlanID" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="ReturnsSiteDescriptors"><EntityTypeMapping TypeName="cbiModel.ReturnsSiteDescriptor"><MappingFragment StoreEntitySet="ReturnsSiteDescriptors">
+            <ScalarProperty Name="SiteID" ColumnName="SiteID" />
+            <ScalarProperty Name="Callee" ColumnName="Callee" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="RunIDToTestCases"><EntityTypeMapping TypeName="cbiModel.RunIDToTestCase"><MappingFragment StoreEntitySet="RunIDToTestCase">
+            <ScalarProperty Name="RunID" ColumnName="RunID" />
+            <ScalarProperty Name="TestCase" ColumnName="TestCase" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Runs"><EntityTypeMapping TypeName="cbiModel.Run"><MappingFragment StoreEntitySet="Runs">
+            <ScalarProperty Name="RunID" ColumnName="RunID" />
+            <ScalarProperty Name="OutcomeID" ColumnName="OutcomeID" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="SampleCounts"><EntityTypeMapping TypeName="cbiModel.SampleCount"><MappingFragment StoreEntitySet="SampleCounts">
+            <ScalarProperty Name="SiteID" ColumnName="SiteID" />
+            <ScalarProperty Name="FieldID" ColumnName="FieldID" />
+            <ScalarProperty Name="RunID" ColumnName="RunID" />
+            <ScalarProperty Name="Count" ColumnName="Count" />
+            <ScalarProperty Name="Phase" ColumnName="Phase" />
+            <ScalarProperty Name="Thread" ColumnName="Thread" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="SampleValues"><EntityTypeMapping TypeName="cbiModel.SampleValue"><MappingFragment StoreEntitySet="SampleValues">
+            <ScalarProperty Name="SiteID" ColumnName="SiteID" />
+            <ScalarProperty Name="FieldID" ColumnName="FieldID" />
+            <ScalarProperty Name="RunID" ColumnName="RunID" />
+            <ScalarProperty Name="Value" ColumnName="Value" />
+            <ScalarProperty Name="Phase" ColumnName="Phase" />
+            <ScalarProperty Name="Thread" ColumnName="Thread" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="ScalarPairsSiteDescriptors"><EntityTypeMapping TypeName="cbiModel.ScalarPairsSiteDescriptor"><MappingFragment StoreEntitySet="ScalarPairsSiteDescriptors">
+            <ScalarProperty Name="SiteID" ColumnName="SiteID" />
+            <ScalarProperty Name="LHSVariable" ColumnName="LHSVariable" />
+            <ScalarProperty Name="LHSVariableTypeID" ColumnName="LHSVariableTypeID" />
+            <ScalarProperty Name="LHSAssignmentTypeID" ColumnName="LHSAssignmentTypeID" />
+            <ScalarProperty Name="RHSVariable" ColumnName="RHSVariable" />
+            <ScalarProperty Name="RHSVariableTypeID" ColumnName="RHSVariableTypeID" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="SchemaVersions"><EntityTypeMapping TypeName="cbiModel.SchemaVersion"><MappingFragment StoreEntitySet="SchemaVersion">
+            <ScalarProperty Name="SchemaID" ColumnName="SchemaID" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Schemes"><EntityTypeMapping TypeName="cbiModel.Scheme"><MappingFragment StoreEntitySet="Schemes">
+            <ScalarProperty Name="SchemeID" ColumnName="SchemeID" />
+            <ScalarProperty Name="Name" ColumnName="Name" />
+            <ScalarProperty Name="SchemeCode" ColumnName="SchemeCode" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Sites"><EntityTypeMapping TypeName="cbiModel.Site"><MappingFragment StoreEntitySet="Sites">
+            <ScalarProperty Name="SiteID" ColumnName="SiteID" />
+            <ScalarProperty Name="FileName" ColumnName="FileName" />
+            <ScalarProperty Name="Line" ColumnName="Line" />
+            <ScalarProperty Name="FunctionIdentifier" ColumnName="FunctionIdentifier" />
+            <ScalarProperty Name="CFGNode" ColumnName="CFGNode" />
+            <ScalarProperty Name="UnitID" ColumnName="UnitID" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Units"><EntityTypeMapping TypeName="cbiModel.Unit"><MappingFragment StoreEntitySet="Units">
+            <ScalarProperty Name="UnitID" ColumnName="UnitID" />
+            <ScalarProperty Name="Signature" ColumnName="Signature" />
+            <ScalarProperty Name="SchemeID" ColumnName="SchemeID" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="VariableTypes"><EntityTypeMapping TypeName="cbiModel.VariableType"><MappingFragment StoreEntitySet="VariableTypes">
+            <ScalarProperty Name="VariableTypeID" ColumnName="VariableTypeID" />
+            <ScalarProperty Name="VariableType1" ColumnName="VariableType" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <AssociationSetMapping Name="RunsInPlans" TypeName="cbiModel.RunsInPlans" StoreEntitySet="RunsInPlans">
             <EndProperty Name="Runs">
               <ScalarProperty Name="RunID" ColumnName="RunID" />
@@ -1743,293 +1509,307 @@
               <ScalarProperty Name="PlanID" ColumnName="PlanID" />
             </EndProperty>
           </AssociationSetMapping>
-          </EntityContainerMapping>
+        </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
-  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2007/06/edmx">
-    <edmx:Connection>
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
       </DesignerInfoPropertySet>
-    </edmx:Connection>
-    <edmx:Options>
+    </Connection>
+    <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
       </DesignerInfoPropertySet>
-    </edmx:Options>
+    </Options>
     <!-- Diagram content (shape and connector positions) -->
-    <edmx:Diagrams>
-      <Diagram Name="Model1" DisplayType="true" ZoomLevel="30">
-        <EntityTypeShape EntityType="cbiModel.AccessTypes" Width="2" PointX="17" PointY="3.625" Height="1.7879850260416674" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.AssignmentTypes" Width="2" PointX="12.125" PointY="3.75" Height="1.5956835937500031" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.AtomsSiteDescriptors" Width="1.875" PointX="9.625" PointY="8.5" Height="1.7879850260416674" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.BoundsSiteDescriptors" Width="1.875" PointX="12.375" PointY="8.375" Height="1.9802864583333317" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.BranchesSiteDescriptors" Width="2" PointX="15.75" PointY="8.375" Height="1.5956835933029652" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.CompareSwapSiteDescriptors" Width="2.375" PointX="9.125" PointY="11.25" Height="1.5956835937500031" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.Fields" Width="1.5" PointX="7.375" PointY="3.75" Height="1.9802864585071802" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.FloatKindsSiteDescriptors" Width="2.125" PointX="12.5" PointY="11.125" Height="1.9802864585071802" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.GObjectUnrefSiteDescriptors" Width="2.25" PointX="10.75" PointY="13.75" Height="1.595683593749996" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.Outcomes" Width="1.625" PointX="1" PointY="4" Height="1.5956835937499996" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.Plans" Width="1.5" PointX="1.875" PointY="20.375" Height="1.5956835937499996" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.ReturnsSiteDescriptors" Width="1.875" PointX="15" PointY="13.75" Height="1.5956835937500031" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.RunIDToTestCase" Width="1.75" PointX="6.5" PointY="20.25" Height="1.5956835937499996" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.Runs" Width="1.5" PointX="9" PointY="20" Height="2.1725878906249996" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.SampleCounts" Width="1.5" PointX="15.625" PointY="20" Height="2.55719075538218" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.SampleValues" Width="1.5" PointX="13.875" PointY="20" Height="2.5571907552083317" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.ScalarPairsSiteDescriptors" Width="2" PointX="16" PointY="10.625" Height="2.3648893229166656" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.SchemaVersion" Width="1.5" PointX="9.125" PointY="0.75" Height="1.211080729166667" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.Schemes" Width="1.75" PointX="5.375" PointY="3.75" Height="1.9802864585071802" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.Sites" Width="2.25" PointX="2.25" PointY="9.375" Height="4.0956022143363953" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.Units" Width="1.5" PointX="2.875" PointY="15.5" Height="1.7879850268363953" IsExpanded="true" />
-        <EntityTypeShape EntityType="cbiModel.VariableTypes" Width="2" PointX="14.625" PointY="3.625" Height="1.9802864583333317" IsExpanded="true" />
+    <Diagrams>
+      <Diagram Name="Model1">
+        <EntityTypeShape EntityType="cbiModel.AccessType" Width="2" PointX="15.25" PointY="3.125" Height="1.7879850260416674" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.AssignmentType" Width="2" PointX="10.5" PointY="3.25" Height="1.5956835937499996" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.AtomsSiteDescriptor" Width="1.75" PointX="13.75" PointY="8" Height="1.9802864583333317" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.BoundsSiteDescriptor" Width="1.875" PointX="15.875" PointY="7.875" Height="1.9802864583333317" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.BranchesSiteDescriptor" Width="1.875" PointX="17.875" PointY="8" Height="1.5956835937499996" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.CompareSwapSiteDescriptor" Width="2.25" PointX="12.25" PointY="10.75" Height="1.595683593749996" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.Field" Width="1.5" PointX="5.875" PointY="3.125" Height="2.1725878906249996" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.FloatKindsSiteDescriptor" Width="2" PointX="15" PointY="10.75" Height="2.3648893229166674" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.GObjectUnrefSiteDescriptor" Width="2.125" PointX="14.25" PointY="13.625" Height="1.595683593749996" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.Outcome" Width="1.5" PointX="1.125" PointY="3.5" Height="1.5956835937499996" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.Plan" Width="1.5" PointX="4.875" PointY="18.25" Height="1.595683593749996" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.ReturnsSiteDescriptor" Width="1.875" PointX="17.5" PointY="13.875" Height="1.5956835937500031" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.RunIDToTestCase" Width="1.5" PointX="8.75" PointY="18.75" Height="1.5956835937500031" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.Run" Width="1.5" PointX="10.75" PointY="18.75" Height="2.3648893229166674" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.SampleCount" Width="1.5" PointX="17.25" PointY="18.375" Height="2.7494921875000031" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.SampleValue" Width="1.5" PointX="15.5" PointY="18.375" Height="2.7494921875000031" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.ScalarPairsSiteDescriptor" Width="2" PointX="17.875" PointY="10.25" Height="2.9417936197916674" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.SchemaVersion" Width="1.5" PointX="8.625" PointY="0.5" Height="1.2110807291666674" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.Scheme" Width="1.5" PointX="4" PointY="3.25" Height="1.9802864583333388" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.Site" Width="2.125" PointX="5.125" PointY="8.125" Height="4.4802050781250031" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.Unit" Width="1.5" PointX="7.125" PointY="13.5" Height="1.9802864583333388" IsExpanded="true" />
+        <EntityTypeShape EntityType="cbiModel.VariableType" Width="2" PointX="12.875" PointY="3.125" Height="1.9802864583333246" IsExpanded="true" />
         <AssociationConnector Association="cbiModel.FK_AtomsSiteDescriptors_0" ManuallyRouted="false">
-          <ConnectorPoint PointX="18" PointY="5.4129850260416674" />
-          <ConnectorPoint PointX="18" PointY="8.125" />
-          <ConnectorPoint PointX="15.583333333333334" PointY="8.125" />
-          <ConnectorPoint PointX="15.416666666666666" PointY="8.125" />
-          <ConnectorPoint PointX="15.411460833333335" PointY="8.125" />
-          <ConnectorPoint PointX="15.244794166666667" PointY="8.125" />
-          <ConnectorPoint PointX="15.177083333333334" PointY="8.125" />
-          <ConnectorPoint PointX="15.010416666666666" PointY="8.125" />
-          <ConnectorPoint PointX="12.302083333333334" PointY="8.125" />
-          <ConnectorPoint PointX="12.135416666666666" PointY="8.125" />
-          <ConnectorPoint PointX="12.083333333333334" PointY="8.125" />
-          <ConnectorPoint PointX="11.916666666666666" PointY="8.125" />
-          <ConnectorPoint PointX="11.875" PointY="8.125" />
-          <ConnectorPoint PointX="11.875" PointY="9.3939925130208337" />
-          <ConnectorPoint PointX="11.5" PointY="9.3939925130208337" /></AssociationConnector>
+          <ConnectorPoint PointX="15.25" PointY="4.0189925130208337" />
+          <ConnectorPoint PointX="14.9375" PointY="4.0189925130208337" />
+          <ConnectorPoint PointX="14.9375" PointY="5.1677864583333246" />
+          <ConnectorPoint PointX="14.625" PointY="5.1677864583333246" />
+          <ConnectorPoint PointX="14.625" PointY="8" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_FloatKindsSiteDescriptors_0" ManuallyRouted="false">
-          <ConnectorPoint PointX="18.53125" PointY="5.4129850260416674" />
-          <ConnectorPoint PointX="18.53125" PointY="13.078837890711924" />
-          <ConnectorPoint PointX="14.625" PointY="13.078837890711924" />
-          </AssociationConnector>
+          <ConnectorPoint PointX="15.6875" PointY="4.9129850260416674" />
+          <ConnectorPoint PointX="15.6875" PointY="10.75" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_ScalarPairsSiteDescriptors_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="12.21875" PointY="5.3456835937500031" />
-          <ConnectorPoint PointX="12.21875" PointY="10.84375" />
-          <ConnectorPoint PointX="12.322916666666666" PointY="10.84375" />
-          <ConnectorPoint PointX="12.489583333333334" PointY="10.84375" />
-          <ConnectorPoint PointX="15.010416666666666" PointY="10.84375" />
-          <ConnectorPoint PointX="15.177083333333334" PointY="10.84375" />
-          <ConnectorPoint PointX="15.244794166666667" PointY="10.84375" />
-          <ConnectorPoint PointX="15.411460833333335" PointY="10.84375" />
-          <ConnectorPoint PointX="15.416666666666666" PointY="10.84375" />
-          <ConnectorPoint PointX="15.583333333333334" PointY="10.84375" />
-          <ConnectorPoint PointX="16" PointY="10.84375" /></AssociationConnector>
+          <ConnectorPoint PointX="11.46875" PointY="4.84568359375" />
+          <ConnectorPoint PointX="11.46875" PointY="10.53125" />
+          <ConnectorPoint PointX="14.666666666666666" PointY="10.53125" />
+          <ConnectorPoint PointX="14.833333333333334" PointY="10.53125" />
+          <ConnectorPoint PointX="15.604166666666666" PointY="10.53125" />
+          <ConnectorPoint PointX="15.770833333333334" PointY="10.53125" />
+          <ConnectorPoint PointX="17.875" PointY="10.53125" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_AtomsSiteDescriptors_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="9.8314925130208337" />
-          <ConnectorPoint PointX="6.166666666666667" PointY="9.8314925130208337" />
-          <ConnectorPoint PointX="6.333333333333333" PointY="9.8314925130208337" />
-          <ConnectorPoint PointX="8.5104166666666661" PointY="9.8314925130208337" />
-          <ConnectorPoint PointX="8.6770833333333339" PointY="9.8314925130208337" />
-          <ConnectorPoint PointX="9.625" PointY="9.8314925130208337" />
-          </AssociationConnector>
+          <ConnectorPoint PointX="7.25" PointY="8.738051873709118" />
+          <ConnectorPoint PointX="10.354166666666666" PointY="8.738051873709118" />
+          <ConnectorPoint PointX="10.520833333333334" PointY="8.738051873709118" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="8.738051873709118" />
+          <ConnectorPoint PointX="10.833333333333334" PointY="8.738051873709118" />
+          <ConnectorPoint PointX="11.385416666666666" PointY="8.738051873709118" />
+          <ConnectorPoint PointX="11.552083333333334" PointY="8.738051873709118" />
+          <ConnectorPoint PointX="13.416666666666666" PointY="8.738051873709118" />
+          <ConnectorPoint PointX="13.583333333333334" PointY="8.738051873709118" />
+          <ConnectorPoint PointX="13.75" PointY="8.738051873709118" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_BoundsSiteDescriptors_2" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="13.319194336421788" />
-          <ConnectorPoint PointX="4.791666666666667" PointY="13.319194336421788" />
-          <ConnectorPoint PointX="4.958333333333333" PointY="13.319194336421788" />
-          <ConnectorPoint PointX="6.166666666666667" PointY="13.319194336421788" />
-          <ConnectorPoint PointX="6.333333333333333" PointY="13.319194336421788" />
-          <ConnectorPoint PointX="8.5104166666666661" PointY="13.319194336421788" />
-          <ConnectorPoint PointX="8.6770833333333339" PointY="13.319194336421788" />
-          <ConnectorPoint PointX="11.635416666666666" PointY="13.319194336421788" />
-          <ConnectorPoint PointX="11.802083333333334" PointY="13.319194336421788" />
-          <ConnectorPoint PointX="11.916666666666666" PointY="13.319194336421788" />
-          <ConnectorPoint PointX="12.083333333333334" PointY="13.319194336421788" />
-          <ConnectorPoint PointX="12.40625" PointY="13.319194336421788" />
-          <ConnectorPoint PointX="12.40625" PointY="10.355286458333332" /></AssociationConnector>
+          <ConnectorPoint PointX="7.25" PointY="8.1266336153846161" />
+          <ConnectorPoint PointX="7.625" PointY="7.7516336153846161" />
+          <ConnectorPoint PointX="7.625" PointY="7.5" />
+          <ConnectorPoint PointX="10.354166666666666" PointY="7.4999999999999991" />
+          <ConnectorPoint PointX="10.520833333333334" PointY="7.5" />
+          <ConnectorPoint PointX="11.385416666666666" PointY="7.4999999999999991" />
+          <ConnectorPoint PointX="11.552083333333334" PointY="7.5" />
+          <ConnectorPoint PointX="13.666667166666665" PointY="7.4999999999999991" />
+          <ConnectorPoint PointX="13.833333833333333" PointY="7.5" />
+          <ConnectorPoint PointX="14.541666666666666" PointY="7.4999999999999991" />
+          <ConnectorPoint PointX="14.708333333333334" PointY="7.5" />
+          <ConnectorPoint PointX="15.5" PointY="7.5" />
+          <ConnectorPoint PointX="15.628574434901122" PointY="7.6285744349011209" />
+          <ConnectorPoint PointX="15.746425565098878" PointY="7.7464255650988791" />
+          <ConnectorPoint PointX="15.875" PointY="7.875" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_BranchesSiteDescriptors_0" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="6.166666666666667" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="6.333333333333333" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="8.5104166666666661" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="8.6770833333333339" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="11.916666666666666" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="12.083333333333334" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="12.135416666666666" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="12.302083333333334" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="12.322916666666666" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="12.489583333333334" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="15.010416666666666" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="15.177083333333334" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="15.244794166666667" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="15.411460833333335" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="15.416666666666666" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="15.583333333333334" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="15.84375" PointY="10.490143229166666" />
-          <ConnectorPoint PointX="15.84375" PointY="9.9706835933029652" /></AssociationConnector>
+          <ConnectorPoint PointX="7.25" PointY="10.208893229166666" />
+          <ConnectorPoint PointX="7.8854191666666669" PointY="10.208893229166666" />
+          <ConnectorPoint PointX="8.0520858333333329" PointY="10.208893229166666" />
+          <ConnectorPoint PointX="10.354166666666666" PointY="10.208893229166666" />
+          <ConnectorPoint PointX="10.520833333333334" PointY="10.208893229166666" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="10.208893229166666" />
+          <ConnectorPoint PointX="10.833333333333334" PointY="10.208893229166666" />
+          <ConnectorPoint PointX="11.385416666666666" PointY="10.208893229166666" />
+          <ConnectorPoint PointX="11.552083333333334" PointY="10.208893229166666" />
+          <ConnectorPoint PointX="13.416666666666666" PointY="10.208893229166666" />
+          <ConnectorPoint PointX="13.583333333333334" PointY="10.208893229166666" />
+          <ConnectorPoint PointX="15.604166666666666" PointY="10.208893229166666" />
+          <ConnectorPoint PointX="15.770833333333334" PointY="10.208893229166666" />
+          <ConnectorPoint PointX="17.625" PointY="10.208893229166666" />
+          <ConnectorPoint PointX="17.625" PointY="10" />
+          <ConnectorPoint PointX="18.8125" PointY="10" />
+          <ConnectorPoint PointX="18.8125" PointY="9.59568359375" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_CompareSwapSiteDescriptors_0" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="12.047841796875002" />
-          <ConnectorPoint PointX="4.791666666666667" PointY="12.047841796875002" />
-          <ConnectorPoint PointX="4.958333333333333" PointY="12.047841796875002" />
-          <ConnectorPoint PointX="6.166666666666667" PointY="12.047841796875002" />
-          <ConnectorPoint PointX="6.333333333333333" PointY="12.047841796875002" />
-          <ConnectorPoint PointX="8.5104166666666661" PointY="12.047841796875002" />
-          <ConnectorPoint PointX="8.6770833333333339" PointY="12.047841796875002" />
-          <ConnectorPoint PointX="9.125" PointY="12.047841796875002" />
-          </AssociationConnector>
+          <ConnectorPoint PointX="7.25" PointY="11.547841796874998" />
+          <ConnectorPoint PointX="7.8854191666666669" PointY="11.547841796874998" />
+          <ConnectorPoint PointX="8.0520858333333329" PointY="11.547841796874998" />
+          <ConnectorPoint PointX="10.354166666666666" PointY="11.547841796874998" />
+          <ConnectorPoint PointX="10.520833333333334" PointY="11.547841796874998" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="11.547841796874998" />
+          <ConnectorPoint PointX="10.833333333333334" PointY="11.547841796874998" />
+          <ConnectorPoint PointX="12.25" PointY="11.547841796874998" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_Fields_0" ManuallyRouted="false">
-          <ConnectorPoint PointX="7.125" PointY="4.74014322925359" />
-          <ConnectorPoint PointX="7.375" PointY="4.74014322925359" />
-          </AssociationConnector>
+          <ConnectorPoint PointX="5.5" PointY="4.2401432291666694" />
+          <ConnectorPoint PointX="5.875" PointY="4.2401432291666694" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_SampleCounts_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="8.875" PointY="4.74014322925359" />
-          <ConnectorPoint PointX="12" PointY="4.74014322925359" />
-          <ConnectorPoint PointX="12" PointY="13.5" />
-          <ConnectorPoint PointX="17.125" PointY="13.5" />
-          <ConnectorPoint PointX="17.125" PointY="19.625" />
-          <ConnectorPoint PointX="16.864585333333334" PointY="19.625" />
-          <ConnectorPoint PointX="16.69791866666667" PointY="19.625" />
-          <ConnectorPoint PointX="16.375" PointY="19.625" />
-          <ConnectorPoint PointX="16.375" PointY="20" />
-          </AssociationConnector>
+          <ConnectorPoint PointX="7.375" PointY="4.2112939453125" />
+          <ConnectorPoint PointX="10.4375" PointY="4.2112939453125" />
+          <ConnectorPoint PointX="10.4375" PointY="18.28125" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="18.28125" />
+          <ConnectorPoint PointX="10.833333333333334" PointY="18.28125" />
+          <ConnectorPoint PointX="15.041666666666666" PointY="18.28125" />
+          <ConnectorPoint PointX="15.208333333333334" PointY="18.28125" />
+          <ConnectorPoint PointX="17.796874000000003" PointY="18.28125" />
+          <ConnectorPoint PointX="17.796874000000003" PointY="18.375" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_SampleValues_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="8.59375" PointY="5.73028645850718" />
-          <ConnectorPoint PointX="8.59375" PointY="22.396139322916664" />
-          <ConnectorPoint PointX="13.875" PointY="22.396139322916664" /></AssociationConnector>
+          <ConnectorPoint PointX="6.625" PointY="5.297587890625" />
+          <ConnectorPoint PointX="6.625" PointY="7.875" />
+          <ConnectorPoint PointX="7.4183002820512831" PointY="7.8749999999999991" />
+          <ConnectorPoint PointX="7.5849669487179492" PointY="7.875" />
+          <ConnectorPoint PointX="10.354166666666666" PointY="7.8749999999999991" />
+          <ConnectorPoint PointX="10.520833333333334" PointY="7.875" />
+          <ConnectorPoint PointX="10.75" PointY="7.875" />
+          <ConnectorPoint PointX="10.75" PointY="18.5" />
+          <ConnectorPoint PointX="15" PointY="18.5" />
+          <ConnectorPoint PointX="15" PointY="19.026718198079436" />
+          <ConnectorPoint PointX="15.041666666666666" PointY="19.026718198079436" />
+          <ConnectorPoint PointX="15.208333333333334" PointY="19.026718198079436" />
+          <ConnectorPoint PointX="15.5" PointY="19.026718198079436" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_FloatKindsSiteDescriptors_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="15.625" PointY="5.6052864583333317" />
-          <ConnectorPoint PointX="15.625" PointY="7.875" />
-          <ConnectorPoint PointX="15.5" PointY="7.875" />
-          <ConnectorPoint PointX="15.5" PointY="12.070666945355963" />
-          <ConnectorPoint PointX="15.411460833333335" PointY="12.070666945355963" />
-          <ConnectorPoint PointX="15.244794166666667" PointY="12.070666945355963" />
-          <ConnectorPoint PointX="14.625" PointY="12.070666945355963" />
-          </AssociationConnector>
+          <ConnectorPoint PointX="13.750000499999999" PointY="5.1052864583333246" />
+          <ConnectorPoint PointX="13.750000499999999" PointY="7.75" />
+          <ConnectorPoint PointX="13.5" PointY="7.75" />
+          <ConnectorPoint PointX="13.5" PointY="10.375" />
+          <ConnectorPoint PointX="14.75" PointY="10.375" />
+          <ConnectorPoint PointX="14.75" PointY="11.932444661458334" />
+          <ConnectorPoint PointX="15" PointY="11.932444661458334" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_FloatKindsSiteDescriptors_2" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="13.006735026128592" />
-          <ConnectorPoint PointX="4.791666666666667" PointY="13.006735026128592" />
-          <ConnectorPoint PointX="4.958333333333333" PointY="13.006735026128592" />
-          <ConnectorPoint PointX="6.166666666666667" PointY="13.006735026128592" />
-          <ConnectorPoint PointX="6.333333333333333" PointY="13.006735026128592" />
-          <ConnectorPoint PointX="8.5104166666666661" PointY="13.006735026128592" />
-          <ConnectorPoint PointX="8.6770833333333339" PointY="13.006735026128592" />
-          <ConnectorPoint PointX="11.635416666666666" PointY="13.006735026128592" />
-          <ConnectorPoint PointX="11.802083333333334" PointY="13.006735026128592" />
-          <ConnectorPoint PointX="11.916666666666666" PointY="13.006735026128592" />
-          <ConnectorPoint PointX="12.083333333333334" PointY="13.006735026128592" />
-          <ConnectorPoint PointX="12.322916666666666" PointY="13.006735026128592" />
-          <ConnectorPoint PointX="12.489583333333334" PointY="13.006735026128592" />
-          <ConnectorPoint PointX="12.5" PointY="13.006735026128592" /></AssociationConnector>
+          <ConnectorPoint PointX="7.25" PointY="12.5066943359375" />
+          <ConnectorPoint PointX="7.8854191666666669" PointY="12.5066943359375" />
+          <ConnectorPoint PointX="8.0520858333333329" PointY="12.5066943359375" />
+          <ConnectorPoint PointX="10.354166666666666" PointY="12.5066943359375" />
+          <ConnectorPoint PointX="10.520833333333334" PointY="12.5066943359375" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="12.5066943359375" />
+          <ConnectorPoint PointX="10.833333333333334" PointY="12.5066943359375" />
+          <ConnectorPoint PointX="15" PointY="12.5066943359375" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_GObjectUnrefSiteDescriptors_0" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="10.698199114583334" />
-          <ConnectorPoint PointX="6.166666666666667" PointY="10.698199114583334" />
-          <ConnectorPoint PointX="6.333333333333333" PointY="10.698199114583334" />
-          <ConnectorPoint PointX="8.5104166666666661" PointY="10.698199114583334" />
-          <ConnectorPoint PointX="8.6770833333333339" PointY="10.698199114583334" />
-          <ConnectorPoint PointX="11.71875" PointY="10.698199114583334" />
-          <ConnectorPoint PointX="11.71875" PointY="13.75" />
-          </AssociationConnector>
+          <ConnectorPoint PointX="7.25" PointY="12.605205078125003" />
+          <ConnectorPoint PointX="7.8854191666666669" PointY="12.605205078125003" />
+          <ConnectorPoint PointX="8.0520858333333329" PointY="12.605205078125003" />
+          <ConnectorPoint PointX="10.354166666666666" PointY="12.605205078125003" />
+          <ConnectorPoint PointX="10.520833333333334" PointY="12.605205078125003" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="12.605205078125003" />
+          <ConnectorPoint PointX="10.833333333333334" PointY="12.605205078125003" />
+          <ConnectorPoint PointX="14.25" PointY="12.605205078125003" />
+          <ConnectorPoint PointX="14.25" PointY="13.625" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_Runs_0" ManuallyRouted="false">
-          <ConnectorPoint PointX="1.40625" PointY="5.59568359375" />
-          <ConnectorPoint PointX="1.40625" PointY="20.09375" />
-          <ConnectorPoint PointX="2.4479166666666665" PointY="20.09375" />
-          <ConnectorPoint PointX="2.6145833333333335" PointY="20.09375" />
-          <ConnectorPoint PointX="4.385416666666667" PointY="20.09375" />
-          <ConnectorPoint PointX="4.552083333333333" PointY="20.09375" />
-          <ConnectorPoint PointX="8.5104166666666661" PointY="20.09375" />
-          <ConnectorPoint PointX="8.6770833333333339" PointY="20.09375" />
-          <ConnectorPoint PointX="9" PointY="20.09375" /></AssociationConnector>
+          <ConnectorPoint PointX="1.875" PointY="5.09568359375" />
+          <ConnectorPoint PointX="1.875" PointY="20.761536458333335" />
+          <ConnectorPoint PointX="10.75" PointY="20.761536458333335" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_ReturnsSiteDescriptors_0" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="13.426150775379092" />
-          <ConnectorPoint PointX="4.791666666666667" PointY="13.426150775379092" />
-          <ConnectorPoint PointX="4.958333333333333" PointY="13.426150775379092" />
-          <ConnectorPoint PointX="6.166666666666667" PointY="13.426150775379092" />
-          <ConnectorPoint PointX="6.333333333333333" PointY="13.426150775379092" />
-          <ConnectorPoint PointX="8.5104166666666661" PointY="13.426150775379092" />
-          <ConnectorPoint PointX="8.6770833333333339" PointY="13.426150775379092" />
-          <ConnectorPoint PointX="11.635416666666666" PointY="13.426150775379092" />
-          <ConnectorPoint PointX="11.802083333333334" PointY="13.426150775379092" />
-          <ConnectorPoint PointX="15.25" PointY="13.426150775379092" />
-          <ConnectorPoint PointX="15.25" PointY="13.75" />
-          </AssociationConnector>
+          <ConnectorPoint PointX="7.25" PointY="10.609375" />
+          <ConnectorPoint PointX="7.8854191666666669" PointY="10.609375" />
+          <ConnectorPoint PointX="8.0520858333333329" PointY="10.609375" />
+          <ConnectorPoint PointX="10.354166666666666" PointY="10.609375" />
+          <ConnectorPoint PointX="10.520833333333334" PointY="10.609375" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="10.609375" />
+          <ConnectorPoint PointX="10.833333333333334" PointY="10.609375" />
+          <ConnectorPoint PointX="14.666666666666666" PointY="10.609375" />
+          <ConnectorPoint PointX="14.833333333333334" PointY="10.609375" />
+          <ConnectorPoint PointX="15.604166666666666" PointY="10.609375" />
+          <ConnectorPoint PointX="15.770833333333334" PointY="10.609375" />
+          <ConnectorPoint PointX="17.166666666666668" PointY="10.609375" />
+          <ConnectorPoint PointX="17.333333333333332" PointY="10.609375" />
+          <ConnectorPoint PointX="17.625" PointY="10.609375" />
+          <ConnectorPoint PointX="17.625" PointY="13.441793619791667" />
+          <ConnectorPoint PointX="18.4375" PointY="13.441793619791667" />
+          <ConnectorPoint PointX="18.4375" PointY="13.875" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_RunIDToTestCase_0" ManuallyRouted="false">
-          <ConnectorPoint PointX="9" PointY="21.047841796874998" />
-          <ConnectorPoint PointX="8.6770833333333339" PointY="21.047841796874998" />
-          <ConnectorPoint PointX="8.5104166666666661" PointY="21.047841796874998" />
-          <ConnectorPoint PointX="8.25" PointY="21.047841796874998" />
-          </AssociationConnector>
+          <ConnectorPoint PointX="10.75" PointY="19.547841796875" />
+          <ConnectorPoint PointX="10.25" PointY="19.547841796875" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_SampleCounts_0" ManuallyRouted="false">
-          <ConnectorPoint PointX="9.75" PointY="20" />
-          <ConnectorPoint PointX="9.75" PointY="19.625" />
-          <ConnectorPoint PointX="15.968747999999998" PointY="19.625" />
-          <ConnectorPoint PointX="15.968747999999998" PointY="20" />
-          </AssociationConnector>
+          <ConnectorPoint PointX="12.25" PointY="21.114889322916667" />
+          <ConnectorPoint PointX="12.625" PointY="21.489889322916667" />
+          <ConnectorPoint PointX="12.625" PointY="21.499492187500003" />
+          <ConnectorPoint PointX="16.875" PointY="21.499492187500003" />
+          <ConnectorPoint PointX="17.25" PointY="21.124492187500003" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_SampleValues_0" ManuallyRouted="false">
-          <ConnectorPoint PointX="10.5" PointY="21.086293945312498" />
-          <ConnectorPoint PointX="13.875" PointY="21.086293945312498" />
-          </AssociationConnector>
+          <ConnectorPoint PointX="12.25" PointY="20.463565208333335" />
+          <ConnectorPoint PointX="15.5" PointY="20.463565208333335" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_SampleCounts_2" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="11.373020455729169" />
-          <ConnectorPoint PointX="4.875" PointY="11.373020455729169" />
-          <ConnectorPoint PointX="4.875" PointY="19.375" />
-          <ConnectorPoint PointX="8.5104166666666661" PointY="19.375" />
-          <ConnectorPoint PointX="8.6770833333333339" PointY="19.375" />
-          <ConnectorPoint PointX="16.781252000000002" PointY="19.375" />
-          <ConnectorPoint PointX="16.781252000000002" PointY="20" />
-          </AssociationConnector>
+          <ConnectorPoint PointX="7.25" PointY="10.453125" />
+          <ConnectorPoint PointX="7.8854191666666669" PointY="10.453125" />
+          <ConnectorPoint PointX="8.0520858333333329" PointY="10.453125" />
+          <ConnectorPoint PointX="10.354166666666666" PointY="10.453125" />
+          <ConnectorPoint PointX="10.520833333333334" PointY="10.453125" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="10.453125" />
+          <ConnectorPoint PointX="10.833333333333334" PointY="10.453125" />
+          <ConnectorPoint PointX="15.604166666666666" PointY="10.453125" />
+          <ConnectorPoint PointX="15.770833333333334" PointY="10.453125" />
+          <ConnectorPoint PointX="17.25" PointY="10.453125" />
+          <ConnectorPoint PointX="17.25" PointY="18" />
+          <ConnectorPoint PointX="18.304689000000003" PointY="18" />
+          <ConnectorPoint PointX="18.304689000000003" PointY="18.375" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_SampleValues_2" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.46875" PointY="13.470602214336395" />
-          <ConnectorPoint PointX="4.46875" PointY="22.284361106770831" />
-          <ConnectorPoint PointX="8.5104166666666661" PointY="22.284361106770831" />
-          <ConnectorPoint PointX="8.6770833333333339" PointY="22.284361106770831" />
-          <ConnectorPoint PointX="13.875" PointY="22.284361106770831" /></AssociationConnector>
+          <ConnectorPoint PointX="6.5558675587745956" PointY="12.605205078125003" />
+          <ConnectorPoint PointX="6.5558675587745956" PointY="18" />
+          <ConnectorPoint PointX="10.354166666666666" PointY="18" />
+          <ConnectorPoint PointX="10.520833333333334" PointY="18" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="18" />
+          <ConnectorPoint PointX="10.833333333333334" PointY="18" />
+          <ConnectorPoint PointX="15.125" PointY="18" />
+          <ConnectorPoint PointX="15.125" PointY="19.745141703206386" />
+          <ConnectorPoint PointX="15.5" PointY="19.745141703206386" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_ScalarPairsSiteDescriptors_0" ManuallyRouted="false">
-          <ConnectorPoint PointX="15.09375" PointY="5.6052864583333317" />
-          <ConnectorPoint PointX="15.09375" PointY="11.457208472677982" />
-          <ConnectorPoint PointX="15.244794166666667" PointY="11.457208472677982" />
-          <ConnectorPoint PointX="15.411460833333335" PointY="11.457208472677982" />
-          <ConnectorPoint PointX="15.416666666666666" PointY="11.457208472677982" />
-          <ConnectorPoint PointX="15.583333333333334" PointY="11.457208472677982" />
-          <ConnectorPoint PointX="16" PointY="11.457208472677982" /></AssociationConnector>
+          <ConnectorPoint PointX="14.875" PointY="5.040385742187496" />
+          <ConnectorPoint PointX="15.604166666666666" PointY="5.0403857421874951" />
+          <ConnectorPoint PointX="15.770833333333334" PointY="5.040385742187496" />
+          <ConnectorPoint PointX="19.84375" PointY="5.040385742187496" />
+          <ConnectorPoint PointX="19.84375" PointY="10.25" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_ScalarPairsSiteDescriptors_2" ManuallyRouted="false">
-          <ConnectorPoint PointX="15.3281275" PointY="5.6052864583333317" />
-          <ConnectorPoint PointX="15.3281275" PointY="12.561530634136314" />
-          <ConnectorPoint PointX="16" PointY="12.561530634136314" />
-          </AssociationConnector>
+          <ConnectorPoint PointX="14.875" PointY="5.07163824218749" />
+          <ConnectorPoint PointX="15.604166666666666" PointY="5.0716382421874888" />
+          <ConnectorPoint PointX="15.770833333333334" PointY="5.07163824218749" />
+          <ConnectorPoint PointX="19.828125" PointY="5.07163824218749" />
+          <ConnectorPoint PointX="19.828125" PointY="10.25" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_ScalarPairsSiteDescriptors_3" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="11.015625" />
-          <ConnectorPoint PointX="6.166666666666667" PointY="11.015625" />
-          <ConnectorPoint PointX="6.333333333333333" PointY="11.015625" />
-          <ConnectorPoint PointX="8.5104166666666661" PointY="11.015625" />
-          <ConnectorPoint PointX="8.6770833333333339" PointY="11.015625" />
-          <ConnectorPoint PointX="11.635416666666666" PointY="11.015625" />
-          <ConnectorPoint PointX="11.802083333333334" PointY="11.015625" />
-          <ConnectorPoint PointX="11.916666666666666" PointY="11.015625" />
-          <ConnectorPoint PointX="12.083333333333334" PointY="11.015625" />
-          <ConnectorPoint PointX="12.322916666666666" PointY="11.015625" />
-          <ConnectorPoint PointX="12.489583333333334" PointY="11.015625" />
-          <ConnectorPoint PointX="15.010416666666666" PointY="11.015625" />
-          <ConnectorPoint PointX="15.177083333333334" PointY="11.015625" />
-          <ConnectorPoint PointX="15.244794166666667" PointY="11.015625" />
-          <ConnectorPoint PointX="15.411460833333335" PointY="11.015625" />
-          <ConnectorPoint PointX="15.416666666666666" PointY="11.015625" />
-          <ConnectorPoint PointX="15.583333333333334" PointY="11.015625" />
-          <ConnectorPoint PointX="16" PointY="11.015625" /></AssociationConnector>
+          <ConnectorPoint PointX="7.25" PointY="10.323199114583327" />
+          <ConnectorPoint PointX="7.8854191666666669" PointY="10.323199114583327" />
+          <ConnectorPoint PointX="8.0520858333333329" PointY="10.323199114583327" />
+          <ConnectorPoint PointX="10.354166666666666" PointY="10.323199114583327" />
+          <ConnectorPoint PointX="10.520833333333334" PointY="10.323199114583327" />
+          <ConnectorPoint PointX="10.666666666666666" PointY="10.323199114583327" />
+          <ConnectorPoint PointX="10.833333333333334" PointY="10.323199114583327" />
+          <ConnectorPoint PointX="11.385416666666666" PointY="10.323199114583327" />
+          <ConnectorPoint PointX="11.552083333333334" PointY="10.323199114583327" />
+          <ConnectorPoint PointX="15.604166666666666" PointY="10.323199114583327" />
+          <ConnectorPoint PointX="15.770833333333334" PointY="10.323199114583327" />
+          <ConnectorPoint PointX="17.625" PointY="10.323199114583327" />
+          <ConnectorPoint PointX="17.625" PointY="10.0625" />
+          <ConnectorPoint PointX="19.28906" PointY="10.0625" />
+          <ConnectorPoint PointX="19.28906" PointY="10.25" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_Units_0" ManuallyRouted="false">
-          <ConnectorPoint PointX="6.25" PointY="5.73028645850718" />
-          <ConnectorPoint PointX="6.25" PointY="16.393992513418198" />
-          <ConnectorPoint PointX="4.958333333333333" PointY="16.393992513418198" />
-          <ConnectorPoint PointX="4.791666666666667" PointY="16.393992513418198" />
-          <ConnectorPoint PointX="4.552083333333333" PointY="16.393992513418198" />
-          <ConnectorPoint PointX="4.385416666666667" PointY="16.393992513418198" />
-          <ConnectorPoint PointX="4.375" PointY="16.393992513418198" /></AssociationConnector>
+          <ConnectorPoint PointX="4.53125" PointY="5.2302864583333388" />
+          <ConnectorPoint PointX="4.53125" PointY="14.490143229166669" />
+          <ConnectorPoint PointX="5.9425658154296874" PointY="14.490143229166669" />
+          <ConnectorPoint PointX="6.1092324820963535" PointY="14.490143229166669" />
+          <ConnectorPoint PointX="6.4725342254412626" PointY="14.490143229166669" />
+          <ConnectorPoint PointX="6.6392008921079286" PointY="14.490143229166669" />
+          <ConnectorPoint PointX="7.125" PointY="14.490143229166669" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.FK_Sites_0" ManuallyRouted="false">
-          <ConnectorPoint PointX="3.625" PointY="15.5" />
-          <ConnectorPoint PointX="3.625" PointY="13.470602214336395" />
-          </AssociationConnector>
+          <ConnectorPoint PointX="7.9687525" PointY="13.5" />
+          <ConnectorPoint PointX="7.9687525" PointY="9.4761037474182359" />
+          <ConnectorPoint PointX="7.25" PointY="9.4761037474182359" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.RunsInPlans" ManuallyRouted="false">
-          <ConnectorPoint PointX="9" PointY="21.939433593749996" />
-          <ConnectorPoint PointX="8.6770833333333339" PointY="21.939433593749996" />
-          <ConnectorPoint PointX="8.5104166666666661" PointY="21.939433593749996" />
-          <ConnectorPoint PointX="4.552083333333333" PointY="21.939433593749996" />
-          <ConnectorPoint PointX="4.385416666666667" PointY="21.939433593749996" />
-          <ConnectorPoint PointX="3.375" PointY="21.939433593749996" /></AssociationConnector>
+          <ConnectorPoint PointX="10.75" PointY="20.553607526041667" />
+          <ConnectorPoint PointX="5.625" PointY="20.553607526041667" />
+          <ConnectorPoint PointX="5.625" PointY="19.845683593749996" />
+        </AssociationConnector>
         <AssociationConnector Association="cbiModel.SitesInPlans" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.53125" PointY="13.470602214336395" />
-          <ConnectorPoint PointX="2.53125" PointY="20.375" />
-          </AssociationConnector>
-        </Diagram></edmx:Diagrams>
-  </edmx:Designer>
+          <ConnectorPoint PointX="6.0258991487630205" PointY="12.605205078125003" />
+          <ConnectorPoint PointX="6.0258991487630205" PointY="18.25" />
+        </AssociationConnector>
+      </Diagram>
+    </Diagrams>
+  </Designer>
 </edmx:Edmx>
