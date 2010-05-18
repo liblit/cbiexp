@@ -3,6 +3,7 @@ Import('env')
 File([
         'Location.h',
         'Locations.h',
+        'README',
         'Reader.h',
         ])
 

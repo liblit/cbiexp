@@ -1,3 +1,6 @@
 Glob('*.m')
+File([
+        'README',
+        ])
 
 SConscript(dirs=['toxml'])

@@ -99,6 +99,7 @@ File([
         'doc/truth_prob_estimation.pdf',
         'scons-tools/ocaml.py',
         'scons-tools/template.py',
+        'scons-tools/utils.py',
         ])
 
 Glob('DataFormatConversion/samplerToDB/*.py')

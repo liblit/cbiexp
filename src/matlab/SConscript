@@ -1,7 +1,10 @@
 Import('env')
 
 Glob('*.m')
-File('process.xml')
+File([
+        'README',
+        'process.xml',
+        ])
 
 Default(
     env.Program(

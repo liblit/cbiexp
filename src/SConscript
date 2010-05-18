@@ -92,7 +92,6 @@ File([
         'Dilute.h',
         'DiscreteDist.h',
         'DynamicLibrary-dl.h',
-        'DynamicLibrary-win.h',
         'DynamicLibrary.h',
         'EstimateTPs.h',
         'IndexedPredInfo.h',
