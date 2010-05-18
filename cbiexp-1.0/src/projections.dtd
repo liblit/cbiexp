@@ -1,0 +1,6 @@
+<!-- available projection strategies -->
+<!ELEMENT projections (projection)+>
+
+<!-- a single projection strategy -->
+<!ELEMENT projection EMPTY>
+<!ATTLIST projection name ID #REQUIRED>

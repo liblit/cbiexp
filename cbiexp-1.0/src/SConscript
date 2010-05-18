@@ -1,0 +1,175 @@
+Import('env')
+#env.CacheDir(Dir('#.scons-cache').path)
+
+
+########################################################################
+
+
+lib = env.StaticLibrary('analyze', [
+	'AdjWeightsOptions.cc',
+	'AutoFD.cc',
+	'Bugs.cc',
+	'Candidate.cc',
+	'ClassifyRuns.cc',
+	'Confidence.cc',
+	'CullPredicates.cc',
+	'DatabaseFile.cc',
+	'Dilute.cc',
+	'DynamicLibrary-dl.cc',
+	'EstimateTPs.cc',
+	'IndexedPredInfo.cc',
+	'Nonconst_PredStats.cc',
+	'NumRuns.cc',
+	'OutcomeRunSets.cc',
+	'PredCoords.cc',
+	'PredStats.cc',
+	'Progress/Bounded.cc',
+	'Progress/Unbounded.cc',
+	'Progress/tty.cc',
+	'ReportReader.cc',
+	'Rho.cc',
+	'RunBugs.cc',
+	'RunSet.cc',
+	'RunsSplit.cc',
+	'SampleRatesFile.cc',
+	'SetVector.cc',
+	'SiteCoords.cc',
+	'SourceDirectory.cc',
+	'StaticSiteInfo.cc',
+	'Stylesheet.cc',
+	'UtilLogReg.cc',
+	'Verbose.cc',
+	'ViewPrinter.cc',
+	'classify_runs.cc',
+	'combine.cc',
+	'fopen.cc',
+	'split_runs.cc',
+	'utils.cc',
+	'xml.cc',
+        ])
+
+aenv = env.Clone(LIBS=['analyze', 'sqlite3'], LIBPATH='.')
+denv = aenv.Clone(LIBS=['$LIBS', 'dl'])
+senv = aenv.Clone(LIBS=['$LIBS', 'Score', 'dl'], LIBPATH=['$LIBPATH', 'Score'])
+genv = aenv.Clone()
+genv.MergeFlags('!gsl-config --cflags --libs')
+
+Default([
+        aenv.Program('bicluster.cc'),
+        aenv.Program('calc_sober.cc'),
+        genv.Program('cluster_runs.cc'),
+        aenv.Program('collect_parmstats.cc'),
+        genv.Program('compute_nonconst_preds.cc', LIBS=['$LIBS', 'dl']),
+        aenv.Program('compute-obs-tru', 'compute_obs_tru.cc'),
+        genv.Program('est_parms.cc'),
+        aenv.Program('gather_prior_dist.cc'),
+        aenv.Program('gather_prior_truths.cc'),
+        denv.Program('gen-summary', 'gen_summary.cc'),
+        senv.Program('gen-views', 'gen_views.cc', LIBS=['$LIBS', 'corrective'], LIBPATH=['$LIBPATH', 'corrective-ranking']),
+        aenv.Program('get_tp_weights.cc'),
+        denv.Program('logreg.cc'),
+        denv.Program('prefilter.cc'),
+        senv.Program('project.cc'),
+        genv.Program('train_utillog.cc'),
+        denv.Program('xmlify-results.cc'),
+        ])
+
+
+########################################################################
+
+
+File([
+        'AdjWeightsOptions.h',
+        'AutoFD.h',
+        'Bugs.h',
+        'Candidate.h',
+        'CheetahFilters.py',
+        'ClassifyRuns.h',
+        'Confidence.h',
+        'Counts.h',
+        'CullPredicates.h',
+        'DatabaseFile.h',
+        'Dilute.h',
+        'DiscreteDist.h',
+        'DynamicLibrary-dl.h',
+        'DynamicLibrary.h',
+        'EstimateTPs.h',
+        'IndexedPredInfo.h',
+        'MappedArray.h',
+        'Matrix.h',
+        'Nonconst_PredStats.h',
+        'NumRuns.h',
+        'OutcomeRunSets.h',
+        'PredCoords.h',
+        'PredStats.h',
+        'Progress/Bounded.h',
+        'Progress/Unbounded.h',
+        'Progress/tty.h',
+        'ReportReader.h',
+        'Rho.h',
+        'RunBugs.h',
+        'RunSet.h',
+        'RunsSplit.h',
+        'SampleRatesFile.h',
+        'SetVector.h',
+        'SiteCoords.h',
+        'SourceDirectory.h',
+        'StaticSiteInfo.h',
+        'Stylesheet.h',
+        'UtilLogReg.h',
+        'Verbose.h',
+        'ViewPrinter.h',
+        'arguments.h',
+        'bug-o-meter.js',
+        'classify_runs.h',
+        'combine.h',
+        'extractStaticSiteInfo.py',
+        'fopen.h',
+        'genOutcomeIndices.py',
+        'site_t.h',
+        'site_t.h',
+        'sorts.h',
+        'split_runs.h',
+        'static_site_info.tmpl',
+        'top-rho',
+        'unit_t.h',
+        'unit_t.h',
+        'utils.h',
+        'xml.h',
+        ])
+
+for suffix in ['css', 'dtd', 'xml', 'xsd', 'xsl']:
+    Glob('*.' + suffix)
+
+
+########################################################################
+
+
+env['HAVE_MEX'] = ('', '1')[bool(env['mex'])]
+
+rules = env.Template(
+    'analysis-rules.mk.in',
+    varlist=[
+        'CXX',
+        'CXXFLAGS',
+        'HAVE_MEX'
+        ],
+    )
+
+Default(rules)
+
+
+########################################################################
+
+
+Export('env')
+SConscript(dirs=[
+        'amplify',
+        'corrective-ranking',
+        'effort',
+        'evaluateplsa',
+        'fromplsa',
+        'matlab',
+        'never-reached',
+        'Score',
+        ])

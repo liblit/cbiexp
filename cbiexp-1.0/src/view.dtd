@@ -1,0 +1,8 @@
+<!ATTLIST scores
+  scheme NMTOKEN #REQUIRED
+  sort NMTOKEN #REQUIRED
+  projection NMTOKEN #REQUIRED>
+
+<!ENTITY % predictor.extra-attrs "">
+<!ENTITY % scores.dtd SYSTEM "scores.dtd">
+%scores.dtd;

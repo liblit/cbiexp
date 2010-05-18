@@ -1,0 +1,26 @@
+import SCons.Warnings as Warnings
+
+Import('env')
+
+env.PrependENVPath('PATH', '/s/std/bin')
+mex = env.Tool('mex', toolpath='.')
+File([
+        'calcCorr.m',
+        'genMscript.pl',
+        'mex.py',
+        'mhn2sparsemat.pl',
+        'readsp.c',
+        ])
+
+
+class MissingMexWarning(Warnings.Warning):
+    pass
+
+if not env['mex']:
+    Warnings.enableWarningClass(MissingMexWarning)
+    Warnings.warn(MissingMexWarning, 'cannot find mex, so skipping correlations code')
+    Return()
+
+
+env.SetDefault(mex_flags=['$__ccflags_debug', '$__ccflags_optimize'])
+Default(env.Mex('readsp.c'))

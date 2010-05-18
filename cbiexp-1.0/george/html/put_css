@@ -1,0 +1,51 @@
+#!/bin/bash
+#This script modifies the html files to be able to display 
+#our stylesheets. It makes backup files on each modification
+#
+#usage: put_css <full directory path to be processed>
+
+
+# set up the home directory variables and the target directory
+# variables and cd into it
+hm2=$PWD
+hm=$1
+cd $hm
+myHome=$hm
+hm=$PWD
+
+# go through each directory and modify the files
+for di in $(find . -type d); do
+	cd $hm/$di
+	#puts a CSS stylesheet ref at each html file
+	for fl in *.html; do
+		if [[ -e $fl ]]; then
+			cp $fl $fl.old
+			
+			# strip the html from the filename
+			# note: does not really strip html, just splits the file by "."
+			# delimeter, and uses the first two tokens. 
+			# assumption: files do not have dots before .c.html 
+			newfl=`echo $fl | cut -d . -f 1-2`
+       
+			# define strings for replacement
+			replaceWhat="<\/head>"
+			line1="<link type=\"text\/css\" rel=\"stylesheet\" href=\"${newfl}-coverage.css\" title=\"coverage\"\/>"
+			line5="<link type=\"text\/css\" rel=\"stylesheet\"  href=\"file:\/\/\/tmp\/george\/menu.css\"\/>"
+			#line5="<link type=\"text\/css\" rel=\"stylesheet\"  href=\"file:\/\/${myHome}\/menu.css\"\/>"
+			line2="<link type=\"text\/css\" rel=\"alternate stylesheet\" href=\"${newfl}-crash-impact.css\" title=\"crash-impact\"\/>"
+			line3="<link type=\"text\/css\" rel=\"alternate stylesheet\" href=\"${newfl}-crashiness.css\" title=\"crashiness\"\/>"
+			line4="<script type=\"text\/javascript\" src=\"file:\/\/\/tmp\/george\/styleswitcher.js\">"
+			#line4="<script type=\"text\/javascript\" src=\"file:\/\/${myHome}\/styleswitcher.js\">"
+			
+			#sed utility does the actual find-and-replace in a given file
+			sed -i "s/${replaceWhat}/${line1}${line5}${line2}${line3}${line4}${replaceWhat}/" $fl
+			
+			#Modifies the tags to allow line-by-line highlighting (opp to
+			#just highlighting the line number that was before)
+			sed -i "s/<\/a>//g" $fl #remove all </a>
+			sed -i "s/<a name=/<\/a><a id=/g" $fl #replace all <a name..> with </a><a id=..
+		fi
+	done
+cd $hm
+done
+cd $hm2

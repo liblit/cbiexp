@@ -1,0 +1,11 @@
+<!ELEMENT schemes (scheme+)>
+
+<!ELEMENT scheme (predicate+)>
+<!ATTLIST scheme
+  id ID #REQUIRED
+>
+
+<!ELEMENT predicate EMPTY>
+<!ATTLIST predicate
+  text CDATA #REQUIRED
+>

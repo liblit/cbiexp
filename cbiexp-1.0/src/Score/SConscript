@@ -1,0 +1,23 @@
+Import('env')
+
+env.StaticLibrary('Score', [
+        'Fail.cc',
+	'HarmonicMeanLog.cc',
+	'HarmonicMeanSqrt.cc',
+	'Importance.cc',
+	'Increase.cc',
+	'LowerBound.cc',
+	'LowerTimesFails.cc',
+	'TrueInFails.cc',
+        ])
+
+File([
+        'Fail.h',
+        'HarmonicMeanLog.h',
+        'HarmonicMeanSqrt.h',
+        'Importance.h',
+        'Increase.h',
+        'LowerBound.h',
+        'LowerTimesFails.h',
+        'TrueInFails.h',
+        ])

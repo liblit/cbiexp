@@ -1,0 +1,8 @@
+<!ELEMENT probablefeatures (aspect*)>
+
+<!ELEMENT aspect (feature*)> 
+
+<!ELEMENT feature EMPTY>
+
+<!ATTLIST feature Pw_z NMTOKEN #REQUIRED>
+<!ATTLIST feature index NMTOKEN #REQUIRED>

@@ -1,0 +1,23 @@
+Import('env')
+
+File([
+        'Location.h',
+        'Locations.h',
+        'README',
+        'Reader.h',
+        ])
+
+sources = [
+    'Location.cc',
+    'Locations.cc',
+    'Reader.cc',
+    'main.cc',
+    ]
+
+Default(
+    env.Program(
+        'never-reached', sources,
+        LIBS=['analyze', 'sqlite3', 'dl'],
+        LIBPATH='..',
+        )
+    )

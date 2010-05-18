@@ -1,0 +1,27 @@
+When CBI is used on real user desktops, the data we collect is sampled.  This helps improve performance and protect user privacy.  *However*, when we run controlled experiments we use a different approach:
+
+	(1) Collect complete feedback data with no sampling.
+	(2) Simulate the effects of sampling offline.
+
+We usually refer to step (2) as "downsampling".  Offline downsampling is great because it lets you experiment with many variations on sampling (different sampling rates, non-uniform sampling rates, etc.) without having to create a whole new set of runs from scratch.
+
+The "cbiexp" source distribution includes downsampling tools that let you experiment with uniform downsampling rates (e.g., every site sampled at 1/100 or 1/1000) as well as some non-uniform sampling rates.  You can do all of this starting with a basic non-sampled dataset.
+
+The offline downsampling process has two steps:
+
+First, you create a downsampling plan that gives the desired sampling rate for each site.  You can create plans manually, but for most common plans there are tools to create the plans automatically.  The way you do this is to set "report-series" in your analysis GNUmakefile.  For example, you might include a line that says "report-series = uniform-100" to apply uniform 1/100 downsampling to all sites.  The built-in plans that can be generated automatically are:
+
+	uniform-100		# 1/100 sampling
+	uniform-1000		# 1/1000 sampling
+	uniform-10000		# ... and so on ...
+	uniform-100000
+	uniform-1000000
+	inverse-100		# non-uniform sampling
+
+The "inverse-100" report series is a little unusual.  It first examines a set of training examples (some subset of all of your feedback reports).  It finds the maximum count of each predicate, and sets the sampling rate for *that* predicate to 1/max.  So if a predicate appeared 50 times in some training run, but never more than 50, we would downsample it at a rate of 1/50.  However, the sampling rate will never be set smaller than 1/100, even for predicates that appear far more than 100 times in a run.
+
+That all sounds pretty complicated.  The important part is that you can set "report-series" to one of the built-in plan names I listed above and the rest will be done for you automatically when you "make" your analysis.
+
+Once you have a sampling plan, the second step is for the bulk downsampler to apply this downsampling plan to your dataset.  This does not replace the original, complete data!  Rather, it creates a new set of reports with changed names that sit next to the complete data.  That way, you can easily experiment with several different kinds of sampling all on the same original dataset.  This bulk downsampling also happens automatically when you run "make".  It can take a while if you have a lot of runs in your dataset, but it only needs to happen once for a given downsampling plan.
+
+Important note: because the downsampled reports have different file names than the complete reports, if you are writing your own analysis code you must make sure that you read the right data files.  Otherwise, you could easily create 1/1000 downsampled data but then analyze the complete data and fool yourself into thinking you have a better analysis than you really have!  The best thing to do is to look at existing analysis programs and see how they work.  In particular, look at any tool that takes "--report-suffix=..." as a command line flag.  That flag is used by the ReportReader class to generate the correct file names for reading either complete or downsampled data.

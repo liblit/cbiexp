@@ -1,0 +1,56 @@
+table.meter {
+  border-collapse: collapse;
+  height: 12px;
+  border: 2px solid silver
+}
+
+table.meter tr td {
+  border: none;
+  padding-left: 0px;
+  padding-right: 0px
+}
+
+table.meter tr td.f1 {
+  background-color: black
+}
+
+table.meter tr td.f2 {
+  background-color: red
+}
+
+table.meter tr td.f3 {
+  background-color: pink
+}
+
+table.meter tr td.f4 {
+  background-color: white
+}
+
+td.meter div.details {
+  display: none;
+  background-color: #ffd;
+  font-size: smaller;
+  border: thin solid #bb0;
+  padding: 1ex;
+  position: absolute;
+  margin-top: 1em;
+  margin-left: 1ex;
+}
+
+td.meter:hover div.details, td.meter-hover div.details {
+  display: block;
+}
+
+td.meter:hover, td.meter-hover {
+  background-color: #ffe;
+}
+
+td.meter div.details hr {
+  border: none;
+  border-top: 1px dotted #bb0;
+}
+
+td.meter div.details p {
+  padding: 0;
+  margin: 0;
+}

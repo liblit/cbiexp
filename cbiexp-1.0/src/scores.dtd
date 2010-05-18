@@ -1,0 +1,11 @@
+<!ELEMENT scores ((predictor|conjunction)*)>
+
+<!ENTITY % predictor.content "EMPTY">
+<!ENTITY % predictor.coordinates "index NMTOKEN #REQUIRED">
+<!ENTITY % predictor.extra-attrs "score CDATA #REQUIRED">
+
+<!ELEMENT predictor %predictor.content;>
+<!ATTLIST predictor
+  %predictor.coordinates;
+  %predictor.extra-attrs;
+>

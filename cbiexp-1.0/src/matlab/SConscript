@@ -1,0 +1,16 @@
+Import('env')
+
+Glob('*.m')
+File([
+        'README',
+        'process.xml',
+        ])
+
+Default(
+    env.Program(
+        'make-counts-matrix',
+        'make_counts_matrix.cc',
+        LIBS=['analyze', 'sqlite3'],
+        LIBPATH='..',
+        )
+    )

@@ -1,0 +1,42 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use FileHandle;
+
+use FindBin;
+use lib "$FindBin::Bin/../../bin";
+use Check;
+
+
+########################################################################
+
+
+Check::stamp;
+
+
+sub label () {
+    # did various assorted things go wrong?
+    return 'ignore' if -e 'disregard';
+
+    my $reports = Check::reports;
+    return $reports if $reports;
+
+    # did the reference version run properly?
+    my $good = new FileHandle 'good/exit', 'r';
+    return 'ignore' unless $good;
+    $good = $good->getline;
+    chomp $good;
+    return 'ignore' if $good =~ /^signal\t/;
+    return 'ignore' if $good eq 'timeout';
+
+    # check for differences between reference and buggy
+    my $fail = new FileHandle 'bad/fail', 'r';
+    return 'ignore' unless $fail;
+    $fail = $fail->getline;
+    chomp $fail;
+    return ($fail == 0) ? 'success' : 'failure';
+}
+
+
+print label, "\n";

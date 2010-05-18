@@ -1,0 +1,6 @@
+<!ELEMENT runinfos (run*)>
+
+<!ELEMENT run EMPTY>
+<!ATTLIST run outcome NMTOKEN #REQUIRED>
+<!ATTLIST run runid NMTOKEN #REQUIRED>
+<!ATTLIST run sum NMTOKEN #REQUIRED>

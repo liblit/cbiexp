@@ -1,0 +1,479 @@
+root ?= ../..
+name ?= $(error no name set)
+corrdir := $(root)/correlations
+tooldir := $(root)/src
+matlab-counts ?= Xtru.sparse
+cull-predicates ?= true
+
+time := /usr/bin/time
+CXX := @CXX@
+CPPFLAGS := -I$(tooldir)
+CXXFLAGS := @CXXFLAGS@ -W -Wall -Werror
+HAVE_MEX = @HAVE_MEX@
+
+ifeq ($(strip $(update-tools)),)
+tool-deps =
+else
+tool-deps = $(addprefix $(tooldir)/, $(1))
+endif
+
+build = $(MAKE) update-tools=
+
+sparsebase := fobs sobs ftr str
+sparse := $(sparsebase:=.) $(sparsebase:=.ir) $(sparsebase:=.jc) $(sparsebase:=.meta)
+
+schemes ?= all atoms branches float-kinds g-object-unref returns scalar-pairs yields fun-reentries compare-swap atoms-rw
+sorts := lb is fs nf hl hs lbnf
+projections := none circular linear
+views := $(foreach scheme, $(schemes), $(foreach sort, $(sorts), $(foreach projection, $(projections), $(scheme)_$(sort)_$(projection).xml)))
+topRho := $(foreach sort, hl hs, $(foreach proj, circular linear, top-rho_$(sort)_$(proj).xml))
+zoom ?= all
+
+find-zooms := find . -maxdepth 1 -name 'zoom-corrected-*.xml'
+find-linears := find . -maxdepth 1 -name '*_linear.xml'
+find-circulars := find . -maxdepth 1 -name '*_circulars'
+
+links :=  					\
+	bug-o-meter.css				\
+	bug-o-meter.dtd				\
+	bug-o-meter.js				\
+	bug-o-meter.xsl				\
+	corrected-view.dtd			\
+	corrected-view.xsl			\
+	link-cell.css				\
+	logo.css				\
+	logo.xsl				\
+	logreg.dtd				\
+	logreg.xsl				\
+	operand.dtd				\
+	operands.xsl				\
+	pred-scores.css				\
+	pred-scores.dtd				\
+	pred-scores.xsl				\
+	predictor-info.dtd			\
+	projected-view.dtd			\
+	projected-view.xsl			\
+	projections.dtd				\
+	projections.xml				\
+	rho.dtd					\
+	rho.xsl					\
+	schemes.dtd				\
+	schemes.xml				\
+	scores.css				\
+	scores.dtd				\
+	scores.xsl				\
+	sorts.dtd				\
+	sorts.xml				\
+	summary.css				\
+	summary.dtd				\
+	summary.xsl				\
+	view.css				\
+	view.dtd				\
+	view.xsl
+
+
+all ?=						\
+	noelim					\
+	pldi2005				\
+	pldi2005approx				\
+	issta2007				\
+	prior-dist				\
+	truth-dist				\
+	sober					\
+	bicluster				\
+	theta					\
+	clusters				\
+	allnevers				\
+	corrcoefs				\
+	runsinfo.dat
+
+ifndef issta-csurf-project
+all := $(filter-out issta2007, $(all))
+endif
+
+all: $(all)
+.PHONY: all
+COMPOUND = $(findstring issta2007, $(all))
+
+#############################################################################
+# Copy all web friendly files to a separate directory for viewing
+# Don't copy if publish directory has not already been created
+#############################################################################
+publish ?= $(HOME)/www/$(name)-new
+publish: $(links)
+	test -e $(publish)
+	-rm -Rf $(publish)/*
+	find . -name '*.xml' -print0 -or -name '*.html' -print0 | xargs -t --null --no-run-if-empty -i cp --parents {} $(publish)
+	cp --parents $(links) $(publish)
+.PHONY : publish
+
+#############################################################################
+# Shared XML goals, i.e., XML goals on which many other goals are dependent
+#############################################################################
+
+# copies xml dtds and xslt scripts from tools directory to analysis directory
+# depends on .xml files on which any xsl file explicitly depends
+links: $(links)
+$(links): %: $(call tool-deps, %) summary.xml predictor-info.xml
+	if [ -L $@ ]; then rm -f $@; fi
+	cp $(tooldir)/$* $@
+CLEANFILES += $(links)
+.PHONY: links
+
+summary.xml: preds.txt s.runs f.runs static-site-info.so $(call tool-deps, gen-summary)
+	$(time) $(tooldir)/gen-summary --begin-runs=$(begin-runs) --end-runs=$(end-runs) --source-directory=src $(confidence:%=--confidence=%) >$@
+	$(build) links
+	xmllint --valid --noout $@
+CLEANFILES += summary.xml
+
+predictor-info.xml: preds.txt static-site-info.so $(call tool-deps, xmlify-results)
+	$(tooldir)/xmlify-results $(xmlify_results_flags)
+	$(build) links
+	xmllint --valid --noout $@
+CLEANFILES += predictor-info.xml
+
+
+#############################################################################
+# Shared goals, i.e., goals on which many other goals are dependent
+#############################################################################
+
+static-site-info.so: %.so: %.cc
+	$(LINK.cc) -shared -fpic -o $@ $<
+CLEANFILES += static-site-info.so
+
+static-site-info.cc: $(database) $(call tool-deps, extractStaticSiteInfo.py)
+	$(tooldir)/extractStaticSiteInfo.py $(database) $(tooldir)/static_site_info.tmpl $@ --filter=CppFilter
+CLEANFILES += static-site-info.cc
+
+f.runs s.runs outcomes.txt: $(database) $(call tool-deps, genOutcomeIndices.py)
+	$(tooldir)/genOutcomeIndices.py $(database) f.runs s.runs outcomes.txt
+CLEANFILES += s.runs f.runs
+
+preds.txt: s.runs f.runs static-site-info.so $(database) $(call tool-deps, prefilter)
+	$(time) $(tooldir)/prefilter --cull=$(cull-predicates) --begin-runs=$(begin-runs) --end-runs=$(end-runs) $(confidence:%=--confidence=%) --database-filename=$(database)
+CLEANFILES += preds.txt
+
+
+#############################################################################
+# Many measures, no elimination
+# See subdirectory Scores for a description of the different measures
+#############################################################################
+noelim: $(filter %_none.xml, $(views))
+$(filter %_none.xml, $(views)): preds.txt static-site-info.so tru.txt obs.txt $(call tool-deps, gen-views) $(if $(COMPOUND), pairs.txt)
+	$(build) links
+	$(tooldir)/gen-views --begin-runs=$(begin-runs) --end-runs=$(end-runs) $(schemes:%=--force-scheme=%) $(view_flags) $(if $(COMPOUND), --complex-preds)
+	xmllint --valid --noout $(filter %_none.xml, $(views))
+CLEANFILES += $(filter %_none.xml, $(views))
+CLEANFILES += complex_hl_none.xml complex-info.xml complex_all.txt
+.PHONY : noelim
+
+#############################################################################
+# PLDI 2005 algorithm and related algorithms
+#############################################################################
+
+# PLDI 2005 algorithm
+pldi2005: all_hl_corrected-exact-complete.xml elimination-clusters.txt corrected-exact-complete.txt noelim
+all_hl_corrected-exact-complete.xml elimination-clusters.txt corrected-exact-complete.txt: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/exact-complete)
+	$(time) $(tooldir)/corrective-ranking/exact-complete --zoom=$(zoom) --begin-runs=$(begin-runs) --end-runs=$(end-runs) $(confidence:%=--confidence=%) $(corrected_view_flags)
+	$(build) links
+	xmllint --valid --noout all_hl_corrected-exact-complete.xml
+	test -e elimination-clusters.txt
+	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
+CLEANFILES += all_hl_corrected-exact-complete.xml elimination-clusters.txt corrected-exact-complete.txt
+.PHONY : pldi2005
+
+# Variation on PLDI 2005 algorithm
+pldi2005approx: all_hl_corrected-approximate-complete.xml corrected-approximate-complete.txt noelim
+all_hl_corrected-approximate-complete.xml corrected-approximate-complete.txt: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/approximate-complete)
+	$(time) $(tooldir)/corrective-ranking/approximate-complete --zoom=$(zoom) --begin-runs=$(begin-runs) --end-runs=$(end-runs) $(confidence:%=--confidence=%) $(corrected_view_flags)
+	$(build) links
+	xmllint --valid --noout $@
+	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
+CLEANFILES += all_hl_corrected-approximate-complete.xml corrected-approximate-complete.txt
+.PHONY : pldi2005approx
+
+# ISSTA 2007 algorithm
+issta2007: all_hl_corrected-exact-complete_complex.xml corrected-exact-complete_complex.txt noelim
+all_hl_corrected-%_complex.xml: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/%) pairs.txt
+	$(time) $(tooldir)/corrective-ranking/$* --zoom=$(zoom) --begin-runs=$(begin-runs) --end-runs=$(end-runs) $(confidence:%=--confidence=%) $(corrected_view_flags) --complex-preds
+	$(build) links
+	xmllint --valid --noout $@
+	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
+CLEANFILES += all_hl_corrected-exact-complete_complex.xml corrected-exact-complete_complex.txt
+.PHONY : issta2007
+
+obs.txt tru.txt: preds.txt s.runs f.runs static-site-info.so $(database) $(call tool-deps, compute-obs-tru)
+	$(time) $(tooldir)/compute-obs-tru --begin-runs=$(begin-runs) --end-runs=$(end-runs) --database-filename=$(database)
+CLEANFILES += obs.txt tru.txt
+
+ifdef issta-csurf-project
+csurf-dir := $(shell dirname $(issta-csurf-project))
+pairs.txt: static-site-info.so preds.txt
+	touch $(csurf-dir)/pairs.txt
+	ln -sf $(CURDIR)/static-site-info.so $(csurf-dir)
+	ln -sf $(CURDIR)/preds.txt $(csurf-dir)
+	-cd $(csurf-dir) && csurf -nogui  $(issta-csurf-project) -l $(tooldir)/effort/effort.stk
+	cp $(csurf-dir)/pairs.txt $@
+else
+pairs.txt:
+	touch $@
+endif
+CLEANFILES += pairs.txt
+
+
+#############################################################################
+# Truth probability estimation
+# Estimate truth probabilities for every predicate in preds.txt for every run
+# using the algorithm in the ICML 2006 paper
+#
+# In theory, any analysis done only on the culled predicates in preds.txt
+# could use the estimated truth probabilities as a starting point
+#
+# If omit-truth-probability-estimation flag is set do not estimate
+# probabilties, just report actual values
+#############################################################################
+ifndef omit-truth-probability-estimation
+parmstats.txt notp-parmstats.txt: s.runs f.runs preds.txt static-site-info.so $(database) $(call tool-deps, collect_parmstats)
+	$(time) $(tooldir)/collect_parmstats --begin-runs=$(begin-runs) --end-runs=$(end-runs) $(if $(rates-txt), --sample-rates=$(rates-txt)) --database-filename=$(database)
+CLEANFILES += parmstats.txt notp-parmstats.txt
+
+parms.txt notp-parms.txt: parmstats.txt notp-parmstats.txt static-site-info.so $(call tool-deps, est_parms)
+	$(time) $(tooldir)/est_parms
+CLEANFILES += parms.txt notp-parms.txt est_parms.log
+
+X.dat notX.dat : preds.txt parms.txt notp-parms.txt static-site-info.so $(database) $(call tool-deps, get_tp_weights)
+	$(time) $(tooldir)/get_tp_weights --begin-runs=$(begin-runs) --end-runs=$(end-runs) --estimate-tps=true --database-filename=$(database)
+else
+X.dat notX.dat : preds.txt static-site-info.so $(database) $(call tool-deps, get_tp_weights)
+	$(time) $(tooldir)/get_tp_weights --begin-runs=$(begin-runs) --end-runs=$(end-runs) --estimate-tps=false --database-filename=$(database)
+endif
+CLEANFILES += X.dat notX.dat truX.dat trunotX.dat truFreq.dat trunotFreq.dat
+
+#############################################################################
+# For every site corresponding to a predicate in preds.txt yields a histogram
+# of the number of times a predicate associated with the site is observed true
+# in a run. Done separately for failing and for succeeding runs.
+#############################################################################
+prior-dist: fpriors.dat spriors.dat
+fpriors.dat spriors.dat: s.runs f.runs preds.txt static-site-info.so $(database) $(call tool-deps, gather_prior_dist)
+	$(time) $(tooldir)/gather_prior_dist --begin-runs=$(begin-runs) --end-runs=$(end-runs) --database-filename=$(database)
+CLEANFILES += fpriors.dat spriors.dat
+.PHONY : prior-dist
+
+#############################################################################
+# For every predicate in preds.txt yields a histogram of the ratios of the
+# counts of a predicate to its compliment in a given run.
+# Done separately for failing and for succeeding runs.
+#############################################################################
+truth-dist: struthfreq.dat ftruthfreq.dat
+struthfreq.dat ftruthfreq.dat: s.runs f.runs preds.txt static-site-info.so $(database) $(call tool-deps, gather_prior_truths)
+	$(time) $(tooldir)/gather_prior_truths --begin-runs=$(begin-runs) --end-runs=$(end-runs) --database-filename=$(database)
+CLEANFILES += struthfreq.dat ftruthfreq.dat
+.PHONY : truth-dist
+
+#############################################################################
+# SOBER analysis
+# implementation of the SOBER algorithm on predicates in preds.txt
+#############################################################################
+sober: sober.xml sober.txt
+sober.xml sober.txt: static-site-info.so preds.txt $(database) $(call tool-deps, calc_sober)
+	$(build) links
+	$(time) $(tooldir)/calc_sober --begin-runs=$(begin-runs) --end-runs=$(end-runs) --database-filename=$(database)
+	xmllint --valid --noout sober.xml
+CLEANFILES += sober.xml sober.txt
+.PHONY : sober
+
+#############################################################################
+# Biclustering
+# ICML 2006 algorithm for simultaneously clustering runs and predicates
+#############################################################################
+
+bicluster: bicluster_votes.xml bicluster_preds.xml final-votes.txt
+bicluster_votes.xml bicluster_preds.xml final-votes.txt: preds.txt X.dat notX.dat $(call tool-deps, bicluster)
+	$(build) links
+	$(time) $(tooldir)/bicluster --begin-runs=$(begin-runs) --end-runs=$(end-runs) --truth-probability-weights=X.dat --not-truth-probability-weights=notX.dat
+	xmllint --valid --noout bicluster_votes.xml
+CLEANFILES += bicluster_votes.xml bicluster_preds.xml final-votes.txt bicluster_votes.log list*.xml qualities.log notQualities.log
+.PHONY : bicluster
+
+#############################################################################
+# Logistic Regression --- early CBI analysis
+# 1. Computes a set of interesting predicates into nonconst_preds.txt
+# 2. Chops up all runs into a set of training runs and a validation set
+# 3. Iteratively computes a predictor for failure and success
+#    At each iteration
+#        computes the value for every predicate's coefficient
+#            and stores it in theta.txt
+#            the intercept is indexed as -1, -1
+#        stores the values for the last iteration in logreg.txt
+#        stores the results of applying the logistic regression formula to
+#            every training run in train_lls.txt
+#        stores the results of applying the logistic regression formula to
+#            every validation run in val_lls.txt
+#        evaluates by calculating a confusion matrix on the results
+#            of the prediction for every validation run and storing this
+#            in confmat.txt
+############################################################################
+nonconst-preds: train.runs val.runs nonconst_preds.txt
+train.runs val.runs nonconst_preds.txt : s.runs f.runs static-site-info.so $(database) $(call tool-deps, compute_nonconst_preds)
+	$(time) $(tooldir)/compute_nonconst_preds --begin-runs=$(begin-runs) --end-runs=$(end-runs) --database-filename=$(database)
+CLEANFILES += train.runs val.runs nonconst_preds.txt
+.PHONY : nonconst-preds
+
+
+theta: theta.txt train_lls.txt val_lls.txt confmat.txt
+theta.txt train_lls.txt val_lls.txt confmat.txt logreg.txt: train.runs val.runs nonconst_preds.txt static-site-info.so $(database) $(call tool-deps, train_utillog)
+	$(time) $(tooldir)/train_utillog --begin-runs=$(begin-runs) --end-runs=$(end-runs) --delta1=10.0 --delta2=2.0 --delta3=1.0 --database-filename=$(database)
+CLEANFILES += theta.txt train_lls.txt val_lls.txt confmat.txt logreg.txt
+.PHONY : theta
+
+logreg.xml: %.xml: %.txt static-site-info.so $(call tool-deps, %)
+	$(tooldir)/$* < $*.txt >$@
+	$(build) links
+	xmllint --valid --noout $@
+CLEANFILES += logreg.xml
+
+
+#############################################################################
+# does K-means clustering of runs
+############################################################################
+clusters : f_nonconst_preds.txt kmeans_group.txt
+f_nonconst_preds.txt kmeans_group.txt: static-site-info.so $(call tool-deps, cluster_runs) s.runs f.runs $(database)
+	$(time) $(tooldir)/cluster_runs --begin-runs=$(begin-runs) --end-runs=$(end-runs) --nonconst-file=f_nonconst_preds.txt --database-filename=$(database)
+CLEANFILES += f_nonconst_preds.txt kmeans_groups.txt
+.PHONY : clusters
+
+#############################################################################
+# gathers some very simple statistics about a program's executions
+# generates three files:
+#   never-reached.txt
+#   never-false.txt
+#   never-true.txt
+# see never-reached/README for more information
+############################################################################
+never-kinds := reached false true
+nevers := $(never-kinds:%=never-%.txt)
+allnevers : $(nevers)
+$(nevers): f.runs static-site-info.so $(database) $(call tool-deps, never-reached/never-reached)
+	$(tooldir)/never-reached/never-reached --begin-runs=$(begin-runs) --end-runs=$(end-runs) --database-filename=$(database)
+	for goal in $(nevers); do test -r $$goal; done
+CLEANFILES += $(nevers)
+
+##############################################################################
+# These analyses are grouped not because they are related by what they do
+# but because they are related by the infrastructure that supports them.
+# Comments next to each goal indicates what they actually do
+##############################################################################
+ifdef HAVE_MEX
+
+# transforms correlation coefficient information into a web readable format
+corrcoefs: $(topRho)
+$(topRho): rho.bin $(call tool-deps, top-rho) elimschemes
+	$(tooldir)/top-rho
+	$(build) links
+	xmllint --valid --noout $(topRho)
+CLEANFILES += $(topRho)
+.PHONY : corrcoefs
+
+# calculates scores information for the linear and circular projection schemes
+elimschemes: preds.txt rho.bin static-site-info.so $(call tool-deps, project)
+	$(time) $(tooldir)/project --begin-runs=$(begin-runs) --end-runs=$(end-runs)
+	$(build) links
+	$(find-linears) -exec xmllint --valid --noout '{}' ';'
+	$(find-circulars) -exec xmllint --valid --noout '{}' ';'
+	touch elimschemes
+CLEANFILES += $(filter-out %_none.xml, $(views)) elimschemes
+
+# calculates correlation coefficients for predicates in preds.txt
+# writes many matlab output files to mats subdirectory
+# writes the correlation coefficients as a binary file to rho.bin
+rho.bin: $(corrdir)/readsp.mexglx calculate.m $(sparse)
+	echo "fwrite(fopen('$@','w'), rho, 'double');" | $(time) matlab -nodisplay -nojvm -r calculate
+	test -s $@
+CLEANFILES += rho.bin mats
+
+# builds a file to read some inputs into matlabs sparse matrix format
+$(corrdir)/readsp.mexglx: force
+	$(MAKE) -C $(@D) $(@F)
+
+# automatically generates a file to calculate correlation coefficients
+calculate.m: $(corrdir)/genMscript.pl $(sparsebase:=.meta)
+	$(time) $< .
+CLEANFILES += calculate.m
+
+# converts data from standard format to a matlab friendly format (ascii)
+$(sparse): $(corrdir)/mhn2sparsemat.pl f.runs s.runs obs.txt tru.txt
+	$(time) $< . .
+	for goal in $(sparse); do test -r $$goal; done
+CLEANFILES += $(sparse)
+else
+corrcoefs:
+	$(warning request to buld corrcoefs target, but MEX not available)
+.PHONY : corrcoefs
+endif
+
+##############################################################################
+# generate lots of data files for input to pLSA analysis
+# --- this data is all post culling, i.e., the only features are those that
+#     appear in preds.txt
+#
+# the plsa algorithm itself could be run on complete data, but this
+#     functionality was not implemented
+##############################################################################
+
+Xtru.sparse Xobs.sparse X.xml: preds.txt $(database) $(call tool-deps, make-counts-matrix)
+	$(time) $(tooldir)/matlab/make-counts-matrix --begin-runs=$(begin-runs) --end-runs=$(end-runs) --database-filename=$(database)
+CLEANFILES += Xtru.sparse Xobs.sparse X.xml
+
+prerunsinfo.mat: outcomes.txt X.xml $(matlab-counts)
+	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); convertData('$(matlab-counts)', 'prerunsinfo.mat', 'outcomes.txt', '$(causes-txt)', 'X.xml'); quit()"
+CLEANFILES += prerunsinfo.mat
+
+runsinfo.mat: prerunsinfo.mat
+	test process.xml || $(time) xmllint --valid --noout process.xml
+	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); path(pwd, path); postProcess('$<', '$@', 'process.xml'); quit()"
+CLEANFILES += runsinfo.mat
+
+runsinfo.dat: runsinfo.mat
+	$(time) matlab -nodisplay -r "path('$(tooldir)/matlab', path); toDAformat('$<', '$@'); quit()"
+CLEANFILES += runsinfo.dat
+
+########################################################################
+# Diagnostic commands
+########################################################################
+
+# echos all the variables defined for this execution of make
+# really, it uses grep to identify output from make -p that looks like
+# variable definitions, so is dependent on make's format for printing
+# this information
+echovars:
+	$(MAKE) --question --print-data-base | grep '.*= .*' | grep -v '^[_#<@%\.\?\*\^\+]' | sort
+.PHONY : echovars
+
+# warns about any variables that are used but undefined
+echoundefs:
+	$(MAKE) --question --warn-undefined-variables || test -z
+.PHONY : echoundefs
+
+########################################################################
+# Administrative commands and directives
+########################################################################
+
+ifneq ($(strip $(update-tools)),)
+$(tooldir)/%:
+
+$(tooldir)/analysis-rules.mk: force
+	$(MAKE) -C $(tooldir)
+endif
+
+clean::
+	$(find-zooms) -exec rm '{}' ';'
+
+clean::
+	rm -rf $(CLEANFILES)
+.PHONY: clean
+
+force:
+.PHONY: force
+
+.DELETE_ON_ERROR:

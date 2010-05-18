@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# delete the directories that do not contain any 
+# files in them or any of their subdirectories
+
+# this script is included in the copy_dir_files script as well
+# so if that one is run, this does not need to be run at all
+
+# usage: purge_empty_directories <root dir name>
+
+${1?"Usage: purge_empty_directories <root dir name>"}
+
+cd $1
+for di in $(find . -type d); do
+  if [[ -e $di ]]; then
+    if ! [[ "$(find $di -type f)" ]]; then
+        rm -rf $di
+    fi
+  fi
+done
+

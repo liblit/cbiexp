@@ -1,0 +1,22 @@
+#sidebar { 
+
+  float: right;
+  width: 200px;
+  position: fixed;
+  left: 900px;
+  font-size: 12px;
+  font-family: arial, helvetica, verdana, sans-serif;
+
+}
+
+#source {
+   float: left; 
+   width: 625px;  
+}
+      
+#main { 
+ 
+  font-size: 12px;
+  font-family: arial, helvetica, verdana, sans-serif;
+
+}

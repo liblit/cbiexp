@@ -1,0 +1,15 @@
+To create a set of runs:
+
+   1. Edit "bin/SiteConfig.pm" and change @musicdirs to a list of
+      directories containing music files.
+
+   2. Run "bin/rhythmbox" directly, and use the GUI to load the music
+      files in @musicdirs into Rhythmbox's library.  Rhythmbox should
+      list all of the files under @musicdirs and nothing extra.
+
+   3. Quit Rhythmbox.
+
+   4. Use "../bin/make-runs" to start creating runs.  Run this script
+      with no arguments for a usage summary.
+
+If you want to add more runs later, jump straight to step 4.

@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!DOCTYPE schemes SYSTEM "schemes.dtd">
+
+<schemes>
+  <scheme id="atoms">
+    <predicate text="atomic"/>
+    <predicate text="not atomic"/>
+  </scheme>
+  <scheme id="branches">
+    <predicate text="is FALSE"/>
+    <predicate text="is TRUE"/>
+    <predicate text="is TRUE"/>
+    <predicate text="is FALSE"/>
+  </scheme>
+  <scheme id="float-kinds">
+    <predicate text="== -inf"/>
+    <predicate text="!= -inf"/>
+    <predicate text="is negative and normalized"/>
+    <predicate text="is not (negative and normalized)"/>
+    <predicate text="is negative and denormalized"/>
+    <predicate text="is not (negative and denormalized)"/>
+    <predicate text="== -0"/>
+    <predicate text="!= -0"/>
+    <predicate text="is NaN"/>
+    <predicate text="is not NaN"/>
+    <predicate text="== +0"/>
+    <predicate text="!= +0"/>
+    <predicate text="is positive and denormalized"/>
+    <predicate text="is not (positive and denormalized)"/>
+    <predicate text="is positive and normalized"/>
+    <predicate text="is not (positive and normalized)"/>
+    <predicate text="== +inf"/>
+    <predicate text="!= +inf"/>
+  </scheme>
+  <scheme id="g-object-unref">
+    <predicate text="== 0"/>
+    <predicate text="!= 0"/>
+    <predicate text="== 1"/>
+    <predicate text="!= 1"/>
+    <predicate text="&gt; 1"/>
+    <predicate text="&lt;= 1"/>
+    <predicate text="is invalid"/>
+    <predicate text="is valid"/>
+  </scheme>
+  <scheme id="returns">
+    <predicate text="&lt; 0"/>
+    <predicate text="&gt;= 0"/>
+    <predicate text="== 0"/>
+    <predicate text="!= 0"/>
+    <predicate text="&gt; 0"/>
+    <predicate text="&lt;= 0"/>
+  </scheme>
+  <scheme id="scalar-pairs">
+    <predicate text="&lt;"/>
+    <predicate text="&gt;="/>
+    <predicate text="=="/>
+    <predicate text="!="/>
+    <predicate text="&gt;"/>
+    <predicate text="&lt;="/>
+  </scheme>
+  <scheme id="yields">
+    <predicate text="not yielded"/>
+    <predicate text="yielded"/>
+  </scheme>
+  <scheme id="fun-reentries">
+    <predicate text="function not re-entered"/>
+    <predicate text="function re-entered"/>
+  </scheme>
+  <scheme id="compare-swap">
+    <predicate text="compare-swap 1"/>
+    <predicate text="compare-swap 2"/>
+  </scheme>
+  <scheme id="atoms-rw">
+    <predicate text="atoms-rw 1"/>
+    <predicate text="atoms-rw 2"/>
+  </scheme>
+</schemes>

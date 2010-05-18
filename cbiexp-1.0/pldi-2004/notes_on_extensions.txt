@@ -1,0 +1,335 @@
+This note documents some non-obvious facts about the iterative
+algorithm for CBI.  Specifically:
+
+1. We show that after a predicate P is selected by the algorithm, the
+Increase score of its complement ~P will be non-negative.  We also
+consider different ways of simulating the bug "fix" corresponding to
+predicate P: throwing out all runs where P is true, throwing out only
+the failing runs where P is true, converting the failing runs of P to
+successful runs.  We show that while all these strategies have the
+property, they are not the same, and there are technical reasons to
+prefer the last one (converting failing runs to successful runs).
+
+2. Another natural property, that the sign of the Increase score of a
+predicate and its complement are opposite, does not hold.  In fact,
+both P and ~P may have negative increase scores, even when they are
+the only and equivalent predictors of failure.  This seems to be a bug
+in our current ideas: an example shows that the probability of failure
+just before a conditional is not necessarily the sum of the
+probabilities of failure of both branches.
+
+3. We suggest a fix to this issue: a different way of computing
+Increase that is more robust (at least in the sense that the
+Increase(P) and Increase(~P) always have opposite signs).  The fix
+also has property (1).  As a result, we can prove that the top-ranked
+predicate in the iterative algorithm always has a non-negative Increase
+score.
+
+============================================
+
+Standard definitions:
+
+Increase(P) = Failure(P) - Context(P)
+Failure(P) = (F(P)/(F(P) + S(P))
+Context(P) = (OF(P)/OF(P) + OS(P))
+
+For the purposes of this note we will write Context(P) in the following
+non-standard way:
+
+Context(P) =                F(P) + F(~P) - N
+             ---------------------------------------
+             F(P) + F(~P) + S(P) + S(~P) - N - M
+
+where N = the number of runs counted in both F(P) and F(~P)
+      M = the number of runs counted in both S(P) and S(~P)
+
+The fact that both P and ~P can be true in a run means that we need
+the correction factors N and M to compensate for any double counting.
+Note that N and M are non-negative (they may be 0).
+
+=============================================
+
+PART 1
+
+This part is all good news.
+
+Here we examine the three proposed methods for discounting the runs of
+P when P is selected by the iterative algorithm.  All three methods
+have a pleasing property: Even if Increase(~P) is negative before the
+selection of P, afterwards Increase(~P) is guaranteed to be
+non-negative.  Thus, negative Increase predicates that are paired with
+a positive Increase predicate ~P present no paradoxes: The negative
+Increase score of P will resolve to a non-negative Increase score when
+~P is selected by the algorithm.
+
+The proofs for all three cases are similar, but the differences are
+instructive.
+
+Lemmma.  Let P be a predicate where ~P is selected before P by the
+algorithm.  After ~P is selected and all runs where ~P is true are
+dropped, Increase(P) = 0 or is undefined.
+
+Proof.
+ 
+Initially 
+Increase(P) =         F(P)               F(P) + F(~P) - N
+                   ----------  -   ------------------------------------
+                    F(P)+S(P)      F(P) + F(~P) + S(P) + S(~P) - N - M
+
+
+After ~P is selected,
+Increase(P) =           F(P) - N                   F(P) - N 
+                   ---------------------  -   ------------------- 
+                    F(P) + S(P) - N - M       F(P) + S(P) - N - M 
+
+which is either 0 or undefined.
+
+
+
+Lemmma.  Let P be a predicate where ~P is selected before P by the
+algorithm.  After ~P is selected and all failing runs where ~P is true
+are dropped, Increase(P) >= 0 or is undefined.
+
+Proof.
+ 
+Initially 
+Increase(P) =         F(P)               F(P) + F(~P) - N
+                   ----------  -   ------------------------------------
+                    F(P)+S(P)      F(P) + F(~P) + S(P) + S(~P) - N - M
+
+
+After ~P is selected,
+Increase(P) =           F(P) - N                   F(P) - N 
+                   ---------------------  -   --------------------------- 
+                    F(P) + S(P) - N           F(P) + S(P) + S(~P) - N - M
+ 
+Since S(P) >= M and F(P) >= N, Increase(P) >= 0 if it is defined.
+
+
+
+
+Lemmma.  Let P be a predicate where ~P is selected before P by the
+algorithm.  After ~P is selected and all failing runs where ~P is true
+are counted as successful runs, Increase(P) >= 0 or is undefined.
+
+Proof.
+ 
+Initially 
+Increase(P) =         F(P)               F(P) + F(~P) - N
+                   ----------  -   ------------------------------------
+                    F(P)+S(P)      F(P) + F(~P) + S(P) + S(~P) - N - M
+
+
+After ~P is selected,
+Increase(P) =        F(P) - N                          F(P) - N 
+                --------------------  -  -----------------------------------
+                  F(P) + S(P) - N        F(P) + F(~P) + S(P) + S(~P) - N - M
+ 
+Since S(~P) >= M, Increase(P) >= 0 if it is defined.
+
+(end of proofs)
+
+Discussion: Note that the lemmas are in order of increasingly defined
+and increasingly non-zero.  That is, counting failed runs as
+successful runs is least likely to make the predicate that is not
+chosen have an undefined or zero Increase score.  Thus, more failed
+runs are accounted for by the last technique.
+
+At one point I said I thought counting failed runs as successful runs
+is counterintuitive.  Now I think just the opposite: the programmer
+probably didn't intend those paths to be unreachable, so throwing out
+runs is really drastic.  Converting them to successful runs preserves
+more realistic executions in many (all?) cases (consider the Lisp bug
+in Moss: the programmer certainly intended to have Lisp programs, but
+throwing out all the failing runs for Lisp throws out all executions
+on the Lisp path, simulating a Moss with no Lisp processing at all).
+
+=========================================================================
+
+PART 2
+
+This part is bad news.
+
+To characterize predicates with negative increase scores, it would be
+nice if the sign of Increase(P) was always opposite that of
+Increase(~P).  Combined with Part 1, such a situation would mean that
+negative Increase score predicates were always paired with a positive
+increase score predicate, and so every negative increase score
+predicate would eventually become non-negative when its complement was
+selected by the algorithm.
+
+In fact, this is almost true.
+
+Lemma.  Let P be a predicate and ~P its logical complement.  The sign
+of Increase(P) is opposite the sign of Increase(~P) if N = M = 0.
+
+Increase(P) =         F(P)             F(P) + F(~P)
+                   -----------  -   --------------------------
+                    F(P)+S(P)       F(P) + F(~P) + S(P) + S(~P)
+
+
+Increase(~P) =         F(~P)                 F(P) + F(~P)
+                   ---------------  -   ---------------------------
+                    F(~P)+S(~P)         F(P) + F(~P) + S(P) + S(~P)
+
+
+
+Increase(P) is negative if
+       F(P)                                      F(P) + F(~P)
+  -------------         <             --------------------------------
+    F(P)+S(P)                             F(P) + F(~P) + S(P) + S(~P)
+
+<=>  F(P)^2 + F(P)F(~P) + F(P)S(P) + F(P)S(~P) <  
+     F(P)^2 + F(P)F(~P) + F(P)S(P) + F(~P)S(P)
+<=>  F(P)S(~P) < F(~P)S(P)
+
+By a symmetric calculation, Increase(~P) is negative iff
+
+     F(~P)S(P) < F(P)S(~P)
+
+
+Thus, the signs of Increase(P) and Increase(~P) are opposite.
+
+(end of proof)
+
+However, when M, in particular, is non-zero, both Increase(P) and
+Increase(~P) can be negative.  Consider the following program:
+
+F() { fail 50% of the time if this is the first loop iteration, otherwise
+      never fail }
+
+main() {
+loop
+   if (X == 0) then  (*)
+      F();
+      X = 1
+   else
+      F();
+      X = 0
+   end
+until (terminate sometime after the 2nd iteration)
+}     
+
+The only instrumented predicate is X == 0 at line (*).  The important
+thing about this example is that if the program fails, X == 0 is
+observed exactly once.  Thus, in failing runs, X == 0 and X != 0 are
+never both observed true in the same run.  In successful runs,
+however, both X == 0 and X != 0 are always observed true (assuming
+100% sampling).
+
+Here is a sample set of 4 feedback reports:
+
+  (X == 0)   (X != 0)   outcome
+     T           F       failed
+     F           T       failed
+     T           T       success
+     T           T       success
+
+Now Failure(X == 0) = Failure(X != 0) = 1/3, and 
+    Context(X == 0) = Context(X != 0) = 1/2.
+Thus Increase(X == 0) = Increase(X != 0) = -1/6.
+
+This example gets what clearly seems to be the wrong answer.  The
+problem is that the two predicates split the set of failed runs, but
+they share the entire set of successful runs.  Thus, there is another
+kind of double-counting problem: despite the fact that the probability
+of failure is exactly the same on both branches of the conditional in
+every iteration of the loop (note that the probability is different in
+different iterations, but it is always the same on both branches in a
+particular iteration), our metrics report that the probability of
+failure goes down after the branch is taken, whichever way the branch
+goes!
+
+
+=========================================================================
+
+PART 3
+
+This section is good news.
+
+In this section we propose a fix to the problem discussed in Part 2.
+The idea is that in calculation of Failure(P), the predicate P gets
+credit for only half of the runs in which P and ~P are both true.
+Intuitively this adjustment divides the failing and successful runs that P
+and ~P share between the two predicates, preventing any overcounting.
+
+
+Increase(P) =     F(P) - N/2                     F(P) + F(~P) - N
+              ---------------------   -    -----------------------------------
+              F(P)+S(P) - N/2 - M/2        F(P) + F(~P) + S(P) + S(~P) - N - M
+
+
+Increase(~P) =    F(~P) - N/2                 F(P) + F(~P) - N
+              ---------------------  -     -----------------------------------
+              F(~P)+S(~P)-N/2-M/2          F(P) + F(~P) + S(P) + S(~P) - N - M
+
+
+Lemma.  Let P be a predicate and ~P its logical complement.  The sign
+of Increase(P) is opposite the sign of Increase(~P).
+
+Increase(P) is negative if
+       F(P) - N/2                              F(P) + F(~P) - N
+  -------------------         <        -----------------------------------
+    F(P)+S(P)-N/2-M/2                  F(P) + F(~P) + S(P) + S(~P) - N - M
+
+<=>  F(P)^2 + F(P)F(~P) + F(P)S(P) + F(P)S(~P) - F(P)N - F(P)M -
+     NF(P)/2 - NF(~P)/2 - NS(P)/2 - NS(~P)/2 + N^2/2 + NM/2 
+<
+     F(P)^2 + F(P)F(~P) - F(P)N + F(P)S(P) + F(~P)S(P) - S(P)N 
+     - NF(P)/2 - NF(~P)/2 + N^2/2 - MF(P)/2 - MF(~P)/2 + NM/2
+
+<=>  F(P)S(~P) - F(P)M - NS(P)/2 - NS(~P)/2 <
+     F(~P)S(P) - S(P)N - MF(P)/2 - MF(~P)/2 
+
+<=>  F(P)S(~P) - MF(P)/2 - NS(~P)/2 <  F(~P)S(P) - NS(P)/2 - MF(~P)/2 
+
+<=>  F(P)S(~P) - F(~P)S(P) <  -NS(P)/2 - MF(~P)/2 + MF(P)/2 + NS(~P)/2 
+
+By a symmetric calculation, Increase(~P) is negative iff
+
+       F(~P) - N/2                              F(P) + F(~P) - N
+  -------------------         <        -----------------------------------
+    F(~P)+S(~P)-N/2-M/2                  F(P) + F(~P) + S(P) + S(~P) - N - M
+
+<=>  F(~P)^2 + F(P)F(~P) + F(~P)S(P) + F(~P)S(~P) - F(~P)N - F(~P)M -
+     NF(P)/2 - NF(~P)/2 - NS(P)/2 - NS(~P)/2 + N^2/2 + NM/2 
+<
+     F(~P)^2 + F(P)F(~P) - F(~P)N + F(P)S(~P) + F(~P)S(~P) - S(~P)N 
+     - NF(P)/2 - NF(~P)/2 + N^2/2 - MF(P)/2 - MF(~P)/2 + NM/2
+
+<=>  F(~P)S(P) - F(~P)M - NS(P)/2 - NS(~P)/2 <
+     F(P)S(~P) - S(~P)N - MF(P)/2 - MF(~P)/2 
+
+<=>  F(~P)S(P) - MF(~P)/2 - NS(P)/2 <  F(P)S(~P) - NS(~P)/2 - MF(P)/2 
+
+<=>  NS(~P)/2 + MF(P)/2 - MF(~P)/2 - NS(P)/2 <  F(P)S(~P) - F(~P)S(P) 
+
+Now we have
+        NS(~P)/2 + MF(P)/2 - MF(~P)/2 - NS(P)/2 
+     <  F(P)S(~P) - F(~P)S(P) 
+     <  -NS(P)/2 - MF(~P)/2 + MF(P)/2 + NS(~P)/2 
+=>
+  NS(~P)/2 + MF(P)/2 - MF(~P)/2 - NS(P)/2 <  
+ -NS(P)/2 - MF(~P)/2 + MF(P)/2 + NS(~P)/2 
+<=>   NS(~P)/2 + MF(P)/2 - MF(~P)/2 - NS(P)/2 <  
+      NS(~P)/2 + MF(P)/2 - MF(~P)/2 - NS(P)/2
+<=>   0 < 0
+a contradiction.  We conclude that Increase(P) and Increase(~P) cannot have
+the same sign.
+(end of proof)
+
+This modification to the calculation of Increase(P) does not quite
+give us a new algorithm, because there is an issue of how to discount
+runs.  If P is only "charged" for 1/2 of the runs shared with ~P,
+should only 1/2 of the runs be discounted?  It appears the answer
+should be no, because it is not obvious which 1/2 of the runs to pick
+because the choice may affect the scores other predicates.  It seems
+more natural that when P is picked before ~P that all of the runs
+where P and ~P are true be charged to P because P is the more
+important predicate.  Thus, the purpose of the modified Increase score
+is to divide shared runs equally before we know which predicate is
+more important, and to avoid the possibility that the highest ranked
+predicate has a negative increase score.  Once the selection of the
+top-ranked predicate has been made, we proceed as in the original
+algorithm.
+

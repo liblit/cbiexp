@@ -1,0 +1,148 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (X11; I; Linux 2.0.35 i686) [Netscape]">
+   <meta name="keywords" content="VNC, AT&T Laboratories Cambridge, Virtual Network Computing, thin-client">
+
+
+   <title>VNC - rfbcounter server</title>
+<link REL="stylesheet" HREF="styles.css" TYPE="text/css">
+</head>
+<body bgcolor="#FFFFFF" vlink="#000080" marginheight="0" topmargin="0" leftmargin="0" marginwidth="0">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><a href="index.html"><img SRC="sidelogo.gif" ALT="VNC logo" BORDER=0 height=113 width=120></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="20"><img SRC="spacer.gif" HSPACE=8 height=1 width=1></td>
+
+<td>
+<table BORDER=0 WIDTH="100%" >
+<tr>
+<td WIDTH="90%" valign="center">
+<center>
+<h1>
+<IMG SRC="vnctitle.gif"  WIDTH=370 HEIGHT=30 ALT="Virtual Network Computing"></h1></center>
+</td>
+
+<td WIDTH="10%"><a href="http://www.uk.research.att.com/"><img SRC="attlogo.gif" ALT="AT&T" BORDER=0 height=75 width=66 align=RIGHT></a></td>
+</tr>
+</table>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+<tr><td colspan=5 bgcolor="#eecc80"><img src="spacer.gif" height=3 vspace=0 hspace=1></td></tr>
+<tr><td bgcolor="#eecc80"><img src="spacer.gif" height=4 vspace=0 hspace=1></td><td colspan=4></td></tr>
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><a href="index.html"><img SRC="homebutton.gif" ALT="[Home]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="screenshots.html"><img SRC="screenbutton.gif" ALT="[screenshots]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+
+<tr>
+<td><a href="start.html"><img SRC="startbutton.gif" ALT="[getting started]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="docs.html"><img SRC="docbutton.gif" ALT="[documentation]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="faq.html"><img SRC="faqbutton.gif" ALT="FAQs" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="download.html"><img SRC="downloadbutton.gif" ALT="[download]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="intouch.html"><img SRC="intouchbutton.gif" ALT="[keep in touch]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="contribs.html"><img SRC="contribbutton.gif" ALT="Others' ports and add-ons etc" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="help.html"><img SRC="helpbutton.gif" ALT="Project ideas" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="vncpeople.html"><img SRC="vncpeoplebutton.gif" ALT="VNC people" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/search.html"><img SRC="searchbutton.gif" ALT="Search" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/"><img SRC="attbutton.gif" ALT="[AT&T Laboratories Cambridge]" BORDER=0 height=33 width=120></a></td>
+</tr>
+</table></center>
+</td>
+
+<td VALIGN=TOP WIDTH="20"><img SRC="spacer.gif" HSPACE=8 height=1 width=1></td>
+
+<td VALIGN=TOP>
+<h2>
+rfbcounter</h2>
+A <i>really </i>simple VNC server.
+<p><img SRC="rfbcounter.gif" ALT="[screenshot of rfbcounter]" HSPACE=8 VSPACE=6 height=123 width=258 align=LEFT>
+We thought we'd release the source code of this just to show that a VNC
+server doesn't have to be big and complicated, and that you can display
+things other than desktops!&nbsp;
+<br>Rfbcounter creates and updates a simple numeric counter.&nbsp; It does
+so by generating raw VNC protocol to produce the digits, and does not have
+a framebuffer of its own.
+<p>The name comes from the fact that the VNC protocol is sometimes referred
+to as the RFB protocol.&nbsp; RFB stands for 'Remote Framebuffer'.
+<p>The source code for rfbcounter can be found, tarred and gzipped, <a href="http://www.uk.research.att.com/vnc/dist/rfbcounter.tar.gz">here</a>.
+It is a single C file with a couple of headers, and should compile easily
+on Linux, and with very little effort on Win32 and other flavours of Unix.
+<h3>
+Usage:</h3>
+
+<pre>&nbsp;&nbsp;&nbsp; rfbcounter [-clock] display-number width [fg] [bg]</pre>
+eg. if you run
+<pre>&nbsp;&nbsp;&nbsp; rfbcounter 5 300</pre>
+you can then connect a VNC viewer to display 5 on that machine and you'll
+get a counter 500 pixels wide. The fg &amp; bg arguments are single byte
+values specifying foreground and background colours in BGR233. By prefixing
+with a zero, you can use octal to simplify color selection, for example
+0007 0100 is bright red on a dark blue background.&nbsp; If you specify
+the -clock option, rfbcounter will display the current time instead of
+a free-running counter, and update it once a minute.
+<p><b>Note: </b>rfbcounter does not do any pixel translation.&nbsp; Your
+viewer *must* cope with 8-bit bgr233 format for this to work.&nbsp; On
+Unix, use the -bgr233 option to vncviewer.
+<p>This is not an example of good VNC code.&nbsp; We ignore lots of messages
+we shouldn't really ignore, for example.&nbsp; It only uses the RRE encoding,
+because that's the easiest way to draw rectangles.
+<p>&nbsp;</td>
+
+<td WIDTH="5%"></td>
+</tr>
+
+<tr>
+<td ALIGN=CENTER VALIGN=TOP COLSPAN="4">
+<!-- Ruler here? -->
+<center>
+<p><i><font size=-1>For comments, feedback, etc, please see the '<a href="intouch.html">Keeping
+in touch</a>' page</font>.</i>
+<br><i><font size=-1>Copyright 1999 - AT&amp;T Laboratories Cambridge
+</font></i></center>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

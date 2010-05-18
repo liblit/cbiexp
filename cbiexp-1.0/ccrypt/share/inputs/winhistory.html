@@ -1,0 +1,483 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (X11; I; Linux 2.0.35 i686) [Netscape]">
+   <meta name="keywords" content="VNC, AT&T Laboratories Cambridge, Virtual Network Computing, thin-client">
+
+
+   <title>Windows VNC release history</title>
+<link REL="stylesheet" HREF="styles.css" TYPE="text/css">
+</head>
+<body bgcolor="#FFFFFF" vlink="#000080" marginheight="0" topmargin="0" leftmargin="0" marginwidth="0">
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><a href="index.html"><img SRC="sidelogo.gif" ALT="VNC logo" BORDER=0 height=113 width=120></a></center>
+</td>
+
+<td VALIGN=TOP WIDTH="20"><img SRC="spacer.gif" HSPACE=8 height=1 width=1></td>
+
+<td>
+<table BORDER=0 WIDTH="100%" >
+<tr>
+<td WIDTH="90%" valign="center">
+<center>
+<h1>
+<IMG SRC="vnctitle.gif"  WIDTH=370 HEIGHT=30 ALT="Virtual Network Computing"></h1></center>
+</td>
+
+<td WIDTH="10%"><a href="http://www.uk.research.att.com/"><img SRC="attlogo.gif" ALT="AT&T" BORDER=0 height=75 width=66 align=RIGHT></a></td>
+</tr>
+</table>
+</td>
+
+<td WIDTH="5%"></td>
+</tr>
+<tr><td colspan=5 bgcolor="#eecc80"><img src="spacer.gif" height=3 vspace=0 hspace=1></td></tr>
+<tr><td bgcolor="#eecc80"><img src="spacer.gif" height=4 vspace=0 hspace=1></td><td colspan=4></td></tr>
+<tr>
+<td ALIGN=CENTER VALIGN=TOP WIDTH="125" BGCOLOR="#EECC80">
+<center><table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><a href="index.html"><img SRC="homebutton.gif" ALT="[Home]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="screenshots.html"><img SRC="screenbutton.gif" ALT="[screenshots]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+
+<tr>
+<td><a href="start.html"><img SRC="startbutton.gif" ALT="[getting started]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="docs.html"><img SRC="docbutton.gif" ALT="[documentation]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="faq.html"><img SRC="faqbutton.gif" ALT="FAQs" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="download.html"><img SRC="downloadbutton.gif" ALT="[download]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="intouch.html"><img SRC="intouchbutton.gif" ALT="[keep in touch]" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="contribs.html"><img SRC="contribbutton.gif" ALT="Others' ports and add-ons etc" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="help.html"><img SRC="helpbutton.gif" ALT="Project ideas" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="vncpeople.html"><img SRC="vncpeoplebutton.gif" ALT="VNC people" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/search.html"><img SRC="searchbutton.gif" ALT="Search" BORDER=0 height=33 width=120></a></td>
+</tr>
+
+<tr>
+<td><a href="http://www.uk.research.att.com/"><img SRC="attbutton.gif" ALT="[AT&T Laboratories Cambridge]" BORDER=0 height=33 width=120></a></td>
+</tr>
+</table></center>
+</td>
+
+<td VALIGN=TOP WIDTH="8%"></td>
+
+<td VALIGN=TOP WIDTH="100%">
+<h2>
+<b>What's new in the Windows VNC package?</b></h2>
+See the main VNC History page for an explanation of the version numbers.
+<p>A more complete list of changes can be found in the files called History.txt
+included in the source packages of both the viewer and the server.&nbsp;
+This is just a summary.
+<p>Want to get the latest version? Go to the 
+<A HREF="http://www.uk.research.att.com/vnc/download.html">Download Page</A>.</P>
+
+<p>
+<hr color="#000080" noshade>
+<h3>
+New in Windows package 3.3.3r7</h3>
+<p>Fixed winsock-related bug which caused R6 server not to work under unmodified Windows 95.</p>
+
+<p>
+<hr color="#000080" noshade>
+<h3>
+New in Windows package 3.3.3r6</h3>
+<p>
+The viewer has not changed in this release. The server has been upgraded to 3.3.3r6.
+<h4>WinVNC server</h4>
+As always, see the History.txt file in the source release for full details.  This revision incorporates:
+<ul>
+<li>Many bug fixes and some speed improvements (particular thanks to Will Dean)
+<li>Some protection against Denial-of-Service attacks.
+<li>The QuerySetting & QueryTimeout registry options which allow the user of a desktop to be prompted before others can connect.
+</ul>
+For details see the <a href="docs.html">WinVNC documentation</a>.
+<p>
+<hr color="#000080" noshade>
+<h3>
+New in Windows package 3.3.3r2</h3>
+<p>
+This package consists of version 3.3.3r2 of the server and
+3.3.3r2 of the viewer.</p>
+<h4>Windows VNCviewer</h4>
+
+<p>Changed threading to fix problems on some SMP machines.</p>
+
+<p>The <tt>-register</tt> option now stores quoted pathnames, 
+so the <tt>-config</tt> option should work better when filenames have spaces in them.</p>
+
+<p>Config files now store details about the VNC encodings selected.</p>
+
+<p>Fixed bug which could cause a crash in rare circumstances when given an empty server name.</p>
+
+<h4>WinVNC server</h4>
+
+<p>Added <tt>-connect</tt> option which causes a currently running server to initiate an outgoing connection. (Equivalent of 'Add New Client' menu option.)</p>
+
+<p>Outgoing connections are now in 'shared' mode.</p>
+
+<p>Improved the way preferences are loaded, reducing the number of times clients will be disconnected during loading.</p>
+
+<p>Added experimental option to disable local keyboard and mouse when remote connections active. Works on NT only.</p>
+
+<hr color="#000080" noshade>
+<h3>
+New in Windows package 3.3.3r1</h3>
+<p>
+Fixed bug in the 3.3.3 server which was stopping the Java viewer from
+working. This package consists of version 3.3.3r1 of the server and
+3.3.3 of the viewer.</p>
+ 
+<hr color="#000080" noshade>
+<h3>
+New in Windows package 3.3.3</h3>
+
+<p>The <a href="docs.html">documentation</a> has been updated. Please read it again if you're upgrading.</p> 
+<p>The Windows VNC package is now built using Visual C++ 6.0. We recommend that you use the same or later if you wish to rebuild it from the source code.</p>
+
+<h4>Windows VNCviewer</h4>
+
+<p>Changes to thread scheduling and locking which should improve
+reacitivity of local GUI (menus, scrollbars etc) on slow links.</p>
+
+<p>Information about the current connection including, optionally, the
+password, can be saved to a '.vnc' file, which can then be specified
+on the command line.  You can use the IniFileMapping facility of NT if
+you would prefer these to be saved in the registry. Also an option to
+register '.vnc' files as belonging to vncviewer, so that you can
+double-click on them.</p>
+
+<p>Fairly primitive scaling facility allows you to see desktop at
+different sizes.</p>
+
+<p>In Connection dialog, display defaults to :0 if not specified, so when connecting to WinVNC servers you can usually just type the machine name.</p>
+
+<p>Command line options to change the appearance of the local cursor.</p>
+
+<p>3-button emulation (create a middle-button click by pressing left
+and right together) is now the default, so an option has been added to
+disable it if required.</p>
+
+<p>Updated copyright notices and About... boxes.</p>
+
+<h4>WinVNC server</h4>
+
+<p> An 'Add New Client' option has been added to the server menu,
+which initiates a connection to a listening VNC viewer (one started
+with the -listen option). This allows you to send your desktop to a
+helpdesk, for example, without them needing to know your password or IP address.
+</p>
+
+<p> The WinVNC settings for the currently logged in user are now
+correctly loaded even when running as a service under Windows NT,
+provided a small 'helper' app is run when the user logs in.  This
+helper is installed automatically when WinVNC is run as a service.</p>
+
+<p> Limited client IP-address based filtering of connections is now supported,
+through the new Machine-Local registry setting "AuthHosts".</p>
+
+<p> Incoming connections may be restricted on a server-wide basis to
+being accepted only on the local-loopback interface, through the
+"LoopbackOnly" registry setting.</p>
+
+<p> Nagle's algorithm is now disabled on <i>all</i> WinVNC connections, decreasing latency considerably in many cases.</p>
+
+<p> Dynamic priority adjustments are made to WinVNC threads to
+increase performance without impacting other running applications.</p>
+
+<p> The machine's name is now included in the title of the web page
+used to access the Java version of the VNC client.</p>
+
+<p> Timestamp information is now added in the debug log output.</p>
+
+<p> MAJOR FIX: Two significant handle leaks which could occur when
+running as a service under Windows NT have been fixed.</p>
+
+<p> MINOR FIX: The "LockSetting" registry option is now correctly loaded.</p>
+
+<p> MINOR FIX: A bug which would sometimes cause an Application Fault when stopping a service-mode WinVNC has been fixed.</p>
+
+<hr color="#000080" noshade>
+<h3>
+New in windows package 3.3.2 R6</h3>
+The R6 package consists of:
+<ul>&nbsp;
+<li>
+Revision 6 of the WinVNC server</li>
+
+<li>
+Revision 11 of the Windows VNC viewer.</li>
+</ul>
+
+<h4>
+Windows VNCviewer (R11)</h4>
+Added middle-button emulation for two-button mice by clicking both buttons
+simultaneously.&nbsp; This need to be turned on from the command line or
+the Options dialog.&nbsp; Many thanks to Randy Brown &lt;rgb@inven.com>
+for providing this very useful feature, which we've been meaning to do
+for some time! A few new command line options to control this.
+<p>You can start connections in full-screen mode by specifying -fullscreen
+on the command line.
+<p>You can disable transfer of the clipboard in both directions from the
+Options dialog or the command line.
+<h4>
+WinVNC Server (R6)</h4>
+Fixed a bug in polling of DOS-prompt boxes under Windows 95.
+<p>Fixed minor protocol non-compliance bug with regard to clients which
+fail to send SetPixelFormat messages.
+<p>
+<hr color="#000080" noshade>
+<h3>
+New in windows package 3.3.2 R5</h3>
+See the <a href="docs.html">documentation</a> for further details. The
+R5 package consists of:
+<ul>&nbsp;
+<li>
+Revision 5 of the WinVNC server</li>
+
+<li>
+Revision 9 of the Windows VNC viewer.</li>
+</ul>
+
+<h4>
+Windows VNCviewer (R9)</h4>
+More internal restructuring so that more code can be shared with the Windows
+CE viewer. Fixed some resource/handle leaks.
+<p>Added a 'Request Refresh' option to the menu.
+<h4>
+WinVNC Server (R5)</h4>
+The WinVNC registry settings have now been reorganized and improved to
+allow better control over individual user's capabilities when running it,
+whether as an application or as a service. Full details in the <a href="winvnc.html">documentation</a>.&nbsp;
+<p>Mouse events are now produced to reflect those sent on the wire, regardless
+of whether the mouse buttons would locally be swapped by the OS. This means
+that left- or right-&nbsp;&nbsp;&nbsp;&nbsp; handedness is a client-side
+feature.
+<p>If you hold the mouse over the WinVNC icon in the System Tray, it will
+attempt to display the local IP addresses of the machine.&nbsp; Useful
+if these are dynamically allocated.
+<p>Some of the more important fixes:
+<p>If a client chose to send multiple update requests to the server without
+waiting for the update data, then the server would only consider the last
+request. This behaviour was incorrect and has now been fixed. As a result,
+WinVNC will now work properly with the PalmVNC viewer.
+<p>The HTTP server section of WinVNC could end up listening on the wrong
+port number when&nbsp;&nbsp;&nbsp;&nbsp; automatic display number selection
+was in use. This is now fixed.
+<p>A small memory leak in the WinNT side of the vncService::CurrentUser
+function has been fixed.&nbsp;&nbsp;&nbsp; Although the amount lost on
+each execution was small, the function is called often enough for this
+to cause problems over long periods of use.
+<p>Fixed a potential lockup when the Properties dialog is closed by the
+OS rather than by the Ok or Cancel buttons.
+<br>
+<hr color="#000080" noshade>
+<h3>
+New in windows package 3.3.2 R2</h3>
+See the <a href="docs.html">documentation</a> for further details. The
+R2 package consists of:
+<ul>&nbsp;
+<li>
+Revision 2 of the WinVNC server</li>
+
+<li>
+Revision 5 of the Windows VNC viewer.</li>
+</ul>
+
+<h4>
+Windows VNCviewer (R5)</h4>
+Added full-screen mode. Many thanks to Greg Hewgill &lt;greg@hewgill.com>
+for providing much of the basis for this.
+<p>Creates a palette for much better colour on 256-colour clients.
+<p>Added -viewonly and -restricted switches.
+<p>In addition to Ctrl-Alt-Del, you can send individual Ctrl-up, Ctrl-down,
+Alt-up and Alt-down keystrokes from the menu.
+<p>Updates are not requested from the server while iconified.
+<p>The initial state of the clipboard is not sent on connection as it was
+in the past.
+<p>Substantial source code restructuring.
+<p>The local 'dot cursor' is only used when the viewer window has the focus.
+<p>The modifiers are all raised when losing focus.
+<p>In 'listen' mode, the tray icon is checked every 15 seconds and restored
+if not there. If your Explorer dies as often as mine, you might appreciate
+this.
+<p>Fixed session dialog box so longer host names could be entered.
+<h4>
+WinVNC Server (R2)</h4>
+Palette-based clients (such as the Linux SVGAlib client) are now properly
+supported by WinVNC.
+<p>Local-loopback connections, from viewers on the same machine as the
+server, can now be enabled.
+<p>Null-password connections can now be enabled.
+<p>WinVNC server logging features are in place, allowing remote connections
+and error conditions to be logged.
+<p>More of the keypad keys are now recognised from remote clients.&nbsp;
+This means that Ctrl-Alt-keypadDel will cause the server to perform the
+standard Ctrl-Alt-Del procedure.
+<p>Extra hook code is in place to make updates of pop-up menus, etc, work
+better.
+<p>The new ConnectPriority option is available, on a per-machine basis,
+to indicate how the server should deal with multiple non-shared connections.
+<p>Automatic display number selection is now available.
+<p>The CopyRect optimisations are now better handled.
+<p>Screen update notifications are now handled more efficiently.
+<p>The WinVNC -kill command will now wait until any old copies of WinVNC
+have quit before attempting to continue.
+<br>
+<hr color="#000080" noshade>
+<h3>
+New in 3.3.2</h3>
+The MRU (most recently used) list on the viewer now works much better.&nbsp;
+Extra command line options allow for more debugging output.
+<p>WinVNC now returns explanatory message text to the viewer when an incoming
+connection is refused because of an empty Password field or a local-loopback
+connection.
+<p>Mouse movements are now pre-processed by the Desktop handler and only
+passed to the Client handlers immediately before an update is triggered,
+resulting in less overhead and therefore lower latency.
+<p>If a client requests the CopyRect encoding in the list of encodings
+it supports then WinVNC will now use the CopyRect primitive when doing
+simple tasks like&nbsp;&nbsp;&nbsp;&nbsp; dragging windows. This still
+has some flaws in it but generally improves performance.
+<p>Updated the Java classes exported by WinVNC to include the Send-Ctrl-Alt-Del
+button.
+<p>Added a "-about" option, which will cause an _already running_ copy
+of WinVNC to display its About box, making it easier to check that you
+have the latest version!
+<p>Added version information to the VNCHooks Dynamic Link Library. This
+can be viewed selecting the properties dialog for the vnchooks.dll file.
+<br>
+<hr color="#000080" noshade>
+<h3>
+New in 3.3.1 Revision 19:</h3>
+MS-DOS applications can now by typed into! Thanks to Gur Stavi for pointing
+out that WinVNC didn't previously generate keyboard scancodes for key events.
+This means that the COMMAND.COM and EDIT programs, for example, may now
+be used through VNC.
+<p>Lookup-table based colour translations are now incorporated into WinVNC.
+This means a small increase in memory usage but delivers a noticable performance
+boost on most screen formats.
+<p>1, 4 and 8 bit palette-based local displays are now handled directly
+by WinVNC, resulting in a significant performance boost, although there
+are currently problems with the palette layout being confused in places.
+<p>More intelligent culling of unchanged regions of the screen from the
+list of rectangles to be sent has been implemented. Generally, this isn't
+noticable but over low-bandwidth links, it should have a significant effect.
+<p>WM_ENDSESSION is handled properly for full system shutdown. WM_DISPLAYCHANGE
+is now handled, so that when the display resolution changes, all remote
+VNC users are disconnected, to prevent corrupt display updates.
+<p>The mouse cursor rendered to VNC clients is now correct most of the
+time.
+<p>When installing WinVNC as a service, quotes are now placed around the
+executable's name, to avoid problems if there are whitespace characters
+in the path. (Common because of installing to "program files\orl\vnc").
+<p>The command-line options available have changed slightly - see the <a href="winvnc.html">WinVNC
+documentation</a> for details.
+<p>The Java viewer class files have been updated. The new classes are slightly
+more compatible with borderline Java VMs.
+<p>Deferred update messages are no longer removed from the application's
+message queue behind its back, hopefully resulting in more reliable behaviour
+&amp; fewer lock-ups.
+<p>The screen-saver is now not disabled when WinVNC is running in service
+mode and a connection is made, to avoid a potential race condition. This
+will be handled better in a future revision.
+<h4>
+WIN-NT ONLY:</h4>
+When running as a system service, WinVNC no longer disconnects all remote
+VNC connections whenever the current desktop changes.
+<p>Corrected some problems with shift-key release code confusing Windows
+NT.
+<h4>
+WIN-95 ONLY:</h4>
+WM_USERCHANGED is handled, so that when no user is logged in, the machine-local
+password is used, otherwise the user's own VNC password and settings are
+used. (This assumes that Windows 95 is set to Multiple User Profile mode)
+<p>Under Windows 95, WinVNC running in service mode no longer crashes when
+told to stop by the -kill or -remove options.
+<p>The main text area of the Windows 95 console will now be polled by WinVNC
+properly when the Poll Console Windows Only option is set.
+<br>
+<hr color="#000080" noshade>
+<h3>
+New in&nbsp; 3.3.1 Revision 16:</h3>
+The big change is that WinVNC can now run as a service under both 95 and
+NT, so you can log in and log out remotely.&nbsp; This is still under development,
+so please excuse some rough edges! For more details see the <a href="winvnc.html">WinVNC
+documentation</a>.&nbsp;&nbsp; It will still run in its conventional mode
+if preferred.
+<p>The viewer now has a 'Send Ctrl-Alt-Del' option on the menu for use
+with the above. Unix viewers can generally send this anyway, as can Java
+viewers on platforms which don't use it locally.
+<p>A bug which often caused the entire screen to be transmitted twice to
+a connecting client is now fixed.
+<p>The general Shift, Alt and Control-related bugs, affecting non-UK/US
+keyboard layouts in particular, are now corrected, with one important exception:
+<p>When typing into an application set to use international keyboard layout
+A, using WinVNC run with keyboard layout B, problems may be experienced
+because WinVNC sets the wrong Shift key states to generate particular characters.
+As long as only one keyboard layout is used consistently across all applications,
+this shouldn't be a problem.
+<p>The viewer now generates AltGr international characters according to
+the keyboard layout in use. The right Ctrl key can be combined with these
+so that on a German keyboard, for example, AltGr-Q gives @ and RightCtrl-AltGr-Q
+gives Ctrl-@.&nbsp; Dead keys are not properly supported yet.
+<br>
+<hr color="#000080" noshade>
+<h3>
+New in&nbsp; 3.3.1 Revision 13:</h3>
+The Caps-Lock, Num-Lock and Scroll-Lock keys are now correctly disabled
+whenever a new client connects, if that client has keyboard input enabled.
+<p>Left and right versions of the Shift, Alt and Control keys can now be
+distinguished on NT if the viewer distinguishes.
+<p>The right and middle mouse buttons can now be set to trigger window
+updates, although by default these options are not used. This can be handy
+for things which use right-click for something other than popping up a
+menu.</td>
+
+<td WIDTH="5%"></td>
+</tr>
+
+<tr>
+<td bgcolor="#eecc80">&nbsp;</td><td ALIGN=CENTER VALIGN=TOP COLSPAN="4" WIDTH="100%">
+<!-- Ruler here? -->
+<center>
+<p><i><font size=-1>For comments, feedback, etc, please see the '<a href="intouch.html">Keeping
+in touch</a>' page</font>.</i>
+<br><i><font size=-1>Copyright 1999 - AT&amp;T Laboratories Cambridge
+</font></i></center>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

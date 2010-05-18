@@ -1,0 +1,38 @@
+Import('env')
+env = env.Clone(
+    LIBS=['corrective', 'analyze', 'sqlite3', 'dl'],
+    LIBPATH=['..', '.'],
+)
+
+File([
+        'Candidates.h',
+        'Complex.h',
+        'Conjunction.h',
+        'Disjunction.h',
+        'Foci.h',
+        'Outcome.h',
+        'Predicate.h',
+        'Predicates.h',
+        'RunSet.h',
+        'RunSuite.h',
+        'allFailures.h',
+        'main.h',
+        'zoom.h',
+        ])
+
+env.StaticLibrary('corrective', [
+	'Complex.cc',
+	'Candidates.cc',
+	'Conjunction.cc',
+	'Disjunction.cc',
+	'Outcome.cc',
+	'Predicate.cc',
+	'RunSet.cc',
+	'RunSuite.cc',
+	'allFailures.cc',
+	'main.cc',
+	'zoom.cc',
+        ])
+
+for variant in ['exact-complete', 'approximate-complete', 'adaptive-sampled']:
+    Default(env.Program('%s.cc' % variant))

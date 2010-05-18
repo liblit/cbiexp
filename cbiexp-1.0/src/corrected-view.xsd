@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:include schemaLocation="bug-o-meter.xsd" />
+  <xsd:redefine schemaLocation="projected-view.xsd">
+    <xsd:complexType name="predictor.type">
+      <xsd:complexContent>
+        <xsd:extension base="predictor.type">
+          <xsd:sequence>
+            <xsd:element ref="bug-o-meter" />
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:redefine>
+</xsd:schema>

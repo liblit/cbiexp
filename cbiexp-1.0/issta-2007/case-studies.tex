@@ -1,0 +1,155 @@
+% -*- TeX-master: "master" -*-
+
+\section{Case Studies}
+\label{sec-qual}
+This section discusses two cases where complex predicates prove to be useful.  The first study concerns a memory access bug in \prog{exif} 0.6.9, an open source image manipulation program.  A complex predicate is useful in increasing the score of an extremely useful bug predictor.  The second study uses an input validation bug in \prog{ccrypt} 1.2 to explain how complex predicates can be used to identify partial predictors automatically.
+
+Both studies present predicates found during automated analysis.  It should be noted that in most cases the predicates discussed were not top-ranked, and in fact many were removed by the redundancy elimination algorithm.  These predicates were manually identified from the full list of predictors.  This demonstrates the need for techniques to effectively filter through large numbers of complex predicates, as discussed in \autoref{sec-metrics}.
+
+\subsection{\large\textbf{\prog{exif}}}
+\label{sec-exif}
+
+\prog{exif} 0.6.9 crashes while manipulating a thumbnail in a Canon image.  The bug is in function \texttt{exif\_mnote\_data\_canon\_load} in the module handling Canon images.  The following is a snippet from said function:
+\begin{quote}
+\small
+\begin{verbatim}
+for (i = 0; i < c; i++) {
+    ...
+    n->count = i + 1;
+    ...
+    if (o + s > buf_size) return;    // (a)
+    ...
+    n->entries[i].data = malloc(s);  // (b)
+    ...
+}
+\end{verbatim}
+\end{quote}
+
+If the condition \texttt{o + s > buf\_size} is true on line (a), then the allocation of memory to the pointer \texttt{n->entries[i].data} on line (b) is skipped.  The program crashes when other code reads from \texttt{n->entries[i].data} without checking if the pointer is valid.  This is an example of a non-deterministic bug as the program succeeds as long as the uninitialized pointer is not accessed somewhere else.
+
+We generated 1,000 runs of the program using input images randomly selected from a set of Canon and non-Canon images.  As the bug being studied rarely manifests, this set of images was designed to trigger sufficient failed executions.  Each run was executed with randomly-generated command line arguments, omitting arguments which would have triggered two unrelated bugs.
+There are 934 successful executions and 66 crashes.  Applying the redundancy elimination algorithm with only simple predicates produces two predicates that account for all failed runs as shown in \autoref{tab:tbl1}.  Studying the source code of the program does not show any obvious relation between the two predictors and the cause of failure.  Although the second predictor is present in the crashing function, it is a comparison between two unrelated variables: the loop iterator \texttt{i} and the size of the data stored in the traversed array \texttt{s}.  Also it is true in only 31 of the 66 failures.
+
+\begin{table*}[tb]
+\caption{Results for \prog{exif} with only simple predicates}
+\label{tab:tbl1}
+\centering
+\begin{tabular}{lllll}
+\toprule
+Score & Predicate & Function & File:Line \\
+\midrule
+0.704974 & $\text{new value of len} == \text{old value of len}$ & \func{jpeg\_data\_load\_data} & jpeg-data.c:224 \\
+0.395001 & $\text{i} == \text{s}$ & \func{exif\_mnote\_data\_canon\_save} & exif-mnote-data-canon.c:176 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The analysis assigns a very low score of 0.0191528 to the predicate $p_1$: \texttt{o + s > buf\_size} despite the fact that it captures the exact source of the uninitialized pointer.  Because the bug is non-deterministic, $p_1$ is also true in 335 runs that succeeded, making $p_1$ a partial predictor.  Including complex predicates in the analysis produces one complex predicate shown in \autoref{tab:tbl2}.  (The second row is the second component of a complex predicate, which is a conjunction as indicated by the keyword \emph{and} at the start.)  Conjunction of $p_1$ with the second predicate $p_2$: \texttt{offset < len} eliminates all false positives and thereby earns a very high score.  This is an example of how a conjunction can improve the score of a partial predictor.  $p_2$ is in function \texttt{exif\_data\_load\_data} that calls \texttt{exif\_mnote\_data\_canon\_load} indirectly.  It is possible that $p_2$ is another partial predictor, capturing another condition that drives the bug to cause a crash.  If it does, it has to be a deep relationship as we could not find such a relation even after spending a couple of hours trying to understand the source code.  However this does not reduce the importance of this result as the conjunction has a very high score compared to $p_1$ and $p_2$ individually.
+
+\begin{table*}[tb]
+\caption{Results for \prog{exif} with complex predicates}
+\label{tab:tbl2}
+\centering
+\begin{tabular}{lllll}
+\toprule
+Score & Predicate & Function & File:Line \\
+\midrule
+0.941385 & $\text{o} + \text{s} > \text{buf\_size}$ is TRUE & \func{exif\_mnote\_data\_canon\_load} & exif-mnote-data-canon.c:237 \\
+         & \emph{and} $\text{offset} < \text{len}$ & \func{exif\_data\_load\_data} & exif-data.c:644 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+At the point where the uninitialized pointer is actually used, a hypothetical predicate $p_3$: \texttt{n->entries[i].data == 0} ought to be a perfect bug predictor.  However, the CBI instrumenting compiler does not actually instrument this condition or any direct equivalent.  Furthermore, this assumes that \texttt{n->entries[i].data} is zero-initialized even when \texttt{exif\_mnote\_data\_canon\_load} returns early without filling in this field.  Predicate $p_1$ provides critical additional information, as it identifies the initial trigger (skipping the \texttt{malloc}) that sets the stage for eventual failure (use of an uninitialized pointer).  Thus one role for complex predicates is to capture those program behaviors, like $p_1$, that are necessary but not sufficient preconditions for failure.
+
+% Threat taxonomy discussion:
+% Placing the threats listed below in the taxonomy is difficult because the case studies are more anecdotal than experimental.  IV and DVs can be identified, but there are many possible DV definitions, which potentially shift threats from one tier to another.
+% The IV is obvious: whether analysis included complex predicates.
+% DV is harder to identify.  Possibilities include: (1) Whether p_1 was top-ranked (or tied for top rank).  (2) The score of the best predicate involving p_1.  (3) The score of the top-ranked predicate.  (4) How useful the top-ranked predicate is in identifying the bug (hard to quantify).
+% All of the above are at some point relevant in the above discussion (and there are many more possibilities).  Depending on which is regarded as the 'true' DV the below are threats to a different tier of validity.  What we can do is determine which tiers they definitely don't belong to.
+% Conclusion validity: Obviously the analysis gave different results when complex preds were considered.  No threats to conclusion validity.
+% Internal validity: threats would have to interfere with the conclusion that the differing results were caused by complex pred. analysis and not some other factor.  Simple and complex pred analyses were both run on the exact same data set.  Assuming there weren't any result-altering bugs in our code there are no threats to internal validity, since the IV was literally the only thing that differed between cases.  Altering the test suite to produce the desired bug doesn't affect internal validity because both the simple analysis and the complex pred analysis got the exact same fixed input.
+% Construct validity: this one has some merit.  Input data was fixed to produce the particular bug being investigated.  We didn't try different sets of input to make sure p_1 can be identified under different input conditions.  It's possible that the fixed input altered the results we would have seen.  (Construct validity is ~'can the results you saw be generalized to an identical construct,' e.g., the same analysis run on the same program)
+% External validity: This is probably the most likely.  The experimental input was fixed to emphasize the predicate we wanted high-ranked.  End users won't do this.  Additionally, searched the predicate list with a particular pred in mind.  To perform the same analysis on a similar but not identical program we would need to preidentify another predicate to examine (as opposed to one being immediately noticeable in the analysis).
+% I'm of the opinion that most of the threats below are threats to external validity, but I'm not sure.  A compelling argument can be made for construct validity.  I'm splitting the difference and just calling them 'threats.'
+
+% Three threats were discussed in the (former) threats to validity section.  They were incorporated into the discussion above.
+% (1) exif 0.6.9 had two other bugs; command line arguments which triggered these bugs were omitted.
+% (2) Image data was altered to trigger the bug more frequently (frequently enough to get sufficient crashes for study).
+% (3) The predicates chosen were not top ranked; in fact they were removed by redundancy elimination.  They were manually identified from the list of all predictors (this provides support for the discussion in section 4).
+% I moved (1) and (2) to the paragraph discussing how run information was generated.  (3) is closely related to a similar comment in ccrypt's threats to validity; the two were combined and moved to the header for section 5.
+
+\subsection{\large\textbf{\prog{ccrypt}}}
+\label{sec-ccrypt}
+\prog{ccrypt} 1.2 contains a known bug that causes a crash when \texttt{EOF} is received at a confirmation prompt before overwriting an existing file.  \texttt{EOF} in other contexts does not cause failure, however, and an examination of the source code quickly reveals why:
+\begin{quote}
+\small
+\begin{verbatim}
+/* read a yes/no response from the user */
+int prompt(void) {
+  ...
+  line = xreadline(fin, cmd.name);    // (a)
+  return (!strcmp(line, "y") ||
+     !strcmp(line, "yes"));
+}
+
+char *xreadline(FILE *fin, char *myname) {
+  ...
+  res = fgets(buf, INITSIZE, fin);
+  if (res==NULL) {                    // (b)
+    free(buf);
+    return NULL;
+  }
+  ...
+  return buf;
+}
+\end{verbatim}
+\end{quote}
+
+Calls to \func{xreadline}, the function used to get user input, can return \texttt{NULL} under some circumstances.  In most cases the value is checked before being dereferenced.  In \func{prompt}, however, it is used immediately after the call on line (a).  \func{xreadline} returning \texttt{NULL} in \func{prompt} should thus be a perfect predictor of failure, occurring in no successful runs and in every failure related to this bug.  The branch taken on line (b) in \prog{xreadline} is important as well, serving as the moment failure in \prog{prompt} becomes inevitable.  This branch is only taken when the user enters \texttt{EOF} on the command line.  In mapping the cause of failure, a programmer without a clear understanding of the code is likely to spend time tracking the user-entered \texttt{EOF} through \prog{xreadline} to the \texttt{NULL} dereference in \prog{prompt}, requiring either a visual inspection of the source or use of an interactive debugger.  Knowledge of the connection between program events such as these is necessary to make good debugging decisions, e.g., adding a \texttt{NULL} check to \prog{prompt} versus ensuring \prog{xreadline} always returns a valid pointer.  Automated bug analysis should ideally reveal as much of this chain of causation to the programmer as possible.
+
+We generated 1,000 runs of \prog{ccrypt}, again using randomly-selected command line arguments.  Input files include images and text archived from the online documentation of a remote desktop display system.  There are 658 successful executions and 342 crashes.  All failing runs crash due to the \texttt{NULL} dereference described above.  No other bugs were visible to our test suite.
+
+\begin{table*}[tb]
+\caption{Results for \prog{ccrypt} with only simple predicates}
+\label{tab:tbl3}
+\centering
+\begin{tabular}{lllllll}
+\toprule
+Score & True Successes & False Successes & Predicate & Function & File:Line \\
+\midrule
+0.431678 & 0 & 342 & $\text{xreadline} == \text{0}$ & \func{prompt} & traverse.c:122 \\
+0.385597 & 200 & 342 & $\text{res} == \text{(char *)0}$ & \func{xreadline} & xalloc.c:43 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+An initial analysis of only simple predicates (\autoref{tab:tbl3}) finds $p_1$: \texttt{xreadline == 0} as the top predictor of failure.  It is true in all 342 failed runs and no successful runs, verifying our assumptions.  The related predicate $p_2$: \texttt{res == (char *)0} scores substantially lower, appearing in all failures but a large number of successes.  $p_2$'s reported score is low enough that without knowledge of the nature of the bug a programmer would be likely to overlook its significance.  Additionally, because of its relationship to $p_1$, it is removed by the redundancy elimination algorithm.  More importantly, traditional CBI analysis reveals no connection between the two predictors to the programmer, despite the fact that $p_2$, a necessary but not sufficient condition for failure, is subordinate to $p_1$ in predicting a crash.
+
+\begin{table*}[tb]
+\caption{Results for \prog{ccrypt} with complex predicates}
+\label{tab:tbl4}
+\centering
+\begin{tabular}{lllllll}
+\toprule
+Score & True Successes & False Successes & Predicate & Function & File:Line \\
+\midrule
+0.72814 & 0 & 342 & $\text{xreadline} == \text{0}$ & \func{prompt} & traverse.c:12 \\
+	&   &     & \emph{and} $\text{res} == \text{(char *)0}$ & \func{xreadline} & xalloc.c:43 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+When complex predicates are included in the analysis (\autoref{tab:tbl4}), a conjunction of $p_1$ and $p_2$ is among the top predictors.  This provides little help in finding the bug, which is easily identified by traditional CBI analysis, but it does reveal the nature of $p_2$ as a partial predictor.  The conjunction $p_1 \wedge p_2$ is observed in more successful runs than $p_1$ alone, but is true in the same number of successes and failures.  That $p_1$ can be conjoined with $p_2$ without affecting $p_1$'s predictive power demonstrates a connection between the two predicates, in this case suggesting that $p_1 \implies p_2$.
+
+This implication is detectable because the experiment is run using complete data collection.  Results taken using sparse sampling rates would have made this detection impossible, given the likelihood of $p_2$ being unobserved in a run where $p_1$ was true.  Additionally, it is detected in the absence of other bugs.  Intuitively an unrelated bug would cause faults in different program runs, allowing the analysis to distinguish between unrelated sets of predictors, but this was not tested.
+
+This result provides evidence that complex predicate analysis can automatically group related predicates in ways traditional CBI analysis does not, including the discovery of partial, sub-bug, and perfect predictor hierarchies and implications.  Grouping related predictors statistically provides insight into program structure and execution features that can be used in debugging.  This example reiterates that complex predicates can collaborate with tools like \textsc{BTrace} that produce an execution trace from a set of predicates.  Cooperative Bug Isolation can therefore utilize techniques that previously required detailed execution information by generating a facsimile from statistical data.
+
+% Two threats were discussed in the (former) threats to validity section.  They were incorporated into the discussion above.
+% (1) ccrypt had only one visible bug; p1 => p2 was detected in this environment.  We don't know if other bugs would have prevented this detection.
+% (2) p1 ^ p2 was highly-ranked but not top-scored, and was removed by redundancy elimination.
+% I incorporated (1) into an earlier paragraph which mentioned another possible flaw in this technique, namely that this experiment was run without sampling and we don't know how to get the same result in a sampled environment.  (2) was moved to the top of section 5 in a discussion which mentioned this issue globally, as it occurred in both case studies.
+
+% LocalWords:  ccrypt mnote buf tbl lllll len jpeg pred preidentify xreadline
+% LocalWords:  lllllll src BTrace

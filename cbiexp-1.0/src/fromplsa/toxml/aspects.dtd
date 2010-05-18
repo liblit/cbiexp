@@ -1,0 +1,4 @@
+<!ELEMENT aspectinfos (aspect*)>
+
+<!ELEMENT aspect EMPTY>
+<!ATTLIST aspect kind NMTOKEN #REQUIRED>

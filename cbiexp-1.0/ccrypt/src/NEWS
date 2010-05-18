@@ -1,0 +1,29 @@
+January 29, 2002: Release 1.2
+
+ This release provides vastly improved encryption/decryption speed. By
+ optimizing one critical inner loop, ccrypt now runs about 2-3 times
+ faster than the previous release. The only other changes were some
+ minor improvements to the autoconf scripts. No new features were
+ added.
+
+November 28, 2001: Release 1.1
+
+ There are two major changes in this release: first, I have added an
+ option --unixcrypt, which allows the decryption of files that have
+ been encrypted with the old unix "crypt" utility. Since the cipher
+ used by "crypt" is broken and no longer secure, it is recommended
+ that all such files should be converted to the ccrypt format. The
+ second change is that ccrypt is now configured using the
+ automake/autoconf tools. This should make compilation and
+ installation a lot more standard and portable. This release of ccrypt
+ compiles under Linux, SunOS, MacOS X, FreeBSD, AIX, and CygWin with
+ no problems, and it should be portable to other systems with no or
+ few changes. I have also added some tests that can be invoked by
+ "make check", which check that ccrypt is working properly.
+
+October 30, 2001: Release 1.0
+
+ This is the first public release of ccrypt. It fixes the file format
+ and the basic user interface. All future releases of ccrypt will be
+ backward compatible with this format, i.e., they will be able to
+ decrypt files that were produced by earlier releases.

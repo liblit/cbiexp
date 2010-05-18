@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:include schemaLocation="bug-o-meter.xsd" />
+  <xsd:include schemaLocation="operand.xsd" />
+  <xsd:include schemaLocation="scheme-attrs.xsd" />
+  <xsd:include schemaLocation="source-location.xsd" />
+  <xsd:element name="predictor-info" type="predictor-info.type">
+    <xsd:annotation>
+      <xsd:documentation>
+        An ordered collection of predicates believed to be candidate
+        failure predictors. The order here is the same as the order in
+        “preds.txt”. In ranked predictor lists that include index="nnn"
+        attributes, the index number refers to the order of the “info”
+        children under this element. In accordance with general XPath
+        conventions, those children are numbered starting from 1, not 0.
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:complexType name="predictor-info.type">
+    <xsd:sequence maxOccurs="unbounded" minOccurs="0">
+      <xsd:element ref="info" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:element name="info" type="info.type">
+    <xsd:annotation>
+      <xsd:documentation>
+        Detailed information about a single candidate failure predictor.
+        This includes most of the static site information originally
+        found on a single line of some “.sites” file. This also includes
+        some statistical information derived from the statistical
+        debugging analysis. Thus, this element contains both static and
+        dynamic data.
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:complexType name="info.type">
+    <xsd:sequence>
+      <xsd:element ref="bug-o-meter" />
+      <xsd:element ref="operand" maxOccurs="unbounded" minOccurs="0" />
+    </xsd:sequence>
+    <xsd:attributeGroup ref="location" />
+    <xsd:attributeGroup ref="predicate-coords" />
+  </xsd:complexType>
+
+  <xsd:attributeGroup name="predicate-coords">
+    <xsd:attributeGroup ref="unit-scheme" />
+    <xsd:attribute name="site" type="xsd:positiveInteger" use="required" />
+    <xsd:attribute name="predicate" type="xsd:nonNegativeInteger" use="required" />
+  </xsd:attributeGroup>
+</xsd:schema>

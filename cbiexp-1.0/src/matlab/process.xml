@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE actions [
+<!ELEMENT actions (action)*>
+<!ELEMENT action (arg)*>
+<!ATTLIST action name CDATA #REQUIRED>
+<!ELEMENT arg EMPTY>
+<!ATTLIST arg value CDATA #REQUIRED>
+]>
+<actions>
+    <action name="removeAllZeroRuns"/>
+    <action name="removeFractionSucceedingRuns">
+        <arg value="0.0"/>
+    </action>
+</actions>

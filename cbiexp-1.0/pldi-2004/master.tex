@@ -1,0 +1,543 @@
+%% -*- TeX-master: t -*-
+
+\documentclass[final]{sigplanconf}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% standard texmf packages
+%%
+
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{fancyvrb}
+\usepackage{flushend}
+\usepackage{graphicx}
+\usepackage{ifthen}
+\usepackage{nicefrac}
+\usepackage[TABTOPCAP, tight]{subfigure}
+\usepackage{url}
+\usepackage{xspace}
+
+\def\UrlLeft{<}
+\def\UrlRight{>}
+
+\setlength{\abovetopsep}{1ex}
+
+\usepackage{mathptmx}
+\usepackage{times}
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+
+\usepackage[
+bookmarks,
+breaklinks,
+draft=false,
+pdftitle={Scalable Statistical Bug Isolation},
+pdfauthor={Ben Liblit, Mayur Naik, Alice X. Zheng, Alex Aiken, and Michael I. Jordan},
+pdfsubject={D.2.4 [Software Engineering]: Software/Program Verification -- statistical methods; D.2.5 [Software Engineering]: Testing and Debugging -- debugging aids, distributed debugging, monitors, tracing; I.5.2 [Pattern Recognition]: Design Methodology -- feature evaluation and selection},
+pdfkeywords={bug isolation, random sampling, invariants, feature selection, statistical debugging},
+pdfpagemode=UseOutlines
+]{hyperref}
+
+\ifthenelse{\isundefined{\pdfoutput}}{}{\usepackage{thumbpdf}}
+
+%% \VerbatimFootnotes
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% unique to this paper
+%%
+
+\usepackage{mailto}
+\usepackage{subtab}
+\usepackage{views/bug-o-meter}
+\usepackage{views/view}
+
+\renewcommand{\sectionautorefname}[0]{Section}
+\renewcommand{\subsectionautorefname}[0]{\sectionautorefname}
+\newcommand{\subtableautorefname}[0]{\tableautorefname}
+
+\newtheorem{lemma}{Lemma}[section]
+\newcommand{\lemmaautorefname}[0]{Lemma}
+
+\newcommand{\bug}{\ensuremath{B}}
+\newcommand{\bugprofile}{\ensuremath{\mathcal{B}}}
+\newcommand{\moss}{\textsc{Moss}\xspace}
+\newcommand{\rhythmbox}{\textsc{Rhythmbox}\xspace}
+\newcommand{\exif}{\textsc{exif}\xspace}
+\newcommand{\bc}{\textsc{bc}\xspace}
+\newcommand{\ccrypt}{\textsc{ccrypt}\xspace}
+\newcommand{\termdef}[1]{\emph{#1}}
+\newcommand{\prob}{\ensuremath{\textit{Pr}}}
+\newcommand{\fail}{\ensuremath{\textit{Crash}}}
+\newcommand{\crash}{\ensuremath{\textit{Failure}}}
+\newcommand{\context}{\ensuremath{\textit{Context}}}
+\newcommand{\increase}{\ensuremath{\textit{Increase}}}
+\newcommand{\importance}{\ensuremath{\textit{Importance}}}
+\newcommand{\numfail}{\ensuremath{\textit{NumF}}}
+\renewcommand{\H}{{\mathcal{H}}}
+\newcommand{\report}[1]{\ensuremath{R(#1)}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%% front matter
+%%
+
+
+\title{Scalable Statistical Bug Isolation
+  %%
+  \renewcommand{\ast}[0]{}
+  %%
+  \thanks{This research was supported in part by NASA Grant No.\ 
+    NAG2-1210; NSF Grant Nos.\ EIA-9802069, CCR-0085949, ACI-9619020,
+    and ENG-0412995; DOE Prime Contract No.\ W-7405-ENG-48 through
+    Memorandum Agreement No.\ B504962 with LLNL; DARPA ARO-MURI
+    ACCLIMATE DAAD-19-02-1-0383; and a grant from Microsoft Research.
+    The information presented here does not necessarily reflect the
+    position or the policy of the Government and no official
+    endorsement should be inferred.}}
+
+
+\authorinfo{Ben Liblit}{Computer Sciences Department \\ University of Wisconsin-Madison}{\mailto{liblit@cs.wisc.edu}}
+\authorinfo{Mayur Naik}{Computer Science Department \\ Stanford University}{\mailto{mhn@cs.stanford.edu}}
+\authorinfo{Alice X.\ Zheng}{Department of Electrical Engineering and Computer Science \\ University of California, Berkeley}{\mailto{alicez@cs.berkeley.edu}}
+\authorinfo{Alex Aiken}{Computer Science Department \\ Stanford University}{\mailto{aiken@cs.stanford.edu}}
+\authorinfo{Michael I.\ Jordan}{Department of Electrical Engineering \\ and Computer Science \\ Department of Statistics \\ University of California, Berkeley}{\mailto{jordan@cs.berkeley.edu}}
+
+\bibliographystyle{abbrv}
+
+\conferenceinfo{PLDI'05,} {June 12--15, 2005, Chicago, Illinois, USA.}
+\CopyrightYear{2005}
+\copyrightdata{1-59593-080-9/05/0006}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  document body
+%%
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  We present a statistical debugging algorithm that
+  isolates bugs in programs containing multiple undiagnosed bugs.
+  Earlier statistical algorithms that focus solely on identifying
+  predictors that correlate with program failure perform poorly
+  when there are multiple bugs.  Our new technique separates the
+  effects of different bugs and identifies predictors that are
+  associated with individual bugs.  These predictors reveal both the
+  circumstances under which bugs occur as well as the frequencies of
+  failure modes, making it easier to prioritize debugging efforts.
+  Our algorithm is validated using several case studies, including
+  examples in which the algorithm identified previously
+  unknown, significant crashing bugs in widely used systems.
+\end{abstract}
+
+\category{D.2.4}{Software Engineering}{Software/Program Verification}[statistical methods]
+\category{D.2.5}{Software Engineering}{Testing and Debugging}[debugging aids, distributed debugging, monitors, tracing]
+\category{I.5.2}{Pattern Recognition}{Design Methodology}[feature evaluation and selection]
+
+\terms{Experimentation, Reliability}
+
+\keywords{bug isolation, random sampling, invariants, feature selection, statistical debugging}
+
+
+\section{Introduction}
+\label{sec:introduction}
+
+This paper is about \termdef{statistical debugging}, a dynamic
+analysis for identifying the causes of software failures (i.e., bugs).
+Instrumented programs monitor their own behavior and produce feedback
+reports.  The instrumentation examines program behavior during
+execution by sampling, so complete information is never available
+about any single run.  However, monitoring is also lightweight and
+therefore practical to deploy in a production testing environment or
+to large user communities, making it possible to gather information
+about many runs.  The collected data can then be analyzed for
+interesting trends across all of the monitored executions.
+
+In our approach, instrumentation consists of \termdef{predicates} tested
+at particular program points; we defer discussing which predicates are
+chosen for instrumentation to \autoref{sec:background}.  A given
+program point may have many predicates that are sampled independently
+during program execution when that program point is reached (i.e.,
+each predicate associated with a program point may or may not be
+tested each time the program point is reached).  A feedback report $R$
+consists of one bit indicating whether a run of the program
+succeeded or failed, as well as a bit vector with one bit for each
+predicate $P$.  If $P$ is observed to be true at least once during run
+$R$ then $\report{P} = 1$, otherwise $\report{P} = 0$.
+
+Let $\bug$ denote a bug (i.e., something that causes incorrect
+behavior in a program).  We use $\bugprofile$ to denote a \termdef{bug
+profile}, i.e., a set of failing runs (feedback reports) that share
+$\bug$ as the cause of failure.  The union of all bug profiles is
+exactly the set of failing runs, but note that $\bugprofile_i \cap
+\bugprofile_j \neq
+\emptyset$ in general; more than one bug can occur in some runs.
+
+A predicate $P$ is a \termdef{bug predictor} (or simply a
+\termdef{predictor}) of bug $\bug$ if whenever $\report{P} = 1$
+then it is statistically likely that $R \in \bugprofile$ (see
+\autoref{sec:increase}).  \termdef{Statistical debugging} selects a
+small subset ${\cal S}$ of the set of all instrumented predicates ${\cal P}$ such
+that ${\cal S}$ has predictors of all bugs.  We also rank the
+predictors in ${\cal S}$ from the most to least important.  The set
+${\cal S}$ and associated metrics (see
+\autoref{sec:experiments}) are then available to engineers to help
+in finding and fixing the most serious bugs.
+
+In previous work, we focused on techniques
+for lightweight instrumentation and sampling of program executions, but
+we also studied two preliminary algorithms for statistical debugging and
+presented experimental results on medium-size applications with a
+single bug \cite{PLDI`03*141,NIPS2003_AP05}.  The most general
+technique we studied is \termdef{regularized logistic regression}, a standard
+statistical procedure that tries to select a set of predicates that
+best predict the outcome of every run. As we worked to apply these
+methods to much larger programs under realistic conditions, we
+discovered a number of serious scalability problems:
+%%
+\begin{itemize}
+
+\item For large applications the set ${\cal P}$ numbers in the hundreds of
+thousands of predicates, many of which are, or are very nearly,
+logically redundant.  In our experience, this redundancy in ${\cal P}$
+causes regularized logistic regression to choose highly redundant lists of
+predictors ${\cal S}$.  Redundancy is
+already evident in prior work \cite{PLDI`03*141} but becomes a much
+more serious problem for larger programs.
+
+\item A separate difficulty is the prevalence of predicates predicting
+multiple bugs.  For example, for many Unix programs a bug is more
+likely to be encountered when many command line flags are given,
+because the more options that are given non-default settings the more
+likely unusual code paths are to be exercised.  Thus, predicates
+implying a long command line may rank near the top, even though such
+predicates are useless for isolating the cause of individual bugs.
+
+\item Finally, different bugs occur at rates that differ by orders of
+magnitude.  In reality, we do not know which failure is caused by which bug,
+so we are forced to lump all the bugs together and try to learn a binary
+classifier.  Thus, predictors for all but the most common bugs have relatively little
+influence over the global optimum and tend to be ranked very low or not included
+in ${\cal S}$ at all.
+
+\end{itemize}
+
+These problems with regularized logistic regression persist in many variations
+we have investigated, but analysis of this body of experimental work yielded some
+key technical insights.  In addition to the bug predictors we wish to
+find among the instrumented predicates, there are several other kinds
+of predicates.  First, nearly all predicates (often 98\% or 99\%) are
+not predictive of anything.  These \termdef{non-predictors} are best identified and discarded as
+quickly as possible. Among the remaining predicates that can
+predict failure in some way, there are some bug predictors.
+There are also \termdef{super-bug predictors}: predicates that, as
+described above, predict failures due to a variety of bugs.  And there
+are \termdef{sub-bug predictors}: predicates that characterize a subset of
+the instances of a specific bug; these are often special cases of more
+general problems.  We give the concepts of super- and sub-bug
+predictors more precise technical treatment in
+\autoref{sec:ranking}.
+
+The difficulty in identifying the best bug predictors lies in not being
+misled by the sub- or super-bug predictors and not being overwhelmed
+by the sheer number of predicates to sift through.
+This paper makes a number of contributions on these problems:
+
+\begin{itemize}
+
+\item We present a new algorithm for isolating multiple bugs in
+complex applications (\autoref{sec:algorithm})
+that offers significant improvements over previous work.
+It scales much more gracefully in all the dimensions discussed above
+and for each selected predicate $P$ it naturally yields information
+that shows both how important (in number of explained program
+failures) and how accurate a predictor $P$ is.
+
+\item We validate the algorithm by a variety of experiments.  We show
+improved results for previously reported experiments
+\cite{PLDI`03*141}.  In a
+controlled experiment we show that the algorithm is able to find a
+number of known bugs in a complex application.  Lastly, we use
+the algorithm to discover previously unknown serious crashing bugs in
+two large and widely used open source applications.
+
+\item We show that relatively few runs are sufficient
+to isolate all of the bugs described in this paper, demonstrating that our
+approach is feasible for in-house automatic testing as well as for
+deployment to end users (see \autoref{sec:numruns}).
+
+\item We report on the effectiveness of the current industry practice
+of collecting stack traces from failing runs.  We find that across all
+of our experiments, in about half the cases the stack is useful in
+isolating the cause of a bug; in the other half the stack contains
+essentially no information about the bug's cause.
+
+\item Finally, we show that, in principle, it is possible for our
+approach to help isolate any kind of failure, not just program
+crashes.  All that is required is a way to label each run as either
+``successful'' or ``unsuccessful.''
+
+\end{itemize}
+
+With respect to this last point, perhaps the greatest strength of our
+system is its ability to automatically identify the cause of many
+different kinds of bugs, including new classes of bugs that we did not
+anticipate in building the tool.  By relying only on the distinction
+between good and bad executions, our analysis does not require a
+specification of the program properties to be analyzed.  Thus,
+statistical debugging provides a complementary approach to static
+analyses, which generally do require specification of the properties
+to check.  Statistical debugging can identify bugs beyond the reach of
+current static analysis techniques and even new classes of bugs that may be
+amenable to static analysis if anyone thought to check for them.
+One of the bugs we found, in the \rhythmbox open source music player,
+provides a good illustration of the potential for positive interaction
+with static analysis.  A strong predictor of failure detected by our
+algorithm revealed a previously unrecognized unsafe usage pattern of a
+library's API\@.  A simple syntactic static analysis subsequently showed
+more than one hundred instances of the same unsafe pattern throughout
+\rhythmbox.
+
+The rest of the paper is organized as follows.  After providing background
+in \autoref{sec:background}, we discuss our algorithm
+in \autoref{sec:algorithm}. The experimental results are presented in
+\autoref{sec:experiments}, including the advantages over our
+previous approach based on regularized logistic regression.
+%(\autoref{sec:comparison}).
+\autoref{sec:extensions} considers variations and extensions of
+the basic statistical debugging algorithm.
+We discuss related work in \autoref{sec:related-work} and offer our conclusions
+in \autoref{sec:conclusions}.
+
+
+\section{Background}
+\label{sec:background}
+
+This section describes ideas and terminology needed to present our
+algorithm.  The ideal program monitoring system would gather complete
+execution traces and provide them to an engineer (or, more likely, a
+tool) to mine for the causes of bugs.  However, complete tracing of
+program behavior is simply impractical; no end user or tester would accept the
+required performance overhead or network bandwidth.
+
+Instead, we use a combination of sparse random sampling, which controls
+performance overhead, and client-side summarization of the data, which
+limits storage and transmission costs.  We briefly discuss
+both aspects.
+
+Random sampling is added to a program via a source-to-source
+transformation.  Our sampling transformation is general: any
+collection of statements within (or added to) a program may be
+designated as an \emph{instrumentation site} and thereby sampled instead of run
+unconditionally.  That is, each time instrumentation code is reached,
+a coin flip decides whether the instrumentation is executed or not.
+Coin flipping is simulated in a statistically fair manner equivalent
+to a Bernoulli process: each potential sample is taken or skipped
+randomly and independently as the program runs.  We have found that a
+sampling rate of \nicefrac{1}{100} in most applications\footnote{Some compute-bound kernels are an exception; we currently sometimes resort to simply
+excluding the most performance critical code from instrumentation.} keeps the performance overhead of instrumentation low, often unmeasurable.
+
+Orthogonal to the sampling transformation is the decision about what
+instrumentation to introduce and how to concisely summarize the
+resulting data.  Useful instrumentation captures behaviors likely to
+be of interest when hunting for bugs.  At present our system offers
+the following instrumentation schemes for C programs:
+
+\begin{description}
+
+\item[branches:] At each conditional we track two predicates
+  indicating whether the true or false branches were ever taken.  This
+  applies to \texttt{if} statements as well as implicit conditionals
+  such as loop tests and short-circuiting logical operators.
+
+\item[returns:] In C, the
+  sign of a function's return value is often used to signal success or failure.
+  At each scalar-returning function call site, we track six predicates:
+  whether the returned value is ever $< 0$, $\leq 0$, $> 0$, $\geq 0$,
+  $= 0$, or $\neq 0$.
+%  For
+%  pointer-returning calls, this scheme reduces to counting
+%  \texttt{NULL} versus non-\texttt{NULL}.
+%The observation is made
+%  just after the function returns but before the result is used by the
+%  original program.  An instrumentation site is added even if the
+%  source program discards the return value, as unchecked return
+%  values are a common source of bugs.  Each call site induces one
+%  instrumentation site with three counters: number of negative
+%  returns, number of zero returns, and number of positive returns.
+%%
+
+\item[scalar-pairs:] Many bugs
+  concern boundary issues in the relationship between a
+  variable and another variable or constant.  At
+  each scalar assignment \texttt{x = \dots}, identify each
+  same-typed in-scope variable $\mathtt{y}_i$ and each
+  constant expression $\mathtt{c}_j$.  For each   $\mathtt{y}_i$ and each $\mathtt{c}_j$,
+  we track six relationships to the new value of \texttt{x}: $<, \leq, >, \geq, =, \neq$.
+  Each $(\mathtt{x}, \mathtt{y}_i)$ or $(\mathtt{x}, \mathtt{c}_j)$ pair
+  is treated as a distinct instrumentation site---in general, a single assignment statement is associated with multiple distinct instrumentation sites.
+  %%
+\end{description}
+
+All predicates at an instrumentation site are sampled jointly.  To be
+more precise, an \termdef{observation} is a single dynamic check of
+all predicates at a single instrumentation site.  We write ``$P$
+observed'' when the site containing $P$ has been sampled, regardless
+of whether $P$ was actually true or false.  We write ``$P$ observed to
+be true'' or merely ``$P$'' when the site containing $P$ has been
+sampled and $P$ was actually found to be true.  For example, sampling
+a single negative return value means that all six returns predicates
+($< 0$, $\leq 0$, $> 0$, $\geq 0$, $= 0$, and $\neq 0$) are
+``observed.''  However only three of them ($< 0$, $\leq 0$, and $\neq
+0$) are ``observed to be true.''  \footnote{In reality, we count the
+number of times $P$ is observed to be true, but the analysis of the
+feedback reports only uses whether $P$ is observed to be true at least
+once.}
+
+These are natural properties to check and provide good coverage of a
+program's scalar values and control flow.  This set is by no means
+complete, however; in particular, we believe it would be useful to have
+predicates on heap structures as well (see \autoref{sec:experiments}).
+
+\section{Cause Isolation Algorithm}
+\label{sec:algorithm}
+\input{alg}
+
+\section{Experiments}
+\label{sec:experiments}
+\input{experiments}
+
+\section{Alternatives and Extensions}
+\label{sec:extensions}
+\input{extensions}
+
+\section{Related Work}
+\label{sec:related-work}
+
+In this section we briefly survey related work. There is currently a
+great deal of interest in applying static analysis to improve software
+quality.  While we firmly believe in the use of static analysis to
+find and prevent bugs, our dynamic approach has advantages as well.  A dynamic
+analysis can observe actual run-time values, which is often better
+than either making a very conservative static assumption about run-time
+values for the sake of soundness or allowing some very simple bugs to escape
+undetected.  Another advantage of dynamic analysis, especially one
+that mines actual user executions for its data, is the ability to
+assign an accurate importance to each bug.  Additionally, as we have shown,
+a dynamic analysis that does not require an explicit specification of
+the properties to check can find clues to a very wide range of errors,
+including classes of errors not considered in the design of the
+analysis.
+
+The Daikon project \cite{ernst2001} monitors instrumented applications
+to discover likely program invariants.  It collects extensive trace
+information at run time and mines traces offline to accept or reject any
+of a wide variety of hypothesized candidate predicates.  The DIDUCE project
+\cite{ICSE02*291} tests a more restricted set of predicates within the
+client program, and attempts to relate state changes in candidate
+predicates to manifestation of bugs.  Both projects assume complete
+monitoring, such as within a controlled test environment.  Our goal is
+to use lightweight partial monitoring, suitable for either testing
+or deployment to end users.
+%We never have complete information, and
+%therefore we must use a more statistical approach.
+
+\termdef{Software tomography} as realized through the GAMMA system
+\cite{PASTE'02*2,Orso:2003:LFDIART} shares our goal of low-overhead
+distributed monitoring of deployed code.  GAMMA collects code coverage
+data to support a variety of code evolution tasks.  Our
+instrumentation exposes a broader family of data- and
+control-dependent predicates on program behavior and uses randomized
+sparse sampling to control overhead.  Our predicates do,
+however, also give coverage information: the sum of all predicate counters at a site reveals the relative coverage of that site.
+
+Efforts to directly apply statistical modeling principles to debugging
+have met with mixed results.  Early work in this area by Burnell and
+Horvitz \cite{Burnell:1995:SCM} uses program slicing in conjunction
+with Bayesian belief networks to filter and rank the possible causes
+for a given bug.  Empirical evaluation shows that the slicing
+component alone finds 65\% of bug causes, while the probabilistic
+model correctly identifies another 10\%.  This additional payoff may
+seem small in light of the effort, measured in man-years, required to
+distill experts' often tacit knowledge into a formal belief network.
+However, the approach does illustrate one strategy for integrating
+information about program structure into the statistical modeling
+process.
+
+In more recent work, Podgurski et al.\ \cite{ICSE`03*465} apply
+statistical feature selection, clustering, and multivariate
+visualization techniques to the task of classifying software failure
+reports.  The intent is to bucket each report into an equivalence
+group believed to share the same underlying cause.  Features are
+derived offline from fine-grained execution traces without sampling;
+this approach reduces the noise level of the data but greatly restricts the
+instrumentation schemes that are practical to deploy outside of a
+controlled testing environment.  As in our own earlier work, Podgurski
+uses logistic regression to select features that are highly
+predictive of failure.
+Clustering tends to identify small, tight groups of runs that do
+share a single cause but that are not always maximal.  That is, one
+cause may be split across several clusters.  This problem is similar
+to covering a bug profile with sub-bug predictors.
+
+In contrast, current
+industrial practice uses stack traces to cluster failure reports into
+equivalence classes.  Two crash reports showing the same stack trace,
+or perhaps only the same top-of-stack function, are presumed to be two
+reports of the same failure.  This heuristic works to the extent that a single
+cause corresponds to a single point of failure, but our experience
+with \moss, \rhythmbox, and \exif suggests that this assumption may not often hold.  In \moss,
+we find that only bugs \#2 and \#5 have truly unique ``signature'' stacks: a
+crash location that is present if and only if the corresponding bug
+was actually triggered.  These bugs are also our most deterministic.
+Bugs \#4 and \#6 also have nearly unique stack signatures.
+The remaining bugs are much less consistent: each stack signature is
+observed after a variety of different bugs, and each triggered bug
+causes failure in a variety of different stack states.  \rhythmbox and \exif
+bugs caused crashes so long after the bad behavior that stacks
+were of limited use or no use at all.
+
+Studies that attempt real-world deployment of monitored software must
+address a host of practical engineering concerns, from distribution to
+installation to user support to data collection and warehousing.
+Elbaum and Hardojo \cite{Elbaum:2003:DISATA} have reported on a
+limited deployment of instrumented Pine binaries.  Their experiences
+have helped to guide our own design of a wide public deployment of
+applications with sampled instrumentation, presently underway
+\cite{Liblit:2004:PDCBI}.
+
+For some highly available systems, even a single failure must be
+avoided.  Once the behaviors that predict imminent failure are known,
+automatic corrective measures may be able to prevent the failure from
+occurring at all.  The Software Dependability Framework (SDF)
+\cite{Gross:2003:PSMUST} uses multivariate state estimation
+techniques to model and thereby predict impending system failures.
+Instrumentation is assumed to be complete and is typically
+domain-specific.  Our algorithm could also be used to identify
+\emph{early warning} predicates that predict impending failure in actual
+use.
+
+\section{Conclusions}
+\label{sec:conclusions}
+
+We have demonstrated a practical, scalable algorithm for isolating multiple bugs
+in complex software systems.  Our experimental results show that we can
+detect a wide variety of both anticipated and unanticipated causes of failure
+in realistic systems and do so with a relatively modest number of program
+executions.
+
+\bibliography{cacm1990,gcbib,icse02,icse03,misc,nips16,paste02,pldi03,pods,ramss,refs}
+
+\end{document}
+
+%% LocalWords:  DIDUCE Burnell Horvitz Podgurski Elbaum Hardojo SDF CCured
+%% LocalWords:  topcrash cacm icse ramss pldi Podgurski's Kanduri logregression
+%% LocalWords:  McMaster Umranov Votta mossdilute gcbib numruns

@@ -1,0 +1,32 @@
+% -*- TeX-master: "master" -*-
+%       *         *         *         *         *         *         *         *
+
+\section{Conclusions and Future Work}
+\label{sec-conclusion}
+We have demonstrated that compound Boolean predicates are useful
+predictors of bugs.  Our experiments show qualitative and quantitative
+evidence that statistical debugging techniques can be effectively
+applied to complex predicates, and that the resulting analysis
+provides improved results.  We describe two methods of eliminating
+predicate combinations from consideration, making the task of
+computing complex predicates more feasible.  The first employs
+three-valued logic to estimate set sizes and thereby estimate the
+upper bound of the score of a complex predicate.  The second uses
+distances in program dependence graphs to quantify the programmer
+effort involved in understanding complex predicates.
+
+These techniques help the statistical debugging analysis scale up to
+handle the large number of candidate predicates we consider.  However,
+using the analysis results in debugging can require sifting through a
+large number of less useful predicates that also pass automated
+inspection.  Further shrinking this list while retaining useful
+predictors remains an important open problem.  Most identified bug
+predictors redundantly describe the same small set of program
+failures.  Thus the bi-clustering algorithm of Zheng et al.\
+\cite{Zheng:2006:SDSIMB} may be promising as it was designed to handle
+multiple predictors for the same bug.  Automated analyses which
+further process predictor lists, such as \textsc{BTrace}
+\cite{Lal:2006:POPAD}, may also benefit from the richer diagnostic
+language offered by the work presented here.
+
+% LocalWords:  BTrace

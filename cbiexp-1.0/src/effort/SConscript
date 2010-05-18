@@ -1,0 +1,36 @@
+from os.path import realpath
+from sys import stderr
+
+import SCons.Warnings as Warnings
+
+Import('env')
+
+File('effort.cc')
+
+
+class MissingCodeSurferWarning(Warnings.Warning):
+    pass
+
+if not env.get('csurf'):
+    Warnings.enableWarningClass(MissingCodeSurferWarning)
+    Warnings.warn(MissingCodeSurferWarning, 'cannot find CodeSurfer, so skipping effort plugin')
+    Return()
+
+
+csurf = realpath(env['csurf'])
+include = File(csurf).dir.dir.Dir('include')
+[plugin] = env.SharedLibrary(
+    'effort.cc',
+    CPPPATH=['$CPPPATH', include],
+    LIBPATH='..',
+    LIBS=['analyze', 'sqlite3'],
+    )
+Default(plugin)
+
+def build_effort_stk(target, source, env):
+    target = open(target[0].path, 'w')
+    print >>target, '(load "%s")' % source[0]
+    print >>target, '(quit)'
+    target.close()
+
+Default(env.Command('effort.stk', Value(plugin.abspath), build_effort_stk))

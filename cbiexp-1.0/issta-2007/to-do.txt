@@ -1,0 +1,87 @@
+Put name markers in brackets after items in the to-do list:
+
+  +Foo: things Foo is best suited to work on or plans to work on
+  -Foo: things Foo is definitely not able to work on
+  *Foo: things Foo is working on right now
+
+If you see a problem but either cannot fix it or don't want to work on
+it now, add it to the list below so that it will not be overlooked or
+forgotten.  Try to keep to-do items roughly organized by section,
+except for whole-paper issues which are listed first.
+
+As you fix outstanding items, remove them from the list and check in
+this updated to-do list along with your changes.  When this list is
+empty, that basically means we're done!
+
+------------------------------------------------------------------------
+--
+--  General
+--
+
+------------------------------------------------------------------------
+--
+--  Review 1
+--
+
+------------------------------------------------------------------------
+--
+--  Review 2
+--
+
+>> Can you think of a better term for "interesting" complex predicates.
+>> Interesting is a rather anodyne term in this context.
+
+1. Come up with a more suitable term than "interesting"
+2. Make sure ALL references to "interesting" are changed.
+
+>> In section 3.4 the claim that bounding the predicates does not affect the
+>> results surely has the hidden assumption that an error is caused by a single
+>> fault? If so then I think that this should be stated. Naturally errors caused
+>> by the co-occurrence of several faults are unlikely, but then they are also the
+>> most subtle and important of all faults. Are there any other assumptions in
+>> this claim (in section 3.4)? It is a very strong claim and I don't see that the
+>> proof is obvious. Have I missed something? Some words of proof sketch would be
+>> helpful (unless you are sure that it is obvious in which case I've missed
+>> something).
+
+6. I completely miss the point here.  Perhaps one of you could clarify the 
+question of the comment
+
+------------------------------------------------------------------------
+--
+--  Review 3
+--
+
+>> The paper could make a stronger case for the usefullness of disjunctions.
+>> Figure 1(b) seems to imply that they're completely uselesss. Perhaps a 
+>> small experiment of a variation on a Siemens program with multiple bugs 
+>> could be used to argue in favor of disjunctions?
+
+3. Disjunctions are less useful with multiple bugs as we don't know if we are
+picking up primary predictors of 2 bugs or a single bug with disjunctive 
+predictor.  This is mentioned somewhere.  Revise its text and placement if
+necessary.
+
+------------------------------------------------------------------------
+--
+--  Section 4
+--
+
+Section 4 offers some interesting ideas, though they aren't explored
+or justified as fully as they could be.  I'm not convinced that
+Definition 4.2 is working in the right direction.  If two predicates
+are highly correlated according to this definition, doesn't that mean
+they are nearly identical and therefore not especially interesting as
+a pair?  I would have thought that an interesting pair predicates
+would be ones with very little apparent connection in the PDG, but
+which nonetheless are tightly connected in how they predict failures.
+[+chen]
+
+Choosing predicates with the smallest intersection of predecessor sets also 
+relates well with the revised motivation for the metrics; the smaller 
+the intersection, the easier it is for a programmer to search the 
+code related to both predicates to find the connection.  By the current 
+definition "highly correlated" predicate combinations are selected; 
+this means a programmer has a potentially huge intersection set to
+search through for the item which 1. connects the components and 
+2. relates to the bug.

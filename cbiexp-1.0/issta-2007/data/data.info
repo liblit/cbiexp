@@ -1,0 +1,50 @@
+Application: parameter
+Version: parameter
+SamplingRate: parameter
+Effort: Parameter
+
+simple_preds: `wc -l preds.txt`
+
+time: time taken for computing complex predicates, along with estimation (in seconds)
+time_est: time taken for just estimating scores of complex predicate.  Note: This can be larger than the previous entry because 'time' is also low when there are few predicates (during low sampling rates) and hence measurement at second granularity is imprecise
+
+conj_total: Total conjunctions possible - (n^2 - n) / 2 where n is the number of interesting simple predicates (those found in preds.txt')
+conj_pdg_metric_pruned: Number of conjunctions pruned by PDG metric 1 (defn. 4.1 in paper)
+conj_ub_est_pruned: Number of conjunctions pruned by upper bound estimation
+conj_computed: Number of conjunctions for which the actual score was computed
+conj_interesting: Number of interesting conjunctions
+
+
+disj_total: Total disjunctions possible - (n^2 - n) / 2 where n is the number of interesting simple predicates (those found in preds.txt')
+disj_pdg_metric_pruned: Number of disjunctions pruned by PDG metric 1 (defn. 4.1 in paper)
+disj_ub_est_pruned: Number of disjunctions pruned by upper bound estimation
+disj_computed: Number of disjunctions for which the actual score was computed
+disj_interesting: Number of interesting disjunctions
+
+[Invariants:
+		conj_total = disj_total
+		conj_pdg_metric_pruned = disj_pdg_metric_pruned (the metric does not differentiate conj. and disj.)
+		
+		conj_pdg_metric_pruned + conj_ub_est_pruned + conj_computed = conj_total
+		disj_pdg_metric_pruned + disj_ub_est_pruned + disj_computed = disj_total
+		
+		conj_interesting <= conj_computed
+		disj_interesting <= disj_computed (for completeness)
+]
+
+top_compl: Score of top complex predicate
+
+num_perf_compl: Number of perfect complex predicates
+num_perf_simple: Number of perfect simple predicates
+
+top_simple: Score of top simple predicate
+
+compl_cr: Type of top predicate of corrective ranking with complex preds...
+          simple, conj, disj = 0, 1, 2
+compl_cr_is_top_perf: Was that perfect?
+compl_cr_pruned_conj: Number of conjunctions pruned by aggressive pruning
+compl_cr_pruned_disj: Number of disjunctions pruned by aggressive pruning
+time_compl_cr: Time taken for first iteration of complex predicate construction.  This shows how well we can perform in the best case: when we have a good threshold value and are interested in just the top complex predicate
+
+simple_cr: Type of top predicate of corrective ranking without complex-preds... always simple
+simple_cr_is_top_perf: Was that perfect?

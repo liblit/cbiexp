@@ -1,0 +1,60 @@
+Import('cbienv')
+
+
+[config] = cbienv.Template('config.site.in', varlist=['sampler_cc'])
+
+pkgenv=cbienv.Clone(
+    config_site=config,
+    configure_flags='--prefix=' + Dir('install').abspath,
+    )
+pkgenv['ENV']['PKG_CONFIG_PATH'] = Dir('install/lib/pkgconfig').abspath
+
+
+########################################################################
+
+
+makefile = pkgenv.Makefile(
+    'build/libexif/Makefile',
+    Dir('src/libexif-0.6.10'),
+    config_site=config,
+    configure_flags='--prefix=' + Dir('install').abspath,
+    )
+
+library = pkgenv.Command(
+    'install/lib/libexif.so',
+    [Dir('src/libexif-0.6.10'), makefile],
+    'make -C exif/build/libexif install',
+    source_scanner=DirScanner,
+    )
+
+#pkgenv.ExtractImplications(executable)
+sites = pkgenv.ExtractSites(library)
+
+Alias('subjects', [library, sites])
+
+
+########################################################################
+
+
+makefile = pkgenv.Makefile(
+    'build/exif/Makefile',
+    [Dir('src/exif-0.6.9'), library],
+    )
+
+executable = pkgenv.Command(
+    'install/bin/exif',
+    [Dir('src/exif-0.6.9'), makefile, library],
+    'make -C exif/build/exif install',
+    source_scanner=DirScanner,
+    )
+
+#pkgenv.ExtractImplications(executable)
+sites = pkgenv.ExtractSites(executable)
+
+Alias('subjects', [executable, sites])
+
+
+########################################################################
+
+
+Clean('.', ['build', 'install', 'share'])

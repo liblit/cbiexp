@@ -1,0 +1,2 @@
+for suffix in ['dtd', 'm', 'xsl']:
+    Glob('*.' + suffix)

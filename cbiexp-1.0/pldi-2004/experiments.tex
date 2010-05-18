@@ -1,0 +1,465 @@
+%% -*- LaTeX -*-
+
+\input{table}
+
+In this section we present the results of applying the algorithm
+described in \autoref{sec:algorithm} in five case
+studies.  \autoref{tab:exps} shows summary statistics for each of the
+experiments.  In each study we ran the programs on about 32,000 random
+inputs.  The number of instrumentation sites varies with the size of
+the program, as does the number of predicates those instrumentation
+sites yield.  Our algorithm is very effective in reducing the number
+of predicates the user must examine.  For example, in the case of
+\rhythmbox an initial set of 857,384 predicates is reduced to 537 by the $\increase(P) > 0$
+test, a reduction of 99.9\%.  The elimination algorithm then yields 15 predicates, a further
+reduction of 97\%.  The other case studies show a similar reduction in the number of
+predicates by 3-4 orders of magnitude.
+
+The results we discuss are all on sampled data.  Sampling creates
+additional challenges that must be faced by our algorithm.  Assume $P_1$ and $P_2$ are
+equivalent bug predictors and both are sampled at a rate of
+$\nicefrac{1}{100}$ and both are reached once per run.  Then even though
+$P_1$ and $P_2$ are equivalent, they will be observed in nearly disjoint
+sets of runs and treated as close to independent by the elimination
+algorithm.
+
+To address this problem, we set the sampling rates of predicates to be
+inversely proportional to their frequency of execution.  Based on a
+training set of 1,000 executions, we set the sampling rate of each predicate so
+as to obtain an expected 100 samples of each predicate in subsequent program
+executions.  On the low end, the sampling rate is clamped to a minimum of $\nicefrac{1}{100}$; if the site is expected to be reached fewer than 100 times the sampling rate is set at 1.0.
+Thus, rarely executed code has a
+much higher sampling rate than very frequently executed code.  (A
+similar strategy has been pursued for similar reasons in related work \cite{chil04}.)  We
+have validated this approach by comparing the results for each
+experiment with results obtained with no sampling at all (i.e., the
+sampling rate of all predicates set to 100\%).  The results are
+identical except for the \rhythmbox and \moss experiments, where we
+judge the differences to be minor: sometimes a different but logically
+equivalent predicate is chosen, the ranking of predictors of different
+bugs is slightly different, or one or the other version has a few
+extra, weak predictors at the tail end of the list.
+
+\subsection{A Validation Experiment}
+
+To validate our algorithm we first performed an experiment in which we
+knew the set of bugs in advance.  We added nine bugs to \moss, a
+widely used service for detecting plagiarism in software
+\cite{Schleimer:2003:WLA}.  Six of these were previously discovered
+and repaired bugs in \moss that we reintroduced.  The other three were
+variations on three of the original bugs, to see if our algorithm could
+discriminate between pairs of bugs with very similar behavior but
+distinct causes.  The nature of the eight crashing bugs varies: four
+buffer overruns, a null file pointer dereference in certain cases, a
+missing end-of-list check in the traversal of a hash table bucket, a missing
+out-of-memory check, and a violation of a subtle invariant that must be maintained between two
+parts of a complex data structure.  In addition, some of these bugs
+are non-deterministic and may not even crash when they should.
+
+The ninth bug---incorrect comment handling in some cases---only
+causes incorrect output, not a crash.  We include this bug in our
+experiment in order to show that bugs other than crashing bugs can 
+also be isolated using our techniques, provided there is some 
+way, whether by automatic self-checking or human inspection, to recognize
+failing runs.  In particular, for our experiment we also ran a correct 
+version of \moss{} and compared the output of the two versions. 
+This oracle provides a labeling of runs as ``success'' or ``failure,'' 
+and the resulting labels are treated identically by our algorithm as
+those based on program crashes.
+
+\input{moss-view/table}
+
+\autoref{tab:mossdilute} shows the results of the experiment.  The
+predicates listed were selected by the elimination algorithm in the
+order shown.  The first column is the initial bug thermometer for each
+predicate, showing the \context{} and \increase{} scores before
+elimination is performed. The second column is the \termdef{effective}
+bug thermometer, showing the \context{} and \increase{} scores for a
+predicate $P$ at the time $P$ is selected (i.e., when it is the
+top-ranked predicate).  Thus the effective thermometer reflects the
+cumulative diluting effect of redundancy elimination for all
+predicates selected before this one.
+
+As part of the experiment we separately recorded the exact set of
+bugs that actually occurred in each run.
+The columns at the far right of \autoref{tab:mossdilute} show, for
+each selected predicate and for each bug, the actual number of failing
+runs in which both the selected predicate is observed to be true and
+the bug occurs.
+Note that while each
+predicate has a very strong spike at one bug, indicating it is a
+strong predictor of that bug, there are always some runs with other
+bugs present.  For example, the top-ranked predicate, which is
+overwhelmingly a predictor of bug \#5, also includes some runs where
+bugs \#3, \#4, and \#9 occurred.  This situation is not the result of
+misclassification of failing runs by our algorithm.  As observed in
+\autoref{sec:introduction}, more than one bug may occur in a run.
+It simply happens that in some runs bugs \#5 and \#3 both occur (to
+pick just one possible combination).
+
+A particularly interesting case of this phenomenon is bug \#7, one of
+the buffer overruns.  Bug \#7 is not strongly predicted by any
+predicate on the list but occurs in at least a few of the
+failing runs of most predicates.  We have examined the runs of bug \#7
+in detail and found that the failing runs involving bug \#7 also
+trigger at least one other bug.  That is, even when the bug \#7 overrun
+occurs, it never causes incorrect output or a crash
+in any run.  Bug \#8, another overrun, was originally found by a code
+inspection.  It is not shown here because the overrun is never
+triggered in our data (its column would be all 0's).
+There is no way our algorithm can find causes of bugs that do not
+occur, but recall that part of our purpose in sampling user executions
+is to get an accurate picture of the most important bugs.  It is
+consistent with this goal that if a bug never causes a problem, it is
+not only not worth fixing, it is not even worth reporting.
+
+The other bugs all have strong predictors on the list.  In fact,
+the top eight predicates have exactly one predictor for each of the seven
+bugs that occur, with the exception of bug \#1, which has one very
+strong sub-bug predictor in the second spot and another predictor
+in the sixth position.  Notice that even the rarest bug, bug \#2,
+which occurs more than an order of magnitude less frequently than
+the most common bug, is identified immediately after the last of
+the other bugs.  Furthermore, we have verified by hand that
+the selected predicates would, in our judgment, lead an engineer to
+the cause of the bug. Overall, the elimination algorithm does an excellent
+job of listing separate causes of each of the bugs in order of priority,
+with very little redundancy.
+
+Below the eighth position there are no new bugs to report and every
+predicate is correlated with predicates higher on the list.  Even
+without the columns of numbers at the right it is easy to spot the
+eighth position as the natural cutoff.  Keep in mind that the length
+of the thermometer is on a log scale, hence changes in larger
+magnitudes may appear less evident.  Notice that the initial and
+effective thermometers for the first eight predicates are essentially
+identical.  Only the predicate at position six is noticeably
+different, indicating that this predicate is somewhat affected by a
+predicate listed earlier (specifically, its companion sub-bug
+predictor at position two).  However, all of the predicates below the
+eighth line have very different initial and effective thermometers
+(either many fewer failing runs, or much more non-deterministic, or
+both) showing that these predicates are strongly affected by
+higher-ranked predicates.
+
+The visualizations presented thus far have a drawback illustrated by
+the \moss\ experiment: It is not easy to identify the predicates to
+which a predicate is closely related.  Such a feature would be useful
+in confirming whether two selected predicates represent different bugs
+or are in fact related to the same bug.  We do have a measure of how
+strongly $P$ implies another predicate $P'$: How does removing the
+runs where $\report{P} = 1$ affect the importance of $P'$?  The more
+closely related $P$ and $P'$ are, the more $P'$'s importance drops
+when $P$'s failing runs are removed.  In the interactive version of
+our analysis tools, each predicate $P$ in the final, ranked list
+links to an \termdef{affinity list} of all
+predicates ranked by how much $P$ causes their ranking score to
+decrease.
+
+\subsection{Additional Experiments}
+
+We briefly report here on experiments with additional applications
+containing both known and unknown bugs.  Complete analysis results for
+all experiments may be browsed interactively at
+\url{http://www.cs.wisc.edu/~liblit/pldi-2005/}.
+
+\subsubsection{\ccrypt}
+
+\begin{view}{\ccrypt}{ccrypt}
+  \input{views/ccrypt/rows}
+\end{view}
+
+We analyzed \ccrypt 1.2, which has a known input validation bug.  The
+results are shown in \autoref{tab:views-ccrypt}.  Our algorithm
+reports two predictors, both of which point directly to the single bug.
+It is easy to discover that the two predictors are for the same bug;
+the first predicate is listed first in the second predicate's affinity
+list, indicating the first predicate is a sub-bug predictor associated
+with the second predicate.
+
+\subsubsection{\bc}
+
+\begin{view}{\bc}{bc}
+  \input{views/bc/rows}
+\end{view}
+
+GNU \bc 1.06 has a previously reported buffer overrun.  Our results
+are shown in \autoref{tab:views-bc}.  The outcome is the same as for
+\ccrypt: two predicates are retained by elimination, and the second
+predicate lists the first predicate at the top of its affinity list,
+indicating that the first predicate is a sub-bug predictor of the second.
+Both predicates point to the cause of the overrun.  This bug causes a
+crash long after the overrun occurs and there is no useful information
+on the stack at the point of the crash to assist in isolating this
+bug.
+
+\subsubsection{\exif}
+
+\begin{view}{\exif}{exif}
+  \input{views/exif/rows}
+\end{view}
+
+\autoref{tab:views-exif} shows results for \exif 0.6.9, an open source
+image processing program.  Each of the three predicates is a predictor
+of a distinct and previously unknown crashing bug.  It took less than
+twenty minutes of work to find and verify the cause of each of the bugs
+using these predicates and the additional highly correlated predicates
+on their affinity lists.  All bugs have been confirmed as valid by
+\exif project developers.
+
+To illustrate how statistical debugging is used in practice, we
+use the last of these three failure predictors as an example, and
+describe how it enabled us to
+effectively isolate the cause of one of the bugs.  Failed runs
+exhibiting \texttt{o + s > buf\_size} show the following unique stack
+trace at the point of termination:
+
+\begin{quote}
+  \small
+  \begin{minipage}{\linewidth}
+\begin{verbatim}
+main
+  exif_data_save_data
+    exif_data_save_data_content
+      exif_data_save_data_content
+        exif_data_save_data_entry
+          exif_mnote_data_save
+            exif_mnote_data_canon_save
+              memcpy
+\end{verbatim}
+  \end{minipage}
+\end{quote}
+
+The code in the vicinity of the call to \texttt{memcpy} in function
+\texttt{exif\_mnote\_data\_canon\_save} is as follows:
+
+\begin{quote}
+  \begin{minipage}{\linewidth}
+\begin{verbatim}
+for (i = 0; i < n->count; i++) {
+    ...
+    memcpy(*buf + doff,             (c)
+           n->entries[i].data, s);
+    ...
+}
+\end{verbatim}
+  \end{minipage}
+\end{quote}
+
+This stack trace alone provides little insight into the cause of the
+bug.  However, our algorithm highlights \texttt{o + s > buf\_size} in
+function \texttt{exif\_mnote\_data\_canon\_load} as a strong bug
+predictor.  Thus, a quick inspection of the source code leads us to
+construct the following call sequence:
+
+\begin{quote}
+  \small
+  \begin{minipage}{\linewidth}
+\begin{verbatim}
+main
+  exif_loader_get_data
+    exif_data_load_data
+      exif_mnote_data_canon_load
+  exif_data_save_data
+    exif_data_save_data_content
+      exif_data_save_data_content
+        exif_data_save_data_entry
+          exif_mnote_data_save
+            exif_mnote_data_canon_save
+              memcpy
+\end{verbatim}
+  \end{minipage}
+\end{quote}
+
+The code in the vicinity of the predicate \texttt{o + s > buf\_size}
+in function \texttt{exif\_mnote\_data\_canon\_load} is as follows:
+
+\begin{quote}
+\begin{verbatim}
+for (i = 0; i < c; i++) {
+    ...
+    n->count = i + 1;
+    ...
+    if (o + s > buf_size) return;    (a)
+    ...
+    n->entries[i].data = malloc(s);  (b)
+    ...
+}
+\end{verbatim}
+\end{quote}
+
+It is apparent from the above code snippets and the
+call sequence that whenever the predicate \texttt{o + s > buf\_size} is true,
+%%
+\begin{itemize}
+\item the function \texttt{exif\_mnote\_data\_canon\_load} returns on
+  line \texttt{(a)}, thereby skipping the call to \texttt{malloc} on
+  line \texttt{(b)} and thus leaving \texttt{n->entries[i].data}
+  uninitialized for some value of \texttt{i}, and
+
+\item the function \texttt{exif\_mnote\_data\_canon\_save} passes the
+  uninitialized \texttt{n->entries[i].data} to \texttt{memcpy} on line \texttt{(c)}, which reads it and eventually crashes.
+\end{itemize}
+
+In summary, our algorithm enabled us to effectively isolate the causes
+of several previously unknown bugs in source code unfamiliar to us in
+a small amount of time and without any explicit specification beyond
+``the program shouldn't crash.''
+
+\subsubsection{\rhythmbox}
+
+\begingroup
+\setlength{\segunit}{10pt}
+\begin{view}[\tiny]{\rhythmbox}{rhythmbox}
+  \input{views/rhythmbox/rows}
+\end{view}
+\endgroup
+
+\autoref{tab:views-rhythmbox} shows our results for \rhythmbox 0.6.5,
+an interactive, graphical, open source music player.  \rhythmbox is a
+complex, multi-threaded, event-driven system, written using a library
+providing object-oriented primitives in C.  Event-driven systems use
+event queues; each event performs some computation and possibly adds
+more events to some queues.  We know of no static analysis today that
+can analyze event-driven systems accurately, because no static
+analysis is currently capable of analyzing the heap-allocated event
+queues with sufficient precision.  Stack inspection is also of
+limited utility in analyzing event-driven systems, as the stack in the
+main event loop is unchanging and all of the interesting state is in
+the queues.
+
+We isolated two distinct bugs in \rhythmbox.  The first predicate led
+us to the discovery of a race condition.  The second predicate was not
+useful directly, but we were able to isolate the bug using the
+predicates in its affinity list.  This second bug revealed what turned
+out to be a very common incorrect pattern of accessing the underlying
+object library (recall \autoref{sec:introduction}).  \rhythmbox
+developers confirmed the bugs and enthusiastically applied patches
+within a few days, in part because we could quantify the bugs as
+important crashing bugs.  It required several hours to isolate each of
+the two bugs (and there are additional bugs represented in the
+predictors that we did not isolate) because they were violations of subtle heap
+invariants that are not directly captured by our current
+instrumentation schemes.  Note, however, that we could not have even
+begun to understand these bugs without the information provided by our
+tool.  We intend to explore schemes that track predicates on heap
+structure in future work.
+
+\subsection{How Many Runs Are Needed?}
+\label{sec:numruns}
+
+\input{runs}
+
+Recall that we used about 32,000 runs in each of the five case
+studies.  For many of the bugs this number is clearly far more than
+the minimum required.  In this section, we estimate how many runs are
+actually needed for all bug predictors to be identified.
+
+Our estimates are computed using the following methodology.
+We choose one predictor for each bug identified
+in the case studies.  Where the elimination algorithm selects two
+predictors for a bug, we pick the more natural one (i.e., not the
+sub-bug predictor).  For each chosen predictor $P$, we compute
+the importance of $P$ using many different numbers of runs.
+Let $\importance_N(P)$ be the importance of $P$ using $N$ runs.
+We are interested in the minimum $N$ such that
+\[ \importance_{32,000}(P) - \importance_N(P) < 0.2 \]
+The threshold $0.2$ is selected because we observe that 
+all of the chosen predictors in our studies would still
+be ranked very highly even if their importance scores were $0.2$ lower.
+
+\autoref{tab:numruns} presents the results of the analysis.  
+In these experiments, the number of runs $N$ ranges over the values
+100, 200, \ldots, 900, 1,000, 2,000, \ldots, 25,000.
+For each study, we list two numbers for each bug with predictor $P$:
+the minimum number of runs $N$ such that the threshold test is met, and the
+number of failing runs $F(P)$ among those $N$ runs where $P$ is
+observed to be true.  Note that the number of runs $N$ needed for
+different bugs varies by two orders of magnitude.  We need 21,000 runs
+to isolate all of the bug predictors in \exif{} because the last bug in that study is extremely rare: only 21
+failing runs out of our total population of 33,000 runs share bug \#3
+as the cause of failure.  If we exclude bug \#3, then just 2,000 runs
+are sufficient to isolate \exif{} bugs \#1 and \#2.
+Thus, results
+degrade gracefully with fewer runs, with the predictors
+for rare bugs dropping out first.
+
+The number $F(P)$ is independent of the rate at which the different
+bugs occur and allows us to compare the absolute number of failures
+needed to isolate different bugs.  Notice that 
+we can isolate any bug predictor with between 10 and 40 observations of
+failing runs caused by the bug.  How long it takes
+to get those observations of failing runs depends on the frequency
+with which the bug occurs and the sampling rate of the bug predictor.
+Assume $F$ failures are needed to isolate the predictor of a bug.
+If the failing runs where the predictor is observed to be
+true constitute a fraction $0 \leq p \leq 1$ of all runs,
+then about $N = \nicefrac{F}{p}$ runs will be required by our algorithm.
+
+
+\subsection{Comparison with Logistic Regression}
+\label{sec:comparison}
+
+\begin{table}
+\nocaptionrule
+\caption{Results of logistic regression for \moss}
+\label{tab:logregression}
+\centering
+\scriptsize
+\begin{tabular}{ll}
+  \toprule
+  Coefficient & Predicate \\
+  \midrule
+  0.769379 & \verb|(p + passage_index)->last_line < 4| \\
+  0.686149 & \verb|(p + passage_index)->first_line < i| \\
+  0.675982 & \verb|i > 20| \\
+  0.671991 & \verb|i > 26| \\
+  0.619479 & \verb|(p + passage_index)->last_line < i| \\
+  0.600712 & \verb|i > 23| \\
+  0.591044 & \verb|(p + passage_index)->last_line == next| \\
+  0.567753 & \verb|i > 22| \\
+  0.544829 & \verb|i > 25| \\
+  0.536122 & \verb|i > 28| \\
+  \bottomrule
+\end{tabular}
+\end{table}
+
+
+In earlier work
+we used $\ell_1$-regularized logistic regression
+to rank the predicates by their
+failure-prediction strength \cite{PLDI`03*141,NIPS2003_AP05}.
+Logistic regression uses linearly weighted
+combinations of predicates to classify a trial run as successful or
+failed.  Regularized logistic regression incorporates a penalty
+term that drives most coefficients towards zero, thereby
+giving weights to only the most important predicates.  The output
+is a set of coefficients for predicates giving the best overall prediction.
+
+A weakness of logistic regression for our application is that it seeks
+to cover the set of failing runs without regard to the orthogonality
+of the selected predicates (i.e., whether they represent distinct
+bugs).  This problem can be seen in \autoref{tab:logregression},
+which gives the top ten predicates selected by logistic regression
+for \moss.  The striking fact is that all selected predicates are
+either sub-bug or super-bug predictors.  The predicates beginning with
+\texttt{p + \ldots} are all sub-bug predictors of bug \#1 (see
+\autoref{tab:mossdilute}).  The predicates \texttt{i > \ldots} are
+super-bug predictors: \texttt{i} is the length of the command line and
+the predicates say program crashes are more likely for long command
+lines (recall \autoref{sec:introduction}).
+
+The prevalence of super-bug predictors on the list shows the
+difficulty of making use of the penalty term.  Limiting the number of
+predicates that can be selected via a penalty has the effect of
+encouraging regularized logistic regression to choose super-bug predictors, as
+these cover more failing runs at the expense of poorer predictive
+power compared to predictors of individual bugs.  On the other hand,
+the sub-bug predictors are chosen based on their excellent prediction
+power of those small subsets of failed runs.
+%%Relaxing the penalty
+%%allows logistic regression to add more predicates to improve its
+%%prediction, but the sub-bug predictors apparently are favored.
+
+%% LocalWords:  exps mossdilute ccrypt bc exif buf mnote rhythmbox
+%% LocalWords:  logregression numruns

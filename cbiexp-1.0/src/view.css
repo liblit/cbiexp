@@ -1,0 +1,8 @@
+@import "bug-o-meter.css";
+@import "scores.css";
+
+
+table.views th {
+  text-align: right;
+  vertical-align: baseline
+}

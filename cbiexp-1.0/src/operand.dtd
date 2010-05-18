@@ -1,0 +1,7 @@
+<!ELEMENT operand EMPTY>
+
+<!ATTLIST operand
+  source CDATA #REQUIRED
+  scope (local|global|mem|const) #IMPLIED
+  access (direct|indirect|field|index) #IMPLIED
+>

@@ -1,0 +1,32 @@
+<!ELEMENT faq (section+)>
+<!ATTLIST faq title CDATA #REQUIRED>
+
+<!ELEMENT section (item*) >
+<!ATTLIST section name CDATA #REQUIRED>
+
+<!-- Each item is a question and answer -->
+<!ELEMENT item (question, answer) >
+
+<!-- Some formatting tags which we'll allow -->
+<!ENTITY % inlines "a | i | b | br | tt ">
+<!ENTITY % blocks "p | ul | ol | pre | blockquote">
+
+<!-- A question may have simple formatting tags, but no blocks -->
+<!ELEMENT question (#PCDATA | %inlines;)* >
+<!ELEMENT answer (#PCDATA | %blocks; | %inlines;)*>
+
+<!ELEMENT p (#PCDATA | %inlines;)*>
+<!ELEMENT ul (li)*>
+<!ELEMENT ol (li)*>
+<!ELEMENT li (#PCDATA | %blocks; | %inlines;)*>
+<!ELEMENT pre (#PCDATA)>
+<!ELEMENT blockquote (#PCDATA)>
+
+<!ELEMENT a (#PCDATA)>
+<!ATTLIST a href CDATA #IMPLIED>
+<!ATTLIST a name CDATA #IMPLIED>
+
+<!ELEMENT i (#PCDATA)>
+<!ELEMENT b (#PCDATA)>
+<!ELEMENT tt (#PCDATA)>
+<!ELEMENT br EMPTY>

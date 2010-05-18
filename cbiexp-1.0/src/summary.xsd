@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="qualified"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:element name="experiment" type="experiment.type">
+    <xsd:annotation>
+      <xsd:documentation>
+        results from a single experiment
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:complexType name="experiment.type">
+    <xsd:sequence>
+      <xsd:element ref="runs" />
+      <xsd:element ref="analysis" />
+      <xsd:element ref="schemes" />
+    </xsd:sequence>
+    <xsd:attribute name="date" type="xsd:dateTime" use="required" />
+    <xsd:attribute name="source-dir" type="source-dir.type" />
+  </xsd:complexType>
+
+  <xsd:element name="runs" type="runs.type" />
+
+  <xsd:element name="analysis" type="analysis.type" />
+
+  <xsd:element name="schemes" type="schemes.type" />
+
+  <xsd:simpleType name="source-dir.type">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="runs.type">
+    <xsd:attribute name="success" type="xsd:nonNegativeInteger"
+      use="required" />
+
+    <xsd:attribute name="failure" type="xsd:nonNegativeInteger"
+      use="required" />
+
+    <xsd:attribute name="ignore" type="xsd:nonNegativeInteger"
+      use="required" />
+
+  </xsd:complexType>
+
+  <xsd:complexType name="analysis.type">
+    <xsd:attribute name="confidence">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:nonNegativeInteger">
+          <xsd:maxInclusive value="100" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="schemes.type">
+    <xsd:sequence maxOccurs="unbounded" minOccurs="1">
+      <xsd:element ref="scheme" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:element name="scheme" type="scheme.type" />
+
+  <xsd:complexType name="scheme.type">
+    <xsd:attribute name="name" type="name.type" use="required" />
+    <xsd:attribute name="total" type="xsd:nonNegativeInteger"
+      use="required" />
+
+    <xsd:attribute name="retain" type="xsd:nonNegativeInteger"
+      use="required" />
+
+  </xsd:complexType>
+
+  <xsd:simpleType name="name.type">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="atoms" />
+      <xsd:enumeration value="bounds" />
+      <xsd:enumeration value="branches" />
+      <xsd:enumeration value="float-kinds" />
+      <xsd:enumeration value="function-entries" />
+      <xsd:enumeration value="g-object-unref" />
+      <xsd:enumeration value="returns" />
+      <xsd:enumeration value="scalar-pairs" />
+      <xsd:enumeration value="yields" />
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>
