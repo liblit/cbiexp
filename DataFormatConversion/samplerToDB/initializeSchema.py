@@ -44,7 +44,7 @@ def setupPragmas(conn, memory=100):
 
 
 
-def setupTables(conn, version):
+def setupTables(conn, version=1):
     """Create initial tables in database
 
     The setup step will not fail if the tables already exist
@@ -55,6 +55,9 @@ def setupTables(conn, version):
                 supports version 1
 
     """
+    if version != 1:
+        raise ValueError('Version %s of the database schema is unsupported' %
+                         str(version))
 
     # Get the cursor
     c = conn.cursor()

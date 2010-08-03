@@ -201,13 +201,16 @@ def processReportFile(cursor, UnitInfoMap, runID, fname, wantedSchemes=None):
             cursor.executemany(insertQuery, values)
 
 
-def processReports(conn, runDirs, version, schemes=None):
+def processReports(conn, runDirs, schemes=None, version=1):
     """ Arguments:
             conn: A database connection
             runDirs: A list (or iterator) that generates run directories
                      to be processed
             schemes: A list of schemes that are enabled during analysis
     """
+    if version != 1:
+        raise ValueError('Version %s of the database schema is unsupported' %
+                         str(version))
 
     outcomeEnum = EnumerationTables['Outcomes']
     UNKNOWN = [t[0] for t in outcomeEnum if t[1] == 'UNKNOWN'][0]

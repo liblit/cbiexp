@@ -9,11 +9,14 @@ import sys
 from itertools import count, izip, imap
 from os.path import basename, exists, join
 
-def processOutcomesFile(conn, outcomesTxt, version):
+def processOutcomesFile(conn, outcomesTxt, version=1):
     """ Populate Runs table from file 'outcomesTxt'.  The file
         contains one integer per line, representing the outcome
         of runs, starting at index 0.
     """
+    if version != 1:
+        raise ValueError('Version %s of the database schema is unsupported' %
+                         str(version))
 
     def getOutcome(line):
         outcome = int(line.strip())
@@ -29,10 +32,13 @@ def processOutcomesFile(conn, outcomesTxt, version):
     conn.commit()
 
 
-def processLabels(conn, runDirs, version):
+def processLabels(conn, runDirs, version=1):
     """ Populate Runs table by iterating over run directories
         and reading 'label' files.
     """
+    if version != 1:
+        raise ValueError('Version %s of the database schema is unsupported' %
+                         str(version))
 
     cursor = conn.cursor()
     runIDCounter = count()

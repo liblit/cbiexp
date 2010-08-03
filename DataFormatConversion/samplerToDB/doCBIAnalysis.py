@@ -28,9 +28,10 @@ root := %(cbiexpDir)s
 include %(cbiexpDir)s/src/analysis-rules.mk
 """
 
-def doCBIAnalysis(sitesDir, reportsDir, analysisDir, csurfPrj, version):
+def doCBIAnalysis(sitesDir, reportsDir, analysisDir, csurfPrj, version=1):
     if version != 1:
-        raise ValueError('Incompatible version %d' % version)
+        raise ValueError('Version %s of the database schema is unsupported' %
+                         str(version))
 
     sitesFiles = sorted(glob(join(sitesDir, '*.sites')))
     runDirs = glob(join(reportsDir, '[0-9]*/[0-9]*'))
@@ -45,10 +46,10 @@ def doCBIAnalysis(sitesDir, reportsDir, analysisDir, csurfPrj, version):
     conn = sqlite3.connect(database)
 
     setupPragmas(conn)
-    setupTables(conn, version)
-    writeSitesIntoDB(conn, sitesFiles, version)
-    processLabels(conn, runDirs, version)
-    processReports(conn, runDirs, version)
+    setupTables(conn)
+    writeSitesIntoDB(conn, sitesFiles)
+    processLabels(conn, runDirs)
+    processReports(conn, runDirs)
 
     conn.commit()
 

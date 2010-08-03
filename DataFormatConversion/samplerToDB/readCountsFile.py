@@ -13,7 +13,7 @@ from itertools import count
 from DBConstants import EnumerationTables
 from utils import getSiteIDToSchemeMapping, InsertQueryConstructor
 
-def processCountsFile(conn, countsTxt, phase, version):
+def processCountsFile(conn, countsTxt, phase=-1, version=1):
     """Input sample counts/values into the database.
 
         ARGUMENTS:
@@ -24,6 +24,11 @@ def processCountsFile(conn, countsTxt, phase, version):
             version: Version of the schema supported. Currently only supports
                     version 1.
     """
+
+    if version != 1:
+        raise ValueError('Version %s of the database schema is unsupported' %
+                         str(version))
+
     # NOTE:
     # This assumes that the counts are *NOT* thread local and so uses the 
     # default value of -1 for 'thread' while inserting the counts into the
@@ -57,7 +62,10 @@ def processCountsFile(conn, countsTxt, phase, version):
     cursor = conn.cursor()
     with file(countsTxt, 'r') as countsFile:
         for line in countsFile:
-            inputSamplesForSingleRun(cursor, runID.next(), line)
+            if line == '\n':
+                runID.next()
+            else:
+                inputSamplesForSingleRun(cursor, runID.next(), line)
 
     cursor.execute('CREATE INDEX IndexSampleCountsByRunID ON SampleCounts(RunID)')
     cursor.execute('CREATE INDEX IndexSampleValuesByRunID ON SampleValues(RunID)')

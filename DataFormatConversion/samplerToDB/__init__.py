@@ -12,13 +12,14 @@ from sitesIntoDB import writeSitesIntoDB
 
 def setupDatabase(cbi_db, version=1):
     if version != 1:
-        raise ValueError('Incompatible version %d' % version)
+        raise ValueError('Version %s of the database schema is unsupported' %
+                         str(version))
 
     if os.path.exists(cbi_db):
         raise ValueError('File exists: %s' % cbi_db)
 
     conn = sqlite3.connect(cbi_db)
     setupPragmas(conn)
-    setupTables(conn, version)
+    setupTables(conn)
 
     conn.close()

@@ -8,7 +8,7 @@ import re
 import sqlite3
 import sys
 
-from itertools import count, chain, imap
+from itertools import count, chain, imap, repeat
 
 from DBConstants import EnumerationTables
 
@@ -77,16 +77,19 @@ def readSitesFile(filepath, fileNameModifier):
                 yield dict(zip(keys, vals))
 
 
-def writeSitesIntoDB(conn, sitesFiles, version, fileNameModifier=None, wantedSchemes=None):
+def writeSitesIntoDB(conn, sitesFiles, fileNameModifier=None, wantedSchemes=None, version=1):
     """ Read units and sites from <sitesFiles> and insert into
-        sqlite3 database connection <conn>.  CBI database schema
-        version <version> is assumed.  Currently <version> is
-        unused
+        sqlite3 database connection <conn>.  Currently only CBI database 
+        schema version 1 is supported.
 
         Optionally, you can also provide a <fileNameModifier> function to 
         modify the filenames (corresponding to the sites) being stored eg. 
         to strip the build/compilation directory path from the filename
     """
+
+    if version != 1:
+        raise ValueError('Version %s of the database schema is unsupported' %
+                         str(version))
 
     cursor = conn.cursor()
     schemeNameToID = getEnumEvaluator('Schemes')
@@ -99,7 +102,7 @@ def writeSitesIntoDB(conn, sitesFiles, version, fileNameModifier=None, wantedSch
     curUnit, curScheme = None, None
     isFilteredScheme = False
 
-    for line in chain(*imap(readSitesFile, sitesFiles, (lambda : (yield fileNameModifier))())):
+    for line in chain(*imap(readSitesFile, sitesFiles, repeat(fileNameModifier))):
         if line is None:
             # end of unit
             curUnit, curScheme = None, None
