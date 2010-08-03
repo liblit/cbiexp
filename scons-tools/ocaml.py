@@ -1,6 +1,5 @@
 from itertools import chain, ifilter, imap
 from os.path import dirname
-from subprocess import PIPE, Popen
 
 import sys
 sys.path[1:1] = ['/usr/lib/scons']
@@ -34,20 +33,6 @@ def __warn(message):
 #
 
 
-def __read_pipe(command, env):
-    [command] = env.subst_list(command)
-    command = map(str, command)
-    print ' '.join(command)
-    process = Popen(command, env=env['ENV'], stdout=PIPE)
-
-    for line in process.stdout:
-        yield line
-
-    status = process.wait()
-    if status != 0:
-        env.Exit(status)
-
-
 def __ocamldep_scan(node, env, path):
     __pychecker__ = 'no-argsused'
     suffix = node.get_suffix()
@@ -71,7 +56,9 @@ def __ocamldep_scan(node, env, path):
                 yield accum + line
                 accum = ''
 
-    deps = __read_pipe(['$OCAMLDEP', '$_OCAML_PATH', '$_OCAML_PP', str(node)], env)
+    command = ['$OCAMLDEP', '$_OCAML_PATH', '$_OCAML_PP', str(node)]
+    [command] = env.subst_list(command)
+    deps = env.ReadPipe(command)
     deps = joinLines(deps)
     deps = imap(str.split, deps)
     deps = ( fields[1:] for fields in deps if fields[0] == target )
@@ -164,7 +151,7 @@ def __lib_emitter(target, source, env):
     return target, source
 
 
-__lib_action = Action([['$_OCAMLC', '-a', '$_OCAML_WARN', '$_OCAML_WARN_ERROR', '-o', '$TARGET', '$SOURCES']])
+__lib_action = Action([['$_OCAMLC', '$_OCAML_DEBUG', '-a', '$_OCAML_WARN', '$_OCAML_WARN_ERROR', '-o', '$TARGET', '$SOURCES']])
 
 
 __lib_builder = Builder(
@@ -188,6 +175,8 @@ def __exe_depends(node, env):
     src_suffix = __object_to_source[obj_suffix]
     source = node.target_from_source('', src_suffix)
     cmis = ( cmi for cmi in node.children() if cmi != source )
+    top = env.Dir('#.')
+    cmis = ( cmi for cmi in cmis if cmi.is_under(top) )
     cmos = ( cmi.target_from_source('', obj_suffix) for cmi in cmis )
     cmos = ( env.FindFile(str(cmo), '#.') for cmo in cmos )
     cmos = ifilter(None, cmos)
@@ -218,7 +207,7 @@ def __find_libs(libs, env, path):
         if found:
             yield found
         else:
-            __warn('no %s in search path [%s]' % (lib, ', '.join(path)))
+            __warn('no %s in search path [%s]' % (lib, ', '.join(imap(str, path))))
 
 
 def __exe_target_scan(node, env, path):
@@ -244,7 +233,7 @@ __exe_target_scanner = Scanner(
     )
 
 
-__exe_action = Action([['$_OCAMLC', '$_OCAML_PATH', '-o', '$TARGET', '$_OCAML_LIBS', '$_OCAML_LINK_ORDER']])
+__exe_action = Action([['$_OCAMLC', '$_OCAML_DEBUG', '$_OCAML_PATH', '-o', '$TARGET', '$_OCAML_LIBS', '$_OCAML_LINK_ORDER']])
 
 
 __exe_builder = Builder(
@@ -329,6 +318,9 @@ def __var_ocaml_stdlib(target, source, env, for_signature):
 
 
 def generate(env):
+    tooldir = dirname(__file__)
+    env.Tool('pipe', toolpath=[tooldir])
+
     env.AppendUnique(
         OCAMLC=env.Detect(['ocamlc.opt', 'ocamlc']),
         OCAMLDEP=env.Detect(['ocamldep.opt', 'ocamldep']),
@@ -348,7 +340,7 @@ def generate(env):
         _OCAMLC=__var_ocamlc,
         _OCAML_DEBUG=__var_ocaml_debug,
         _OCAML_DTYPES=__var_ocaml_dtypes,
-        _OCAML_LIBS='${_concat("", OCAML_LIBS, _OCAML_CMA, __env__)}',
+        _OCAML_LIBS='${_concat("", OCAML_LIBS, OCAML_CMA, __env__)}',
         _OCAML_LINK_ORDER=__var_ocaml_link_order,
         _OCAML_PATH='${_concat("-I ", OCAML_PATH, "", __env__)}',
         _OCAML_PP='${_concat("-pp ", OCAML_PP, "", __env__)}',
