@@ -52,7 +52,8 @@ def readSites(cbi_db):
             FROM \
                 Sites JOIN Units JOIN Schemes ON\
                     Sites.UnitID=Units.UnitID AND\
-                    Units.SchemeID=Schemes.SchemeID'
+                    Units.SchemeID=Schemes.SchemeID\
+            ORDER BY Sites.SiteID'
 
     cursor = conn.cursor().execute(query)
     keys = [t[0] for t in cursor.description] + ['Descriptions']
