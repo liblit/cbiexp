@@ -241,7 +241,7 @@ __exe_builder = Builder(
     source_scanner=__exe_scanner,
     action=__exe_action,
     src_builder=__obj_builder,
-    src_suffix='$_OCAML_CMO',
+    src_suffix='$OCAML_CMO',
     suffix='$PROGSUFFIX',
     )
 
