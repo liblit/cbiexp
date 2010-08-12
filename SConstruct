@@ -112,7 +112,7 @@ def included(source):
 
 sources = env.FindSourceFiles()
 sources = set(filter(included, sources))
-sources.remove(File('config.log'))
+sources.discard(File('config.log'))
 sources = list(sources)
 
 package = env.Package(
