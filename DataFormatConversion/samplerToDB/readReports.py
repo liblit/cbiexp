@@ -35,14 +35,6 @@ class SampleInfo(object):
         return '%s %s %d %d' % (self.signature, self.scheme, self.phase, self.thread)
 
 
-class CountInfo(object):
-
-    __slots__ = ['counts']
-
-    def __init__(self, counts):
-        self.counts = counts
-
-
 def readReport(inputs):
     # start reading
     state = 'INITIAL'
@@ -50,10 +42,13 @@ def readReport(inputs):
     for line in inputs:
         line = line.strip()
 
-        isReportOpen = reportOpen.match(line)
-        isReportClose = reportClose.match(line)
-        isSamplesOpen = samplesOpen.match(line)
-        isSamplesClose = samplesClose.match(line)
+        isReportOpen, isReportClose = None, None
+        isSamplesOpen, isSamplesClose = None, None
+        if line[0] == '<':
+            isReportOpen = reportOpen.match(line)
+            isReportClose = reportClose.match(line)
+            isSamplesOpen = samplesOpen.match(line)
+            isSamplesClose = samplesClose.match(line)
 
         if state == 'INITIAL':
             if isReportOpen is None:
@@ -74,7 +69,7 @@ def readReport(inputs):
             if isReportClose:
                 state = 'INITIAL'
             elif isSamplesOpen:
-                yield SampleInfo(*isSamplesOpen.groups())
+                yield 'SampleInfo', SampleInfo(*isSamplesOpen.groups())
                 state = 'READING'
             else:
                 raise ValueError('Read "%s" in a samples subreport' % line)
@@ -83,7 +78,7 @@ def readReport(inputs):
             if isSamplesClose:
                 state = 'REPORT'
             else:
-                yield CountInfo(line.split('\t'))
+                yield 'CountInfo', line.split('\t')
 
     if state != 'INITIAL':
         raise ValueError('Report reading terminated in state ' + state)
@@ -141,6 +136,8 @@ def processReportFile(cursor, UnitInfoMap, runID, fname, wantedSchemes=None):
         isFilteredScheme = False
         insertQuery = None
         values = None
+        curFieldIDs = None
+        ignoreZeros = False
         # store the keys for the observed units, to accommodate the use case 
         # for shared libraries where the same unit signature and schemeid 
         # may be observed multiple times. In such a scenario we are supposed 
@@ -150,8 +147,8 @@ def processReportFile(cursor, UnitInfoMap, runID, fname, wantedSchemes=None):
         isSharedLibrary = False
         updateQuery = None
 
-        for info in readReport(ifile):
-            if isinstance(info, SampleInfo):
+        for kind, info in readReport(ifile):
+            if kind == 'SampleInfo':
                 if siteIDCounter:
                     ensureAllCountersAreRead(curSampleInfo, siteIDCounter)
                     if isSharedLibrary:
@@ -170,7 +167,7 @@ def processReportFile(cursor, UnitInfoMap, runID, fname, wantedSchemes=None):
                 curThread = info.thread
                 key = (info.signature, curSchemeID)
                 siteIDCounter = iter(UnitInfoMap[key])
-                insertQuery = qg.generateInsertQuery(curSchemeID)
+                insertQuery, curFieldIDs, ignoreZeros = qg.generateInsertionScenario(curSchemeID)
                 if unitsObserved.has_key(key):
                     isSharedLibrary = True
                     updateQuery = qg.generateUpdateQuery(curSchemeID) 
@@ -183,15 +180,23 @@ def processReportFile(cursor, UnitInfoMap, runID, fname, wantedSchemes=None):
             elif isFilteredScheme:
                 continue
 
-            elif isinstance(info, CountInfo):
+            elif kind == 'CountInfo':
                 try:
                     siteID = siteIDCounter.next()
                 except StopIteration:
                     raise ValueError('Found too many samples while reading '
                                      'unit "%s".' % str(curSampleInfo))
 
-                values += qg.generateValues(siteID, runID, curSchemeID,
-                                            info.counts, curPhase, curThread)
+                if len(curFieldIDs) != len(info):
+                    raise ValueError('Got %d samples while expecting %d samples '
+                                      'for site %d with scheme %d'
+                                      % (len(samples), len(fields), siteID, schemeID))
+
+                for sample, fieldID in zip(info, curFieldIDs):
+                    sample = int(sample)
+                    if ignoreZeros and sample == 0:
+                        continue
+                    values.append((sample, curPhase, runID, curThread, siteID, fieldID))
 
         if siteIDCounter:
             ensureAllCountersAreRead(curSampleInfo, siteIDCounter)

@@ -93,11 +93,15 @@ class InsertQueryConstructor(object):
         self.SchemeIDToTable = getSchemeIDToTableMapping()
         self.Cols = ('Count', 'Phase', 'RunID', 'Thread', 'SiteID', 'FieldID')
 
-    def generateInsertQuery(self, schemeID):
+    def generateInsertionScenario(self, schemeID):
         table = self.SchemeIDToTable[schemeID]
         cols = ', '.join(self.Cols)
         entries = ', '.join('?' * len(self.Cols))
-        return 'INSERT OR IGNORE INTO %s (%s) VALUES (%s);' % (table, cols, entries)
+
+        ignoreZeros = (self.SchemeIDToTable[schemeID] == 'SampleCounts')
+        fields = self.SchemeIDToFields[schemeID]
+        query = 'INSERT OR IGNORE INTO %s (%s) VALUES (%s);' % (table, cols, entries)
+        return query, fields, ignoreZeros
 
     # This function is needed for the case of shared libraries where we may 
     # have multiple sample reports being generated for a single unit. 
@@ -105,23 +109,3 @@ class InsertQueryConstructor(object):
         table = self.SchemeIDToTable[schemeID]
         return 'UPDATE %s SET Count = Count + ? WHERE Phase=? AND RunID=? AND Thread=? AND SiteID=? AND FieldID=?;' % (table, )
 
-
-    def generateValues(self, siteID, runID, schemeID, sample, phase, thread):
-        """ Constructs query from input arguments and member
-            dictionaries and yields (query, values-to-bind) pairs
-        """
-
-        samples = map(int, sample)
-        fields = self.SchemeIDToFields[schemeID]
-        if len(fields) != len(samples):
-            raise ValueError('Got %d samples while expecting %d samples '
-                              'for site %d with scheme %d'
-                              % (len(samples), len(fields), siteID, schemeID))
-
-        table = self.SchemeIDToTable[schemeID]
-        ignoreZeros = (table == 'SampleCounts')
-
-        for sample, fieldID in zip(samples, fields):
-            if ignoreZeros and sample == 0:
-                continue
-            yield (sample, phase, runID, thread, siteID, fieldID)
