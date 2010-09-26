@@ -50,9 +50,19 @@ def processCountsFile(conn, countsTxt, phase=-1, version=1):
             samples = samples[1:]
             schemeID = SiteIDToSchemeID[siteID]
 
-            query = qg.generateInsertQuery(schemeID)
-            values = qg.generateValues(siteID, runID, schemeID,
-                                         samples, phase, -1)
+            query, fields, ignoreZeros = qg.generateInsertionScenario(schemeID)
+            if len(fields) != len(samples):
+                raise ValueError('Got %d samples while expecting %d samples '
+                                 'for site %d with scheme %d'
+                                 % (len(samples), len(fields), siteID,
+                                    schemeID))
+            
+            values = []
+            for sample, fieldID in zip(samples, fields):
+                if ignoreZeros and sample == 0:
+                    continue
+                values.append((sample, phase, runID, -1, siteID, fieldID))
+            
             cursor.executemany(query, values)
 
     SiteIDToSchemeID = getSiteIDToSchemeMapping(conn)
