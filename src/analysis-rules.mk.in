@@ -172,14 +172,13 @@ CLEANFILES += complex_hl_none.xml complex-info.xml complex_all.txt
 #############################################################################
 
 # PLDI 2005 algorithm
-pldi2005: all_hl_corrected-exact-complete.xml elimination-clusters.txt corrected-exact-complete.txt noelim
-all_hl_corrected-exact-complete.xml elimination-clusters.txt corrected-exact-complete.txt: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/exact-complete)
+pldi2005: all_hl_corrected-exact-complete.xml corrected-exact-complete.txt noelim
+all_hl_corrected-exact-complete.xml corrected-exact-complete.txt: f.runs obs.txt tru.txt $(call tool-deps, corrective-ranking/exact-complete)
 	$(time) $(tooldir)/corrective-ranking/exact-complete --zoom=$(zoom) --begin-runs=$(begin-runs) --end-runs=$(end-runs) $(confidence:%=--confidence=%) $(corrected_view_flags)
 	$(build) links
 	xmllint --valid --noout all_hl_corrected-exact-complete.xml
-	test -e elimination-clusters.txt
 	$(find-zooms) -print0 | xargs --null --no-run-if-empty xmllint --valid --noout
-CLEANFILES += all_hl_corrected-exact-complete.xml elimination-clusters.txt corrected-exact-complete.txt
+CLEANFILES += all_hl_corrected-exact-complete.xml corrected-exact-complete.txt
 .PHONY : pldi2005
 
 # Variation on PLDI 2005 algorithm

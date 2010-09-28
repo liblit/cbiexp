@@ -28,7 +28,7 @@ public:
   void load(std::istream &);
   void swap(RunSet &);
 
-  void dilute(const Predicate &, const RunSet &, bool clustering = false);
+  void dilute(const Predicate &, const RunSet &);
 
 private:
   size_t intersectionSize(const RunSet &);

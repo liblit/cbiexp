@@ -15,9 +15,8 @@ using namespace std;
 
 
 void
-RunSet::dilute(const Predicate &, const RunSet &winner, bool clustering) {
+RunSet::dilute(const Predicate &, const RunSet &winner) {
     assert(size() == winner.size());
-    assert(clustering || !clustering); // Dummy use of parameter to bypass -Werror flag passed to g++
     // Nothing
 }
 
