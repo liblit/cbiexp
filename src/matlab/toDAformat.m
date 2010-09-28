@@ -5,7 +5,7 @@
 function toDAformat(inputfile, outputfile)
     load(inputfile);
 
-    X = Data.X;
+    X = full(Data.X);
     Fvector = Data.Fvector;
 
     out = fopen(outputfile, 'w');
