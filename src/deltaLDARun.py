@@ -158,7 +158,7 @@ def deltaLDARun(runsinfo, optargs={}):
     """
 
     usageTopics = optargs.setdefault('usageTopics', 1)
-    bugTopics = optargs.setdefault('bugtopics', 1)
+    bugTopics = optargs.setdefault('bugTopics', 1)
     # numsamp specifies how many samples to take from the Gibbs sampler
     numsamp = optargs.setdefault('numsamp', 500)
     # randseed is used to initialize the Gibbs sampler random number generator
