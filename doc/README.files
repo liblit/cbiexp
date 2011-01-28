@@ -1,0 +1,58 @@
+File: preds.txt
+Separator: space (1)
+Line delimiter: '\n'
+Columns:
+    <Scheme-code>: single letter
+    <SiteID>: int
+    <PredNum>: int \in {2 or 2*|Field|} where the odd numbered predicates are the
+negation of corresponding 'Field'
+    <lb>: Lower bound of increase based on 95% confidence from normal
+distribution
+    <in>: float 'Increase' = fs - co
+    <fs>: float 'Failure' = F[p] / (S[p] + F[p])
+    <co>: float 'Context' = OF[p] / (OS[p] + OF[p])
+    <S>: number of successful runs where 'Pred' was True
+    <F>: number of failed runs where 'Pred' was True
+    <OS>: number of successful runs where 'Site' was observed
+    <OF>: number of failing runs where 'Site' was observed
+Writer: prefilter.cc
+
+
+File: tru.txt
+Separator: space (1)
+Line delimiter: '\n'
+Columns:
+    ['S:' | 'F:']: corresponding to either success or failure
+    <RunID 'list>: space delimited list of RunIDs where predicate was observed
+Writer: compute_obs_tru.cc
+
+
+File: obs.txt
+Separator: space (1)
+Line delimiter: '\n'
+Columns:
+    ['S:' | 'F:']: corresponding to either success or failure
+    <RunID 'list>: space delimited list of RunIDs where site was observed
+Writer: compute_obs_tru.cc
+
+
+File: Xtru.sparse
+Separator: space (1)
+Line delimiter: '\n'
+Columns:
+    <PredID>: int corresponding to line number of predicate from preds.txt
+starting from 1
+    <RunID>: int corresponding to RunID where predicate was observed
+    <Count>: number of times predicate was observed in given RunID
+Writer: matlab/make_counts_matrix.cc
+
+
+File: Xobs.sparse
+Separator: space (1)
+Line delimiter: '\n'
+Columns:
+    <PredID>: int corresponding to line number of predicate from preds.txt
+starting from 1
+    <RunID>: int corresponding to RunID where site was observed
+    <Count>: number of times predicate was observed in given RunID
+Writer: matlab/make_counts_matrix.cc

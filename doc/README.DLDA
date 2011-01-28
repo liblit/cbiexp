@@ -1,0 +1,57 @@
+File: src/deltaLDARun.py
+
+This script is used to run the ECML-07 delta-LDA analysis. The script assumes
+that you have separately installed the delta-LDA code available here:
+http://pages.cs.wisc.edu/~andrzeje/research/delta_lda.html. This script is only
+a driver for the actual analysis.
+
+The main input to the script is the 'runsinfo.mat' file which is generated as
+part  of the 'runsinfo.dat' "analysis" (see cbiexp/src/analysis-rules.mk). The
+other parameters (such as number of bug topics etc) are self explanatory.
+
+The result of running the script is a dictionary which contains a number of
+numpy arrays:
+    'phi' - phi is the matrix of topic-word probabilities, i.e.,
+            Pr(word | topic) such that phi[zj, wi] = Pr(word=wi | Topic=zj).
+    'prz' - prz is the vector denoting the probability of the various topics.
+    'prz_w' - prz_w is the matrix of word-topic probabilities, i.e.,
+            Pr(topic | word) such that prz_w[wi, zj] = Pr(Topic=zj|word=wi).
+    'theta' - Theta is the matrix of document-topic probabilities, i.e.,
+            Pr(Topic | Document) such that theta[di, zj] = Pr(Topic=zj |
+            Document = di).
+
+Additionally, there is a 'binarized' version of each of these matrices, which is
+computed from running the delta-LDA analysis on binarized (i.e., 0-1) counts.
+
+In the arrays mentioned above the usage topics are always arranged *before* the
+bug topics, eg., if there is one usage topic and one bug topic, then prz[0]
+corresponds to the probability for the usage topic and prz[1] corresponds to the
+probability of the lone bug topic.
+
+For CBI, the word tokens correspond to the individual predicates which have been
+observed and the documents correspond to the individual runs. Successful runs,
+currently, are modeled as having word token generated only from usage topics
+whereas failing runs are modeled as having word tokens generated both from usage
+and buggy topics. For more details see the ECML-2007 paper.
+
+The set of word tokens are generated from the set of predicates in preds.txt.
+The ordering of the word tokens/predicates is maintained in the aforementioned
+arrays (prz_w etc).
+
+
+How to use the results as outputted by this script:
+
+For a given bug topic z_j we should be looking for the word token, w_i, such
+that P(z_j | w_i) is maximum (over all word tokens) and *NOT* the w_i which
+maximises P(w_i | z_j). The reason is as follows. Consider what P(w_i | z_j) 
+really is. Using bayes rule:
+
+P(w_i | z_j) is proportional to P(z_j | w_i) . P(w_i). So a high P(w_i
+| z_j) could simply be because the word token has a high probability.
+What you instead want to look for is high values of P(z_j | w_i) for
+bug-topics z_j's. Additionally, in the ECML-07 paper a further
+distinction was made and for bug-topic z_j the bug predictor was the
+word token w_i such that P(z_j | w_i) is maximum *unless* for the
+given word token w_i there exists a bug topic z_k such that P(z_k |
+w_i) > P(z_j | w_i). The idea being that in that latter case the word
+token is in a sense better indicative of the bug topic z_k.
