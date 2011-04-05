@@ -30,7 +30,7 @@ env = Environment(
     CCFLAGS=['$__ccflags_debug', '$__ccflags_optimize', '-Werror', '-Wall', '-Wextra', '-Wformat=2'],
     CXXFLAGS=['-Wno-deprecated'],
     LIBPATH=Dir('.'),
-    tools=['ar', 'c++', 'cc', 'filesystem', 'link', 'packaging', 'tar', 'template'],
+    tools=['default', 'packaging', 'template'],
     toolpath=['scons-tools'],
     TARCOMSTR='$TAR $TARFLAGS -f $TARGET $$SOURCES',
     )
