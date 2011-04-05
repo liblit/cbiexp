@@ -1,4 +1,4 @@
-Import('env')
+Import('env', 'lib')
 
 Glob('*.m')
 File([
@@ -10,7 +10,7 @@ Default(
     env.Program(
         'make-counts-matrix',
         'make_counts_matrix.cc',
-        LIBS=['analyze', 'sqlite3'],
+        LIBS=[lib, 'sqlite3'],
         LIBPATH='..',
         )
     )

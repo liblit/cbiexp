@@ -1,4 +1,4 @@
-Import('env')
+Import('env', 'lib')
 
 File([
         'Location.h',
@@ -17,7 +17,7 @@ sources = [
 Default(
     env.Program(
         'never-reached', sources,
-        LIBS=['analyze', 'sqlite3', 'dl'],
+        LIBS=[lib, 'sqlite3', 'dl'],
         LIBPATH='..',
         )
     )
