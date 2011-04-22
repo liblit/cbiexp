@@ -52,8 +52,8 @@ def readReport(inputs):
 
         if state == 'INITIAL':
             if isReportOpen is None:
-                raise ValueError('Read "%s" instead of <report> tag' % line)
-            if isReportOpen.group(1) == 'samples':
+                pass            # junk can appear between reports
+            elif isReportOpen.group(1) == 'samples':
                 state = 'REPORT'
             else:
                 state = 'DISCARD'
