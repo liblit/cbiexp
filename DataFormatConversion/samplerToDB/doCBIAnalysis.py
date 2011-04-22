@@ -79,7 +79,7 @@ def main():
 
     sitesDir, reportsDir, analysisDir = args
     version = options.version
-    csurfPrj = options.csurfPrj
+    csurfPrj = options.csurf_prj
 
     doCBIAnalysis(sitesDir, reportsDir, analysisDir, csurfPrj, version)
 
