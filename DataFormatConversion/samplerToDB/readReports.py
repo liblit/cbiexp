@@ -44,7 +44,7 @@ def readReport(inputs):
 
         isReportOpen, isReportClose = None, None
         isSamplesOpen, isSamplesClose = None, None
-        if line[0] == '<':
+        if line.startswith('<'):
             isReportOpen = reportOpen.match(line)
             isReportClose = reportClose.match(line)
             isSamplesOpen = samplesOpen.match(line)
