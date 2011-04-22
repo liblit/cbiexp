@@ -6,7 +6,7 @@ from __future__ import with_statement
 import optparse
 import sqlite3
 
-from glob import glob
+from glob import iglob
 from os import makedirs
 from os.path import abspath, basename, dirname, isdir, join
 from shutil import rmtree
@@ -33,8 +33,8 @@ def doCBIAnalysis(sitesDir, reportsDir, analysisDir, csurfPrj, version=1):
         raise ValueError('Version %s of the database schema is unsupported' %
                          str(version))
 
-    sitesFiles = sorted(glob(join(sitesDir, '*.sites')))
-    runDirs = glob(join(reportsDir, '[0-9]*/[0-9]*'))
+    sitesFiles = sorted(iglob(join(sitesDir, '*.sites')))
+    runDirs = iglob(join(reportsDir, '[0-9]*/[0-9]*'))
     runDirs = sorted(runDirs, key=lambda d: int(basename(d)))
 
     # Create a pristine analysisDir

@@ -4,14 +4,14 @@
 from __future__ import with_statement
 
 import optparse
-import glob
 import re
 import sqlite3
 import sys
 
+from collections import defaultdict
+from glob import iglob
 from itertools import count
 from os.path import basename, join
-from collections import defaultdict
 
 from DBConstants import EnumerationTables
 from utils import InsertQueryConstructor
@@ -270,7 +270,8 @@ def main():
                      ' is currently not supported')
 
     cbi_db, testsDir = args
-    runDirs = glob.iglob(join(testsDir, '[0-9]*/[0-9]*'))
+    runDirs = iglob(join(testsDir, '[0-9]*/[0-9]*'))
+    runDirs = sorted(runDirs, key=lambda d: int(basename(d)))
 
     conn = sqlite3.connect(cbi_db)
     processReports(conn, runDirs, options.version, options.schemes)

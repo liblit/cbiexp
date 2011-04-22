@@ -1,11 +1,11 @@
 #!/s/python-2.6.2/bin/python -O
 # -*- python -*-
 
-import glob
 import optparse
 import sqlite3
 import sys
 
+from glob import iglob
 from itertools import count, izip, imap
 from os.path import basename, exists, join
 
@@ -115,7 +115,8 @@ def main():
         processOutcomesFile(conn, outcomesTxt, options.version)
     elif runsDir:
         checkExists('runs-dir', runsDir)
-        dirs = glob.iglob(join(runsDir, '[0-9]*/[0-9]*'))
+        dirs = iglob(join(runsDir, '[0-9]*/[0-9]*'))
+        dirs = sorted(dirs, key=lambda d: int(basename(d)))
         processLabels(conn, dirs, options.version)
     else:
         parser.error('must set either --outcomes-file or --run-dirs')
