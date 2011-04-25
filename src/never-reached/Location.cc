@@ -18,8 +18,7 @@ size_t
 hash<Location>::operator()(const Location &location) const
 {
   // note that Location::func is not used for hashing or equality
-  return location.line ^
-    hash<const char *>::hash()(location.file.c_str());
+  return location.line ^ hash<const char *>()(location.file.c_str());
 }
 
 
