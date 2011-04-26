@@ -28,7 +28,7 @@ root := %(cbiexpDir)s
 include %(cbiexpDir)s/src/analysis-rules.mk
 """
 
-def doCBIAnalysis(sitesDir, reportsDir, analysisDir, csurfPrj, version=1):
+def doCBIAnalysis(sitesDir, reportsDir, analysisDir, csurfPrj, version=1, verbose=False):
     if version != 1:
         raise ValueError('Version %s of the database schema is unsupported' %
                          str(version))
@@ -49,7 +49,7 @@ def doCBIAnalysis(sitesDir, reportsDir, analysisDir, csurfPrj, version=1):
     setupTables(conn)
     writeSitesIntoDB(conn, sitesFiles)
     processLabels(conn, runDirs)
-    processReports(conn, runDirs)
+    processReports(conn, runDirs, verbose=verbose)
 
     conn.commit()
 
@@ -70,7 +70,9 @@ def main():
 
     parser.add_option('-c', '--csurf-prj', action='store', default=None,
                       help = 'enable ISSTA analysis and use CSURF-PRJ')
-    parser.add_option('-v', '--version', action='store', default=1, type='int',
+    parser.add_option('-v', '--verbose', action='store_true', default=False,
+                      help = 'print progress information')
+    parser.add_option('-V', '--version', action='store', default=1, type='int',
                       help = 'version of schema to implement')
 
     options, args = parser.parse_args()
@@ -78,10 +80,12 @@ def main():
         parser.error('wrong number of positional arguments')
 
     sitesDir, reportsDir, analysisDir = args
-    version = options.version
-    csurfPrj = options.csurf_prj
-
-    doCBIAnalysis(sitesDir, reportsDir, analysisDir, csurfPrj, version)
+    doCBIAnalysis(
+        sitesDir, reportsDir, analysisDir,
+        csurfPrj=options.csurf_prj,
+        version=options.version,
+        verbose=options.verbose,
+        )
 
 ################################################################################
 

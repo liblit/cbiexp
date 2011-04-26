@@ -206,7 +206,7 @@ def processReportFile(cursor, UnitInfoMap, runID, fname, wantedSchemes=None):
             cursor.executemany(insertQuery, values)
 
 
-def processReports(conn, runDirs, schemes=None, version=1):
+def processReports(conn, runDirs, schemes=None, version=1, verbose=False):
     """ Arguments:
             conn: A database connection
             runDirs: A list (or iterator) that generates run directories
@@ -228,6 +228,10 @@ def processReports(conn, runDirs, schemes=None, version=1):
     cursor = conn.cursor()
     for runDir in runDirs:
         testCase = int(basename(runDir))
+        if verbose:
+            print 'processing test case', testCase
+            sys.stdout.flush()
+
         if testCase not in testCaseMap:
             continue
         runID = testCaseMap[testCase]
