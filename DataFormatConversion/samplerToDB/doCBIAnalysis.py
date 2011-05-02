@@ -33,6 +33,12 @@ def doCBIAnalysis(sitesDir, reportsDir, analysisDir, csurfPrj, version=1, verbos
         raise ValueError('Version %s of the database schema is unsupported' %
                          str(version))
 
+    if not isdir(sitesDir):
+        raise ValueError('Sites directory "%s" does not exist' % sitesDir)
+
+    if not isdir(reportsDir):
+        raise ValueError('Reports directory "%s" does not exist' % reportsDir)
+
     sitesFiles = sorted(iglob(join(sitesDir, '*.sites')))
     runDirs = iglob(join(reportsDir, '[0-9]*/[0-9]*'))
     runDirs = sorted(runDirs, key=lambda d: int(basename(d)))
