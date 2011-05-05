@@ -33,4 +33,8 @@ const argp Stylesheet::argp = {
   options, parseFlag, 0, 0, 0, 0, 0
 };
 
+
+const char *Stylesheet::filename;
+
+
 #endif // HAVE_ARGP_H

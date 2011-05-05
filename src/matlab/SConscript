@@ -11,6 +11,7 @@ Default(
         'make-counts-matrix',
         'make_counts_matrix.cc',
         LIBS=[lib, 'sqlite3'],
-        LIBPATH='..',
+        LIBPATH=lib.dir,
+        RPATH=lib.dir.abspath,
         )
     )

@@ -27,8 +27,6 @@ using namespace std;
 
 typedef list<IndexedPredInfo> Stats;
 
-const char *Stylesheet::filename = "view.xsl";
-
 
 template <class Get>
 static void
@@ -138,6 +136,7 @@ int
 main(int argc, char** argv)
 {
     // command line processing and other initialization
+    Stylesheet::filename = "view.xsl";
     process_cmdline(argc, argv);
     classify_runs();
 

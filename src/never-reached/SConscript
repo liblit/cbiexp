@@ -18,6 +18,7 @@ Default(
     env.Program(
         'never-reached', sources,
         LIBS=[lib, 'sqlite3', 'dl'],
-        LIBPATH='..',
+        LIBPATH=lib.dir,
+        RPATH=lib.dir.abspath,
         )
     )

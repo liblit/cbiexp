@@ -41,16 +41,14 @@ sources = [
     'Verbose.cc',
     'ViewPrinter.cc',
     'classify_runs.cc',
-    'combine.cc',
     'fopen.cc',
     'split_runs.cc',
     'utils.cc',
     'xml.cc',
     ]
 
-env.SharedLibrary('analyze', sources)
-lib = env.StaticLibrary('analyze', sources)
-aenv = env.Clone(LIBS=[lib, 'sqlite3'], LIBPATH='.')
+[lib] = env.SharedLibrary('analyze', sources, LIBS=['dl'])
+aenv = env.Clone(LIBS=['analyze', 'sqlite3'], LIBPATH='.', RPATH=Dir('.').abspath)
 denv = aenv.Clone(LIBS=['$LIBS', 'dl'])
 senv = aenv.Clone(LIBS=['$LIBS', 'Score', 'dl'], LIBPATH=['$LIBPATH', 'Score'])
 genv = aenv.Clone()
@@ -67,7 +65,7 @@ Default([
         aenv.Program('gather_prior_dist.cc'),
         aenv.Program('gather_prior_truths.cc'),
         denv.Program('gen-summary', 'gen_summary.cc'),
-        senv.Program('gen-views', 'gen_views.cc', LIBS=['$LIBS', 'corrective'], LIBPATH=['$LIBPATH', 'corrective-ranking']),
+        senv.Program('gen-views', ['gen_views.cc', 'combine.cc'], LIBS=['$LIBS', 'corrective'], LIBPATH=['$LIBPATH', 'corrective-ranking']),
         aenv.Program('get_tp_weights.cc'),
         denv.Program('logreg.cc'),
         denv.Program('prefilter.cc'),

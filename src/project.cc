@@ -31,8 +31,6 @@
 
 using namespace std;
 
-const char *Stylesheet::filename = "projected-view.xsl";
-
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -157,6 +155,7 @@ int
 main(int argc, char *argv[])
 {
   // command line processing and other initialization
+  Stylesheet::filename = "projected-view.xsl";
   processCommandLine(argc, argv);
   ios::sync_with_stdio(false);
   classify_runs();
