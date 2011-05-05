@@ -10,7 +10,7 @@ Default(
     env.Program(
         'make-counts-matrix',
         'make_counts_matrix.cc',
-        LIBS=[lib, 'sqlite3'],
+        LIBS=[lib.name, 'sqlite3'],
         LIBPATH=lib.dir,
         RPATH=lib.dir.abspath,
         )
