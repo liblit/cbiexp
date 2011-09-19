@@ -1,4 +1,4 @@
-#!/s/python-2.6.2/bin/python -O
+#!/s/python-2.7.1/bin/python -O
 # -*- python -*-
 
 import optparse

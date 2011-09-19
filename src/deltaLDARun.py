@@ -1,8 +1,7 @@
-#!/s/python-2.6.2/bin/python
+#!/s/python-2.7.1/bin/python
 # -*- python -*-
 
 ###############################################################################
-from __future__ import with_statement
 
 import optparse
 import sys

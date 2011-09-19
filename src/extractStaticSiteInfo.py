@@ -1,6 +1,4 @@
-#!/s/python-2.5/bin/python
-
-from __future__ import with_statement
+#!/s/python-2.7.1/bin/python
 
 import CheetahFilters
 import sqlite3

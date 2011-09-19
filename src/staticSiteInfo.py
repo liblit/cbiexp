@@ -1,4 +1,4 @@
-#!/s/python-2.5/bin/python -O
+#!/s/python-2.7.1/bin/python -O
 
 from binascii import unhexlify
 from ctypes import *
