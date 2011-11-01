@@ -79,7 +79,7 @@ def readReport(inputs):
                 yield 'CountInfo', line.split('\t')
 
     if state != 'INITIAL':
-        raise ValueError('Report reading terminated in state ' + state)
+        raise ValueError(('Report "%s" reading terminated in state ' % inputs.name) + state)
 
 
 def getUnitInfo(conn):
@@ -188,7 +188,7 @@ def processReportFile(cursor, UnitInfoMap, runID, fname, wantedSchemes=None):
                 if len(curFieldIDs) != len(info):
                     raise ValueError('Got %d samples while expecting %d samples '
                                       'for site %d with scheme %d'
-                                      % (len(samples), len(fields), siteID, schemeID))
+                                      % (len(info), len(curFieldIDs), siteID, schemeID))
 
                 for sample, fieldID in zip(info, curFieldIDs):
                     sample = int(sample)
