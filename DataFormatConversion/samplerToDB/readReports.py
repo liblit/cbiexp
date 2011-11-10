@@ -9,6 +9,7 @@ import sys
 from collections import defaultdict
 from glob import iglob
 from itertools import count
+from os import stat
 from os.path import basename, join
 
 from DBConstants import EnumerationTables
@@ -187,8 +188,9 @@ def processReportFile(cursor, UnitInfoMap, runID, fname, wantedSchemes=None):
 
                 if len(curFieldIDs) != len(info):
                     raise ValueError('Got %d samples while expecting %d samples '
-                                      'for site %d with scheme %d'
-                                      % (len(info), len(curFieldIDs), siteID, curSampleInfo.scheme))
+                                      'for site %d with scheme %d in file "%s" with size of %d bytes'
+                                      % (len(info), len(curFieldIDs), siteID, curSampleInfo.scheme,
+                                         fname, stat(fname).st_size))
 
                 for sample, fieldID in zip(info, curFieldIDs):
                     sample = int(sample)
