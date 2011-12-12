@@ -188,7 +188,7 @@ def processReportFile(cursor, UnitInfoMap, runID, fname, wantedSchemes=None):
 
                 if len(curFieldIDs) != len(info):
                     raise ValueError('Got %d samples while expecting %d samples '
-                                      'for site %d with scheme %d in file "%s" with size of %d bytes'
+                                      'for site %d with scheme %d in file "%s" with size of %s bytes'
                                       % (len(info), len(curFieldIDs), siteID, curSampleInfo.scheme,
                                          fname, stat(fname).st_size))
 
