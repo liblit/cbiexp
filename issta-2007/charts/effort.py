@@ -1,4 +1,4 @@
-#!/s/std/bin/python
+#!/s/python-2.7.1/bin/python -O
 
 import common
 
