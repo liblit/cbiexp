@@ -96,8 +96,14 @@ print_summary(ostream &out, Tally &tally)
       unsigned predsPerSite;
       switch (site->scheme_code)
 	{
+	case 'E':
+	case 'I':
+	case 'V':
+	  predsPerSite = 1;
+	  break;
 	case 'A':
 	case 'B':
+	case 'D':
 	case 'Y':
 	case 'Z':
 	case 'C':
@@ -125,13 +131,17 @@ print_summary(ostream &out, Tally &tally)
 
   print_summary_scheme(out, "atoms", total, tally, 'A'); /*cci*/
   print_summary_scheme(out, "branches", total, tally, 'B');
+  print_summary_scheme(out, "bounds", total, tally, 'D');
+  print_summary_scheme(out, "function-entries", total, tally, 'E');
   print_summary_scheme(out, "float-kinds", total, tally, 'F');
   print_summary_scheme(out, "g-object-unref", total, tally, 'G');
+  print_summary_scheme(out, "data", total, tally, 'I');
   print_summary_scheme(out, "returns", total, tally, 'R');
   print_summary_scheme(out, "scalar-pairs", total, tally, 'S');
   print_summary_scheme(out, "yields", total, tally, 'Y'); /*cci*/
   print_summary_scheme(out, "fun-reentries", total, tally, 'Z'); /*cci*/
   print_summary_scheme(out, "compare-swap", total, tally, 'C'); /*cci*/
+  print_summary_scheme(out, "coverage", total, tally, 'V');
   print_summary_scheme(out, "atoms-rw", total, tally, 'W'); /*cci*/
 
   out << "</schemes></experiment>\n";

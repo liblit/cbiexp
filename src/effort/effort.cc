@@ -47,9 +47,9 @@ void check_cs_error(cs_result result) {
 /* The main function of the plugin. */
 extern "C" void cs_plug_main(void)
 {
-  check_cs_error(cs_startup());
+  //  check_cs_error(cs_startup());
   libeffort();
-  check_cs_error(cs_cleanup());
+  //  check_cs_error(cs_cleanup());
 }
 
 cs_pdg_vertex_set CBI_pred_to_pdg_nodes(const char *fun, int line) {
@@ -81,7 +81,7 @@ bool valid(cs_pdg_kind kind) {
          kind == cs_pdg_kind_file_initialization;
 }
 
-cs_integer total_size() {
+csint32 total_size() {
   cs_result result;
 
   // Get the PDGS in the project
@@ -95,7 +95,7 @@ cs_integer total_size() {
   cs_pdg* PDGs = (cs_pdg *) malloc(size);
   check_cs_error(cs_sdg_pdgs(PDGs, size, &size));
 
-  cs_integer numV = 0;
+  csint32 numV = 0;
   for(cs_size_t i = 0; i < size / sizeof(cs_pdg); ++ i) {
     cs_pdg_kind kind = cs_pdg_get_kind(PDGs[i]);
 
@@ -110,10 +110,10 @@ cs_integer total_size() {
   return numV;
 }
 
-cs_integer effort;
+csint32 effort;
 void read_effort() {
   double percent, tmp;
-  cs_integer size;
+  csint32 size;
   char *str;
 
   // read the % of code that the programmer will explore: from the environment
@@ -168,7 +168,7 @@ void put_edges_into_vertex_set(
 
 cs_pdg_vertex_set bfs(cs_pdg_vertex_set &start) {
   cs_pdg_vertex_set tmp, tmp1, result, fringe;
-  cs_integer explored;
+  csint32 explored;
 
   check_cs_error(cs_pdg_vertex_set_create_default(&tmp));
   check_cs_error(cs_pdg_vertex_set_union(tmp, start, &result));
@@ -185,13 +185,13 @@ cs_pdg_vertex_set bfs(cs_pdg_vertex_set &start) {
 
     // accumulate adjacent vertices of all nodes in fringe
     check_cs_error(cs_pdg_vertex_set_create_default(&tmp));
-    cs_integer numV = cs_pdg_vertex_set_cardinality(fringe);
+    csint32 numV = cs_pdg_vertex_set_cardinality(fringe);
     cs_size_t size = numV * sizeof(cs_pdg_vertex);
 
     cs_pdg_vertex *list = (cs_pdg_vertex *) malloc(size);
     check_cs_error(cs_pdg_vertex_set_to_list(fringe, list, size, &size));
 
-    for(cs_integer i = 0; i < numV; i ++) {
+    for(csint32 i = 0; i < numV; i ++) {
       cs_const_pdg_edge_set inter_sources, inter_targets, intra_sources, intra_targets;
 
       check_cs_error(cs_pdg_vertex_inter_sources(list[i], &inter_sources));

@@ -2,7 +2,7 @@
 
 <!ELEMENT predictor (operand*)>
 <!ATTLIST predictor
-  scheme (atoms|branches|g-object-unref|returns|scalar-pairs|yields|fun-reentries|compare-swap|atoms-rw) #REQUIRED
+  scheme (atoms|branches|bounds|function-entries|float-kinds|g-object-unref|data|returns|scalar-pairs|yields|fun-reentries|compare-swap|coverage|atoms-rw) #REQUIRED
   file CDATA #REQUIRED
   line NMTOKEN #REQUIRED
   function NMTOKEN #REQUIRED

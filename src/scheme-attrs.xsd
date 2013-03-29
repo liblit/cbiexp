@@ -9,13 +9,17 @@
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="atoms" />
       <xsd:enumeration value="branches" />
+      <xsd:enumeration value="bounds" />
+      <xsd:enumeration value="function-entries" />
       <xsd:enumeration value="float-kinds" />
       <xsd:enumeration value="g-object-unref" />
+      <xsd:enumeration value="data" />
       <xsd:enumeration value="returns" />
       <xsd:enumeration value="scalar-pairs" />
       <xsd:enumeration value="yields" />
       <xsd:enumeration value="fun-reentries" />
       <xsd:enumeration value="compare-swap" />
+      <xsd:enumeration value="coverage" />
       <xsd:enumeration value="atoms-rw" />
     </xsd:restriction>
   </xsd:simpleType>

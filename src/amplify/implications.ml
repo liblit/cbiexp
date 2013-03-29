@@ -63,7 +63,7 @@ class impliesSynthRelationImpl : impliesRelation =
   object
     inherit impliesRelationImpl as super
 
-    method add (l : predicate) (r : predicate) =
+    method! add (l : predicate) (r : predicate) =
       let sl = Predicate.core_to_synth_pred l in
       let sr = Predicate.core_to_synth_pred r in
       super#add sl sr; 

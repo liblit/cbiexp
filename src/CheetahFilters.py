@@ -3,7 +3,9 @@
 from Cheetah.Filters import Filter
 
 def tagToScheme(val):
-    return {'A':'atoms','B':'branches', 'F':'float-kinds', 'G':'g-object-unref', 'R':'returns','S':'scalar-pairs','Y':'yields'}[val]
+    return {'A':'atoms', 'B':'branches', 'D':'bounds', 'E':'function-entries', 'F':'float-kinds', 'G':'g-object-unref',
+            'I':'data', 'R':'returns', 'S':'scalar-pairs', 'Y':'yields', 'Z':'fun-reentries', 'C':'compare-swap',
+            'V':'coverage', 'W':'atoms-rw'}[val]
 
 class SchemeTagXMLFilter(Filter):
     """Do XML filtering, converting a scheme tag to a scheme string"""

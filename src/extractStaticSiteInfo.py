@@ -10,13 +10,17 @@ from Cheetah.Template import Template
 schemeSpecificDescriptions = (
         # (name-of-table, extra columns added to static-site-info.cc)
         ('AtomsSiteDescriptors', ('Variable',)),
+        ('AtomsRWSiteDescriptors', ('Variable',)),
         ('BoundsSiteDescriptors', ('Variable',)),
         ('BranchesSiteDescriptors', ('Predicate',)),
         ('CompareSwapSiteDescriptors', ('Variable',)),
+        ('CoverageSiteDescriptors', ('Statement',)),
+        ('DataSiteDescriptors', ('Variable',)),
         ('FloatKindsSiteDescriptors', ('Variable',)),
         ('GObjectUnrefSiteDescriptors', ('Object',)),
         ('ReturnsSiteDescriptors', ('Callee',)),
         ('ScalarPairsSiteDescriptors', ('LHSVariable', 'RHSVariable')),
+        ('YieldsSiteDescriptors', ('Instruction',)),
         )
 
 

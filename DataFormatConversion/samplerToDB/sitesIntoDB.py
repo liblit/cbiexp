@@ -14,14 +14,19 @@ from DBConstants import EnumerationTables
 
 schemeTables = {
         'atoms': 'AtomsSiteDescriptors',
+        'atoms-rw': 'AtomsRWSiteDescriptors',
         'bounds': 'BoundsSiteDescriptors',
         'branches': 'BranchesSiteDescriptors',
         'compare-swap': 'CompareSwapSiteDescriptors',
+        'coverage': 'CoverageSiteDescriptors',
+        'data': 'DataSiteDescriptors',
         'float-kinds': 'FloatKindsSiteDescriptors',
         'function-entries': None,
+        'fun-reentries': None,
         'g-object-unref': 'GObjectUnrefSiteDescriptors',
         'returns': 'ReturnsSiteDescriptors',
-        'scalar-pairs': 'ScalarPairsSiteDescriptors'
+        'scalar-pairs': 'ScalarPairsSiteDescriptors',
+        'yields': 'YieldsSiteDescriptors',
         }
 
 def getEnumEvaluator(enumName):
@@ -39,15 +44,20 @@ convertors = {
 
 SchemeDescriptions = {
         'atoms': ('Text', 'AccessType',),
+        'atoms-rw': ('Text', 'AccessType',),
         'bounds': ('Text', 'VariableType', 'AccessType',),
         'branches': ('Text',),
         'compare-swap': ('Text',),
+        'coverage': ('Text',),
+        'data': ('Text', 'AccessType',),
         'float-kinds': ('Text', 'VariableType', 'AssignmentType',),
         'function-entries': None,
+        'fun-reentries': None,
         'g-object-unref': ('Text',),
         'returns': ('Text',),
         'scalar-pairs': ('Text', 'VariableType', 'AssignmentType',\
                          'Text', 'VariableType',),
+        'yields': ('Text',),
         }
 
 ###############################################################################

@@ -65,6 +65,14 @@ scheme_name(char code)
 	static const string name("compare-swap");
 	return name;
     }
+    case 'D': {
+	static const string name("bounds");
+	return name;
+    }
+    case 'E': {
+	static const string name("function-entries");
+	return name;
+    }
     case 'F': {
 	static const string name("float-kinds");
 	return name;
@@ -73,12 +81,20 @@ scheme_name(char code)
 	static const string name("g-object-unref");
 	return name;
     }
+    case 'I': {
+	static const string name("data");
+	return name;
+    }
     case 'R': {
 	static const string name("returns");
 	return name;
     }
     case 'S': {
 	static const string name("scalar-pairs");
+	return name;
+    }
+    case 'V': {
+	static const string name("coverage");
 	return name;
     }
     case 'W': {

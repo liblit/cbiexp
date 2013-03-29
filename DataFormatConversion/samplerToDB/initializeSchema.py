@@ -156,6 +156,17 @@ def setupTables(conn, version=1):
                     (AccessTypeID) REFERENCES AccessTypes(AccessTypeID));
 
         CREATE TABLE
+            AtomsRWSiteDescriptors(
+                SiteID INTEGER NOT NULL
+                        CONSTRAINT AtomsRWSiteDescriptors_pk PRIMARY KEY,
+                Variable TEXT NOT NULL,
+                AccessTypeID INTEGER NOT NULL,
+                CONSTRAINT AtomsRWSiteDescriptors_SiteID_fk FOREIGN KEY (SiteID)
+                    REFERENCES Sites(SiteID),
+                CONSTRAINT AtomsRWSiteDescriptors_AccessTypeID_fk FOREIGN KEY
+                    (AccessTypeID) REFERENCES AccessTypes(AccessTypeID));
+
+        CREATE TABLE
             BoundsSiteDescriptors(
                 SiteID INTEGER NOT NULL
                         CONSTRAINT BoundsSiteDescriptors_pk PRIMARY KEY,
@@ -176,6 +187,25 @@ def setupTables(conn, version=1):
                 Predicate TEXT NOT NULL,
                 CONSTRAINT BranchesSiteDescriptors_SiteID_fk FOREIGN KEY
                     (SiteID) REFERENCES Sites(SiteID));
+
+        CREATE TABLE
+            CoverageSiteDescriptors(
+                SiteId INTEGER NOT NULL
+                        CONSTRAINT CoverageSiteDescriptors_pk PRIMARY KEY,
+                Statement TEXT NOT NULL,
+                CONSTRAINT CoverageSiteDescriptors_SiteID_fk FOREIGN KEY
+                    (SiteID) REFERENCES Sites(SiteID));
+
+        CREATE TABLE
+            DataSiteDescriptors(
+                SiteID INTEGER NOT NULL
+                        CONSTRAINT DataSiteDescriptors_pk PRIMARY KEY,
+                Variable TEXT NOT NULL,
+                AccessTypeID INTEGER NOT NULL,
+                CONSTRAINT DataSiteDescriptors_SiteID_fk FOREIGN KEY (SiteID)
+                    REFERENCES Sites(SiteID),
+                CONSTRAINT DataSiteDescriptors_AccessTypeID_fk FOREIGN KEY
+                    (AccessTypeID) REFERENCES AccessTypes(AccessTypeID));
 
         CREATE TABLE
             FloatKindsSiteDescriptors(
@@ -228,6 +258,14 @@ def setupTables(conn, version=1):
                 CONSTRAINT ScalarPairsSiteDescriptors_RHSVariableTypeID_fk
                     FOREIGN KEY (RHSVariableTypeID) REFERENCES
                     VariableTypes(VariableTypeID));
+
+        CREATE TABLE
+            YieldsSiteDescriptors(
+                SiteId INTEGER NOT NULL
+                        CONSTRAINT YieldsSiteDescriptors_pk PRIMARY KEY,
+                Instruction TEXT NOT NULL,
+                CONSTRAINT YieldsSiteDescriptors_SiteID_fk FOREIGN KEY
+                    (SiteID) REFERENCES Sites(SiteID));
 
         CREATE TABLE
             CompareSwapSiteDescriptors(

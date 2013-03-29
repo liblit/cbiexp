@@ -10,6 +10,13 @@
     <predicate text="is FALSE"/>
     <predicate text="is TRUE"/>
   </scheme>
+  <scheme id="bounds">
+    <predicate text="minimum value"/>
+    <predicate text="maximum value"/>
+  </scheme>
+  <scheme id="function-entries">
+    <predicate text="function entered"/>
+  </scheme>
   <scheme id="float-kinds">
     <predicate text="== -inf"/>
     <predicate text="!= -inf"/>
@@ -40,6 +47,9 @@
     <predicate text="is invalid"/>
     <predicate text="is valid"/>
   </scheme>
+  <scheme id="data">
+    <predicate text="memory access"/>
+  </scheme>
   <scheme id="returns">
     <predicate text="&lt; 0"/>
     <predicate text="&gt;= 0"/>
@@ -67,6 +77,9 @@
   <scheme id="compare-swap">
     <predicate text="compare-swap 1"/>
     <predicate text="compare-swap 2"/>
+  </scheme>
+  <scheme id="coverage">
+    <predicate text="statement run"/>
   </scheme>
   <scheme id="atoms-rw">
     <predicate text="atoms-rw 1"/>

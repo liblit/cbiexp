@@ -19,6 +19,9 @@ EnumerationTables = {
         (9, 'bounds', 'D',),
         (10, 'g-object-unref', 'G',),
         (11, 'function-entries', 'E'),
+        (12, 'coverage', 'V'),
+        (13, 'data', 'I'),
+        (14, 'yields', 'Y'),
     ],
 
     'Fields':[
@@ -54,6 +57,10 @@ EnumerationTables = {
         (30, 10, 'MORE_THAN_ONE_REFERENCE'),
         (31, 10, 'INVALID'),
         (32, 11, 'FUNCTION_ENTERED'),
+        (33, 12, 'STATEMENT_RUN'),
+        (34, 13, 'MEM_ACCESS'),
+        (35, 14, 'NOT_YIELDED'),
+        (36, 14, 'YIELDED'),
     ],
 
 
