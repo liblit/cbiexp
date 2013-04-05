@@ -1,10 +1,11 @@
+from platform import architecture
 from SCons.Script import *
 
 
 mex_builder = Builder(
     single_source=True,
     src_suffix='c',
-    suffix='mexglx',
+    suffix={'64bit': 'mexa64', '32bit': 'mexglx'}[architecture()[0]],
     action='$mex $mex_flags -output $TARGET $SOURCE',
 )
 
