@@ -1,0 +1,7 @@
+*.annot
+*.cmi
+*.cmx
+/*Lexer.ml
+/amplify
+/amplify-truth-probs
+/logreader
