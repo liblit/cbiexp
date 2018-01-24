@@ -183,7 +183,10 @@ pred_info_t::read_stats (FILE * fp)
 	Bset[val] = count;
 	total += count;
     }
-    fscanf(fp, "\n");
+    {
+	const int converted = fscanf(fp, "\n");
+	assert(converted == 0);
+    }
     assert(total == Bsize);
 
     total = 0;
@@ -193,7 +196,10 @@ pred_info_t::read_stats (FILE * fp)
 	Cset[val] = count;
 	total += count;
     }
-    fscanf(fp, "\n");
+    {
+	const int converted = fscanf(fp, "\n");
+	assert(converted == 0);
+    }
     assert(total == Csize);
 }
 

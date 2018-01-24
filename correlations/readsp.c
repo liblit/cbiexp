@@ -35,7 +35,7 @@ void mexFunction (int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   char buf[1024];
   char fnroot[1024];
   double *dataX;
-  int *datair, *datajc;
+  size_t *datair, *datajc;
   FILE *datafd, *irfd, *jcfd;
 
   if (nrhs != 4) {
@@ -81,20 +81,17 @@ void mexFunction (int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   if (!jcfd) mexErrMsgTxt("Cannot open jc file");
 
   for (i = 0; i < nzmax; i++) {
-    fscanf(datafd, "%lf", dataX);
-    if (feof(datafd))
+    if (fscanf(datafd, "%lf", dataX) != 1 || feof(datafd))
       mexErrMsgTxt("Expecting more data");
     dataX++;
 
-    fscanf(irfd, "%d", datair);
-    if (feof(irfd))
+    if (fscanf(irfd, "%zd", datair) != 1 || feof(irfd))
       mexErrMsgTxt("Expecting more ir");
     datair++;
   }
 
   for (i = 0; i <= N; i++) {
-    fscanf (jcfd, "%d", datajc);
-    if (feof(jcfd)) 
+    if (fscanf (jcfd, "%zd", datajc) != 1 || feof(jcfd))
       mexErrMsgTxt("Expecting more jc");
     datajc++;
   }

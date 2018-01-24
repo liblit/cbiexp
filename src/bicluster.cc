@@ -190,8 +190,14 @@ read_weights()
       run_weights[i] += W[i*npreds+j];
       notrun_weights[i] += notW[i*npreds+j];
     }
-    fscanf(xfp, "\n");
-    fscanf(notxfp, "\n");
+    {
+      const int converted = fscanf(xfp, "\n");
+      assert(converted == 0);
+    }
+    {
+      const int converted = fscanf(notxfp, "\n");
+      assert(converted == 0);
+    }
 
     ++i;
   }
@@ -219,7 +225,8 @@ read_freqs ()
       assert(ctr == 1);
       W[i*npreds+j] = w;
     }
-    fscanf(wfp, "\n");
+    const int converted = fscanf(wfp, "\n");
+    assert(converted == 0);
     ++i;
   }
   fclose(wfp);

@@ -27,7 +27,8 @@ namespace RunBugs
     char *pos;
     int r;
     while (true) {
-      fgets(buf, 1024, runfp);
+      const char *got = fgets(buf, 1024, runfp);
+      assert(got == buf);
       if (feof(runfp))
         break;
   
