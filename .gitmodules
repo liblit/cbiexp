@@ -1,0 +1,4 @@
+[submodule "sampler"]
+	path = sampler
+	url = ../sampler.git
+	branch = master
