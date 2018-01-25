@@ -1,12 +1,11 @@
 open Flag
 open AnalysisReport
-open PerRunReport
 
 module PredicateTable = Predicate.Table
 
 let rd = new RunsDirectory.c
 let nr = new NumRuns.c rd
-let lr = LogReport.factory rd
+let lr = PerRunReport.LogReport.factory rd
 let sr = StatsReport.factory ()
 let prr = PredRankReport.factory ()
 let pr = RankPredsByRunsAmplified.factory ()

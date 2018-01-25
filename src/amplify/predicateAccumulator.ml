@@ -2,8 +2,6 @@ open Predicate
 
 type entry = { index : int; siteId : int; values : bool array } 
 
-let makeEntry id si v = { index = id; siteId = si; values = v }  
-
 module IntHash = Hashtbl.Make (
   struct
     type t = int

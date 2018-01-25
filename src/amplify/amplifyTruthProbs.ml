@@ -3,7 +3,6 @@ open AnalysisReport
 open PerRunReport
 open MultiReports
 
-type predicate = Predicate.p
 module PredicateTable = Predicate.Table
 module PredicateSet = Predicate.Set
 

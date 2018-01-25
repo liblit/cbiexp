@@ -1,8 +1,3 @@
-{
-  exception ParseFailure of string
-  exception Eof
-}
-
 rule initial count = shortest
   | _* '\n' { initial (count + 1) lexbuf } 
   | eof { count }

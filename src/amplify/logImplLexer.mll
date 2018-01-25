@@ -1,7 +1,6 @@
 {
   type predicate = Predicate.p
   exception ParseFailure of string
-  exception Eof
 }
 
 let compilationUnit = ['0' - '9' 'a' - 'f']

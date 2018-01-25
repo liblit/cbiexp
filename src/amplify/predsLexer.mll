@@ -1,8 +1,4 @@
-{
-  exception ParseFailure of string
-}
-
-let id = ('0' | ['0' - '9']+) 
+let id = ('0' | ['0' - '9']+)
 let schemeCode = ['A' - 'Z']
 
 rule initial preds = shortest

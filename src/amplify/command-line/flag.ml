@@ -1,5 +1,4 @@
 open Arg
-open CommandLine
 
 class type c =
   object

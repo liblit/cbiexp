@@ -2,8 +2,7 @@ open Flag
 open PerRunReport
 open MultiReports
 
-type predicate = Predicate.p
-module PredicateSet = Predicate.Set 
+module PredicateSet = Predicate.Set
 
 let rd = new RunsDirectory.c
 let nr = new NumRuns.c rd
