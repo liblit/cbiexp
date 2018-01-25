@@ -1,0 +1,36 @@
+language: c++
+addons:
+  apt:
+    sources:
+    - avsm
+    packages:
+    - aspcud
+    - desktop-file-utils
+    - docbook-xsl
+    - dpkg-dev
+    - flex
+    - gir1.2-webkit-3.0
+    - inkscape
+    - libboost-dev
+    - libdbus-1-dev
+    - libglib2.0-dev
+    - libgsl0-dev
+    - liblttng-ust-dev
+    - libsqlite3-dev
+    - libxml2-utils
+    - ocaml-native-compilers
+    - opam
+    - pychecker
+    - rarian-compat
+    - xsltproc
+before_install:
+- opam init --yes
+- opam install --yes cil
+install:
+- scons --keep-going --directory=sampler cil_path="$HOME/.opam/system/lib/cil" OCAML_NATIVE=yes
+- scons --keep-going sampler_build=sampler
+script: true
+before_cache: rm --force --recursive "$HOME/.opam/log"
+cache:
+  directories:
+  - "$HOME/.opam"
