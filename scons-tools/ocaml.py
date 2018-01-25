@@ -44,7 +44,7 @@ def __ocamldep_scan(node, env, path):
         __warn('%s does not exist' % node)
 
     target = node.target_from_source('', __source_to_object[env['OCAML_NATIVE']][suffix])
-    target = str(target) + ':'
+    target = str(target)
 
     def joinLines(stream):
         """reassemble long lines that were split using backslashed newlines"""
@@ -61,7 +61,7 @@ def __ocamldep_scan(node, env, path):
     deps = env.ReadPipe(command)
     deps = joinLines(deps)
     deps = imap(str.split, deps)
-    deps = ( fields[1:] for fields in deps if fields[0] == target )
+    deps = ( fields[2:] for fields in deps if fields[0] == target )
     deps = chain(*deps)
     deps = imap(env.File, deps)
     return deps
